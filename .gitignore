@@ -1,0 +1,97 @@
+# AppImage examples
+*.AppImage
+
+# Reference
+/ArcherBC2
+
+# Leiningen
+/target
+/classes
+/checkouts
+/pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
+/.prepl-port
+.hgignore
+.hg/
+
+# Java
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.classpath
+.project
+.settings/
+.vscode/
+*.code-workspace
+.history/
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+.\#*
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+Session.vim
+.netrwhist
+tags
+[._]*.un~
+
+# OS
+.DS_Store
+._*
+Thumbs.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Project specific
+/logs/
+*.log
+.env
+.env.local
+
+# Build artifacts
+/build/
+/dist/
+
+# Temporary files
+*.tmp
+*.temp
+*.backup
+*.bk
+*.orig
+
+# AppImage build artifacts (from CI)
+*.AppImage
+/AppDir/
+/squashfs-root/

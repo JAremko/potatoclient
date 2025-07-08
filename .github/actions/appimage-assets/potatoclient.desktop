@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=PotatoClient
+Comment=Potato Client - Video Stream Control Center
+Icon=potatoclient
+Exec=potatoclient %U
+Categories=AudioVideo;Video;Network;
+Terminal=false
+StartupNotify=true

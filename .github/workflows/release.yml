@@ -1,0 +1,574 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.extract_version.outputs.VERSION }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Extract version from project.clj
+      id: extract_version
+      run: |
+        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+    
+    - name: Setup Java for building
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'liberica'
+        java-version: '17'
+    
+    - name: Install Leiningen
+      run: |
+        wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+        chmod +x lein
+        sudo mv lein /usr/local/bin/
+        lein version
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gstreamer1.0-tools \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-ugly \
+          gstreamer1.0-libav \
+          libgstreamer1.0-0 \
+          libgstreamer-plugins-base1.0-0 \
+          libgstreamer-plugins-base1.0-dev \
+          libunwind-dev \
+          libfuse2 \
+          patchelf \
+          file \
+          wget
+    
+    - name: Build project
+      run: |
+        lein uberjar
+        ls -la target/
+    
+    - name: Download AppImage tools
+      run: |
+        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x *.AppImage
+    
+    - name: Create AppDir structure  
+      run: |
+        # Clean previous build
+        rm -rf AppDir
+        mkdir -p AppDir
+        
+        # Create AppDir structure
+        mkdir -p AppDir/usr/bin
+        mkdir -p AppDir/usr/lib/potatoclient
+        mkdir -p AppDir/usr/share/applications
+        mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+        mkdir -p AppDir/usr/lib/jvm
+        
+        # Download and extract Liberica JDK 17
+        echo "Downloading Liberica JDK 17..."
+        wget -q -O /tmp/liberica17.tar.gz "https://download.bell-sw.com/java/17.0.13+12/bellsoft-jdk17.0.13+12-linux-amd64.tar.gz"
+        tar -xf /tmp/liberica17.tar.gz -C AppDir/usr/lib/jvm --strip-components=1
+        rm /tmp/liberica17.tar.gz
+        
+        # Copy application files
+        cp target/potatoclient.jar AppDir/usr/lib/potatoclient/
+        cp resources/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/potatoclient.png
+        
+        # Copy launcher script from assets
+        cp .github/actions/appimage-assets/potatoclient-launcher.sh AppDir/usr/bin/potatoclient
+        chmod +x AppDir/usr/bin/potatoclient
+        
+        # Copy desktop file from assets
+        cp .github/actions/appimage-assets/potatoclient.desktop AppDir/usr/share/applications/
+        
+        # Create AppRun symlink
+        ln -sf usr/bin/potatoclient AppDir/AppRun
+        
+        # Create desktop and icon symlinks at root
+        ln -sf usr/share/applications/potatoclient.desktop AppDir/
+        ln -sf usr/share/icons/hicolor/256x256/apps/potatoclient.png AppDir/
+    
+    - name: Deploy dependencies with linuxdeploy
+      run: |
+        # First, temporarily remove Java executables to prevent linuxdeploy from processing them
+        find AppDir/usr/lib/jvm -type f -executable -name "*" > /tmp/java_executables.txt
+        while IFS= read -r file; do
+            chmod -x "$file" 2>/dev/null || true
+        done < /tmp/java_executables.txt
+        
+        # Deploy only the GStreamer libraries
+        ./linuxdeploy-x86_64.AppImage \
+            --appdir AppDir \
+            --desktop-file AppDir/usr/share/applications/potatoclient.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/256x256/apps/potatoclient.png \
+            --library /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstaudio-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstpbutils-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgsttag-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstrtp-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstrtsp-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstsdp-1.0.so.0 \
+            --library /usr/lib/x86_64-linux-gnu/libgstnet-1.0.so.0 || true
+        
+        # Restore Java executable permissions
+        while IFS= read -r file; do
+            chmod +x "$file" 2>/dev/null || true
+        done < /tmp/java_executables.txt
+        rm -f /tmp/java_executables.txt
+    
+    - name: Run GStreamer plugin
+      run: |
+        # Make plugin script executable
+        chmod +x .github/workflows/scripts/linuxdeploy-plugin-gstreamer.sh
+        
+        # Run GStreamer plugin (without LINUXDEPLOY to avoid re-running it)
+        echo "Running GStreamer plugin..."
+        unset LINUXDEPLOY
+        .github/workflows/scripts/linuxdeploy-plugin-gstreamer.sh --appdir AppDir
+    
+    - name: Additional cleanup
+      run: |
+        echo "Cleaning up AppDir..."
+        find AppDir -name "*.a" -delete
+        find AppDir -name "*.la" -delete
+        rm -rf AppDir/usr/share/man
+        rm -rf AppDir/usr/share/doc
+        rm -rf AppDir/usr/include
+    
+    - name: Build AppImage
+      run: |
+        # Show the size of the AppDir before building
+        echo "AppDir size:"
+        du -sh AppDir/
+        
+        # Create AppImage with user-friendly naming
+        echo "Creating AppImage..."
+        ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage
+        
+        # Test the AppImage
+        echo "Testing AppImage..."
+        ./PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage --version || echo "No version flag implemented"
+    
+    - name: Upload AppImage
+      uses: actions/upload-artifact@v4
+      with:
+        name: PotatoClient-AppImage
+        path: PotatoClient-*.AppImage
+
+  build-windows:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.extract_version.outputs.VERSION }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Extract version from project.clj
+      id: extract_version
+      run: |
+        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+    
+    - name: Setup Java for building
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'liberica'
+        java-version: '17'
+        architecture: 'x64'
+    
+    - name: Install Leiningen
+      run: |
+        wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+        chmod +x lein
+        sudo mv lein /usr/local/bin/
+        lein version
+    
+    - name: Build uberjar
+      run: |
+        lein uberjar
+        echo "Built JAR files:"
+        ls -la target/
+    
+    - name: Download Launch4j
+      run: |
+        echo "Downloading Launch4j 3.50..."
+        wget -q -O launch4j.tgz https://sourceforge.net/projects/launch4j/files/launch4j-3/3.50/launch4j-3.50-linux-x64.tgz/download
+        tar -xzf launch4j.tgz
+        rm launch4j.tgz
+    
+    - name: Download 64-bit JRE for Windows
+      run: |
+        echo "Downloading Liberica JRE 17 64-bit for Windows..."
+        wget -q https://download.bell-sw.com/java/17.0.13+12/bellsoft-jre17.0.13+12-windows-amd64.zip
+        unzip -q bellsoft-jre17.0.13+12-windows-amd64.zip
+        mv jre-17.0.13 runtime
+        rm bellsoft-jre17.0.13+12-windows-amd64.zip
+    
+    - name: Download GStreamer for Windows
+      run: |
+        echo "Downloading GStreamer 1.26.3 for Windows 64-bit (latest stable)..."
+        # Download GStreamer 1.26.3 x86_64 runtime installer
+        wget -q https://gstreamer.freedesktop.org/data/pkg/windows/1.26.3/msvc/gstreamer-1.0-msvc-x86_64-1.26.3.msi
+        
+        # Download GStreamer 1.26.3 x86_64 development files (includes additional plugins like libav)
+        wget -q https://gstreamer.freedesktop.org/data/pkg/windows/1.26.3/msvc/gstreamer-1.0-devel-msvc-x86_64-1.26.3.msi
+        
+        mkdir -p redist
+        mv *.msi redist/
+    
+    - name: Download Visual C++ Redistributables
+      run: |
+        echo "Downloading Visual C++ Redistributables for 64-bit..."
+        # VC++ 2015-2022 x64 (required for modern applications)
+        wget -q https://aka.ms/vs/17/release/vc_redist.x64.exe -O redist/vc_redist_x64.exe
+        
+        # Also get VC++ 2013 x64 as GStreamer 1.8 might need it
+        wget -q https://aka.ms/highdpimfc2013x64enu -O redist/vcredist_2013_x64.exe
+    
+    - name: Create Windows executable
+      run: |
+        echo "Creating Windows executable with Launch4j..."
+        # Copy JAR to working directory for Launch4j
+        cp target/potatoclient.jar .
+        # Update Launch4j config with absolute icon path only
+        sed -i "s|<icon>./icon.ico</icon>|<icon>$(pwd)/resources/icon.ico</icon>|" .github/workflows/build.xml
+        # Fix line endings for Unix execution
+        dos2unix launch4j/launch4j || sed -i 's/\r$//' launch4j/launch4j
+        chmod +x launch4j/launch4j
+        ./launch4j/launch4j .github/workflows/build.xml
+    
+    - name: Package distribution
+      run: |
+        mkdir -p dist/PotatoClient
+        # The exe is created in .github/workflows directory
+        cp .github/workflows/PotatoClient.exe dist/PotatoClient/
+        cp potatoclient.jar dist/PotatoClient/
+        cp -r runtime dist/PotatoClient/
+        cp -r redist dist/PotatoClient/
+        
+        # Copy resources if they exist
+        if [ -d "resources" ]; then
+          cp -r resources dist/PotatoClient/
+        fi
+        
+        # Create version file
+        echo "${{ steps.extract_version.outputs.VERSION }}" > dist/PotatoClient/version.txt
+        
+        # Create README for dependencies
+        cat > dist/PotatoClient/README-DEPENDENCIES.txt << EOF
+        PotatoClient Dependencies for Windows
+        =====================================
+        
+        INSTALLER vs PORTABLE VERSION:
+        - The installer (PotatoClient-setup.exe) requires administrator privileges
+          to install system dependencies automatically.
+        - The portable version (ZIP file) can run without admin rights if the
+          dependencies are already installed.
+        
+        If using the portable version and PotatoClient fails to start, please install:
+        
+        1. GStreamer 1.26.3 (in redist folder):
+           - Install gstreamer-1.0-msvc-x86_64-1.26.3.msi first (runtime)
+           - Install gstreamer-1.0-devel-msvc-x86_64-1.26.3.msi second (includes H264 decoders)
+        
+        2. Visual C++ Redistributables (in redist folder):
+           - vc_redist_x64.exe (Visual C++ 2015-2022 redistributable)
+           - vcredist_2013_x64.exe (may be needed for some plugins)
+        
+        The application includes Java 17 runtime, so no Java installation is required.
+        
+        System Requirements:
+        - Windows 7 SP1 or newer (64-bit)
+        - Administrator privileges (for installer only)
+        - 4GB RAM minimum recommended
+        EOF
+        
+        # Create zip archive with user-friendly naming
+        cd dist
+        zip -r ../PotatoClient-${{ steps.extract_version.outputs.VERSION }}-windows-x64-portable.zip PotatoClient
+        cd ..
+        
+        echo "Package contents:"
+        ls -la dist/PotatoClient/
+        ls -la dist/PotatoClient/redist/
+    
+    - name: Upload distribution for installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: PotatoClient-dist
+        path: dist/PotatoClient/
+
+  create-windows-installer:
+    needs: build-windows
+    runs-on: windows-2022
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download distribution
+      uses: actions/download-artifact@v4
+      with:
+        name: PotatoClient-dist
+        path: dist/PotatoClient
+    
+    - name: Install Inno Setup
+      run: |
+        choco install innosetup --yes
+    
+    - name: Build installer
+      shell: powershell
+      run: |
+        $Env:ISCC_PATH="${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+        $Env:APP_VERSION="${{ needs.build-windows.outputs.version }}"
+        
+        Write-Host "Building installer with Inno Setup..."
+        Write-Host "App version: $Env:APP_VERSION"
+        
+        & "$Env:ISCC_PATH" /Qp "${{ github.workspace }}\.github\workflows\install.iss"
+        
+        # Rename installer to use user-friendly naming
+        Move-Item -Path "Output\PotatoClient-*.exe" -Destination "Output\PotatoClient-$Env:APP_VERSION-windows-x64-setup.exe"
+    
+    - name: Upload installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: PotatoClient-installer
+        path: Output/PotatoClient-*.exe
+
+  build-macos:
+    runs-on: macos-14  # M1/M2 runner
+    outputs:
+      version: ${{ steps.extract_version.outputs.VERSION }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Extract version from project.clj
+      id: extract_version
+      run: |
+        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+    
+    - name: Setup Java for building
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'liberica'
+        java-version: '17'
+        architecture: 'aarch64'
+    
+    - name: Install Leiningen
+      run: |
+        brew install leiningen
+        lein version
+    
+    - name: Install GStreamer
+      run: |
+        echo "Installing GStreamer via Homebrew..."
+        brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav
+        echo "GStreamer version:"
+        gst-launch-1.0 --version
+    
+    - name: Build uberjar
+      run: |
+        lein uberjar
+        echo "Built JAR files:"
+        ls -la target/
+    
+    - name: Download macOS JRE
+      run: |
+        echo "Downloading Liberica JRE 17 for macOS ARM64..."
+        wget -q https://download.bell-sw.com/java/17.0.13+12/bellsoft-jre17.0.13+12-macos-aarch64.zip
+        unzip -q bellsoft-jre17.0.13+12-macos-aarch64.zip
+        # Find the actual JRE directory (it might be jre-17.0.13 or jre-17.0.13.jre)
+        JRE_DIR=$(find . -maxdepth 1 -type d -name "jre-*" | head -1)
+        if [ -z "$JRE_DIR" ]; then
+          echo "Error: Could not find JRE directory"
+          ls -la
+          exit 1
+        fi
+        echo "Found JRE directory: $JRE_DIR"
+        mv "$JRE_DIR" runtime
+        rm bellsoft-jre17.0.13+12-macos-aarch64.zip
+    
+    - name: Create .app bundle
+      run: |
+        # Create app bundle structure
+        APP_NAME="PotatoClient"
+        APP_DIR="$APP_NAME.app"
+        mkdir -p "$APP_DIR/Contents/MacOS"
+        mkdir -p "$APP_DIR/Contents/Resources"
+        mkdir -p "$APP_DIR/Contents/runtime"
+        
+        # Copy resources
+        cp .github/actions/macos-assets/Info.plist "$APP_DIR/Contents/"
+        cp .github/actions/macos-assets/potatoclient-launcher "$APP_DIR/Contents/MacOS/"
+        chmod +x "$APP_DIR/Contents/MacOS/potatoclient-launcher"
+        
+        # Copy JAR and runtime
+        cp target/potatoclient.jar "$APP_DIR/Contents/Resources/"
+        cp -R runtime/* "$APP_DIR/Contents/runtime/"
+        
+        # Convert icon to icns format
+        if [ -f "resources/icon.png" ]; then
+          echo "Creating icns icon..."
+          mkdir icon.iconset
+          sips -z 16 16   resources/icon.png --out icon.iconset/icon_16x16.png
+          sips -z 32 32   resources/icon.png --out icon.iconset/icon_16x16@2x.png
+          sips -z 32 32   resources/icon.png --out icon.iconset/icon_32x32.png
+          sips -z 64 64   resources/icon.png --out icon.iconset/icon_32x32@2x.png
+          sips -z 128 128 resources/icon.png --out icon.iconset/icon_128x128.png
+          sips -z 256 256 resources/icon.png --out icon.iconset/icon_128x128@2x.png
+          sips -z 256 256 resources/icon.png --out icon.iconset/icon_256x256.png
+          sips -z 512 512 resources/icon.png --out icon.iconset/icon_256x256@2x.png
+          sips -z 512 512 resources/icon.png --out icon.iconset/icon_512x512.png
+          sips -z 1024 1024 resources/icon.png --out icon.iconset/icon_512x512@2x.png
+          iconutil -c icns icon.iconset
+          cp icon.icns "$APP_DIR/Contents/Resources/"
+          rm -rf icon.iconset icon.icns
+        fi
+        
+        # Update Info.plist with version
+        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.extract_version.outputs.VERSION }}" "$APP_DIR/Contents/Info.plist"
+        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.extract_version.outputs.VERSION }}" "$APP_DIR/Contents/Info.plist"
+        
+        echo "App bundle created: $APP_DIR"
+        ls -la "$APP_DIR/Contents/"
+    
+    - name: Create DMG
+      run: |
+        # Create a temporary directory for DMG contents
+        mkdir -p dmg-content
+        cp -R PotatoClient.app dmg-content/
+        
+        # Copy README
+        cp .github/actions/macos-assets/README.txt dmg-content/
+        
+        # Create Applications symlink
+        ln -s /Applications dmg-content/Applications
+        
+        # Optional: Download GStreamer installer and include it
+        # echo "Downloading GStreamer installer for inclusion..."
+        # wget -q https://gstreamer.freedesktop.org/data/pkg/osx/1.24.7/gstreamer-1.0-1.24.7-universal.pkg -O dmg-content/Install_GStreamer.pkg || echo "Failed to download GStreamer installer"
+        
+        # Create DMG with user-friendly naming
+        hdiutil create -volname "PotatoClient" \
+                      -srcfolder dmg-content \
+                      -ov -format UDZO \
+                      "PotatoClient-${{ steps.extract_version.outputs.VERSION }}-macos-arm64.dmg"
+        
+        # Clean up
+        rm -rf dmg-content
+        
+        echo "DMG created successfully"
+        ls -la *.dmg
+    
+    - name: Optional - Ad-hoc sign for development (no certificate required)
+      run: |
+        # Ad-hoc signing (using "-" as identity) allows local testing without Gatekeeper issues
+        # This is NOT for distribution, just for development convenience
+        echo "Ad-hoc signing the app bundle for development..."
+        codesign --force --deep --sign - PotatoClient.app || echo "Ad-hoc signing failed, continuing without signature"
+        
+        # Note: The DMG is already created, so this signed .app won't be in the DMG
+        # For fully signed DMG, you'd need to sign before creating DMG
+    
+    - name: Upload DMG
+      uses: actions/upload-artifact@v4
+      with:
+        name: PotatoClient-macOS
+        path: PotatoClient-*.dmg
+
+  release:
+    needs: [build-appimage, build-windows, create-windows-installer, build-macos]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+    
+    - name: List downloaded files
+      run: |
+        echo "Downloaded files:"
+        find . -type f -name "PotatoClient-*" | sort
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ needs.build-appimage.outputs.version }}
+        name: PotatoClient v${{ needs.build-appimage.outputs.version }}
+        body: |
+          Release v${{ needs.build-appimage.outputs.version }} - ${{ github.event.head_commit.message }}
+          
+          ## Downloads
+          
+          ### Windows
+          - **PotatoClient-${{ needs.build-windows.outputs.version }}-windows-x64-setup.exe** - Windows installer (includes GStreamer 1.26.3)
+          
+          ### Linux
+          - **PotatoClient-${{ needs.build-appimage.outputs.version }}-linux-x86_64.AppImage** - AppImage for Linux
+          
+          ### macOS
+          - **PotatoClient-${{ needs.build-macos.outputs.version }}-macos-arm64.dmg** - DMG for macOS (Apple Silicon)
+          
+          ## System Requirements
+          
+          ### Windows
+          - Windows 7 SP1 x64 or newer (64-bit only)
+          - 4GB RAM minimum recommended
+          - No Java installation required (bundled Java 17)
+          - Administrator privileges for installer
+          
+          ### Linux
+          - Ubuntu 22.04 LTS or newer (glibc 2.35+)
+          - 64-bit Linux distribution
+          - GStreamer 1.0+ (bundled in AppImage)
+          - 4GB RAM minimum recommended
+          
+          ### macOS
+          - macOS 11.0 (Big Sur) or newer
+          - Apple Silicon (M1/M2/M3) processor
+          - GStreamer 1.0+ (install via Homebrew or official package)
+          - 4GB RAM minimum recommended
+          
+          ## Changes
+          ${{ github.event.head_commit.message }}
+          
+          ---
+          *Built from commit: ${{ github.sha }}*
+        files: |
+          PotatoClient-installer/PotatoClient-*.exe
+          PotatoClient-AppImage/PotatoClient-*.AppImage
+          PotatoClient-macOS/PotatoClient-*.dmg
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

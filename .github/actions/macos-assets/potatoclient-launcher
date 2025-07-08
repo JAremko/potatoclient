@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# PotatoClient macOS launcher script
+# This script sets up the environment and launches the Java application
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+APP_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"
+
+# Set up Java
+export JAVA_HOME="$APP_DIR/runtime"
+JAVA_BIN="$JAVA_HOME/bin/java"
+
+# Set up GStreamer paths for macOS
+# GStreamer is typically installed via Homebrew or the official package
+GSTREAMER_FOUND=false
+
+if [ -d "/Library/Frameworks/GStreamer.framework" ]; then
+    # Official GStreamer package location
+    export DYLD_LIBRARY_PATH="/Library/Frameworks/GStreamer.framework/Libraries:$DYLD_LIBRARY_PATH"
+    export GST_PLUGIN_PATH="/Library/Frameworks/GStreamer.framework/Libraries/gstreamer-1.0"
+    export GST_PLUGIN_PATH_1_0="/Library/Frameworks/GStreamer.framework/Libraries/gstreamer-1.0"
+    export GST_PLUGIN_SCANNER="/Library/Frameworks/GStreamer.framework/Helpers/gstreamer-1.0/gst-plugin-scanner"
+    GSTREAMER_FOUND=true
+elif [ -d "/opt/homebrew/lib/gstreamer-1.0" ]; then
+    # Homebrew ARM64 location
+    export DYLD_LIBRARY_PATH="/opt/homebrew/lib:$DYLD_LIBRARY_PATH"
+    export GST_PLUGIN_PATH="/opt/homebrew/lib/gstreamer-1.0"
+    export GST_PLUGIN_PATH_1_0="/opt/homebrew/lib/gstreamer-1.0"
+    GSTREAMER_FOUND=true
+elif [ -d "/usr/local/lib/gstreamer-1.0" ]; then
+    # Homebrew Intel location
+    export DYLD_LIBRARY_PATH="/usr/local/lib:$DYLD_LIBRARY_PATH"
+    export GST_PLUGIN_PATH="/usr/local/lib/gstreamer-1.0"
+    export GST_PLUGIN_PATH_1_0="/usr/local/lib/gstreamer-1.0"
+    GSTREAMER_FOUND=true
+fi
+
+# Check if GStreamer is installed
+if [ "$GSTREAMER_FOUND" = false ]; then
+    osascript -e 'display alert "GStreamer Not Found" message "PotatoClient requires GStreamer to be installed.\n\nPlease install it using:\n• Homebrew: brew install gstreamer\n• Or download from: https://gstreamer.freedesktop.org/download/\n\nAfter installation, restart PotatoClient." as critical buttons {"Open GStreamer Website", "Exit"} default button "Exit"' > /dev/null 2>&1
+    
+    if [ $? -eq 0 ]; then
+        # User clicked "Open GStreamer Website"
+        open "https://gstreamer.freedesktop.org/download/#macos"
+    fi
+    exit 1
+fi
+
+# JVM options
+JVM_OPTS=(
+    "-Xms256m"
+    "-Xmx2048m"
+    "-Djava.library.path=$DYLD_LIBRARY_PATH"
+    "-Dgstreamer.library.path=$DYLD_LIBRARY_PATH"
+    "-Dgstreamer.plugin.path=$GST_PLUGIN_PATH"
+    "--enable-native-access=ALL-UNNAMED"
+    "-Dapple.awt.application.name=PotatoClient"
+    "-Dapple.laf.useScreenMenuBar=true"
+    "-Dcom.apple.macos.use-file-dialog-packages=true"
+    "-Dcom.apple.macos.useScreenMenuBar=true"
+    "-Dcom.apple.mrj.application.apple.menu.about.name=PotatoClient"
+    "-Dcom.apple.smallTabs=true"
+    "-Dfile.encoding=UTF-8"
+)
+
+# Application JAR
+APP_JAR="$APP_DIR/Resources/potatoclient.jar"
+
+# Check if JAR exists
+if [ ! -f "$APP_JAR" ]; then
+    echo "Error: Application JAR not found at $APP_JAR"
+    exit 1
+fi
+
+# Check if Java exists
+if [ ! -f "$JAVA_BIN" ]; then
+    echo "Error: Java runtime not found at $JAVA_BIN"
+    exit 1
+fi
+
+# Launch the application
+exec "$JAVA_BIN" "${JVM_OPTS[@]}" -jar "$APP_JAR" "$@"

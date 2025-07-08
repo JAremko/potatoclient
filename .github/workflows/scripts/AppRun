@@ -1,0 +1,8 @@
+#!/bin/bash
+HERE="$(dirname "$(readlink -f "${0}")")"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/lib/jre/lib:${HERE}/usr/lib/jre/lib/server:${LD_LIBRARY_PATH}"
+export GST_PLUGIN_PATH="${HERE}/usr/lib/gstreamer-1.0"
+export GST_PLUGIN_SCANNER="${HERE}/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
+export PATH="${HERE}/usr/lib/jre/bin:${PATH}"
+export JAVA_HOME="${HERE}/usr/lib/jre"
+exec "${HERE}/usr/bin/potatoclient" "$@"
