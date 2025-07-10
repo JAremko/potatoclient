@@ -68,7 +68,9 @@ jobs:
           libavformat-dev \
           libavutil-dev \
           libswscale-dev \
-          libswresample-dev
+          libswresample-dev \
+          libsphinxbase3 \
+          libpocketsphinx3
     
     - name: Build project
       run: |
@@ -178,10 +180,10 @@ jobs:
         done
         
         # Copy any additional dependencies that might be needed
-        # Note: libpocketsphinx is optional, we'll copy it if it exists but not fail if it doesn't
-        for lib in libpocketsphinx.so*; do
+        # Copy sphinx libraries that gst-libav depends on
+        for lib in libpocketsphinx.so* libsphinxbase.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
-                echo "Copying optional library: $found_lib"
+                echo "Copying sphinx library: $found_lib"
                 cp -P "$found_lib" AppDir/usr/lib/ || true
             done
         done
