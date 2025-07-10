@@ -1,6 +1,6 @@
-(defproject potatoclient "1.0.3"
-  :description "Potato Client - Video Stream Control Center"
-  :license {:name "EPL-2.0"
+(defproject potatoclient "1.1.1"
+  :description "Potato Client - Video Stream Control Center with Protocol Buffer Support"
+  :license {:name "LGPL-3.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [seesaw "1.5.0"]
@@ -13,7 +13,10 @@
                  ;; GStreamer for video playback
                  [org.freedesktop.gstreamer/gst1-java-core "1.4.0" :exclusions [net.java.dev.jna/jna]]
                  ;; Add specific JNA version to avoid version range warning
-                 [net.java.dev.jna/jna "5.13.0"]]
+                 [net.java.dev.jna/jna "5.13.0"]
+                 ;; Protocol Buffer dependencies
+                 [com.google.protobuf/protobuf-java "3.25.1"]
+                 [com.appsflyer/pronto "3.0.0"]]
   
   :source-paths ["src"]
   :java-source-paths ["src/java"]
@@ -37,6 +40,15 @@
                        :uberjar-name "potatoclient.jar"}
              :dev {:source-paths ["dev"]
                    :global-vars {*warn-on-reflection* true
-                                 *assert* true}}}
+                                 *assert* true}
+                   :plugins [[com.appsflyer/lein-protodeps "1.0.5"]]}}
+  
+  :lein-protodeps {:output-path "src/java"
+                   :proto-version "3.25.1"
+                   :compile-grpc? false
+                   :repos {:local {:repo-type :filesystem
+                                   :config {:path "."}
+                                   :proto-paths ["proto"]
+                                   :dependencies []}}}
   
 )
