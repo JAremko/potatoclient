@@ -83,7 +83,11 @@ public class GStreamerPipeline {
                     Registry registry = Registry.get();
                     if (registry != null && gstPluginPath != null) {
                         callback.onLog("DEBUG", "Scanning plugin path: " + gstPluginPath);
-                        registry.scanPath(gstPluginPath);
+                        try {
+                            registry.scanPath(gstPluginPath);
+                        } catch (Exception e) {
+                            callback.onLog("DEBUG", "Plugin path scan warning: " + e.getMessage());
+                        }
                     }
                 } catch (Exception e) {
                     callback.onLog("ERROR", "Failed to initialize GStreamer: " + e.getMessage());
@@ -138,35 +142,40 @@ public class GStreamerPipeline {
             };
             
             for (String decoderName : decoderOptions) {
-                decoder = ElementFactory.make(decoderName, "decoder");
-                if (decoder != null) {
-                    selectedDecoder = decoderName;
-                    callback.onLog("INFO", "Using H264 decoder: " + decoderName);
-                    
-                    // Configure decoder-specific settings
-                    switch (decoderName) {
-                        case "avdec_h264":
-                            decoder.set("lowres", 0);
-                            decoder.set("skip-frame", 0);
-                            decoder.set("max-threads", Runtime.getRuntime().availableProcessors());
-                            break;
-                        case "nvh264dec":
-                        case "nvdec":
-                            // NVIDIA decoders usually work with default settings
-                            callback.onLog("INFO", "Hardware acceleration enabled (NVIDIA)");
-                            break;
-                        case "d3d11h264dec":
-                            callback.onLog("INFO", "Hardware acceleration enabled (Direct3D 11)");
-                            break;
-                        case "msdkh264dec":
-                            callback.onLog("INFO", "Hardware acceleration enabled (Intel Quick Sync)");
-                            break;
-                        case "decodebin":
-                            // decodebin will auto-negotiate the best decoder
-                            callback.onLog("INFO", "Using automatic decoder selection");
-                            break;
+                try {
+                    decoder = ElementFactory.make(decoderName, "decoder");
+                    if (decoder != null) {
+                        selectedDecoder = decoderName;
+                        callback.onLog("INFO", "Using H264 decoder: " + decoderName);
+                        
+                        // Configure decoder-specific settings
+                        switch (decoderName) {
+                            case "avdec_h264":
+                                decoder.set("lowres", 0);
+                                decoder.set("skip-frame", 0);
+                                decoder.set("max-threads", Runtime.getRuntime().availableProcessors());
+                                break;
+                            case "nvh264dec":
+                            case "nvdec":
+                                // NVIDIA decoders usually work with default settings
+                                callback.onLog("INFO", "Hardware acceleration enabled (NVIDIA)");
+                                break;
+                            case "d3d11h264dec":
+                                callback.onLog("INFO", "Hardware acceleration enabled (Direct3D 11)");
+                                break;
+                            case "msdkh264dec":
+                                callback.onLog("INFO", "Hardware acceleration enabled (Intel Quick Sync)");
+                                break;
+                            case "decodebin":
+                                // decodebin will auto-negotiate the best decoder
+                                callback.onLog("INFO", "Using automatic decoder selection");
+                                break;
+                        }
+                        break;
                     }
-                    break;
+                } catch (Exception e) {
+                    // Log and continue to next decoder option
+                    callback.onLog("DEBUG", "Failed to create " + decoderName + ": " + e.getMessage());
                 }
             }
             

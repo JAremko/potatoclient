@@ -58,7 +58,11 @@ jobs:
           libfuse2 \
           patchelf \
           file \
-          wget
+          wget \
+          libopenh264-dev \
+          libvpx-dev \
+          libx264-dev \
+          libavcodec-extra
     
     - name: Build project
       run: |
@@ -138,6 +142,30 @@ jobs:
             chmod +x "$file" 2>/dev/null || true
         done < /tmp/java_executables.txt
         rm -f /tmp/java_executables.txt
+        
+        # Manually copy codec libraries that GStreamer plugins depend on
+        echo "Copying codec libraries..."
+        mkdir -p AppDir/usr/lib
+        
+        # Find and copy codec libraries
+        for lib in libopenh264.so* libvpx.so* libx264.so*; do
+            found_lib=$(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null | head -1)
+            if [ -n "$found_lib" ]; then
+                echo "Copying codec library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/
+            else
+                echo "Warning: Could not find $lib"
+            fi
+        done
+        
+        # Also copy libav dependencies for H.264 support
+        for lib in libavcodec.so* libavformat.so* libavutil.so* libswresample.so*; do
+            found_lib=$(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null | head -1)
+            if [ -n "$found_lib" ]; then
+                echo "Copying libav library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/
+            fi
+        done
     
     - name: Run GStreamer plugin
       run: |
