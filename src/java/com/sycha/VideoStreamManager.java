@@ -119,8 +119,13 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         // Redirect System.err to capture all exceptions
         redirectSystemErr();
         
-        // Add shutdown hook
-        shutdownHook = new Thread(this::cleanup, "VideoStream-Shutdown-" + streamId);
+        // Add minimal shutdown hook
+        shutdownHook = new Thread(() -> {
+            running.set(false);
+            try {
+                messageProtocol.sendResponse("shutdown", null);
+            } catch (Exception ignored) {}
+        }, "VideoStream-Shutdown-" + streamId);
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         
         // Start command reader thread
@@ -139,14 +144,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             }
         }
         
-        cleanup();
-        
-        // Remove shutdown hook if normal exit
-        try {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
-        } catch (Exception ignored) {
-            // Already shutting down
-        }
+        // Exit when main loop ends
+        System.exit(0);
     }
     
     private void readCommands() {
@@ -223,40 +222,38 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         gstreamerPipeline.stop();
         
         messageProtocol.sendResponse("hidden", null);
+        
+        // Exit the process since we're simplifying lifecycle
+        shutdown();
     }
     
     private void shutdown() {
-        running.set(false);
-        hide();
-        
-        // Dispose frame on EDT
-        frameManager.disposeFrame();
-        
-        // Cleanup event handlers
-        if (mouseEventHandler != null) {
-            mouseEventHandler.cleanup();
-        }
-        if (windowEventHandler != null) {
-            windowEventHandler.cleanup();
+        if (!running.compareAndSet(true, false)) {
+            return; // Already shutting down
         }
         
-        // Shutdown executor services
-        reconnectExecutor.shutdown();
-        eventThrottleExecutor.shutdown();
+        // Quick cleanup - we're exiting anyway
         try {
-            if (!reconnectExecutor.awaitTermination(EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-                reconnectExecutor.shutdownNow();
-            }
-            if (!eventThrottleExecutor.awaitTermination(EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-                eventThrottleExecutor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            reconnectExecutor.shutdownNow();
-            eventThrottleExecutor.shutdownNow();
+            // Hide frame first
+            frameManager.hideFrame();
+            
+            // Disconnect WebSocket
+            webSocketManager.disconnect();
+            
+            // Stop pipeline
+            gstreamerPipeline.stop();
+            
+            // Send shutdown response
+            messageProtocol.sendResponse("shutdown", null);
+            
+            // Give a moment for the message to be sent
+            Thread.sleep(50);
+        } catch (Exception e) {
+            // Best effort - we're exiting anyway
         }
         
-        messageProtocol.sendResponse("shutdown", null);
+        // Force exit
+        System.exit(0);
     }
     
     // FrameManager.FrameEventListener implementation
@@ -273,25 +270,13 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     @Override
     public void onFrameClosing() {
         messageProtocol.sendResponse("window-closed", null);
-        hide();
+        // Exit immediately when window is closed
+        shutdown();
     }
     
     private void cleanup() {
-        if (!running.compareAndSet(true, false)) {
-            return; // Already cleaned up
-        }
-        
-        hide();
-        
-        // Close scanner
-        try {
-            scanner.close();
-        } catch (Exception ignored) {
-            // Best effort
-        }
-        
-        // Don't quit Gst during shutdown to avoid crashes
-        // Gst cleanup will happen when JVM exits
+        // Simplified cleanup - just exit
+        shutdown();
     }
     
     // MouseEventHandler.EventCallback implementation
@@ -313,7 +298,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     @Override
     public void onWindowClosing() {
         messageProtocol.sendResponse("window-closed", null);
-        hide();
+        // Exit immediately when window is closed
+        shutdown();
     }
     
     // WebSocketManager.EventCallback implementation

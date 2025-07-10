@@ -122,14 +122,17 @@
 
 (defn stop-stream [stream]
   (when stream
+    ;; First try graceful shutdown
     (try
       (send-command stream {:action "shutdown"})
-      (Thread/sleep 100)
+      (Thread/sleep 50)
       (catch Exception e))
+    ;; Then force kill the process
     (try
       (when (.isAlive (:process stream))
         (.destroyForcibly (:process stream)))
       (catch Exception e))
+    ;; Close all streams
     (try
       (.close (:writer stream))
       (catch Exception e))
@@ -138,6 +141,10 @@
       (catch Exception e))
     (try
       (.close (:stderr-reader stream))
+      (catch Exception e))
+    ;; Close the channel
+    (try
+      (async/close! (:output-chan stream))
       (catch Exception e))))
 
 (defn add-log-entry! [entry]
@@ -225,13 +232,16 @@
                                    :type "RESPONSE"
                                    :message (:status msg)
                                    :raw-data msg})
-                    ;; Handle window-closed event
+                    ;; Handle window-closed event - terminate the process
                     (when (= (:status msg) "window-closed")
-                      (seesaw/invoke-later
-                        (swap! state assoc stream-key nil)
-                        (when-let [btn (get @ui-elements stream-key)]
-                          (seesaw/text! btn (str (name stream-key) " Stream OFF"))
-                          (seesaw/config! btn :selected? false)))))
+                      (when-let [stream (get @state stream-key)]
+                        (future
+                          (stop-stream stream)
+                          (swap! state assoc stream-key nil)
+                          (seesaw/invoke-later
+                            (when-let [btn (get @ui-elements stream-key)]
+                              (seesaw/text! btn (str (name stream-key) " Stream OFF"))
+                              (seesaw/config! btn :selected? false)))))))
         "log" (let [stack-trace (:stackTrace msg)
                     full-message (if stack-trace
                                    (str (:message msg) "\n" stack-trace)
@@ -258,13 +268,11 @@
 
 (defn toggle-stream [stream-key endpoint ui-elements]
   (if-let [stream (get @state stream-key)]
-    ;; Hide and stop
+    ;; Stop the process completely
     (future
-      (send-command stream {:action "hide"})
-      (Thread/sleep 100)
       (stop-stream stream)
       (swap! state assoc stream-key nil))
-    ;; Start and show
+    ;; Start new process and show immediately
     (future
       (let [url (str "wss://" @domain endpoint)
             stream (start-stream-process (name stream-key) url)]

@@ -1,4 +1,4 @@
-(defproject potatoclient "1.0.1"
+(defproject potatoclient "1.0.2"
   :description "Potato Client - Video Stream Control Center"
   :license {:name "EPL-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
