@@ -1,8 +1,48 @@
 #!/bin/bash
-HERE="$(dirname "$(readlink -f "${0}")")"
-export LD_LIBRARY_PATH="${HERE}/usr/lib:${HERE}/usr/lib/jre/lib:${HERE}/usr/lib/jre/lib/server:${LD_LIBRARY_PATH}"
-export GST_PLUGIN_PATH="${HERE}/usr/lib/gstreamer-1.0"
-export GST_PLUGIN_SCANNER="${HERE}/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
-export PATH="${HERE}/usr/lib/jre/bin:${PATH}"
-export JAVA_HOME="${HERE}/usr/lib/jre"
-exec "${HERE}/usr/bin/potatoclient" "$@"
+
+# Get the real path of the AppImage or AppDir
+if [ -n "${APPIMAGE}" ] && [ -z "${APPDIR}" ]; then
+    # Running from AppImage - APPDIR is automatically set by AppImage runtime
+    export APPDIR="${APPDIR:-${HERE}}"
+fi
+
+if [ -z "${APPDIR}" ]; then
+    # Running from extracted AppDir or other context
+    HERE="$(dirname "$(readlink -f "${0}")")"
+    export APPDIR="${HERE}"
+fi
+
+# Set up environment
+export LD_LIBRARY_PATH="${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu:${APPDIR}/usr/lib/jre/lib:${APPDIR}/usr/lib/jre/lib/server:${LD_LIBRARY_PATH}"
+export PATH="${APPDIR}/usr/lib/jre/bin:${PATH}"
+export JAVA_HOME="${APPDIR}/usr/lib/jre"
+
+# Note: Java options are handled in the launcher script (potatoclient-launcher.sh)
+
+# Source AppRun hooks if they exist
+if [ -d "${APPDIR}/apprun-hooks" ]; then
+    for hook in "${APPDIR}"/apprun-hooks/*.sh; do
+        if [ -f "$hook" ]; then
+            echo "Sourcing AppRun hook: $(basename "$hook")" >&2
+            source "$hook"
+        fi
+    done
+fi
+
+# GStreamer environment variables are now set by apprun-hooks/linuxdeploy-plugin-gstreamer.sh
+
+# Force GStreamer to use our bundled libraries
+export GI_TYPELIB_PATH="${APPDIR}/usr/lib/girepository-1.0:${GI_TYPELIB_PATH}"
+
+# Debug output if GST_DEBUG is set
+if [ -n "$GST_DEBUG" ]; then
+    echo "=== GStreamer Environment ===" >&2
+    echo "APPDIR: ${APPDIR}" >&2
+    echo "GST_PLUGIN_PATH_1_0: ${GST_PLUGIN_PATH_1_0}" >&2
+    echo "GST_PLUGIN_SCANNER_1_0: ${GST_PLUGIN_SCANNER_1_0}" >&2
+    echo "LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}" >&2
+    echo "===========================" >&2
+fi
+
+# Execute the application (launcher script handles Java options internally)
+exec "${APPDIR}/usr/bin/potatoclient" "$@"

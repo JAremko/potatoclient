@@ -34,6 +34,9 @@ public class GStreamerPipeline {
     
     private final AtomicLong frameCount = new AtomicLong(0);
     private final AtomicLong startTime = new AtomicLong(0);
+    private volatile boolean hasReceivedKeyframe = false;
+    private volatile Component pendingVideoComponent = null;
+    private volatile boolean overlaySet = false;
     
     public GStreamerPipeline(String streamId, EventCallback callback) {
         this.streamId = streamId;
@@ -217,65 +220,8 @@ public class GStreamerPipeline {
             queue.set("max-size-time", QUEUE_MAX_TIME_NS);
             queue.set("max-size-bytes", 0L);
             
-            // Video converter/scaler - handle based on environment
-            Element videoconvert = null;
-            Element videoscale = null;
-            
-            if (isAppImage) {
-                // In AppImage, video conversion elements might not be available
-                // The pipeline can work without them for direct rendering
-                callback.onLog("INFO", "AppImage mode: Skipping video conversion elements for direct rendering");
-            } else {
-                // Try videoconvertscale first (newer GStreamer)
-                // then fall back to separate videoconvert and videoscale
-                
-                // Check GStreamer version for videoconvertscale support
-                boolean supportsVideoConvertScale = false;
-                if (gstreamerVersion != null) {
-                    // Parse version to check if >= 1.20
-                    String[] versionParts = gstreamerVersion.split(" ")[1].split("\\.");
-                    try {
-                        int major = Integer.parseInt(versionParts[0]);
-                        int minor = Integer.parseInt(versionParts[1]);
-                        supportsVideoConvertScale = (major > 1) || (major == 1 && minor >= 20);
-                    } catch (Exception e) {
-                        callback.onLog("DEBUG", "Could not parse GStreamer version: " + e.getMessage());
-                    }
-                }
-                
-                if (supportsVideoConvertScale) {
-                    // Try the new combined element first (GStreamer 1.20+)
-                    try {
-                        Element videoconvertscale = ElementFactory.make("videoconvertscale", "videoconvertscale");
-                        if (videoconvertscale != null) {
-                            callback.onLog("DEBUG", "Using videoconvertscale (GStreamer 1.20+)");
-                            videoconvert = videoconvertscale;  // Use as videoconvert for pipeline
-                            // videoscale stays null since we don't need it separately
-                        }
-                    } catch (Exception e) {
-                        // Element doesn't exist in this GStreamer version
-                        callback.onLog("DEBUG", "videoconvertscale not available: " + e.getMessage());
-                    }
-                }
-                
-                // Fall back to separate elements if videoconvertscale wasn't available
-                if (videoconvert == null) {
-                    callback.onLog("DEBUG", "Using separate videoconvert and videoscale elements");
-                    try {
-                        videoconvert = ElementFactory.make("videoconvert", "videoconvert");
-                        videoscale = ElementFactory.make("videoscale", "videoscale");
-                        
-                        if (videoconvert == null) {
-                            callback.onLog("WARN", "Failed to create videoconvert element - may have compatibility issues");
-                        }
-                        if (videoscale == null) {
-                            callback.onLog("WARN", "Failed to create videoscale element - may have resolution issues");
-                        }
-                    } catch (Exception e) {
-                        callback.onLog("WARN", "Failed to create video conversion elements: " + e.getMessage());
-                    }
-                }
-            }
+            // Skip video converter/scaler - test direct pipeline
+            callback.onLog("INFO", "Using direct pipeline without color conversion");
             
             // Video sink - platform specific
             if (Platform.isLinux()) {
@@ -315,13 +261,7 @@ public class GStreamerPipeline {
             // Add elements to pipeline and link based on decoder type
             if ("decodebin".equals(selectedDecoder)) {
                 // decodebin handles parsing internally, so we skip h264parse
-                if (videoconvert != null && videoscale != null) {
-                    pipeline.addMany(appsrc, decoder, queue, videoconvert, videoscale, videosink);
-                } else if (videoconvert != null) {
-                    pipeline.addMany(appsrc, decoder, queue, videoconvert, videosink);
-                } else {
-                    pipeline.addMany(appsrc, decoder, queue, videosink);
-                }
+                pipeline.addMany(appsrc, decoder, queue, videosink);
                 
                 // Link appsrc to decoder
                 appsrc.link(decoder);
@@ -341,25 +281,11 @@ public class GStreamerPipeline {
                 });
                 
                 // Link remaining elements
-                if (videoconvert != null && videoscale != null) {
-                    Element.linkMany(queue, videoconvert, videoscale, videosink);
-                } else if (videoconvert != null) {
-                    Element.linkMany(queue, videoconvert, videosink);
-                } else {
-                    queue.link(videosink);
-                }
+                queue.link(videosink);
             } else {
                 // Standard pipeline with h264parse
-                if (videoconvert != null && videoscale != null) {
-                    pipeline.addMany(appsrc, h264parse, decoder, queue, videoconvert, videoscale, videosink);
-                    Element.linkMany(appsrc, h264parse, decoder, queue, videoconvert, videoscale, videosink);
-                } else if (videoconvert != null) {
-                    pipeline.addMany(appsrc, h264parse, decoder, queue, videoconvert, videosink);
-                    Element.linkMany(appsrc, h264parse, decoder, queue, videoconvert, videosink);
-                } else {
-                    pipeline.addMany(appsrc, h264parse, decoder, queue, videosink);
-                    Element.linkMany(appsrc, h264parse, decoder, queue, videosink);
-                }
+                pipeline.addMany(appsrc, h264parse, decoder, queue, videosink);
+                Element.linkMany(appsrc, h264parse, decoder, queue, videosink);
             }
             
             // Set up bus for error handling
@@ -376,32 +302,10 @@ public class GStreamerPipeline {
                 }
             });
             
-            // Set video overlay
+            // Store video component for later overlay setup
             if (videoComponent != null && videosink != null) {
-                // Ensure component is realized
-                if (!videoComponent.isDisplayable()) {
-                    callback.onLog("WARN", "Video component not yet displayable");
-                }
-                
-                videoOverlay = VideoOverlay.wrap(videosink);
-                
-                // Get native window handle
-                long windowHandle = 0;
-                if (Platform.isLinux()) {
-                    windowHandle = Native.getComponentID(videoComponent);
-                } else if (Platform.isWindows()) {
-                    Pointer p = Native.getComponentPointer(videoComponent);
-                    windowHandle = Pointer.nativeValue(p);
-                } else if (Platform.isMac()) {
-                    windowHandle = Native.getComponentID(videoComponent);
-                }
-                
-                if (windowHandle != 0) {
-                    videoOverlay.setWindowHandle(windowHandle);
-                    callback.onLog("DEBUG", "Set video overlay window handle: " + windowHandle);
-                } else {
-                    callback.onLog("WARN", "Could not get native window handle for video component");
-                }
+                pendingVideoComponent = videoComponent;
+                callback.onLog("DEBUG", "Deferring video overlay setup until first frame");
             }
             
             // Start pipeline
@@ -421,6 +325,42 @@ public class GStreamerPipeline {
             }
         } finally {
             pipelineLock.unlock();
+        }
+    }
+    
+    private void setupVideoOverlay() {
+        if (overlaySet || pendingVideoComponent == null || videosink == null) {
+            return;
+        }
+        
+        try {
+            // Ensure component is realized
+            if (!pendingVideoComponent.isDisplayable()) {
+                callback.onLog("WARN", "Video component not yet displayable");
+            }
+            
+            videoOverlay = VideoOverlay.wrap(videosink);
+            
+            // Get native window handle
+            long windowHandle = 0;
+            if (Platform.isLinux()) {
+                windowHandle = Native.getComponentID(pendingVideoComponent);
+            } else if (Platform.isWindows()) {
+                Pointer p = Native.getComponentPointer(pendingVideoComponent);
+                windowHandle = Pointer.nativeValue(p);
+            } else if (Platform.isMac()) {
+                windowHandle = Native.getComponentID(pendingVideoComponent);
+            }
+            
+            if (windowHandle != 0) {
+                videoOverlay.setWindowHandle(windowHandle);
+                overlaySet = true;
+                callback.onLog("DEBUG", "Set video overlay window handle: " + windowHandle);
+            } else {
+                callback.onLog("WARN", "Could not get native window handle for video component");
+            }
+        } catch (Exception e) {
+            callback.onLog("ERROR", "Failed to setup video overlay: " + e.getMessage());
         }
     }
     
@@ -450,6 +390,16 @@ public class GStreamerPipeline {
             }
             
             long frames = frameCount.incrementAndGet();
+            
+            // Mark that we've received the first keyframe
+            if (!hasReceivedKeyframe) {
+                hasReceivedKeyframe = true;
+                callback.onLog("DEBUG", "Received first keyframe");
+                
+                // Setup video overlay after first frame
+                setupVideoOverlay();
+            }
+            
             if (frames % FRAME_LOG_INTERVAL == 0 && callback.isRunning()) {
                 callback.onLog("INFO", "Processed " + frames + " frames");
             }
@@ -476,6 +426,9 @@ public class GStreamerPipeline {
             }
             frameCount.set(0);
             startTime.set(0);
+            hasReceivedKeyframe = false;
+            pendingVideoComponent = null;
+            overlaySet = false;
         } finally {
             pipelineLock.unlock();
         }
@@ -487,5 +440,9 @@ public class GStreamerPipeline {
     
     public long getFrameCount() {
         return frameCount.get();
+    }
+    
+    public boolean hasReceivedFirstKeyframe() {
+        return hasReceivedKeyframe;
     }
 }

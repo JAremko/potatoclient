@@ -123,6 +123,10 @@ essential_plugins=(
     "libgstvolume.so"
     "libgstximagesink.so"
     "libgstxvimagesink.so"
+    # Video conversion plugins - CRITICAL
+    "libgstvideoconvert.so"
+    "libgstvideoscale.so"
+    "libgstvideoconvertscale.so"
     # H.264 specific plugins
     "libgstvideoparsersbad.so"
     "libgstmpegtsdemux.so"
@@ -225,12 +229,35 @@ echo "Copying GStreamer libraries..."
 gst_lib_dir="/usr/lib/$(uname -m)-linux-gnu"
 target_lib_dir="$APPDIR/usr/lib"
 
-for lib in libgstreamer-1.0.so* libgstbase-1.0.so* libgstapp-1.0.so* libgstvideo-1.0.so* libgstaudio-1.0.so* libgstpbutils-1.0.so* libgsttag-1.0.so* libgstrtp-1.0.so* libgstrtsp-1.0.so* libgstsdp-1.0.so* libgstnet-1.0.so*; do
-    if [ -f "$gst_lib_dir/$lib" ]; then
-        echo "Copying library: $lib"
-        cp -P "$gst_lib_dir/$lib" "$target_lib_dir/"
+# Core GStreamer libraries and all their dependencies
+for lib in libgstreamer-1.0.so* libgstbase-1.0.so* libgstapp-1.0.so* libgstvideo-1.0.so* libgstaudio-1.0.so* libgstpbutils-1.0.so* libgsttag-1.0.so* libgstrtp-1.0.so* libgstrtsp-1.0.so* libgstsdp-1.0.so* libgstnet-1.0.so* libgstcontroller-1.0.so* libgstcheck-1.0.so* libgstfft-1.0.so* libgstgl-1.0.so* libgstriff-1.0.so* libgstcodecparsers-1.0.so* libgstmpegts-1.0.so* libgstcodecs-1.0.so* libgstplay-1.0.so* libgstplayer-1.0.so* libgstwebrtc-1.0.so* libgstbadaudio-1.0.so*; do
+    for found_lib in $(find "$gst_lib_dir" /usr/lib -name "$lib" 2>/dev/null); do
+        echo "Copying library: $(basename $found_lib)"
+        cp -P "$found_lib" "$target_lib_dir/"
+    done
+done
+
+# Create unversioned symlinks for JNA to find libraries by base name
+echo "Creating symlinks for JNA compatibility..."
+cd "$target_lib_dir"
+for lib in libgst*.so.*; do
+    if [ -f "$lib" ]; then
+        # Extract base name without version (e.g., libgstapp-1.0.so from libgstapp-1.0.so.0.2001.0)
+        base_name=$(echo "$lib" | sed -E 's/\.so\.[0-9.]+$/\.so/')
+        if [ ! -e "$base_name" ]; then
+            echo "Creating symlink: $base_name -> $lib"
+            ln -sf "$lib" "$base_name"
+        fi
+        
+        # Also create short name for some libraries (e.g., libgstapp.so from libgstapp-1.0.so)
+        short_name=$(echo "$base_name" | sed 's/-[0-9.]*\.so$/\.so/')
+        if [ "$short_name" != "$base_name" ] && [ ! -e "$short_name" ]; then
+            echo "Creating short symlink: $short_name -> $base_name"
+            ln -sf "$base_name" "$short_name"
+        fi
     fi
 done
+cd -
 
 echo "Installing AppRun hook"
 mkdir -p "$APPDIR"/apprun-hooks

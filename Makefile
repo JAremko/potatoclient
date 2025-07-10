@@ -21,9 +21,15 @@ help: ## Show this help message
 	@echo "  make run        # Build and run the application"
 	@echo "  make nrepl      # Start NREPL for Clojure development"
 
+# Build proto files
+.PHONY: proto
+proto: ## Generate Java classes from proto files
+	@echo "Generating Java classes from proto files..."
+	./scripts/compile-protos.sh
+
 # Build target
 .PHONY: build
-build: ## Build the project (creates JAR file)
+build: proto ## Build the project (creates JAR file)
 	@echo "Building project..."
 	lein uberjar
 
@@ -33,9 +39,16 @@ run: build ## Build and run the application
 	@echo "Running application..."
 	java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
+# Clean proto files
+.PHONY: clean-proto
+clean-proto: ## Clean generated proto Java files
+	@echo "Cleaning generated proto files..."
+	rm -rf src/java/ser/
+	rm -rf src/java/cmd/
+
 # Clean target
 .PHONY: clean
-clean: ## Clean all build artifacts
+clean: clean-proto ## Clean all build artifacts
 	@echo "Cleaning build artifacts..."
 	lein clean
 	rm -rf target/

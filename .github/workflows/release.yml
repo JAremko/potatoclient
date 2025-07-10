@@ -62,7 +62,13 @@ jobs:
           libopenh264-dev \
           libvpx-dev \
           libx264-dev \
-          libavcodec-extra
+          libavcodec-extra \
+          ffmpeg \
+          libavcodec-dev \
+          libavformat-dev \
+          libavutil-dev \
+          libswscale-dev \
+          libswresample-dev
     
     - name: Build project
       run: |
@@ -147,24 +153,37 @@ jobs:
         echo "Copying codec libraries..."
         mkdir -p AppDir/usr/lib
         
-        # Find and copy codec libraries
+        # Find and copy codec libraries - copy ALL versions to avoid mismatch
         for lib in libopenh264.so* libvpx.so* libx264.so*; do
-            found_lib=$(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null | head -1)
-            if [ -n "$found_lib" ]; then
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
                 echo "Copying codec library: $found_lib"
                 cp -P "$found_lib" AppDir/usr/lib/
-            else
-                echo "Warning: Could not find $lib"
-            fi
+            done
         done
         
-        # Also copy libav dependencies for H.264 support
-        for lib in libavcodec.so* libavformat.so* libavutil.so* libswresample.so*; do
-            found_lib=$(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null | head -1)
-            if [ -n "$found_lib" ]; then
+        # Copy libav dependencies for H.264 support - CRITICAL for avdec_h264
+        for lib in libavcodec.so* libavformat.so* libavutil.so* libswresample.so* libswscale.so*; do
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
                 echo "Copying libav library: $found_lib"
                 cp -P "$found_lib" AppDir/usr/lib/
-            fi
+            done
+        done
+        
+        # Copy additional FFmpeg dependencies that libav needs
+        for lib in libavfilter.so* libpostproc.so*; do
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
+                echo "Copying FFmpeg library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/
+            done
+        done
+        
+        # Copy any additional dependencies that might be needed
+        # Note: libpocketsphinx is optional, we'll copy it if it exists but not fail if it doesn't
+        for lib in libpocketsphinx.so*; do
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
+                echo "Copying optional library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/ || true
+            done
         done
     
     - name: Run GStreamer plugin
@@ -176,6 +195,74 @@ jobs:
         echo "Running GStreamer plugin..."
         unset LINUXDEPLOY
         .github/workflows/scripts/linuxdeploy-plugin-gstreamer.sh --appdir AppDir
+        
+        # Copy ALL GStreamer-related libraries to avoid version mismatches
+        echo "Copying additional GStreamer dependencies..."
+        for lib in libgstcodecparsers-1.0.so* libgstmpegts-1.0.so* libgstcodecs-1.0.so* libgstplay-1.0.so* libgstplayer-1.0.so* libgstwebrtc-1.0.so* libgstbadaudio-1.0.so*; do
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
+                echo "Copying GStreamer library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/ || true
+            done
+        done
+    
+    - name: Ensure GStreamer libraries are properly linked
+      run: |
+        echo "Ensuring GStreamer library symlinks..."
+        cd AppDir/usr/lib
+        
+        # Create all necessary symlinks for JNA
+        for lib in libgst*.so.*; do
+            if [ -f "$lib" ]; then
+                # Create versioned symlink (e.g., libgstapp-1.0.so from libgstapp-1.0.so.0.2001.0)
+                base_name=$(echo "$lib" | sed -E 's/\.so\.[0-9.]+$/\.so/')
+                if [ ! -e "$base_name" ]; then
+                    echo "Creating symlink: $base_name -> $lib"
+                    ln -sf "$lib" "$base_name"
+                fi
+                
+                # Create unversioned symlink for JNA (e.g., libgstapp.so)
+                short_name=$(echo "$base_name" | sed 's/-[0-9.]*\.so$/\.so/')
+                if [ "$short_name" != "$base_name" ] && [ ! -e "$short_name" ]; then
+                    echo "Creating short symlink: $short_name -> $base_name"
+                    ln -sf "$base_name" "$short_name"
+                fi
+            fi
+        done
+        
+        # Verify critical libraries
+        echo "Verifying critical GStreamer libraries:"
+        for libname in gstapp gstreamer-1.0 gstbase-1.0 gstvideo-1.0; do
+            echo "Checking lib${libname}:"
+            ls -la lib${libname}* 2>/dev/null || echo "  WARNING: lib${libname} not found!"
+        done
+        
+        cd -
+        
+        # Verify the plugin scanner exists
+        echo "Verifying GStreamer plugin scanner:"
+        if [ -f "AppDir/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner" ]; then
+            echo "  Plugin scanner found at correct location"
+            chmod +x "AppDir/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
+        else
+            echo "  ERROR: Plugin scanner not found!"
+        fi
+        
+        # Fix RPATH for all GStreamer plugins to use bundled libraries only
+        echo "Fixing RPATH for GStreamer plugins to ensure isolation..."
+        for plugin in AppDir/usr/lib/gstreamer-1.0/*.so; do
+            if [ -f "$plugin" ]; then
+                echo "Fixing RPATH for $(basename "$plugin")"
+                patchelf --set-rpath '$ORIGIN/..:$ORIGIN' "$plugin"
+            fi
+        done
+        
+        # Also fix RPATH for additional libraries
+        for lib in AppDir/usr/lib/libgst*.so*; do
+            if [ -f "$lib" ] && file "$lib" | grep -q ELF; then
+                echo "Fixing RPATH for $(basename "$lib")"
+                patchelf --set-rpath '$ORIGIN:$ORIGIN/..' "$lib"
+            fi
+        done
     
     - name: Additional cleanup
       run: |
@@ -199,6 +286,13 @@ jobs:
         # Test the AppImage
         echo "Testing AppImage..."
         ./PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage --version || echo "No version flag implemented"
+        
+        # Test GStreamer library loading
+        echo "Testing GStreamer library loading in AppImage..."
+        ./PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage --appimage-extract-and-run &
+        APP_PID=$!
+        sleep 5
+        kill $APP_PID 2>/dev/null || true
     
     - name: Upload AppImage
       uses: actions/upload-artifact@v4

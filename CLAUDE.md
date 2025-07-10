@@ -6,12 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PotatoClient is a multi-process video streaming client that displays two H.264 video streams from WebSocket connections. The main process (Clojure) manages the UI while separate Java subprocesses handle each video stream for stability and performance.
 
+The application also includes Protocol Buffer support for structured communication with remote systems, enabling state synchronization and command sending.
+
 ## System Requirements
 
 ### Build Requirements
 - **Java**: JDK 17 or newer (we use BellSoft Liberica JDK 17)
 - **Build Tool**: Leiningen 2.9+
 - **GStreamer**: 1.0+ development libraries (1.20+ recommended for videoconvertscale)
+- **Protocol Buffers**: protoc compiler (handled automatically by build)
 
 ### Target Platform Requirements
 - **Windows**: Windows 7 SP1 x64 or newer (64-bit only)
@@ -29,7 +32,7 @@ PotatoClient is a multi-process video streaming client that displays two H.264 v
 
 ### Essential Commands
 ```bash
-# Build the application (creates standalone JAR)
+# Build the application (creates standalone JAR, compiles protos)
 make build
 
 # Run the application
@@ -40,6 +43,12 @@ make nrepl
 
 # Run with GStreamer debug output
 make dev
+
+# Generate Protocol Buffer Java classes
+make proto
+
+# Clean generated proto files
+make clean-proto
 
 # Run tests (note: no tests currently exist)
 make test
@@ -62,13 +71,27 @@ lein with-profile dev run
 
 ## Architecture Overview
 
+### Namespace Structure (Clojure)
+
+The codebase follows a modular, idiomatic Clojure structure:
+
+- **`potatoclient.core`**: Main application entry point
+- **`potatoclient.state`**: Centralized state management with atoms
+- **`potatoclient.process`**: Process lifecycle management
+- **`potatoclient.ipc`**: Inter-process communication handling
+- **`potatoclient.ui.*`**: UI components (control panel, log table, export)
+- **`potatoclient.events.*`**: Event handling (log events, stream events)
+- **`proto`**: Protocol Buffer support for state/command serialization
+- **`video-control-center`**: Legacy entry point (delegates to core)
+
 ### Process Architecture
 
-1. **Main Process** (`src/video_control_center.clj`): Clojure application handling:
+1. **Main Process** (Clojure): Application core handling:
    - UI management using Seesaw (Swing wrapper)
    - Process lifecycle management for video streams
    - Event logging and display with color coding
    - Inter-process communication via JSON over stdin/stdout
+   - Protocol Buffer message handling
    - Child process launching with proper JVM flags
 
 2. **Stream Processes** (`src/java/com/sycha/VideoStreamManager.java`): Java subprocesses for:
@@ -81,8 +104,10 @@ lein with-profile dev run
 
 - **Process Isolation**: Each video stream runs in a separate Java subprocess
 - **Message Passing**: JSON messages for inter-process communication
+- **Protocol Buffers**: Structured data exchange with remote systems
 - **Lock-free Concurrency**: Atomic operations in Java for thread safety
 - **Event Throttling**: Rate limiting for mouse events (250ms interval)
+- **Modular Architecture**: Clear separation of concerns in namespaces
 
 ### Configuration
 
@@ -116,6 +141,10 @@ lein with-profile dev run
 - `resources/logback.xml`: Logging configuration
 - `src/java/com/sycha/GStreamerUtils.java`: Windows GStreamer path detection
 - `src/java/com/sycha/MessageProtocol.java`: Inter-process communication protocol
+- `src/proto.clj`: Protocol Buffer integration with Pronto 3.0
+- `src/potatoclient/`: Modular Clojure namespace structure
+- `proto/`: Protocol Buffer definition files
+- `scripts/compile-protos.sh`: Proto compilation script
 - `.github/actions/macos-assets/`: macOS-specific build assets
 
 ### Development Tips
@@ -130,10 +159,23 @@ lein with-profile dev run
 
 ### Common Tasks
 
-- **Adding new event types**: Update both Clojure event handlers in `video_control_center.clj` and Java event processing in `VideoStreamManager.java`
+- **Adding new event types**: 
+  - Update event handlers in `potatoclient.events.stream`
+  - Add Java event processing in `VideoStreamManager.java`
 - **Modifying video pipeline**: Edit GStreamer pipeline strings in `VideoStreamManager.java`
-- **UI changes**: Modify Seesaw components in `video_control_center.clj`
+- **UI changes**: 
+  - Modify components in `potatoclient.ui.*` namespaces
+  - Update state atoms in `potatoclient.state`
 - **Build configuration**: Update `project.clj` for dependencies or JVM options
+- **Protocol Buffer changes**:
+  - Add/modify `.proto` files in `proto/` directory
+  - Run `make proto` to regenerate Java classes
+  - Update `proto.clj` mappers if needed
+- **Adding new features**: Follow the modular structure
+  - State in `potatoclient.state`
+  - UI in `potatoclient.ui.*`
+  - Events in `potatoclient.events.*`
+  - IPC in `potatoclient.ipc`
 
 ### Platform-Specific Compatibility
 
@@ -161,14 +203,3 @@ The `.github/workflows/release.yml` workflow:
 - Automatically releases on push to main branch
 - Includes all redistributables in Windows installer
 - Creates .app bundle with proper Info.plist for macOS
-
-### Recent Improvements
-
-- **Hardware Acceleration**: Automatic detection and use of GPU decoders
-- **GStreamer Compatibility**: Support for videoconvertscale (1.20+) with fallback
-- **JVM Native Access**: Proper flags for Java 17+ JNA compatibility
-- **Stack Trace Consolidation**: Multi-line stack traces consolidated in logs
-- **Save Logs Feature**: Export timestamped event history
-- **Windows Installer**: Updated to GStreamer 1.26.3 with H264 codec support
-- **macOS Support**: Native Apple Silicon build with DMG distribution
-- **Cross-Platform Builds**: Unified GitHub Actions workflow for all platforms

@@ -78,8 +78,17 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             
             @Override
             public void println(String x) {
-                if (x != null) {
-                    messageProtocol.sendLog("STDERR", x);
+                if (x != null && !x.trim().isEmpty()) {
+                    String trimmed = x.trim();
+                    
+                    // Filter out known GStreamer warnings
+                    if (trimmed.contains("gst_video_center_rect: assertion 'src->h != 0' failed") ||
+                        (trimmed.contains("g_object_unref: assertion") && trimmed.contains("G_IS_OBJECT"))) {
+                        originalErr.println(x);
+                        return;
+                    }
+                    
+                    messageProtocol.sendLog("STDERR", trimmed);
                     originalErr.println(x);
                 }
             }
@@ -87,7 +96,22 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             @Override
             public void println(Object x) {
                 if (x != null) {
-                    messageProtocol.sendLog("STDERR", String.valueOf(x));
+                    String str = String.valueOf(x).trim();
+                    
+                    // Skip empty lines
+                    if (str.isEmpty()) {
+                        originalErr.println(x);
+                        return;
+                    }
+                    
+                    // Filter out known GStreamer warnings
+                    if (str.contains("gst_video_center_rect: assertion 'src->h != 0' failed") ||
+                        (str.contains("g_object_unref: assertion") && str.contains("G_IS_OBJECT"))) {
+                        originalErr.println(x);
+                        return;
+                    }
+                    
+                    messageProtocol.sendLog("STDERR", str);
                     originalErr.println(x);
                 }
             }
@@ -104,9 +128,27 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
                     buffer.delete(0, lastNewline + 1);
                     
                     for (String line : lines.split("\n")) {
-                        if (!line.trim().isEmpty()) {
-                            messageProtocol.sendLog("STDERR", line.trim());
+                        String trimmedLine = line.trim();
+                        
+                        // Skip empty lines or lines with only whitespace
+                        if (trimmedLine.isEmpty()) {
+                            continue;
                         }
+                        
+                        // Filter out known GStreamer warnings that aren't useful
+                        if (trimmedLine.contains("gst_video_center_rect: assertion 'src->h != 0' failed")) {
+                            // This warning happens when window is resized/moved, not useful
+                            continue;
+                        }
+                        
+                        // Filter out other common GStreamer noise
+                        if (trimmedLine.contains("g_object_unref: assertion") && 
+                            trimmedLine.contains("G_IS_OBJECT")) {
+                            // Common during pipeline shutdown
+                            continue;
+                        }
+                        
+                        messageProtocol.sendLog("STDERR", trimmedLine);
                     }
                 }
                 
@@ -155,8 +197,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
                 if (line.trim().isEmpty()) continue;
                 
                 try {
-                    @SuppressWarnings("unchecked")
-                    var cmd = mapper.readValue(line, Map.class);
+                    Map<String, String> cmd = mapper.readValue(line, mapper.getTypeFactory().constructMapType(Map.class, String.class, String.class));
                     handleCommand(cmd);
                 } catch (Exception e) {
                     if (running.get()) {

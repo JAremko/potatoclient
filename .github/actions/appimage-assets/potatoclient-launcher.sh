@@ -22,9 +22,15 @@ if [ -d "${APPDIR}/apprun-hooks" ]; then
 fi
 
 # Set up environment
+# CRITICAL: Put AppDir libraries FIRST to avoid system library conflicts
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
 export PATH="${APPDIR}/usr/lib/jvm/bin:${PATH}"
 export JAVA_HOME="${APPDIR}/usr/lib/jvm"
+
+# Unset system GStreamer paths to prevent conflicts
+unset GST_PLUGIN_PATH
+unset GST_PLUGIN_SYSTEM_PATH
+unset GST_REGISTRY_UPDATE
 
 # Java options for GStreamer
 JAVA_OPTS="-Djna.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"
@@ -32,11 +38,24 @@ JAVA_OPTS="${JAVA_OPTS} -Dgstreamer.library.path=${APPDIR}/usr/lib:${APPDIR}/usr
 JAVA_OPTS="${JAVA_OPTS} -Dgstreamer.plugin.path=${APPDIR}/usr/lib/gstreamer-1.0"
 JAVA_OPTS="${JAVA_OPTS} -Djava.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"
 JAVA_OPTS="${JAVA_OPTS} -Djna.nosys=false"
+# Force JNA to look in our AppDir first for native libraries
+JAVA_OPTS="${JAVA_OPTS} -Djna.boot.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"
+# Enable JNA debug logging if GST_DEBUG is set
+if [ "$GST_DEBUG" != "" ]; then
+    JAVA_OPTS="${JAVA_OPTS} -Djna.debug_load=true"
+fi
 
 # Also set GStreamer environment variables directly
 export GST_PLUGIN_PATH="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export GST_PLUGIN_SYSTEM_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
+
+# CRITICAL: Set plugin scanner path to prevent "External plugin loader failed" errors
+export GST_PLUGIN_SCANNER_1_0="${APPDIR}/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
+export GST_PTP_HELPER_1_0="${APPDIR}/usr/lib/gstreamer1.0/gstreamer-1.0/gst-ptp-helper"
+
+# Disable plugin scanner reuse to ensure fresh scans
+export GST_REGISTRY_REUSE_PLUGIN_SCANNER="no"
 
 # macOS compatibility flag - only add on macOS
 if [[ "$OSTYPE" == "darwin"* ]]; then

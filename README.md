@@ -17,8 +17,13 @@ A high-performance, cross-platform video streaming client built with Clojure and
   - Mouse events with NDC coordinate transformation
   - Window events (resize, move, focus, etc.)
   - Navigation events with intelligent rate limiting
+- **Protocol Buffer Support**: 
+  - State synchronization from remote systems
+  - Command sending with structured messages
+  - Integration with Pronto 3.0 for idiomatic Clojure usage
 - **Robust Architecture**:
   - Multi-process design for stability
+  - Modular Clojure namespace structure
   - Automatic WebSocket reconnection
   - Lock-free atomic operations
   - Optimized memory management
@@ -170,8 +175,14 @@ make run              # Run directly
 # Clean build
 make clean
 
-# Build JAR
+# Build JAR (includes proto compilation)
 make build
+
+# Generate Protocol Buffer classes
+make proto
+
+# Clean generated proto files
+make clean-proto
 
 # Run with debug output
 make dev
@@ -209,7 +220,16 @@ The application uses a multi-process architecture for stability:
 
 ### Key Components
 
-- **video_control_center.clj**: Main UI and process management
+#### Clojure (Main Process)
+- **potatoclient.core**: Application entry point
+- **potatoclient.state**: Centralized state management
+- **potatoclient.process**: Process lifecycle management
+- **potatoclient.ipc**: Inter-process communication
+- **potatoclient.ui.***: UI components (control panel, log table)
+- **potatoclient.events.***: Event handling subsystem
+- **proto**: Protocol Buffer support with Pronto 3.0
+
+#### Java (Stream Processes)
 - **VideoStreamManager.java**: WebSocket client and GStreamer pipeline
 - **GStreamerPipeline.java**: Video decoding with hardware acceleration
 - **WebSocketManager.java**: Network communication with auto-reconnect
@@ -228,3 +248,23 @@ The application uses a multi-process architecture for stability:
    - `avdec_h264` - FFmpeg/libav
    - `openh264dec` - OpenH264
    - `decodebin` - Auto-negotiation
+
+## Project Structure
+
+```
+potatoclient/
+├── src/
+│   ├── potatoclient/         # Modular Clojure namespaces
+│   │   ├── core.clj          # Main entry point
+│   │   ├── state.clj         # State management
+│   │   ├── process.clj       # Process lifecycle
+│   │   ├── ipc.clj           # Inter-process communication
+│   │   ├── ui/               # UI components
+│   │   └── events/           # Event handlers
+│   ├── java/com/sycha/       # Java stream processors
+│   ├── proto.clj             # Protocol Buffer support
+│   └── video_control_center.clj # Legacy entry point
+├── proto/                    # Protocol Buffer definitions
+├── scripts/                  # Build and utility scripts
+└── resources/               # Assets and configuration
+```
