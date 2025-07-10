@@ -200,23 +200,34 @@ public class GStreamerPipeline {
             Element videoconvert = null;
             Element videoscale = null;
             
-            // Try the new combined element first
-            Element videoconvertscale = ElementFactory.make("videoconvertscale", "videoconvertscale");
-            if (videoconvertscale != null) {
-                callback.onLog("DEBUG", "Using videoconvertscale (GStreamer 1.20+)");
-                videoconvert = videoconvertscale;  // Use as videoconvert for pipeline
-                // videoscale stays null since we don't need it separately
-            } else {
-                // Fall back to separate elements for older GStreamer
-                callback.onLog("DEBUG", "videoconvertscale not available, using separate elements");
-                videoconvert = ElementFactory.make("videoconvert", "videoconvert");
-                videoscale = ElementFactory.make("videoscale", "videoscale");
-                
-                if (videoconvert == null) {
-                    callback.onLog("WARN", "Failed to create videoconvert element - may have compatibility issues");
+            // Try the new combined element first (GStreamer 1.20+)
+            try {
+                Element videoconvertscale = ElementFactory.make("videoconvertscale", "videoconvertscale");
+                if (videoconvertscale != null) {
+                    callback.onLog("DEBUG", "Using videoconvertscale (GStreamer 1.20+)");
+                    videoconvert = videoconvertscale;  // Use as videoconvert for pipeline
+                    // videoscale stays null since we don't need it separately
                 }
-                if (videoscale == null) {
-                    callback.onLog("WARN", "Failed to create videoscale element - may have resolution issues");
+            } catch (Exception e) {
+                // Element doesn't exist in this GStreamer version
+                callback.onLog("DEBUG", "videoconvertscale not available: " + e.getMessage());
+            }
+            
+            // Fall back to separate elements if videoconvertscale wasn't available
+            if (videoconvert == null) {
+                callback.onLog("DEBUG", "Using separate videoconvert and videoscale elements");
+                try {
+                    videoconvert = ElementFactory.make("videoconvert", "videoconvert");
+                    videoscale = ElementFactory.make("videoscale", "videoscale");
+                    
+                    if (videoconvert == null) {
+                        callback.onLog("WARN", "Failed to create videoconvert element - may have compatibility issues");
+                    }
+                    if (videoscale == null) {
+                        callback.onLog("WARN", "Failed to create videoscale element - may have resolution issues");
+                    }
+                } catch (Exception e) {
+                    callback.onLog("ERROR", "Failed to create video conversion elements: " + e.getMessage());
                 }
             }
             
