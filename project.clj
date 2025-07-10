@@ -1,8 +1,8 @@
-(defproject potatoclient "1.1.1"
+(defproject potatoclient "1.1.2"
   :description "Potato Client - Video Stream Control Center with Protocol Buffer Support"
   :license {:name "LGPL-3.0"
-            :url "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.11.1"]
+            :url "https://www.gnu.org/licenses/lgpl-3.0.en.html"}
+  :dependencies [[org.clojure/clojure "1.12.1"]
                  [seesaw "1.5.0"]
                  [org.clojure/data.json "2.4.0"]
                  [org.clojure/core.async "1.6.681"]

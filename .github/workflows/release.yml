@@ -70,7 +70,8 @@ jobs:
           libswscale-dev \
           libswresample-dev \
           libsphinxbase3 \
-          libpocketsphinx3
+          libpocketsphinx3 \
+          librubberband2
     
     - name: Build project
       run: |
@@ -184,6 +185,14 @@ jobs:
         for lib in libpocketsphinx.so* libsphinxbase.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
                 echo "Copying sphinx library: $found_lib"
+                cp -P "$found_lib" AppDir/usr/lib/ || true
+            done
+        done
+        
+        # Copy rubberband library that GStreamer pitch plugin depends on
+        for lib in librubberband.so*; do
+            for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
+                echo "Copying rubberband library: $found_lib"
                 cp -P "$found_lib" AppDir/usr/lib/ || true
             done
         done
