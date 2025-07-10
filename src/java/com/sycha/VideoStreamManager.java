@@ -175,85 +175,101 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         var action = cmd.get("action");
         switch (action) {
             case "show" -> show();
-            case "hide" -> hide();
             case "shutdown" -> shutdown();
             default -> messageProtocol.sendLog("WARN", "Unknown command: " + action);
         }
     }
     
     private void show() {
-        if (!frameManager.isFrameCreated()) {
-            frameManager.createFrame();
-            // Wait for frame creation to complete
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    // Frame is now created
-                });
-            } catch (Exception e) {
-                messageProtocol.sendException("Failed to create frame", e);
-                return;
-            }
+        // Create and show frame
+        frameManager.createFrame();
+        
+        // Wait for frame creation to complete
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                frameManager.showFrame();
+            });
+        } catch (Exception e) {
+            messageProtocol.sendException("Failed to create/show frame", e);
+            return;
         }
         
+        // Initialize pipeline and connect WebSocket
         SwingUtilities.invokeLater(() -> {
-            frameManager.showFrame();
-            
-            // Initialize pipeline after frame is visible
-            if (!gstreamerPipeline.isActive() && frameManager.getVideoComponent() != null) {
+            if (frameManager.getVideoComponent() != null) {
                 gstreamerPipeline.initialize(frameManager.getVideoComponent());
-            }
-            
-            // Connect WebSocket after pipeline is ready
-            if (!webSocketManager.isConnected()) {
                 webSocketManager.connect();
             }
         });
+        
         messageProtocol.sendResponse("shown", null);
     }
     
-    private void hide() {
-        // Hide frame first
-        frameManager.hideFrame();
-        
-        // Disconnect WebSocket
-        webSocketManager.disconnect();
-        
-        // Stop pipeline
-        gstreamerPipeline.stop();
-        
-        messageProtocol.sendResponse("hidden", null);
-        
-        // Exit the process since we're simplifying lifecycle
-        shutdown();
-    }
     
     private void shutdown() {
         if (!running.compareAndSet(true, false)) {
             return; // Already shutting down
         }
         
-        // Quick cleanup - we're exiting anyway
+        messageProtocol.sendLog("INFO", "Shutting down stream " + streamId);
+        
+        // Careful cleanup to avoid hardware glitches
         try {
-            // Hide frame first
-            frameManager.hideFrame();
-            
-            // Disconnect WebSocket
+            // 1. Stop accepting new frames first
             webSocketManager.disconnect();
             
-            // Stop pipeline
+            // 2. Let pipeline finish processing current frames
+            Thread.sleep(100);
+            
+            // 3. Stop the pipeline properly
             gstreamerPipeline.stop();
             
-            // Send shutdown response
+            // 4. Hide and dispose frame
+            SwingUtilities.invokeAndWait(() -> {
+                frameManager.hideFrame();
+                frameManager.disposeFrame();
+            });
+            
+            // 5. Cleanup event handlers
+            if (mouseEventHandler != null) {
+                mouseEventHandler.cleanup();
+            }
+            if (windowEventHandler != null) {
+                windowEventHandler.cleanup();
+            }
+            
+            // 6. Shutdown executors
+            shutdownExecutors();
+            
+            // 7. Send shutdown response
             messageProtocol.sendResponse("shutdown", null);
             
-            // Give a moment for the message to be sent
+            // 8. Give time for response to be sent
             Thread.sleep(50);
+            
         } catch (Exception e) {
-            // Best effort - we're exiting anyway
+            messageProtocol.sendLog("WARN", "Error during shutdown: " + e.getMessage());
         }
         
-        // Force exit
+        // Exit cleanly
         System.exit(0);
+    }
+    
+    private void shutdownExecutors() {
+        reconnectExecutor.shutdown();
+        eventThrottleExecutor.shutdown();
+        try {
+            if (!reconnectExecutor.awaitTermination(EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                reconnectExecutor.shutdownNow();
+            }
+            if (!eventThrottleExecutor.awaitTermination(EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                eventThrottleExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            reconnectExecutor.shutdownNow();
+            eventThrottleExecutor.shutdownNow();
+        }
     }
     
     // FrameManager.FrameEventListener implementation
@@ -275,7 +291,6 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     }
     
     private void cleanup() {
-        // Simplified cleanup - just exit
         shutdown();
     }
     

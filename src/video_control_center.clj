@@ -278,7 +278,8 @@
             stream (start-stream-process (name stream-key) url)]
         (swap! state assoc stream-key stream)
         (process-stream-output stream-key stream ui-elements)
-        (Thread/sleep 100)
+        ;; Give process time to initialize
+        (Thread/sleep 200)
         (send-command stream {:action "show"}))))
   (not (get @state stream-key)))
 
