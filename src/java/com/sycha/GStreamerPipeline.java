@@ -29,6 +29,8 @@ public class GStreamerPipeline {
     private volatile Element videosink;
     private volatile VideoOverlay videoOverlay;
     private volatile String selectedDecoder;
+    private volatile boolean isAppImage = false;
+    private volatile String gstreamerVersion = null;
     
     private final AtomicLong frameCount = new AtomicLong(0);
     private final AtomicLong startTime = new AtomicLong(0);
@@ -77,7 +79,15 @@ public class GStreamerPipeline {
                     } else {
                         Gst.init(GSTREAMER_APP_NAME, new String[]{});
                     }
-                    callback.onLog("INFO", "GStreamer initialized successfully. Version: " + Gst.getVersionString());
+                    gstreamerVersion = Gst.getVersionString();
+                    callback.onLog("INFO", "GStreamer initialized successfully. Version: " + gstreamerVersion);
+                    
+                    // Check if running in AppImage
+                    String appDir = System.getenv("APPDIR");
+                    isAppImage = appDir != null && !appDir.isEmpty();
+                    if (isAppImage) {
+                        callback.onLog("INFO", "Running in AppImage environment");
+                    }
                     
                     // Force plugin registry update
                     Registry registry = Registry.get();
@@ -129,17 +139,29 @@ public class GStreamerPipeline {
             // H264 decoder - try multiple options in order of preference
             // Priority: Hardware decoders > Software decoders
             Element decoder = null;
-            String[] decoderOptions = {
-                "nvh264dec",       // NVIDIA hardware decoder (NVDEC)
-                "nvdec",           // Newer NVIDIA decoder
-                "d3d11h264dec",    // Windows Direct3D 11 hardware decoder
-                "msdkh264dec",     // Intel Media SDK hardware decoder
-                "vaapih264dec",    // VA-API hardware decoder (Linux)
-                "vtdec_h264",      // macOS VideoToolbox hardware decoder
-                "avdec_h264",      // FFmpeg/libav software decoder (most common)
-                "openh264dec",     // OpenH264 software decoder
-                "decodebin"        // Auto-negotiating decoder (fallback)
-            };
+            String[] decoderOptions;
+            
+            if (isAppImage) {
+                // In AppImage, prefer software decoders for better compatibility
+                decoderOptions = new String[] {
+                    "avdec_h264",      // FFmpeg/libav software decoder (most reliable in AppImage)
+                    "openh264dec",     // OpenH264 software decoder
+                    "decodebin"        // Auto-negotiating decoder (fallback)
+                };
+            } else {
+                // Normal priority: hardware first
+                decoderOptions = new String[] {
+                    "nvh264dec",       // NVIDIA hardware decoder (NVDEC)
+                    "nvdec",           // Newer NVIDIA decoder
+                    "d3d11h264dec",    // Windows Direct3D 11 hardware decoder
+                    "msdkh264dec",     // Intel Media SDK hardware decoder
+                    "vaapih264dec",    // VA-API hardware decoder (Linux)
+                    "vtdec_h264",      // macOS VideoToolbox hardware decoder
+                    "avdec_h264",      // FFmpeg/libav software decoder (most common)
+                    "openh264dec",     // OpenH264 software decoder
+                    "decodebin"        // Auto-negotiating decoder (fallback)
+                };
+            }
             
             for (String decoderName : decoderOptions) {
                 try {
@@ -195,39 +217,63 @@ public class GStreamerPipeline {
             queue.set("max-size-time", QUEUE_MAX_TIME_NS);
             queue.set("max-size-bytes", 0L);
             
-            // Video converter/scaler - try videoconvertscale first (newer GStreamer)
-            // then fall back to separate videoconvert and videoscale
+            // Video converter/scaler - handle based on environment
             Element videoconvert = null;
             Element videoscale = null;
             
-            // Try the new combined element first (GStreamer 1.20+)
-            try {
-                Element videoconvertscale = ElementFactory.make("videoconvertscale", "videoconvertscale");
-                if (videoconvertscale != null) {
-                    callback.onLog("DEBUG", "Using videoconvertscale (GStreamer 1.20+)");
-                    videoconvert = videoconvertscale;  // Use as videoconvert for pipeline
-                    // videoscale stays null since we don't need it separately
+            if (isAppImage) {
+                // In AppImage, video conversion elements might not be available
+                // The pipeline can work without them for direct rendering
+                callback.onLog("INFO", "AppImage mode: Skipping video conversion elements for direct rendering");
+            } else {
+                // Try videoconvertscale first (newer GStreamer)
+                // then fall back to separate videoconvert and videoscale
+                
+                // Check GStreamer version for videoconvertscale support
+                boolean supportsVideoConvertScale = false;
+                if (gstreamerVersion != null) {
+                    // Parse version to check if >= 1.20
+                    String[] versionParts = gstreamerVersion.split(" ")[1].split("\\.");
+                    try {
+                        int major = Integer.parseInt(versionParts[0]);
+                        int minor = Integer.parseInt(versionParts[1]);
+                        supportsVideoConvertScale = (major > 1) || (major == 1 && minor >= 20);
+                    } catch (Exception e) {
+                        callback.onLog("DEBUG", "Could not parse GStreamer version: " + e.getMessage());
+                    }
                 }
-            } catch (Exception e) {
-                // Element doesn't exist in this GStreamer version
-                callback.onLog("DEBUG", "videoconvertscale not available: " + e.getMessage());
-            }
-            
-            // Fall back to separate elements if videoconvertscale wasn't available
-            if (videoconvert == null) {
-                callback.onLog("DEBUG", "Using separate videoconvert and videoscale elements");
-                try {
-                    videoconvert = ElementFactory.make("videoconvert", "videoconvert");
-                    videoscale = ElementFactory.make("videoscale", "videoscale");
-                    
-                    if (videoconvert == null) {
-                        callback.onLog("WARN", "Failed to create videoconvert element - may have compatibility issues");
+                
+                if (supportsVideoConvertScale) {
+                    // Try the new combined element first (GStreamer 1.20+)
+                    try {
+                        Element videoconvertscale = ElementFactory.make("videoconvertscale", "videoconvertscale");
+                        if (videoconvertscale != null) {
+                            callback.onLog("DEBUG", "Using videoconvertscale (GStreamer 1.20+)");
+                            videoconvert = videoconvertscale;  // Use as videoconvert for pipeline
+                            // videoscale stays null since we don't need it separately
+                        }
+                    } catch (Exception e) {
+                        // Element doesn't exist in this GStreamer version
+                        callback.onLog("DEBUG", "videoconvertscale not available: " + e.getMessage());
                     }
-                    if (videoscale == null) {
-                        callback.onLog("WARN", "Failed to create videoscale element - may have resolution issues");
+                }
+                
+                // Fall back to separate elements if videoconvertscale wasn't available
+                if (videoconvert == null) {
+                    callback.onLog("DEBUG", "Using separate videoconvert and videoscale elements");
+                    try {
+                        videoconvert = ElementFactory.make("videoconvert", "videoconvert");
+                        videoscale = ElementFactory.make("videoscale", "videoscale");
+                        
+                        if (videoconvert == null) {
+                            callback.onLog("WARN", "Failed to create videoconvert element - may have compatibility issues");
+                        }
+                        if (videoscale == null) {
+                            callback.onLog("WARN", "Failed to create videoscale element - may have resolution issues");
+                        }
+                    } catch (Exception e) {
+                        callback.onLog("WARN", "Failed to create video conversion elements: " + e.getMessage());
                     }
-                } catch (Exception e) {
-                    callback.onLog("ERROR", "Failed to create video conversion elements: " + e.getMessage());
                 }
             }
             
