@@ -4,6 +4,8 @@
 # Reference
 /ArcherBC2
 
+/.cpcache
+
 # Leiningen
 /target
 /classes
@@ -91,7 +93,16 @@ $RECYCLE.BIN/
 *.bk
 *.orig
 
+# MCP/nREPL temporary files
+.nrepl.pid
+.nrepl.log
+.mcp.pid
+.mcp.log
+
 # AppImage build artifacts (from CI)
 *.AppImage
 /AppDir/
 /squashfs-root/
+
+# Tools
+/tools/

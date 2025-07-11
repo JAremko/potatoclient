@@ -21,10 +21,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from project.clj
+    - name: Extract version from build.clj
       id: extract_version
       run: |
-        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
@@ -34,12 +34,13 @@ jobs:
         distribution: 'liberica'
         java-version: '17'
     
-    - name: Install Leiningen
+    - name: Install Clojure CLI tools
       run: |
-        wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-        chmod +x lein
-        sudo mv lein /usr/local/bin/
-        lein version
+        curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
+        chmod +x linux-install.sh
+        sudo ./linux-install.sh
+        rm linux-install.sh
+        clojure --version
     
     - name: Install system dependencies
       run: |
@@ -75,7 +76,7 @@ jobs:
     
     - name: Build project
       run: |
-        lein uberjar
+        clojure -T:build uber
         ls -la target/
     
     - name: Download AppImage tools
@@ -104,7 +105,7 @@ jobs:
         rm /tmp/liberica17.tar.gz
         
         # Copy application files
-        cp target/potatoclient.jar AppDir/usr/lib/potatoclient/
+        cp target/potatoclient-*.jar AppDir/usr/lib/potatoclient/potatoclient.jar
         cp resources/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/potatoclient.png
         
         # Copy launcher script from assets
@@ -320,10 +321,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from project.clj
+    - name: Extract version from build.clj
       id: extract_version
       run: |
-        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
@@ -334,16 +335,17 @@ jobs:
         java-version: '17'
         architecture: 'x64'
     
-    - name: Install Leiningen
+    - name: Install Clojure CLI tools
       run: |
-        wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-        chmod +x lein
-        sudo mv lein /usr/local/bin/
-        lein version
+        curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
+        chmod +x linux-install.sh
+        sudo ./linux-install.sh
+        rm linux-install.sh
+        clojure --version
     
     - name: Build uberjar
       run: |
-        lein uberjar
+        clojure -T:build uber
         echo "Built JAR files:"
         ls -la target/
     
@@ -387,7 +389,7 @@ jobs:
       run: |
         echo "Creating Windows executable with Launch4j..."
         # Copy JAR to working directory for Launch4j
-        cp target/potatoclient.jar .
+        cp target/potatoclient-*.jar potatoclient.jar
         # Update Launch4j config with absolute icon path only
         sed -i "s|<icon>./icon.ico</icon>|<icon>$(pwd)/resources/icon.ico</icon>|" .github/workflows/build.xml
         # Fix line endings for Unix execution
@@ -503,10 +505,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from project.clj
+    - name: Extract version from build.clj
       id: extract_version
       run: |
-        VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
@@ -517,10 +519,10 @@ jobs:
         java-version: '17'
         architecture: 'aarch64'
     
-    - name: Install Leiningen
+    - name: Install Clojure CLI tools
       run: |
-        brew install leiningen
-        lein version
+        brew install clojure/tools/clojure
+        clojure --version
     
     - name: Install GStreamer
       run: |
@@ -531,7 +533,7 @@ jobs:
     
     - name: Build uberjar
       run: |
-        lein uberjar
+        clojure -T:build uber
         echo "Built JAR files:"
         ls -la target/
     
@@ -566,7 +568,7 @@ jobs:
         chmod +x "$APP_DIR/Contents/MacOS/potatoclient-launcher"
         
         # Copy JAR and runtime
-        cp target/potatoclient.jar "$APP_DIR/Contents/Resources/"
+        cp target/potatoclient-*.jar "$APP_DIR/Contents/Resources/potatoclient.jar"
         cp -R runtime/* "$APP_DIR/Contents/runtime/"
         
         # Convert icon to icns format

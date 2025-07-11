@@ -7,3 +7,6 @@
   "Delegate to the new core namespace"
   [& args]
   (apply core/-main args))
+
+(comment
+  (-main))

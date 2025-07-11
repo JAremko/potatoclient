@@ -7,13 +7,13 @@ set -e
 
 echo "Building PotatoClient for macOS (Development)"
 
-# Extract version
-VERSION=$(grep defproject project.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+# Extract version from build.clj
+VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
 echo "Version: $VERSION"
 
 # Build the JAR
 echo "Building JAR..."
-lein uberjar
+clojure -T:build uber
 
 # Create app bundle structure
 APP_NAME="PotatoClient"
@@ -29,7 +29,7 @@ cp .github/actions/macos-assets/potatoclient-launcher "$APP_DIR/Contents/MacOS/"
 chmod +x "$APP_DIR/Contents/MacOS/potatoclient-launcher"
 
 # Copy JAR
-cp target/potatoclient.jar "$APP_DIR/Contents/Resources/"
+cp target/potatoclient-*.jar "$APP_DIR/Contents/Resources/potatoclient.jar"
 
 # Option 1: Use system Java (no bundled runtime)
 echo "Using system Java runtime..."

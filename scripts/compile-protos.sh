@@ -19,15 +19,14 @@ python3 scripts/preprocess_protos.py
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 
-# Use protoc from lein-protodeps if available, otherwise system protoc
-PROTOC_PATH="$HOME/.lein-protodeps/protoc-installations/protoc-3.25.1-linux-x86_64/bin/protoc"
-
-if [ -f "$PROTOC_PATH" ]; then
-    echo "Using protoc from lein-protodeps"
-    PROTOC="$PROTOC_PATH"
+# Use compatible protoc version if available, otherwise system protoc
+if [[ -f "tools/protoc-3.15.0/bin/protoc" ]]; then
+    PROTOC="tools/protoc-3.15.0/bin/protoc"
+    echo "Using protoc 3.15.0 for compatibility"
 else
-    echo "Using system protoc"
     PROTOC="protoc"
+    echo "Warning: Using system protoc (may cause compatibility issues)"
+    echo "Run './scripts/download-protoc-3.15.sh' to download compatible protoc"
 fi
 
 # Compile proto files
