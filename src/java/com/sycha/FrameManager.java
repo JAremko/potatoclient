@@ -48,9 +48,12 @@ public class FrameManager {
         JFrame newFrame = new JFrame(title);
         newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
-        // Set window icon
+        // Set window icon based on stream type
         try {
-            URL iconURL = getClass().getResource("/icon.png");
+            String iconResource = streamId.equals(Constants.StreamConfig.HEAT_STREAM_ID) 
+                ? "/heat.png" 
+                : "/day.png";
+            URL iconURL = getClass().getResource(iconResource);
             if (iconURL != null) {
                 newFrame.setIconImage(new ImageIcon(iconURL).getImage());
             }

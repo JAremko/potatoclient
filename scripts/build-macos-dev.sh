@@ -38,19 +38,19 @@ sed -i '' 's|export JAVA_HOME=.*|# Using system Java|' "$APP_DIR/Contents/MacOS/
 sed -i '' 's|JAVA_BIN=.*|JAVA_BIN="java"|' "$APP_DIR/Contents/MacOS/potatoclient-launcher"
 
 # Convert icon if available
-if [ -f "resources/icon.png" ]; then
+if [ -f "resources/main.png" ]; then
     echo "Creating icon..."
     mkdir icon.iconset
-    sips -z 16 16   resources/icon.png --out icon.iconset/icon_16x16.png 2>/dev/null
-    sips -z 32 32   resources/icon.png --out icon.iconset/icon_16x16@2x.png 2>/dev/null
-    sips -z 32 32   resources/icon.png --out icon.iconset/icon_32x32.png 2>/dev/null
-    sips -z 64 64   resources/icon.png --out icon.iconset/icon_32x32@2x.png 2>/dev/null
-    sips -z 128 128 resources/icon.png --out icon.iconset/icon_128x128.png 2>/dev/null
-    sips -z 256 256 resources/icon.png --out icon.iconset/icon_128x128@2x.png 2>/dev/null
-    sips -z 256 256 resources/icon.png --out icon.iconset/icon_256x256.png 2>/dev/null
-    sips -z 512 512 resources/icon.png --out icon.iconset/icon_256x256@2x.png 2>/dev/null
-    sips -z 512 512 resources/icon.png --out icon.iconset/icon_512x512.png 2>/dev/null
-    sips -z 1024 1024 resources/icon.png --out icon.iconset/icon_512x512@2x.png 2>/dev/null
+    sips -z 16 16   resources/main.png --out icon.iconset/icon_16x16.png 2>/dev/null
+    sips -z 32 32   resources/main.png --out icon.iconset/icon_16x16@2x.png 2>/dev/null
+    sips -z 32 32   resources/main.png --out icon.iconset/icon_32x32.png 2>/dev/null
+    sips -z 64 64   resources/main.png --out icon.iconset/icon_32x32@2x.png 2>/dev/null
+    sips -z 128 128 resources/main.png --out icon.iconset/icon_128x128.png 2>/dev/null
+    sips -z 256 256 resources/main.png --out icon.iconset/icon_128x128@2x.png 2>/dev/null
+    sips -z 256 256 resources/main.png --out icon.iconset/icon_256x256.png 2>/dev/null
+    sips -z 512 512 resources/main.png --out icon.iconset/icon_256x256@2x.png 2>/dev/null
+    sips -z 512 512 resources/main.png --out icon.iconset/icon_512x512.png 2>/dev/null
+    sips -z 1024 1024 resources/main.png --out icon.iconset/icon_512x512@2x.png 2>/dev/null
     iconutil -c icns icon.iconset 2>/dev/null || echo "Icon conversion failed"
     [ -f icon.icns ] && cp icon.icns "$APP_DIR/Contents/Resources/"
     rm -rf icon.iconset icon.icns

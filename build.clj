@@ -3,7 +3,7 @@
             [clojure.java.io :as io]))
 
 (def lib 'potatoclient/potatoclient)
-(def version "1.2.0")
+(def version "1.2.2")
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 (def uber-file (format "target/%s-%s.jar" (name lib) version))

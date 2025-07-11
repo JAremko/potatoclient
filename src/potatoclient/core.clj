@@ -15,7 +15,7 @@
         log-table (log-table/create)]
     (seesaw/frame
       :title "WebSocket Video Streams - Control Center"
-      :icon (clojure.java.io/resource "icon.png")
+      :icon (clojure.java.io/resource "main.png")
       :on-close :exit
       :size [800 :by 600]
       :content (seesaw/border-panel
