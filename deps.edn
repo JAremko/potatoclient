@@ -1,5 +1,5 @@
 {:paths ["src" "resources"]
- 
+
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
         seesaw/seesaw {:mvn/version "1.5.0"}
         org.clojure/data.json {:mvn/version "2.4.0"}
@@ -11,13 +11,13 @@
                              :exclusions [org.slf4j/slf4j-api]}
         ;; GStreamer for video playback
         org.freedesktop.gstreamer/gst1-java-core {:mvn/version "1.4.0"
-                                                   :exclusions [net.java.dev.jna/jna]}
+                                                  :exclusions [net.java.dev.jna/jna]}
         ;; Add specific JNA version to avoid version range warning
         net.java.dev.jna/jna {:mvn/version "5.13.0"}
         ;; Protocol Buffer dependencies
         com.google.protobuf/protobuf-java {:mvn/version "3.15.0"}
         com.appsflyer/pronto {:mvn/version "3.0.0"}}
- 
+
  :aliases {:dev {:extra-paths ["dev" "src/java"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                               cider/cider-nrepl {:mvn/version "0.45.0"}}
@@ -26,8 +26,8 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.main.report=stderr"]}
-           
-           :nrepl {:extra-paths ["dev" "src/java"]
+
+           :nrepl {:extra-paths ["dev" "src/java" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                                 cider/cider-nrepl {:mvn/version "0.45.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -36,14 +36,14 @@
                               "--enable-native-access=ALL-UNNAMED"
                               "-Djdk.attach.allowAttachSelf"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
-           
+
            :run {:extra-paths ["src/java"]
                  :jvm-opts ["-Djna.library.path=/usr/lib"
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"]
                  :main-opts ["-m" "video-control-center"]}
-           
+
            :uberjar {:extra-paths ["src/java"]
                      :jvm-opts ["-Djna.library.path=/usr/lib"
                                 "-Dgstreamer.library.path=/usr/lib"
@@ -57,22 +57,22 @@
                                  :aot true
                                  :main-class video-control-center
                                  :compile-ns :all}}
-           
+
            :compile-java {:extra-paths ["src/java"]
                           :jvm-opts ["--release" "17"]}
-           
+
            :mcp {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                                        :git/tag "v0.1.6-alpha"
                                                        :git/sha "4ad62f4"}}
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
-           
+
            :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.7"}}
                    :ns-default build}
-           
+
            :test {:extra-paths ["test"]
                   :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
-                                                                      :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}}
+                                                                     :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}}
                   :main-opts ["-m" "cognitect.test-runner"]
                   :exec-fn cognitect.test-runner.api/test}}}

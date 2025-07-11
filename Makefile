@@ -72,7 +72,7 @@ clean: clean-proto ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: ## Start NREPL server on port 7888 for development
+nrepl: proto compile-java ## Start NREPL server on port 7888 for development
 	@echo "Starting NREPL server on port 7888..."
 	@echo "Connect your editor to port 7888"
 	clojure -M:nrepl
