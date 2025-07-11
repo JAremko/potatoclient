@@ -655,50 +655,24 @@ jobs:
         echo "Downloaded files:"
         find . -type f -name "PotatoClient-*" | sort
     
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        # Read template and substitute variables
+        RELEASE_BODY=$(cat .github/RELEASE_TEMPLATE.md)
+        RELEASE_BODY="${RELEASE_BODY//\{\{VERSION\}\}/${{ needs.build-appimage.outputs.version }}}"
+        RELEASE_BODY="${RELEASE_BODY//\{\{COMMIT_MESSAGE\}\}/${{ github.event.head_commit.message }}}"
+        RELEASE_BODY="${RELEASE_BODY//\{\{COMMIT_SHA\}\}/${{ github.sha }}}"
+        
+        # Write to file for the release action
+        echo "$RELEASE_BODY" > release_notes.md
+        
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: v${{ needs.build-appimage.outputs.version }}
         name: PotatoClient v${{ needs.build-appimage.outputs.version }}
-        body: |
-          Release v${{ needs.build-appimage.outputs.version }} - ${{ github.event.head_commit.message }}
-          
-          ## Downloads
-          
-          ### Windows
-          - **PotatoClient-${{ needs.build-windows.outputs.version }}-windows-x64-setup.exe** - Windows installer (includes GStreamer 1.26.3)
-          
-          ### Linux
-          - **PotatoClient-${{ needs.build-appimage.outputs.version }}-linux-x86_64.AppImage** - AppImage for Linux
-          
-          ### macOS
-          - **PotatoClient-${{ needs.build-macos.outputs.version }}-macos-arm64.dmg** - DMG for macOS (Apple Silicon)
-          
-          ## System Requirements
-          
-          ### Windows
-          - Windows 7 SP1 x64 or newer (64-bit only)
-          - 4GB RAM minimum recommended
-          - No Java installation required (bundled Java 17)
-          - Administrator privileges for installer
-          
-          ### Linux
-          - Ubuntu 22.04 LTS or newer (glibc 2.35+)
-          - 64-bit Linux distribution
-          - GStreamer 1.0+ (bundled in AppImage)
-          - 4GB RAM minimum recommended
-          
-          ### macOS
-          - macOS 11.0 (Big Sur) or newer
-          - Apple Silicon (M1/M2/M3) processor
-          - GStreamer 1.0+ (install via Homebrew or official package)
-          - 4GB RAM minimum recommended
-          
-          ## Changes
-          ${{ github.event.head_commit.message }}
-          
-          ---
-          *Built from commit: ${{ github.sha }}*
+        body_path: release_notes.md
         files: |
           PotatoClient-installer/PotatoClient-*.exe
           PotatoClient-AppImage/PotatoClient-*.AppImage

@@ -1,71 +1,36 @@
 # PotatoClient
 
-Cross-platform video streaming client with dual H.264 WebSocket streams and hardware acceleration.
+Multi-process video streaming client for dual H.264 WebSocket streams with hardware acceleration.
 
 ## Features
 
-- **Dual Video Streams**: Heat (900x720) and Day (1920x1080) cameras
-- **Hardware Acceleration**: NVIDIA, Intel Quick Sync, Direct3D, VA-API, VideoToolbox
-- **Multi-process Architecture**: Stable isolated stream handlers
-- **Event Logging**: Color-coded real-time event display
-- **Protocol Buffers**: Structured remote communication
+- Dual video streams: Heat (900x720) and Day (1920x1080)
+- Hardware acceleration: NVIDIA, Intel QSV, D3D11, VA-API, VideoToolbox
+- Isolated stream processes for stability
+- Real-time event logging with color coding
+- Protocol Buffer communication
 
 ## Quick Start
 
-### Download Pre-built Releases
-Get the latest release from [GitHub Releases](https://github.com/yourusername/potatoclient/releases):
-- **Windows**: `PotatoClient-setup.exe` (includes GStreamer)
-- **Linux**: `PotatoClient-x86_64.AppImage`
-- **macOS**: `PotatoClient-macos-arm64.dmg` (Apple Silicon)
-
-### Build from Source
 ```bash
 # Prerequisites: Java 17+, Clojure CLI, GStreamer 1.0+
-
-git clone https://github.com/yourusername/potatoclient.git
+git clone <repository>
 cd potatoclient
 make build
 make run
 ```
 
-## System Requirements
+## Requirements
 
-- **Windows**: Windows 7 SP1+ (64-bit), 4GB RAM
-- **Linux**: Ubuntu 22.04+ (glibc 2.35+), 4GB RAM
-- **macOS**: macOS 11.0+, Apple Silicon, 4GB RAM
-
-## Installation
-
-### Windows
-Run the installer or extract the portable ZIP. GStreamer and Visual C++ Redistributables are included.
-
-### Linux
-```bash
-chmod +x PotatoClient-x86_64.AppImage
-./PotatoClient-x86_64.AppImage
-```
-
-### macOS
-1. Install GStreamer: `brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad`
-2. Open DMG and drag to Applications
-3. First run: Right-click → Open → Open
-
-## Usage
-
-1. Launch the application
-2. Enter server domain (e.g., `sych.local`)
-3. Click "Show Heat" or "Show Day" to start streams
-4. View color-coded events in the log table
-5. Export logs with "Save Logs" button
+- Java 17+ with `--enable-native-access=ALL-UNNAMED`
+- Clojure CLI tools
+- GStreamer 1.0+ with H.264 decoder plugins
+- Protocol Buffers 3.15.0 (bundled)
+- AppImage on Linux: Requires FUSE 2. See [FUSE setup guide](https://github.com/AppImage/AppImageKit/wiki/FUSE)
 
 ## Development
 
-### Build System
-- Uses Clojure CLI tools (deps.edn)
-- Creates versioned JAR: `target/potatoclient-<version>.jar`
-- Includes Protocol Buffer support with Pronto 3.0
-
-### Commands
+### Build Commands
 ```bash
 make build        # Build JAR and compile protos
 make run          # Run application
@@ -77,31 +42,26 @@ make clean-proto  # Clean proto-generated files
 ```
 
 ### Architecture
-```
-┌─────────────┐
-│ Control UI  │ (Clojure/Swing)
-└──────┬──────┘
-       │ JSON IPC
-   ┌───┴───┬───┐
-   │ Heat  │Day│ (Java subprocesses)
-   │Stream │   │
-   └───────┴───┘
-```
 
-### Project Structure
-```
-src/
-├── potatoclient/     # Clojure UI and core logic
-└── java/com/sycha/   # Java stream handlers
-proto/                # Protocol Buffer definitions
-deps.edn             # Build configuration
-build.clj            # Build script
-```
+- **Main Process** (Clojure): UI management, state coordination
+- **Stream Processes** (Java): WebSocket handling, GStreamer pipelines
+- **IPC**: JSON messages between processes
+- **UI**: Swing/Seesaw components
 
-## Contributing
+### Key Components
 
-See [CLAUDE.md](CLAUDE.md) for detailed development guidelines.
+- `potatoclient.main`: Entry point
+- `potatoclient.core`: Application initialization
+- `potatoclient.state`: Global state management
+- `potatoclient.process`: Stream process lifecycle
+- `potatoclient.proto`: Protocol Buffer serialization
+- `VideoStreamManager.java`: GStreamer pipeline management
 
-## License
+### Development Workflow
 
-[LICENSE]
+1. Proto changes: Edit `.proto` files → `make proto`
+2. Run with REPL: `make nrepl` → connect on port 7888
+3. Debug streams: `make dev` for GStreamer debug output
+4. Build release: `make clean build`
+
+See [CLAUDE.md](CLAUDE.md) for detailed guidelines.

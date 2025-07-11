@@ -1,95 +1,63 @@
-# CLAUDE.md
+# Developer Guide
 
-This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
+PotatoClient is a multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Java) handle video streams.
 
-## Project Overview
-
-PotatoClient is a multi-process video streaming client that displays two H.264 video streams from WebSocket connections. The main process (Clojure) manages the UI while separate Java subprocesses handle each video stream.
-
-## Build Commands
+## Quick Reference
 
 ```bash
-make build        # Build JAR and compile protos
-make run          # Run application  
-make dev          # Run with GStreamer debug output
-make nrepl        # Start REPL on port 7888
-make proto        # Generate Protocol Buffer classes
-make clean        # Clean all build artifacts
-make clean-proto  # Clean only proto-generated files
+make build   # Build JAR and compile protos
+make run     # Run application  
+make dev     # Run with debug output
+make nrepl   # REPL on port 7888
+make proto   # Generate protobuf classes
+make clean   # Clean all artifacts
 ```
 
 ## Architecture
 
-### Main Process (Clojure)
-- **potatoclient.core**: Entry point
-- **potatoclient.state**: State management (atoms)
-- **potatoclient.process**: Process lifecycle
-- **potatoclient.ipc**: Inter-process communication (JSON)
-- **potatoclient.ui.***: UI components (Seesaw/Swing)
-- **potatoclient.events.***: Event handling
-- **potatoclient.proto**: Protocol Buffer support (Pronto 3.0)
+### Key Components
 
-### Stream Processes (Java)
-- WebSocket H.264 stream handling
-- GStreamer pipeline with hardware acceleration
-- Auto-reconnection with backoff
-- Mouse/window event processing
+**Clojure (Main Process)**
+- `potatoclient.main` - Entry point
+- `potatoclient.state` - Global state atoms
+- `potatoclient.process` - Subprocess management
+- `potatoclient.proto` - Protobuf serialization
 
-### Key Files
-- `deps.edn`: Build config and dependencies
-- `build.clj`: Build script (version 1.2.0)
-- `.github/workflows/release.yml`: CI/CD for all platforms
-- `src/java/com/sycha/VideoStreamManager.java`: Stream handler
-- `proto/`: Protocol Buffer definitions
-- `tools/protoc-3.15.0/`: Bundled protoc for compatibility
+**Java (Stream Processes)**
+- `VideoStreamManager` - WebSocket + GStreamer pipeline
+- Hardware decoder selection and fallback
+- Auto-reconnection with exponential backoff
 
-## Development
+## Development Tasks
 
-### Requirements
-- Java 17+ (uses `--enable-native-access=ALL-UNNAMED`)
-- Clojure CLI tools (deps.edn)
-- GStreamer 1.0+
-- Protocol Buffers 3.15.0 (bundled)
+**Add Event Type**
+1. Define in `potatoclient.events.stream`
+2. Handle in `VideoStreamManager.java`
+3. Add color in `events.formatting`
 
-### Common Tasks
+**Modify Pipeline**
+- Edit `VideoStreamManager.java`
+- Decoder priority in `findBestH264Decoder()`
 
-**Add new event type:**
-1. Update `potatoclient.events.stream`
-2. Add to `VideoStreamManager.java`
-3. Update colors in `potatoclient.events.formatting`
-
-**Modify video pipeline:**
-- Edit pipeline in `VideoStreamManager.java`
-- Hardware decoders in `GStreamerPipeline.findBestH264Decoder()`
-
-**UI changes:**
-- Components in `potatoclient.ui.*`
-- State in `potatoclient.state`
-
-**Proto changes:**
+**Update Protocol**
 1. Edit `.proto` files
 2. Run `make proto`
-3. Update `potatoclient.proto` if needed
+3. Update `potatoclient.proto`
 
-### Important Notes
+## Technical Details
 
-- **Protobuf Version**: Uses 3.15.0 for Pronto compatibility
-- **Build Output**: Creates `target/potatoclient-<version>.jar`
-- **Java Compilation**: Targets Java 17 with release flag
+**Build**: Java 17+, Protobuf 3.15.0 (bundled)
+**Output**: `target/potatoclient-<version>.jar`
+**Streams**: Heat (900x720), Day (1920x1080)
 
-### Platform Notes
-
-**Windows**: Auto-detects GStreamer paths
-**macOS**: Supports Apple Silicon, VideoToolbox
-**Linux**: Uses system GStreamer
-
-### Video Streams
-- Heat: 900x720 @ 30fps (port 50002)
-- Day: 1920x1080 @ 30fps (port 50001)
-
-### Hardware Decoders Priority
+**Hardware Decoders** (priority order):
 1. NVIDIA (nvh264dec)
-2. Direct3D 11 (d3d11h264dec)
-3. Intel Quick Sync (msdkh264dec)
+2. Direct3D 11 (d3d11h264dec) 
+3. Intel QSV (msdkh264dec)
 4. VA-API/VideoToolbox
 5. Software fallback
+
+**Platform Notes**:
+- Windows: Auto-detects GStreamer
+- macOS: VideoToolbox support
+- Linux: System GStreamer
