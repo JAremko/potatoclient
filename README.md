@@ -92,8 +92,7 @@ make clean-proto  # Clean proto-generated files
 ```
 src/
 ├── potatoclient/     # Clojure UI and core logic
-├── java/com/sycha/   # Java stream handlers
-└── proto.clj         # Protocol Buffer support
+└── java/com/sycha/   # Java stream handlers
 proto/                # Protocol Buffer definitions
 deps.edn             # Build configuration
 build.clj            # Build script

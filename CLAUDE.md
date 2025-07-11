@@ -27,7 +27,7 @@ make clean-proto  # Clean only proto-generated files
 - **potatoclient.ipc**: Inter-process communication (JSON)
 - **potatoclient.ui.***: UI components (Seesaw/Swing)
 - **potatoclient.events.***: Event handling
-- **proto**: Protocol Buffer support (Pronto 3.0)
+- **potatoclient.proto**: Protocol Buffer support (Pronto 3.0)
 
 ### Stream Processes (Java)
 - WebSocket H.264 stream handling
@@ -69,7 +69,7 @@ make clean-proto  # Clean only proto-generated files
 **Proto changes:**
 1. Edit `.proto` files
 2. Run `make proto`
-3. Update `proto.clj` if needed
+3. Update `potatoclient.proto` if needed
 
 ### Important Notes
 

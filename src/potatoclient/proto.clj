@@ -1,4 +1,4 @@
-(ns proto
+(ns potatoclient.proto
   (:require [pronto.core :as p]
             [pronto.utils :as u])
   (:import [ser JonSharedData$JonGUIState]

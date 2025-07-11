@@ -3,7 +3,7 @@
             [clojure.java.io :as io]))
 
 (def lib 'potatoclient/potatoclient)
-(def version "1.2.2")
+(def version "1.2.3")
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 (def uber-file (format "target/%s-%s.jar" (name lib) version))
@@ -33,4 +33,4 @@
   (b/uber {:class-dir class-dir
            :uber-file uber-file
            :basis basis
-           :main 'video-control-center}))
+           :main 'potatoclient.main}))

@@ -42,7 +42,7 @@
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"]
-                 :main-opts ["-m" "video-control-center"]}
+                 :main-opts ["-m" "potatoclient.main"]}
 
            :uberjar {:extra-paths ["src/java"]
                      :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -55,7 +55,7 @@
                      :exec-fn hf.depstar/uberjar
                      :exec-args {:jar "target/potatoclient.jar"
                                  :aot true
-                                 :main-class video-control-center
+                                 :main-class potatoclient.main
                                  :compile-ns :all}}
 
            :compile-java {:extra-paths ["src/java"]
