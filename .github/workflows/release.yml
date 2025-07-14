@@ -21,10 +21,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from build.clj
+    - name: Extract version from VERSION file
       id: extract_version
       run: |
-        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
@@ -321,10 +321,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from build.clj
+    - name: Extract version from VERSION file
       id: extract_version
       run: |
-        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
@@ -505,10 +505,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Extract version from build.clj
+    - name: Extract version from VERSION file
       id: extract_version
       run: |
-        VERSION=$(grep 'def version' build.clj | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+        VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
     
