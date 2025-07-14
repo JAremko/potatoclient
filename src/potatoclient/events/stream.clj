@@ -6,6 +6,7 @@
   (:require [potatoclient.events.log :as log]
             [potatoclient.state :as state]
             [potatoclient.process :as process]
+            [potatoclient.i18n :as i18n]
             [clojure.data.json :as json]
             [seesaw.core :as seesaw]
             [clojure.spec.alpha :as s]
@@ -151,11 +152,16 @@
   (when-let [stream (state/get-stream stream-key)]
     (future
       (try
+        ;; Send shutdown command to subprocess first
+        (process/send-command stream {:action "shutdown"})
+        ;; Give it a moment to shutdown gracefully
+        (Thread/sleep 100)
+        ;; Then stop the stream and clean up
         (process/stop-stream stream)
         (state/clear-stream! stream-key)
         (seesaw/invoke-later
          (when-let [btn (state/get-ui-element stream-key)]
-           (seesaw/text! btn (str (name stream-key) " Stream OFF"))
+           (seesaw/text! btn (i18n/tr :control-button-connect))
            (seesaw/config! btn :selected? false)))
         (catch Exception e
           (log/log-error (name stream-key)

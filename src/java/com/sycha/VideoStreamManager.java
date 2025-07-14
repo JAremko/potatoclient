@@ -327,8 +327,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     @Override
     public void onFrameClosing() {
         messageProtocol.sendResponse("window-closed", null);
-        // Exit immediately when window is closed
-        shutdown();
+        // Don't call shutdown() here - let the Clojure side handle it
+        // This ensures consistent behavior with button clicks
     }
     
     private void cleanup() {
@@ -354,8 +354,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     @Override
     public void onWindowClosing() {
         messageProtocol.sendResponse("window-closed", null);
-        // Exit immediately when window is closed
-        shutdown();
+        // Don't call shutdown() here - let the Clojure side handle it
+        // This ensures consistent behavior with button clicks
     }
     
     // WebSocketManager.EventCallback implementation
