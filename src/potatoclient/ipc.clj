@@ -8,7 +8,9 @@
             [potatoclient.process :as process]
             [potatoclient.events.log :as log]
             [potatoclient.events.stream :as stream-events]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [orchestra.core :refer [defn-spec]]
+            [orchestra.spec.test :as st]))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -59,12 +61,13 @@
   (Thread/sleep stream-init-delay-ms)
   (process/send-command stream {:action "show"}))
 
-(defn start-stream
+(defn-spec start-stream any?
   "Start a stream and set up its message processing.
   
   Creates the subprocess, registers it in state, and begins
   processing its output messages."
-  [stream-key endpoint]
+  [stream-key ::stream-key
+   endpoint string?]
   {:pre [(s/valid? ::stream-key stream-key)
          (string? endpoint)
          (not (clojure.string/blank? endpoint))]}
@@ -83,11 +86,11 @@
                       :exception e)
         (state/clear-stream! stream-key)))))
 
-(defn stop-stream
+(defn-spec stop-stream any?
   "Stop a stream and clean up resources.
   
   Stops the subprocess and removes it from state."
-  [stream-key]
+  [stream-key ::stream-key]
   {:pre [(s/valid? ::stream-key stream-key)]}
   (future
     (try
@@ -100,9 +103,10 @@
                       "Error stopping stream"
                       :exception e)))))
 
-(defn restart-stream
+(defn-spec restart-stream any?
   "Restart a stream by stopping and starting it again."
-  [stream-key endpoint]
+  [stream-key ::stream-key
+   endpoint string?]
   {:pre [(s/valid? ::stream-key stream-key)]}
   (future
     (when (state/get-stream stream-key)
@@ -110,9 +114,10 @@
       (Thread/sleep (* 2 stream-init-delay-ms)))
     (start-stream stream-key endpoint)))
 
-(defn send-command-to-stream
+(defn-spec send-command-to-stream boolean?
   "Send a command to a specific stream."
-  [stream-key command]
+  [stream-key ::stream-key
+   command map?]
   {:pre [(s/valid? ::stream-key stream-key)
          (map? command)]}
   (if-let [stream (state/get-stream stream-key)]
@@ -122,9 +127,9 @@
                       "Cannot send command - stream not connected")
       false)))
 
-(defn broadcast-command
+(defn-spec broadcast-command any?
   "Send a command to all active streams."
-  [command]
+  [command map?]
   {:pre [(map? command)]}
   (doseq [[stream-key stream] (state/all-streams)
           :when stream]

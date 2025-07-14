@@ -35,3 +35,17 @@
            :uber-file uber-file
            :basis basis
            :main 'potatoclient.main}))
+
+(defn release [_]
+  "Build a release version with instrumentation disabled."
+  (clean nil)
+  (b/copy-dir {:src-dirs ["src" "resources"]
+               :target-dir class-dir})
+  (compile-java nil)
+  ;; Set release flag before compiling Clojure code
+  (System/setProperty "potatoclient.release" "true")
+  (compile-clj nil)
+  (b/uber {:class-dir class-dir
+           :uber-file (str/replace uber-file #"\.jar$" "-release.jar")
+           :basis basis
+           :main 'potatoclient.main}))

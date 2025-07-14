@@ -6,7 +6,9 @@
   (:require [clojure.java.io :as io]
             [clojure.data.json :as json]
             [clojure.core.async :as async :refer [>!! <!! go-loop]]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [orchestra.core :refer [defn-spec]]
+            [orchestra.spec.test :as st])
   (:import [java.lang ProcessBuilder Process]
            [java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter]
            [java.util.concurrent TimeUnit]))
@@ -176,10 +178,11 @@
      :stream-id stream-id
      :state (atom :starting)}))
 
-(defn start-stream-process
+(defn-spec start-stream-process map?
   "Start a video stream subprocess.
   Returns a map containing process info and communication channels."
-  [stream-id url]
+  [stream-id string?
+   url string?]
   (let [stream (create-stream-process stream-id url)]
     ;; Start reader threads
     (create-stdout-reader (:stdout-reader stream) (:output-chan stream) stream-id)
@@ -187,10 +190,11 @@
     (reset! (:state stream) :running)
     stream))
 
-(defn send-command
+(defn-spec send-command boolean?
   "Send a command to a stream process."
-  [stream cmd]
-  (when (and stream (= @(:state stream) :running))
+  [stream map?
+   cmd map?]
+  (if (and stream (= @(:state stream) :running))
     (try
       (let [^BufferedWriter writer (:writer stream)]
         (.write writer (json/write-str cmd))
@@ -198,7 +202,8 @@
         (.flush writer))
       true
       (catch Exception e
-        false))))
+        false))
+    false))
 
 (defn- close-resource
   "Safely close a resource, ignoring exceptions."
@@ -208,9 +213,9 @@
       (close-fn resource))
     (catch Exception _)))
 
-(defn stop-stream
+(defn-spec stop-stream any?
   "Stop a stream process gracefully, then forcefully if needed."
-  [stream]
+  [stream map?]
   (when stream
     (reset! (:state stream) :stopping)
     
@@ -231,9 +236,9 @@
     
     (reset! (:state stream) :stopped)))
 
-(defn cleanup-all-processes
+(defn-spec cleanup-all-processes any?
   "Clean up all processes - useful for shutdown hooks."
-  [state-atom]
+  [state-atom any?]
   (doseq [[stream-key stream-data] @state-atom]
     (when (and (map? stream-data)
                (:process stream-data))
@@ -243,9 +248,9 @@
             (.destroyForcibly process)
             (catch Exception _)))))))
 
-(defn process-alive?
+(defn-spec process-alive? boolean?
   "Check if a stream process is still alive."
-  [stream]
+  [stream map?]
   (and stream
        (:process stream)
        (let [^Process process (:process stream)]

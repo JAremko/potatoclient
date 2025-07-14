@@ -4,7 +4,9 @@
   Provides centralized state management with clear boundaries between
   different state concerns (streams, logs, UI, configuration)."
   (:require [potatoclient.config :as config]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [orchestra.core :refer [defn-spec]]
+            [orchestra.spec.test :as st]))
 
 ;; Specs for validation
 (s/def ::stream-key #{:heat :day})
@@ -39,39 +41,40 @@
 (def ^:private log-buffer-drop-count 100)
 
 ;; Stream management
-(defn get-stream
+(defn-spec get-stream ::stream-process
   "Get a stream process by key (:heat or :day)."
-  [stream-key]
+  [stream-key ::stream-key]
   {:pre [(s/valid? ::stream-key stream-key)]}
   (get @streams-state stream-key))
 
-(defn set-stream!
+(defn-spec set-stream! map?
   "Set a stream process reference."
-  [stream-key stream]
+  [stream-key ::stream-key
+   stream ::stream-process]
   {:pre [(s/valid? ::stream-key stream-key)
          (s/valid? ::stream-process stream)]}
   (swap! streams-state assoc stream-key stream))
 
-(defn clear-stream!
+(defn-spec clear-stream! map?
   "Clear a stream process reference."
-  [stream-key]
+  [stream-key ::stream-key]
   {:pre [(s/valid? ::stream-key stream-key)]}
   (swap! streams-state assoc stream-key nil))
 
-(defn all-streams
+(defn-spec all-streams map?
   "Get all stream entries as a map."
   []
   @streams-state)
 
 ;; Domain/server configuration
-(defn get-domain
+(defn-spec get-domain string?
   "Get the current domain configuration from persistent config."
   []
   (config/get-domain))
 
-(defn set-domain!
+(defn-spec set-domain! any?
   "Update the domain configuration persistently."
-  [domain]
+  [domain string?]
   {:pre [(string? domain)
          (not (clojure.string/blank? domain))]}
   (config/save-domain! domain))
@@ -86,9 +89,9 @@
      :buffer []
      :update-scheduled? false}))
 
-(defn add-log-entry!
+(defn-spec add-log-entry! any?
   "Add a log entry to the buffer."
-  [entry]
+  [entry ::log-entry]
   {:pre [(s/valid? ::log-entry entry)]}
   (swap! logs-state update :buffer conj entry)
   ;; Trim buffer if too large
@@ -96,60 +99,61 @@
     (swap! logs-state update :buffer 
            #(vec (drop log-buffer-drop-count %)))))
 
-(defn flush-log-buffer!
+(defn-spec flush-log-buffer! any?
   "Flush log buffer to main log entries."
   []
   (swap! logs-state merge-log-buffers))
 
-(defn clear-logs!
+(defn-spec clear-logs! any?
   "Clear all log entries."
   []
   (swap! logs-state assoc :entries [] :buffer []))
 
-(defn get-log-entries
+(defn-spec get-log-entries vector?
   "Get all current log entries (not including buffered)."
   []
   (:entries @logs-state))
 
-(defn get-update-scheduled?
+(defn-spec get-update-scheduled? boolean?
   "Check if a log update is already scheduled."
   []
   (:update-scheduled? @logs-state))
 
-(defn set-update-scheduled!
+(defn-spec set-update-scheduled! any?
   "Set the update scheduled flag."
-  [scheduled?]
+  [scheduled? boolean?]
   (swap! logs-state assoc :update-scheduled? scheduled?))
 
 ;; UI element management
-(defn register-ui-element!
+(defn-spec register-ui-element! any?
   "Register a UI element for later updates."
-  [element-key element]
+  [element-key keyword?
+   element some?]
   {:pre [(keyword? element-key)
          (some? element)]}
   (swap! ui-refs assoc element-key element))
 
-(defn get-ui-element
+(defn-spec get-ui-element any?
   "Get a UI element reference by key."
-  [element-key]
+  [element-key keyword?]
   {:pre [(keyword? element-key)]}
   (get @ui-refs element-key))
 
-(defn unregister-ui-element!
+(defn-spec unregister-ui-element! any?
   "Remove a UI element reference."
-  [element-key]
+  [element-key keyword?]
   {:pre [(keyword? element-key)]}
   (swap! ui-refs dissoc element-key))
 
 ;; Locale management
-(defn get-locale
+(defn-spec get-locale ::locale
   "Get the current locale setting."
   []
   (:locale @app-config))
 
-(defn set-locale!
+(defn-spec set-locale! any?
   "Set the locale and update Java locale accordingly."
-  [locale]
+  [locale ::locale]
   {:pre [(s/valid? ::locale locale)]}
   (swap! app-config assoc :locale locale)
   ;; Update Java locale for proper i18n
@@ -160,7 +164,7 @@
      (java.util.Locale. ^String lang ^String country))))
 
 ;; State inspection (useful for debugging/REPL)
-(defn current-state
+(defn-spec current-state map?
   "Get a snapshot of all application state.
   Useful for debugging - not for normal application use."
   []

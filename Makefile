@@ -16,7 +16,7 @@ help: ## Show this help message
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Build & Run:"
-	@grep -E '^(build|run|dev|clean|rebuild|proto|compile-java|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(build|release|run|dev|clean|rebuild|proto|compile-java|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "MCP Server (for Claude integration):"
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
@@ -47,6 +47,12 @@ compile-java: ## Compile Java source files
 build: proto compile-java ## Build the project (creates JAR file)
 	@echo "Building project..."
 	clojure -T:build uber
+
+# Release build target
+.PHONY: release
+release: proto compile-java ## Build release version (without instrumentation)
+	@echo "Building release version..."
+	clojure -T:build release
 
 # Run target
 .PHONY: run

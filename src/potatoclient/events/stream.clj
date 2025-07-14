@@ -8,7 +8,9 @@
             [potatoclient.process :as process]
             [clojure.data.json :as json]
             [seesaw.core :as seesaw]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [orchestra.core :refer [defn-spec]]
+            [orchestra.spec.test :as st]))
 
 ;; Event type definitions
 (def window-event-types
@@ -66,10 +68,9 @@
       ;; Unknown type - show raw data
       (str type " " (json/write-str (dissoc event :type))))))
 
-(defn format-window-event
+(defn-spec format-window-event string?
   "Format a window event for display."
-  [event]
-  {:pre [(s/valid? ::window-event event)]}
+  [event ::window-event]
   (format-window-event-details event))
 
 ;; Navigation event formatting
@@ -138,10 +139,9 @@
       ;; Unknown type
       (str type " @ " coords))))
 
-(defn format-navigation-event
+(defn-spec format-navigation-event string?
   "Format a navigation/mouse event for display."
-  [event]
-  {:pre [(s/valid? ::navigation-event event)]}
+  [event ::navigation-event]
   (format-navigation-event-details event))
 
 ;; Event handlers
@@ -162,11 +162,10 @@
                         "Error handling window close"
                         :exception e))))))
 
-(defn handle-response-event
+(defn-spec handle-response-event nil?
   "Handle a response event from a stream."
-  [stream-key msg]
-  {:pre [(keyword? stream-key)
-         (map? msg)]}
+  [stream-key keyword?
+   msg map?]
   (log/add-log-entry!
    {:time (System/currentTimeMillis)
     :stream (:streamId msg)
@@ -176,13 +175,12 @@
   
   ;; Handle specific response types
   (when (= (:status msg) "window-closed")
-    (handle-window-closed stream-key)))
+    (handle-window-closed stream-key))
+  nil)
 
-(defn handle-navigation-event
+(defn-spec handle-navigation-event nil?
   "Handle a navigation/mouse event."
-  [msg]
-  {:pre [(map? msg)
-         (map? (:event msg))]}
+  [msg (s/and map? #(map? (:event %)))]
   (let [event (:event msg)]
     (log/add-log-entry!
      {:time (System/currentTimeMillis)
@@ -190,13 +188,12 @@
       :type "NAV"
       :message (format-navigation-event event)
       :raw-data msg
-      :nav-type (keyword (:type event))})))
+      :nav-type (keyword (:type event))})
+    nil))
 
-(defn handle-window-event
+(defn-spec handle-window-event nil?
   "Handle a window event."
-  [msg]
-  {:pre [(map? msg)
-         (map? (:event msg))]}
+  [msg (s/and map? #(map? (:event %)))]
   (let [event (:event msg)]
     (log/add-log-entry!
      {:time (System/currentTimeMillis)
@@ -204,15 +201,16 @@
       :type "WINDOW"
       :message (format-window-event event)
       :raw-data msg
-      :event-type (keyword (:type event))})))
+      :event-type (keyword (:type event))})
+    nil))
 
 ;; Utility functions
-(defn stream-connected?
+(defn-spec stream-connected? boolean?
   "Check if a stream is currently connected."
-  [stream-key]
+  [stream-key keyword?]
   (some? (state/get-stream stream-key)))
 
-(defn all-streams-connected?
+(defn-spec all-streams-connected? boolean?
   "Check if all streams are connected."
   []
   (and (stream-connected? :heat)
