@@ -1,6 +1,7 @@
 (ns potatoclient.state
   "Application state management for the Potato Client.
-  Provides centralized state atoms and state manipulation functions.")
+  Provides centralized state atoms and state manipulation functions."
+  (:require [potatoclient.config :as config]))
 
 ;; Core application state
 (defonce app-state 
@@ -20,11 +21,6 @@
 (defonce update-scheduled
   ;; Flag to track if a log update is already scheduled
   (atom false))
-
-;; Configuration
-(defonce config
-  ;; Application configuration
-  (atom {:domain "sych.local"}))
 
 ;; UI component references
 (defonce ui-elements
@@ -50,12 +46,12 @@
 (defn get-domain 
   "Get the current domain configuration"
   []
-  (:domain @config))
+  (config/get-domain))
 
 (defn set-domain! 
   "Update the domain configuration"
   [domain]
-  (swap! config assoc :domain domain))
+  (config/save-domain! domain))
 
 (defn add-log-entry!
   "Add a log entry to the buffer"

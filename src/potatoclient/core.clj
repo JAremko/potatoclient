@@ -5,7 +5,8 @@
             [potatoclient.process :as process]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-table :as log-table]
-            [potatoclient.events.log :as log])
+            [potatoclient.events.log :as log]
+            [potatoclient.config :as config])
   (:gen-class))
 
 (defn- create-main-window
@@ -31,8 +32,8 @@
 (defn -main
   "Application entry point"
   [& args]
-  ;; Enable native look and feel
-  (seesaw/native!)
+  ;; Initialize configuration and theming
+  (config/initialize!)
   
   ;; Setup shutdown hook
   (setup-shutdown-hook)

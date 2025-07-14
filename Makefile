@@ -4,7 +4,7 @@
 
 # Variables
 # Version is defined in build.clj
-JAR_VERSION = 1.2.3
+JAR_VERSION = 1.2.4
 JAR_NAME = potatoclient-$(JAR_VERSION).jar
 JAR_PATH = target/$(JAR_NAME)
 
