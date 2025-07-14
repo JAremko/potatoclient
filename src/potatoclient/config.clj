@@ -9,10 +9,10 @@
 (defn- get-config-dir
   "Get the configuration directory path using platform-specific conventions"
   []
-  (let [os-name (.toLowerCase (System/getProperty "os.name"))]
+  (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
-      (.contains os-name "win")
+      (.contains ^String os-name "win")
       (let [local-appdata (System/getenv "LOCALAPPDATA")
             appdata (System/getenv "APPDATA")
             user-home (System/getProperty "user.home")]
@@ -22,7 +22,7 @@
                  "PotatoClient"))
       
       ;; macOS - use standard Application Support directory
-      (.contains os-name "mac")
+      (.contains ^String os-name "mac")
       (io/file (System/getProperty "user.home")
                "Library"
                "Application Support"
@@ -34,7 +34,7 @@
             user-home (System/getProperty "user.home")
             ;; Only use XDG_CONFIG_HOME if it's a proper path
             config-base (if (and xdg-config 
-                                (.startsWith xdg-config "/")
+                                (.startsWith ^String xdg-config "/")
                                 (not= xdg-config user-home))
                          xdg-config
                          (io/file user-home ".config"))]
@@ -49,8 +49,8 @@
   "Ensure the configuration directory exists"
   []
   (let [config-dir (get-config-dir)]
-    (when-not (.exists config-dir)
-      (.mkdirs config-dir))))
+    (when-not (.exists ^java.io.File config-dir)
+      (.mkdirs ^java.io.File config-dir))))
 
 (defn load-config
   "Load configuration from file, return default if not found"
@@ -59,14 +59,14 @@
         default-config {:theme :sol-dark
                         :domain "sych.local"
                         :locale :english}]
-    (if (.exists config-file)
+    (if (.exists ^java.io.File config-file)
       (try
         (-> config-file
             slurp
             edn/read-string
             (merge default-config))
         (catch Exception e
-          (println "Error loading config:" (.getMessage e))
+          (println "Error loading config:" (.getMessage ^Exception e))
           default-config))
       default-config)))
 
@@ -79,7 +79,7 @@
       (spit config-file (pr-str config)))
     true
     (catch Exception e
-      (println "Error saving config:" (.getMessage e))
+      (println "Error saving config:" (.getMessage ^Exception e))
       false)))
 
 (defn get-theme
@@ -124,7 +124,7 @@
 (defn get-config-location
   "Get the full path to the configuration file (for debugging)"
   []
-  (.getAbsolutePath (get-config-file)))
+  (.getAbsolutePath ^java.io.File (get-config-file)))
 
 (defn initialize!
   "Initialize configuration system"

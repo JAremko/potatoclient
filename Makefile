@@ -121,6 +121,10 @@ rebuild: clean build ## Clean and rebuild the project
 dev: build ## Run with GStreamer debug output
 	GST_DEBUG=3 java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
+.PHONY: dev-reflect
+dev-reflect: build ## Run in development mode with reflection warnings
+	java -Dpotatoclient.dev=true --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
+
 # Build for macOS development (unsigned, uses system Java)
 .PHONY: build-macos-dev
 build-macos-dev: ## Build unsigned macOS .app bundle for development

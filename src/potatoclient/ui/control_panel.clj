@@ -1,90 +1,138 @@
 (ns potatoclient.ui.control-panel
-  "Control panel UI component for managing video streams"
+  "Control panel UI component for managing video streams.
+  
+  Provides the main control interface for connecting/disconnecting
+  video streams and managing application settings."
   (:require [potatoclient.state :as state]
             [potatoclient.ipc :as ipc]
-            [potatoclient.i18n :as i18n])
-  (:use [seesaw core border]))
+            [potatoclient.i18n :as i18n]
+            [seesaw.core :as seesaw]
+            [seesaw.border :as border]))
 
-(defn- toggle-stream
-  "Toggle a stream on/off and update button text"
-  [stream-key endpoint button]
-  (if (state/get-stream stream-key)
-    ;; Stop the stream
-    (do
-      (ipc/stop-stream stream-key)
-      (text! button (i18n/tr :control-button-connect))
-      false)
-    ;; Start the stream
-    (do
-      (ipc/start-stream stream-key endpoint)
-      (text! button (i18n/tr :control-button-disconnect))
-      true)))
+;; Stream configuration
+(def ^:private stream-config
+  {:heat {:endpoint "/ws/ws_rec_video_heat"
+          :specs "900x720 @ 30fps"}
+   :day  {:endpoint "/ws/ws_rec_video_day"
+          :specs "1920x1080 @ 30fps"}})
 
-(defn- create-stream-control
-  "Create a control panel for a single stream"
-  [stream-key stream-label endpoint specs]
-  (let [is-connected (state/get-stream stream-key)
-        button (toggle :text (if is-connected
-                              (i18n/tr :control-button-disconnect)
-                              (i18n/tr :control-button-connect))
-                      :selected? is-connected)]
-    ;; Register UI element for updates
+;; UI styling constants
+(def ^:private panel-border-width 5)
+(def ^:private domain-field-columns 20)
+(def ^:private label-font "ARIAL-BOLD-16")
+(def ^:private spec-font "ARIAL-10")
+
+(defn- toggle-stream!
+  "Toggle a stream on/off and update button text."
+  [stream-key button]
+  (let [{:keys [endpoint]} (get stream-config stream-key)]
+    (if (state/get-stream stream-key)
+      ;; Stop the stream
+      (do
+        (ipc/stop-stream stream-key)
+        (seesaw/text! button (i18n/tr :control-button-connect))
+        false)
+      ;; Start the stream
+      (do
+        (ipc/start-stream stream-key endpoint)
+        (seesaw/text! button (i18n/tr :control-button-disconnect))
+        true))))
+
+(defn- create-stream-button
+  "Create a toggle button for stream control."
+  [stream-key initial-state]
+  (let [button (seesaw/toggle
+                :text (if initial-state
+                        (i18n/tr :control-button-disconnect)
+                        (i18n/tr :control-button-connect))
+                :selected? initial-state)]
+    ;; Register for state updates
     (state/register-ui-element! stream-key button)
     
-    ;; Stream toggle handler
-    (listen button :action
-      (fn [e]
-        (toggle-stream stream-key endpoint button)))
+    ;; Add action handler
+    (seesaw/listen button :action
+                  (fn [_] (toggle-stream! stream-key button)))
+    button))
+
+(defn- create-stream-panel
+  "Create a control panel for a single stream."
+  [stream-key label-text]
+  (let [{:keys [specs]} (get stream-config stream-key)
+        is-connected (some? (state/get-stream stream-key))
+        button (create-stream-button stream-key is-connected)]
+    (seesaw/border-panel
+     :border (border/compound-border
+              (border/line-border :thickness 1 :color "#cccccc")
+              panel-border-width
+              label-text)
+     :center (seesaw/vertical-panel
+              :border panel-border-width
+              :items [(seesaw/label :text specs :font spec-font)
+                      button]))))
+
+(defn- create-domain-field
+  "Create the domain configuration field."
+  []
+  (let [field (seesaw/text :columns domain-field-columns
+                          :text (state/get-domain))]
+    ;; Update state when field changes
+    (seesaw/listen field :document
+                  (fn [_]
+                    (state/set-domain! (seesaw/text field))))
+    field))
+
+(defn- create-log-controls
+  "Create log management buttons."
+  []
+  (let [clear-btn (seesaw/button :text "Clear Log")
+        export-btn (seesaw/button :text (i18n/tr :menu-file-export))]
     
-    (border-panel
-      :border (compound-border
-               (line-border :thickness 1 :color "#cccccc")
-               5
-               stream-label)
-      :center (vertical-panel
-                :border 5
-                :items [(label :text specs :font "ARIAL-10")
-                        button]))))
+    ;; Clear button handler
+    (seesaw/listen clear-btn :action
+                  (fn [_] (state/clear-logs!)))
+    
+    ;; Export button handler - lazy load export dialog
+    (seesaw/listen export-btn :action
+                  (fn [_]
+                    (require '[potatoclient.ui.log-export :as log-export])
+                    ((resolve 'potatoclient.ui.log-export/save-logs-dialog))))
+    
+    [clear-btn export-btn]))
+
+(defn- create-header-section
+  "Create the header section with domain configuration."
+  []
+  (seesaw/vertical-panel
+   :items [(seesaw/label :text (i18n/tr :control-label-system)
+                        :font label-font)
+           (seesaw/horizontal-panel
+            :items [(str (i18n/tr :config-server-address) ": ")
+                    (create-domain-field)])
+           (seesaw/separator)]))
+
+(defn- create-streams-section
+  "Create the streams control section."
+  []
+  (seesaw/horizontal-panel
+   :items [(create-stream-panel :heat (i18n/tr :control-label-heat))
+           (create-stream-panel :day (i18n/tr :control-label-day))]))
+
+(defn- create-log-section
+  "Create the log controls section."
+  []
+  (let [[clear-btn export-btn] (create-log-controls)]
+    (seesaw/vertical-panel
+     :items [(seesaw/separator)
+             (seesaw/flow-panel :items [clear-btn export-btn])])))
 
 (defn create
-  "Create the control panel UI component"
+  "Create the control panel UI component.
+  
+  Returns a panel containing all control elements for managing
+  video streams and application settings."
   []
-  (let [domain-field (text :columns 20 :text (state/get-domain))
-        heat-control (create-stream-control 
-                       :heat 
-                       (i18n/tr :control-label-heat)
-                       "/ws/ws_rec_video_heat"
-                       "900x720 @ 30fps")
-        day-control (create-stream-control 
-                      :day 
-                      (i18n/tr :control-label-day)
-                      "/ws/ws_rec_video_day"
-                      "1920x1080 @ 30fps")
-        clear-log-btn (button :text "Clear Log")
-        save-log-btn (button :text (i18n/tr :menu-file-export))]
-    
-    ;; Update domain atom when field changes
-    (listen domain-field :document
-      (fn [e]
-        (state/set-domain! (text domain-field))))
-    
-    ;; Log control handlers
-    (listen clear-log-btn :action
-      (fn [e]
-        (state/clear-logs!)))
-    
-    (listen save-log-btn :action
-      (fn [e]
-        (require '[potatoclient.ui.log-export :as log-export])
-        ((resolve 'potatoclient.ui.log-export/save-logs-dialog))))
-    
-    ;; Build the panel
-    (vertical-panel
-      :border 5
-      :items [(label :text (i18n/tr :control-label-system) :font "ARIAL-BOLD-16")
-              (horizontal-panel :items [(str (i18n/tr :config-server-address) ": ") domain-field])
-              (separator)
-              (horizontal-panel 
-                :items [heat-control day-control])
-              (separator)
-              (flow-panel :items [clear-log-btn save-log-btn])])))
+  (seesaw/vertical-panel
+   :border panel-border-width
+   :items [(create-header-section)
+           (create-streams-section)
+           (create-log-section)]))
