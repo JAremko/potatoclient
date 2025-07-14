@@ -5,9 +5,10 @@
 
 ;; Core application state
 (defonce app-state 
-  ;; Main application state atom containing stream processes
+  ;; Main application state atom containing stream processes and locale
   (atom {:heat nil 
-         :day nil}))
+         :day nil
+         :locale :english}))
 
 ;; Log data
 (defonce log-entries
@@ -84,3 +85,21 @@
   "Register a UI element for later updates"
   [element-key element]
   (swap! ui-elements assoc element-key element))
+
+;; Locale management
+(defn get-locale
+  "Get the current locale setting"
+  []
+  (:locale @app-state))
+
+(defn set-locale!
+  "Set the locale and persist to config"
+  [locale]
+  (swap! app-state assoc :locale locale)
+  ;; Set Java locale for j18n
+  (let [[lang country] (case locale
+                         :english ["en" "US"]
+                         :ukrainian ["uk" "UA"]
+                         ["en" "US"])]
+    (java.util.Locale/setDefault 
+      (java.util.Locale. lang country))))

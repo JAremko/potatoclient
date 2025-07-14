@@ -1,9 +1,9 @@
 (ns potatoclient.ui.log-table
   "Log table UI component for displaying stream events"
-  (:require [seesaw.core :as seesaw]
-            [seesaw.table :as table]
-            [clojure.data.json :as json]
-            [potatoclient.state :as state])
+  (:require [clojure.data.json :as json]
+            [potatoclient.state :as state]
+            [potatoclient.i18n :as i18n])
+  (:use [seesaw core table])
   (:import [javax.swing.table DefaultTableCellRenderer]
            [java.awt Color]))
 
@@ -43,7 +43,7 @@
   (proxy [DefaultTableCellRenderer] []
     (getTableCellRendererComponent [table value isSelected hasFocus row column]
       (let [component (proxy-super getTableCellRendererComponent table value isSelected hasFocus row column)
-            row-data (table/value-at table-model row)]
+            row-data (value-at table-model row)]
         (when (and row-data (not isSelected))
           (let [type (:type row-data)
                 event-type (:event-type row-data)
@@ -55,44 +55,44 @@
   "Show the raw JSON data for a log entry"
   [row-data]
   (when-let [raw-data (:raw-data row-data)]
-    (seesaw/alert (str "JSON Data for " (:type row-data) " event:\n\n"
-                      (json/write-str raw-data :indent true)))))
+    (alert (str "JSON Data for " (:type row-data) " event:\n\n"
+               (json/write-str raw-data :indent true)))))
 
 (defn create
   "Create the log table UI component"
   []
-  (let [columns [{:key :time :text "Time" 
+  (let [columns [{:key :time :text (i18n/tr :log-column-time) 
                   :class java.lang.Long
                   :read (fn [m] (.format (java.text.SimpleDateFormat. "HH:mm:ss.SSS") 
                                         (java.util.Date. (:time m))))
                   :write (fn [m v] m)}
-                 {:key :stream :text "Stream"}
-                 {:key :type :text "Type"}
-                 {:key :message :text "Message"}]
-        table-model (table/table-model :columns columns)
-        log-table (seesaw/table :model table-model
-                               :show-grid? true)]
+                 {:key :stream :text (i18n/tr :log-column-source)}
+                 {:key :type :text (i18n/tr :log-column-type)}
+                 {:key :message :text (i18n/tr :log-column-message)}]
+        table-model (table-model :columns columns)
+        log-table (table :model table-model
+                        :show-grid? true)]
     
     ;; Update table when log-entries changes
     (add-watch state/log-entries :table-updater
       (fn [_ _ old-val new-val]
         (when (not= old-val new-val)
-          (seesaw/invoke-later
-            (table/clear! table-model)
+          (invoke-later
+            (clear! table-model)
             (doseq [row new-val]
-              (table/insert-at! table-model (table/row-count table-model) row))))))
+              (insert-at! table-model (row-count table-model) row))))))
     
     ;; Set custom renderer for type column
     (let [type-renderer (create-type-renderer table-model)]
       (.setCellRenderer (.getColumn (.getColumnModel log-table) 2) type-renderer))
     
     ;; Add double-click handler for JSON display
-    (seesaw/listen log-table :mouse-clicked
+    (listen log-table :mouse-clicked
       (fn [e]
         (when (= 2 (.getClickCount e))  ; Double click
           (let [row (.rowAtPoint log-table (.getPoint e))]
             (when (>= row 0)
-              (when-let [row-data (table/value-at table-model row)]
+              (when-let [row-data (value-at table-model row)]
                 (show-raw-data row-data)))))))
     
-    (seesaw/scrollable log-table)))
+    (scrollable log-table)))

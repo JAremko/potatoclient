@@ -4,6 +4,8 @@
         seesaw/seesaw {:mvn/version "1.5.0"}
         org.clojure/data.json {:mvn/version "2.4.0"}
         org.clojure/core.async {:mvn/version "1.6.681"}
+        ;; Localization
+        tongue/tongue {:mvn/version "0.4.4"}
         ;; Java dependencies for the stream handler
         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.2"}
         org.java-websocket/Java-WebSocket {:mvn/version "1.5.4"}

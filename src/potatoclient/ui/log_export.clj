@@ -1,14 +1,14 @@
 (ns potatoclient.ui.log-export
   "Log export functionality"
-  (:require [seesaw.core :as seesaw]
-            [seesaw.chooser :as chooser]
-            [clojure.java.io :as io]
-            [potatoclient.state :as state]))
+  (:require [clojure.java.io :as io]
+            [potatoclient.state :as state]
+            [potatoclient.i18n :as i18n])
+  (:use [seesaw core chooser]))
 
 (defn save-logs-dialog
   "Show a file dialog and save logs to the selected file"
   []
-  (when-let [file (chooser/choose-file
+  (when-let [file (choose-file
                     :type :save
                     :filters [["Log files" ["log" "txt"]]
                               ["All files" ["*"]]])]
@@ -26,6 +26,6 @@
                             (:message entry)))
             (when (contains? #{"ERROR" "STDERR"} (:type entry))
               (.write w "\n")))))
-      (seesaw/alert "Logs saved successfully!")
+      (alert (i18n/tr :export-success))
       (catch Exception e
-        (seesaw/alert (str "Error saving logs: " (.getMessage e)))))))
+        (alert (str (i18n/tr :export-error) ": " (.getMessage e)))))))
