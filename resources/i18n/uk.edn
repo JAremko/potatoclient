@@ -1,0 +1,72 @@
+{:app-title "PotatoClient"
+ :app-version "Версія"
+ 
+ ;; Menu items
+ :menu-file "Файл"
+ :menu-file-export "Експортувати журнал"
+ :menu-file-exit "Вихід"
+ :menu-view "Вигляд"
+ :menu-view-theme "Тема"
+ :menu-view-language "Мова"
+ :menu-help "Допомога"
+ :menu-help-about "Про програму"
+ 
+ ;; Connection status
+ :status-disconnected "Від'єднано"
+ :status-connecting "Підключення..."
+ :status-connected "Підключено"
+ :status-failed "Помилка підключення"
+ 
+ ;; Control panel
+ :control-label-system "Керування системою"
+ :control-button-connect "Підключити"
+ :control-button-disconnect "Від'єднати"
+ :control-label-heat "Тепловий потік"
+ :control-label-day "Денний потік"
+ :control-checkbox-enable "Увімкнути"
+ :control-checkbox-autoconnect "Автопідключення"
+ 
+ ;; Log table
+ :log-column-time "Час"
+ :log-column-type "Тип"
+ :log-column-source "Джерело"
+ :log-column-message "Повідомлення"
+ 
+ ;; Export dialog
+ :export-title "Експорт журналу"
+ :export-button-export "Експортувати"
+ :export-button-cancel "Скасувати"
+ :export-success "Журнал успішно експортовано"
+ :export-error "Помилка експорту журналу"
+ 
+ ;; About dialog
+ :about-title "Про PotatoClient"
+ :about-text "Клієнт відеопотоку з подвійними H.264 WebSocket потоками.\n\nГоловний процес керує інтерфейсом, підпроцеси обробляють відеопотоки."
+ :about-button-close "Закрити"
+ 
+ ;; Configuration
+ :config-server-address "Адреса сервера"
+ :config-server-port "Порт сервера"
+ :config-reconnect-delay "Затримка перепідключення (мс)"
+ :config-max-reconnect-attempts "Макс. спроб перепідключення"
+ 
+ ;; Stream configuration
+ :config-heat-stream "Налаштування теплового потоку"
+ :config-day-stream "Налаштування денного потоку"
+ :config-stream-width "Ширина"
+ :config-stream-height "Висота"
+ :config-stream-framerate "Частота кадрів"
+ :config-stream-decoder "Декодер"
+ 
+ ;; Decoder options
+ :decoder-auto "Автовизначення"
+ :decoder-nvidia "NVIDIA (nvh264dec)"
+ :decoder-intel "Intel QSV (msdkh264dec)"
+ :decoder-vaapi "VA-API (vaapih264dec)"
+ :decoder-software "Програмний (avdec_h264)"
+ 
+ ;; Error messages
+ :error-connection-failed "Не вдалося підключитися до сервера"
+ :error-stream-failed "Не вдалося запустити потік"
+ :error-subprocess-died "Підпроцес несподівано завершився"
+ :error-export-failed "Не вдалося експортувати файл журналу"}

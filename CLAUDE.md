@@ -43,9 +43,12 @@ make clean        # Clean all artifacts
 3. Theme will appear in View menu
 
 **Add Language**
-1. Add translations in `potatoclient.i18n/translations`
-2. Add locale option in `potatoclient.state/::locale` spec
-3. Update menu in `core.clj` with new language option
+1. Create new translation file in `resources/i18n/{locale}.edn` (e.g., `fr.edn` for French)
+2. Add locale to `potatoclient.i18n/::locale` spec (e.g., `:fr`)
+3. Add locale option in `potatoclient.state/::locale` spec (e.g., `:french`)
+4. Update `load-translations!` in `i18n.clj` to include new locale in `locales` vector
+5. Update `tr` function in `i18n.clj` to map new locale (e.g., `:french` → `:fr`)
+6. Update menu in `core.clj` with new language option
 
 **Add Event Type**
 1. Define in `potatoclient.events.stream`
@@ -60,6 +63,29 @@ make clean        # Clean all artifacts
 1. Edit `.proto` files
 2. Run `make proto`
 3. Update `potatoclient.proto` accessors
+
+## Localization
+
+Translations are stored in separate EDN files under `resources/i18n/`:
+- `en.edn` - English translations
+- `uk.edn` - Ukrainian translations
+
+**Translation File Format**:
+```clojure
+{:app-title "PotatoClient"
+ :menu-file "File"
+ :menu-help "Help"
+ ;; ... more translations
+}
+```
+
+**Reloading Translations (Dev Mode)**:
+```clojure
+;; In REPL or development:
+(potatoclient.i18n/reload-translations!)
+```
+
+This allows editing translation files and seeing changes without restarting.
 
 ## Configuration
 
