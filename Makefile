@@ -3,8 +3,8 @@
 .DEFAULT_GOAL := help
 
 # Variables
-# Version is defined in build.clj
-JAR_VERSION = 1.3.0
+# Version is read from VERSION file
+JAR_VERSION = $(shell cat VERSION)
 JAR_NAME = potatoclient-$(JAR_VERSION).jar
 JAR_PATH = target/$(JAR_NAME)
 

@@ -1,9 +1,10 @@
 (ns build
   (:require [clojure.tools.build.api :as b]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (def lib 'potatoclient/potatoclient)
-(def version "1.3.0")
+(def version (str/trim (slurp "VERSION")))
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 (def uber-file (format "target/%s-%s.jar" (name lib) version))
