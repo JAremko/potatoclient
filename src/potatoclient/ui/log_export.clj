@@ -2,10 +2,12 @@
   "Log export functionality"
   (:require [clojure.java.io :as io]
             [potatoclient.state :as state]
-            [potatoclient.i18n :as i18n])
+            [potatoclient.i18n :as i18n]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s])
   (:use [seesaw core chooser]))
 
-(defn save-logs-dialog
+(defn-spec save-logs-dialog any?
   "Show a file dialog and save logs to the selected file"
   []
   (when-let [file (choose-file

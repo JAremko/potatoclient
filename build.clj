@@ -37,15 +37,20 @@
            :main 'potatoclient.main}))
 
 (defn release [_]
-  "Build a release version with instrumentation disabled."
+  "Build a release version with instrumentation disabled and full optimizations."
   (clean nil)
+  ;; Set environment variable for release build
+  (System/setProperty "POTATOCLIENT_RELEASE" "true")
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (compile-java nil)
-  ;; Set release flag before compiling Clojure code
-  (System/setProperty "potatoclient.release" "true")
-  (compile-clj nil)
+  ;; Compile with release optimizations
+  (b/compile-clj {:basis basis
+                  :src-dirs ["src"]
+                  :class-dir class-dir
+                  :compile-opts {:elide-meta [:doc :file :line :added]
+                                 :direct-linking true}})
   (b/uber {:class-dir class-dir
-           :uber-file (str/replace uber-file #"\.jar$" "-release.jar")
+           :uber-file uber-file
            :basis basis
            :main 'potatoclient.main}))

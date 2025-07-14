@@ -11,36 +11,63 @@
             [potatoclient.events.log :as log]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
-            [potatoclient.theme :as theme])
+            [potatoclient.theme :as theme]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s])
   (:gen-class))
 
 (declare create-main-window)
 
-(defn- preserve-window-state
-  "Extract window state for restoration."
-  [^javax.swing.JFrame frame]
-  {:bounds (.getBounds frame)
-   :extended-state (.getExtendedState frame)})
+(defn-spec ^:private get-version string?
+  "Get application version from VERSION file."
+  []
+  (try
+    (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
+    (catch Exception _ "dev")))
 
-(defn- restore-window-state!
+(defn-spec ^:private get-build-type string?
+  "Get build type (RELEASE or DEVELOPMENT)."
+  []
+  (if (or (System/getProperty "potatoclient.release")
+          (System/getenv "POTATOCLIENT_RELEASE"))
+    "RELEASE"
+    "DEVELOPMENT"))
+
+;; Specs for core namespace
+(s/def ::window-state (s/keys :req-un [::bounds ::extended-state]))
+(s/def ::bounds #(instance? java.awt.Rectangle %))
+(s/def ::extended-state integer?)
+(s/def ::frame #(instance? javax.swing.JFrame %))
+(s/def ::lang-key #{:english :ukrainian})
+(s/def ::display-name string?)
+(s/def ::group #(instance? javax.swing.ButtonGroup %))
+(s/def ::theme-key keyword?)
+
+(defn-spec ^:private preserve-window-state ::window-state
+  "Extract window state for restoration."
+  [frame ::frame]
+  {:bounds (.getBounds ^javax.swing.JFrame frame)
+   :extended-state (.getExtendedState ^javax.swing.JFrame frame)})
+
+(defn-spec ^:private restore-window-state! ::frame
   "Restore window state to a frame."
-  [^javax.swing.JFrame frame state]
-  (doto frame
+  [frame ::frame, state ::window-state]
+  (doto ^javax.swing.JFrame frame
     (.setBounds ^java.awt.Rectangle (:bounds state))
     (.setExtendedState ^Integer (:extended-state state))))
 
-(defn- reload-ui!
+(defn-spec ^:private reload-ui! any?
   "Reload the UI with new locale while preserving window state."
-  [^javax.swing.JFrame frame]
+  [frame ::frame]
   (let [window-state (preserve-window-state frame)
         new-frame (create-main-window)]
-    (.dispose frame)
+    (.dispose ^javax.swing.JFrame frame)
     (restore-window-state! new-frame window-state)
     (seesaw/show! new-frame)))
 
-(defn- create-language-menu-item
+(defn-spec ^:private create-language-menu-item #(instance? javax.swing.JRadioButtonMenuItem %)
   "Create a language selection menu item."
-  [lang-key display-name group current-locale reload-fn]
+  [lang-key ::lang-key, display-name ::display-name, group ::group, current-locale keyword?, reload-fn fn?]
   (seesaw/radio-menu-item
    :text display-name
    :group group
@@ -50,9 +77,9 @@
                      (config/update-config! :locale lang-key)
                      (reload-fn))]))
 
-(defn- create-theme-menu-item
+(defn-spec ^:private create-theme-menu-item #(instance? javax.swing.JRadioButtonMenuItem %)
   "Create a theme selection menu item."
-  [theme-key theme-group current-theme frame-ref]
+  [theme-key ::theme-key, theme-group ::group, current-theme ::theme-key, frame-ref #(instance? clojure.lang.IDeref %)]
   (seesaw/radio-menu-item
    :text (theme/get-theme-name theme-key)
    :group theme-group
@@ -62,7 +89,7 @@
                        (config/save-theme! theme-key)
                        (javax.swing.SwingUtilities/updateComponentTreeUI @frame-ref)))]))
 
-(defn- create-file-menu
+(defn-spec ^:private create-file-menu #(instance? javax.swing.JMenu %)
   "Create the File menu."
   []
   (seesaw/menu 
@@ -75,9 +102,9 @@
             :name (i18n/tr :menu-file-exit)
             :handler (fn [_] (System/exit 0)))]))
 
-(defn- create-view-menu
+(defn-spec ^:private create-view-menu #(instance? javax.swing.JMenu %)
   "Create the View menu."
-  [frame-ref reload-fn]
+  [frame-ref #(instance? clojure.lang.IDeref %), reload-fn fn?]
   (let [lang-group (seesaw/button-group)
         theme-group (seesaw/button-group)
         current-theme (theme/get-current-theme)
@@ -94,41 +121,52 @@
               :items [(create-language-menu-item :english "English" lang-group current-locale reload-fn)
                       (create-language-menu-item :ukrainian "Українська" lang-group current-locale reload-fn)])])))
 
-(defn- create-help-menu
+(defn-spec ^:private create-help-menu #(instance? javax.swing.JMenu %)
   "Create the Help menu."
-  [frame-ref]
+  [frame-ref #(instance? clojure.lang.IDeref %)]
   (seesaw/menu 
    :text (i18n/tr :menu-help)
    :items [(action/action
             :name (i18n/tr :menu-help-about)
             :handler (fn [_]
-                      (seesaw/alert @frame-ref
-                                   (i18n/tr :about-text)
-                                   :title (i18n/tr :about-title)
-                                   :type :info)))]))
+                      (let [about-text (format "%s\n\nVersion: %s\nBuild: %s\n\nOrchestra instrumentation: %s"
+                                               (i18n/tr :about-text)
+                                               (get-version)
+                                               (get-build-type)
+                                               (if (= "RELEASE" (get-build-type))
+                                                 "Disabled (optimized)"
+                                                 "Enabled (development)"))]
+                        (seesaw/alert @frame-ref
+                                     about-text
+                                     :title (i18n/tr :about-title)
+                                     :type :info))))]))
 
-(defn- create-menu-bar
+(defn-spec ^:private create-menu-bar #(instance? javax.swing.JMenuBar %)
   "Create the application menu bar."
-  [frame-ref]
+  [frame-ref #(instance? clojure.lang.IDeref %)]
   (let [reload-fn #(reload-ui! @frame-ref)]
     (seesaw/menubar
      :items [(create-file-menu)
              (create-view-menu frame-ref reload-fn)
              (create-help-menu frame-ref)])))
 
-(defn- create-main-content
+(defn-spec ^:private create-main-content #(instance? javax.swing.JPanel %)
   "Create the main content panel."
   []
   (seesaw/border-panel
    :north (control-panel/create)
    :center (log-table/create)))
 
-(defn- create-main-window
+(defn-spec ^:private create-main-window ::frame
   "Create and configure the main application window."
   []
   (let [frame-ref (atom nil)
+        title (format "%s v%s [%s]" 
+                      (i18n/tr :app-title)
+                      (get-version)
+                      (get-build-type))
         frame (seesaw/frame
-               :title (i18n/tr :app-title)
+               :title title
                :icon (clojure.java.io/resource "main.png")
                :on-close :exit
                :size [800 :by 600]
@@ -137,7 +175,7 @@
     (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-ref))
     frame))
 
-(defn- setup-shutdown-hook!
+(defn-spec ^:private setup-shutdown-hook! any?
   "Setup JVM shutdown hook to clean up processes."
   []
   (.addShutdownHook
@@ -149,25 +187,27 @@
         (catch Exception e
           nil))))))
 
-(defn- initialize-application!
+(defn-spec ^:private initialize-application! any?
   "Initialize all application subsystems."
   []
   (config/initialize!)
   (i18n/init!)
   (setup-shutdown-hook!))
 
-(defn- log-startup!
+(defn-spec ^:private log-startup! any?
   "Log application startup."
   []
   (log/add-log-entry!
    {:time (System/currentTimeMillis)
     :stream "SYSTEM"
     :type "INFO"
-    :message "Control Center started"}))
+    :message (format "Control Center started (v%s %s build)"
+                     (get-version)
+                     (get-build-type))}))
 
-(defn -main
+(defn-spec -main any?
   "Application entry point."
-  [& args]
+  [& args (s/* string?)]
   (initialize-application!)
   (seesaw/invoke-later
    (-> (create-main-window)

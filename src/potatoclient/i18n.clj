@@ -1,7 +1,9 @@
 (ns potatoclient.i18n
   "Internationalization support for PotatoClient"
   (:require [tongue.core :as tongue]
-            [potatoclient.state :as state]))
+            [potatoclient.state :as state]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s]))
 
 ;; Define translations
 (def translations
@@ -151,21 +153,26 @@
         :error-subprocess-died "Підпроцес несподівано завершився"
         :error-export-failed "Не вдалося експортувати файл журналу"}})
 
+;; Specs for i18n namespace
+(s/def ::translation-key keyword?)
+(s/def ::locale #{:en :uk})
+(s/def ::translation-args (s/coll-of any? :kind vector?))
+
 ;; Create translator instance
 (def translate (tongue/build-translate translations))
 
-(defn tr
+(defn-spec tr string?
   "Translate a key using current locale"
-  ([key]
+  ([key ::translation-key]
    (tr key []))
-  ([key args]
+  ([key ::translation-key, args ::translation-args]
    (let [locale (case (state/get-locale)
                   :english :en
                   :ukrainian :uk
                   :en)]
      (apply translate locale key args))))
 
-(defn init!
+(defn-spec init! any?
   "Initialize localization system"
   []
   ;; Set initial locale

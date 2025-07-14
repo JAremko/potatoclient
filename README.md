@@ -10,6 +10,7 @@ Multi-process video streaming client with dual H.264 WebSocket streams.
 - Dark/Light themes (Sol Dark, Sol Light)
 - Multilingual: English, Ukrainian
 - Real-time event logging with filtering
+- Comprehensive runtime validation with Orchestra & clojure.spec
 
 ## Quick Start
 
@@ -71,4 +72,29 @@ make build-macos    # .dmg bundle
 make build-linux    # AppImage
 ```
 
-See [CLAUDE.md](CLAUDE.md) for development guide.
+### Build Types
+
+PotatoClient has two distinct build types:
+
+**Development Build** (`make build`, `make dev`):
+- Full Orchestra instrumentation enabled
+- Runtime validation of all function specs
+- Shows `[DEVELOPMENT]` in window title
+- Console output: `"Running DEVELOPMENT build - enabling instrumentation..."`
+
+**Release Build** (CI builds, `make release`):
+- Orchestra instrumentation disabled
+- AOT compilation with direct linking
+- Optimized for performance
+- Shows `[RELEASE]` in window title
+- Console output: `"Running RELEASE build - instrumentation disabled"`
+
+### Runtime Validation
+
+PotatoClient uses [Orchestra](https://github.com/jeaye/orchestra) for comprehensive spec instrumentation:
+
+- **Development builds**: Full validation of function inputs, outputs, and relationships
+- **Release builds**: Zero overhead - instrumentation automatically disabled
+- **Every function** is spec'd using `defn-spec` for type safety and documentation
+
+See [CLAUDE.md](CLAUDE.md) for detailed development guide.

@@ -76,7 +76,7 @@ jobs:
     
     - name: Build project
       run: |
-        clojure -T:build uber
+        POTATOCLIENT_RELEASE=true clojure -T:build release
         ls -la target/
     
     - name: Download AppImage tools
@@ -345,7 +345,7 @@ jobs:
     
     - name: Build uberjar
       run: |
-        clojure -T:build uber
+        POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
     
@@ -533,7 +533,7 @@ jobs:
     
     - name: Build uberjar
       run: |
-        clojure -T:build uber
+        POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
     

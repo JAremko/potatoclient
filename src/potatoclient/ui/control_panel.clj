@@ -7,7 +7,9 @@
             [potatoclient.ipc :as ipc]
             [potatoclient.i18n :as i18n]
             [seesaw.core :as seesaw]
-            [seesaw.border :as border]))
+            [seesaw.border :as border]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s]))
 
 ;; Stream configuration
 (def ^:private stream-config
@@ -22,9 +24,15 @@
 (def ^:private label-font "ARIAL-BOLD-16")
 (def ^:private spec-font "ARIAL-10")
 
-(defn- toggle-stream!
+;; Specs for control-panel namespace
+(s/def ::stream-key #{:heat :day})
+(s/def ::button #(instance? javax.swing.AbstractButton %))
+(s/def ::label-text string?)
+(s/def ::panel #(instance? javax.swing.JPanel %))
+
+(defn-spec ^:private toggle-stream! boolean?
   "Toggle a stream on/off and update button text."
-  [stream-key button]
+  [stream-key ::stream-key, button ::button]
   (let [{:keys [endpoint]} (get stream-config stream-key)]
     (if (state/get-stream stream-key)
       ;; Stop the stream
@@ -38,9 +46,9 @@
         (seesaw/text! button (i18n/tr :control-button-disconnect))
         true))))
 
-(defn- create-stream-button
+(defn-spec ^:private create-stream-button ::button
   "Create a toggle button for stream control."
-  [stream-key initial-state]
+  [stream-key ::stream-key, initial-state boolean?]
   (let [button (seesaw/toggle
                 :text (if initial-state
                         (i18n/tr :control-button-disconnect)
@@ -54,9 +62,9 @@
                   (fn [_] (toggle-stream! stream-key button)))
     button))
 
-(defn- create-stream-panel
+(defn-spec ^:private create-stream-panel ::panel
   "Create a control panel for a single stream."
-  [stream-key label-text]
+  [stream-key ::stream-key, label-text ::label-text]
   (let [{:keys [specs]} (get stream-config stream-key)
         is-connected (some? (state/get-stream stream-key))
         button (create-stream-button stream-key is-connected)]
@@ -70,7 +78,7 @@
               :items [(seesaw/label :text specs :font spec-font)
                       button]))))
 
-(defn- create-domain-field
+(defn-spec ^:private create-domain-field #(instance? javax.swing.JTextField %)
   "Create the domain configuration field."
   []
   (let [field (seesaw/text :columns domain-field-columns
@@ -81,7 +89,7 @@
                     (state/set-domain! (seesaw/text field))))
     field))
 
-(defn- create-log-controls
+(defn-spec ^:private create-log-controls (s/coll-of ::button :count 2)
   "Create log management buttons."
   []
   (let [clear-btn (seesaw/button :text "Clear Log")
@@ -99,7 +107,7 @@
     
     [clear-btn export-btn]))
 
-(defn- create-header-section
+(defn-spec ^:private create-header-section ::panel
   "Create the header section with domain configuration."
   []
   (seesaw/vertical-panel
@@ -110,14 +118,14 @@
                     (create-domain-field)])
            (seesaw/separator)]))
 
-(defn- create-streams-section
+(defn-spec ^:private create-streams-section ::panel
   "Create the streams control section."
   []
   (seesaw/horizontal-panel
    :items [(create-stream-panel :heat (i18n/tr :control-label-heat))
            (create-stream-panel :day (i18n/tr :control-label-day))]))
 
-(defn- create-log-section
+(defn-spec ^:private create-log-section ::panel
   "Create the log controls section."
   []
   (let [[clear-btn export-btn] (create-log-controls)]
@@ -125,7 +133,7 @@
      :items [(seesaw/separator)
              (seesaw/flow-panel :items [clear-btn export-btn])])))
 
-(defn create
+(defn-spec create ::panel
   "Create the control panel UI component.
   
   Returns a panel containing all control elements for managing

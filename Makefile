@@ -52,7 +52,7 @@ build: proto compile-java ## Build the project (creates JAR file)
 .PHONY: release
 release: proto compile-java ## Build release version (without instrumentation)
 	@echo "Building release version..."
-	clojure -T:build release
+	POTATOCLIENT_RELEASE=true clojure -T:build release
 
 # Run target
 .PHONY: run

@@ -1,34 +1,38 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient - a multi-process video streaming client."
   (:require [potatoclient.core :as core]
-            [orchestra.spec.test :as st])
+            [orchestra.spec.test :as st]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s])
   (:gen-class))
 
-(defn- release-build?
+(defn-spec ^:private release-build? boolean?
   "Check if this is a release build."
   []
-  (or (System/getProperty "potatoclient.release")
-      (System/getenv "POTATOCLIENT_RELEASE")))
+  (boolean
+   (or (System/getProperty "potatoclient.release")
+       (System/getenv "POTATOCLIENT_RELEASE"))))
 
-(defn- enable-instrumentation!
-  "Enable Orchestra instrumentation and reflection warnings for non-release builds."
+(defn-spec ^:private enable-instrumentation! any?
+  "Enable Orchestra instrumentation for non-release builds."
   []
-  (when-not (release-build?)
-    (println "Enabling instrumentation and reflection warnings...")
-    (set! *warn-on-reflection* true)
-    (st/instrument)
-    (println "Instrumentation enabled.")))
+  (if (release-build?)
+    (println "Running RELEASE build - instrumentation disabled for optimal performance")
+    (do
+      (println "Running DEVELOPMENT build - enabling instrumentation...")
+      (st/instrument)
+      (println "Instrumentation enabled."))))
 
-(defn- enable-dev-mode!
+(defn-spec ^:private enable-dev-mode! any?
   "Enable additional development mode settings by loading the dev namespace."
   []
   (when (or (System/getProperty "potatoclient.dev")
             (System/getenv "POTATOCLIENT_DEV"))
     (require 'potatoclient.dev)))
 
-(defn -main
+(defn-spec -main any?
   "Application entry point. Delegates to core namespace for actual initialization."
-  [& args]
+  [& args (s/* string?)]
   (enable-instrumentation!)
   (enable-dev-mode!)
   (try

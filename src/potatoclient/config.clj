@@ -2,11 +2,20 @@
   "Configuration management for PotatoClient"
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [potatoclient.theme :as theme]))
+            [potatoclient.theme :as theme]
+            [orchestra.core :refer [defn-spec]]
+            [clojure.spec.alpha :as s]))
 
 (def ^:private config-file-name "potatoclient-config.edn")
 
-(defn- get-config-dir
+;; Specs for config namespace
+(s/def ::theme keyword?)
+(s/def ::domain string?)
+(s/def ::locale keyword?)
+(s/def ::config (s/keys :req-un [::theme ::domain ::locale]))
+(s/def ::config-key #{:theme :domain :locale})
+
+(defn-spec ^:private get-config-dir #(instance? java.io.File %)
   "Get the configuration directory path using platform-specific conventions"
   []
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
@@ -40,19 +49,19 @@
                          (io/file user-home ".config"))]
         (io/file config-base "potatoclient")))))
 
-(defn- get-config-file
+(defn-spec ^:private get-config-file #(instance? java.io.File %)
   "Get the configuration file"
   []
   (io/file (get-config-dir) config-file-name))
 
-(defn- ensure-config-dir!
+(defn-spec ^:private ensure-config-dir! any?
   "Ensure the configuration directory exists"
   []
   (let [config-dir (get-config-dir)]
     (when-not (.exists ^java.io.File config-dir)
       (.mkdirs ^java.io.File config-dir))))
 
-(defn load-config
+(defn-spec load-config ::config
   "Load configuration from file, return default if not found"
   []
   (let [config-file (get-config-file)
@@ -70,9 +79,9 @@
           default-config))
       default-config)))
 
-(defn save-config!
+(defn-spec save-config! boolean?
   "Save configuration to file"
-  [config]
+  [config ::config]
   (try
     (ensure-config-dir!)
     (let [config-file (get-config-file)]
@@ -82,51 +91,51 @@
       (println "Error saving config:" (.getMessage ^Exception e))
       false)))
 
-(defn get-theme
+(defn-spec get-theme ::theme
   "Get the saved theme from config"
   []
   (:theme (load-config)))
 
-(defn save-theme!
+(defn-spec save-theme! boolean?
   "Save the current theme to config"
-  [theme-key]
+  [theme-key ::theme]
   (let [config (load-config)]
     (save-config! (assoc config :theme theme-key))))
 
-(defn get-domain
+(defn-spec get-domain ::domain
   "Get the saved domain from config"
   []
   (:domain (load-config)))
 
-(defn save-domain!
+(defn-spec save-domain! boolean?
   "Save the domain to config"
-  [domain]
+  [domain ::domain]
   (let [config (load-config)]
     (save-config! (assoc config :domain domain))))
 
-(defn get-locale
+(defn-spec get-locale ::locale
   "Get the saved locale from config"
   []
   (:locale (load-config)))
 
-(defn save-locale!
+(defn-spec save-locale! boolean?
   "Save the locale to config"
-  [locale]
+  [locale ::locale]
   (let [config (load-config)]
     (save-config! (assoc config :locale locale))))
 
-(defn update-config!
+(defn-spec update-config! boolean?
   "Update a specific configuration key-value pair"
-  [key value]
+  [key ::config-key, value any?]
   (let [config (load-config)]
     (save-config! (assoc config key value))))
 
-(defn get-config-location
+(defn-spec get-config-location string?
   "Get the full path to the configuration file (for debugging)"
   []
   (.getAbsolutePath ^java.io.File (get-config-file)))
 
-(defn initialize!
+(defn-spec initialize! ::config
   "Initialize configuration system"
   []
   (let [config (load-config)]
