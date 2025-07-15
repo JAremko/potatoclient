@@ -1,10 +1,9 @@
 (ns potatoclient.theme
   "Theme management for PotatoClient using DarkLaf"
-  (:require [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st]
-            [clojure.java.io :as io]
-            [seesaw.core :as seesaw])
+  (:require [clojure.java.io :as io]
+            [seesaw.core :as seesaw]
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:import com.github.weisj.darklaf.LafManager
            [com.github.weisj.darklaf.theme
             SolarizedLightTheme
@@ -17,13 +16,13 @@
 ;; Theme configuration atom
 (def ^:private theme-config (atom {:current-theme :sol-dark}))
 
-;; Valid theme keys
-(s/def ::theme-key #{:sol-light :sol-dark :dark :hi-dark})
 
-(defn-spec get-current-theme ::theme-key
+(defn get-current-theme
   "Get the current theme key"
   []
   (:current-theme @theme-config))
+
+(m/=> get-current-theme [:=> [:cat] ::specs/theme-key])
 
 (defn- apply-theme!
   "Apply the given theme using DarkLaf"
@@ -37,10 +36,10 @@
     (LafManager/setTheme (SolarizedDarkTheme.)))
   (LafManager/install))
 
-(defn-spec set-theme! boolean?
+(defn set-theme!
   "Set and apply a new theme"
-  [theme-key ::theme-key]
-  (if (s/valid? ::theme-key theme-key)
+  [theme-key]
+  (if (m/validate ::specs/theme-key theme-key)
     (do
       (swap! theme-config assoc :current-theme theme-key)
       (apply-theme! theme-key)
@@ -49,15 +48,19 @@
       (println (str "Invalid theme key: " theme-key))
       false)))
 
-(defn-spec initialize-theme! any?
+(m/=> set-theme! [:=> [:cat ::specs/theme-key] :boolean])
+
+(defn initialize-theme!
   "Initialize the theming system with default or saved theme"
-  [initial-theme ::theme-key]
-  (when (s/valid? ::theme-key initial-theme)
+  [initial-theme]
+  (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme)))
 
-(defn-spec get-theme-name string?
+(m/=> initialize-theme! [:=> [:cat ::specs/theme-key] :any])
+
+(defn get-theme-name
   "Get human-readable name for a theme key"
-  [theme-key ::theme-key]
+  [theme-key]
   (case theme-key
     :sol-light "Sol Light"
     :sol-dark "Sol Dark"
@@ -65,9 +68,11 @@
     :hi-dark "Hi-Dark"
     "Unknown"))
 
-(defn-spec get-theme-i18n-key keyword?
+(m/=> get-theme-name [:=> [:cat ::specs/theme-key] :string])
+
+(defn get-theme-i18n-key
   "Get the i18n key for a theme"
-  [theme-key ::theme-key]
+  [theme-key]
   (case theme-key
     :sol-light :theme-sol-light
     :sol-dark :theme-sol-dark
@@ -75,37 +80,42 @@
     :hi-dark :theme-hi-dark
     :theme-unknown))
 
-(defn-spec get-available-themes vector?
+(m/=> get-theme-i18n-key [:=> [:cat ::specs/theme-key] :keyword])
+
+(defn get-available-themes
   "Get a vector of available theme keys"
   []
   [:sol-light :sol-dark :dark :hi-dark])
 
-;; Icon loading specs
-(s/def ::icon-key keyword?)
-(s/def ::icon (s/nilable #(instance? javax.swing.Icon %)))
+(m/=> get-available-themes [:=> [:cat] [:vector ::specs/theme-key]])
 
-(defn-spec ^:private is-development-mode? boolean?
+
+(defn- is-development-mode?
   "Check if running in development mode."
   []
   (not (or (System/getProperty "potatoclient.release")
            (System/getenv "POTATOCLIENT_RELEASE"))))
+
+(m/=> is-development-mode? [:=> [:cat] :boolean])
 
 ;; Date formatter for logging
 (def ^:private ^ThreadLocal log-formatter
   (ThreadLocal/withInitial
    #(SimpleDateFormat. "HH:mm:ss.SSS")))
 
-(defn-spec ^:private log-theme string?
+(defn- log-theme
   "Log theme-related messages in development mode."
-  [level string?, message string?]
+  [level message]
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date.))]
     (format "[%s] THEME %s: %s" timestamp level message)))
 
+(m/=> log-theme [:=> [:cat :string :string] :string])
+
 (declare key->icon)
 
-(defn-spec key->icon ::icon
+(defn key->icon
   "Load theme-aware icon by key. Returns nil if icon not found."
-  [icon-key ::icon-key]
+  [icon-key]
   (let [icon-name (name icon-key)
         theme-name (name (get-current-theme))
         path (str "skins/" theme-name "/icons/" icon-name ".png")
@@ -127,7 +137,9 @@
                                                icon-name (.getMessage e)))))
           nil)))))
 
-(defn-spec preload-theme-icons! any?
+(m/=> key->icon [:=> [:cat :keyword] ::specs/icon])
+
+(defn preload-theme-icons!
   "Preload all icons for the current theme to ensure they're available."
   []
   (when (is-development-mode?)
@@ -140,3 +152,5 @@
       (key->icon icon-key))
     (when (is-development-mode?)
       (println (log-theme "INFO" "Icon preloading completed")))))
+
+(m/=> preload-theme-icons! [:=> [:cat] :any])

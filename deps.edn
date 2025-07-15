@@ -8,6 +8,8 @@
         tongue/tongue {:mvn/version "0.4.4"}
         ;; Orchestra for comprehensive spec instrumentation
         orchestra/orchestra {:mvn/version "2021.01.01-1"}
+        ;; Malli for data and function schema validation
+        metosin/malli {:mvn/version "0.19.1"}
         ;; Java dependencies for the stream handler
         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.2"}
         org.java-websocket/Java-WebSocket {:mvn/version "1.5.4"}

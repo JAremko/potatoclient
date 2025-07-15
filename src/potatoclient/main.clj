@@ -14,14 +14,23 @@
        (System/getenv "POTATOCLIENT_RELEASE"))))
 
 (defn-spec ^:private enable-instrumentation! any?
-  "Enable Orchestra instrumentation for non-release builds."
+  "Enable Orchestra and Malli instrumentation for non-release builds."
   []
   (if (release-build?)
     (println "Running RELEASE build - instrumentation disabled for optimal performance")
     (do
       (println "Running DEVELOPMENT build - enabling instrumentation...")
+      ;; Orchestra instrumentation (for legacy code during migration)
       (st/instrument)
-      (println "Instrumentation enabled."))))
+      ;; Malli instrumentation
+      (try
+        (require '[malli.dev :as dev])
+        (require '[malli.dev.pretty :as pretty])
+        ((resolve 'dev/start!) {:report ((resolve 'pretty/thrower))})
+        (println "Orchestra and Malli instrumentation enabled.")
+        (catch Exception e
+          (println "Warning: Could not enable Malli instrumentation:" (.getMessage e))
+          (println "Orchestra instrumentation enabled."))))))
 
 (defn-spec ^:private enable-dev-mode! any?
   "Enable additional development mode settings by loading the dev namespace."

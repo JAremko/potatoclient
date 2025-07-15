@@ -184,9 +184,9 @@
     (handle-window-closed stream-key))
   nil)
 
-(defn-spec handle-navigation-event nil?
+(defn handle-navigation-event
   "Handle a navigation/mouse event."
-  [msg (s/and map? #(map? (:event %)))]
+  [msg]
   (let [event (:event msg)]
     (log/add-log-entry!
      {:time (System/currentTimeMillis)
@@ -197,9 +197,11 @@
       :nav-type (keyword (:type event))})
     nil))
 
-(defn-spec handle-window-event nil?
+(m/=> handle-navigation-event [:=> [:cat [:map [:event :map]]] :nil])
+
+(defn handle-window-event
   "Handle a window event."
-  [msg (s/and map? #(map? (:event %)))]
+  [msg]
   (let [event (:event msg)]
     (log/add-log-entry!
      {:time (System/currentTimeMillis)
@@ -209,6 +211,8 @@
       :raw-data msg
       :event-type (keyword (:type event))})
     nil))
+
+(m/=> handle-window-event [:=> [:cat [:map [:event :map]]] :nil])
 
 ;; Utility functions
 (defn-spec stream-connected? boolean?
