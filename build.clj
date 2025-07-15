@@ -13,7 +13,7 @@
   (b/delete {:path "target"}))
 
 (defn compile-java [_]
-  (b/javac {:src-dirs ["src/java"]
+  (b/javac {:src-dirs ["src/potatoclient/java"]
             :class-dir class-dir
             :basis basis
             :javac-opts ["--release" "17"]}))

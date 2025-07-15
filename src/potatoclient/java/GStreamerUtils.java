@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import com.sun.jna.Platform;
 import java.io.File;

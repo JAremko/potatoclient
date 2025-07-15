@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicBoolean;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 public class MouseEventHandler {
     // Click caching for double-click detection

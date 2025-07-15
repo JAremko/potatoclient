@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.security.cert.X509Certificate;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 public class WebSocketManager {
     public interface EventCallback {

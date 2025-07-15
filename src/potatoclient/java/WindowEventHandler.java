@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 public class WindowEventHandler {
     public interface EventCallback {

@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.io.PrintStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 public class VideoStreamManager implements MouseEventHandler.EventCallback, 
                                          WindowEventHandler.EventCallback,

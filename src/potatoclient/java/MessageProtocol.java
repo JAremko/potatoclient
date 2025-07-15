@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.awt.Component;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 /**
  * Handles all communication protocol with the parent Clojure process.

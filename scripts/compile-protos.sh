@@ -6,7 +6,7 @@ set -e
 
 PROTO_DIR="proto"
 TEMP_DIR="temp_proto"
-OUTPUT_DIR="src/java"
+OUTPUT_DIR="src/potatoclient/java"
 
 # Create temp directory
 rm -rf "$TEMP_DIR"

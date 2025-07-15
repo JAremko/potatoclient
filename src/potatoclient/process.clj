@@ -77,7 +77,7 @@
         classpath (System/getProperty "java.class.path")
         app-env (get-appimage-environment)
         jvm-args (build-jvm-args app-env)
-        main-class "com.sycha.VideoStreamManager"
+        main-class "potatoclient.java.VideoStreamManager"
         cmd (vec (concat [java-exe "-cp" classpath]
                         jvm-args
                         [main-class stream-id url]))]

@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 /**
  * Central location for all constants used across the video streaming system.

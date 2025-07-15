@@ -24,7 +24,7 @@
         ;; DarkLaf for theming support
         com.github.weisj/darklaf-core {:mvn/version "3.0.2"}}
 
- :aliases {:dev {:extra-paths ["dev" "src/java"]
+ :aliases {:dev {:extra-paths ["dev" "src/potatoclient/java"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                               cider/cider-nrepl {:mvn/version "0.45.0"}}
                  :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -33,7 +33,7 @@
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.main.report=stderr"]}
 
-           :nrepl {:extra-paths ["dev" "src/java" "target/classes"]
+           :nrepl {:extra-paths ["dev" "src/potatoclient/java" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                                 cider/cider-nrepl {:mvn/version "0.45.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -43,7 +43,7 @@
                               "-Djdk.attach.allowAttachSelf"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
-           :run {:extra-paths ["src/java"]
+           :run {:extra-paths ["src/potatoclient/java"]
                  :jvm-opts ["-Djna.library.path=/usr/lib"
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -51,7 +51,7 @@
                             "-Dclojure.compile.warn-on-reflection=true"]
                  :main-opts ["-m" "potatoclient.main"]}
 
-           :uberjar {:extra-paths ["src/java"]
+           :uberjar {:extra-paths ["src/potatoclient/java"]
                      :jvm-opts ["-Djna.library.path=/usr/lib"
                                 "-Dgstreamer.library.path=/usr/lib"
                                 "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -65,7 +65,7 @@
                                  :main-class potatoclient.main
                                  :compile-ns :all}}
 
-           :compile-java {:extra-paths ["src/java"]
+           :compile-java {:extra-paths ["src/potatoclient/java"]
                           :jvm-opts ["--release" "17"]}
 
            :mcp {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}

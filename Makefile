@@ -64,8 +64,8 @@ run: build ## Build and run the application
 .PHONY: clean-proto
 clean-proto: ## Clean generated proto Java files
 	@echo "Cleaning generated proto files..."
-	rm -rf src/java/ser/
-	rm -rf src/java/cmd/
+	rm -rf src/potatoclient/java/ser/
+	rm -rf src/potatoclient/java/cmd/
 
 # Clean target
 .PHONY: clean

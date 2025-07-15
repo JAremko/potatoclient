@@ -7,7 +7,7 @@ set -e
 echo "Fixing protobuf compatibility issues..."
 
 # Find all generated Java files
-find src/java -name "*.java" -type f | while read -r file; do
+find src/potatoclient/java -name "*.java" -type f | while read -r file; do
     # Remove @Generated annotation which doesn't exist in protobuf 3.x
     sed -i '/@com.google.protobuf.Generated/d' "$file"
     

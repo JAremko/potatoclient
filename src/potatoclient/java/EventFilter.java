@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import java.util.EnumSet;
 

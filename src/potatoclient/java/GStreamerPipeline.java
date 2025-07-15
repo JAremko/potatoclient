@@ -1,4 +1,4 @@
-package com.sycha;
+package potatoclient.java;
 
 import org.freedesktop.gstreamer.*;
 import org.freedesktop.gstreamer.elements.*;
@@ -11,7 +11,7 @@ import java.awt.Component;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
-import static com.sycha.Constants.*;
+import static potatoclient.java.Constants.*;
 
 public class GStreamerPipeline {
     public interface EventCallback {
