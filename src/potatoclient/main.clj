@@ -1,47 +1,44 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient - a multi-process video streaming client."
   (:require [potatoclient.core :as core]
-            [orchestra.spec.test :as st]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:gen-class))
 
-(defn-spec ^:private release-build? boolean?
+(defn ^:private release-build?
   "Check if this is a release build."
   []
   (boolean
    (or (System/getProperty "potatoclient.release")
        (System/getenv "POTATOCLIENT_RELEASE"))))
 
-(defn-spec ^:private enable-instrumentation! any?
-  "Enable Orchestra and Malli instrumentation for non-release builds."
+
+(defn ^:private enable-instrumentation!
+  "Enable Malli instrumentation for non-release builds."
   []
   (if (release-build?)
     (println "Running RELEASE build - instrumentation disabled for optimal performance")
     (do
       (println "Running DEVELOPMENT build - enabling instrumentation...")
-      ;; Orchestra instrumentation (for legacy code during migration)
-      (st/instrument)
-      ;; Malli instrumentation
+      ;; Load and start Malli instrumentation
       (try
-        (require '[malli.dev :as dev])
-        (require '[malli.dev.pretty :as pretty])
-        ((resolve 'dev/start!) {:report ((resolve 'pretty/thrower))})
-        (println "Orchestra and Malli instrumentation enabled.")
+        (require 'potatoclient.instrumentation)
+        ((resolve 'potatoclient.instrumentation/start!))
         (catch Exception e
-          (println "Warning: Could not enable Malli instrumentation:" (.getMessage e))
-          (println "Orchestra instrumentation enabled."))))))
+          (println "Warning: Could not enable Malli instrumentation:" (.getMessage e)))))))
 
-(defn-spec ^:private enable-dev-mode! any?
+
+(defn ^:private enable-dev-mode!
   "Enable additional development mode settings by loading the dev namespace."
   []
   (when (or (System/getProperty "potatoclient.dev")
             (System/getenv "POTATOCLIENT_DEV"))
     (require 'potatoclient.dev)))
 
-(defn-spec -main any?
+
+(defn -main
   "Application entry point. Delegates to core namespace for actual initialization."
-  [& args (s/* string?)]
+  [& args]
   (enable-instrumentation!)
   (enable-dev-mode!)
   (try
@@ -52,3 +49,4 @@
         (println (.getMessage e))
         (.printStackTrace e))
       (System/exit 1))))
+

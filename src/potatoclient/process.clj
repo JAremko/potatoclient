@@ -7,8 +7,8 @@
             [clojure.data.json :as json]
             [clojure.core.async :as async :refer [>!! <!! go-loop]]
             [clojure.string :as str]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st]
+            [malli.core :as m]
+            [potatoclient.specs :as specs]
             [potatoclient.state :as state])
   (:import [java.lang ProcessBuilder Process]
            [java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter]
@@ -179,11 +179,10 @@
      :stream-id stream-id
      :state (atom :starting)}))
 
-(defn-spec start-stream-process map?
+(defn start-stream-process
   "Start a video stream subprocess.
   Returns a map containing process info and communication channels."
-  [stream-id string?
-   url string?]
+  [stream-id url]
   (let [stream (create-stream-process stream-id url)]
     ;; Start reader threads
     (create-stdout-reader (:stdout-reader stream) (:output-chan stream) stream-id)
@@ -191,10 +190,9 @@
     (reset! (:state stream) :running)
     stream))
 
-(defn-spec send-command boolean?
+(defn send-command
   "Send a command to a stream process."
-  [stream map?
-   cmd map?]
+  [stream cmd]
   (if (and stream (= @(:state stream) :running))
     (try
       (let [^BufferedWriter writer (:writer stream)]
@@ -214,9 +212,9 @@
       (close-fn resource))
     (catch Exception _)))
 
-(defn-spec stop-stream any?
+(defn stop-stream
   "Stop a stream process gracefully, then forcefully if needed."
-  [stream map?]
+  [stream]
   (when stream
     (reset! (:state stream) :stopping)
     
@@ -237,7 +235,7 @@
     
     (reset! (:state stream) :stopped)))
 
-(defn-spec cleanup-all-processes any?
+(defn cleanup-all-processes
   "Clean up all processes - useful for shutdown hooks."
   ([]
    ;; No-arg version that uses state directly
@@ -250,11 +248,16 @@
                 (:process stream-data))
        (stop-stream stream-data)))))
 
-(defn-spec process-alive? boolean?
+(defn process-alive?
   "Check if a stream process is still alive."
-  [stream map?]
+  [stream]
   (and stream
        (:process stream)
        (let [^Process process (:process stream)]
          (.isAlive process))
        (= @(:state stream) :running)))
+
+;; -----------------------------------------------------------------------------
+;; Malli Function Schemas
+;; -----------------------------------------------------------------------------
+

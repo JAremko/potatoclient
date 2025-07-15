@@ -10,18 +10,19 @@
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:gen-class))
 
-(defn-spec ^:private get-version string?
+(defn ^:private get-version
   "Get application version from VERSION file."
   []
   (try
     (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
     (catch Exception _ "dev")))
 
-(defn-spec ^:private get-build-type string?
+
+(defn ^:private get-build-type
   "Get build type (RELEASE or DEVELOPMENT)."
   []
   (if (or (System/getProperty "potatoclient.release")
@@ -29,7 +30,8 @@
     "RELEASE"
     "DEVELOPMENT"))
 
-(defn-spec ^:private setup-shutdown-hook! any?
+
+(defn ^:private setup-shutdown-hook!
   "Setup JVM shutdown hook to clean up processes."
   []
   (.addShutdownHook
@@ -42,7 +44,8 @@
         (catch Exception e
           nil))))))
 
-(defn-spec ^:private initialize-application! any?
+
+(defn ^:private initialize-application!
   "Initialize all application subsystems."
   []
   (config/initialize!)
@@ -50,7 +53,8 @@
   (log-writer/start-logging!)
   (setup-shutdown-hook!))
 
-(defn-spec ^:private log-startup! any?
+
+(defn ^:private log-startup!
   "Log application startup."
   []
   (log/add-log-entry!
@@ -61,9 +65,10 @@
                      (get-version)
                      (get-build-type))}))
 
-(defn-spec -main any?
+
+(defn -main
   "Application entry point."
-  [& args (s/* string?)]
+  [& args]
   (initialize-application!)
   (seesaw/invoke-later
    (let [params {:version (get-version)
@@ -73,3 +78,4 @@
      (seesaw/invoke-later
       (seesaw/show! frame))))
   (log-startup!))
+

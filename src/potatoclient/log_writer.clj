@@ -1,8 +1,8 @@
 (ns potatoclient.log-writer
   "Automatic file logging for non-release builds"
   (:require [clojure.java.io :as io]
-            [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:import [java.io BufferedWriter FileWriter]
            [java.text SimpleDateFormat]
            [java.util Date]))
@@ -20,35 +20,33 @@
   (ThreadLocal/withInitial
    #(SimpleDateFormat. "HH:mm:ss.SSS")))
 
-;; Specs
-(s/def ::writer #(instance? BufferedWriter %))
-(s/def ::time pos-int?)
-(s/def ::stream string?)
-(s/def ::type string?)
-(s/def ::message string?)
-(s/def ::log-entry (s/keys :req-un [::time ::stream ::type ::message]))
+;; Note: Specs are imported from potatoclient.specs
+;; Using specs/buffered-writer and specs/log-entry
 
-(defn-spec ^:private get-log-filename string?
+(defn ^:private get-log-filename
   "Generate a log filename with current timestamp"
   []
   (let [timestamp (.format filename-formatter (Date.))]
     (str "logs/potatoclient_" timestamp ".log")))
 
-(defn-spec ^:private ensure-logs-directory! any?
+
+(defn ^:private ensure-logs-directory!
   "Ensure the logs directory exists"
   []
   (let [logs-dir (io/file "logs")]
     (when-not (.exists logs-dir)
       (.mkdirs logs-dir))))
 
-(defn-spec ^:private create-log-writer! ::writer
+
+(defn ^:private create-log-writer!
   "Create a new buffered writer for the log file"
-  [filename string?]
+  [filename]
   (BufferedWriter. (FileWriter. filename true)))
 
-(defn-spec ^:private format-log-entry string?
+
+(defn ^:private format-log-entry
   "Format a log entry for file output"
-  [entry ::log-entry]
+  [entry]
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date. (:time entry)))]
     (format "[%s] %s %s: %s"
             timestamp
@@ -56,9 +54,10 @@
             (:type entry)
             (:message entry))))
 
-(defn-spec write-log-entry! any?
+
+(defn write-log-entry!
   "Write a log entry to the file if logging is enabled"
-  [entry ::log-entry]
+  [entry]
   (when (and @logging-enabled @log-writer)
     (try
       (let [formatted (format-log-entry entry)]
@@ -68,7 +67,8 @@
       (catch Exception e
         (println "Error writing to log file:" (.getMessage e))))))
 
-(defn-spec start-logging! boolean?
+
+(defn start-logging!
   "Start automatic file logging if not in release mode"
   []
   (when-not (or (System/getProperty "potatoclient.release")
@@ -85,7 +85,8 @@
         (println "Failed to start file logging:" (.getMessage e))
         false))))
 
-(defn-spec stop-logging! any?
+
+(defn stop-logging!
   "Stop file logging and close the writer"
   []
   (when @log-writer
@@ -96,7 +97,9 @@
     (reset! log-writer nil)
     (reset! logging-enabled false)))
 
-(defn-spec is-logging-enabled? boolean?
+
+(defn is-logging-enabled?
   "Check if file logging is enabled"
   []
   @logging-enabled)
+

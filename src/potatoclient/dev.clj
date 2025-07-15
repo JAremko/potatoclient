@@ -2,8 +2,7 @@
   "Development utilities and settings.
   
   This namespace is automatically loaded when running in development mode
-  to enable various debugging and development features."
-  (:require [orchestra.spec.test :as st]))
+  to enable various debugging and development features.")
 
 (defn enable-verbose-logging!
   "Enable verbose logging for development."

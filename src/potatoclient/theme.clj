@@ -22,7 +22,6 @@
   []
   (:current-theme @theme-config))
 
-(m/=> get-current-theme [:=> [:cat] ::specs/theme-key])
 
 (defn- apply-theme!
   "Apply the given theme using DarkLaf"
@@ -48,7 +47,6 @@
       (println (str "Invalid theme key: " theme-key))
       false)))
 
-(m/=> set-theme! [:=> [:cat ::specs/theme-key] :boolean])
 
 (defn initialize-theme!
   "Initialize the theming system with default or saved theme"
@@ -56,7 +54,6 @@
   (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme)))
 
-(m/=> initialize-theme! [:=> [:cat ::specs/theme-key] :any])
 
 (defn get-theme-name
   "Get human-readable name for a theme key"
@@ -68,7 +65,6 @@
     :hi-dark "Hi-Dark"
     "Unknown"))
 
-(m/=> get-theme-name [:=> [:cat ::specs/theme-key] :string])
 
 (defn get-theme-i18n-key
   "Get the i18n key for a theme"
@@ -80,14 +76,12 @@
     :hi-dark :theme-hi-dark
     :theme-unknown))
 
-(m/=> get-theme-i18n-key [:=> [:cat ::specs/theme-key] :keyword])
 
 (defn get-available-themes
   "Get a vector of available theme keys"
   []
   [:sol-light :sol-dark :dark :hi-dark])
 
-(m/=> get-available-themes [:=> [:cat] [:vector ::specs/theme-key]])
 
 
 (defn- is-development-mode?
@@ -96,7 +90,6 @@
   (not (or (System/getProperty "potatoclient.release")
            (System/getenv "POTATOCLIENT_RELEASE"))))
 
-(m/=> is-development-mode? [:=> [:cat] :boolean])
 
 ;; Date formatter for logging
 (def ^:private ^ThreadLocal log-formatter
@@ -109,7 +102,6 @@
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date.))]
     (format "[%s] THEME %s: %s" timestamp level message)))
 
-(m/=> log-theme [:=> [:cat :string :string] :string])
 
 (declare key->icon)
 
@@ -137,7 +129,6 @@
                                                icon-name (.getMessage e)))))
           nil)))))
 
-(m/=> key->icon [:=> [:cat :keyword] ::specs/icon])
 
 (defn preload-theme-icons!
   "Preload all icons for the current theme to ensure they're available."
@@ -153,4 +144,3 @@
     (when (is-development-mode?)
       (println (log-theme "INFO" "Icon preloading completed")))))
 
-(m/=> preload-theme-icons! [:=> [:cat] :any])

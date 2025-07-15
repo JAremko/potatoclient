@@ -3,11 +3,11 @@
   (:require [clojure.java.io :as io]
             [potatoclient.state :as state]
             [potatoclient.i18n :as i18n]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:use [seesaw core chooser]))
 
-(defn-spec save-logs-dialog any?
+(defn save-logs-dialog
   "Show a file dialog and save logs to the selected file"
   []
   (when-let [file (choose-file
@@ -31,3 +31,4 @@
       (alert (i18n/tr :export-success))
       (catch Exception e
         (alert (str (i18n/tr :export-error) ": " (.getMessage e)))))))
+

@@ -15,7 +15,7 @@
 
 (def domain
   "Domain name string"
-  :string)
+  string?)
 
 (def locale
   "Application locale"
@@ -53,24 +53,51 @@
   [:maybe :map])
 
 ;; -----------------------------------------------------------------------------
+;; Process Schemas
+;; -----------------------------------------------------------------------------
+
+(def process
+  "Java Process instance"
+  [:fn #(instance? java.lang.Process %)])
+
+(def process-state
+  "Process lifecycle state"
+  [:enum :starting :running :stopping :stopped :failed])
+
+(def stream-process-map
+  "Complete stream process structure"
+  [:map
+   [:process process]
+   [:writer [:fn #(instance? java.io.BufferedWriter %)]]
+   [:stdout-reader [:fn #(instance? java.io.BufferedReader %)]]
+   [:stderr-reader [:fn #(instance? java.io.BufferedReader %)]]
+   [:output-chan any?] ;; core.async channel
+   [:stream-id string?]
+   [:state [:fn #(instance? clojure.lang.Atom %)]]])
+
+(def process-command
+  "Command to send to process"
+  [:map-of keyword? any?])
+
+;; -----------------------------------------------------------------------------
 ;; Logging Schemas
 ;; -----------------------------------------------------------------------------
 
 (def log-time
   "Log timestamp"
-  :pos-int)
+  pos-int?)
 
 (def log-stream
   "Log stream name"
-  :string)
+  string?)
 
 (def log-type
   "Log type/level"
-  :string)
+  string?)
 
 (def log-message
   "Log message content"
-  :string)
+  string?)
 
 (def log-entry
   "Complete log entry"
@@ -79,9 +106,9 @@
    [:stream log-stream]
    [:type log-type]
    [:message log-message]
-   [:event-type {:optional true} [:maybe :string]]
-   [:nav-type {:optional true} [:maybe :string]]
-   [:raw-data {:optional true} :any]])
+   [:event-type {:optional true} [:maybe string?]]
+   [:nav-type {:optional true} [:maybe string?]]
+   [:raw-data {:optional true} any?]])
 
 ;; -----------------------------------------------------------------------------
 ;; IPC/Message Schemas
@@ -102,19 +129,19 @@
 
 (def protocol-version
   "Protocol version number"
-  :pos-int)
+  pos-int?)
 
 (def session-id
   "Session identifier"
-  :pos-int)
+  pos-int?)
 
 (def important
   "Important flag"
-  :boolean)
+  boolean?)
 
 (def from-cv-subsystem
   "CV subsystem flag"
-  :boolean)
+  boolean?)
 
 (def client-type
   "Client type values"
@@ -127,7 +154,7 @@
 
 (def payload
   "Command payload"
-  [:map-of :keyword :any])
+  [:map-of keyword? any?])
 
 (def command
   "Protocol command structure"
@@ -146,23 +173,23 @@
 
 (def event-type
   "UI event type"
-  :keyword)
+  keyword?)
 
 (def x-coord
   "X coordinate"
-  :number)
+  number?)
 
 (def y-coord
   "Y coordinate"
-  :number)
+  number?)
 
 (def ndc-x
   "Normalized device coordinate X"
-  :number)
+  number?)
 
 (def ndc-y
   "Normalized device coordinate Y"
-  :number)
+  number?)
 
 (def mouse-button
   "Mouse button number"
@@ -170,11 +197,11 @@
 
 (def click-count
   "Click count"
-  :pos-int)
+  pos-int?)
 
 (def wheel-rotation
   "Mouse wheel rotation"
-  :number)
+  number?)
 
 (def window-event
   "Window event structure"
@@ -274,7 +301,7 @@
 
 (def extended-state
   "JFrame extended state"
-  :int)
+  int?)
 
 (def window-state
   "Window state information"
@@ -285,9 +312,9 @@
 (def frame-params
   "Parameters for creating main frame"
   [:map
-   [:version :string]
-   [:build-type :string]
-   [:title {:optional true} :string]])
+   [:version string?]
+   [:build-type string?]
+   [:title {:optional true} string?]])
 
 ;; -----------------------------------------------------------------------------
 ;; I18n Schemas
@@ -295,15 +322,15 @@
 
 (def translation-key
   "Translation key"
-  :keyword)
+  keyword?)
 
 (def translation-args
   "Translation arguments"
-  [:vector :any])
+  [:vector any?])
 
 (def translations-map
   "Translation definitions"
-  [:map-of :keyword [:map-of :keyword :string]])
+  [:map-of keyword? [:map-of keyword? string?]])
 
 ;; -----------------------------------------------------------------------------
 ;; Registry Setup
@@ -327,6 +354,12 @@
     
     ;; State
     ::stream-process stream-process
+    
+    ;; Process
+    ::process process
+    ::process-state process-state
+    ::stream-process-map stream-process-map
+    ::process-command process-command
     
     ;; Logging
     ::log-time log-time

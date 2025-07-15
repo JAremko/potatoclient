@@ -111,33 +111,39 @@ State is separated by concern:
 
 All state functions include validation via clojure.spec.
 
-## Spec & Orchestra Integration
+## Malli Integration
 
-PotatoClient uses comprehensive runtime validation through clojure.spec and Orchestra:
+PotatoClient uses comprehensive runtime validation through Malli schemas:
 
-### What is Orchestra?
-Orchestra is a drop-in replacement for `clojure.spec.test.alpha` that provides complete instrumentation:
-- **Standard spec**: Only validates `:args` (function inputs)
-- **Orchestra**: Validates `:args`, `:ret` (return values), and `:fn` (relationships between inputs/outputs)
+### What is Malli?
+Malli is a high-performance data and function schema library that provides:
+- **Function schemas**: Validate function inputs, outputs, and relationships
+- **Data schemas**: Define and validate data structures
+- **Better error messages**: Human-readable error explanations
+- **Performance**: Faster validation than clojure.spec
+- **Clj-kondo support**: Static analysis integration
 
 ### Implementation Details
 
-**Every function uses `defn-spec`**:
+**Every function uses Malli schemas**:
 ```clojure
-;; Instead of regular defn:
-(defn get-theme []
-  (:theme (load-config)))
-
-;; We use defn-spec with return type:
-(defn-spec get-theme ::theme
+;; Function definition:
+(defn get-theme
   []
   (:theme (load-config)))
 
-;; Private functions use metadata:
-(defn-spec ^:private ensure-config-dir! any?
+;; With Malli schema:
+(m/=> get-theme [:=> [:cat] ::specs/theme-key])
+
+;; Private functions:
+(defn- ensure-config-dir!
   []
   ...)
+(m/=> ensure-config-dir! [:=> [:cat] :any])
 ```
+
+**Centralized Schemas**:
+All schemas are defined in `potatoclient.specs` namespace for reuse across the codebase.
 
 **Automatic Instrumentation**:
 - Development/test builds: Full instrumentation enabled automatically
@@ -146,40 +152,44 @@ Orchestra is a drop-in replacement for `clojure.spec.test.alpha` that provides c
 
 **Benefits**:
 1. **Catch bugs early**: Invalid function calls fail immediately with clear error messages
-2. **Living documentation**: Specs document expected types for all functions
+2. **Living documentation**: Schemas document expected types for all functions
 3. **Development confidence**: Know immediately when data doesn't match expectations
 4. **Zero production overhead**: Instrumentation disabled in release builds
+5. **Better performance**: Malli is faster than clojure.spec
 
-### Adding Specs to New Code
+### Adding Schemas to New Code
 
 When adding new namespaces or functions:
 
-1. **Import Orchestra**:
+1. **Import Malli**:
 ```clojure
 (ns my-namespace
-  (:require [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s]))
+  (:require [malli.core :as m]
+            [potatoclient.specs :as specs]))
 ```
 
-2. **Define specs for your domain**:
+2. **Use existing schemas from specs namespace**:
 ```clojure
-(s/def ::width pos-int?)
-(s/def ::height pos-int?)
-(s/def ::dimensions (s/keys :req-un [::width ::height]))
+;; Most common schemas are already defined in potatoclient.specs
+(m/=> my-function [:=> [:cat ::specs/theme-key] :string])
 ```
 
-3. **Use defn-spec for all functions**:
+3. **Define new schemas in specs.clj if needed**:
 ```clojure
-(defn-spec calculate-area pos-int?
-  [dimensions ::dimensions]
+;; In potatoclient.specs:
+(def my-new-schema
+  [:map
+   [:width pos-int?]
+   [:height pos-int?]])
+```
+
+4. **Add function schemas after definitions**:
+```clojure
+(defn calculate-area
+  [dimensions]
   (* (:width dimensions) (:height dimensions)))
-```
 
-4. **For private functions**:
-```clojure
-(defn-spec ^:private helper-fn string?
-  [x any?]
-  (str x))
+(m/=> calculate-area [:=> [:cat ::specs/dimensions] pos-int?])
 ```
 
 ## Build Types & Development Mode
@@ -212,7 +222,7 @@ The application detects build type via:
 Release builds show:
 - Console: `"Running RELEASE build - instrumentation disabled"`
 - Window: `PotatoClient v1.4.0 [RELEASE]`
-- About: `"Orchestra instrumentation: Disabled (optimized)"`
+- About: `"Malli instrumentation: Disabled (optimized)"`
 
 ## Technical Details
 

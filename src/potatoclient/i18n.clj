@@ -5,7 +5,7 @@
             [clojure.java.io :as io]
             [clojure.edn :as edn]
             [malli.core :as m]
-            [potatoclient.specs :as specs])
+            [potatoclient.specs :as specs]))
 
 
 ;; Atom to hold translations and translator instance
@@ -25,7 +25,6 @@
       (println "Failed to load translation file for locale:" locale "Error:" (.getMessage e))
       nil)))
 
-(m/=> load-translation-file [:=> [:cat ::specs/locale-code] [:maybe :map]])
 
 (defn load-translations!
   "Load all translation files from resources"
@@ -41,7 +40,6 @@
     (reset! translator-atom (tongue/build-translate translations))
     translations))
 
-(m/=> load-translations! [:=> [:cat] ::specs/translations-map])
 
 (defn reload-translations!
   "Reload all translations - useful for development"
@@ -49,7 +47,6 @@
   (println "Reloading translations...")
   (load-translations!))
 
-(m/=> reload-translations! [:=> [:cat] ::specs/translations-map])
 
 ;; Initialize translations on namespace load
 (load-translations!)
@@ -68,9 +65,6 @@
        (apply translator locale key args)
        (str key)))))
 
-(m/=> tr [:function
-          [:=> [:cat ::specs/translation-key] :string]
-          [:=> [:cat ::specs/translation-key ::specs/translation-args] :string]])
 
 (defn init!
   "Initialize localization system"
@@ -81,4 +75,3 @@
   ;; Set initial locale
   (state/set-locale! (state/get-locale)))
 
-(m/=> init! [:=> [:cat] :any])

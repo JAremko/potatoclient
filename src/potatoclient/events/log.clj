@@ -6,9 +6,8 @@
   (:require [potatoclient.state :as state]
             [potatoclient.log-writer :as log-writer]
             [seesaw.core :as seesaw]
-            [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:import [java.text SimpleDateFormat]
            [java.util Date]))
 
@@ -21,28 +20,21 @@
   (ThreadLocal/withInitial
    #(SimpleDateFormat. "HH:mm:ss.SSS")))
 
-;; Specs
-(s/def ::time pos-int?)
-(s/def ::stream string?)
-(s/def ::type string?)
-(s/def ::message string?)
-(s/def ::log-entry (s/keys :req-un [::time ::stream ::type ::message]
-                          :opt-un [::raw-data]))
-(s/def ::exception #(instance? Exception %))
 
 (defn- get-timestamp
   "Format a timestamp for display."
   [time-ms]
   (.format ^SimpleDateFormat (.get date-formatter) (Date. time-ms)))
 
-(defn-spec format-log-entry string?
+(defn format-log-entry
   "Format a log entry for display."
-  [entry ::log-entry]
+  [entry]
   (format "[%s] %s %s: %s"
           (get-timestamp (:time entry))
           (:stream entry)
           (:type entry)
           (:message entry)))
+
 
 (defn- write-to-console
   "Write log message to appropriate console stream."
@@ -65,9 +57,9 @@
      :delay batch-update-delay-ms
      :repeats? false)))
 
-(defn-spec add-log-entry! nil?
+(defn add-log-entry!
   "Add a log entry with console output and batch buffering."
-  [entry ::log-entry]
+  [entry]
   ;; Write to console
   (let [log-msg (format-log-entry entry)]
     (write-to-console log-msg (:type entry)))
@@ -83,6 +75,7 @@
   (schedule-batch-update!)
   nil)
 
+
 (defn- build-log-entry
   "Build a standardized log entry from various sources."
   [stream-id level message & {:keys [raw-data stack-trace]}]
@@ -95,11 +88,9 @@
              :message full-message}
       raw-data (assoc :raw-data raw-data))))
 
-(defn-spec handle-log-event nil?
+(defn handle-log-event
   "Handle a log event from a stream process."
-  [msg (s/and map?
-              #(string? (:streamId %))
-              #(string? (:level %)))]
+  [msg]
   (add-log-entry!
    (build-log-entry (:streamId msg)
                    (:level msg)
@@ -108,30 +99,30 @@
                    :stack-trace (:stackTrace msg)))
   nil)
 
+
 ;; Utility functions for common log operations
-(defn-spec log-info nil?
+(defn log-info
   "Log an informational message."
-  [stream-id string?
-   message string?]
+  [stream-id message]
   (add-log-entry!
    (build-log-entry stream-id "INFO" message))
   nil)
 
-(defn-spec log-error nil?
+
+(defn log-error
   "Log an error message."
-  [stream-id string?
-   message string?
-   & {:keys [exception] :as kwargs} (s/? (s/keys* :opt-un [::exception]))]
+  [stream-id message & {:keys [exception]}]
   (add-log-entry!
    (build-log-entry stream-id "ERROR" message
                    :stack-trace (when exception
                                  (.toString exception))))
   nil)
 
-(defn-spec log-warning nil?
+
+(defn log-warning
   "Log a warning message."
-  [stream-id string?
-   message string?]
+  [stream-id message]
   (add-log-entry!
    (build-log-entry stream-id "WARN" message))
   nil)
+

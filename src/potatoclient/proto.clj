@@ -5,9 +5,8 @@
   using the pronto library for Clojure protobuf support."
   (:require [pronto.core :as p]
             [pronto.utils :as u]
-            [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st])
+            [potatoclient.specs :as specs]
+            [malli.core :as m])
   (:import [ser JonSharedData$JonGUIState]
            [cmd JonSharedCmd$Root]))
 
@@ -21,25 +20,29 @@
 ;; Command payload types
 (def command-types #{:ping :noop :frozen})
 
-;; Specs for validation
-(s/def ::protocol-version pos-int?)
-(s/def ::session-id pos-int?)
-(s/def ::important boolean?)
-(s/def ::from-cv-subsystem boolean?)
-(s/def ::client-type (set (vals client-types)))
-(s/def ::payload-type command-types)
-(s/def ::payload (s/map-of keyword? any?))
+;; Client type values schema
+(def client-type-values
+  [:enum "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV"
+         "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
+         "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED"
+         "JON_GUI_DATA_CLIENT_TYPE_LIRA"])
 
-(s/def ::command
-  (s/keys :req-un [::protocol-version ::session-id ::important 
-                   ::from-cv-subsystem ::client-type ::payload]))
+;; Command schema with proper client type
+(def command-schema
+  [:map
+   [:protocol-version ::specs/protocol-version]
+   [:session-id ::specs/session-id]
+   [:important ::specs/important]
+   [:from-cv-subsystem ::specs/from-cv-subsystem]
+   [:client-type client-type-values]
+   [:payload ::specs/payload]])
 
 ;; Define the mapper for state and command messages
 (p/defmapper proto-mapper [JonSharedData$JonGUIState JonSharedCmd$Root]
   :key-name-fn u/->kebab-case)
 
 ;; Serialization functions
-(defn-spec serialize-cmd bytes?
+(defn serialize-cmd
   "Serialize a Clojure command map to protobuf bytes.
   
   The command should have the structure:
@@ -51,7 +54,7 @@
    :payload {:ping {}}}
    
   Returns the serialized bytes or throws an exception with details."
-  [cmd-map ::command]
+  [cmd-map]
   (try
     (-> (p/clj-map->proto-map proto-mapper JonSharedCmd$Root cmd-map)
         (p/proto-map->bytes))
@@ -61,12 +64,13 @@
                        :command cmd-map
                        :cause e})))))
 
-(defn-spec deserialize-state map?
+
+(defn deserialize-state
   "Deserialize protobuf bytes to a Clojure state map.
   
   Returns a map with kebab-case keys representing the current state.
   Throws an exception if deserialization fails."
-  [proto-bytes bytes?]
+  [proto-bytes]
   {:pre [(pos? (count proto-bytes))]}
   (try
     (p/bytes->proto-map proto-mapper JonSharedData$JonGUIState proto-bytes)
@@ -75,6 +79,7 @@
                       {:error (.getMessage e)
                        :bytes-length (count proto-bytes)
                        :cause e})))))
+
 
 ;; Command factory functions
 (defn- create-command
@@ -90,70 +95,77 @@
    :from-cv-subsystem from-cv?
    :client-type (get client-types client-type-key)})
 
-(defn-spec cmd-ping ::command
+(defn cmd-ping
   "Create a ping command for heartbeat/keepalive."
-  [session-id pos-int?
-   client-type-key keyword?]
+  [session-id client-type-key]
   {:pre [(contains? client-types client-type-key)]}
   (assoc (create-command session-id client-type-key)
          :payload {:ping {}}))
 
-(defn-spec cmd-noop ::command
+
+(defn cmd-noop
   "Create a no-operation command."
-  [session-id pos-int?
-   client-type-key keyword?]
+  [session-id client-type-key]
   {:pre [(contains? client-types client-type-key)]}
   (assoc (create-command session-id client-type-key)
          :payload {:noop {}}))
 
-(defn-spec cmd-frozen ::command
+
+(defn cmd-frozen
   "Create a frozen command (marks important state)."
-  [session-id pos-int?
-   client-type-key keyword?]
+  [session-id client-type-key]
   {:pre [(contains? client-types client-type-key)]}
   (assoc (create-command session-id client-type-key :important? true)
          :payload {:frozen {}}))
 
+
 ;; State accessor functions with nil-safety
-(defn-spec get-system-info any?
+(defn get-system-info
   "Extract system information from state."
-  [state map?]
+  [state]
   (get state :system))
 
-(defn-spec get-camera-day any?
+
+(defn get-camera-day
   "Extract day camera information from state."
-  [state map?]
+  [state]
   (get state :camera-day))
 
-(defn-spec get-camera-heat any?
+
+(defn get-camera-heat
   "Extract heat camera information from state."
-  [state map?]
+  [state]
   (get state :camera-heat))
 
-(defn-spec get-gps-info any?
+
+(defn get-gps-info
   "Extract GPS information from state."
-  [state map?]
+  [state]
   (get state :gps))
 
-(defn-spec get-compass-info any?
+
+(defn get-compass-info
   "Extract compass information from state."
-  [state map?]
+  [state]
   (get state :compass))
 
-(defn-spec get-lrf-info any?
+
+(defn get-lrf-info
   "Extract laser range finder information from state."
-  [state map?]
+  [state]
   (get state :lrf))
 
-(defn-spec get-time-info any?
+
+(defn get-time-info
   "Extract time information from state."
-  [state map?]
+  [state]
   (get state :time))
 
+
 ;; Higher-level state queries
-(defn-spec get-location (s/nilable map?)
+(defn get-location
   "Extract location data (GPS + compass) from state."
-  [state map?]
+  [state]
   (when-let [gps (get-gps-info state)]
     {:latitude (:latitude gps)
      :longitude (:longitude gps)
@@ -161,19 +173,23 @@
      :heading (get-in state [:compass :heading])
      :timestamp (get-in state [:time :timestamp])}))
 
-(defn-spec cameras-available? boolean?
+
+(defn cameras-available?
   "Check if camera data is available in state."
-  [state map?]
+  [state]
   (or (some? (get-camera-day state))
       (some? (get-camera-heat state))))
 
-;; Validation functions
-(defn-spec valid-command? boolean?
-  "Check if a command map is valid for serialization."
-  [cmd-map any?]
-  (s/valid? ::command cmd-map))
 
-(defn-spec explain-invalid-command string?
+;; Validation functions
+(defn valid-command?
+  "Check if a command map is valid for serialization."
+  [cmd-map]
+  (m/validate command-schema cmd-map))
+
+
+(defn explain-invalid-command
   "Get explanation for why a command is invalid."
-  [cmd-map any?]
-  (s/explain-str ::command cmd-map))
+  [cmd-map]
+  (str (m/explain command-schema cmd-map)))
+

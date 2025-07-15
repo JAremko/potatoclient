@@ -8,9 +8,9 @@
             [potatoclient.process :as process]
             [potatoclient.events.log :as log]
             [potatoclient.events.stream :as stream-events]
-            [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st]))
+            [malli.core :as m]
+            [malli.dev :as dev]
+            [potatoclient.specs :as specs]))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -22,16 +22,15 @@
    :navigation (fn [_ msg] (stream-events/handle-navigation-event msg))
    :window   (fn [_ msg] (stream-events/handle-window-event msg))})
 
-;; Specs
-(s/def ::message-type #{:response :log :navigation :window})
-(s/def ::stream-key #{:heat :day})
-(s/def ::message (s/keys :req-un [::type]))
+;; No need to define specs here as they're available in potatoclient.specs
 
 (defn- dispatch-message
   "Dispatch a message to the appropriate handler."
   [stream-key msg]
-  {:pre [(s/valid? ::stream-key stream-key)
-         (s/valid? ::message msg)]}
+  (assert (m/validate specs/stream-key stream-key) 
+          (str "Invalid stream-key: " stream-key))
+  (assert (m/validate specs/message msg)
+          (str "Invalid message: " msg))
   (if-let [handler (get message-handlers (keyword (:type msg)))]
     (try
       (handler stream-key msg)
@@ -42,6 +41,7 @@
     (log/log-warning (name stream-key)
                     (str "Unknown message type: " (:type msg)))))
 
+
 (defn- process-stream-messages
   "Process messages from a stream's output channel."
   [stream-key stream]
@@ -50,10 +50,12 @@
       (dispatch-message stream-key msg)
       (recur))))
 
+
 (defn- build-stream-url
   "Build the WebSocket URL for a stream."
   [endpoint]
   (str "wss://" (state/get-domain) endpoint))
+
 
 (defn- initialize-stream
   "Initialize a newly started stream."
@@ -61,16 +63,17 @@
   (Thread/sleep stream-init-delay-ms)
   (process/send-command stream {:action "show"}))
 
-(defn-spec start-stream any?
+
+(defn start-stream
   "Start a stream and set up its message processing.
   
   Creates the subprocess, registers it in state, and begins
   processing its output messages."
-  [stream-key ::stream-key
-   endpoint string?]
-  {:pre [(s/valid? ::stream-key stream-key)
-         (string? endpoint)
-         (not (clojure.string/blank? endpoint))]}
+  [stream-key endpoint]
+  (assert (m/validate specs/stream-key stream-key)
+          (str "Invalid stream-key: " stream-key))
+  (assert (and (string? endpoint) (not (clojure.string/blank? endpoint)))
+          (str "Invalid endpoint: " endpoint))
   (future
     (try
       (let [url (build-stream-url endpoint)
@@ -86,12 +89,14 @@
                       :exception e)
         (state/clear-stream! stream-key)))))
 
-(defn-spec stop-stream any?
+
+(defn stop-stream
   "Stop a stream and clean up resources.
   
   Stops the subprocess and removes it from state."
-  [stream-key ::stream-key]
-  {:pre [(s/valid? ::stream-key stream-key)]}
+  [stream-key]
+  (assert (m/validate specs/stream-key stream-key)
+          (str "Invalid stream-key: " stream-key))
   (future
     (try
       (when-let [stream (state/get-stream stream-key)]
@@ -103,23 +108,26 @@
                       "Error stopping stream"
                       :exception e)))))
 
-(defn-spec restart-stream any?
+
+(defn restart-stream
   "Restart a stream by stopping and starting it again."
-  [stream-key ::stream-key
-   endpoint string?]
-  {:pre [(s/valid? ::stream-key stream-key)]}
+  [stream-key endpoint]
+  (assert (m/validate specs/stream-key stream-key)
+          (str "Invalid stream-key: " stream-key))
   (future
     (when (state/get-stream stream-key)
       (stop-stream stream-key)
       (Thread/sleep (* 2 stream-init-delay-ms)))
     (start-stream stream-key endpoint)))
 
-(defn-spec send-command-to-stream boolean?
+
+(defn send-command-to-stream
   "Send a command to a specific stream."
-  [stream-key ::stream-key
-   command map?]
-  {:pre [(s/valid? ::stream-key stream-key)
-         (map? command)]}
+  [stream-key command]
+  (assert (m/validate specs/stream-key stream-key)
+          (str "Invalid stream-key: " stream-key))
+  (assert (map? command)
+          (str "Invalid command - must be a map: " command))
   (if-let [stream (state/get-stream stream-key)]
     (process/send-command stream command)
     (do
@@ -127,10 +135,13 @@
                       "Cannot send command - stream not connected")
       false)))
 
-(defn-spec broadcast-command any?
+
+(defn broadcast-command
   "Send a command to all active streams."
-  [command map?]
-  {:pre [(map? command)]}
+  [command]
+  (assert (map? command)
+          (str "Invalid command - must be a map: " command))
   (doseq [[stream-key stream] (state/all-streams)
           :when stream]
     (send-command-to-stream stream-key command)))
+

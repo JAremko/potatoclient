@@ -3,22 +3,15 @@
   (:require [clojure.data.json :as json]
             [potatoclient.state :as state]
             [potatoclient.i18n :as i18n]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:use [seesaw core table])
   (:import [javax.swing.table DefaultTableCellRenderer]
            [java.awt Color]))
 
-;; Specs for log-table namespace
-(s/def ::log-type string?)
-(s/def ::event-type (s/nilable string?))
-(s/def ::nav-type (s/nilable string?))
-(s/def ::color #(instance? Color %))
-(s/def ::row-data (s/keys :opt-un [::type ::event-type ::nav-type ::raw-data]))
-
-(defn-spec ^:private get-type-color ::color
+(defn ^:private get-type-color
   "Get the background color for a log entry based on its type"
-  [type ::log-type, event-type ::event-type, nav-type ::nav-type]
+  [type event-type nav-type]
   (case type
     "RESPONSE" (Color. 100 200 100)  ; Light green
     "INFO" (Color. 100 150 255)      ; Light blue
@@ -46,9 +39,10 @@
                (Color. 200 200 255))              ; Light purple default
     (Color. 255 255 255)))                        ; White default
 
-(defn-spec ^:private create-type-renderer #(instance? DefaultTableCellRenderer %)
+
+(defn ^:private create-type-renderer
   "Create a custom cell renderer for the type column"
-  [table-model any?]
+  [table-model]
   (proxy [DefaultTableCellRenderer] []
     (getTableCellRendererComponent [table value isSelected hasFocus row column]
       (let [component (proxy-super getTableCellRendererComponent table value isSelected hasFocus row column)
@@ -60,14 +54,16 @@
             (.setBackground component (get-type-color type event-type nav-type))))
         component))))
 
-(defn-spec ^:private show-raw-data any?
+
+(defn ^:private show-raw-data
   "Show the raw JSON data for a log entry"
-  [row-data ::row-data]
+  [row-data]
   (when-let [raw-data (:raw-data row-data)]
     (alert (str "JSON Data for " (:type row-data) " event:\n\n"
                (json/write-str raw-data :indent true)))))
 
-(defn-spec create #(instance? javax.swing.JScrollPane %)
+
+(defn create
   "Create the log table UI component"
   []
   (let [columns [{:key :time :text (i18n/tr :log-column-time) 
@@ -105,3 +101,4 @@
                 (show-raw-data row-data)))))))
     
     (scrollable log-table)))
+

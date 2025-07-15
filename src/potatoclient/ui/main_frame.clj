@@ -15,28 +15,24 @@
             [potatoclient.log-writer :as log-writer]
             [potatoclient.events.log :as log]
             [potatoclient.ipc :as ipc]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s])
+            [malli.core :as m]
+            [potatoclient.specs :as specs])
   (:import [javax.swing JFrame JMenuBar JMenu JToggleButton Box]
            [java.awt.event WindowAdapter]))
 
-;; Specs
-(s/def ::window-state (s/keys :req-un [::bounds ::extended-state]))
-(s/def ::bounds #(instance? java.awt.Rectangle %))
-(s/def ::extended-state integer?)
-(s/def ::frame #(instance? javax.swing.JFrame %))
-(s/def ::lang-key #{:english :ukrainian})
-(s/def ::display-name string?)
-(s/def ::theme-key keyword?)
-(s/def ::version string?)
-(s/def ::build-type string?)
-(s/def ::frame-params (s/keys :req-un [::version ::build-type]
-                              :opt-un [::window-state]))
-(s/def ::stream-key #{:heat :day})
+;; Additional schemas not in specs
+(def display-name :string)
+(def version :string)
+(def build-type :string)
+(def frame-params
+  [:map
+   [:version version]
+   [:build-type build-type]
+   [:window-state {:optional true} specs/window-state]])
 
-(defn-spec ^:private create-language-action #(instance? javax.swing.Action %)
+(defn ^:private create-language-action
   "Create a language selection action."
-  [lang-key ::lang-key, display-name ::display-name, reload-fn fn?]
+  [lang-key display-name reload-fn]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (clojure.java.io/resource "flags/ua.png"))
@@ -53,9 +49,10 @@
                   (config/update-config! :locale lang-key)
                   (reload-fn))))))
 
-(defn-spec ^:private create-theme-action #(instance? javax.swing.Action %)
+
+(defn ^:private create-theme-action
   "Create a theme selection action."
-  [theme-key ::theme-key, reload-fn fn?]
+  [theme-key reload-fn]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
         theme-name (i18n/tr theme-i18n-key)
         ;; Add padding to theme name to ensure menu width
@@ -72,27 +69,30 @@
                     (reload-fn)))))))
 
 
-(defn-spec ^:private create-theme-menu #(instance? javax.swing.JMenu %)
+
+(defn ^:private create-theme-menu
   "Create the Theme menu."
-  [reload-fn fn?]
+  [reload-fn]
   (seesaw/menu 
    :text (i18n/tr :menu-view-theme)
    :icon (theme/key->icon :actions-group-theme)
    :items (map #(create-theme-action % reload-fn)
               (theme/get-available-themes))))
 
-(defn-spec ^:private create-language-menu #(instance? javax.swing.JMenu %)
+
+(defn ^:private create-language-menu
   "Create the Language menu."
-  [reload-fn fn?]
+  [reload-fn]
   (seesaw/menu 
    :text (i18n/tr :menu-view-language)
    :icon (theme/key->icon :icon-languages)
    :items [(create-language-action :english "English" reload-fn)
            (create-language-action :ukrainian "Українська" reload-fn)]))
 
-(defn-spec ^:private create-stream-toggle-button #(instance? javax.swing.JToggleButton %)
+
+(defn ^:private create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
-  [stream-key ::stream-key]
+  [stream-key]
   (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
                               :tooltip "Heat Camera (900x720)"
                               :label-key :stream-thermal}
@@ -131,9 +131,10 @@
             (seesaw/config! button :selected? connected?))))))
     button))
 
-(defn-spec ^:private create-menu-bar #(instance? javax.swing.JMenuBar %)
+
+(defn ^:private create-menu-bar
   "Create the application menu bar."
-  [reload-fn fn?]
+  [reload-fn]
   (let [menubar (seesaw/menubar
                  :items [(create-theme-menu reload-fn)
                          (create-language-menu reload-fn)])
@@ -148,16 +149,18 @@
     (.add menubar (javax.swing.Box/createHorizontalStrut 10))
     menubar))
 
-(defn-spec ^:private create-main-content #(instance? javax.swing.JPanel %)
+
+(defn ^:private create-main-content
   "Create the main content panel."
   []
   (seesaw/border-panel
    :north (control-panel/create)
    :center (log-table/create)))
 
-(defn-spec ^:private add-window-close-handler! any?
+
+(defn ^:private add-window-close-handler!
   "Add window close handler for proper cleanup."
-  [frame ::frame]
+  [frame]
   (.addWindowListener ^javax.swing.JFrame frame
     (proxy [WindowAdapter] []
       (windowClosing [_]
@@ -169,28 +172,32 @@
             (println "Error during shutdown:" (.getMessage e))))
         (System/exit 0)))))
 
-(defn-spec preserve-window-state ::window-state
+
+(defn preserve-window-state
   "Extract window state for restoration."
-  [frame ::frame]
+  [frame]
   {:bounds (.getBounds ^javax.swing.JFrame frame)
    :extended-state (.getExtendedState ^javax.swing.JFrame frame)})
 
-(defn-spec restore-window-state! ::frame
+
+(defn restore-window-state!
   "Restore window state to a frame."
-  [frame ::frame, state ::window-state]
+  [frame state]
   (doto ^javax.swing.JFrame frame
     (.setBounds ^java.awt.Rectangle (:bounds state))
     (.setExtendedState ^Integer (:extended-state state))))
 
-(defn-spec ^:private ensure-on-edt fn?
+
+(defn ^:private ensure-on-edt
   "Ensure a function runs on the Event Dispatch Thread."
-  [f fn?]
+  [f]
   (fn [& args]
     (if (javax.swing.SwingUtilities/isEventDispatchThread)
       (apply f args)
       (seesaw/invoke-now (apply f args)))))
 
-(defn-spec create-main-frame ::frame
+
+(defn create-main-frame
   "Create a new main application frame with clean state.
   
   This function creates a fresh frame instance ensuring all components
@@ -198,7 +205,7 @@
   parameters for version info and optional window state for restoration.
   
   IMPORTANT: This should be called on the Event Dispatch Thread."
-  [params ::frame-params]
+  [params]
   (let [{:keys [version build-type window-state]} params
         ;; Preload icons before creating UI components
         _ (theme/preload-theme-icons!)
@@ -244,3 +251,4 @@
       (log/log-info "UI" "Main frame created and configured"))
     
     frame))
+

@@ -9,9 +9,8 @@
             [potatoclient.i18n :as i18n]
             [clojure.data.json :as json]
             [seesaw.core :as seesaw]
-            [clojure.spec.alpha :as s]
-            [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st]))
+            [malli.core :as m]
+            [potatoclient.specs :as specs]))
 
 ;; Event type definitions
 (def window-event-types
@@ -26,23 +25,6 @@
 (def mouse-button-names
   {1 "Left" 2 "Middle" 3 "Right"})
 
-;; Specs
-(s/def ::event-type keyword?)
-(s/def ::x number?)
-(s/def ::y number?)
-(s/def ::ndcX number?)
-(s/def ::ndcY number?)
-(s/def ::button #{1 2 3})
-(s/def ::clickCount pos-int?)
-(s/def ::wheelRotation number?)
-
-(s/def ::window-event
-  (s/keys :req-un [::type]
-          :opt-un [::width ::height ::x ::y]))
-
-(s/def ::navigation-event
-  (s/keys :req-un [::type ::x ::y]
-          :opt-un [::ndcX ::ndcY ::button ::clickCount ::wheelRotation]))
 
 ;; Window event formatting
 (defn- format-dimensions [width height]
@@ -69,10 +51,11 @@
       ;; Unknown type - show raw data
       (str type " " (json/write-str (dissoc event :type))))))
 
-(defn-spec format-window-event string?
+(defn format-window-event
   "Format a window event for display."
-  [event ::window-event]
+  [event]
   (format-window-event-details event))
+
 
 ;; Navigation event formatting
 (defn- format-coordinates
@@ -140,10 +123,11 @@
       ;; Unknown type
       (str type " @ " coords))))
 
-(defn-spec format-navigation-event string?
+(defn format-navigation-event
   "Format a navigation/mouse event for display."
-  [event ::navigation-event]
+  [event]
   (format-navigation-event-details event))
+
 
 ;; Event handlers
 (defn- handle-window-closed
@@ -168,10 +152,9 @@
                         "Error handling window close"
                         :exception e))))))
 
-(defn-spec handle-response-event nil?
+(defn handle-response-event
   "Handle a response event from a stream."
-  [stream-key keyword?
-   msg map?]
+  [stream-key msg]
   (log/add-log-entry!
    {:time (System/currentTimeMillis)
     :stream (:streamId msg)
@@ -183,6 +166,7 @@
   (when (= (:status msg) "window-closed")
     (handle-window-closed stream-key))
   nil)
+
 
 (defn handle-navigation-event
   "Handle a navigation/mouse event."
@@ -197,7 +181,6 @@
       :nav-type (keyword (:type event))})
     nil))
 
-(m/=> handle-navigation-event [:=> [:cat [:map [:event :map]]] :nil])
 
 (defn handle-window-event
   "Handle a window event."
@@ -212,16 +195,17 @@
       :event-type (keyword (:type event))})
     nil))
 
-(m/=> handle-window-event [:=> [:cat [:map [:event :map]]] :nil])
 
 ;; Utility functions
-(defn-spec stream-connected? boolean?
+(defn stream-connected?
   "Check if a stream is currently connected."
-  [stream-key keyword?]
+  [stream-key]
   (some? (state/get-stream stream-key)))
 
-(defn-spec all-streams-connected? boolean?
+
+(defn all-streams-connected?
   "Check if all streams are connected."
   []
   (and (stream-connected? :heat)
        (stream-connected? :day)))
+

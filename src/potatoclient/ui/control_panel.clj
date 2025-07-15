@@ -5,10 +5,10 @@
   video streams and managing application settings."
   (:require [potatoclient.state :as state]
             [potatoclient.i18n :as i18n]
+            [potatoclient.specs :as specs]
             [seesaw.core :as seesaw]
             [seesaw.border :as border]
-            [orchestra.core :refer [defn-spec]]
-            [clojure.spec.alpha :as s]))
+            [malli.core :as m]))
 
 
 ;; UI styling constants
@@ -16,11 +16,8 @@
 (def ^:private domain-field-columns 20)
 (def ^:private label-font "ARIAL-BOLD-16")
 
-;; Specs for control-panel namespace
-(s/def ::button #(instance? javax.swing.AbstractButton %))
-(s/def ::panel #(instance? javax.swing.JPanel %))
 
-(defn-spec ^:private create-domain-field #(instance? javax.swing.JTextField %)
+(defn ^:private create-domain-field
   "Create the domain configuration field."
   []
   (let [field (seesaw/text :columns domain-field-columns
@@ -31,7 +28,8 @@
                     (state/set-domain! (seesaw/text field))))
     field))
 
-(defn-spec ^:private create-log-controls (s/coll-of ::button :count 2)
+
+(defn ^:private create-log-controls
   "Create log management buttons."
   []
   (let [clear-btn (seesaw/button :text "Clear Log")
@@ -49,7 +47,8 @@
     
     [clear-btn export-btn]))
 
-(defn-spec ^:private create-header-section ::panel
+
+(defn ^:private create-header-section
   "Create the header section with domain configuration."
   []
   (seesaw/vertical-panel
@@ -61,7 +60,8 @@
            (seesaw/separator)]))
 
 
-(defn-spec ^:private create-log-section ::panel
+
+(defn ^:private create-log-section
   "Create the log controls section."
   []
   (let [[clear-btn export-btn] (create-log-controls)]
@@ -69,7 +69,8 @@
      :items [(seesaw/separator)
              (seesaw/flow-panel :items [clear-btn export-btn])])))
 
-(defn-spec create ::panel
+
+(defn create
   "Create the control panel UI component.
   
   Returns a panel containing all control elements for managing
@@ -79,3 +80,4 @@
    :border panel-border-width
    :items [(create-header-section)
            (create-log-section)]))
+

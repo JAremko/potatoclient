@@ -4,7 +4,7 @@
             [clojure.java.io :as io]
             [potatoclient.theme :as theme]
             [malli.core :as m]
-            [potatoclient.specs :as specs])
+            [potatoclient.specs :as specs]))
 
 (def ^:private config-file-name "potatoclient-config.edn")
 
@@ -43,14 +43,12 @@
                          (io/file user-home ".config"))]
         (io/file config-base "potatoclient")))))
 
-(m/=> get-config-dir [:=> [:cat] ::specs/file])
 
 (defn- get-config-file
   "Get the configuration file"
   []
   (io/file (get-config-dir) config-file-name))
 
-(m/=> get-config-file [:=> [:cat] ::specs/file])
 
 (defn- ensure-config-dir!
   "Ensure the configuration directory exists"
@@ -59,7 +57,6 @@
     (when-not (.exists ^java.io.File config-dir)
       (.mkdirs ^java.io.File config-dir))))
 
-(m/=> ensure-config-dir! [:=> [:cat] :any])
 
 (defn load-config
   "Load configuration from file, return default if not found"
@@ -79,7 +76,6 @@
           default-config))
       default-config)))
 
-(m/=> load-config [:=> [:cat] ::specs/config])
 
 (defn save-config!
   "Save configuration to file"
@@ -93,14 +89,12 @@
       (println "Error saving config:" (.getMessage ^Exception e))
       false)))
 
-(m/=> save-config! [:=> [:cat ::specs/config] :boolean])
 
 (defn get-theme
   "Get the saved theme from config"
   []
   (:theme (load-config)))
 
-(m/=> get-theme [:=> [:cat] ::specs/theme-key])
 
 (defn save-theme!
   "Save the current theme to config"
@@ -108,14 +102,12 @@
   (let [config (load-config)]
     (save-config! (assoc config :theme theme-key))))
 
-(m/=> save-theme! [:=> [:cat ::specs/theme-key] :boolean])
 
 (defn get-domain
   "Get the saved domain from config"
   []
   (:domain (load-config)))
 
-(m/=> get-domain [:=> [:cat] ::specs/domain])
 
 (defn save-domain!
   "Save the domain to config"
@@ -123,14 +115,12 @@
   (let [config (load-config)]
     (save-config! (assoc config :domain domain))))
 
-(m/=> save-domain! [:=> [:cat ::specs/domain] :boolean])
 
 (defn get-locale
   "Get the saved locale from config"
   []
   (:locale (load-config)))
 
-(m/=> get-locale [:=> [:cat] ::specs/locale])
 
 (defn save-locale!
   "Save the locale to config"
@@ -138,7 +128,6 @@
   (let [config (load-config)]
     (save-config! (assoc config :locale locale))))
 
-(m/=> save-locale! [:=> [:cat ::specs/locale] :boolean])
 
 (defn update-config!
   "Update a specific configuration key-value pair"
@@ -146,14 +135,12 @@
   (let [config (load-config)]
     (save-config! (assoc config key value))))
 
-(m/=> update-config! [:=> [:cat ::specs/config-key :any] :boolean])
 
 (defn get-config-location
   "Get the full path to the configuration file (for debugging)"
   []
   (.getAbsolutePath ^java.io.File (get-config-file)))
 
-(m/=> get-config-location [:=> [:cat] :string])
 
 (defn initialize!
   "Initialize configuration system"
@@ -170,4 +157,3 @@
     ;; Return the loaded config
     config))
 
-(m/=> initialize! [:=> [:cat] ::specs/config])
