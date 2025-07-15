@@ -30,6 +30,8 @@
  :control-button-disconnect "Disconnect"
  :control-label-heat "Heat Stream"
  :control-label-day "Day Stream"
+ :stream-thermal "Thermal"
+ :stream-day "Day"
  :control-checkbox-enable "Enable"
  :control-checkbox-autoconnect "Auto-connect"
  

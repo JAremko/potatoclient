@@ -133,7 +133,8 @@
   (when (is-development-mode?)
     (println (log-theme "INFO" (format "Preloading icons for theme: %s" (name (get-current-theme))))))
   (let [icons-to-preload [:actions-group-menu :actions-group-theme :icon-languages
-                         :file-export :sol-dark :sol-light :dark :hi-dark]
+                         :file-export :sol-dark :sol-light :dark :hi-dark
+                         :day :heat]
         theme-name (name (get-current-theme))]
     (doseq [icon-key icons-to-preload]
       (key->icon icon-key))

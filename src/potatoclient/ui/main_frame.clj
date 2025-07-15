@@ -14,9 +14,10 @@
             [potatoclient.theme :as theme]
             [potatoclient.log-writer :as log-writer]
             [potatoclient.events.log :as log]
+            [potatoclient.ipc :as ipc]
             [orchestra.core :refer [defn-spec]]
             [clojure.spec.alpha :as s])
-  (:import [javax.swing JFrame JMenuBar JMenu]
+  (:import [javax.swing JFrame JMenuBar JMenu JToggleButton Box]
            [java.awt.event WindowAdapter]))
 
 ;; Specs
@@ -31,6 +32,7 @@
 (s/def ::build-type string?)
 (s/def ::frame-params (s/keys :req-un [::version ::build-type]
                               :opt-un [::window-state]))
+(s/def ::stream-key #{:heat :day})
 
 (defn-spec ^:private create-language-action #(instance? javax.swing.Action %)
   "Create a language selection action."
@@ -88,12 +90,63 @@
    :items [(create-language-action :english "English" reload-fn)
            (create-language-action :ukrainian "Українська" reload-fn)]))
 
+(defn-spec ^:private create-stream-toggle-button #(instance? javax.swing.JToggleButton %)
+  "Create a stream toggle button for the menu bar."
+  [stream-key ::stream-key]
+  (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
+                              :tooltip "Heat Camera (900x720)"
+                              :label-key :stream-thermal}
+                       :day  {:endpoint "/ws/ws_rec_video_day"
+                              :tooltip "Day Camera (1920x1080)"
+                              :label-key :stream-day}}
+        {:keys [endpoint tooltip label-key]} (get stream-config stream-key)
+        is-connected (atom (some? (state/get-stream stream-key)))
+        button (seesaw/toggle
+                :text (i18n/tr label-key)
+                :icon (theme/key->icon stream-key)
+                :selected? @is-connected
+                :tip tooltip)]
+    ;; Add action handler
+    (seesaw/listen button :action
+                  (fn [e]
+                    (let [current-state @is-connected]
+                      (if current-state
+                        (do
+                          (ipc/stop-stream stream-key)
+                          (reset! is-connected false))
+                        (do
+                          (ipc/start-stream stream-key endpoint)
+                          (reset! is-connected true))))))
+    
+    ;; Update button state when stream state changes
+    (add-watch state/app-state 
+     (keyword (str "stream-button-" (name stream-key)))
+     (fn [_ _ old-state new-state]
+       (let [old-stream (get old-state stream-key)
+             new-stream (get new-state stream-key)
+             connected? (some? new-stream)]
+         (when (not= (some? old-stream) connected?)
+           (reset! is-connected connected?)
+           (seesaw/invoke-later
+            (seesaw/config! button :selected? connected?))))))
+    button))
+
 (defn-spec ^:private create-menu-bar #(instance? javax.swing.JMenuBar %)
   "Create the application menu bar."
   [reload-fn fn?]
-  (seesaw/menubar
-   :items [(create-theme-menu reload-fn)
-           (create-language-menu reload-fn)]))
+  (let [menubar (seesaw/menubar
+                 :items [(create-theme-menu reload-fn)
+                         (create-language-menu reload-fn)])
+        ;; Add stream toggle buttons directly to the menu bar
+        heat-button (create-stream-toggle-button :heat)
+        day-button (create-stream-toggle-button :day)]
+    ;; Add some spacing before the buttons
+    (.add menubar (javax.swing.Box/createHorizontalGlue))
+    (.add menubar heat-button)
+    (.add menubar (javax.swing.Box/createHorizontalStrut 5))
+    (.add menubar day-button)
+    (.add menubar (javax.swing.Box/createHorizontalStrut 10))
+    menubar))
 
 (defn-spec ^:private create-main-content #(instance? javax.swing.JPanel %)
   "Create the main content panel."

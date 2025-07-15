@@ -30,6 +30,8 @@
  :control-button-disconnect "Від'єднати"
  :control-label-heat "Тепловий потік"
  :control-label-day "Денний потік"
+ :stream-thermal "Тепловізор"
+ :stream-day "Денна"
  :control-checkbox-enable "Увімкнути"
  :control-checkbox-autoconnect "Автопідключення"
  
