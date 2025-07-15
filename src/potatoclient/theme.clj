@@ -10,7 +10,7 @@
             SolarizedLightTheme
             SolarizedDarkTheme
             OneDarkTheme
-            IntelliJTheme]
+            HighContrastDarkTheme]
            [java.text SimpleDateFormat]
            [java.util Date]))
 
@@ -18,7 +18,7 @@
 (def ^:private theme-config (atom {:current-theme :sol-dark}))
 
 ;; Valid theme keys
-(s/def ::theme-key #{:sol-light :sol-dark :dark :light})
+(s/def ::theme-key #{:sol-light :sol-dark :dark :hi-dark})
 
 (defn-spec get-current-theme ::theme-key
   "Get the current theme key"
@@ -32,7 +32,7 @@
     :sol-light (LafManager/setTheme (SolarizedLightTheme.))
     :sol-dark (LafManager/setTheme (SolarizedDarkTheme.))
     :dark (LafManager/setTheme (OneDarkTheme.))
-    :light (LafManager/setTheme (IntelliJTheme.))
+    :hi-dark (LafManager/setTheme (HighContrastDarkTheme.))
     ;; Default fallback
     (LafManager/setTheme (SolarizedDarkTheme.)))
   (LafManager/install))
@@ -59,16 +59,26 @@
   "Get human-readable name for a theme key"
   [theme-key ::theme-key]
   (case theme-key
-    :sol-light "Solarized Light"
-    :sol-dark "Solarized Dark"
-    :dark "Real Dark"
-    :light "Light"
+    :sol-light "Sol Light"
+    :sol-dark "Sol Dark"
+    :dark "Dark"
+    :hi-dark "Hi-Dark"
     "Unknown"))
+
+(defn-spec get-theme-i18n-key keyword?
+  "Get the i18n key for a theme"
+  [theme-key ::theme-key]
+  (case theme-key
+    :sol-light :theme-sol-light
+    :sol-dark :theme-sol-dark
+    :dark :theme-dark
+    :hi-dark :theme-hi-dark
+    :theme-unknown))
 
 (defn-spec get-available-themes vector?
   "Get a vector of available theme keys"
   []
-  [:sol-light :sol-dark :dark :light])
+  [:sol-light :sol-dark :dark :hi-dark])
 
 ;; Icon loading specs
 (s/def ::icon-key keyword?)
@@ -123,7 +133,7 @@
   (when (is-development-mode?)
     (println (log-theme "INFO" (format "Preloading icons for theme: %s" (name (get-current-theme))))))
   (let [icons-to-preload [:actions-group-menu :actions-group-theme :icon-languages
-                         :file-export :sol-dark :sol-light :dark :light]
+                         :file-export :sol-dark :sol-light :dark :hi-dark]
         theme-name (name (get-current-theme))]
     (doseq [icon-key icons-to-preload]
       (key->icon icon-key))

@@ -54,7 +54,8 @@
 (defn-spec ^:private create-theme-action #(instance? javax.swing.Action %)
   "Create a theme selection action."
   [theme-key ::theme-key, reload-fn fn?]
-  (let [theme-name (theme/get-theme-name theme-key)
+  (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
+        theme-name (i18n/tr theme-i18n-key)
         ;; Add padding to theme name to ensure menu width
         padded-name (format "%-20s" theme-name)]
     (action/action

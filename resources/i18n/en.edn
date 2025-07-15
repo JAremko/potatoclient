@@ -11,6 +11,13 @@
  :menu-help "Help"
  :menu-help-about "About"
  
+ ;; Theme names
+ :theme-sol-light "Sol Light"
+ :theme-sol-dark "Sol Dark"
+ :theme-dark "Dark"
+ :theme-hi-dark "Hi-Dark"
+ :theme-unknown "Unknown"
+ 
  ;; Connection status
  :status-disconnected "Disconnected"
  :status-connecting "Connecting..."

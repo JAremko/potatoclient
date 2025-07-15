@@ -11,6 +11,13 @@
  :menu-help "Допомога"
  :menu-help-about "Про програму"
  
+ ;; Theme names
+ :theme-sol-light "Сонячна світла"
+ :theme-sol-dark "Сонячна темна"
+ :theme-dark "Темна"
+ :theme-hi-dark "Висококонтрастна темна"
+ :theme-unknown "Невідома"
+ 
  ;; Connection status
  :status-disconnected "Від'єднано"
  :status-connecting "Підключення..."
