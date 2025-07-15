@@ -8,7 +8,8 @@
             [clojure.core.async :as async :refer [>!! <!! go-loop]]
             [clojure.string :as str]
             [orchestra.core :refer [defn-spec]]
-            [orchestra.spec.test :as st])
+            [orchestra.spec.test :as st]
+            [potatoclient.state :as state])
   (:import [java.lang ProcessBuilder Process]
            [java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter]
            [java.util.concurrent TimeUnit]))
@@ -238,15 +239,16 @@
 
 (defn-spec cleanup-all-processes any?
   "Clean up all processes - useful for shutdown hooks."
-  [state-atom any?]
-  (doseq [[stream-key stream-data] @state-atom]
-    (when (and (map? stream-data)
-               (:process stream-data))
-      (let [^Process process (:process stream-data)]
-        (when (.isAlive process)
-          (try
-            (.destroyForcibly process)
-            (catch Exception _)))))))
+  ([]
+   ;; No-arg version that uses state directly
+   (let [all-streams (state/all-streams)]
+     (cleanup-all-processes all-streams)))
+  ([streams-map any?]
+   ;; Original version that accepts a map
+   (doseq [[stream-key stream-data] streams-map]
+     (when (and (map? stream-data)
+                (:process stream-data))
+       (stop-stream stream-data)))))
 
 (defn-spec process-alive? boolean?
   "Check if a stream process is still alive."

@@ -205,6 +205,12 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
                     }
                 }
             }
+            
+            // If we exit the loop because stdin was closed (parent process died)
+            if (running.get()) {
+                System.err.println("Parent process stdin closed, shutting down");
+                shutdown();
+            }
         } catch (Exception e) {
             if (running.get()) {
                 messageProtocol.sendException("Command reader error", e);
@@ -326,9 +332,15 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     
     @Override
     public void onFrameClosing() {
-        messageProtocol.sendResponse("window-closed", null);
-        // Don't call shutdown() here - let the Clojure side handle it
-        // This ensures consistent behavior with button clicks
+        try {
+            messageProtocol.sendResponse("window-closed", null);
+            // Don't call shutdown() here - let the Clojure side handle it
+            // This ensures consistent behavior with button clicks
+        } catch (Exception e) {
+            // If we can't send the message (parent process is dead), shutdown directly
+            System.err.println("Parent process appears to be dead, shutting down directly");
+            shutdown();
+        }
     }
     
     private void cleanup() {
@@ -353,9 +365,15 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     
     @Override
     public void onWindowClosing() {
-        messageProtocol.sendResponse("window-closed", null);
-        // Don't call shutdown() here - let the Clojure side handle it
-        // This ensures consistent behavior with button clicks
+        try {
+            messageProtocol.sendResponse("window-closed", null);
+            // Don't call shutdown() here - let the Clojure side handle it
+            // This ensures consistent behavior with button clicks
+        } catch (Exception e) {
+            // If we can't send the message (parent process is dead), shutdown directly
+            System.err.println("Parent process appears to be dead, shutting down directly");
+            shutdown();
+        }
     }
     
     // WebSocketManager.EventCallback implementation

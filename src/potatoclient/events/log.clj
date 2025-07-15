@@ -4,6 +4,7 @@
   Manages log entry formatting, buffering, and batch updates
   to prevent UI flooding."
   (:require [potatoclient.state :as state]
+            [potatoclient.log-writer :as log-writer]
             [seesaw.core :as seesaw]
             [clojure.spec.alpha :as s]
             [orchestra.core :refer [defn-spec]]
@@ -73,6 +74,10 @@
   
   ;; Add to state buffer
   (state/add-log-entry! entry)
+  
+  ;; Write to file if logging is enabled
+  (when (log-writer/is-logging-enabled?)
+    (log-writer/write-log-entry! entry))
   
   ;; Schedule batch update
   (schedule-batch-update!)
