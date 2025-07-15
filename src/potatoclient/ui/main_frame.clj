@@ -38,9 +38,11 @@
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (clojure.java.io/resource "flags/ua.png"))
-                    nil)]
+                    nil)
+        ;; Add padding to display name to ensure menu width
+        padded-name (format "%-20s" display-name)]
     (action/action
-     :name display-name
+     :name padded-name
      :icon flag-icon
      :handler (fn [_]
                 ;; Only proceed if selecting a different language
@@ -51,37 +53,29 @@
 
 (defn-spec ^:private create-theme-action #(instance? javax.swing.Action %)
   "Create a theme selection action."
-  [theme-key ::theme-key, frame-ref #(instance? clojure.lang.IDeref %)]
-  (action/action
-   :name (theme/get-theme-name theme-key)
-   :icon (theme/key->icon theme-key)
-   :handler (fn [_]
-              ;; Only proceed if selecting a different theme
-              (when-not (= (theme/get-current-theme) theme-key)
-                (when (theme/set-theme! theme-key)
-                  (config/save-theme! theme-key)
-                  ;; Recreate frame to ensure icons refresh properly
-                  (when-let [frame @frame-ref]
-                    (javax.swing.SwingUtilities/updateComponentTreeUI frame)))))))
+  [theme-key ::theme-key, reload-fn fn?]
+  (let [theme-name (theme/get-theme-name theme-key)
+        ;; Add padding to theme name to ensure menu width
+        padded-name (format "%-20s" theme-name)]
+    (action/action
+     :name padded-name
+     :icon (theme/key->icon theme-key)
+     :handler (fn [_]
+                ;; Only proceed if selecting a different theme
+                (when-not (= (theme/get-current-theme) theme-key)
+                  (when (theme/set-theme! theme-key)
+                    (config/save-theme! theme-key)
+                    ;; Recreate frame to ensure all theme changes apply properly
+                    (reload-fn)))))))
 
-(defn-spec ^:private create-file-menu #(instance? javax.swing.JMenu %)
-  "Create the File menu."
-  []
-  (seesaw/menu 
-   :text (i18n/tr :menu-file)
-   :icon (theme/key->icon :actions-group-menu)
-   :items [(action/action
-            :name (i18n/tr :menu-file-exit)
-            :key "control Q"
-            :handler (fn [_] (System/exit 0)))]))
 
 (defn-spec ^:private create-theme-menu #(instance? javax.swing.JMenu %)
   "Create the Theme menu."
-  [frame-ref #(instance? clojure.lang.IDeref %)]
+  [reload-fn fn?]
   (seesaw/menu 
    :text (i18n/tr :menu-view-theme)
    :icon (theme/key->icon :actions-group-theme)
-   :items (map #(create-theme-action % frame-ref)
+   :items (map #(create-theme-action % reload-fn)
               (theme/get-available-themes))))
 
 (defn-spec ^:private create-language-menu #(instance? javax.swing.JMenu %)
@@ -95,10 +89,9 @@
 
 (defn-spec ^:private create-menu-bar #(instance? javax.swing.JMenuBar %)
   "Create the application menu bar."
-  [frame-ref #(instance? clojure.lang.IDeref %), reload-fn fn?]
+  [reload-fn fn?]
   (seesaw/menubar
-   :items [(create-file-menu)
-           (create-theme-menu frame-ref)
+   :items [(create-theme-menu reload-fn)
            (create-language-menu reload-fn)]))
 
 (defn-spec ^:private create-main-content #(instance? javax.swing.JPanel %)
@@ -182,7 +175,7 @@
     (reset! frame-ref frame)
     
     ;; Set up menu bar (icons should already be loaded)
-    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-ref reload-fn))
+    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar reload-fn))
     
     ;; Add window close handler
     (add-window-close-handler! frame)
