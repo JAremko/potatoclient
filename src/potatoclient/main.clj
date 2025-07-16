@@ -15,7 +15,10 @@
   []
   (if (runtime/release-build?)
     (println "Running RELEASE build - instrumentation disabled for optimal performance")
-    (println "Running DEVELOPMENT build - instrumentation available via (potatoclient.instrumentation/start!)")))
+    (do
+      (println "Running DEVELOPMENT build - starting instrumentation...")
+      (require 'potatoclient.instrumentation)
+      ((resolve 'potatoclient.instrumentation/start!)))))
 
 
 (defn- enable-dev-mode!
