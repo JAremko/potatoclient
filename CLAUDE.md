@@ -22,6 +22,32 @@ Example for new functions:
 (m/=> your-ns/process-data [:=> [:cat map? map?] any?])
 ```
 
+### Working with Instrumentation
+
+To ensure accurate spec reporting:
+
+1. **Start instrumentation** (loads all schemas):
+   ```clojure
+   (potatoclient.instrumentation/start!)
+   ```
+
+2. **Refresh schemas** after adding new specs:
+   ```clojure
+   (potatoclient.instrumentation/refresh-schemas!)
+   ```
+
+3. **Check unspecced functions**:
+   ```clojure
+   (potatoclient.instrumentation/report-unspecced-functions)
+   ```
+
+4. **Generate markdown report**:
+   ```clojure
+   (potatoclient.reports/generate-unspecced-functions-report!)
+   ```
+
+Note: When adding specs to `instrumentation.clj`, you must call `refresh-schemas!` or restart instrumentation for the changes to take effect.
+
 ## Quick Reference
 
 ```bash
@@ -33,6 +59,7 @@ make dev-reflect  # Run with reflection warnings
 make nrepl        # REPL on port 7888
 make proto        # Generate protobuf classes
 make clean        # Clean all artifacts
+make report-unspecced  # Generate report of functions without Malli specs
 ```
 
 ## Development vs Release Builds
@@ -246,6 +273,23 @@ When adding new functions:
    [:width pos-int?]
    [:height pos-int?]])
 ```
+
+### Checking for Unspecced Functions
+
+To ensure all functions have Malli specs:
+
+```bash
+# Generate a report of functions without specs
+make report-unspecced
+
+# The report will be saved to ./reports/unspecced-functions.md
+```
+
+This report will:
+- List all functions that lack Malli instrumentation
+- Group them by namespace
+- Provide statistics on coverage
+- Only include actual functions (not schema definitions)
 
 ### Instrumentation Usage
 

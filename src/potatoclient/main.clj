@@ -29,6 +29,21 @@
     (require 'potatoclient.dev)))
 
 
+(defn- generate-unspecced-report!
+  "Generate unspecced functions report and exit."
+  []
+  (println "Generating unspecced functions report...")
+  (require 'potatoclient.reports)
+  (let [generate-fn (resolve 'potatoclient.reports/generate-unspecced-functions-report!)]
+    (if generate-fn
+      (do
+        (generate-fn)
+        (println "Report generated successfully!")
+        (System/exit 0))
+      (do
+        (println "Error: Could not find report generation function")
+        (System/exit 1)))))
+
 (defn -main
   "Application entry point. Delegates to core namespace for actual initialization."
   [& args]
@@ -36,7 +51,10 @@
   (enable-dev-mode!)
   (try
     (logging/init!)
-    (apply core/-main args)
+    ;; Check for report generation flag
+    (if (some #{"--report-unspecced"} args)
+      (generate-unspecced-report!)
+      (apply core/-main args))
     (catch Exception e
       (binding [*out* *err*]
         (println "Fatal error during application startup:")

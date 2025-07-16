@@ -1,12 +1,12 @@
 # Unspecced Functions Report
 
-*Generated: 2025-07-16 14:28:43*
+*Generated: 2025-07-16 16:16:36*
 
 ## Summary
 
-![Unspecced Functions](https://img.shields.io/badge/Unspecced%20Functions-105-orange)
+![Unspecced Functions](https://img.shields.io/badge/Unspecced%20Functions-83-orange)
 
-⚠️ Found **105** functions without Malli specs across **18** namespaces.
+⚠️ Found **83** functions without Malli specs across **18** namespaces.
 
 ## Unspecced Functions by Namespace
 
@@ -92,40 +92,18 @@
 - `serialize-cmd`
 - `valid-command?`
 
+### potatoclient.reports
+
+- `generate-all-reports!`
+- `generate-unspecced-functions-report!`
+
 ### potatoclient.runtime
 
 - `release-build?`
 
-### potatoclient.specs
-
-- `click-count`
-- `domain`
-- `event-type`
-- `extended-state`
-- `from-cv-subsystem`
-- `important`
-- `ndc-x`
-- `ndc-y`
-- `protocol-version`
-- `session-id`
-- `translation-key`
-- `wheel-rotation`
-- `x-coord`
-- `y-coord`
-
 ### potatoclient.state
 
-- `all-streams`
-- `clear-stream!`
 - `current-state`
-- `get-domain`
-- `get-locale`
-- `get-stream`
-- `get-ui-element`
-- `register-ui-element!`
-- `set-domain!`
-- `set-locale!`
-- `set-stream!`
 
 ### potatoclient.state.config
 
@@ -175,9 +153,7 @@
 | Namespace | Count |
 | --- | --- |
 | `potatoclient.proto` | 18 |
-| `potatoclient.specs` | 14 |
 | `potatoclient.config` | 11 |
-| `potatoclient.state` | 11 |
 | `potatoclient.theme` | 8 |
 | `potatoclient.events.stream` | 7 |
 | `potatoclient.state.config` | 5 |
@@ -187,7 +163,9 @@
 | `potatoclient.state.streams` | 4 |
 | `potatoclient.state.ui` | 3 |
 | `potatoclient.ui.main-frame` | 3 |
+| `potatoclient.reports` | 2 |
 | `potatoclient.logging` | 2 |
+| `potatoclient.state` | 1 |
 | `potatoclient.main` | 1 |
 | `potatoclient.runtime` | 1 |
 | `potatoclient.core` | 1 |

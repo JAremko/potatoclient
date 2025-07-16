@@ -22,7 +22,7 @@ help: ## Show this help message
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Development:"
-	@grep -E '^(nrepl|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Quick Start with MCP:"
 	@echo "  1. make mcp-server    # Start MCP server (keep terminal open)"
@@ -109,6 +109,12 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 test: ## Run tests
 	@echo "Running tests..."
 	clojure -M:test
+
+# Report unspecced functions
+.PHONY: report-unspecced
+report-unspecced: build ## Generate report of functions without Malli specs
+	@echo "Generating unspecced functions report..."
+	java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH) --report-unspecced
 
 # Check dependencies
 .PHONY: check-deps
