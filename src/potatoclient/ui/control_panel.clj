@@ -29,25 +29,6 @@
     field))
 
 
-(defn- create-log-controls
-  "Create log management buttons."
-  []
-  (let [clear-btn (seesaw/button :text "Clear Log")
-        export-btn (seesaw/button :text (i18n/tr :menu-file-export))]
-    
-    ;; Clear button handler
-    (seesaw/listen clear-btn :action
-                  (fn [_] (state/clear-logs!)))
-    
-    ;; Export button handler - lazy load export dialog
-    (seesaw/listen export-btn :action
-                  (fn [_]
-                    (require '[potatoclient.ui.log-export :as log-export])
-                    ((resolve 'potatoclient.ui.log-export/save-logs-dialog))))
-    
-    [clear-btn export-btn]))
-
-
 (defn- create-header-section
   "Create the header section with domain configuration."
   []
@@ -60,16 +41,6 @@
            (seesaw/separator)]))
 
 
-
-(defn- create-log-section
-  "Create the log controls section."
-  []
-  (let [[clear-btn export-btn] (create-log-controls)]
-    (seesaw/vertical-panel
-     :items [(seesaw/separator)
-             (seesaw/flow-panel :items [clear-btn export-btn])])))
-
-
 (defn create
   "Create the control panel UI component.
   
@@ -78,6 +49,5 @@
   []
   (seesaw/vertical-panel
    :border panel-border-width
-   :items [(create-header-section)
-           (create-log-section)]))
+   :items [(create-header-section)]))
 

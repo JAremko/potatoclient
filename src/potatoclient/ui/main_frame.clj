@@ -8,13 +8,11 @@
             [potatoclient.state :as state]
             [potatoclient.process :as process]
             [potatoclient.ui.control-panel :as control-panel]
-            [potatoclient.ui.log-table :as log-table]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
             [potatoclient.runtime :as runtime]
-            [potatoclient.log-writer :as log-writer]
-            [potatoclient.events.log :as log]
+            [potatoclient.logging :as logging]
             [potatoclient.ipc :as ipc]
             [malli.core :as m]
             [potatoclient.specs :as specs])
@@ -154,9 +152,8 @@
 (defn- create-main-content
   "Create the main content panel."
   []
-  (seesaw/border-panel
-   :north (control-panel/create)
-   :center (log-table/create)))
+  ;; Since we removed the log view, just show the control panel
+  (control-panel/create))
 
 
 (defn- add-window-close-handler!
@@ -168,7 +165,7 @@
         (println "Shutting down PotatoClient...")
         (try
           (process/cleanup-all-processes)
-          (log-writer/stop-logging!)
+          (logging/shutdown!)
           (catch Exception e
             (println "Error during shutdown:" (.getMessage e))))
         (System/exit 0)))))
@@ -248,7 +245,9 @@
     
     ;; Log frame creation completion in dev mode
     (when-not (runtime/release-build?)
-      (log/log-info "UI" "Main frame created and configured"))
+      (logging/log-info
+       {:id ::frame-created
+        :msg "Main frame created and configured"}))
     
     frame))
 

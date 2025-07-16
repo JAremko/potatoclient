@@ -9,7 +9,7 @@ Multi-process video streaming client with dual H.264 WebSocket streams.
 - Cross-platform: Windows, macOS, Linux
 - Dark/Light themes (Sol Dark, Sol Light, Dark, Hi-Dark)
 - Multilingual: English, Ukrainian
-- Real-time event logging with filtering
+- Smart logging: file logging in dev, console-only in production
 - Comprehensive runtime validation with Malli schemas
 
 ## Quick Start
@@ -79,13 +79,15 @@ PotatoClient has two distinct build types:
 
 **Development Build** (`make build`, `make dev`):
 - Malli instrumentation available for manual activation
-- File logging enabled (logs to `logs/` directory)
+- Full logging to console and `./logs/potatoclient-{version}-{timestamp}.log`
+- All log levels: DEBUG, INFO, WARN, ERROR
 - Shows `[DEVELOPMENT]` in window title
 - Console output: `"Running DEVELOPMENT build - instrumentation available"`
 
 **Release Build** (`make release`):
 - No instrumentation overhead
-- File logging disabled
+- Minimal logging: only WARN/ERROR to stdout/stderr
+- No file logging for clean deployments
 - AOT compilation with direct linking
 - Optimized for performance
 - Shows `[RELEASE]` in window title
@@ -112,4 +114,30 @@ PotatoClient uses [Malli](https://github.com/metosin/malli) for comprehensive ru
 
 ;; Now all function calls are validated
 ;; Invalid calls will throw detailed error messages
+```
+
+### Logging System
+
+PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-performance logging:
+
+**Development Mode**:
+- Logs all levels (DEBUG, INFO, WARN, ERROR) to console
+- Creates timestamped log files: `./logs/potatoclient-{version}-{timestamp}.log`
+- Example: `./logs/potatoclient-1.5.3-20250716-131710.log`
+- Perfect for debugging and development
+
+**Production Mode**:
+- Only critical messages (WARN, ERROR) to stdout/stderr
+- No file logging for clean deployments
+- Zero performance overhead from debug logging
+- Ideal for production environments
+
+**Checking Logs**:
+```bash
+# Development: Check timestamped logs
+ls -la ./logs/
+tail -f ./logs/potatoclient-*.log
+
+# Production: Monitor console output
+./potatoclient | grep -E "WARN|ERROR"
 ```

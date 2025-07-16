@@ -3,7 +3,7 @@
   
   Processes window events, navigation/mouse events, and stream responses
   from the video subprocesses."
-  (:require [potatoclient.events.log :as log]
+  (:require [potatoclient.logging :as logging]
             [potatoclient.state :as state]
             [potatoclient.process :as process]
             [potatoclient.i18n :as i18n]
@@ -133,7 +133,8 @@
 (defn- handle-window-closed
   "Handle window closed event - terminate the associated process."
   [stream-key]
-  (log/log-info (name stream-key) "Stream window closed by X button")
+  (logging/log-stream-event stream-key :window-closed
+                           {:message "Stream window closed by X button"})
   (when-let [stream (state/get-stream stream-key)]
     (future
       (try
@@ -149,19 +150,18 @@
            (seesaw/text! btn (i18n/tr :control-button-connect))
            (seesaw/config! btn :selected? false)))
         (catch Exception e
-          (log/log-error (name stream-key)
-                        "Error handling window close"
-                        :exception e))))))
+          (logging/log-error
+           {:id ::window-close-error
+            :data {:stream stream-key
+                   :error (.getMessage e)}
+            :msg "Error handling window close"}))))))
 
 (defn handle-response-event
   "Handle a response event from a stream."
   [stream-key msg]
-  (log/add-log-entry!
-   {:time (System/currentTimeMillis)
-    :stream (:streamId msg)
-    :type "RESPONSE"
-    :message (:status msg)
-    :raw-data msg})
+  (logging/log-stream-event stream-key :response
+                           {:status (:status msg)
+                            :data msg})
   
   ;; Handle specific response types
   (when (= (:status msg) "window-closed")
@@ -173,13 +173,10 @@
   "Handle a navigation/mouse event."
   [msg]
   (let [event (:event msg)]
-    (log/add-log-entry!
-     {:time (System/currentTimeMillis)
-      :stream (:streamId msg)
-      :type "NAV"
-      :message (format-navigation-event event)
-      :raw-data msg
-      :nav-type (name (:type event))})
+    (logging/log-stream-event (:streamId msg) :navigation
+                             {:nav-type (:type event)
+                              :message (format-navigation-event event)
+                              :data event})
     nil))
 
 
@@ -187,13 +184,10 @@
   "Handle a window event."
   [msg]
   (let [event (:event msg)]
-    (log/add-log-entry!
-     {:time (System/currentTimeMillis)
-      :stream (:streamId msg)
-      :type "WINDOW"
-      :message (format-window-event event)
-      :raw-data msg
-      :event-type (name (:type event))})
+    (logging/log-stream-event (:streamId msg) :window
+                             {:event-type (:type event)
+                              :message (format-window-event event)
+                              :data event})
     nil))
 
 

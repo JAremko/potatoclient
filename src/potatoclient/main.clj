@@ -2,6 +2,7 @@
   "Main entry point for PotatoClient - a multi-process video streaming client."
   (:require [potatoclient.core :as core]
             [potatoclient.runtime :as runtime]
+            [potatoclient.logging :as logging]
             [clojure.java.io :as io]
             [malli.core :as m]
             [potatoclient.specs :as specs])
@@ -31,6 +32,7 @@
   (enable-instrumentation!)
   (enable-dev-mode!)
   (try
+    (logging/init!)
     (apply core/-main args)
     (catch Exception e
       (binding [*out* *err*]

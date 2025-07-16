@@ -6,7 +6,7 @@
   (:require [clojure.core.async :as async :refer [go-loop <!]]
             [potatoclient.state :as state]
             [potatoclient.process :as process]
-            [potatoclient.events.log :as log]
+            [potatoclient.logging :as logging]
             [potatoclient.events.stream :as stream-events]
             [malli.core :as m]
             [malli.dev :as dev]
@@ -18,7 +18,10 @@
 ;; Message type dispatch table
 (def ^:private message-handlers
   {:response stream-events/handle-response-event
-   :log      (fn [_ msg] (log/handle-log-event msg))
+   :log      (fn [_ msg] (logging/log-event ::stream-log
+                                           {:stream (:streamId msg)
+                                            :level (:level msg)
+                                            :message (:message msg)}))
    :navigation (fn [_ msg] (stream-events/handle-navigation-event msg))
    :window   (fn [_ msg] (stream-events/handle-window-event msg))})
 
@@ -36,11 +39,17 @@
     (try
       (handler stream-key msg)
       (catch Exception e
-        (log/log-error (name stream-key)
-                      (str "Error handling " (:type msg) " message")
-                      :exception e)))
-    (log/log-warning (name stream-key)
-                    (str "Unknown message type: " (:type msg)))))
+        (logging/log-error
+         {:id ::message-handler-error
+          :data {:stream stream-key
+                 :msg-type (:type msg)
+                 :error (.getMessage e)}
+          :msg (str "Error handling " (:type msg) " message")})))
+    (logging/log-warn
+     {:id ::unknown-message-type
+      :data {:stream stream-key
+             :msg-type (:type msg)}
+      :msg (str "Unknown message type: " (:type msg))})))
 
 
 (defn- process-stream-messages
@@ -82,12 +91,17 @@
         (state/set-stream! stream-key stream)
         (process-stream-messages stream-key stream)
         (initialize-stream stream)
-        (log/log-info (name stream-key)
-                     (str "Stream started: " endpoint)))
+        (logging/log-info
+         {:id ::stream-started
+          :data {:stream stream-key
+                 :endpoint endpoint}
+          :msg (str "Stream started: " endpoint)}))
       (catch Exception e
-        (log/log-error (name stream-key)
-                      "Failed to start stream"
-                      :exception e)
+        (logging/log-error
+         {:id ::stream-start-failed
+          :data {:stream stream-key
+                 :error (.getMessage e)}
+          :msg "Failed to start stream"})
         (state/clear-stream! stream-key)))))
 
 
@@ -103,11 +117,17 @@
       (when-let [stream (state/get-stream stream-key)]
         (process/stop-stream stream)
         (state/clear-stream! stream-key)
-        (log/log-info (name stream-key) "Stream stopped by control button"))
+        (logging/log-info
+         {:id ::stream-stopped
+          :data {:stream stream-key
+                 :source :control-button}
+          :msg "Stream stopped by control button"}))
       (catch Exception e
-        (log/log-error (name stream-key)
-                      "Error stopping stream"
-                      :exception e)))))
+        (logging/log-error
+         {:id ::stream-stop-error
+          :data {:stream stream-key
+                 :error (.getMessage e)}
+          :msg "Error stopping stream"})))))
 
 
 (defn restart-stream
@@ -132,8 +152,10 @@
   (if-let [stream (state/get-stream stream-key)]
     (process/send-command stream command)
     (do
-      (log/log-warning (name stream-key)
-                      "Cannot send command - stream not connected")
+      (logging/log-warn
+       {:id ::stream-not-connected
+        :data {:stream stream-key}
+        :msg "Cannot send command - stream not connected"})
       false)))
 
 

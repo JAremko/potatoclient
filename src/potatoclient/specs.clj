@@ -80,37 +80,6 @@
   [:map-of keyword? any?])
 
 ;; -----------------------------------------------------------------------------
-;; Logging Schemas
-;; -----------------------------------------------------------------------------
-
-(def log-time
-  "Log timestamp"
-  pos-int?)
-
-(def log-stream
-  "Log stream name"
-  string?)
-
-(def log-type
-  "Log type/level"
-  string?)
-
-(def log-message
-  "Log message content"
-  string?)
-
-(def log-entry
-  "Complete log entry"
-  [:map
-   [:time log-time]
-   [:stream log-stream]
-   [:type log-type]
-   [:message log-message]
-   [:event-type {:optional true} [:maybe string?]]
-   [:nav-type {:optional true} [:maybe string?]]
-   [:raw-data {:optional true} any?]])
-
-;; -----------------------------------------------------------------------------
 ;; IPC/Message Schemas
 ;; -----------------------------------------------------------------------------
 
@@ -226,10 +195,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Java Interop Schemas
 ;; -----------------------------------------------------------------------------
-
-(def buffered-writer
-  "Java BufferedWriter instance"
-  [:fn #(instance? java.io.BufferedWriter %)])
 
 (def file
   "Java File instance"
@@ -361,12 +326,6 @@
     ::stream-process-map stream-process-map
     ::process-command process-command
     
-    ;; Logging
-    ::log-time log-time
-    ::log-stream log-stream
-    ::log-type log-type
-    ::log-message log-message
-    ::log-entry log-entry
     
     ;; IPC
     ::message-type message-type
@@ -395,7 +354,6 @@
     ::navigation-event navigation-event
     
     ;; Java interop
-    ::buffered-writer buffered-writer
     ::file file
     ::color color
     ::rectangle rectangle

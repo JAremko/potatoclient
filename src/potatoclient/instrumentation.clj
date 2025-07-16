@@ -19,13 +19,10 @@
             [potatoclient.process :as process]
             [potatoclient.proto :as proto]
             [potatoclient.ipc :as ipc]
-            [potatoclient.log-writer :as log-writer]
+            [potatoclient.logging :as logging]
             ;; Event namespaces
             [potatoclient.events.stream :as stream-events]
-            [potatoclient.events.log :as log-events]
             ;; UI namespaces
-            [potatoclient.ui.log-export :as log-export]
-            [potatoclient.ui.log-table :as log-table]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.main-frame :as main-frame]
             ;; Main namespaces
@@ -78,14 +75,16 @@
 ;; -----------------------------------------------------------------------------
 
 (m/=> state/get-stream [:=> [:cat ::specs/stream-key] [:maybe ::specs/stream-process-map]])
-(m/=> state/get-all-streams [:=> [:cat] [:map-of ::specs/stream-key ::specs/stream-process-map]])
+(m/=> state/all-streams [:=> [:cat] [:map-of ::specs/stream-key ::specs/stream-process-map]])
 (m/=> state/set-stream! [:=> [:cat ::specs/stream-key ::specs/stream-process-map] any?])
 (m/=> state/clear-stream! [:=> [:cat ::specs/stream-key] any?])
-(m/=> state/get-app-config [:=> [:cat ::specs/config-key] any?])
-(m/=> state/update-app-config! [:=> [:cat ::specs/config-key any?] any?])
-(m/=> state/get-logs [:=> [:cat] [:sequential ::specs/log-entry]])
 (m/=> state/get-ui-element [:=> [:cat keyword?] any?])
-(m/=> state/set-ui-element! [:=> [:cat keyword? any?] any?])
+(m/=> state/register-ui-element! [:=> [:cat keyword? any?] any?])
+(m/=> state/get-locale [:=> [:cat] ::specs/locale])
+(m/=> state/set-locale! [:=> [:cat ::specs/locale] any?])
+(m/=> state/get-domain [:=> [:cat] ::specs/domain])
+(m/=> state/set-domain! [:=> [:cat string?] any?])
+(m/=> state/current-state [:=> [:cat] map?])
 
 ;; -----------------------------------------------------------------------------
 ;; Events.stream namespace schemas
@@ -100,17 +99,6 @@
 (m/=> stream-events/all-streams-connected? [:=> [:cat] boolean?])
 
 ;; -----------------------------------------------------------------------------
-;; Events.log namespace schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> log-events/add-log-entry! [:=> [:cat ::specs/log-entry] any?])
-(m/=> log-events/get-next-id [:=> [:cat] int?])
-(m/=> log-events/trim-logs! [:=> [:cat] any?])
-(m/=> log-events/update-table-model! [:=> [:cat] any?])
-(m/=> log-events/scroll-to-bottom! [:=> [:cat] any?])
-(m/=> log-events/log-error [:=> [:cat string? string? [:* [:alt [:tuple keyword? any?]]]] any?])
-
-;; -----------------------------------------------------------------------------
 ;; Proto namespace schemas
 ;; -----------------------------------------------------------------------------
 
@@ -119,7 +107,7 @@
 (m/=> proto/build-message [:=> [:cat any?] any?])
 (m/=> proto/create-message [:=> [:cat keyword? map?] any?])
 (m/=> proto/message->bytes [:=> [:cat any?] bytes?])
-(m/=> proto/write-delimited [:=> [:cat any? ::specs/buffered-writer] any?])
+(m/=> proto/write-delimited [:=> [:cat any? any?] any?])
 (m/=> proto/parse-command [:=> [:cat bytes?] [:maybe ::specs/command]])
 (m/=> proto/create-gimbal-angle-command [:=> [:cat number? number?] ::specs/command])
 (m/=> proto/create-lrf-request-command [:=> [:cat] ::specs/command])
@@ -132,17 +120,11 @@
 (m/=> proto/handle-lrf-command [:=> [:cat keyword?] any?])
 
 ;; -----------------------------------------------------------------------------
-;; Log-writer namespace schemas
+;; Logging namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> log-writer/ensure-log-directory! [:=> [:cat] any?])
-(m/=> log-writer/get-log-file-name [:=> [:cat] string?])
-(m/=> log-writer/get-current-log-file [:=> [:cat] ::specs/file])
-(m/=> log-writer/rotate-log-if-needed! [:=> [:cat] any?])
-(m/=> log-writer/format-log-entry [:=> [:cat ::specs/log-entry] string?])
-(m/=> log-writer/write-log-entry! [:=> [:cat ::specs/log-entry] any?])
-(m/=> log-writer/init-log-writer! [:=> [:cat] any?])
-(m/=> log-writer/shutdown-log-writer! [:=> [:cat] any?])
+(m/=> logging/init! [:=> [:cat] any?])
+(m/=> logging/shutdown! [:=> [:cat] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; IPC namespace schemas
@@ -165,21 +147,6 @@
 (m/=> process/get-stream-state [:=> [:cat ::specs/stream-process-map] ::specs/process-state])
 
 ;; -----------------------------------------------------------------------------
-;; UI.log-export namespace schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> log-export/export-logs [:=> [:cat ::specs/jframe] any?])
-
-;; -----------------------------------------------------------------------------
-;; UI.log-table namespace schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> log-table/create-table-model [:=> [:cat] any?])
-(m/=> log-table/create-cell-renderer [:=> [:cat] ::specs/table-cell-renderer])
-(m/=> log-table/create-log-table [:=> [:cat] any?])
-(m/=> log-table/create-log-panel [:=> [:cat] ::specs/jscroll-pane])
-
-;; -----------------------------------------------------------------------------
 ;; UI.control-panel namespace schemas
 ;; -----------------------------------------------------------------------------
 
@@ -197,32 +164,48 @@
 (m/=> main-frame/load-window-state [:=> [:cat] [:maybe ::specs/window-state]])
 (m/=> main-frame/restore-window-state [:=> [:cat ::specs/jframe] any?])
 (m/=> main-frame/make-centered [:=> [:cat ::specs/jframe] any?])
-(m/=> main-frame/set-icon [:=> [:cat ::specs/jframe] any?])
-(m/=> main-frame/create-main-frame [:=> [:cat ::specs/frame-params] ::specs/jframe])
-(m/=> main-frame/create-theme-menu-item [:=> [:cat ::specs/theme-key ::specs/jframe] any?])
-(m/=> main-frame/create-locale-menu-item [:=> [:cat ::specs/locale] any?])
-(m/=> main-frame/create-help-action [:=> [:cat ::specs/jframe ::specs/frame-params] ::specs/action])
-(m/=> main-frame/create-menu-bar [:=> [:cat ::specs/jframe ::specs/frame-params] ::specs/jmenu-bar])
-(m/=> main-frame/show-about-dialog [:=> [:cat ::specs/jframe ::specs/frame-params] any?])
+(m/=> main-frame/setup-window-persistence [:=> [:cat ::specs/jframe] any?])
+(m/=> main-frame/create-language-menu [:=> [:cat] ::specs/jmenu])
+(m/=> main-frame/create-theme-menu [:=> [:cat ::specs/jframe] ::specs/jmenu])
+(m/=> main-frame/create-view-menu [:=> [:cat ::specs/jframe] ::specs/jmenu])
+(m/=> main-frame/create-help-menu [:=> [:cat] ::specs/jmenu])
+(m/=> main-frame/create-menu-bar [:=> [:cat ::specs/jframe] ::specs/jmenu-bar])
+(m/=> main-frame/create-main-frame [:=> [:cat map?] ::specs/jframe])
 
 ;; -----------------------------------------------------------------------------
 ;; Core namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> core/setup-shutdown-hook [:=> [:cat any?] any?])
-(m/=> core/initialize-ui! [:=> [:cat] any?])
-(m/=> core/build-type-string [:=> [:cat] string?])
-(m/=> core/setup-exception-handler! [:=> [:cat] any?])
-(m/=> core/-main [:=> [:cat [:* string?]] any?])
-(m/=> core/shutdown! [:=> [:cat] any?])
+(m/=> core/start-application [:=> [:cat] any?])
+(m/=> core/shutdown-application [:=> [:cat] any?])
 
 ;; -----------------------------------------------------------------------------
-;; Instrumentation startup
+;; Instrumentation control
 ;; -----------------------------------------------------------------------------
+
+(defonce ^:private instrumentation-started? (atom false))
 
 (defn start!
-  "Start Malli instrumentation with pretty error reporting."
+  "Start function instrumentation.
+   
+   This should only be called in development environments after
+   the application has been initialized."
   []
-  (println "Starting Malli function instrumentation...")
-  (dev/start! {:report (pretty/thrower)})
-  (println "Malli function instrumentation enabled."))
+  (if @instrumentation-started?
+    (println "Instrumentation already started")
+    (do
+      (println "Starting Malli function instrumentation...")
+      (dev/start! {:report (pretty/reporter)})
+      (reset! instrumentation-started? true)
+      (println "Instrumentation started successfully"))))
+
+(defn stop!
+  "Stop function instrumentation."
+  []
+  (if @instrumentation-started?
+    (do
+      (println "Stopping Malli function instrumentation...")
+      (dev/stop!)
+      (reset! instrumentation-started? false)
+      (println "Instrumentation stopped"))
+    (println "Instrumentation not running")))

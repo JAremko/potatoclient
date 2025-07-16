@@ -39,7 +39,7 @@ make clean        # Clean all artifacts
 
 ### Development Build (`make build`)
 - **Instrumentation**: Available via `(potatoclient.instrumentation/start!)`
-- **File Logging**: Enabled (logs to `logs/` directory)
+- **Logging**: All levels (DEBUG, INFO, WARN, ERROR) to console and timestamped file in `./logs/`
 - **Window Title**: Shows `[DEVELOPMENT]`
 - **Console**: "Running DEVELOPMENT build - instrumentation available"
 - **Metadata**: Full debugging information included
@@ -47,7 +47,7 @@ make clean        # Clean all artifacts
 
 ### Release Build (`make release`)
 - **Instrumentation**: Completely disabled
-- **File Logging**: Disabled
+- **Logging**: Only WARN/ERROR to stdout/stderr, no file logging
 - **Window Title**: Shows `[RELEASE]`
 - **Console**: "Running RELEASE build - instrumentation disabled"
 - **Metadata**: Stripped (smaller JAR)
@@ -71,6 +71,7 @@ make clean        # Clean all artifacts
 - `potatoclient.runtime` - Runtime detection utilities
 - `potatoclient.specs` - Centralized Malli schemas
 - `potatoclient.instrumentation` - Function schemas (dev only)
+- `potatoclient.logging` - Telemere-based logging configuration
 
 **Java (Stream Processes)**
 - `VideoStreamManager` - WebSocket + GStreamer pipeline
@@ -132,6 +133,40 @@ Translations are stored in separate EDN files under `resources/i18n/`:
 
 This allows editing translation files and seeing changes without restarting.
 
+## Logging System
+
+PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-performance logging with different behaviors for development and production builds.
+
+### Development Logging
+- **All log levels**: DEBUG, INFO, WARN, ERROR
+- **Dual output**: Console and timestamped file
+- **Log location**: `./logs/potatoclient-{version}-{timestamp}.log`
+- **Example**: `./logs/potatoclient-dev-20250716-131710.log`
+
+### Production Logging
+- **Critical only**: WARN and ERROR levels
+- **Console only**: stdout/stderr, no file creation
+- **Zero overhead**: No performance impact from debug logging
+- **Clean deployment**: No log file management needed
+
+### Usage in Code
+```clojure
+(require '[potatoclient.logging :as logging])
+
+;; Standard logging
+(logging/log-debug "Debug information")
+(logging/log-info "Process started")
+(logging/log-warn "Connection slow")
+(logging/log-error "Connection failed")
+
+;; Stream events
+(logging/log-stream-event :heat :connected {:url "wss://example.com"})
+(logging/log-stream-event :day :error {:message "Timeout"})
+```
+
+### Java Integration
+Java subprocesses send log messages via IPC, which are processed by the Clojure logging system. This ensures consistent logging behavior and allows the main process to control what gets logged based on build type.
+
 ## Configuration
 
 Platform-specific locations:
@@ -151,7 +186,6 @@ Config format (EDN):
 State is separated by concern:
 - `streams-state` - Process references
 - `app-config` - Runtime configuration
-- `logs-state` - Log entries and buffering
 - `ui-refs` - UI component references
 
 All state functions include validation via Malli schemas.
@@ -230,14 +264,14 @@ When adding new functions:
 
 ### Development Build (default)
 - Malli instrumentation available (manual loading)
-- File logging to `logs/` directory
+- Full logging (DEBUG, INFO, WARN, ERROR) to console and `./logs/potatoclient-{version}-{timestamp}.log`
 - Full error messages and stack traces
 - Window title shows `[DEVELOPMENT]`
 - Enable with: `make build`
 
 ### Release Build (optimized)
 - No instrumentation overhead
-- No file logging
+- Minimal logging (WARN, ERROR only) to stdout/stderr
 - AOT compilation with direct linking
 - Metadata stripped (`:doc`, `:file`, `:line`)
 - Window title shows `[RELEASE]`
@@ -297,8 +331,8 @@ Release builds from CI have:
 Users can verify they're running an optimized release:
 1. Check console output on startup
 2. Look for `[RELEASE]` in window title
-3. No log files created in `logs/` directory
-4. Log shows: `"Control Center started (vX.X.X RELEASE build)"`
+3. No log files created
+4. Only critical messages (warnings/errors) appear on console
 
 ## Recent Optimizations
 
@@ -310,8 +344,13 @@ Users can verify they're running an optimized release:
 
 ### Window Event Handling
 1. **Fixed X Button**: Removed duplicate window listeners that prevented proper close handling
-2. **Enhanced Logging**: Added distinct logging for different close methods (X button, control button, app shutdown)
-3. **Consistent Behavior**: All close methods now follow the same IPC message flow
+2. **Consistent Behavior**: All close methods now follow the same IPC message flow
+
+### Logging System Simplification
+1. **Telemere Integration**: Replaced custom logging with high-performance Telemere library
+2. **Removed Log UI**: Eliminated in-app log viewer for cleaner interface
+3. **Smart Logging**: Development builds log everything to timestamped files, release builds only output critical events
+4. **Zero Overhead**: Conditional evaluation ensures no performance impact in production
 
 ## Best Practices
 
@@ -321,3 +360,6 @@ Users can verify they're running an optimized release:
 4. **Run release builds for production** to avoid validation overhead
 5. **Keep schemas in sync** with actual function implementations
 6. **Use existing schemas** from `potatoclient.specs` when possible
+7. **Use appropriate log levels**: DEBUG for development details, INFO for normal operations, WARN for issues, ERROR for failures
+8. **Check logs during development**: Look in `./logs/` directory for timestamped log files
+9. **Monitor production logs**: Only warnings and errors appear on stdout/stderr in release builds

@@ -5,8 +5,7 @@
             [potatoclient.state :as state]
             [potatoclient.process :as process]
             [potatoclient.ui.main-frame :as main-frame]
-            [potatoclient.events.log :as log]
-            [potatoclient.log-writer :as log-writer]
+            [potatoclient.logging :as logging]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
@@ -40,7 +39,7 @@
     (fn []
       (try
         (process/cleanup-all-processes)
-        (log-writer/stop-logging!)
+        (logging/shutdown!)
         (catch Exception e
           nil))))))
 
@@ -50,20 +49,19 @@
   []
   (config/initialize!)
   (i18n/init!)
-  (log-writer/start-logging!)
   (setup-shutdown-hook!))
 
 
 (defn- log-startup!
   "Log application startup."
   []
-  (log/add-log-entry!
-   {:time (System/currentTimeMillis)
-    :stream "SYSTEM"
-    :type "INFO"
-    :message (format "Control Center started (v%s %s build)"
-                     (get-version)
-                     (get-build-type))}))
+  (logging/log-info
+   {:id ::startup
+    :data {:version (get-version)
+           :build-type (get-build-type)}
+    :msg (format "Control Center started (v%s %s build)"
+                 (get-version)
+                 (get-build-type))}))
 
 
 (defn -main
