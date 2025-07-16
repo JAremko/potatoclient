@@ -16,6 +16,9 @@
             [potatoclient.i18n :as i18n]
             [potatoclient.config :as config]
             [potatoclient.state :as state]
+            [potatoclient.state.streams :as state-streams]
+            [potatoclient.state.config :as state-config]
+            [potatoclient.state.ui :as state-ui]
             [potatoclient.process :as process]
             [potatoclient.proto :as proto]
             [potatoclient.ipc :as ipc]
@@ -75,7 +78,7 @@
 ;; -----------------------------------------------------------------------------
 
 (m/=> state/get-stream [:=> [:cat ::specs/stream-key] [:maybe ::specs/stream-process-map]])
-(m/=> state/all-streams [:=> [:cat] [:map-of ::specs/stream-key ::specs/stream-process-map]])
+(m/=> state/all-streams [:=> [:cat] [:map-of ::specs/stream-key [:maybe ::specs/stream-process-map]]])
 (m/=> state/set-stream! [:=> [:cat ::specs/stream-key ::specs/stream-process-map] any?])
 (m/=> state/clear-stream! [:=> [:cat ::specs/stream-key] any?])
 (m/=> state/get-ui-element [:=> [:cat keyword?] any?])
@@ -85,6 +88,33 @@
 (m/=> state/get-domain [:=> [:cat] ::specs/domain])
 (m/=> state/set-domain! [:=> [:cat string?] any?])
 (m/=> state/current-state [:=> [:cat] map?])
+
+;; -----------------------------------------------------------------------------
+;; State.streams namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> state-streams/get-stream [:=> [:cat ::specs/stream-key] [:maybe ::specs/stream-process-map]])
+(m/=> state-streams/set-stream! [:=> [:cat ::specs/stream-key ::specs/stream-process-map] any?])
+(m/=> state-streams/clear-stream! [:=> [:cat ::specs/stream-key] any?])
+(m/=> state-streams/all-streams [:=> [:cat] [:map-of ::specs/stream-key [:maybe ::specs/stream-process-map]]])
+
+;; -----------------------------------------------------------------------------
+;; State.config namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> state-config/get-locale [:=> [:cat] ::specs/locale])
+(m/=> state-config/set-locale! [:=> [:cat ::specs/locale] any?])
+(m/=> state-config/get-domain [:=> [:cat] ::specs/domain])
+(m/=> state-config/set-domain! [:=> [:cat string?] any?])
+(m/=> state-config/get-config [:=> [:cat] map?])
+
+;; -----------------------------------------------------------------------------
+;; State.ui namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> state-ui/register-ui-element! [:=> [:cat keyword? any?] any?])
+(m/=> state-ui/get-ui-element [:=> [:cat keyword?] any?])
+(m/=> state-ui/all-ui-elements [:=> [:cat] [:sequential keyword?]])
 
 ;; -----------------------------------------------------------------------------
 ;; Events.stream namespace schemas

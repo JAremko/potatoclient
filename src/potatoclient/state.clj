@@ -2,117 +2,39 @@
   "Application state management for PotatoClient.
   
   Provides centralized state management with clear boundaries between
-  different state concerns (streams, UI, configuration)."
-  (:require [potatoclient.config :as config]
-            [malli.core :as m]
-            [potatoclient.specs :as specs]
-            [clojure.string]))
+  different state concerns (streams, UI, configuration).
+  
+  This namespace re-exports all state management functions from the
+  sub-namespaces for backward compatibility."
+  (:require [potatoclient.state.streams :as streams]
+            [potatoclient.state.config :as config]
+            [potatoclient.state.ui :as ui]))
 
+;; Re-export stream management functions
+(def get-stream streams/get-stream)
+(def set-stream! streams/set-stream!)
+(def clear-stream! streams/clear-stream!)
+(def all-streams streams/all-streams)
 
-;; Core application state - separated by concern
-;; Stream process references
-(defonce ^:private streams-state
-  (atom {:heat nil
-         :day nil}))
+;; Re-export configuration functions
+(def get-locale config/get-locale)
+(def set-locale! config/set-locale!)
+(def get-domain config/get-domain)
+(def set-domain! config/set-domain!)
 
-;; Runtime configuration state
-(defonce ^:private app-config
-  (atom {:locale :english}))
-
-;; UI component references for updates
-(defonce ^:private ui-refs
-  (atom {}))
-
-;; Stream management
-(defn get-stream
-  "Get a stream process by key (:heat or :day)."
-  [stream-key]
-  {:pre [(m/validate specs/stream-key stream-key)]}
-  (get @streams-state stream-key))
-
-
-(defn set-stream!
-  "Set a stream process."
-  [stream-key stream]
-  {:pre [(m/validate specs/stream-key stream-key)
-         (map? stream)]}
-  (swap! streams-state assoc stream-key stream))
-
-
-(defn clear-stream!
-  "Clear a stream process."
-  [stream-key]
-  {:pre [(m/validate specs/stream-key stream-key)]}
-  (swap! streams-state assoc stream-key nil))
-
-
-(defn all-streams
-  "Get all stream entries as a map."
-  []
-  @streams-state)
-
-
-;; Domain/server configuration
-(defn get-domain
-  "Get the current domain configuration from persistent config."
-  []
-  (config/get-domain))
-
-
-(defn set-domain!
-  "Update the domain configuration persistently."
-  [domain]
-  {:pre [(string? domain)
-         (not (clojure.string/blank? domain))]}
-  (config/save-domain! domain))
-
-
-;; UI element management
-(defn register-ui-element!
-  "Register a UI element for later updates."
-  [element-key element]
-  {:pre [(keyword? element-key)
-         (some? element)]}
-  (swap! ui-refs assoc element-key element))
-
-
-(defn get-ui-element
-  "Get a registered UI element."
-  [element-key]
-  {:pre [(keyword? element-key)]}
-  (get @ui-refs element-key))
-
-
-;; Configuration management
-(defn get-locale
-  "Get the current locale."
-  []
-  (:locale @app-config))
-
-
-(defn set-locale!
-  "Set the current locale."
-  [locale]
-  {:pre [(m/validate specs/locale locale)]}
-  (swap! app-config assoc :locale locale)
-  ;; Also update default Locale
-  (let [locale-map {:english ["en" "US"]
-                    :ukrainian ["uk" "UA"]}
-        [lang country] (get locale-map locale ["en" "US"])]
-    (java.util.Locale/setDefault
-     (java.util.Locale. ^String lang ^String country))))
-
+;; Re-export UI functions
+(def register-ui-element! ui/register-ui-element!)
+(def get-ui-element ui/get-ui-element)
 
 ;; State inspection (useful for debugging/REPL)
 (defn current-state
   "Get a snapshot of all application state.
   Useful for debugging - not for normal application use."
   []
-  {:streams @streams-state
-   :config @app-config
-   :ui-elements (keys @ui-refs)})
+  {:streams (streams/all-streams)
+   :config (config/get-config)
+   :ui-elements (ui/all-ui-elements)})
 
-
-;; Atom access for legacy compatibility
-(def app-state streams-state)
-(def ui-elements ui-refs)
+;; Legacy compatibility - these are still used in some places
+(def app-state streams/app-state)
+(def ui-elements ui/ui-elements)
