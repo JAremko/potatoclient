@@ -76,6 +76,9 @@ make clean        # Clean all artifacts
 - `VideoStreamManager` - WebSocket + GStreamer pipeline
 - Hardware decoder selection and fallback
 - Auto-reconnection with exponential backoff
+- Buffer pooling for zero-allocation streaming
+- Optimized lock-free data pushing
+- Direct pipeline without frame rate limiting
 
 ## Development Tasks
 
@@ -97,8 +100,9 @@ make clean        # Clean all artifacts
 3. Add to `ipc/message-handlers` dispatch table
 
 **Modify Pipeline**
-- Edit `VideoStreamManager.java`
-- Decoder priority in `findBestH264Decoder()`
+- Edit `GStreamerPipeline.java` for pipeline structure
+- Decoder priority in `GStreamerPipeline.java` constructor
+- Pipeline: appsrc → h264parse → decoder → queue → videosink
 
 **Update Protocol**
 1. Edit `.proto` files
@@ -251,6 +255,12 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 **Build**: Java 17+, Protobuf 3.15.0 (bundled)
 **Streams**: Heat (900x720), Day (1920x1080)
 
+**Performance Optimizations**:
+- Zero-allocation streaming with buffer pooling
+- Lock-free fast path for video data
+- Direct pipeline without unnecessary elements
+- Hardware acceleration prioritized
+
 **Hardware Decoders** (priority):
 1. NVIDIA (nvh264dec)
 2. Direct3D 11 (d3d11h264dec) 
@@ -289,6 +299,19 @@ Users can verify they're running an optimized release:
 2. Look for `[RELEASE]` in window title
 3. No log files created in `logs/` directory
 4. Log shows: `"Control Center started (vX.X.X RELEASE build)"`
+
+## Recent Optimizations
+
+### Video Streaming Performance
+1. **Buffer Pooling**: Implemented zero-allocation streaming with reusable buffers
+2. **Lock Optimization**: Minimized lock contention by acquiring/releasing locks only during critical operations
+3. **Pipeline Simplification**: Removed unnecessary elements (videorate) for better performance
+4. **Fixed Keyframe Bug**: Removed faulty keyframe detection that prevented video playback
+
+### Window Event Handling
+1. **Fixed X Button**: Removed duplicate window listeners that prevented proper close handling
+2. **Enhanced Logging**: Added distinct logging for different close methods (X button, control button, app shutdown)
+3. **Consistent Behavior**: All close methods now follow the same IPC message flow
 
 ## Best Practices
 

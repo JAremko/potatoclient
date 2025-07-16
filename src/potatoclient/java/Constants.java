@@ -55,4 +55,12 @@ public final class Constants {
     public static final int STRING_BUILDER_INITIAL_SIZE = 256;
     public static final int STRING_WRITER_INITIAL_SIZE = 512;
     public static final int MAP_INITIAL_CAPACITY = 8;
+    
+    // Buffer pooling
+    public static final int BUFFER_POOL_SIZE = 10;
+    public static final int MAX_BUFFER_SIZE = 2 * 1024 * 1024; // 2MB max frame size
+    
+    // Frame rate limiting
+    public static final int TARGET_FPS = 30;
+    public static final long FRAME_INTERVAL_NS = 1_000_000_000L / TARGET_FPS; // 33.33ms
 }

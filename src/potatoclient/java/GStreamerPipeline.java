@@ -11,6 +11,8 @@ import java.awt.Component;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Queue;
 import static potatoclient.java.Constants.*;
 
 public class GStreamerPipeline {
@@ -37,6 +39,11 @@ public class GStreamerPipeline {
     private volatile boolean hasReceivedKeyframe = false;
     private volatile Component pendingVideoComponent = null;
     private volatile boolean overlaySet = false;
+    
+    // Buffer pool for zero-allocation streaming
+    private final Queue<Buffer> bufferPool = new ConcurrentLinkedQueue<>();
+    private final AtomicLong poolHits = new AtomicLong(0);
+    private final AtomicLong poolMisses = new AtomicLong(0);
     
     public GStreamerPipeline(String streamId, EventCallback callback) {
         this.streamId = streamId;
@@ -130,6 +137,8 @@ public class GStreamerPipeline {
             appsrc.set("max-bytes", 0L);
             appsrc.set("block", false);
             appsrc.set("emit-signals", false);
+            appsrc.set("min-latency", 0L);
+            appsrc.set("max-latency", 0L);
             
             // H264 parser
             Element h264parse = ElementFactory.make("h264parse", "h264parse");
@@ -220,6 +229,7 @@ public class GStreamerPipeline {
             queue.set("max-size-time", QUEUE_MAX_TIME_NS);
             queue.set("max-size-bytes", 0L);
             
+            
             // Skip video converter/scaler - test direct pipeline
             callback.onLog("INFO", "Using direct pipeline without color conversion");
             
@@ -260,7 +270,7 @@ public class GStreamerPipeline {
             
             // Add elements to pipeline and link based on decoder type
             if ("decodebin".equals(selectedDecoder)) {
-                // decodebin handles parsing internally, so we skip h264parse
+                // decodebin handles parsing internally
                 pipeline.addMany(appsrc, decoder, queue, videosink);
                 
                 // Link appsrc to decoder
@@ -307,6 +317,10 @@ public class GStreamerPipeline {
                 pendingVideoComponent = videoComponent;
                 callback.onLog("DEBUG", "Deferring video overlay setup until first frame");
             }
+            
+            // Configure pipeline for low latency
+            pipeline.set("latency", 0L);
+            pipeline.set("delay", 0L);
             
             // Start pipeline
             StateChangeReturn ret = pipeline.play();
@@ -364,51 +378,103 @@ public class GStreamerPipeline {
         }
     }
     
-    public void pushVideoData(ByteBuffer data) {
-        // Quick check without lock
-        if (pipeline == null || appsrc == null || !callback.isRunning()) return;
+    private Buffer acquireBuffer(int size) {
+        // Try to get a buffer from the pool
+        Buffer buffer = bufferPool.poll();
         
-        // Only acquire lock if we need to process
-        pipelineLock.lock();
+        if (buffer != null) {
+            // GStreamer buffers are mutable, we can reuse any buffer
+            poolHits.incrementAndGet();
+            return buffer;
+        }
+        
+        // Need to allocate a new buffer
+        poolMisses.incrementAndGet();
+        
+        return new Buffer(Math.min(size, MAX_BUFFER_SIZE));
+    }
+    
+    private void releaseBuffer(Buffer buffer) {
+        if (buffer != null && bufferPool.size() < BUFFER_POOL_SIZE) {
+            bufferPool.offer(buffer);
+        }
+    }
+    
+    public void pushVideoData(ByteBuffer data) {
+        // Fast path - check without lock
+        if (pipeline == null || appsrc == null || !callback.isRunning()) {
+            return;
+        }
+        
+        int dataSize = data.remaining();
+        Buffer buffer = null;
+        
         try {
-            if (pipeline == null || appsrc == null) return;
+            // Acquire buffer before taking lock
+            buffer = acquireBuffer(dataSize);
             
-            startTime.compareAndSet(0, System.nanoTime());
-            
-            // Direct buffer push - avoid extra copy
-            Buffer buffer = new Buffer(data.remaining());
+            // Map and copy data outside of lock
             ByteBuffer bb = buffer.map(false);
             bb.put(data);
             buffer.unmap();
             
-            // Push buffer to pipeline
-            FlowReturn ret = appsrc.pushBuffer(buffer);
-            if (ret != FlowReturn.OK && ret != FlowReturn.FLUSHING) {
-                if (callback.isRunning()) {
-                    callback.onLog("ERROR", "Error pushing buffer: " + ret);
+            // Only lock for the actual push operation
+            pipelineLock.lock();
+            try {
+                if (pipeline == null || appsrc == null) {
+                    return;
                 }
-            }
-            
-            long frames = frameCount.incrementAndGet();
-            
-            // Mark that we've received the first keyframe
-            if (!hasReceivedKeyframe) {
-                hasReceivedKeyframe = true;
-                callback.onLog("DEBUG", "Received first keyframe");
                 
-                // Setup video overlay after first frame
-                setupVideoOverlay();
-            }
-            
-            if (frames % FRAME_LOG_INTERVAL == 0 && callback.isRunning()) {
-                callback.onLog("INFO", "Processed " + frames + " frames");
-            }
-        } catch (Exception e) {
-            if (callback.isRunning()) {
-                callback.onPipelineError("Buffer processing error: " + e.getMessage());
+                startTime.compareAndSet(0, System.nanoTime());
+                
+                // Push buffer to pipeline
+                FlowReturn ret = appsrc.pushBuffer(buffer);
+                if (ret != FlowReturn.OK && ret != FlowReturn.FLUSHING) {
+                    if (callback.isRunning()) {
+                        callback.onLog("ERROR", "Error pushing buffer: " + ret);
+                    }
+                    return;
+                }
+                
+                // Buffer successfully pushed, don't release it
+                buffer = null;
+                
+                long frames = frameCount.incrementAndGet();
+                
+                // Mark that we've received the first keyframe
+                if (!hasReceivedKeyframe) {
+                    hasReceivedKeyframe = true;
+                    callback.onLog("DEBUG", "Received first keyframe");
+                    
+                    // Setup video overlay after first frame
+                    setupVideoOverlay();
+                }
+                
+                if (pendingVideoComponent != null && !overlaySet) {
+                    setupVideoOverlay();
+                }
+                
+                if (frames % FRAME_LOG_INTERVAL == 0 && callback.isRunning()) {
+                    long elapsedNs = System.nanoTime() - startTime.get();
+                    double elapsedSec = elapsedNs / 1e9;
+                    double fps = frames / elapsedSec;
+                    
+                    // Log buffer pool stats
+                    long hits = poolHits.get();
+                    long misses = poolMisses.get();
+                    double hitRate = hits + misses > 0 ? (hits * 100.0) / (hits + misses) : 0;
+                    
+                    callback.onLog("DEBUG", String.format("%d frames, %.1f fps, pool hit rate: %.1f%%", 
+                                                        frames, fps, hitRate));
+                }
+            } finally {
+                pipelineLock.unlock();
             }
         } finally {
-            pipelineLock.unlock();
+            // Release buffer if not consumed
+            if (buffer != null) {
+                releaseBuffer(buffer);
+            }
         }
     }
     
@@ -429,6 +495,18 @@ public class GStreamerPipeline {
             hasReceivedKeyframe = false;
             pendingVideoComponent = null;
             overlaySet = false;
+            
+            // Clear buffer pool
+            bufferPool.clear();
+            
+            // Log final buffer pool statistics
+            long hits = poolHits.get();
+            long misses = poolMisses.get();
+            if (hits + misses > 0) {
+                double hitRate = (hits * 100.0) / (hits + misses);
+                callback.onLog("INFO", String.format("Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)", 
+                                                   hitRate, hits, misses));
+            }
         } finally {
             pipelineLock.unlock();
         }
