@@ -32,8 +32,6 @@
             ;; Main namespaces
             [potatoclient.core :as core]
             [potatoclient.main :as main]
-            ;; Reports namespace
-            [potatoclient.reports :as reports]
             ;; Specs
             [potatoclient.specs :as specs]))
 
@@ -278,21 +276,6 @@
 ;; -----------------------------------------------------------------------------
 
 (m/=> potatoclient.main/-main [:=> [:cat [:* any?]] any?])
-
-;; -----------------------------------------------------------------------------
-;; Reports namespace schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> potatoclient.reports/generate-all-reports! [:=> [:cat] any?])
-(m/=> potatoclient.reports/generate-unspecced-functions-report! 
-      [:function
-       [:=> [:cat] [:maybe string?]]
-       [:=> [:cat [:map
-                   [:status keyword?]
-                   [:message string?]
-                   [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
-                   [:total {:optional true} nat-int?]]]
-            [:maybe string?]]])
 
 ;; -----------------------------------------------------------------------------
 ;; Instrumentation control

@@ -5,6 +5,7 @@
    including unspecced functions, code coverage, and other metrics."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
+            [malli.core :as m]
             [potatoclient.instrumentation :as instrumentation]
             [potatoclient.runtime :as runtime])
   (:import [java.time LocalDateTime]
@@ -174,3 +175,18 @@
       (println "Reports are not available in release builds")
       {})
     {:unspecced-functions (generate-unspecced-functions-report!)}))
+
+;; -----------------------------------------------------------------------------
+;; Function schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> generate-all-reports! [:=> [:cat] any?])
+(m/=> generate-unspecced-functions-report! 
+      [:function
+       [:=> [:cat] [:maybe string?]]
+       [:=> [:cat [:map
+                   [:status keyword?]
+                   [:message string?]
+                   [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
+                   [:total {:optional true} nat-int?]]]
+            [:maybe string?]]])
