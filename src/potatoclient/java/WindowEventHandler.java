@@ -15,7 +15,6 @@ import static potatoclient.java.Constants.*;
 public class WindowEventHandler {
     public interface EventCallback {
         void onWindowEvent(EventFilter.EventType type, String eventName, Map<String, Object> details);
-        void onWindowClosing();
     }
     
     private final JFrame frame;
@@ -50,11 +49,7 @@ public class WindowEventHandler {
     public void attachListeners() {
         // Add comprehensive window listeners
         frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                sendFilteredWindowEvent(EventFilter.EventType.WINDOW_CLOSING, "closing", null);
-                callback.onWindowClosing();
-            }
+            // Removed windowClosing - handled by FrameManager
             
             @Override
             public void windowOpened(WindowEvent e) {

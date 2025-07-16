@@ -133,6 +133,7 @@
 (defn- handle-window-closed
   "Handle window closed event - terminate the associated process."
   [stream-key]
+  (log/log-info (name stream-key) "Stream window closed by X button")
   (when-let [stream (state/get-stream stream-key)]
     (future
       (try
@@ -178,7 +179,7 @@
       :type "NAV"
       :message (format-navigation-event event)
       :raw-data msg
-      :nav-type (keyword (:type event))})
+      :nav-type (name (:type event))})
     nil))
 
 
@@ -192,7 +193,7 @@
       :type "WINDOW"
       :message (format-window-event event)
       :raw-data msg
-      :event-type (keyword (:type event))})
+      :event-type (name (:type event))})
     nil))
 
 

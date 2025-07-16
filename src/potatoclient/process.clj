@@ -9,7 +9,8 @@
             [clojure.string :as str]
             [malli.core :as m]
             [potatoclient.specs :as specs]
-            [potatoclient.state :as state])
+            [potatoclient.state :as state]
+            [potatoclient.events.log :as log])
   (:import [java.lang ProcessBuilder Process]
            [java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter]
            [java.util.concurrent TimeUnit]))
@@ -246,6 +247,8 @@
    (doseq [[stream-key stream-data] streams-map]
      (when (and (map? stream-data)
                 (:process stream-data))
+       (when-let [stream-id (:stream-id stream-data)]
+         (log/log-info stream-id "Stream stopped by main app shutdown"))
        (stop-stream stream-data)))))
 
 (defn process-alive?

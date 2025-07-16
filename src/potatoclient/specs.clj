@@ -120,7 +120,7 @@
 
 (def message
   "IPC message structure"
-  [:map
+  [:map {:closed false}
    [:type message-type]])
 
 ;; -----------------------------------------------------------------------------

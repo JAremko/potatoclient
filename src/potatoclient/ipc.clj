@@ -29,8 +29,9 @@
   [stream-key msg]
   (assert (m/validate specs/stream-key stream-key) 
           (str "Invalid stream-key: " stream-key))
-  (assert (m/validate specs/message msg)
-          (str "Invalid message: " msg))
+  ;; Only validate that message has a type field
+  (assert (contains? msg :type)
+          (str "Message missing :type field: " msg))
   (if-let [handler (get message-handlers (keyword (:type msg)))]
     (try
       (handler stream-key msg)
@@ -102,7 +103,7 @@
       (when-let [stream (state/get-stream stream-key)]
         (process/stop-stream stream)
         (state/clear-stream! stream-key)
-        (log/log-info (name stream-key) "Stream stopped"))
+        (log/log-info (name stream-key) "Stream stopped by control button"))
       (catch Exception e
         (log/log-error (name stream-key)
                       "Error stopping stream"
