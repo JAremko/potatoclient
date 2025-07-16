@@ -241,7 +241,7 @@
    ;; No-arg version that uses state directly
    (let [all-streams (state/all-streams)]
      (cleanup-all-processes all-streams)))
-  ([streams-map any?]
+  ([streams-map]
    ;; Original version that accepts a map
    (doseq [[stream-key stream-data] streams-map]
      (when (and (map? stream-data)

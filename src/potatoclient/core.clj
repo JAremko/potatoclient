@@ -10,11 +10,12 @@
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
+            [potatoclient.runtime :as runtime]
             [malli.core :as m]
             [potatoclient.specs :as specs])
   (:gen-class))
 
-(defn ^:private get-version
+(defn- get-version
   "Get application version from VERSION file."
   []
   (try
@@ -22,16 +23,15 @@
     (catch Exception _ "dev")))
 
 
-(defn ^:private get-build-type
+(defn- get-build-type
   "Get build type (RELEASE or DEVELOPMENT)."
   []
-  (if (or (System/getProperty "potatoclient.release")
-          (System/getenv "POTATOCLIENT_RELEASE"))
+  (if (runtime/release-build?)
     "RELEASE"
     "DEVELOPMENT"))
 
 
-(defn ^:private setup-shutdown-hook!
+(defn- setup-shutdown-hook!
   "Setup JVM shutdown hook to clean up processes."
   []
   (.addShutdownHook
@@ -45,7 +45,7 @@
           nil))))))
 
 
-(defn ^:private initialize-application!
+(defn- initialize-application!
   "Initialize all application subsystems."
   []
   (config/initialize!)
@@ -54,7 +54,7 @@
   (setup-shutdown-hook!))
 
 
-(defn ^:private log-startup!
+(defn- log-startup!
   "Log application startup."
   []
   (log/add-log-entry!

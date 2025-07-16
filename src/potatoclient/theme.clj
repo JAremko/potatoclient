@@ -2,6 +2,7 @@
   "Theme management for PotatoClient using DarkLaf"
   (:require [clojure.java.io :as io]
             [seesaw.core :as seesaw]
+            [potatoclient.runtime :as runtime]
             [malli.core :as m]
             [potatoclient.specs :as specs])
   (:import com.github.weisj.darklaf.LafManager
@@ -87,8 +88,7 @@
 (defn- is-development-mode?
   "Check if running in development mode."
   []
-  (not (or (System/getProperty "potatoclient.release")
-           (System/getenv "POTATOCLIENT_RELEASE"))))
+  (not (runtime/release-build?)))
 
 
 ;; Date formatter for logging

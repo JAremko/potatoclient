@@ -9,7 +9,7 @@
   (:import [javax.swing.table DefaultTableCellRenderer]
            [java.awt Color]))
 
-(defn ^:private get-type-color
+(defn- get-type-color
   "Get the background color for a log entry based on its type"
   [type event-type nav-type]
   (case type
@@ -40,7 +40,7 @@
     (Color. 255 255 255)))                        ; White default
 
 
-(defn ^:private create-type-renderer
+(defn- create-type-renderer
   "Create a custom cell renderer for the type column"
   [table-model]
   (proxy [DefaultTableCellRenderer] []
@@ -55,7 +55,7 @@
         component))))
 
 
-(defn ^:private show-raw-data
+(defn- show-raw-data
   "Show the raw JSON data for a log entry"
   [row-data]
   (when-let [raw-data (:raw-data row-data)]

@@ -1,34 +1,23 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient - a multi-process video streaming client."
   (:require [potatoclient.core :as core]
+            [potatoclient.runtime :as runtime]
+            [clojure.java.io :as io]
             [malli.core :as m]
             [potatoclient.specs :as specs])
   (:gen-class))
 
-(defn ^:private release-build?
-  "Check if this is a release build."
-  []
-  (boolean
-   (or (System/getProperty "potatoclient.release")
-       (System/getenv "POTATOCLIENT_RELEASE"))))
 
 
-(defn ^:private enable-instrumentation!
+(defn- enable-instrumentation!
   "Enable Malli instrumentation for non-release builds."
   []
-  (if (release-build?)
+  (if (runtime/release-build?)
     (println "Running RELEASE build - instrumentation disabled for optimal performance")
-    (do
-      (println "Running DEVELOPMENT build - enabling instrumentation...")
-      ;; Load and start Malli instrumentation
-      (try
-        (require 'potatoclient.instrumentation)
-        ((resolve 'potatoclient.instrumentation/start!))
-        (catch Exception e
-          (println "Warning: Could not enable Malli instrumentation:" (.getMessage e)))))))
+    (println "Running DEVELOPMENT build - instrumentation available via (potatoclient.instrumentation/start!)")))
 
 
-(defn ^:private enable-dev-mode!
+(defn- enable-dev-mode!
   "Enable additional development mode settings by loading the dev namespace."
   []
   (when (or (System/getProperty "potatoclient.dev")

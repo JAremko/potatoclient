@@ -43,6 +43,8 @@
   (System/setProperty "POTATOCLIENT_RELEASE" "true")
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
+  ;; Create release marker file
+  (spit (io/file class-dir "RELEASE") "true")
   (compile-java nil)
   ;; Compile with release optimizations
   (b/compile-clj {:basis basis

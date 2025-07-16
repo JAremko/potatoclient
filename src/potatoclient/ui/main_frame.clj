@@ -12,6 +12,7 @@
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
+            [potatoclient.runtime :as runtime]
             [potatoclient.log-writer :as log-writer]
             [potatoclient.events.log :as log]
             [potatoclient.ipc :as ipc]
@@ -30,7 +31,7 @@
    [:build-type build-type]
    [:window-state {:optional true} specs/window-state]])
 
-(defn ^:private create-language-action
+(defn- create-language-action
   "Create a language selection action."
   [lang-key display-name reload-fn]
   (let [flag-icon (case lang-key
@@ -50,7 +51,7 @@
                   (reload-fn))))))
 
 
-(defn ^:private create-theme-action
+(defn- create-theme-action
   "Create a theme selection action."
   [theme-key reload-fn]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
@@ -70,7 +71,7 @@
 
 
 
-(defn ^:private create-theme-menu
+(defn- create-theme-menu
   "Create the Theme menu."
   [reload-fn]
   (seesaw/menu 
@@ -80,7 +81,7 @@
               (theme/get-available-themes))))
 
 
-(defn ^:private create-language-menu
+(defn- create-language-menu
   "Create the Language menu."
   [reload-fn]
   (seesaw/menu 
@@ -90,7 +91,7 @@
            (create-language-action :ukrainian "Українська" reload-fn)]))
 
 
-(defn ^:private create-stream-toggle-button
+(defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
   [stream-key]
   (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
@@ -132,7 +133,7 @@
     button))
 
 
-(defn ^:private create-menu-bar
+(defn- create-menu-bar
   "Create the application menu bar."
   [reload-fn]
   (let [menubar (seesaw/menubar
@@ -150,7 +151,7 @@
     menubar))
 
 
-(defn ^:private create-main-content
+(defn- create-main-content
   "Create the main content panel."
   []
   (seesaw/border-panel
@@ -158,7 +159,7 @@
    :center (log-table/create)))
 
 
-(defn ^:private add-window-close-handler!
+(defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
   [frame]
   (.addWindowListener ^javax.swing.JFrame frame
@@ -188,7 +189,7 @@
     (.setExtendedState ^Integer (:extended-state state))))
 
 
-(defn ^:private ensure-on-edt
+(defn- ensure-on-edt
   "Ensure a function runs on the Event Dispatch Thread."
   [f]
   (fn [& args]
@@ -246,8 +247,7 @@
       (restore-window-state! frame window-state))
     
     ;; Log frame creation completion in dev mode
-    (when-not (or (System/getProperty "potatoclient.release")
-                  (System/getenv "POTATOCLIENT_RELEASE"))
+    (when-not (runtime/release-build?)
       (log/log-info "UI" "Main frame created and configured"))
     
     frame))

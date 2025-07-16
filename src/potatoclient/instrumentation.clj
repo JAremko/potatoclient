@@ -1,6 +1,13 @@
 (ns potatoclient.instrumentation
   "Function schema instrumentation for development builds.
-   This namespace is not AOT compiled and is loaded conditionally."
+   
+   This namespace is not AOT compiled and should be loaded manually in development:
+   
+   ;; In REPL:
+   (require 'potatoclient.instrumentation)
+   (potatoclient.instrumentation/start!)
+   
+   This avoids circular dependency issues during startup."
   (:require [malli.core :as m]
             [malli.dev :as dev]
             [malli.dev.pretty :as pretty]
@@ -23,7 +30,7 @@
             [potatoclient.ui.main-frame :as main-frame]
             ;; Main namespaces
             [potatoclient.core :as core]
-            [potatoclient.main :as main]
+            ;; Note: main namespace excluded to avoid circular dependency
             ;; Specs
             [potatoclient.specs :as specs]))
 
@@ -208,15 +215,6 @@
 (m/=> core/setup-exception-handler! [:=> [:cat] any?])
 (m/=> core/-main [:=> [:cat [:* string?]] any?])
 (m/=> core/shutdown! [:=> [:cat] any?])
-
-;; -----------------------------------------------------------------------------
-;; Main namespace schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> main/release-build? [:=> [:cat] boolean?])
-(m/=> main/enable-instrumentation! [:=> [:cat] any?])
-(m/=> main/enable-dev-mode! [:=> [:cat] any?])
-(m/=> main/-main [:=> [:cat [:* string?]] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; Instrumentation startup

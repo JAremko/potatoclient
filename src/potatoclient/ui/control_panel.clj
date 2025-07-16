@@ -17,7 +17,7 @@
 (def ^:private label-font "ARIAL-BOLD-16")
 
 
-(defn ^:private create-domain-field
+(defn- create-domain-field
   "Create the domain configuration field."
   []
   (let [field (seesaw/text :columns domain-field-columns
@@ -29,7 +29,7 @@
     field))
 
 
-(defn ^:private create-log-controls
+(defn- create-log-controls
   "Create log management buttons."
   []
   (let [clear-btn (seesaw/button :text "Clear Log")
@@ -48,7 +48,7 @@
     [clear-btn export-btn]))
 
 
-(defn ^:private create-header-section
+(defn- create-header-section
   "Create the header section with domain configuration."
   []
   (seesaw/vertical-panel
@@ -61,7 +61,7 @@
 
 
 
-(defn ^:private create-log-section
+(defn- create-log-section
   "Create the log controls section."
   []
   (let [[clear-btn export-btn] (create-log-controls)]
