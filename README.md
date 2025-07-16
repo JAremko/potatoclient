@@ -7,10 +7,10 @@ Multi-process video streaming client with dual H.264 WebSocket streams.
 - Dual video streams: Heat (900x720) and Day (1920x1080)
 - Hardware-accelerated H.264 decoding
 - Cross-platform: Windows, macOS, Linux
-- Dark/Light themes (Sol Dark, Sol Light)
+- Dark/Light themes (Sol Dark, Sol Light, Dark, Hi-Dark)
 - Multilingual: English, Ukrainian
 - Real-time event logging with filtering
-- Comprehensive runtime validation with Orchestra & clojure.spec
+- Comprehensive runtime validation with Malli schemas
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ Settings stored in platform-specific locations:
 - Windows: `%LOCALAPPDATA%\PotatoClient\`
 
 ```clojure
-{:theme :sol-dark     ; :sol-dark or :sol-light
+{:theme :sol-dark     ; :sol-dark, :sol-light, :dark, :hi-dark
  :domain "sych.local" ; WebSocket server
  :locale :english}    ; :english or :ukrainian
 ```
@@ -65,6 +65,7 @@ Settings stored in platform-specific locations:
 make clean        # Clean all artifacts
 make proto        # Generate protobuf classes
 make test         # Run tests
+make release      # Build optimized release JAR
 
 # Platform packages
 make build-windows  # .exe installer
@@ -77,24 +78,38 @@ make build-linux    # AppImage
 PotatoClient has two distinct build types:
 
 **Development Build** (`make build`, `make dev`):
-- Full Orchestra instrumentation enabled
-- Runtime validation of all function specs
+- Malli instrumentation available for manual activation
+- File logging enabled (logs to `logs/` directory)
 - Shows `[DEVELOPMENT]` in window title
-- Console output: `"Running DEVELOPMENT build - enabling instrumentation..."`
+- Console output: `"Running DEVELOPMENT build - instrumentation available"`
 
-**Release Build** (CI builds, `make release`):
-- Orchestra instrumentation disabled
+**Release Build** (`make release`):
+- No instrumentation overhead
+- File logging disabled
 - AOT compilation with direct linking
 - Optimized for performance
 - Shows `[RELEASE]` in window title
 - Console output: `"Running RELEASE build - instrumentation disabled"`
+- Self-contained: Release JARs automatically detect they're release builds
 
 ### Runtime Validation
 
-PotatoClient uses [Orchestra](https://github.com/jeaye/orchestra) for comprehensive spec instrumentation:
+PotatoClient uses [Malli](https://github.com/metosin/malli) for comprehensive runtime validation:
 
-- **Development builds**: Full validation of function inputs, outputs, and relationships
-- **Release builds**: Zero overhead - instrumentation automatically disabled
-- **Every function** is spec'd using `defn-spec` for type safety and documentation
+- **High performance**: Faster than clojure.spec
+- **Better error messages**: Human-readable validation errors
+- **Development builds**: Instrumentation available via REPL
+- **Release builds**: Zero overhead - instrumentation completely excluded
+- **Centralized schemas**: All data schemas in `potatoclient.specs`
+- **Function instrumentation**: All function schemas in `potatoclient.instrumentation`
 
-See [CLAUDE.md](CLAUDE.md) for detailed development guide.
+#### Using Instrumentation in Development
+
+```clojure
+;; In REPL during development:
+(require 'potatoclient.instrumentation)
+(potatoclient.instrumentation/start!)
+
+;; Now all function calls are validated
+;; Invalid calls will throw detailed error messages
+```

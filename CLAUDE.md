@@ -2,11 +2,31 @@
 
 PotatoClient is a multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Java) handle video streams.
 
+## Important: Function Instrumentation
+
+**ALWAYS** update `/src/potatoclient/instrumentation.clj` when:
+- Adding new functions to any namespace
+- Modifying function signatures  
+- Removing functions
+
+The instrumentation file contains Malli function schemas for runtime validation in development builds. Keep it synchronized with your code changes.
+
+Example for new functions:
+```clojure
+;; In your namespace:
+(defn process-data
+  [data options]
+  ...)
+
+;; Add to instrumentation.clj:
+(m/=> your-ns/process-data [:=> [:cat map? map?] any?])
+```
+
 ## Quick Reference
 
 ```bash
 make build        # Build JAR and compile protos (DEVELOPMENT)
-make release      # Build optimized JAR (RELEASE) 
+make release      # Build optimized JAR (RELEASE) - automatically detected
 make run          # Run application  
 make dev          # Run with GStreamer debug
 make dev-reflect  # Run with reflection warnings
@@ -14,6 +34,25 @@ make nrepl        # REPL on port 7888
 make proto        # Generate protobuf classes
 make clean        # Clean all artifacts
 ```
+
+## Development vs Release Builds
+
+### Development Build (`make build`)
+- **Instrumentation**: Available via `(potatoclient.instrumentation/start!)`
+- **File Logging**: Enabled (logs to `logs/` directory)
+- **Window Title**: Shows `[DEVELOPMENT]`
+- **Console**: "Running DEVELOPMENT build - instrumentation available"
+- **Metadata**: Full debugging information included
+- **Performance**: Slower due to validation overhead
+
+### Release Build (`make release`)
+- **Instrumentation**: Completely disabled
+- **File Logging**: Disabled
+- **Window Title**: Shows `[RELEASE]`
+- **Console**: "Running RELEASE build - instrumentation disabled"
+- **Metadata**: Stripped (smaller JAR)
+- **Performance**: Optimized with AOT compilation and direct linking
+- **Auto-Detection**: Release JARs automatically know they're release builds (no flags needed)
 
 ## Architecture
 
@@ -29,6 +68,9 @@ make clean        # Clean all artifacts
 - `potatoclient.config` - Platform-specific configuration
 - `potatoclient.i18n` - Localization (English, Ukrainian)
 - `potatoclient.theme` - Theme support (Sol Dark, Sol Light)
+- `potatoclient.runtime` - Runtime detection utilities
+- `potatoclient.specs` - Centralized Malli schemas
+- `potatoclient.instrumentation` - Function schemas (dev only)
 
 **Java (Stream Processes)**
 - `VideoStreamManager` - WebSocket + GStreamer pipeline
@@ -44,11 +86,10 @@ make clean        # Clean all artifacts
 
 **Add Language**
 1. Create new translation file in `resources/i18n/{locale}.edn` (e.g., `fr.edn` for French)
-2. Add locale to `potatoclient.i18n/::locale` spec (e.g., `:fr`)
-3. Add locale option in `potatoclient.state/::locale` spec (e.g., `:french`)
-4. Update `load-translations!` in `i18n.clj` to include new locale in `locales` vector
-5. Update `tr` function in `i18n.clj` to map new locale (e.g., `:french` → `:fr`)
-6. Update menu in `core.clj` with new language option
+2. Add locale to `potatoclient.specs/locale` (e.g., `:fr`)
+3. Update `load-translations!` in `i18n.clj` to include new locale
+4. Update `tr` function in `i18n.clj` to map new locale
+5. Update menu in `core.clj` with new language option
 
 **Add Event Type**
 1. Define in `potatoclient.events.stream`
@@ -109,7 +150,7 @@ State is separated by concern:
 - `logs-state` - Log entries and buffering
 - `ui-refs` - UI component references
 
-All state functions include validation via clojure.spec.
+All state functions include validation via Malli schemas.
 
 ## Malli Integration
 
@@ -125,104 +166,85 @@ Malli is a high-performance data and function schema library that provides:
 
 ### Implementation Details
 
-**Every function uses Malli schemas**:
-```clojure
-;; Function definition:
-(defn get-theme
-  []
-  (:theme (load-config)))
-
-;; With Malli schema:
-(m/=> get-theme [:=> [:cat] ::specs/theme-key])
-
-;; Private functions:
-(defn- ensure-config-dir!
-  []
-  ...)
-(m/=> ensure-config-dir! [:=> [:cat] :any])
-```
-
 **Centralized Schemas**:
-All schemas are defined in `potatoclient.specs` namespace for reuse across the codebase.
+All data schemas are defined in `potatoclient.specs` namespace for reuse across the codebase.
 
-**Automatic Instrumentation**:
-- Development/test builds: Full instrumentation enabled automatically
-- Release builds: No instrumentation overhead
-- Controlled via environment variables: `POTATOCLIENT_RELEASE=true`
+**Function Instrumentation**:
+All function schemas are defined in `potatoclient.instrumentation` namespace (excluded from AOT compilation).
 
-**Benefits**:
-1. **Catch bugs early**: Invalid function calls fail immediately with clear error messages
-2. **Living documentation**: Schemas document expected types for all functions
-3. **Development confidence**: Know immediately when data doesn't match expectations
-4. **Zero production overhead**: Instrumentation disabled in release builds
-5. **Better performance**: Malli is faster than clojure.spec
+**Private Functions**:
+Use `defn-` instead of `defn ^:private` for idiomatic Clojure code.
 
-### Adding Schemas to New Code
+### Adding New Functions
 
-When adding new namespaces or functions:
+When adding new functions:
 
-1. **Import Malli**:
+1. **Write the function**:
 ```clojure
-(ns my-namespace
-  (:require [malli.core :as m]
-            [potatoclient.specs :as specs]))
+(defn calculate-area
+  "Calculate area of rectangle"
+  [dimensions]
+  (* (:width dimensions) (:height dimensions)))
+
+(defn- validate-dimensions
+  "Private helper to validate dimensions"
+  [dimensions]
+  (and (pos? (:width dimensions))
+       (pos? (:height dimensions))))
 ```
 
-2. **Use existing schemas from specs namespace**:
+2. **Add schemas to instrumentation.clj**:
 ```clojure
-;; Most common schemas are already defined in potatoclient.specs
-(m/=> my-function [:=> [:cat ::specs/theme-key] :string])
+;; In the appropriate section of instrumentation.clj:
+(m/=> your-ns/calculate-area [:=> [:cat ::specs/dimensions] pos-int?])
+(m/=> your-ns/validate-dimensions [:=> [:cat ::specs/dimensions] boolean?])
 ```
 
-3. **Define new schemas in specs.clj if needed**:
+3. **Define new data schemas if needed** (in specs.clj):
 ```clojure
-;; In potatoclient.specs:
-(def my-new-schema
+(def dimensions
+  "Rectangle dimensions"
   [:map
    [:width pos-int?]
    [:height pos-int?]])
 ```
 
-4. **Add function schemas after definitions**:
-```clojure
-(defn calculate-area
-  [dimensions]
-  (* (:width dimensions) (:height dimensions)))
+### Instrumentation Usage
 
-(m/=> calculate-area [:=> [:cat ::specs/dimensions] pos-int?])
+**Development REPL**:
+```clojure
+;; Enable instrumentation manually:
+(require 'potatoclient.instrumentation)
+(potatoclient.instrumentation/start!)
+
+;; Now all function calls are validated
+(calculate-area {:width -5 :height 10})
+;; => Throws detailed error about invalid input
 ```
 
 ## Build Types & Development Mode
 
 ### Development Build (default)
-- Full Orchestra instrumentation enabled
-- Runtime validation of all specs
-- Helpful error messages for spec violations
+- Malli instrumentation available (manual loading)
+- File logging to `logs/` directory
+- Full error messages and stack traces
 - Window title shows `[DEVELOPMENT]`
-- Enable with: `make build` or `make dev`
+- Enable with: `make build`
 
 ### Release Build (optimized)
-- Orchestra instrumentation disabled
+- No instrumentation overhead
+- No file logging
 - AOT compilation with direct linking
 - Metadata stripped (`:doc`, `:file`, `:line`)
 - Window title shows `[RELEASE]`
-- Enable with: `make release` or `POTATOCLIENT_RELEASE=true`
-
-### Development Mode Features
-Enable additional debugging with:
-- `make dev-reflect` - Show reflection warnings
-- `-Dpotatoclient.dev=true` - Enable dev namespace
-- `POTATOCLIENT_DEV=true` - Environment variable
+- Enable with: `make release`
+- **Self-contained**: Release JARs automatically detect they're release builds
 
 ### Build Type Detection
-The application detects build type via:
+The application detects build type via `potatoclient.runtime/release-build?` which checks:
 1. System property: `potatoclient.release`
 2. Environment variable: `POTATOCLIENT_RELEASE`
-
-Release builds show:
-- Console: `"Running RELEASE build - instrumentation disabled"`
-- Window: `PotatoClient v1.4.0 [RELEASE]`
-- About: `"Malli instrumentation: Disabled (optimized)"`
+3. Embedded `RELEASE` marker file (in release JARs)
 
 ## Technical Details
 
@@ -246,7 +268,7 @@ Release builds show:
 
 ### GitHub Actions Workflow
 The CI pipeline (`/.github/workflows/release.yml`) automatically:
-1. Builds release versions with `POTATOCLIENT_RELEASE=true`
+1. Builds release versions with embedded release marker
 2. Enables AOT compilation and direct linking
 3. Creates platform-specific packages:
    - **Linux**: AppImage with bundled JRE and GStreamer
@@ -255,14 +277,24 @@ The CI pipeline (`/.github/workflows/release.yml`) automatically:
 
 ### Release Optimization
 Release builds from CI have:
-- **No instrumentation overhead**: Orchestra completely disabled
+- **No instrumentation overhead**: Malli completely disabled
 - **AOT compilation**: All Clojure code pre-compiled to bytecode
 - **Direct linking**: Function calls are statically linked
 - **Stripped metadata**: Smaller JAR size without dev metadata
+- **Embedded release marker**: Self-identifying as release build
 
 ### Verifying Release Builds
 Users can verify they're running an optimized release:
 1. Check console output on startup
 2. Look for `[RELEASE]` in window title
-3. Check Help → About dialog
-4. Log shows: `"Control Center started (v1.4.0 RELEASE build)"`
+3. No log files created in `logs/` directory
+4. Log shows: `"Control Center started (vX.X.X RELEASE build)"`
+
+## Best Practices
+
+1. **Always update instrumentation.clj** when adding/modifying functions
+2. **Use `defn-` for private functions** (not `defn ^:private`)
+3. **Test with instrumentation enabled** during development
+4. **Run release builds for production** to avoid validation overhead
+5. **Keep schemas in sync** with actual function implementations
+6. **Use existing schemas** from `potatoclient.specs` when possible
