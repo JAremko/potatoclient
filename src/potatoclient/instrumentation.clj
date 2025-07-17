@@ -29,6 +29,7 @@
             ;; UI namespaces
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.main-frame :as main-frame]
+            [potatoclient.ui.log-viewer :as log-viewer]
             ;; Main namespaces
             [potatoclient.core :as core]
             [potatoclient.main :as main]
@@ -199,6 +200,7 @@
 
 (m/=> potatoclient.logging/init! [:=> [:cat] any?])
 (m/=> potatoclient.logging/shutdown! [:=> [:cat] any?])
+(m/=> potatoclient.logging/get-logs-directory [:=> [:cat] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; IPC namespace schemas
@@ -243,19 +245,39 @@
 ;; UI.main-frame namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.ui.main-frame/save-window-state [:=> [:cat :potatoclient.specs/jframe] any?])
-(m/=> potatoclient.ui.main-frame/load-window-state [:=> [:cat] [:maybe :potatoclient.specs/window-state]])
-(m/=> potatoclient.ui.main-frame/restore-window-state [:=> [:cat :potatoclient.specs/jframe] any?])
-(m/=> potatoclient.ui.main-frame/make-centered [:=> [:cat :potatoclient.specs/jframe] any?])
-(m/=> potatoclient.ui.main-frame/setup-window-persistence [:=> [:cat :potatoclient.specs/jframe] any?])
-(m/=> potatoclient.ui.main-frame/create-language-menu [:=> [:cat] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/create-theme-menu [:=> [:cat :potatoclient.specs/jframe] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/create-view-menu [:=> [:cat :potatoclient.specs/jframe] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/create-help-menu [:=> [:cat] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/create-menu-bar [:=> [:cat :potatoclient.specs/jframe] :potatoclient.specs/jmenu-bar])
+(m/=> potatoclient.ui.main-frame/preserve-window-state [:=> [:cat :potatoclient.specs/jframe] map?])
+(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe map?] any?])
+(m/=> potatoclient.ui.main-frame/reload-frame! [:=> [:cat :potatoclient.specs/jframe fn?] any?])
+(m/=> potatoclient.ui.main-frame/create-language-action [:=> [:cat keyword? string? fn?] any?])
+(m/=> potatoclient.ui.main-frame/create-theme-action [:=> [:cat keyword? fn?] any?])
+(m/=> potatoclient.ui.main-frame/create-theme-menu [:=> [:cat fn?] :potatoclient.specs/jmenu])
+(m/=> potatoclient.ui.main-frame/create-language-menu [:=> [:cat fn?] :potatoclient.specs/jmenu])
+(m/=> potatoclient.ui.main-frame/show-about-dialog [:=> [:cat any?] any?])
+(m/=> potatoclient.ui.main-frame/open-logs-viewer [:=> [:cat] any?])
+(m/=> potatoclient.ui.main-frame/create-help-menu [:=> [:cat any?] :potatoclient.specs/jmenu])
+(m/=> potatoclient.ui.main-frame/create-stream-toggle-button [:=> [:cat keyword?] any?])
+(m/=> potatoclient.ui.main-frame/create-menu-bar [:=> [:cat fn? any?] :potatoclient.specs/jmenu-bar])
+(m/=> potatoclient.ui.main-frame/create-main-content [:=> [:cat] :potatoclient.specs/jpanel])
+(m/=> potatoclient.ui.main-frame/add-window-close-handler! [:=> [:cat :potatoclient.specs/jframe] any?])
+(m/=> potatoclient.ui.main-frame/ensure-on-edt [:=> [:cat fn?] fn?])
+(m/=> potatoclient.ui.main-frame/ensure-on-edt-later [:=> [:cat fn?] fn?])
 (m/=> potatoclient.ui.main-frame/create-main-frame [:=> [:cat map?] :potatoclient.specs/jframe])
-(m/=> potatoclient.ui.main-frame/preserve-window-state [:=> [:cat :potatoclient.specs/jframe] any?])
-(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe] any?])
+
+;; -----------------------------------------------------------------------------
+;; Log Viewer namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> potatoclient.ui.log-viewer/get-log-directory [:=> [:cat] :potatoclient.specs/file])
+(m/=> potatoclient.ui.log-viewer/parse-log-filename [:=> [:cat string?] [:maybe map?]])
+(m/=> potatoclient.ui.log-viewer/format-timestamp [:=> [:cat string?] string?])
+(m/=> potatoclient.ui.log-viewer/get-log-files [:=> [:cat] [:sequential map?]])
+(m/=> potatoclient.ui.log-viewer/format-file-size [:=> [:cat int?] string?])
+(m/=> potatoclient.ui.log-viewer/copy-to-clipboard [:=> [:cat string?] any?])
+(m/=> potatoclient.ui.log-viewer/create-file-viewer [:=> [:cat :potatoclient.specs/file :potatoclient.specs/jframe] :potatoclient.specs/jframe])
+(m/=> potatoclient.ui.log-viewer/create-log-table [:=> [:cat] any?])
+(m/=> potatoclient.ui.log-viewer/update-log-list [:=> [:cat any?] any?])
+(m/=> potatoclient.ui.log-viewer/create-log-viewer-frame [:=> [:cat] :potatoclient.specs/jframe])
+(m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; Runtime namespace schemas

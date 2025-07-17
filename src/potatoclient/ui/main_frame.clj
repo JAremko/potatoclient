@@ -8,6 +8,7 @@
             [potatoclient.state :as state]
             [potatoclient.process :as process]
             [potatoclient.ui.control-panel :as control-panel]
+            [potatoclient.ui.log-viewer :as log-viewer]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
@@ -102,6 +103,42 @@
    :items [(create-language-action :english "English" reload-fn)
            (create-language-action :ukrainian "Українська" reload-fn)]))
 
+(defn- show-about-dialog
+  "Show the About dialog."
+  [parent]
+  (let [version (try
+                  (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
+                  (catch Exception _ "dev"))
+        build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")]
+    (javax.swing.JOptionPane/showMessageDialog
+     parent
+     (str (i18n/tr :about-text) "\n\n"
+          (i18n/tr :app-version) ": " version " [" build-type "]")
+     (i18n/tr :about-title)
+     javax.swing.JOptionPane/INFORMATION_MESSAGE)))
+
+(defn- open-logs-viewer
+  "Open the log viewer window."
+  []
+  (log-viewer/show-log-viewer))
+
+(defn- create-help-menu
+  "Create the Help menu."
+  [parent]
+  (let [menu-items [(action/action
+                     :name (i18n/tr :menu-help-about)
+                     :icon (theme/key->icon :tab-icon-description)
+                     :handler (fn [_] (show-about-dialog parent)))]
+        menu-items (conj menu-items
+                         (action/action
+                          :name (i18n/tr :menu-help-view-logs)
+                          :icon (theme/key->icon :file-open)
+                          :handler (fn [_] (open-logs-viewer))))]
+    (seesaw/menu
+     :text (i18n/tr :menu-help)
+     :icon (theme/key->icon :actions-group-menu)
+     :items menu-items)))
+
 (defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
   [stream-key]
@@ -145,12 +182,13 @@
 
 (defn- create-menu-bar
   "Create the application menu bar."
-  [reload-fn]
+  [reload-fn parent]
   (let [heat-button (create-stream-toggle-button :heat)
         day-button (create-stream-toggle-button :day)]
     (seesaw/menubar
      :items [(create-theme-menu reload-fn)
              (create-language-menu reload-fn)
+             (create-help-menu parent)
              (seesaw/separator :orientation :vertical)
              ;; Remove text from toggle buttons to show only icons
              (seesaw/config! heat-button :text "")
@@ -219,7 +257,7 @@
                :content (create-main-content))]
 
     ;; Set up menu bar with frame constructor
-    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-cons))
+    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-cons frame))
 
     ;; Add window close handler
     (add-window-close-handler! frame)

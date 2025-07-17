@@ -10,6 +10,7 @@
  :menu-view-language "Мова"
  :menu-help "Допомога"
  :menu-help-about "Про програму"
+ :menu-help-view-logs "Переглянути журнали"
  
  ;; Theme names
  :theme-sol-light "Сонячна світла"

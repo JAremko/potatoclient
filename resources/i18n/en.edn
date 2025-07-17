@@ -10,6 +10,7 @@
  :menu-view-language "Language"
  :menu-help "Help"
  :menu-help-about "About"
+ :menu-help-view-logs "View Logs"
  
  ;; Theme names
  :theme-sol-light "Sol Light"

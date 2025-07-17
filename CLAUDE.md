@@ -124,6 +124,12 @@ make report-unspecced  # Generate report of functions without Malli specs
 4. Update `tr` function in `i18n.clj` to map new locale
 5. Update menu in `core.clj` with new language option
 
+**Help Menu Features**
+- **About Dialog**: Shows application version, build type (DEVELOPMENT/RELEASE)
+- **View Logs**: Opens log directory in system file explorer
+  - Development: Shows `./logs/` directory
+  - Release: Shows platform-specific user directory (see Logging System)
+
 **Add Event Type**
 1. Define in `potatoclient.events.stream`
 2. Handle in `VideoStreamManager.java`
@@ -174,9 +180,13 @@ PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-perf
 
 ### Production Logging
 - **Critical only**: WARN and ERROR levels
-- **Console only**: stdout/stderr, no file creation
-- **Zero overhead**: No performance impact from debug logging
-- **Clean deployment**: No log file management needed
+- **Dual output**: Console AND file logging for critical events
+- **Platform-specific log locations**:
+  - Linux: `~/.local/share/potatoclient/logs/`
+  - macOS: `~/Library/Application Support/PotatoClient/logs/`
+  - Windows: `%LOCALAPPDATA%\PotatoClient\logs\`
+- **File naming**: `potatoclient-{version}-{timestamp}.log`
+- **Minimal overhead**: Only warnings and errors are logged
 
 ### Usage in Code
 ```clojure
