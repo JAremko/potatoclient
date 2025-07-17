@@ -85,7 +85,14 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
                 // onBinaryMessage
                 data -> {
                     if (running.get()) {
-                        gstreamerPipeline.pushVideoData(data);
+                        try {
+                            gstreamerPipeline.pushVideoData(data);
+                        } finally {
+                            // Return buffer to pool if it's from the pool
+                            if (data.isDirect() && webSocketClient != null) {
+                                webSocketClient.getBufferPool().release(data);
+                            }
+                        }
                     }
                 },
                 // onConnect

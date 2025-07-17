@@ -10,7 +10,11 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -35,8 +39,24 @@ public class WebSocketClientBuiltIn {
     private final AtomicBoolean shouldReconnect = new AtomicBoolean(false);
     private final HttpClient httpClient;
     
-    // Buffer for accumulating partial messages
-    private ByteBuffer messageBuffer = ByteBuffer.allocate(1024 * 1024); // 1MB initial size
+    // Buffer pooling for zero-allocation streaming
+    private static final int BUFFER_POOL_SIZE = 20;
+    private static final int BUFFER_SIZE = 2 * 1024 * 1024; // 2MB per buffer
+    private final ByteBufferPool bufferPool = new ByteBufferPool(BUFFER_POOL_SIZE, BUFFER_SIZE, true);
+    
+    // Buffer for accumulating partial messages - use direct buffer for better performance
+    private ByteBuffer messageBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+    private final AtomicLong lastBufferTrimTime = new AtomicLong(System.currentTimeMillis());
+    private static final long BUFFER_TRIM_INTERVAL_MS = 60_000; // Trim every minute
+    
+    // Statistics tracking
+    private final AtomicLong messagesReceived = new AtomicLong(0);
+    private final AtomicLong bytesReceived = new AtomicLong(0);
+    private final ScheduledExecutorService statsExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "WebSocket-Stats");
+        t.setDaemon(true);
+        return t;
+    });
     
     public WebSocketClientBuiltIn(URI serverUri, Map<String, String> headers,
                                   Consumer<ByteBuffer> onBinaryMessage,
@@ -52,6 +72,9 @@ public class WebSocketClientBuiltIn {
         
         // Create HttpClient with trust-all SSL context for wss:// connections
         this.httpClient = createHttpClient();
+        
+        // Schedule periodic stats logging
+        statsExecutor.scheduleWithFixedDelay(this::logStats, 30, 30, TimeUnit.SECONDS);
     }
     
     private HttpClient createHttpClient() {
@@ -162,6 +185,49 @@ public class WebSocketClientBuiltIn {
                     return null;
                 });
         }
+        
+        // Clean up resources
+        statsExecutor.shutdown();
+        bufferPool.clear();
+    }
+    
+    /**
+     * Get the buffer pool for external buffer management
+     */
+    public ByteBufferPool getBufferPool() {
+        return bufferPool;
+    }
+    
+    /**
+     * Check if message buffer needs trimming and trim if necessary
+     */
+    private void checkAndTrimMessageBuffer() {
+        long now = System.currentTimeMillis();
+        long lastTrim = lastBufferTrimTime.get();
+        
+        if (now - lastTrim > BUFFER_TRIM_INTERVAL_MS && messageBuffer.capacity() > BUFFER_SIZE * 2) {
+            if (lastBufferTrimTime.compareAndSet(lastTrim, now)) {
+                // Trim buffer back to default size if it's grown too large
+                if (messageBuffer.position() == 0) {
+                    messageBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+                    System.out.println("Trimmed WebSocket message buffer back to " + BUFFER_SIZE + " bytes");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Log performance statistics
+     */
+    private void logStats() {
+        ByteBufferPool.PoolStats poolStats = bufferPool.getStats();
+        long messages = messagesReceived.get();
+        long bytes = bytesReceived.get();
+        
+        System.out.println(String.format(
+            "WebSocket Stats: messages=%d, bytes=%d, %s",
+            messages, bytes, poolStats
+        ));
     }
     
     public boolean isOpen() {
@@ -179,10 +245,17 @@ public class WebSocketClientBuiltIn {
         @Override
         public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
             try {
+                // Track statistics
+                bytesReceived.addAndGet(data.remaining());
+                
+                // Check if we need to trim the message buffer
+                checkAndTrimMessageBuffer();
+                
                 // Handle the binary message
                 if (messageBuffer.remaining() < data.remaining()) {
-                    // Expand buffer if needed
-                    ByteBuffer newBuffer = ByteBuffer.allocate(messageBuffer.capacity() + data.remaining() + 1024 * 1024);
+                    // Expand buffer if needed - use direct buffer
+                    int newCapacity = messageBuffer.capacity() + data.remaining() + BUFFER_SIZE;
+                    ByteBuffer newBuffer = ByteBuffer.allocateDirect(newCapacity);
                     messageBuffer.flip();
                     newBuffer.put(messageBuffer);
                     messageBuffer = newBuffer;
@@ -192,19 +265,30 @@ public class WebSocketClientBuiltIn {
                 
                 if (last) {
                     // Complete message received
+                    messagesReceived.incrementAndGet();
                     messageBuffer.flip();
                     
-                    // Create a copy for the callback
-                    ByteBuffer messageCopy = ByteBuffer.allocate(messageBuffer.remaining());
-                    messageCopy.put(messageBuffer);
-                    messageCopy.flip();
+                    // For single-fragment messages, avoid copy
+                    if (messageBuffer.position() == 0 && data.hasRemaining()) {
+                        // Direct pass-through of original buffer
+                        if (onBinaryMessage != null) {
+                            data.rewind();
+                            onBinaryMessage.accept(data);
+                        }
+                    } else {
+                        // Multi-fragment message - use pooled buffer
+                        ByteBuffer pooledBuffer = bufferPool.acquireWithCapacity(messageBuffer.remaining());
+                        pooledBuffer.put(messageBuffer);
+                        pooledBuffer.flip();
+                        
+                        if (onBinaryMessage != null) {
+                            // Pass pooled buffer and let consumer release it
+                            onBinaryMessage.accept(pooledBuffer);
+                        }
+                        // Note: Consumer is responsible for releasing the buffer back to pool
+                    }
                     
                     messageBuffer.clear();
-                    
-                    // Invoke callback
-                    if (onBinaryMessage != null) {
-                        onBinaryMessage.accept(messageCopy);
-                    }
                 }
                 
                 webSocket.request(1);

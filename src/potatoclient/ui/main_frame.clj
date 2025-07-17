@@ -46,7 +46,8 @@
                 (when-not (= (state/get-locale) lang-key)
                   (state/set-locale! lang-key)
                   (config/update-config! :locale lang-key)
-                  (reload-fn))))))
+                  ;; Schedule reload to prevent UI blocking on Windows
+                  (seesaw/invoke-later (reload-fn)))))))
 
 (defn- create-theme-action
   "Create a theme selection action."
@@ -63,8 +64,8 @@
                 (when-not (= (theme/get-current-theme) theme-key)
                   (when (theme/set-theme! theme-key)
                     (config/save-theme! theme-key)
-                    ;; Recreate frame to ensure all theme changes apply properly
-                    (reload-fn)))))))
+                    ;; Schedule reload to prevent UI blocking on Windows
+                    (seesaw/invoke-later (reload-fn))))))))
 
 (defn- create-theme-menu
   "Create the Theme menu."

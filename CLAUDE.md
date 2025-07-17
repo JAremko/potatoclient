@@ -337,10 +337,13 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 **WebSocket**: Built-in Java 17 HttpClient (no external dependencies)
 
 **Performance Optimizations**:
-- Zero-allocation streaming with buffer pooling
+- Zero-allocation streaming with dual buffer pools (WebSocket + GStreamer)
+- Direct ByteBuffers for optimal native interop
 - Lock-free fast path for video data
 - Direct pipeline without unnecessary elements
 - Hardware acceleration prioritized
+- Automatic message buffer trimming to prevent memory bloat
+- Comprehensive performance metrics and pool statistics
 
 **Hardware Decoders** (priority):
 1. NVIDIA (nvh264dec)
@@ -383,11 +386,19 @@ Users can verify they're running an optimized release:
 
 ## Recent Optimizations
 
-### WebSocket Client Migration
+### WebSocket Client Migration & Hot Path Optimization
 1. **Replaced Java-WebSocket with Java 17's HttpClient**: Eliminated external dependency
 2. **Built-in WSS Support**: Native WebSocket Secure connections with certificate trust override
 3. **Simplified Reconnection**: Fixed 1-second delay instead of exponential backoff
-4. **Better Memory Management**: Built-in buffer handling for binary messages
+4. **Zero-Allocation Streaming**: 
+   - Dual buffer pools (WebSocket + GStreamer layers)
+   - Direct ByteBuffers for native interop
+   - Eliminated unnecessary buffer copies for single-fragment messages
+   - Pool statistics tracking for performance monitoring
+5. **Memory Management**:
+   - Automatic message buffer trimming every 60 seconds
+   - Pre-allocated buffer pools to reduce startup allocations
+   - Proper buffer lifecycle management with automatic returns to pool
 
 ### Video Streaming Performance
 1. **Buffer Pooling**: Implemented zero-allocation streaming with reusable buffers
