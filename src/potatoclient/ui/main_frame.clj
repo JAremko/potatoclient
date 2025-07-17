@@ -208,6 +208,11 @@
                         (windowClosing [_]
                           (println "Shutting down PotatoClient...")
                           (try
+                            ;; Save current config state
+                            (let [current-config {:theme (theme/get-current-theme)
+                                                  :domain (config/get-domain)
+                                                  :locale (state/get-locale)}]
+                              (config/save-config! current-config))
                             (process/cleanup-all-processes)
                             (logging/shutdown!)
                             (catch Exception e

@@ -67,10 +67,17 @@
                         :locale :english}]
     (if (.exists ^java.io.File config-file)
       (try
-        (-> config-file
-            slurp
-            edn/read-string
-            (merge default-config))
+        (let [file-data (-> config-file
+                            slurp
+                            edn/read-string)
+              merged-config (merge default-config file-data)]
+          ;; Validate the merged config
+          (if (m/validate ::specs/config merged-config)
+            merged-config
+            (do
+              (println "Invalid config detected, will use defaults")
+              ;; We'll save the default config later in initialize!
+              default-config)))
         (catch Exception e
           (println "Error loading config:" (.getMessage ^Exception e))
           default-config))
@@ -80,13 +87,17 @@
 (defn save-config!
   "Save configuration to file"
   [config]
-  (try
-    (ensure-config-dir!)
-    (let [config-file (get-config-file)]
-      (spit config-file (pr-str config)))
-    true
-    (catch Exception e
-      (println "Error saving config:" (.getMessage ^Exception e))
+  (if (m/validate ::specs/config config)
+    (try
+      (ensure-config-dir!)
+      (let [config-file (get-config-file)]
+        (spit config-file (pr-str config)))
+      true
+      (catch Exception e
+        (println "Error saving config:" (.getMessage ^Exception e))
+        false))
+    (do
+      (println "Invalid config, not saving:" (m/explain ::specs/config config))
       false)))
 
 
@@ -145,9 +156,15 @@
 (defn initialize!
   "Initialize configuration system"
   []
-  (let [config (load-config)]
+  (let [config (load-config)
+        config-file (get-config-file)]
     ;; Log config location on first run
     (println "Configuration file location:" (get-config-location))
+    ;; If config file doesn't exist or was invalid, save defaults
+    (when (or (not (.exists ^java.io.File config-file))
+              (not (m/validate ::specs/config config)))
+      (println "Creating default config file")
+      (save-config! config))
     ;; Initialize theme from saved config
     (theme/initialize-theme! (:theme config))
     ;; Set initial locale

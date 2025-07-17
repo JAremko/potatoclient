@@ -38,8 +38,8 @@
   [:enum :theme :domain :locale])
 
 (def config
-  "Application configuration"
-  [:map
+  "Application configuration - open schema to allow future extensions"
+  [:map {:closed false}
    [:theme theme-key]
    [:domain domain]
    [:locale locale]])

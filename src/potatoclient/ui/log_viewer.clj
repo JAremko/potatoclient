@@ -67,9 +67,22 @@
         clipboard (.getSystemClipboard (Toolkit/getDefaultToolkit))]
     (.setContents clipboard selection selection)))
 
+(defn- format-log-content
+  "Add visual separators between log entries"
+  [content]
+  (let [lines (str/split-lines content)
+        separator (str/join (repeat 80 "-"))]
+    (->> lines
+         (map (fn [line]
+                (if (re-matches #"^\d{4}-\d{2}-\d{2}T.*" line)
+                  (str separator "\n" line)
+                  line)))
+         (str/join "\n"))))
+
 (defn- create-file-viewer
   [file parent-frame]
-  (let [content (slurp file)
+  (let [raw-content (slurp file)
+        content (format-log-content raw-content)
         text-area (seesaw/text :multi-line? true
                                :text content
                                :editable? false
@@ -78,7 +91,7 @@
         copy-button (seesaw/button :text "Copy to Clipboard"
                                    :icon (theme/key->icon :file-save)
                                    :listen [:action (fn [_] 
-                                                      (copy-to-clipboard content)
+                                                      (copy-to-clipboard raw-content)
                                                       (seesaw/alert "Copied to clipboard!"))])
         frame (seesaw/frame :title (str "Log: " (.getName file))
                             :icon (clojure.java.io/resource "main.png")

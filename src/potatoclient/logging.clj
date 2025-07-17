@@ -76,9 +76,32 @@
             (.format formatter (LocalDateTime/ofInstant inst (java.time.ZoneId/systemDefault))))})
        :stream (io/writer log-file :append true)})))
 
+(defn- cleanup-old-logs!
+  "Keep only the newest N log files, delete older ones"
+  [max-files]
+  (let [log-dir (if (runtime/release-build?)
+                  (get-log-dir)
+                  (io/file "logs"))]
+    (when (.exists log-dir)
+      (let [log-files (->> (.listFiles log-dir)
+                           (filter #(and (.isFile %)
+                                        (clojure.string/ends-with? (.getName %) ".log")
+                                        (clojure.string/starts-with? (.getName %) "potatoclient-")))
+                           (sort-by #(.lastModified %) >))
+            files-to-delete (drop max-files log-files)]
+        (doseq [file files-to-delete]
+          (try
+            (.delete file)
+            (println (str "Deleted old log file: " (.getName file)))
+            (catch Exception e
+              (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e))))))))))
+
 (defn init!
   "Initialize the logging system"
   []
+  ;; Clean up old logs first (keep newest 50)
+  (cleanup-old-logs! 50)
+  
   ;; Remove default console handler
   (tel/remove-handler! :default/console)
   
