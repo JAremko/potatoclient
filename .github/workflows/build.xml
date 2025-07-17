@@ -26,6 +26,6 @@
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
     <runtimeBits>64</runtimeBits>
-    <opt>-Xms512m -Djava.library.path=runtime/bin -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED</opt>
+    <opt>-Xms512m -Djava.library.path=runtime/bin -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/sun.swing=ALL-UNNAMED --add-exports=java.desktop/com.sun.java.swing=ALL-UNNAMED</opt>
   </jre>
 </launch4jConfig>
