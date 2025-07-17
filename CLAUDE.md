@@ -102,11 +102,13 @@ make report-unspecced  # Generate report of functions without Malli specs
 
 **Java (Stream Processes)**
 - `VideoStreamManager` - WebSocket + GStreamer pipeline
+- `WebSocketClientBuiltIn` - Java 17's built-in HttpClient for WSS connections
 - Hardware decoder selection and fallback
-- Auto-reconnection with exponential backoff
+- Auto-reconnection with 1-second delay
 - Buffer pooling for zero-allocation streaming
 - Optimized lock-free data pushing
 - Direct pipeline without frame rate limiting
+- Trust-all SSL certificates (development/testing only)
 
 ## Development Tasks
 
@@ -332,6 +334,7 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 
 **Build**: Java 17+, Protobuf 3.15.0 (bundled)
 **Streams**: Heat (900x720), Day (1920x1080)
+**WebSocket**: Built-in Java 17 HttpClient (no external dependencies)
 
 **Performance Optimizations**:
 - Zero-allocation streaming with buffer pooling
@@ -379,6 +382,12 @@ Users can verify they're running an optimized release:
 4. Only critical messages (warnings/errors) appear on console
 
 ## Recent Optimizations
+
+### WebSocket Client Migration
+1. **Replaced Java-WebSocket with Java 17's HttpClient**: Eliminated external dependency
+2. **Built-in WSS Support**: Native WebSocket Secure connections with certificate trust override
+3. **Simplified Reconnection**: Fixed 1-second delay instead of exponential backoff
+4. **Better Memory Management**: Built-in buffer handling for binary messages
 
 ### Video Streaming Performance
 1. **Buffer Pooling**: Implemented zero-allocation streaming with reusable buffers

@@ -2,8 +2,10 @@ package potatoclient.java;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,7 +17,6 @@ import static potatoclient.java.Constants.*;
 
 public class VideoStreamManager implements MouseEventHandler.EventCallback, 
                                          WindowEventHandler.EventCallback,
-                                         WebSocketManager.EventCallback,
                                          GStreamerPipeline.EventCallback,
                                          FrameManager.FrameEventListener {
     
@@ -42,7 +43,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     private final FrameManager frameManager;
     private MouseEventHandler mouseEventHandler;
     private WindowEventHandler windowEventHandler;
-    private WebSocketManager webSocketManager;
+    private WebSocketClientBuiltIn webSocketClient;
     private GStreamerPipeline gstreamerPipeline;
     
     public VideoStreamManager(String streamId, String streamUrl) {
@@ -65,8 +66,41 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         });
         
         // Initialize modules
-        this.webSocketManager = new WebSocketManager(streamUrl, this, reconnectExecutor);
+        this.webSocketClient = createWebSocketClient();
         this.gstreamerPipeline = new GStreamerPipeline(streamId, this);
+    }
+    
+    private WebSocketClientBuiltIn createWebSocketClient() {
+        try {
+            URI uri = new URI(streamUrl);
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Origin", "https://" + uri.getHost());
+            headers.put("User-Agent", WS_USER_AGENT);
+            headers.put("Cache-Control", WS_CACHE_CONTROL);
+            headers.put("Pragma", WS_PRAGMA);
+            
+            return new WebSocketClientBuiltIn(
+                uri,
+                headers,
+                // onBinaryMessage
+                data -> {
+                    if (running.get()) {
+                        gstreamerPipeline.pushVideoData(data);
+                    }
+                },
+                // onConnect
+                () -> messageProtocol.sendLog("INFO", "WebSocket connected to " + streamUrl),
+                // onClose
+                (code, reason) -> messageProtocol.sendLog("INFO", 
+                    String.format("WebSocket closed: %s (code: %d)", reason, code)),
+                // onError
+                error -> messageProtocol.sendLog("ERROR", "WebSocket error: " + 
+                    (error != null ? error.getMessage() : "unknown"))
+            );
+        } catch (Exception e) {
+            messageProtocol.sendException("Failed to create WebSocket client", e);
+            return null;
+        }
     }
     
     private void redirectSystemErr() {
@@ -245,7 +279,9 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         SwingUtilities.invokeLater(() -> {
             if (frameManager.getVideoComponent() != null) {
                 gstreamerPipeline.initialize(frameManager.getVideoComponent());
-                webSocketManager.connect();
+                if (webSocketClient != null) {
+                    webSocketClient.connect();
+                }
             }
         });
         
@@ -263,7 +299,9 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         // Careful cleanup to avoid hardware glitches
         try {
             // 1. Stop accepting new frames first
-            webSocketManager.disconnect();
+            if (webSocketClient != null) {
+                webSocketClient.close();
+            }
             
             // 2. Let pipeline finish processing current frames
             Thread.sleep(100);
@@ -365,27 +403,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     }
     
     
-    // WebSocketManager.EventCallback implementation
-    @Override
-    public void onConnected(String url) {
-        messageProtocol.sendLog("INFO", "WebSocket connected to " + url);
-    }
-    
-    @Override
-    public void onDisconnected(int code, String reason, boolean remote) {
-        messageProtocol.sendLog("INFO", String.format("WebSocket closed: %s (code: %d, remote: %s)", 
-                reason, code, remote));
-    }
-    
-    @Override
-    public void onError(String message) {
-        messageProtocol.sendLog("ERROR", "WebSocket error: " + message);
-    }
-    
-    @Override
-    public void onVideoData(ByteBuffer data) {
-        gstreamerPipeline.pushVideoData(data);
-    }
+    // WebSocket callbacks are now handled via lambdas in createWebSocketClient()
     
     // GStreamerPipeline.EventCallback implementation
     @Override
