@@ -46,8 +46,8 @@
                 (when-not (= (state/get-locale) lang-key)
                   (state/set-locale! lang-key)
                   (config/update-config! :locale lang-key)
-                  ;; Schedule reload to prevent UI blocking on Windows
-                  (seesaw/invoke-later (reload-fn)))))))
+                  ;; Call reload directly - ensure-on-edt handles EDT scheduling
+                  (reload-fn))))))
 
 (defn- create-theme-action
   "Create a theme selection action."
@@ -64,8 +64,8 @@
                 (when-not (= (theme/get-current-theme) theme-key)
                   (when (theme/set-theme! theme-key)
                     (config/save-theme! theme-key)
-                    ;; Schedule reload to prevent UI blocking on Windows
-                    (seesaw/invoke-later (reload-fn))))))))
+                    ;; Call reload directly - ensure-on-edt handles EDT scheduling
+                    (reload-fn)))))))
 
 (defn- create-theme-menu
   "Create the Theme menu."
@@ -218,6 +218,14 @@
       (apply f args)
       (seesaw/invoke-now (apply f args)))))
 
+(defn- ensure-on-edt-later
+  "Ensure a function runs on the Event Dispatch Thread using invoke-later."
+  [f]
+  (fn [& args]
+    (if (javax.swing.SwingUtilities/isEventDispatchThread)
+      (apply f args)
+      (seesaw/invoke-later (apply f args)))))
+
 (defn create-main-frame
   "Create a new main application frame with clean state.
   
@@ -231,17 +239,16 @@
         ;; Preload icons before creating UI components
         _ (theme/preload-theme-icons!)
         frame-ref (atom nil)
-        reload-fn (ensure-on-edt
-                   (fn []
+        reload-fn (fn []
+                    (seesaw/invoke-later
                      (when-let [old-frame @frame-ref]
                        (let [state (preserve-window-state old-frame)
                              new-params (assoc params :window-state state)]
                          (.dispose ^javax.swing.JFrame old-frame)
-                         ;; Create new frame on EDT
-                         (seesaw/invoke-later
-                          (let [new-frame (create-main-frame new-params)]
-                            (reset! frame-ref new-frame)
-                            (seesaw/show! new-frame)))))))
+                         ;; Create and show new frame
+                         (let [new-frame (create-main-frame new-params)]
+                           (reset! frame-ref new-frame)
+                           (seesaw/show! new-frame))))))
         title (format "%s v%s [%s]"
                       (i18n/tr :app-title)
                       version

@@ -219,6 +219,50 @@ State is separated by concern:
 
 All state functions include validation via Malli schemas.
 
+## Swing EDT and Seesaw Invoke Strategy
+
+### Event Dispatch Thread (EDT) Requirements
+
+All Swing UI operations must run on the Event Dispatch Thread (EDT). PotatoClient uses Seesaw's invoke helpers to ensure proper thread safety:
+
+- **`seesaw/invoke-now`**: Blocks until the operation completes on EDT
+- **`seesaw/invoke-later`**: Schedules the operation on EDT and returns immediately
+
+### Common Pitfalls and Solutions
+
+**Avoid Double-Nesting invoke-later**:
+```clojure
+;; BAD - causes race conditions and hangs
+(seesaw/invoke-later
+  (fn []
+    (seesaw/invoke-later  ;; Double nesting!
+      (create-ui))))
+
+;; GOOD - single EDT invocation
+(seesaw/invoke-later
+  (fn []
+    (dispose-old-frame)
+    (create-new-frame)))  ;; All in one EDT cycle
+```
+
+**Frame Recreation Pattern**:
+When recreating frames (e.g., theme switching), perform all operations in a single EDT cycle:
+```clojure
+(defn reload-frame [old-frame create-fn]
+  (seesaw/invoke-later
+    (let [state (preserve-window-state old-frame)]
+      (.dispose old-frame)
+      (let [new-frame (create-fn state)]
+        (seesaw/show! new-frame)))))
+```
+
+**Key Principles**:
+1. UI creation/modification must happen on EDT
+2. Use `invoke-later` for non-blocking operations (preferred)
+3. Use `invoke-now` only when you need the result immediately
+4. Avoid nested `invoke-later` calls - they create separate EDT cycles
+5. Group related UI operations in a single EDT invocation
+
 ## Malli Integration
 
 PotatoClient uses comprehensive runtime validation through Malli schemas:
