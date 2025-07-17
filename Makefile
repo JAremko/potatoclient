@@ -58,7 +58,7 @@ release: proto compile-java ## Build release version (without instrumentation)
 .PHONY: run
 run: build ## Build and run the application
 	@echo "Running application..."
-	java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
+	java -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
 # Clean proto files
 .PHONY: clean-proto
@@ -131,11 +131,11 @@ rebuild: clean build ## Clean and rebuild the project
 # Development run with debug
 .PHONY: dev
 dev: build ## Run with GStreamer debug output
-	GST_DEBUG=3 java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
+	GST_DEBUG=3 java -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
 .PHONY: dev-reflect
 dev-reflect: build ## Run in development mode with reflection warnings
-	java -Dpotatoclient.dev=true --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
+	java -Dpotatoclient.dev=true -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
 # Build for macOS development (unsigned, uses system Java)
 .PHONY: build-macos-dev

@@ -16,7 +16,7 @@
             [potatoclient.ipc :as ipc]
             [malli.core :as m]
             [potatoclient.specs :as specs])
-  (:import [javax.swing JFrame JMenuBar JMenu JToggleButton Box]
+  (:import [javax.swing JFrame]
            [java.awt.event WindowAdapter]))
 
 ;; Additional schemas not in specs
@@ -29,95 +29,78 @@
    [:build-type build-type]
    [:window-state {:optional true} specs/window-state]])
 
+(defn preserve-window-state
+  "Extract window state for restoration."
+  [frame]
+  {:bounds (.getBounds ^javax.swing.JFrame frame)
+   :extended-state (.getExtendedState ^javax.swing.JFrame frame)})
+
+(defn restore-window-state!
+  "Restore window state to a frame."
+  [frame state]
+  (doto ^javax.swing.JFrame frame
+    (.setBounds ^java.awt.Rectangle (:bounds state))
+    (.setExtendedState ^Integer (:extended-state state))))
+
+(defn- reload-frame!
+  "Reload the frame following the ArcherBC2 pattern."
+  [frame frame-cons]
+  (seesaw/invoke-later
+   (let [state (preserve-window-state frame)]
+     (seesaw/config! frame :on-close :nothing)
+     (.dispose ^javax.swing.JFrame frame)
+     (let [new-frame (frame-cons state)]
+       (seesaw/show! new-frame)))))
+
 (defn- create-language-action
   "Create a language selection action."
   [lang-key display-name reload-fn]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (clojure.java.io/resource "flags/ua.png"))
-                    nil)
-        ;; Add padding to display name to ensure menu width
-        padded-name (format "%-20s" display-name)]
+                    nil)]
     (action/action
-     :name padded-name
+     :name (str display-name "    ")
      :icon flag-icon
-     :handler (fn [_]
+     :handler (fn [e]
                 ;; Only proceed if selecting a different language
                 (when-not (= (state/get-locale) lang-key)
                   (state/set-locale! lang-key)
                   (config/update-config! :locale lang-key)
-                  ;; Call reload directly - ensure-on-edt handles EDT scheduling
-                  (reload-fn))))))
+                  (reload-frame! (seesaw/to-root e) reload-fn))))))
 
 (defn- create-theme-action
   "Create a theme selection action."
   [theme-key reload-fn]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
-        theme-name (i18n/tr theme-i18n-key)
-        ;; Add padding to theme name to ensure menu width
-        padded-name (format "%-20s" theme-name)]
+        theme-name (i18n/tr theme-i18n-key)]
     (action/action
-     :name padded-name
+     :name (str theme-name "    ")
      :icon (theme/key->icon theme-key)
-     :handler (fn [_]
+     :handler (fn [e]
                 ;; Only proceed if selecting a different theme
                 (when-not (= (theme/get-current-theme) theme-key)
                   (when (theme/set-theme! theme-key)
                     (config/save-theme! theme-key)
-                    ;; Call reload directly - ensure-on-edt handles EDT scheduling
-                    (reload-fn)))))))
+                    (reload-frame! (seesaw/to-root e) reload-fn)))))))
 
 (defn- create-theme-menu
   "Create the Theme menu."
   [reload-fn]
-  (let [menu (seesaw/menu
-              :text (i18n/tr :menu-view-theme)
-              :icon (theme/key->icon :actions-group-theme)
-              :items (map #(create-theme-action % reload-fn)
-                          (theme/get-available-themes)))]
-    ;; Configure menu to work on click instead of hover
-    (doto ^JMenu menu
-      ;; Disable hover delay (0 means no delay on hover)
-      (.setDelay 0)
-      ;; Add mouse listener for click-to-open behavior
-      (.addMouseListener
-       (reify java.awt.event.MouseListener
-         (mouseClicked [_ e]
-           (when (= 1 (.getClickCount e))
-             (if (.isPopupMenuVisible menu)
-               (.setPopupMenuVisible menu false)
-               (.setPopupMenuVisible menu true))))
-         (mousePressed [_ _])
-         (mouseReleased [_ _])
-         (mouseEntered [_ _])
-         (mouseExited [_ _]))))
-    menu))
+  (seesaw/menu
+   :text (i18n/tr :menu-view-theme)
+   :icon (theme/key->icon :actions-group-theme)
+   :items (map #(create-theme-action % reload-fn)
+               (theme/get-available-themes))))
 
 (defn- create-language-menu
   "Create the Language menu."
   [reload-fn]
-  (let [menu (seesaw/menu
-              :text (i18n/tr :menu-view-language)
-              :icon (theme/key->icon :icon-languages)
-              :items [(create-language-action :english "English" reload-fn)
-                      (create-language-action :ukrainian "Українська" reload-fn)])]
-    ;; Configure menu to work on click instead of hover
-    (doto ^JMenu menu
-      ;; Disable hover delay (0 means no delay on hover)
-      (.setDelay 0)
-      ;; Add mouse listener for click-to-open behavior
-      (.addMouseListener
-       (reify java.awt.event.MouseListener
-         (mouseClicked [_ e]
-           (when (= 1 (.getClickCount e))
-             (if (.isPopupMenuVisible menu)
-               (.setPopupMenuVisible menu false)
-               (.setPopupMenuVisible menu true))))
-         (mousePressed [_ _])
-         (mouseReleased [_ _])
-         (mouseEntered [_ _])
-         (mouseExited [_ _]))))
-    menu))
+  (seesaw/menu
+   :text (i18n/tr :menu-view-language)
+   :icon (theme/key->icon :icon-languages)
+   :items [(create-language-action :english "English" reload-fn)
+           (create-language-action :ukrainian "Українська" reload-fn)]))
 
 (defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
@@ -163,19 +146,15 @@
 (defn- create-menu-bar
   "Create the application menu bar."
   [reload-fn]
-  (let [menubar (seesaw/menubar
-                 :items [(create-theme-menu reload-fn)
-                         (create-language-menu reload-fn)])
-        ;; Add stream toggle buttons directly to the menu bar
-        heat-button (create-stream-toggle-button :heat)
+  (let [heat-button (create-stream-toggle-button :heat)
         day-button (create-stream-toggle-button :day)]
-    ;; Add some spacing before the buttons
-    (.add menubar (javax.swing.Box/createHorizontalGlue))
-    (.add menubar heat-button)
-    (.add menubar (javax.swing.Box/createHorizontalStrut 5))
-    (.add menubar day-button)
-    (.add menubar (javax.swing.Box/createHorizontalStrut 10))
-    menubar))
+    (seesaw/menubar
+     :items [(create-theme-menu reload-fn)
+             (create-language-menu reload-fn)
+             (seesaw/separator :orientation :vertical)
+             ;; Remove text from toggle buttons to show only icons
+             (seesaw/config! heat-button :text "")
+             (seesaw/config! day-button :text "")])))
 
 (defn- create-main-content
   "Create the main content panel."
@@ -196,19 +175,6 @@
                             (catch Exception e
                               (println "Error during shutdown:" (.getMessage e))))
                           (System/exit 0)))))
-
-(defn preserve-window-state
-  "Extract window state for restoration."
-  [frame]
-  {:bounds (.getBounds ^javax.swing.JFrame frame)
-   :extended-state (.getExtendedState ^javax.swing.JFrame frame)})
-
-(defn restore-window-state!
-  "Restore window state to a frame."
-  [frame state]
-  (doto ^javax.swing.JFrame frame
-    (.setBounds ^java.awt.Rectangle (:bounds state))
-    (.setExtendedState ^Integer (:extended-state state))))
 
 (defn- ensure-on-edt
   "Ensure a function runs on the Event Dispatch Thread."
@@ -238,17 +204,9 @@
   (let [{:keys [version build-type window-state]} params
         ;; Preload icons before creating UI components
         _ (theme/preload-theme-icons!)
-        frame-ref (atom nil)
-        reload-fn (fn []
-                    (seesaw/invoke-later
-                     (when-let [old-frame @frame-ref]
-                       (let [state (preserve-window-state old-frame)
-                             new-params (assoc params :window-state state)]
-                         (.dispose ^javax.swing.JFrame old-frame)
-                         ;; Create and show new frame
-                         (let [new-frame (create-main-frame new-params)]
-                           (reset! frame-ref new-frame)
-                           (seesaw/show! new-frame))))))
+        ;; Create frame constructor that preserves window state
+        frame-cons (fn [state]
+                     (create-main-frame (assoc params :window-state state)))
         title (format "%s v%s [%s]"
                       (i18n/tr :app-title)
                       version
@@ -260,11 +218,8 @@
                :size [800 :by 600]
                :content (create-main-content))]
 
-    ;; Store frame reference for reload function
-    (reset! frame-ref frame)
-
-    ;; Set up menu bar (icons should already be loaded)
-    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar reload-fn))
+    ;; Set up menu bar with frame constructor
+    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-cons))
 
     ;; Add window close handler
     (add-window-close-handler! frame)

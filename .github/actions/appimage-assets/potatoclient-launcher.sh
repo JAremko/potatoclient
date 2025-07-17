@@ -32,8 +32,14 @@ unset GST_PLUGIN_PATH
 unset GST_PLUGIN_SYSTEM_PATH
 unset GST_REGISTRY_UPDATE
 
-# Java options for GStreamer
+# Java options for GStreamer and UI consistency
 JAVA_OPTS="-Djna.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"
+# UI consistency flags
+JAVA_OPTS="${JAVA_OPTS} -Dswing.noxp=true"
+JAVA_OPTS="${JAVA_OPTS} -Dsun.java2d.noddraw=true"
+JAVA_OPTS="${JAVA_OPTS} -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel"
+# Enable native access for JNA
+JAVA_OPTS="${JAVA_OPTS} --enable-native-access=ALL-UNNAMED"
 JAVA_OPTS="${JAVA_OPTS} -Dgstreamer.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"
 JAVA_OPTS="${JAVA_OPTS} -Dgstreamer.plugin.path=${APPDIR}/usr/lib/gstreamer-1.0"
 JAVA_OPTS="${JAVA_OPTS} -Djava.library.path=${APPDIR}/usr/lib:${APPDIR}/usr/lib/x86_64-linux-gnu"

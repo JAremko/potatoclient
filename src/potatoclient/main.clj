@@ -43,14 +43,9 @@
 (defn -main
   "Application entry point. Delegates to core namespace for actual initialization."
   [& args]
-  ;; Set system properties to disable menu bar embedding on all platforms
-  ;; This must be done before any Swing/AWT components are created
-  (System/setProperty "jdk.gtk.version" "2.2") ;; For Linux consistency
-  (System/setProperty "apple.laf.useScreenMenuBar" "false") ;; Disable macOS native menu bar
-  (System/setProperty "sun.java2d.noddraw" "true") ;; Windows rendering
-  ;; Force cross-platform look and feel for consistent behavior
-  (System/setProperty "swing.defaultlaf"
-                      (javax.swing.UIManager/getCrossPlatformLookAndFeelClassName))
+  ;; Note: System properties for UI behavior should be set via JVM flags
+  ;; at startup time, not programmatically here. See Makefile and Launch4j
+  ;; configuration for proper flag setup.
 
   (enable-instrumentation!)
   (enable-dev-mode!)
