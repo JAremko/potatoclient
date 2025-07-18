@@ -1,20 +1,20 @@
 (ns potatoclient.theme
   "Theme management for PotatoClient using DarkLaf"
   (:require [clojure.java.io :as io]
-            [seesaw.core :as seesaw]
-            [potatoclient.runtime :as runtime]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [potatoclient.specs :as specs]
             [potatoclient.logging :as logging]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
+            [potatoclient.runtime :as runtime]
+            [potatoclient.specs :as specs]
+            [seesaw.core :as seesaw])
   (:import com.github.weisj.darklaf.LafManager
-           [com.github.weisj.darklaf.theme
-            SolarizedLightTheme
-            SolarizedDarkTheme
-            OneDarkTheme
-            HighContrastDarkTheme]
-           [java.text SimpleDateFormat]
-           [java.util Date]))
+           (com.github.weisj.darklaf.theme
+             HighContrastDarkTheme
+             OneDarkTheme
+             SolarizedDarkTheme
+             SolarizedLightTheme)
+           (java.text SimpleDateFormat)
+           (java.util Date)))
 
 ;; Theme configuration atom
 (def ^:private theme-config (atom {:current-theme :sol-dark}))

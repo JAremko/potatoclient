@@ -3,18 +3,17 @@
   
   Handles spawning, communication, and cleanup of Java subprocesses
   that manage the actual video streams via WebSocket and GStreamer."
-  (:require [clojure.java.io :as io]
+  (:require [clojure.core.async :as async :refer [>!! go-loop]]
             [clojure.data.json :as json]
-            [clojure.core.async :as async :refer [>!! <!! go-loop]]
+            [clojure.java.io :as io]
             [clojure.string :as str]
-            [malli.core :as m]
-            [potatoclient.specs :as specs]
-            [potatoclient.state :as state]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [java.lang ProcessBuilder Process]
-           [java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter]
-           [java.util.concurrent TimeUnit]))
+            [potatoclient.state :as state])
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)
+           (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter)
+           (java.lang Process ProcessBuilder)
+           (java.util Map)))
 
 ;; Configuration constants
 (def ^:private read-timeout-ms 100)
@@ -101,7 +100,7 @@
                                jvm-args
                                [main-class stream-id url domain]))]
           (doto (ProcessBuilder. cmd)
-            (-> .environment (.putAll ^java.util.Map (build-process-environment app-env))))))
+            (-> .environment (.putAll ^Map (build-process-environment app-env))))))
 
 (>defn- parse-json-message
         "Safely parse a JSON message from the subprocess."
@@ -122,9 +121,9 @@
         [^BufferedReader stdout-reader output-chan stream-id]
         [[:fn #(instance? BufferedReader %)]
          [:fn {:error/message "must be a core.async channel"}
-          #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]
+          #(instance? ManyToManyChannel %)]
          string? => [:fn {:error/message "must be a core.async channel"}
-                     #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+                     #(instance? ManyToManyChannel %)]]
         (go-loop []
           (when-let [line (try
                             (.readLine stdout-reader)
@@ -176,9 +175,9 @@
         [^BufferedReader stderr-reader output-chan stream-id]
         [[:fn #(instance? BufferedReader %)]
          [:fn {:error/message "must be a core.async channel"}
-          #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]
+          #(instance? ManyToManyChannel %)]
          string? => [:fn {:error/message "must be a core.async channel"}
-                     #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+                     #(instance? ManyToManyChannel %)]]
         (go-loop [buffer []]
           (if-let [line (try
                           (.readLine stderr-reader)

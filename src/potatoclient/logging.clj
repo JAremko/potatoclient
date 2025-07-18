@@ -1,12 +1,12 @@
 (ns potatoclient.logging
   "Centralized logging configuration using Telemere"
-  (:require [taoensso.telemere :as tel]
-            [potatoclient.runtime :as runtime]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.string]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [java.time LocalDateTime]
-           [java.time.format DateTimeFormatter]))
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+            [potatoclient.runtime :as runtime]
+            [taoensso.telemere :as tel])
+  (:import (java.time LocalDateTime)
+           (java.time.format DateTimeFormatter)))
 
 (>defn- get-version
         "Get application version"

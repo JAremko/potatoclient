@@ -3,16 +3,13 @@
   
   Manages communication between the main process and video stream subprocesses,
   including message routing and stream lifecycle management."
-  (:require [clojure.core.async :as async :refer [go-loop <!]]
-            [potatoclient.state :as state]
-            [potatoclient.process :as process]
+  (:require [clojure.core.async :refer [<! go-loop]]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
-            [potatoclient.logging :as logging]
             [potatoclient.events.stream :as stream-events]
-            [malli.core :as m]
-            [malli.dev :as dev]
-            [potatoclient.specs :as specs]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+            [potatoclient.logging :as logging]
+            [potatoclient.process :as process]
+            [potatoclient.state :as state]))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)

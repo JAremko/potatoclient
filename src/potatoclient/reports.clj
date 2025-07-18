@@ -3,14 +3,13 @@
    
    This namespace provides utilities to generate reports about the codebase,
    including unspecced functions, code coverage, and other metrics."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [malli.core :as m]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
-  (:import [java.time LocalDateTime]
-           [java.time.format DateTimeFormatter]))
+  (:import (java.time LocalDateTime)
+           (java.time.format DateTimeFormatter)))
 
 ;; -----------------------------------------------------------------------------
 ;; Markdown utilities

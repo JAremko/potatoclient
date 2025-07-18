@@ -3,13 +3,13 @@
   
   Provides functions to serialize commands and deserialize state messages
   using the pronto library for Clojure protobuf support."
-  (:require [pronto.core :as p]
-            [pronto.utils :as u]
-            [potatoclient.specs :as specs]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [malli.core :as m]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [ser JonSharedData$JonGUIState]
-           [cmd JonSharedCmd$Root]))
+            [potatoclient.specs :as specs]
+            [pronto.core :as p]
+            [pronto.utils :as u])
+  (:import (cmd JonSharedCmd$Root)
+           (ser JonSharedData$JonGUIState)))
 
 ;; Client type constants for better readability
 (def client-types

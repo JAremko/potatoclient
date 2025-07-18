@@ -1,13 +1,11 @@
 (ns potatoclient.i18n
   "Internationalization support for PotatoClient"
-  (:require [tongue.core :as tongue]
-            [potatoclient.state :as state]
+  (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.edn :as edn]
-            [malli.core :as m]
-            [potatoclient.specs :as specs]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.logging :as logging]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+            [potatoclient.state :as state]
+            [tongue.core :as tongue]))
 
 ;; Atom to hold translations and translator instance
 (defonce translations-atom (atom {}))

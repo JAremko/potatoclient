@@ -3,12 +3,11 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [potatoclient.theme :as theme]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [potatoclient.specs :as specs]
             [potatoclient.logging :as logging]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [java.net URL]))
+            [potatoclient.specs :as specs]
+            [potatoclient.theme :as theme]))
 
 (def ^:private config-file-name "potatoclient-config.edn")
 

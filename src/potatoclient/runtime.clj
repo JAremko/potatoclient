@@ -1,7 +1,7 @@
 (ns potatoclient.runtime
   "Runtime detection utilities"
   (:require [clojure.java.io :as io]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]))
 
 (>defn release-build?
        "Check if this is a release build by checking:

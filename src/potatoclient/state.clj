@@ -6,10 +6,10 @@
   
   This namespace re-exports all state management functions from the
   sub-namespaces for backward compatibility."
-  (:require [potatoclient.state.streams :as streams]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.state.config :as config]
-            [potatoclient.state.ui :as ui]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+            [potatoclient.state.streams :as streams]
+            [potatoclient.state.ui :as ui]))
 
 ;; Re-export stream management functions
 (def get-stream streams/get-stream)

@@ -1,12 +1,9 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient - a multi-process video streaming client."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn-]]
             [potatoclient.core :as core]
-            [potatoclient.runtime :as runtime]
             [potatoclient.logging :as logging]
-            [clojure.java.io :as io]
-            [malli.core :as m]
-            [potatoclient.specs :as specs])
+            [potatoclient.runtime :as runtime])
   (:gen-class))
 
 (>defn- enable-guardrails!

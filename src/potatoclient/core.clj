@@ -1,19 +1,16 @@
 (ns potatoclient.core
   "Core application logic for PotatoClient.
   Handles application initialization and lifecycle management."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [seesaw.core :as seesaw]
-            [potatoclient.state :as state]
-            [potatoclient.process :as process]
-            [potatoclient.ui.main-frame :as main-frame]
-            [potatoclient.ui.startup-dialog :as startup-dialog]
-            [potatoclient.logging :as logging]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
-            [potatoclient.theme :as theme]
+            [potatoclient.logging :as logging]
+            [potatoclient.process :as process]
             [potatoclient.runtime :as runtime]
-            [malli.core :as m]
-            [potatoclient.specs :as specs])
+            [potatoclient.theme :as theme]
+            [potatoclient.ui.main-frame :as main-frame]
+            [potatoclient.ui.startup-dialog :as startup-dialog]
+            [seesaw.core :as seesaw])
   (:gen-class))
 
 (>defn- get-version
