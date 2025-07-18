@@ -2,7 +2,6 @@
   "Centralized logging configuration using Telemere"
   (:require [taoensso.telemere :as tel]
             [potatoclient.runtime :as runtime]
-            [potatoclient.config :as config]
             [clojure.java.io :as io]
             [clojure.string])
   (:import [java.time LocalDateTime]

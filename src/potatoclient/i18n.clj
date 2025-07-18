@@ -5,7 +5,8 @@
             [clojure.java.io :as io]
             [clojure.edn :as edn]
             [malli.core :as m]
-            [potatoclient.specs :as specs]))
+            [potatoclient.specs :as specs]
+            [potatoclient.logging :as logging]))
 
 
 ;; Atom to hold translations and translator instance
@@ -22,7 +23,7 @@
         (with-open [rdr (-> resource io/reader java.io.PushbackReader.)]
           (edn/read rdr))))
     (catch Exception e
-      (println "Failed to load translation file for locale:" locale "Error:" (.getMessage e))
+      (logging/log-error (str "Failed to load translation file for locale: " locale " Error: " (.getMessage e)))
       nil)))
 
 
@@ -44,7 +45,7 @@
 (defn reload-translations!
   "Reload all translations - useful for development"
   []
-  (println "Reloading translations...")
+  (logging/log-info "Reloading translations...")
   (load-translations!))
 
 

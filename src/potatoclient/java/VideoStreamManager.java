@@ -52,7 +52,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         this.scanner = new Scanner(System.in);
         this.eventFilter = new EventFilter();
         this.messageProtocol = new MessageProtocol(streamId);
-        this.frameManager = new FrameManager(streamId, this);
+        this.frameManager = new FrameManager(streamId, this, messageProtocol);
         
         this.reconnectExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "VideoStream-Reconnect-" + streamId);
@@ -249,7 +249,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             
             // If we exit the loop because stdin was closed (parent process died)
             if (running.get()) {
-                System.err.println("Parent process stdin closed, shutting down");
+                messageProtocol.sendLog("WARN", "Parent process stdin closed, shutting down");
                 shutdown();
             }
         } catch (Exception e) {
@@ -384,7 +384,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             // This ensures consistent behavior with button clicks
         } catch (Exception e) {
             // If we can't send the message (parent process is dead), shutdown directly
-            System.err.println("Parent process appears to be dead, shutting down directly");
+            messageProtocol.sendLog("ERROR", "Parent process appears to be dead, shutting down directly");
             shutdown();
         }
     }

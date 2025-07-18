@@ -12,6 +12,7 @@ public class FrameManager {
     private final String streamId;
     private volatile JFrame frame;
     private volatile Component videoComponent;
+    private final MessageProtocol messageProtocol;
     
     public interface FrameEventListener {
         void onFrameCreated(JFrame frame, Component videoComponent);
@@ -20,9 +21,10 @@ public class FrameManager {
     
     private final FrameEventListener listener;
     
-    public FrameManager(String streamId, FrameEventListener listener) {
+    public FrameManager(String streamId, FrameEventListener listener, MessageProtocol messageProtocol) {
         this.streamId = streamId;
         this.listener = listener;
+        this.messageProtocol = messageProtocol;
     }
     
     public void createFrame() {
@@ -58,7 +60,7 @@ public class FrameManager {
                 newFrame.setIconImage(new ImageIcon(iconURL).getImage());
             }
         } catch (Exception e) {
-            System.err.println("Failed to load window icon: " + e.getMessage());
+            messageProtocol.sendLog("ERROR", "Failed to load window icon: " + e.getMessage());
         }
         
         // Add window close listener

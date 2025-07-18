@@ -206,7 +206,7 @@
   (.addWindowListener ^javax.swing.JFrame frame
                       (proxy [WindowAdapter] []
                         (windowClosing [_]
-                          (println "Shutting down PotatoClient...")
+                          (logging/log-info "Shutting down PotatoClient...")
                           (try
                             ;; Save current config state
                             (let [current-config {:theme (theme/get-current-theme)
@@ -216,7 +216,7 @@
                             (process/cleanup-all-processes)
                             (logging/shutdown!)
                             (catch Exception e
-                              (println "Error during shutdown:" (.getMessage e))))
+                              (logging/log-error (str "Error during shutdown: " (.getMessage e)))))
                           (System/exit 0)))))
 
 (defn- ensure-on-edt

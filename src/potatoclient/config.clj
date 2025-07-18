@@ -4,7 +4,8 @@
             [clojure.java.io :as io]
             [potatoclient.theme :as theme]
             [malli.core :as m]
-            [potatoclient.specs :as specs]))
+            [potatoclient.specs :as specs]
+            [potatoclient.logging :as logging]))
 
 (def ^:private config-file-name "potatoclient-config.edn")
 
@@ -75,11 +76,11 @@
           (if (m/validate ::specs/config merged-config)
             merged-config
             (do
-              (println "Invalid config detected, will use defaults")
+              (logging/log-warn "Invalid config detected, will use defaults")
               ;; We'll save the default config later in initialize!
               default-config)))
         (catch Exception e
-          (println "Error loading config:" (.getMessage ^Exception e))
+          (logging/log-error (str "Error loading config: " (.getMessage ^Exception e)))
           default-config))
       default-config)))
 
@@ -94,10 +95,10 @@
         (spit config-file (pr-str config)))
       true
       (catch Exception e
-        (println "Error saving config:" (.getMessage ^Exception e))
+        (logging/log-error (str "Error saving config: " (.getMessage ^Exception e)))
         false))
     (do
-      (println "Invalid config, not saving:" (m/explain ::specs/config config))
+      (logging/log-error (str "Invalid config, not saving: " (m/explain ::specs/config config)))
       false)))
 
 
@@ -159,11 +160,11 @@
   (let [config (load-config)
         config-file (get-config-file)]
     ;; Log config location on first run
-    (println "Configuration file location:" (get-config-location))
+    (logging/log-info (str "Configuration file location: " (get-config-location)))
     ;; If config file doesn't exist or was invalid, save defaults
     (when (or (not (.exists ^java.io.File config-file))
               (not (m/validate ::specs/config config)))
-      (println "Creating default config file")
+      (logging/log-info "Creating default config file")
       (save-config! config))
     ;; Initialize theme from saved config
     (theme/initialize-theme! (:theme config))

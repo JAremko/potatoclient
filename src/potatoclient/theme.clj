@@ -4,7 +4,8 @@
             [seesaw.core :as seesaw]
             [potatoclient.runtime :as runtime]
             [malli.core :as m]
-            [potatoclient.specs :as specs])
+            [potatoclient.specs :as specs]
+            [potatoclient.logging :as logging])
   (:import com.github.weisj.darklaf.LafManager
            [com.github.weisj.darklaf.theme
             SolarizedLightTheme
@@ -45,7 +46,7 @@
       (apply-theme! theme-key)
       true)
     (do
-      (println (str "Invalid theme key: " theme-key))
+      (logging/log-error (str "Invalid theme key: " theme-key))
       false)))
 
 

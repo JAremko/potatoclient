@@ -57,8 +57,7 @@
       (apply core/-main args))
     (catch Exception e
       (binding [*out* *err*]
-        (println "Fatal error during application startup:")
-        (println (.getMessage e))
+        (logging/log-error (str "Fatal error during application startup: " (.getMessage e)))
         (.printStackTrace e))
       (System/exit 1))))
 
