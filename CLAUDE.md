@@ -943,6 +943,50 @@ When adding new functions:
    [:height pos-int?]])
 ```
 
+### Writing Precise Specs
+
+**ALWAYS write precise (narrow) specs rather than overly broad types.** This improves error messages, catches bugs early, and serves as documentation.
+
+**Guidelines for precise specs**:
+
+1. **Avoid `any?` except when necessary**:
+   - ❌ Bad: `[:=> [:cat any?] any?]`
+   - ✅ Good: `[:=> [:cat ::specs/theme-key] nil?]`
+   - Legitimate uses: Java interop objects, higher-order function returns
+
+2. **Use domain-specific types**:
+   - ❌ Bad: `keyword?` for any keyword
+   - ✅ Good: `::specs/stream-type` for `:heat` or `:day`
+   - ❌ Bad: `string?` for any string
+   - ✅ Good: `::specs/url` for WebSocket URLs
+
+3. **Specify return types precisely**:
+   - Side-effect functions should return `nil?`
+   - Pure functions should specify exact return type
+   - Functions returning Java objects should document the class
+
+4. **Use union types for multiple valid inputs**:
+   ```clojure
+   ;; Instead of any?
+   [:or ::specs/theme-key ::specs/locale ::specs/domain]
+   ```
+
+5. **Validate complex structures**:
+   ```clojure
+   ;; For core.async channels
+   [:fn {:error/message "must be a core.async channel"}
+    #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]
+   ```
+
+6. **Document when `any?` is appropriate**:
+   ```clojure
+   ;; Protobuf objects have dynamic types
+   (m/=> proto/encode [:=> [:cat any?] bytes?])
+   
+   ;; Higher-order functions with caller-defined returns
+   (m/=> map [:=> [:cat ifn? seqable?] any?])
+   ```
+
 ### Checking for Unspecced Functions
 
 To ensure all functions have Malli specs:

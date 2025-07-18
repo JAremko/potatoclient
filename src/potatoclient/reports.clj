@@ -72,7 +72,7 @@
 (defn- get-timestamp
   "Get current timestamp for reports."
   []
-  (.format (LocalDateTime/now) 
+  (.format (LocalDateTime/now)
            (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss")))
 
 (defn- get-report-dir
@@ -125,46 +125,46 @@
                unspecced-data (:data report-data)
                total (:total report-data)
                filename "unspecced-functions.md"
-              content (str (md-header 1 "Unspecced Functions Report")
-                          "\n\n"
-                          (md-italic (str "Generated: " timestamp))
-                          "\n\n"
-                          (md-header 2 "Summary")
-                          "\n\n"
-                          (if (zero? total)
-                            (str (md-badge "Coverage" "100%" "brightgreen") "\n\n"
-                                 "✅ " (md-bold "All functions have Malli specs!"))
-                            (str (md-badge "Unspecced Functions" (str total) "orange") "\n\n"
-                                 "⚠️ Found " (md-bold (str total)) " functions without Malli specs across "
-                                 (md-bold (str (count unspecced-data))) " namespaces.\n"))
-                          "\n"
-                          (when (pos? total)
-                            (str (md-header 2 "Unspecced Functions by Namespace")
-                                 "\n\n"
-                                 (str/join "\n" 
-                                          (for [[ns-sym fns] (sort unspecced-data)]
-                                            (format-namespace-section ns-sym fns)))
-                                 "\n\n"
-                                 (md-header 2 "Statistics")
-                                 "\n\n"
-                                 (md-table-header ["Namespace" "Count"])
-                                 "\n"
-                                 (str/join "\n"
-                                          (for [[ns-sym fns] (sort-by (comp count second) > unspecced-data)]
-                                            (md-table-row [(str "`" ns-sym "`") (str (count fns))])))
-                                 "\n"))
-                          "\n"
-                          (md-header 2 "Next Steps")
-                          "\n\n"
-                          (if (zero? total)
-                            "Great job! All functions are properly instrumented with Malli specs."
-                            (str "1. Add Malli specs for the unspecced functions to `src/potatoclient/instrumentation.clj`\n"
-                                 "2. Follow the pattern: `(m/=> namespace/function [:=> [:cat ...args...] return-type])`\n"
-                                 "3. Run `(potatoclient.reports/generate-unspecced-functions-report!)` again to update this report\n"))
-                          "\n")]
-          (let [path (write-report! filename content)]
-            (println (str "Report generated: " path))
-            path)))))))
+               content (str (md-header 1 "Unspecced Functions Report")
+                            "\n\n"
+                            (md-italic (str "Generated: " timestamp))
+                            "\n\n"
+                            (md-header 2 "Summary")
+                            "\n\n"
+                            (if (zero? total)
+                              (str (md-badge "Coverage" "100%" "brightgreen") "\n\n"
+                                   "✅ " (md-bold "All functions have Malli specs!"))
+                              (str (md-badge "Unspecced Functions" (str total) "orange") "\n\n"
+                                   "⚠️ Found " (md-bold (str total)) " functions without Malli specs across "
+                                   (md-bold (str (count unspecced-data))) " namespaces.\n"))
+                            "\n"
+                            (when (pos? total)
+                              (str (md-header 2 "Unspecced Functions by Namespace")
+                                   "\n\n"
+                                   (str/join "\n"
+                                             (for [[ns-sym fns] (sort unspecced-data)]
+                                               (format-namespace-section ns-sym fns)))
+                                   "\n\n"
+                                   (md-header 2 "Statistics")
+                                   "\n\n"
+                                   (md-table-header ["Namespace" "Count"])
+                                   "\n"
+                                   (str/join "\n"
+                                             (for [[ns-sym fns] (sort-by (comp count second) > unspecced-data)]
+                                               (md-table-row [(str "`" ns-sym "`") (str (count fns))])))
+                                   "\n"))
+                            "\n"
+                            (md-header 2 "Next Steps")
+                            "\n\n"
+                            (if (zero? total)
+                              "Great job! All functions are properly instrumented with Malli specs."
+                              (str "1. Add Malli specs for the unspecced functions to `src/potatoclient/instrumentation.clj`\n"
+                                   "2. Follow the pattern: `(m/=> namespace/function [:=> [:cat ...args...] return-type])`\n"
+                                   "3. Run `(potatoclient.reports/generate-unspecced-functions-report!)` again to update this report\n"))
+                            "\n")]
+           (let [path (write-report! filename content)]
+             (println (str "Report generated: " path))
+             path)))))))
 
 (defn generate-all-reports!
   "Generate all available reports.
@@ -180,8 +180,8 @@
 ;; Function schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> generate-all-reports! [:=> [:cat] any?])
-(m/=> generate-unspecced-functions-report! 
+(m/=> generate-all-reports! [:=> [:cat] [:map-of keyword? [:maybe string?]]])
+(m/=> generate-unspecced-functions-report!
       [:function
        [:=> [:cat] [:maybe string?]]
        [:=> [:cat [:map
@@ -189,4 +189,4 @@
                    [:message string?]
                    [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
                    [:total {:optional true} nat-int?]]]
-            [:maybe string?]]])
+        [:maybe string?]]])
