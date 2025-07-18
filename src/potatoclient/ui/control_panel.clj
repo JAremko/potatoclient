@@ -13,32 +13,7 @@
 
 ;; UI styling constants
 (def ^:private panel-border-width 5)
-(def ^:private domain-field-columns 20)
 (def ^:private label-font "ARIAL-BOLD-16")
-
-
-(defn- create-domain-field
-  "Create the domain configuration field."
-  []
-  (let [field (seesaw/text :columns domain-field-columns
-                          :text (state/get-domain))]
-    ;; Update state when field changes
-    (seesaw/listen field :document
-                  (fn [_]
-                    (state/set-domain! (seesaw/text field))))
-    field))
-
-
-(defn- create-header-section
-  "Create the header section with domain configuration."
-  []
-  (seesaw/vertical-panel
-   :items [(seesaw/label :text (i18n/tr :control-label-system)
-                        :font label-font)
-           (seesaw/horizontal-panel
-            :items [(str (i18n/tr :config-server-address) ": ")
-                    (create-domain-field)])
-           (seesaw/separator)]))
 
 
 (defn create
@@ -49,5 +24,5 @@
   []
   (seesaw/vertical-panel
    :border panel-border-width
-   :items [(create-header-section)]))
+   :items [(seesaw/label :text "Control Panel" :font label-font)]))
 

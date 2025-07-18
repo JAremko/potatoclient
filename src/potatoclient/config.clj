@@ -2,12 +2,38 @@
   "Configuration management for PotatoClient"
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clojure.string :as str]
             [potatoclient.theme :as theme]
             [malli.core :as m]
             [potatoclient.specs :as specs]
-            [potatoclient.logging :as logging]))
+            [potatoclient.logging :as logging])
+  (:import [java.net URL]))
 
 (def ^:private config-file-name "potatoclient-config.edn")
+
+
+(defn- extract-domain
+  "Extract domain/IP from various URL formats."
+  [input]
+  (let [cleaned (str/trim input)]
+    (try
+      ;; If it's already just a domain/IP, return as-is
+      (if (and (not (str/includes? cleaned "://"))
+               (not (str/includes? cleaned "/")))
+        cleaned
+        ;; Otherwise, try to parse as URL
+        (let [;; Add protocol if missing
+              url-str (if (str/includes? cleaned "://")
+                        cleaned
+                        (str "http://" cleaned))
+              url (URL. url-str)
+              host (.getHost url)]
+          (if (str/blank? host)
+            cleaned  ; Fallback to original if parsing fails
+            host)))
+      (catch Exception _
+        ;; If all parsing fails, return the cleaned input
+        cleaned))))
 
 
 (defn- get-config-dir
@@ -64,14 +90,20 @@
   []
   (let [config-file (get-config-file)
         default-config {:theme :sol-dark
-                        :domain "sych.local"
+                        :url "wss://sych.local"
                         :locale :english}]
     (if (.exists ^java.io.File config-file)
       (try
         (let [file-data (-> config-file
                             slurp
                             edn/read-string)
-              merged-config (merge default-config file-data)]
+              ;; Handle backward compatibility: convert domain to url if needed
+              migrated-data (if (and (:domain file-data) (not (:url file-data)))
+                              (-> file-data
+                                  (assoc :url (str "wss://" (:domain file-data)))
+                                  (dissoc :domain))
+                              file-data)
+              merged-config (merge default-config migrated-data)]
           ;; Validate the merged config
           (if (m/validate ::specs/config merged-config)
             merged-config
@@ -115,17 +147,38 @@
     (save-config! (assoc config :theme theme-key))))
 
 
-(defn get-domain
-  "Get the saved domain from config"
+(defn get-url
+  "Get the saved URL from config"
   []
-  (:domain (load-config)))
+  (:url (load-config)))
+
+
+(defn save-url!
+  "Save the URL to config"
+  [url]
+  (let [config (load-config)]
+    (save-config! (assoc config :url url))))
+
+
+(defn get-domain
+  "Get the domain extracted from the saved URL (or legacy domain field)"
+  []
+  (let [config (load-config)]
+    (if-let [url (:url config)]
+      ;; Extract domain from URL
+      (extract-domain url)
+      ;; Fallback to legacy domain field
+      (:domain config "sych.local"))))
 
 
 (defn save-domain!
-  "Save the domain to config"
+  "Save the domain to config (stores as URL for consistency)"
   [domain]
-  (let [config (load-config)]
-    (save-config! (assoc config :domain domain))))
+  ;; Only add wss:// if it's not already a URL
+  (if (or (clojure.string/includes? domain "://")
+          (clojure.string/starts-with? domain "//"))
+    (save-url! domain)
+    (save-url! (str "wss://" domain))))
 
 
 (defn get-locale

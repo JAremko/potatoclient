@@ -182,15 +182,20 @@
   "Create the application menu bar."
   [reload-fn parent]
   (let [heat-button (create-stream-toggle-button :heat)
-        day-button (create-stream-toggle-button :day)]
+        day-button (create-stream-toggle-button :day)
+        ;; Remove text from toggle buttons to show only icons
+        heat-button (seesaw/config! heat-button :text "")
+        day-button (seesaw/config! day-button :text "")]
     (seesaw/menubar
-     :items [(create-theme-menu reload-fn)
+     :items [;; Left side - menus
+             (create-theme-menu reload-fn)
              (create-language-menu reload-fn)
              (create-help-menu parent)
-             (seesaw/separator :orientation :vertical)
-             ;; Remove text from toggle buttons to show only icons
-             (seesaw/config! heat-button :text "")
-             (seesaw/config! day-button :text "")])))
+             ;; Use horizontal glue to push buttons to the right
+             (javax.swing.Box/createHorizontalGlue)
+             ;; Right side - stream buttons
+             heat-button
+             day-button])))
 
 (defn- create-main-content
   "Create the main content panel."
@@ -248,10 +253,12 @@
         ;; Create frame constructor that preserves window state
         frame-cons (fn [state]
                      (create-main-frame (assoc params :window-state state)))
-        title (format "%s v%s [%s]"
+        url (config/get-url)
+        title (format "%s v%s [%s] - %s"
                       (i18n/tr :app-title)
                       version
-                      build-type)
+                      build-type
+                      url)
         frame (seesaw/frame
                :title title
                :icon (clojure.java.io/resource "main.png")

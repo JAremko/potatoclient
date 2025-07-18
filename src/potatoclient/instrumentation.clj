@@ -30,6 +30,7 @@
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.startup-dialog :as startup-dialog]
             [potatoclient.ui.utils :as ui-utils]
             ;; Main namespaces
             [potatoclient.core :as core]
@@ -79,7 +80,10 @@
 (m/=> potatoclient.config/save-config! [:=> [:cat :potatoclient.specs/config] boolean?])
 (m/=> potatoclient.config/get-theme [:=> [:cat] :potatoclient.specs/theme-key])
 (m/=> potatoclient.config/save-theme! [:=> [:cat :potatoclient.specs/theme-key] boolean?])
-(m/=> potatoclient.config/get-domain [:=> [:cat] :potatoclient.specs/domain])
+(m/=> potatoclient.config/extract-domain [:=> [:cat string?] string?])
+(m/=> potatoclient.config/get-url [:=> [:cat] [:maybe string?]])
+(m/=> potatoclient.config/save-url! [:=> [:cat string?] boolean?])
+(m/=> potatoclient.config/get-domain [:=> [:cat] string?])
 (m/=> potatoclient.config/save-domain! [:=> [:cat string?] boolean?])
 (m/=> potatoclient.config/get-locale [:=> [:cat] :potatoclient.specs/locale])
 (m/=> potatoclient.config/save-locale! [:=> [:cat :potatoclient.specs/locale] boolean?])
@@ -280,6 +284,19 @@
 (m/=> potatoclient.ui.log-viewer/update-log-list! [:=> [:cat any?] any?])
 (m/=> potatoclient.ui.log-viewer/create-log-viewer-frame [:=> [:cat] :potatoclient.specs/jframe])
 (m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] any?])
+
+;; -----------------------------------------------------------------------------
+;; UI startup-dialog namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> potatoclient.ui.startup-dialog/reload-dialog! [:=> [:cat :potatoclient.specs/jframe fn?] any?])
+(m/=> potatoclient.ui.startup-dialog/create-language-action [:=> [:cat keyword? string? :potatoclient.specs/jframe fn?] any?])
+(m/=> potatoclient.ui.startup-dialog/create-theme-action [:=> [:cat keyword? :potatoclient.specs/jframe fn?] any?])
+(m/=> potatoclient.ui.startup-dialog/create-menu-bar [:=> [:cat :potatoclient.specs/jframe fn?] :potatoclient.specs/jmenu-bar])
+(m/=> potatoclient.ui.startup-dialog/extract-domain [:=> [:cat string?] string?])
+(m/=> potatoclient.ui.startup-dialog/validate-domain [:=> [:cat string?] boolean?])
+(m/=> potatoclient.ui.startup-dialog/create-content-panel [:=> [:cat string?] any?])
+(m/=> potatoclient.ui.startup-dialog/show-startup-dialog [:=> [:cat [:maybe :potatoclient.specs/jframe] fn?] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; UI Utils namespace schemas

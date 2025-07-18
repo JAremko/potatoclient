@@ -14,8 +14,19 @@
   [:enum :sol-light :sol-dark :dark :hi-dark])
 
 (def domain
-  "Domain name string"
-  string?)
+  "Domain name or IP address - validates hosts that can be used for WebSocket connections"
+  [:and
+   string?
+   [:fn {:error/message "must be a valid domain name or IP address"}
+    (fn [s]
+      (and (not (clojure.string/blank? s))
+           (let [;; IPv4 pattern
+                 ip-pattern #"^(\d{1,3}\.){3}\d{1,3}$"
+                 ;; Domain pattern - allows subdomains, hyphens, ports
+                 ;; More permissive than standard to allow .local domains, etc.
+                 domain-pattern #"^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$"]
+             (or (re-matches ip-pattern s)
+                 (re-matches domain-pattern s)))))]])
 
 (def locale
   "Application locale"
@@ -35,13 +46,14 @@
 
 (def config-key
   "Valid configuration keys"
-  [:enum :theme :domain :locale])
+  [:enum :theme :domain :locale :url])
 
 (def config
   "Application configuration - open schema to allow future extensions"
   [:map {:closed false}
    [:theme theme-key]
-   [:domain domain]
+   [:domain {:optional true} domain]  ;; Keep for backward compatibility
+   [:url {:optional true} string?]     ;; Store original URL as entered
    [:locale locale]])
 
 ;; -----------------------------------------------------------------------------

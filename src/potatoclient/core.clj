@@ -5,6 +5,7 @@
             [potatoclient.state :as state]
             [potatoclient.process :as process]
             [potatoclient.ui.main-frame :as main-frame]
+            [potatoclient.ui.startup-dialog :as startup-dialog]
             [potatoclient.logging :as logging]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
@@ -69,11 +70,30 @@
   [& args]
   (initialize-application!)
   (seesaw/invoke-later
-   (let [params {:version (get-version)
-                 :build-type (get-build-type)}
-         frame (main-frame/create-main-frame params)]
-     ;; Show frame on next EDT cycle to ensure everything is initialized
-     (seesaw/invoke-later
-      (seesaw/show! frame))))
-  (log-startup!))
+   ;; Preload theme icons before showing any UI
+   (theme/preload-theme-icons!)
+   ;; Define callback handler for dialog results
+   (letfn [(handle-dialog-result [result]
+             (case result
+               :connect
+               ;; User clicked Connect, proceed with main frame
+               (let [params {:version (get-version)
+                             :build-type (get-build-type)}
+                     frame (main-frame/create-main-frame params)]
+                 (seesaw/show! frame)
+                 (log-startup!))
+               
+               :cancel
+               ;; User clicked Cancel, exit application
+               (do
+                 (logging/log-info "User cancelled startup dialog, exiting...")
+                 (System/exit 0))
+               
+               :reload
+               ;; Theme or language changed, show dialog again
+               (do
+                 (theme/preload-theme-icons!)
+                 (startup-dialog/show-startup-dialog nil handle-dialog-result))))]
+     ;; Show the initial dialog
+     (startup-dialog/show-startup-dialog nil handle-dialog-result))))
 

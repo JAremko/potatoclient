@@ -64,7 +64,11 @@
 (defn- build-stream-url
   "Build the WebSocket URL for a stream."
   [endpoint]
-  (str "wss://" (state/get-domain) endpoint))
+  (let [domain (state/get-domain)]
+    ;; If domain already has a protocol, use it; otherwise default to wss://
+    (if (clojure.string/includes? domain "://")
+      (str domain endpoint)
+      (str "wss://" domain endpoint))))
 
 
 (defn- initialize-stream

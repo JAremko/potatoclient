@@ -54,6 +54,12 @@
  :about-text "Клієнт відеопотоку з подвійними H.264 WebSocket потоками.\n\nГоловний процес керує інтерфейсом, підпроцеси обробляють відеопотоки."
  :about-button-close "Закрити"
  
+ ;; Startup dialog
+ :startup-title "Підключення до сервера"
+ :startup-server-url "URL сервера:"
+ :startup-button-connect "Підключити"
+ :startup-button-cancel "Скасувати"
+ 
  ;; Configuration
  :config-server-address "Адреса сервера"
  :config-server-port "Порт сервера"

@@ -54,6 +54,12 @@
  :about-text "Video streaming client with dual H.264 WebSocket streams.\n\nMain process handles UI, subprocesses handle video streams."
  :about-button-close "Close"
  
+ ;; Startup dialog
+ :startup-title "Connect to Server"
+ :startup-server-url "Server URL:"
+ :startup-button-connect "Connect"
+ :startup-button-cancel "Cancel"
+ 
  ;; Configuration
  :config-server-address "Server Address"
  :config-server-port "Server Port"
