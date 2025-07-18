@@ -48,9 +48,15 @@
   "Valid configuration keys"
   [:enum :theme :domain :locale :url-history])
 
+(def url-history-entry
+  "URL history entry with timestamp"
+  [:map
+   [:url string?]
+   [:timestamp inst?]])
+
 (def url-history
-  "Set of previously used URLs (max 10)"
-  [:set string?])
+  "Set of previously used URLs with timestamps (max 10)"
+  [:set url-history-entry])
 
 (def config
   "Application configuration - open schema to allow future extensions"
@@ -332,6 +338,7 @@
     ;; Configuration
     ::config-key config-key
     ::config config
+    ::url-history-entry url-history-entry
     ::url-history url-history
     
     ;; State

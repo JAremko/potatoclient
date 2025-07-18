@@ -213,35 +213,41 @@
     (or (:url-history config) #{})))
 
 (defn get-recent-urls
-  "Get up to 10 most recent unique URLs as a vector"
+  "Get up to 10 most recent unique URLs as a vector, sorted by timestamp (newest first)"
   []
-  (vec (take 10 (reverse (sort (get-url-history))))))
+  (vec (map :url
+            (take 10
+                  (sort-by :timestamp #(compare %2 %1) (get-url-history))))))
 
 (defn get-most-recent-url
   "Get the most recently used URL from history"
   []
-  (first (get-recent-urls)))
+  (when-let [history (seq (get-url-history))]
+    (:url (first (sort-by :timestamp #(compare %2 %1) history)))))
 
 (defn get-domain
   "Get the domain from the most recent URL or legacy domain field"
   []
   (let [config (load-config)]
     ;; Try to get domain from most recent URL in history
-    (if-let [recent-url (first (get-recent-urls))]
+    (if-let [recent-url (get-most-recent-url)]
       (extract-domain recent-url)
       ;; Fallback to legacy domain field, no default
       (:domain config ""))))
 
 (defn add-url-to-history
-  "Add a URL to the history, maintaining max 10 unique URLs"
+  "Add a URL to the history with current timestamp, maintaining max 10 unique URLs"
   [url]
   (when (and url (not (clojure.string/blank? url)))
     (let [config (load-config)
-          current-history (or (:url-history config) #{})
-          new-history (conj current-history url)
-          ;; Keep only the 10 most recent URLs
-          trimmed-history (if (> (count new-history) 10)
-                           (into #{} (take 10 (reverse (sort new-history))))
-                           new-history)]
+          current-history (get-url-history)
+          ;; Remove any existing entry for this URL
+          filtered-history (into #{} (remove #(= (:url %) url) current-history))
+          ;; Add new entry with current timestamp
+          new-entry {:url url :timestamp (java.util.Date.)}
+          new-history (conj filtered-history new-entry)
+          ;; Keep only the 10 most recent URLs by timestamp
+          sorted-history (sort-by :timestamp #(compare %2 %1) new-history)
+          trimmed-history (into #{} (take 10 sorted-history))]
       (save-config! (assoc config :url-history trimmed-history)))))
 
