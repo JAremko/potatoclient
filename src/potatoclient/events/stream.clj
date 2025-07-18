@@ -1,16 +1,14 @@
 (ns potatoclient.events.stream
-  "Stream-specific event handling for video windows.
-  
-  Processes window events, navigation/mouse events, and stream responses
-  from the video subprocesses."
-  (:require [potatoclient.logging :as logging]
-            [potatoclient.state :as state]
-            [potatoclient.process :as process]
-            [potatoclient.i18n :as i18n]
-            [clojure.data.json :as json]
-            [seesaw.core :as seesaw]
-            [malli.core :as m]
-            [potatoclient.specs :as specs]))
+  "Event handling for video stream windows"
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+   [potatoclient.logging :as logging]
+   [seesaw.core :as seesaw]
+   [potatoclient.state :as state]
+   [potatoclient.process :as process]
+   [potatoclient.specs])
+  (:import
+   [javax.swing JFrame JDialog]))
 
 ;; Event type definitions
 (def window-event-types
@@ -25,182 +23,179 @@
 (def mouse-button-names
   {1 "Left" 2 "Middle" 3 "Right"})
 
-
 ;; Window event formatting
-(defn- format-dimensions [width height]
-  (str width "x" height))
+(>defn- format-dimensions
+        [width height]
+        [int? int? => string?]
+        (str width "x" height))
 
-(defn- format-position [x y]
-  (format "(%d, %d)" x y))
+(>defn- format-position
+        [x y]
+        [int? int? => string?]
+        (format "(%d, %d)" x y))
 
-(defn- format-window-event-details
-  "Format window event based on type."
-  [event]
-  (let [{:keys [type width height x y]} event]
-    (case (keyword type)
-      :resized (str "Resized to " (format-dimensions width height))
-      :moved (str "Moved to " (format-position x y))
-      :maximized "Maximized"
-      :unmaximized "Restored from maximized"
-      :minimized "Minimized to taskbar"
-      :restored "Restored from taskbar"
-      :focused "Got focus"
-      :unfocused "Lost focus"
-      :opened "Window opened"
-      :closing "Window closing"
-      ;; Unknown type - show raw data
-      (str type " " (json/write-str (dissoc event :type))))))
+(>defn- format-window-event-details
+        "Format window event based on type."
+        [{:keys [type width height x y]}]
+        [map? => string?]
+        (case type
+          :resize (str "Resized to " (format-dimensions width height))
+          :move (str "Moved to " (format-position x y))
+          :focus-gained "Gained focus"
+          :focus-lost "Lost focus"
+          :minimized "Minimized"
+          :restored "Restored"
+          :maximized "Maximized"
+          :closed "Closed"
+          (str type)))
 
-(defn format-window-event
-  "Format a window event for display."
-  [event]
-  (format-window-event-details event))
-
+(>defn format-window-event
+       "Format a window event for display."
+       [event]
+       [map? => string?]
+       (format-window-event-details event))
 
 ;; Navigation event formatting
-(defn- format-coordinates
-  "Format coordinates with optional NDC values."
-  [{:keys [x y ndcX ndcY]}]
-  (if (and ndcX ndcY)
-    (format "%d,%d [NDC: %.3f,%.3f]" x y ndcX ndcY)
-    (str x "," y)))
+(>defn- format-coordinates
+        "Format coordinates with optional NDC values."
+        [{:keys [x y ndcX ndcY]}]
+        [map? => string?]
+        (if (and ndcX ndcY)
+          (format "(%d,%d) [%.3f,%.3f]" x y ndcX ndcY)
+          (format "(%d,%d)" x y)))
 
-(defn- format-mouse-button
-  "Format mouse button name."
-  [button]
-  (get mouse-button-names button (str button)))
+(>defn- format-mouse-button
+        "Format mouse button name."
+        [button]
+        [int? => string?]
+        (get mouse-button-names button (str "Button " button)))
 
-(defn- format-click-count
-  "Format click count if multiple."
-  [click-count]
-  (if (> click-count 1)
-    (str " x" click-count)
-    ""))
+(>defn- format-click-count
+        "Format click count if multiple."
+        [count]
+        [int? => string?]
+        (if (> count 1)
+          (str " x" count)
+          ""))
 
-(defn- format-wheel-direction
-  "Format mouse wheel direction."
-  [rotation]
-  (if (pos? rotation) "down" "up"))
+(>defn- format-wheel-direction
+        "Format mouse wheel direction."
+        [rotation]
+        [number? => string?]
+        (if (< rotation 0) "up" "down"))
 
-(defn- format-navigation-event-details
-  "Format navigation event based on type."
-  [event]
-  (let [{:keys [type button clickCount wheelRotation] :as evt} event
-        coords (format-coordinates evt)]
-    (case (keyword type)
-      :mouse-click
-      (str "Click (" (format-mouse-button button)
-           (format-click-count clickCount) ") @ " coords)
-      
-      :mouse-press
-      (str "Press (" (format-mouse-button button) ") @ " coords)
-      
-      :mouse-release
-      (str "Release (" (format-mouse-button button) ") @ " coords)
-      
-      :mouse-move
-      (str "Move @ " coords)
-      
-      :mouse-drag-start
-      (str "Drag start @ " coords)
-      
-      :mouse-drag
-      (str "Dragging @ " coords)
-      
-      :mouse-drag-end
-      (str "Drag end @ " coords)
-      
-      :mouse-enter
-      (str "Mouse entered @ " coords)
-      
-      :mouse-exit
-      (str "Mouse exited @ " coords)
-      
-      :mouse-wheel
-      (str "Wheel " (format-wheel-direction wheelRotation) " "
-           (Math/abs wheelRotation) " @ " coords)
-      
+(>defn- format-navigation-event-details
+        "Format navigation event based on type."
+        [{:keys [type button clickCount wheelRotation] :as event}]
+        [map? => string?]
+        (let [coords (format-coordinates event)]
+          (case type
+            :mouse-click
+            (str "Click (" (format-mouse-button button)
+                 (format-click-count clickCount) ") @ " coords)
+
+            :mouse-press
+            (str "Press (" (format-mouse-button button) ") @ " coords)
+
+            :mouse-release
+            (str "Release (" (format-mouse-button button) ") @ " coords)
+
+            :mouse-move
+            (str "Move @ " coords)
+
+            :mouse-drag-start
+            (str "Drag start @ " coords)
+
+            :mouse-drag
+            (str "Dragging @ " coords)
+
+            :mouse-drag-end
+            (str "Drag end @ " coords)
+
+            :mouse-enter
+            (str "Mouse entered @ " coords)
+
+            :mouse-exit
+            (str "Mouse exited @ " coords)
+
+            :mouse-wheel
+            (str "Wheel " (format-wheel-direction wheelRotation) " "
+                 (Math/abs wheelRotation) " @ " coords)
+
       ;; Unknown type
-      (str type " @ " coords))))
+            (str type " @ " coords))))
 
-(defn format-navigation-event
-  "Format a navigation/mouse event for display."
-  [event]
-  (format-navigation-event-details event))
-
+(>defn format-navigation-event
+       "Format a navigation/mouse event for display."
+       [event]
+       [map? => string?]
+       (format-navigation-event-details event))
 
 ;; Event handlers
-(defn- handle-window-closed
-  "Handle window closed event - terminate the associated process."
-  [stream-key]
-  (logging/log-stream-event stream-key :window-closed
-                           {:message "Stream window closed by X button"})
-  (when-let [stream (state/get-stream stream-key)]
-    (future
-      (try
-        ;; Send shutdown command to subprocess first
-        (process/send-command stream {:action "shutdown"})
-        ;; Give it a moment to shutdown gracefully
-        (Thread/sleep 100)
-        ;; Then stop the stream and clean up
-        (process/stop-stream stream)
-        (state/clear-stream! stream-key)
-        (seesaw/invoke-later
-         (when-let [btn (state/get-ui-element stream-key)]
-           (seesaw/text! btn (i18n/tr :control-button-connect))
-           (seesaw/config! btn :selected? false)))
-        (catch Exception e
-          (logging/log-error
-           {:id ::window-close-error
-            :data {:stream stream-key
-                   :error (.getMessage e)}
-            :msg "Error handling window close"}))))))
+(>defn- handle-window-closed
+        "Handle window closed event - terminate the associated process."
+        [stream-key]
+        [:potatoclient.specs/stream-type => nil?]
+        (logging/log-stream-event stream-key :window-closed
+                                  {:message "Stream window closed by X button"})
+        (when-let [stream (state/get-stream stream-key)]
+          (future
+            (try
+              ;; Send shutdown command and stop the stream
+              (process/send-command stream {:action "shutdown"})
+              (Thread/sleep 100)
+              (process/stop-stream stream)
+              (state/clear-stream! stream-key)
+              (catch Exception e
+                (logging/log-error (str "Error terminating " (name stream-key) " stream: " (.getMessage e))))))
+          nil))
 
-(defn handle-response-event
-  "Handle a response event from a stream."
-  [stream-key msg]
-  (logging/log-stream-event stream-key :response
-                           {:status (:status msg)
-                            :data msg})
-  
+(>defn handle-response-event
+       "Handle a response event from a stream."
+       [stream-key msg]
+       [:potatoclient.specs/stream-type map? => nil?]
+       (logging/log-stream-event stream-key :response
+                                 {:status (:status msg)
+                                  :data msg})
+
   ;; Handle specific response types
-  (when (= (:status msg) "window-closed")
-    (handle-window-closed stream-key))
-  nil)
+       (when (= (:status msg) "window-closed")
+         (handle-window-closed stream-key))
+       nil)
 
+(>defn handle-navigation-event
+       "Handle a navigation/mouse event."
+       [msg]
+       [map? => nil?]
+       (let [event (:event msg)]
+         (logging/log-stream-event (:streamId msg) :navigation
+                                   {:nav-type (:type event)
+                                    :message (format-navigation-event event)
+                                    :data event})
+         nil))
 
-(defn handle-navigation-event
-  "Handle a navigation/mouse event."
-  [msg]
-  (let [event (:event msg)]
-    (logging/log-stream-event (:streamId msg) :navigation
-                             {:nav-type (:type event)
-                              :message (format-navigation-event event)
-                              :data event})
-    nil))
-
-
-(defn handle-window-event
-  "Handle a window event."
-  [msg]
-  (let [event (:event msg)]
-    (logging/log-stream-event (:streamId msg) :window
-                             {:event-type (:type event)
-                              :message (format-window-event event)
-                              :data event})
-    nil))
-
+(>defn handle-window-event
+       "Handle a window event."
+       [msg]
+       [map? => nil?]
+       (let [event (:event msg)]
+         (logging/log-stream-event (:streamId msg) :window
+                                   {:event-type (:type event)
+                                    :message (format-window-event event)
+                                    :data event})
+         nil))
 
 ;; Utility functions
-(defn stream-connected?
-  "Check if a stream is currently connected."
-  [stream-key]
-  (some? (state/get-stream stream-key)))
+(>defn stream-connected?
+       "Check if a stream is currently connected."
+       [stream-key]
+       [:potatoclient.specs/stream-type => boolean?]
+       (some? (state/get-stream stream-key)))
 
-
-(defn all-streams-connected?
-  "Check if all streams are connected."
-  []
-  (and (stream-connected? :heat)
-       (stream-connected? :day)))
+(>defn all-streams-connected?
+       "Check if all streams are connected."
+       []
+       [=> boolean?]
+       (and (stream-connected? :heat)
+            (stream-connected? :day)))
 

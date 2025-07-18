@@ -22,6 +22,8 @@
         com.appsflyer/pronto {:mvn/version "3.0.0"}
         ;; DarkLaf for theming support
         com.github.weisj/darklaf-core {:mvn/version "3.0.2"}
+        ;; Function specs
+        com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         ;; Telemere for logging
         com.taoensso/telemere {:mvn/version "1.0.0-RC1"}}
 
@@ -32,7 +34,8 @@
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
-                            "-Dclojure.main.report=stderr"]}
+                            "-Dclojure.main.report=stderr"
+                            "-Dguardrails.enabled=true"]}
 
            :nrepl {:extra-paths ["dev" "src/potatoclient/java" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
@@ -41,7 +44,8 @@
                               "-Dgstreamer.library.path=/usr/lib"
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                               "--enable-native-access=ALL-UNNAMED"
-                              "-Djdk.attach.allowAttachSelf"]
+                              "-Djdk.attach.allowAttachSelf"
+                              "-Dguardrails.enabled=true"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
            :run {:extra-paths ["src/potatoclient/java"]
@@ -49,7 +53,8 @@
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
-                            "-Dclojure.compile.warn-on-reflection=true"]
+                            "-Dclojure.compile.warn-on-reflection=true"
+                            "-Dguardrails.enabled=true"]
                  :main-opts ["-m" "potatoclient.main"]}
 
            :uberjar {:extra-paths ["src/potatoclient/java"]
@@ -73,6 +78,7 @@
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                                        :git/tag "v0.1.6-alpha"
                                                        :git/sha "4ad62f4"}}
+                 :jvm-opts ["-Dguardrails.enabled=true"]
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
 

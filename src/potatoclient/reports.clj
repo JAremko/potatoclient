@@ -3,10 +3,11 @@
    
    This namespace provides utilities to generate reports about the codebase,
    including unspecced functions, code coverage, and other metrics."
-  (:require [clojure.java.io :as io]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+            [clojure.java.io :as io]
             [clojure.string :as str]
             [malli.core :as m]
-            [potatoclient.instrumentation :as instrumentation]
+            [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
   (:import [java.time LocalDateTime]
            [java.time.format DateTimeFormatter]))
@@ -15,15 +16,19 @@
 ;; Markdown utilities
 ;; -----------------------------------------------------------------------------
 
-(defn- md-header
-  "Create a markdown header at the specified level."
-  [level text]
-  (str (str/join (repeat level "#")) " " text))
+(>defn- md-header
+        "Create a markdown header at the specified level."
+        [level text]
+        [pos-int? string? => string?]
+        (str (str/join (repeat level "#")) " " text))
 
-(defn- md-code-block
+(>defn- md-code-block
   "Create a markdown code block with optional language."
-  ([code] (md-code-block code nil))
+  ([code]
+   [string? => string?]
+   (md-code-block code nil))
   ([code lang]
+   [string? [:maybe string?] => string?]
    (str "```" (or lang "") "\n" code "\n```")))
 
 (defn- md-list-item
@@ -31,35 +36,41 @@
   [text & {:keys [indent] :or {indent 0}}]
   (str (str/join (repeat indent "  ")) "- " text))
 
-(defn- md-table-header
+(>defn- md-table-header
   "Create a markdown table header row."
   [headers]
+  [[:sequential string?] => string?]
   (str "| " (str/join " | " headers) " |\n"
        "|" (str/join "|" (repeat (count headers) " --- ")) "|"))
 
-(defn- md-table-row
+(>defn- md-table-row
   "Create a markdown table row."
   [cells]
+  [[:sequential string?] => string?]
   (str "| " (str/join " | " cells) " |"))
 
-(defn- md-link
+(>defn- md-link
   "Create a markdown link."
   [text url]
+  [string? string? => string?]
   (str "[" text "](" url ")"))
 
-(defn- md-bold
+(>defn- md-bold
   "Create bold text."
   [text]
+  [string? => string?]
   (str "**" text "**"))
 
-(defn- md-italic
+(>defn- md-italic
   "Create italic text."
   [text]
+  [string? => string?]
   (str "*" text "*"))
 
-(defn- md-badge
+(>defn- md-badge
   "Create a shields.io style badge."
   [label value color]
+  [string? string? string? => string?]
   (let [encoded-label (str/replace label " " "%20")
         encoded-value (str/replace value " " "%20")]
     (str "![" label "](https://img.shields.io/badge/"
@@ -69,54 +80,65 @@
 ;; Report generation
 ;; -----------------------------------------------------------------------------
 
-(defn- get-timestamp
+(>defn- get-timestamp
   "Get current timestamp for reports."
   []
+  [=> string?]
   (.format (LocalDateTime/now)
            (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss")))
 
-(defn- get-report-dir
+(>defn- get-report-dir
   "Get the directory for storing reports."
   []
+  [=> [:fn #(instance? java.io.File %)]]
   (io/file "reports"))
 
-(defn- ensure-report-dir!
+(>defn- ensure-report-dir!
   "Ensure the report directory exists."
   []
+  [=> [:fn #(instance? java.io.File %)]]
   (let [dir (get-report-dir)]
     (when-not (.exists dir)
       (.mkdirs dir))
     dir))
 
-(defn- write-report!
+(>defn- write-report!
   "Write a report to a file."
   [filename content]
+  [string? string? => string?]
   (let [report-dir (ensure-report-dir!)
         file (io/file report-dir filename)]
     (spit file content)
     (.getAbsolutePath file)))
 
-(defn- format-namespace-section
+(>defn- format-namespace-section
   "Format a namespace section with its unspecced functions."
   [ns-sym functions]
+  [symbol? [:sequential symbol?] => string?]
   (let [sorted-fns (sort functions)]
     (str (md-header 3 (str ns-sym))
          "\n\n"
          (str/join "\n" (map #(md-list-item (str "`" % "`")) sorted-fns))
          "\n")))
 
-(defn generate-unspecced-functions-report!
-  "Generate a markdown report of functions without Malli specs.
+(>defn generate-unspecced-functions-report!
+  "Generate a markdown report of functions not using Guardrails.
    Returns the path to the generated report file.
    Can optionally take pre-computed report data to avoid duplicate computation."
   ([]
+   [=> [:maybe string?]]
    (generate-unspecced-functions-report! nil))
   ([report-data]
+   [[:maybe [:map
+             [:status keyword?]
+             [:message string?]
+             [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
+             [:total {:optional true} nat-int?]]] => [:maybe string?]]
    (if (runtime/release-build?)
      (do
        (println "Reports are not available in release builds")
        nil)
-     (let [report-data (or report-data (instrumentation/report-unspecced-functions))]
+     (let [report-data (or report-data (gc/find-unspecced-functions))]
        (if (= :error (:status report-data))
          (do
            (println (:message report-data))
@@ -125,7 +147,7 @@
                unspecced-data (:data report-data)
                total (:total report-data)
                filename "unspecced-functions.md"
-               content (str (md-header 1 "Unspecced Functions Report")
+               content (str (md-header 1 "Functions Not Using Guardrails Report")
                             "\n\n"
                             (md-italic (str "Generated: " timestamp))
                             "\n\n"
@@ -133,13 +155,13 @@
                             "\n\n"
                             (if (zero? total)
                               (str (md-badge "Coverage" "100%" "brightgreen") "\n\n"
-                                   "✅ " (md-bold "All functions have Malli specs!"))
-                              (str (md-badge "Unspecced Functions" (str total) "orange") "\n\n"
-                                   "⚠️ Found " (md-bold (str total)) " functions without Malli specs across "
+                                   "✅ " (md-bold "All functions are using Guardrails!"))
+                              (str (md-badge "Functions Not Using Guardrails" (str total) "orange") "\n\n"
+                                   "⚠️ Found " (md-bold (str total)) " functions not using Guardrails across "
                                    (md-bold (str (count unspecced-data))) " namespaces.\n"))
                             "\n"
                             (when (pos? total)
-                              (str (md-header 2 "Unspecced Functions by Namespace")
+                              (str (md-header 2 "Functions by Namespace")
                                    "\n\n"
                                    (str/join "\n"
                                              (for [[ns-sym fns] (sort unspecced-data)]
@@ -157,36 +179,23 @@
                             (md-header 2 "Next Steps")
                             "\n\n"
                             (if (zero? total)
-                              "Great job! All functions are properly instrumented with Malli specs."
-                              (str "1. Add Malli specs for the unspecced functions to `src/potatoclient/instrumentation.clj`\n"
-                                   "2. Follow the pattern: `(m/=> namespace/function [:=> [:cat ...args...] return-type])`\n"
+                              "Great job! All functions are properly using Guardrails!"
+                              (str "1. Convert the functions to use Guardrails `>defn` syntax\n"
+                                   "2. Add proper function specs like: `[arg-spec => return-spec]`\n"
                                    "3. Run `(potatoclient.reports/generate-unspecced-functions-report!)` again to update this report\n"))
                             "\n")]
            (let [path (write-report! filename content)]
              (println (str "Report generated: " path))
              path)))))))
 
-(defn generate-all-reports!
+(>defn generate-all-reports!
   "Generate all available reports.
    Returns a map of report type to file path."
   []
+  [=> [:map-of keyword? [:maybe string?]]]
   (if (runtime/release-build?)
     (do
       (println "Reports are not available in release builds")
       {})
     {:unspecced-functions (generate-unspecced-functions-report!)}))
 
-;; -----------------------------------------------------------------------------
-;; Function schemas
-;; -----------------------------------------------------------------------------
-
-(m/=> generate-all-reports! [:=> [:cat] [:map-of keyword? [:maybe string?]]])
-(m/=> generate-unspecced-functions-report!
-      [:function
-       [:=> [:cat] [:maybe string?]]
-       [:=> [:cat [:map
-                   [:status keyword?]
-                   [:message string?]
-                   [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
-                   [:total {:optional true} nat-int?]]]
-        [:maybe string?]]])

@@ -2,51 +2,86 @@
 
 PotatoClient is a multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Java) handle video streams.
 
-## Important: Function Instrumentation
+## Important: Function Validation with Guardrails
 
-**ALWAYS** update `/src/potatoclient/instrumentation.clj` when:
-- Adding new functions to any namespace
-- Modifying function signatures  
-- Removing functions
+**ALWAYS** use Guardrails' `>defn` and `>defn-` instead of regular `defn` and `defn-` for all functions. This provides runtime validation in development and is automatically removed in release builds.
 
-The instrumentation file contains Malli function schemas for runtime validation in development builds. Keep it synchronized with your code changes.
+### Basic Usage
 
-Example for new functions:
 ```clojure
-;; In your namespace:
-(defn process-data
-  [data options]
-  ...)
+(ns your.namespace
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
 
-;; Add to instrumentation.clj:
-(m/=> your-ns/process-data [:=> [:cat map? map?] any?])
+;; Public function
+(>defn process-data
+  "Process data with options"
+  [data options]
+  [map? map? => map?]  ; arg specs followed by => and return spec
+  (merge data options))
+
+;; Private function  
+(>defn- validate-input
+  "Check if input is valid"
+  [input]
+  [string? => boolean?]
+  (not (clojure.string/blank? input)))
+
+;; Multi-arity function
+(>defn fetch-data
+  ([id]
+   [int? => map?]
+   (fetch-data id {}))
+  ([id options]
+   [int? map? => map?]
+   (retrieve-from-db id options)))
+
+;; Using qualified specs
+(>defn save-config!
+  [config]
+  [:potatoclient.specs/config => boolean?]
+  (write-to-disk config))
+
+;; Nilable values with ?
+(>defn find-user
+  [id]
+  [int? => (? map?)]  ; returns map or nil
+  (get users id))
+
+;; Such-that constraints with |
+(>defn divide
+  [x y]
+  [number? number? | #(not= y 0) => number?]
+  (/ x y))
 ```
 
-### Working with Instrumentation
+### Checking for Unspecced Functions
 
-To ensure accurate spec reporting:
+To find functions still using raw `defn`/`defn-`:
 
-1. **Start instrumentation** (loads all schemas):
-   ```clojure
-   (potatoclient.instrumentation/start!)
-   ```
+```clojure
+(require '[potatoclient.guardrails.check :as check])
 
-2. **Refresh schemas** after adding new specs:
-   ```clojure
-   (potatoclient.instrumentation/refresh-schemas!)
-   ```
+;; Print report
+(check/print-report)
 
-3. **Check unspecced functions**:
-   ```clojure
-   (potatoclient.instrumentation/report-unspecced-functions)
-   ```
+;; Get data structure
+(check/report-unspecced-functions)
+```
 
-4. **Generate markdown report**:
-   ```clojure
-   (potatoclient.reports/generate-unspecced-functions-report!)
-   ```
+### Configuration
 
-Note: When adding specs to `instrumentation.clj`, you must call `refresh-schemas!` or restart instrumentation for the changes to take effect.
+Guardrails is controlled by:
+1. JVM option `-Dguardrails.enabled=true` (set in deps.edn aliases)
+2. Configuration file `guardrails.edn` in project root
+3. Runtime checks only in development, automatically disabled in release builds
+
+### Important Notes
+
+- Guardrails is automatically enabled in dev, run, nrepl, and mcp aliases
+- Release builds have zero overhead - all checks are compiled away
+- Use precise specs from `potatoclient.specs` namespace
+- Private functions use `>defn-` (not `defn ^:private`)
+- All validation happens at runtime during development only
 
 ## Quick Reference
 

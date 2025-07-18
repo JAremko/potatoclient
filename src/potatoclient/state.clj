@@ -8,7 +8,8 @@
   sub-namespaces for backward compatibility."
   (:require [potatoclient.state.streams :as streams]
             [potatoclient.state.config :as config]
-            [potatoclient.state.ui :as ui]))
+            [potatoclient.state.ui :as ui]
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
 
 ;; Re-export stream management functions
 (def get-stream streams/get-stream)
@@ -27,13 +28,18 @@
 (def get-ui-element ui/get-ui-element)
 
 ;; State inspection (useful for debugging/REPL)
-(defn current-state
-  "Get a snapshot of all application state.
+(>defn current-state
+       "Get a snapshot of all application state.
   Useful for debugging - not for normal application use."
-  []
-  {:streams (streams/all-streams)
-   :config (config/get-config)
-   :ui-elements (ui/all-ui-elements)})
+       []
+       [=> [:map
+            [:streams [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
+            [:config [:map
+                      [:locale :potatoclient.specs/locale]
+                      [:domain :potatoclient.specs/domain]]]]]
+       {:streams (streams/all-streams)
+        :config (config/get-config)
+        :ui-elements (ui/all-ui-elements)})
 
 ;; Legacy compatibility - these are still used in some places
 (def app-state streams/app-state)

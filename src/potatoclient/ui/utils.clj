@@ -1,11 +1,12 @@
 (ns potatoclient.ui.utils
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
-  (:require [seesaw.bind :as bind]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+            [seesaw.bind :as bind]
             [seesaw.cursor :as cursor]))
 
-(defn mk-debounced-transform
-  "Creates a debounced transform function for use with seesaw.bind.
+(>defn mk-debounced-transform
+       "Creates a debounced transform function for use with seesaw.bind.
   
   This prevents rapid updates from overwhelming the UI by only propagating
   changes when the value actually differs from the last propagated value.
@@ -39,18 +40,19 @@
                (bind/some (mk-debounced-transform 
                            #(get-in % [:profile :settings :volume])))
                (bind/value volume-slider))"
-  [xf]
-  (let [*last-val (atom nil)]
-    (fn [state]
-      (let [last-val @*last-val
-            new-val (xf state)]
-        (when (or (nil? last-val)
-                  (not= new-val last-val))
-          (reset! *last-val new-val)
-          new-val)))))
+       [xf]
+       [ifn? => ifn?]
+       (let [*last-val (atom nil)]
+         (fn [state]
+           (let [last-val @*last-val
+                 new-val (xf state)]
+             (when (or (nil? last-val)
+                       (not= new-val last-val))
+               (reset! *last-val new-val)
+               new-val)))))
 
-(defn debounce
-  "Creates a debounced version of a function that delays execution until
+(>defn debounce
+       "Creates a debounced version of a function that delays execution until
   a specified quiet period has elapsed.
   
   Parameters:
@@ -77,18 +79,19 @@
   - Search-as-you-type features
   - Expensive computations triggered by user input
   - API calls that shouldn't be made too frequently"
-  [f wait-ms]
-  (let [timeout (atom nil)]
-    (fn [& args]
-      (when @timeout 
-        (future-cancel @timeout))
-      (reset! timeout
-              (future 
-                (Thread/sleep wait-ms)
-                (apply f args))))))
+       [f wait-ms]
+       [ifn? pos-int? => ifn?]
+       (let [timeout (atom nil)]
+         (fn [& args]
+           (when @timeout
+             (future-cancel @timeout))
+           (reset! timeout
+                   (future
+                     (Thread/sleep wait-ms)
+                     (apply f args))))))
 
-(defn throttle
-  "Creates a throttled version of a function that limits execution to at most
+(>defn throttle
+       "Creates a throttled version of a function that limits execution to at most
   once per specified time period.
   
   Parameters:
@@ -108,17 +111,18 @@
   
   This differs from debounce in that it guarantees regular execution
   during continuous calls, rather than waiting for a quiet period."
-  [f period-ms]
-  (let [last-call (atom 0)]
-    (fn [& args]
-      (let [now (System/currentTimeMillis)
-            time-since-last (- now @last-call)]
-        (when (>= time-since-last period-ms)
-          (reset! last-call now)
-          (apply f args))))))
+       [f period-ms]
+       [ifn? pos-int? => ifn?]
+       (let [last-call (atom 0)]
+         (fn [& args]
+           (let [now (System/currentTimeMillis)
+                 time-since-last (- now @last-call)]
+             (when (>= time-since-last period-ms)
+               (reset! last-call now)
+               (apply f args))))))
 
-(defn batch-updates
-  "Batches multiple UI updates into a single EDT invocation for better performance.
+(>defn batch-updates
+       "Batches multiple UI updates into a single EDT invocation for better performance.
   
   Parameters:
   - updates: A sequence of zero-argument functions that perform UI updates
@@ -130,13 +134,14 @@
        #(seesaw/config! button :enabled? true)])
   
   This is more efficient than multiple separate invoke-later calls."
-  [updates]
-  (seesaw.core/invoke-later
-    (doseq [update-fn updates]
-      (update-fn))))
+       [updates]
+       [[:sequential ifn?] => nil?]
+       (seesaw.core/invoke-later
+        (doseq [update-fn updates]
+          (update-fn))))
 
-(defn with-busy-cursor
-  "Executes a function while showing a busy cursor, then restores the original cursor.
+(>defn with-busy-cursor
+       "Executes a function while showing a busy cursor, then restores the original cursor.
   
   Parameters:
   - component: The component to set the cursor on (usually a frame or panel)
@@ -149,19 +154,22 @@
         (process-data)))
   
   The cursor is guaranteed to be restored even if an exception occurs."
-  [component f]
-  (let [original-cursor (.getCursor component)
-        busy-cursor (cursor/cursor :wait)]
-    (try
-      (seesaw.core/invoke-now
-        (.setCursor component busy-cursor))
-      (f)
-      (finally
-        (seesaw.core/invoke-now
-          (.setCursor component original-cursor))))))
+       [component f]
+       [[:fn {:error/message "must be a Swing Component"}
+         #(instance? java.awt.Component %)]
+        ifn? => any?]
+       (let [original-cursor (.getCursor component)
+             busy-cursor (cursor/cursor :wait)]
+         (try
+           (seesaw.core/invoke-now
+            (.setCursor component busy-cursor))
+           (f)
+           (finally
+             (seesaw.core/invoke-now
+              (.setCursor component original-cursor))))))
 
-(defn preserve-selection
-  "Preserves the selection and scroll position of a text component during updates.
+(>defn preserve-selection
+       "Preserves the selection and scroll position of a text component during updates.
   
   Parameters:
   - text-component: A text component (text area, text field, etc.)
@@ -171,15 +179,18 @@
     (preserve-selection text-area
       (fn []
         (seesaw/text! text-area (process-text (seesaw/text text-area)))))"
-  [text-component update-fn]
-  (let [caret-pos (.getCaretPosition text-component)
-        selection-start (.getSelectionStart text-component)
-        selection-end (.getSelectionEnd text-component)]
-    (update-fn)
-    (when (pos? (count (seesaw.core/text text-component)))
-      (.setCaretPosition text-component 
-                         (min caret-pos 
-                              (dec (count (seesaw.core/text text-component)))))
-      (when (not= selection-start selection-end)
-        (.setSelectionStart text-component selection-start)
-        (.setSelectionEnd text-component selection-end)))))
+       [text-component update-fn]
+       [[:fn {:error/message "must be a text component"}
+         #(instance? javax.swing.text.JTextComponent %)]
+        ifn? => nil?]
+       (let [caret-pos (.getCaretPosition text-component)
+             selection-start (.getSelectionStart text-component)
+             selection-end (.getSelectionEnd text-component)]
+         (update-fn)
+         (when (pos? (count (seesaw.core/text text-component)))
+           (.setCaretPosition text-component
+                              (min caret-pos
+                                   (dec (count (seesaw.core/text text-component)))))
+           (when (not= selection-start selection-end)
+             (.setSelectionStart text-component selection-start)
+             (.setSelectionEnd text-component selection-end)))))

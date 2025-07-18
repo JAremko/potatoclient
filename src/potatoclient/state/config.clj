@@ -3,43 +3,48 @@
   (:require [potatoclient.config :as config]
             [malli.core :as m]
             [potatoclient.specs :as specs]
-            [clojure.string]))
+            [clojure.string]
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
 
 ;; Runtime configuration state
 (defonce ^:private app-config
   (atom {:locale :english}))
 
-(defn get-locale
-  "Get the current locale."
-  []
-  (:locale @app-config))
+(>defn get-locale
+       "Get the current locale."
+       []
+       [=> :potatoclient.specs/locale]
+       (:locale @app-config))
 
-(defn set-locale!
-  "Set the current locale."
-  [locale]
-  {:pre [(m/validate specs/locale locale)]}
-  (swap! app-config assoc :locale locale)
+(>defn set-locale!
+       "Set the current locale."
+       [locale]
+       [:potatoclient.specs/locale => nil?]
+       (swap! app-config assoc :locale locale)
   ;; Also update default Locale
-  (let [locale-map {:english ["en" "US"]
-                    :ukrainian ["uk" "UA"]}
-        [lang country] (get locale-map locale ["en" "US"])]
-    (java.util.Locale/setDefault
-     (java.util.Locale. ^String lang ^String country))))
+       (let [locale-map {:english ["en" "US"]
+                         :ukrainian ["uk" "UA"]}
+             [lang country] (get locale-map locale ["en" "US"])]
+         (java.util.Locale/setDefault
+          (java.util.Locale. ^String lang ^String country))))
 
-(defn get-domain
-  "Get the current domain configuration from persistent config."
-  []
-  (config/get-domain))
+(>defn get-domain
+       "Get the current domain configuration from persistent config."
+       []
+       [=> :potatoclient.specs/domain]
+       (config/get-domain))
 
-(defn set-domain!
-  "Update the domain in runtime state (not persisted)."
-  [domain]
-  {:pre [(string? domain)
-         (not (clojure.string/blank? domain))]}
+(>defn set-domain!
+       "Update the domain in runtime state (not persisted)."
+       [domain]
+       [:potatoclient.specs/domain => nil?]
   ;; Only update runtime state, domain is derived from URL history
-  (swap! app-config assoc :domain domain))
+       (swap! app-config assoc :domain domain))
 
-(defn get-config
-  "Get the entire runtime config map."
-  []
-  @app-config)
+(>defn get-config
+       "Get the entire runtime config map."
+       []
+       [=> [:map
+            [:locale :potatoclient.specs/locale]
+            [:domain :potatoclient.specs/domain]]]
+       @app-config)
