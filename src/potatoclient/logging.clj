@@ -150,7 +150,10 @@
         {:level :info
          :id ::startup
          :data {:build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")}}
-        "PotatoClient logging initialized"))
+        "PotatoClient logging initialized")
+
+  ;; Ensure we return nil
+       nil)
 
 (>defn shutdown!
        "Shutdown the logging system"

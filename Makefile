@@ -54,10 +54,10 @@ release: proto compile-java ## Build release version (without instrumentation)
 	@echo "Building release version..."
 	POTATOCLIENT_RELEASE=true clojure -T:build release
 
-# Run target
+# Run target (production-like)
 .PHONY: run
-run: build ## Build and run the application
-	@echo "Running application..."
+run: build ## Build and run the application (production-like)
+	@echo "Running application (production-like)..."
 	java -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
 # Clean proto files
@@ -128,14 +128,16 @@ check-deps: ## Check that required tools are installed
 .PHONY: rebuild
 rebuild: clean build ## Clean and rebuild the project
 
-# Development run with debug
+# Development target - runs with all validation, logging, and debugging features
 .PHONY: dev
-dev: build ## Run with GStreamer debug output
-	GST_DEBUG=3 java -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
-
-.PHONY: dev-reflect
-dev-reflect: build ## Run in development mode with reflection warnings
-	java -Dpotatoclient.dev=true -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
+dev: proto compile-java ## Run development version with full validation, reflection warnings, and debug logging
+	@echo "Running development version with:"
+	@echo "  ✓ Full Guardrails validation"
+	@echo "  ✓ Reflection warnings"
+	@echo "  ✓ All log levels (DEBUG, INFO, WARN, ERROR)"
+	@echo "  ✓ GStreamer debug output"
+	@echo ""
+	GST_DEBUG=3 clojure -M:run
 
 # Build for macOS development (unsigned, uses system Java)
 .PHONY: build-macos-dev

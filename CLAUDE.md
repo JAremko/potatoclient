@@ -77,42 +77,66 @@ Guardrails is controlled by:
 
 ### Important Notes
 
-- Guardrails is automatically enabled in dev, run, nrepl, and mcp aliases
+- Use `>defn` and `>defn-` for ALL functions to ensure proper validation
+- Guardrails is automatically enabled with `make dev` and REPL aliases (nrepl, mcp)
 - Release builds have zero overhead - all checks are compiled away
 - Use precise specs from `potatoclient.specs` namespace
 - Private functions use `>defn-` (not `defn ^:private`)
 - All validation happens at runtime during development only
+- Functions must return `nil` for side-effect operations (not `true` or other values)
 
 ## Quick Reference
 
-**IMPORTANT**: Always use `make run` to run the application. This command includes a rebuild step and will take at least a minute to start, so set appropriate timeouts in your tools or be patient.
+**IMPORTANT**: Use `make dev` for all development work. This command takes 30-40 seconds to start, so set appropriate timeouts in your tools. Do not use short timeouts!
 
 ```bash
-make run              # Build and run application (takes ~1 minute)
-make dev              # Run with GStreamer debug
-make dev-reflect      # Run with reflection warnings
-make nrepl            # REPL on port 7888
-make proto            # Generate protobuf classes
-make clean            # Clean all artifacts
-make report-unspecced # Generate report of functions without Malli specs
-make release          # Build optimized JAR (RELEASE) - for CI/CD only
+make dev              # PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings
+make nrepl            # REPL on port 7888 for interactive development
+make report-unspecced # Check which functions need Guardrails specs
+make clean            # Clean all build artifacts
 ```
+
+### Development Workflow
+
+1. **Always use `make dev`** - This is your main development command
+   - Takes 30-40 seconds to start (be patient!)
+   - Full Guardrails validation catches bugs immediately
+   - All log levels (DEBUG, INFO, WARN, ERROR)
+   - Reflection warnings for performance issues
+   - GStreamer debug output
+
+2. **For REPL development** - Use `make nrepl`
+   - Connect your editor to port 7888
+   - Same validation features as `make dev`
+
+3. **Other commands** (rarely needed during development):
+   - `make run` - Test the JAR in production-like mode
+   - `make release` - Build optimized JAR for distribution
+   - `make proto` - Regenerate protobuf classes (if .proto files change)
 
 ## Development vs Release Builds
 
-### Development Build (`make run`)
-- **Instrumentation**: Available via `(potatoclient.instrumentation/start!)`
+### Development Mode (`make dev`)
+- **Guardrails**: Full validation with detailed error messages
+- **Reflection**: Warnings enabled to catch performance issues
 - **Logging**: All levels (DEBUG, INFO, WARN, ERROR) to console and timestamped file in `./logs/`
+- **GStreamer**: Debug output enabled (GST_DEBUG=3)
 - **Window Title**: Shows `[DEVELOPMENT]`
-- **Console**: "Running DEVELOPMENT build - instrumentation available"
-- **Metadata**: Full debugging information included
-- **Performance**: Slower due to validation overhead
+- **Performance**: Slower due to validation and logging overhead
+- **How it works**: Runs directly with Clojure using `:run` alias
+
+### Production-like (`make run`)
+- **Guardrails**: Disabled
+- **Reflection**: No warnings
+- **Logging**: Standard levels to console and file
+- **Window Title**: Shows `[DEVELOPMENT]`
+- **Performance**: Near-production speed
+- **How it works**: Builds and runs JAR file
 
 ### Release Build (`make release`)
-- **Instrumentation**: Completely disabled
-- **Logging**: Only WARN/ERROR to stdout/stderr, no file logging
+- **Guardrails**: Completely removed from bytecode
+- **Logging**: Only WARN/ERROR to platform-specific locations
 - **Window Title**: Shows `[RELEASE]`
-- **Console**: "Running RELEASE build - instrumentation disabled"
 - **Metadata**: Stripped (smaller JAR)
 - **Performance**: Optimized with AOT compilation and direct linking
 - **Auto-Detection**: Release JARs automatically know they're release builds (no flags needed)
@@ -223,7 +247,24 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
     (seesaw/text! text-area (format-code (seesaw/text text-area)))))
 ```
 
-## Development Tasks
+## Development Workflow
+
+### Starting Development
+
+**Always use `make dev`**:
+```bash
+make dev  # Wait 30-40 seconds for startup
+```
+
+⚠️ **IMPORTANT**: The startup takes 30-40 seconds because it:
+- Compiles all proto files
+- Compiles Java sources
+- Initializes the Clojure runtime with full validation
+- Loads all development features
+
+Set your tool timeouts accordingly - do not use short timeouts!
+
+### Common Development Tasks
 
 **Add Theme**
 1. Add theme definition in `potatoclient.theme/themes`
@@ -1071,23 +1112,30 @@ This report will:
 ;; => Throws detailed error about invalid input
 ```
 
-## Build Types & Development Mode
+## Best Practices
 
-### Development Build (default)
-- Malli instrumentation available (manual loading)
-- Full logging (DEBUG, INFO, WARN, ERROR) to console and `./logs/potatoclient-{version}-{timestamp}.log`
-- Full error messages and stack traces
-- Window title shows `[DEVELOPMENT]`
-- Enable with: `make run`
+### Development Workflow
 
-### Release Build (optimized)
-- No instrumentation overhead
-- Minimal logging (WARN, ERROR only) to stdout/stderr
-- AOT compilation with direct linking
-- Metadata stripped (`:doc`, `:file`, `:line`)
-- Window title shows `[RELEASE]`
-- Enable with: `make release`
-- **Self-contained**: Release JARs automatically detect they're release builds
+1. **Always use `make dev` during development** - Wait 30-40 seconds for startup
+2. **Fix Guardrails errors immediately** - They indicate real bugs in your code
+3. **Write precise specs** - Use domain-specific types from `potatoclient.specs`
+4. **Check reflection warnings** - They indicate performance issues
+5. **Be patient with startup** - The initial compilation takes time but catches bugs early
+
+### Function Development
+
+1. **Always use `>defn` or `>defn-`** - Never use raw `defn`
+2. **Return `nil` for side effects** - Not `true` or other values
+3. **Add specs immediately** - Don't defer this
+4. **Run `make report-unspecced`** - Regularly check for missing specs
+
+### Before Release
+
+Only use these commands when preparing for production:
+
+1. **Test with `make run`** - Tests JAR in production-like mode (rarely needed)
+2. **Build with `make release`** - Creates optimized production JAR
+3. **Test release JAR** - Ensure it runs without development dependencies
 
 ### Build Type Detection
 The application detects build type via `potatoclient.runtime/release-build?` which checks:
@@ -1181,14 +1229,22 @@ Users can verify they're running an optimized release:
 3. **Smart Logging**: Development builds log everything to timestamped files, release builds only output critical events
 4. **Zero Overhead**: Conditional evaluation ensures no performance impact in production
 
-## Best Practices
+### Logging Best Practices
 
-1. **Always update instrumentation.clj** when adding/modifying functions
-2. **Use `defn-` for private functions** (not `defn ^:private`)
-3. **Test with instrumentation enabled** during development
-4. **Run release builds for production** to avoid validation overhead
-5. **Keep schemas in sync** with actual function implementations
-6. **Use existing schemas** from `potatoclient.specs` when possible
-7. **Use appropriate log levels**: DEBUG for development details, INFO for normal operations, WARN for issues, ERROR for failures
-8. **Check logs during development**: Look in `./logs/` directory for timestamped log files
-9. **Monitor production logs**: Only warnings and errors appear on stdout/stderr in release builds
+1. **Use appropriate log levels**: DEBUG for development details, INFO for normal operations, WARN for issues, ERROR for failures
+2. **Check logs during development**: Look in `./logs/` directory for timestamped log files
+3. **Monitor production logs**: Only warnings and errors appear on stdout/stderr in release builds
+
+### Common Guardrails Errors and Solutions
+
+**"Return value should be nil"**:
+- Your function spec says `=> nil?` but you're returning a value
+- Fix: Add explicit `nil` at the end of the function
+
+**"should be an int"**:
+- You're passing the wrong type to a function
+- Fix: Check the function's input specs and fix the caller
+
+**"Return value should be positive"**:
+- Your such-that predicate (`|`) is failing
+- Fix: Ensure your function returns values that satisfy the predicate

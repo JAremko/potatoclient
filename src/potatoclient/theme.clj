@@ -9,10 +9,10 @@
             [seesaw.core :as seesaw])
   (:import com.github.weisj.darklaf.LafManager
            (com.github.weisj.darklaf.theme
-             HighContrastDarkTheme
-             OneDarkTheme
-             SolarizedDarkTheme
-             SolarizedLightTheme)
+            HighContrastDarkTheme
+            OneDarkTheme
+            SolarizedDarkTheme
+            SolarizedLightTheme)
            (java.text SimpleDateFormat)
            (java.util Date)))
 
@@ -56,7 +56,8 @@
        [initial-theme]
        [:potatoclient.specs/theme-key => nil?]
        (when (m/validate ::specs/theme-key initial-theme)
-         (set-theme! initial-theme)))
+         (set-theme! initial-theme))
+       nil)
 
 (>defn get-theme-name
        "Get human-readable name for a theme key"
