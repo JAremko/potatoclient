@@ -17,7 +17,8 @@
             [potatoclient.ipc :as ipc]
             [malli.core :as m]
             [potatoclient.specs :as specs])
-  (:import [javax.swing JFrame]))
+  (:import [javax.swing Box SwingUtilities]
+           [java.awt Rectangle]))
 
 ;; Additional schemas not in specs
 (def display-name :string)
@@ -32,15 +33,15 @@
 (defn preserve-window-state
   "Extract window state for restoration."
   [frame]
-  {:bounds (.getBounds ^javax.swing.JFrame frame)
-   :extended-state (.getExtendedState ^javax.swing.JFrame frame)})
+  {:bounds (.getBounds frame)
+   :extended-state (.getExtendedState frame)})
 
 (defn restore-window-state!
   "Restore window state to a frame."
   [frame state]
-  (doto ^javax.swing.JFrame frame
-    (.setBounds ^java.awt.Rectangle (:bounds state))
-    (.setExtendedState ^Integer (:extended-state state))))
+  (doto frame
+    (.setBounds (:bounds state))
+    (.setExtendedState (:extended-state state))))
 
 (defn- reload-frame!
   "Reload the frame following the ArcherBC2 pattern."
@@ -148,23 +149,22 @@
                              :label-key :stream-day}}
         {:keys [endpoint tooltip label-key]} (get stream-config stream-key)
         is-connected (atom (some? (state/get-stream stream-key)))
-        button (seesaw/toggle
-                :text (i18n/tr label-key)
-                :icon (theme/key->icon stream-key)
-                :selected? @is-connected
-                :tip tooltip)]
-    ;; Add action handler
-    (seesaw/listen button :action
-                   (fn [e]
-                     (let [current-state @is-connected]
-                       (if current-state
-                         (do
-                           (ipc/stop-stream stream-key)
-                           (reset! is-connected false))
-                         (do
-                           (ipc/start-stream stream-key endpoint)
-                           (reset! is-connected true))))))
-
+        toggle-action (action/action
+                       :name (i18n/tr label-key)
+                       :icon (theme/key->icon stream-key)
+                       :selected? @is-connected
+                       :tip tooltip
+                       :handler (fn [e]
+                                  (let [current-state @is-connected]
+                                    (if current-state
+                                      (do
+                                        (ipc/stop-stream stream-key)
+                                        (reset! is-connected false))
+                                      (do
+                                        (ipc/start-stream stream-key endpoint)
+                                        (reset! is-connected true))))))
+        button (seesaw/toggle :action toggle-action)]
+    
     ;; Update button state when stream state changes
     (add-watch state/app-state
                (keyword (str "stream-button-" (name stream-key)))
@@ -181,18 +181,17 @@
 (defn- create-menu-bar
   "Create the application menu bar."
   [reload-fn parent]
-  (let [heat-button (create-stream-toggle-button :heat)
-        day-button (create-stream-toggle-button :day)
-        ;; Remove text from toggle buttons to show only icons
-        heat-button (seesaw/config! heat-button :text "")
-        day-button (seesaw/config! day-button :text "")]
+  (let [heat-button (doto (create-stream-toggle-button :heat)
+                      (seesaw/config! :text ""))
+        day-button (doto (create-stream-toggle-button :day)
+                     (seesaw/config! :text ""))]
     (seesaw/menubar
      :items [;; Left side - menus
              (create-theme-menu reload-fn)
              (create-language-menu reload-fn)
              (create-help-menu parent)
              ;; Use horizontal glue to push buttons to the right
-             (javax.swing.Box/createHorizontalGlue)
+             (Box/createHorizontalGlue)
              ;; Right side - stream buttons
              heat-button
              day-button])))
@@ -203,11 +202,12 @@
   ;; Since we removed the log view, just show the control panel
   (control-panel/create))
 
+
 (defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
   [frame]
   (seesaw/listen frame
-                 :window-closing 
+                 :window-closing
                  (fn [_]
                    (logging/log-info "Shutting down PotatoClient...")
                    (try
@@ -226,7 +226,7 @@
   "Ensure a function runs on the Event Dispatch Thread."
   [f]
   (fn [& args]
-    (if (javax.swing.SwingUtilities/isEventDispatchThread)
+    (if (SwingUtilities/isEventDispatchThread)
       (apply f args)
       (seesaw/invoke-now (apply f args)))))
 
@@ -234,7 +234,7 @@
   "Ensure a function runs on the Event Dispatch Thread using invoke-later."
   [f]
   (fn [& args]
-    (if (javax.swing.SwingUtilities/isEventDispatchThread)
+    (if (SwingUtilities/isEventDispatchThread)
       (apply f args)
       (seesaw/invoke-later (apply f args)))))
 
@@ -266,9 +266,9 @@
                :size [800 :by 600]
                :content (create-main-content))]
 
-    ;; Set up menu bar with frame constructor
-    (.setJMenuBar ^javax.swing.JFrame frame (create-menu-bar frame-cons frame))
-
+    ;; Set up menu bar
+    (seesaw/config! frame :menubar (create-menu-bar frame-cons frame))
+    
     ;; Add window close handler
     (add-window-close-handler! frame)
 

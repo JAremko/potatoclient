@@ -16,7 +16,10 @@
             [potatoclient.logging :as logging]
             [potatoclient.config :as config]
             [potatoclient.runtime :as runtime])
-  (:import [java.text SimpleDateFormat]))
+  (:import [java.text SimpleDateFormat]
+           [java.awt Dimension]
+           [java.awt Frame]
+           [java.awt.event KeyEvent]))
 
 
 (defn- get-log-directory
@@ -121,15 +124,17 @@
                      :south (seesaw/horizontal-panel 
                             :items [copy-action close-action])))
     ;; Set maximized state before showing to avoid visual glitch
-    (.setExtendedState frame java.awt.Frame/MAXIMIZED_BOTH)
+    (.setExtendedState frame Frame/MAXIMIZED_BOTH)
     (.setLocationRelativeTo frame parent-frame)
     (seesaw/show! frame)
     frame))
 
 (defn- pack-table-columns!
-  "Auto-size table columns based on content."
+  "Auto-size table columns based on content using Seesaw's table utilities."
   [table]
-  (let [col-model (.getColumnModel table)]
+  ;; Use Seesaw's table utilities where possible
+  (let [col-model (.getColumnModel table)
+        row-count (table/row-count table)]
     (doseq [col-idx (range (.getColumnCount col-model))]
       (let [column (.getColumn col-model col-idx)
             header-renderer (.getHeaderRenderer column)
@@ -142,7 +147,7 @@
                           75)
             max-width (atom header-width)]
         ;; Check each row's content width
-        (doseq [row (range (min 20 (.getRowCount table)))]
+        (doseq [row (range (min 20 row-count))]
           (let [renderer (.getCellRenderer table row col-idx)
                 value (.getValueAt table row col-idx)
                 comp (.getTableCellRendererComponent renderer table value false false row col-idx)
@@ -225,8 +230,8 @@
                    
                    ;; Handle Enter key
                    :key-pressed (fn [e]
-                                 (when (= (.getKeyCode e) java.awt.event.KeyEvent/VK_ENTER)
-                                   (.actionPerformed open-action nil))))
+                                 (when (= (.getKeyCode e) KeyEvent/VK_ENTER)
+                                   ((:handler (meta open-action)) nil))))
     
     ;; Build UI using border-panel
     (seesaw/config! frame :content
@@ -239,8 +244,8 @@
                                                             :vscroll :always
                                                             :hscroll :as-needed)]  ;; Add horizontal scroll as needed
                                ;; Set preferred viewport size for ~20 rows
-                               (.setPreferredSize (.getViewport scroll-pane)
-                                                (java.awt.Dimension. 0 (* 22 (.getRowHeight table))))
+                               (doto (.getViewport scroll-pane)
+                                 (.setPreferredSize (Dimension. 0 (* 22 (.getRowHeight table)))))
                                scroll-pane)
                      :south (seesaw/flow-panel
                             :align :center
@@ -260,6 +265,6 @@
      (if (empty? log-files)
        (seesaw/alert (i18n/tr :log-viewer-no-files))
        (let [frame (create-log-viewer-frame)]
-         (.setExtendedState frame java.awt.Frame/MAXIMIZED_BOTH)
+         (.setExtendedState frame Frame/MAXIMIZED_BOTH)
          (.setLocationRelativeTo frame nil)
          (seesaw/show! frame))))))

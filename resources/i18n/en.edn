@@ -26,6 +26,7 @@
  :status-failed "Connection Failed"
  
  ;; Control panel
+ :control-panel-title "Stream Control Panel"
  :control-label-system "System Control"
  :control-button-connect "Connect"
  :control-button-disconnect "Disconnect"
@@ -35,6 +36,12 @@
  :stream-day "Day"
  :control-checkbox-enable "Enable"
  :control-checkbox-autoconnect "Auto-connect"
+ :connection-info "Connection Information"
+ :server-domain "Server"
+ :no-server-configured "No server configured"
+ :stream-controls "Stream Controls"
+ :statistics "Statistics"
+ :no-statistics "No statistics available"
  
  ;; Log table
  :log-column-time "Time"

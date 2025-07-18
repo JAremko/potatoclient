@@ -26,6 +26,7 @@
  :status-failed "Помилка підключення"
  
  ;; Control panel
+ :control-panel-title "Панель керування потоками"
  :control-label-system "Керування системою"
  :control-button-connect "Підключити"
  :control-button-disconnect "Від'єднати"
@@ -35,6 +36,12 @@
  :stream-day "Денна"
  :control-checkbox-enable "Увімкнути"
  :control-checkbox-autoconnect "Автопідключення"
+ :connection-info "Інформація про підключення"
+ :server-domain "Сервер"
+ :no-server-configured "Сервер не налаштовано"
+ :stream-controls "Керування потоками"
+ :statistics "Статистика"
+ :no-statistics "Статистика недоступна"
  
  ;; Log table
  :log-column-time "Час"

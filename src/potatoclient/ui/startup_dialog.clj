@@ -11,8 +11,7 @@
             [potatoclient.state :as state]
             [potatoclient.specs :as specs]
             [potatoclient.logging :as logging])
-  (:import [javax.swing JFrame]
-           [java.net URI URL]))
+)
 
 (defn- extract-domain
   "Extract domain/IP from various URL formats.
@@ -109,17 +108,16 @@
         ;; Create items for combobox - saved URL first, then history
         combo-items (vec (distinct (concat (when saved-url [saved-url]) recent-urls)))
         ;; Create editable combobox
-        url-combobox (seesaw/combobox :model combo-items
+        url-combobox (seesaw/combobox :id :url-input
+                                      :model combo-items
                                       :editable? true
                                       :font {:size 14}
                                       :border (border/compound-border
                                                (border/line-border :thickness 1 :color :gray)
-                                               (border/empty-border :thickness 5)))
-        ;; Get the editor component to set initial text
-        editor (.getEditor url-combobox)]
+                                               (border/empty-border :thickness 5)))]
     ;; Set the saved URL as the initial text
     (when saved-url
-      (.setItem editor saved-url))
+      (seesaw/value! url-combobox saved-url))
     
     (mig/mig-panel
      :constraints ["wrap 1, insets 20, gap 10"
@@ -135,15 +133,45 @@
   [parent callback]
   (let [saved-url (config/get-most-recent-url)
         domain (config/get-domain)  ;; This extracts domain from URL
-        ;; Create buttons first to get reference to connect button
-        connect-button (seesaw/button :text (i18n/tr :startup-button-connect)
+        content (create-content-panel saved-url)
+        url-combobox (seesaw/select content [:#url-input])
+        ;; Create the dialog frame first
+        dialog (atom nil)
+        ;; Create button actions that can reference the dialog
+        connect-action (action/action
+                        :name (i18n/tr :startup-button-connect)
+                        :handler (fn [e]
+                                   (let [text (str (seesaw/value url-combobox))
+                                         extracted (extract-domain text)]
+                                     (if (validate-domain extracted)
+                                       (do
+                                         (config/add-url-to-history text)
+                                         (state/set-domain! extracted)
+                                         (seesaw/dispose! @dialog)
+                                         (callback :connect))
+                                       (seesaw/alert @dialog
+                                                     (if (clojure.string/blank? extracted)
+                                                       "Please enter a valid domain or IP address"
+                                                       (str "Invalid domain/IP: " extracted "\n\n"
+                                                            "Valid formats:\n"
+                                                            "• domain.com\n"
+                                                            "• sub.domain.com\n"
+                                                            "• 192.168.1.100\n"
+                                                            "• wss://domain.com:8080/path"))
+                                                     :title "Invalid URL"
+                                                     :type :error)))))
+        cancel-action (action/action
+                       :name (i18n/tr :startup-button-cancel)
+                       :handler (fn [e]
+                                  (seesaw/dispose! @dialog)
+                                  (callback :cancel)))
+        ;; Create buttons with actions
+        connect-button (seesaw/button :action connect-action
                                       :font {:size 14}
                                       :preferred-size [120 :by 35])
-        cancel-button (seesaw/button :text (i18n/tr :startup-button-cancel)
+        cancel-button (seesaw/button :action cancel-action
                                      :font {:size 14}
                                      :preferred-size [120 :by 35])
-        content (create-content-panel saved-url)
-        url-combobox (first (seesaw/select content [:JComboBox]))
         buttons-panel (seesaw/flow-panel
                        :align :center
                        :hgap 15
@@ -151,62 +179,35 @@
         main-panel (seesaw/border-panel
                     :center content
                     :south buttons-panel
-                    :border 10)
-        ;; Create the dialog frame
-        dialog (seesaw/frame
-                :title (i18n/tr :startup-title)
-                :icon (clojure.java.io/resource "main.png")
-                :resizable? false
-                :content main-panel
-                :on-close :nothing)]
+                    :border 10)]
     
-    ;; Event handlers
-    (seesaw/listen connect-button :action
-                   (fn [e]
-                     (let [;; Get text from editable combobox
-                           text (str (seesaw/value url-combobox))
-                           extracted (extract-domain text)]
-                       (if (validate-domain extracted)
-                         (do
-                           ;; Add URL to history (this is the only place we save URLs)
-                           (config/add-url-to-history text)
-                           ;; Update state with extracted domain
-                           (state/set-domain! extracted)
-                           (seesaw/dispose! dialog)
-                           (callback :connect))
-                         ;; Show error alert
-                         (seesaw/alert dialog
-                                       (if (clojure.string/blank? extracted)
-                                         "Please enter a valid domain or IP address"
-                                         (str "Invalid domain/IP: " extracted "\n\n"
-                                              "Valid formats:\n"
-                                              "• domain.com\n"
-                                              "• sub.domain.com\n"
-                                              "• 192.168.1.100\n"
-                                              "• wss://domain.com:8080/path"))
-                                       :title "Invalid URL"
-                                       :type :error)))))
+    ;; Create the actual dialog
+    (reset! dialog
+            (seesaw/frame
+             :title (i18n/tr :startup-title)
+             :icon (clojure.java.io/resource "main.png")
+             :resizable? false
+             :content main-panel
+             :on-close :nothing))
     
-    (seesaw/listen cancel-button :action
-                   (fn [e]
-                     (seesaw/dispose! dialog)
-                     (callback :cancel)))
-    
-    ;; Set up menu bar - must be done before showing dialog
-    (.setJMenuBar ^JFrame dialog (create-menu-bar dialog callback))
+    ;; Configure dialog properties
+    (seesaw/config! @dialog :menubar (create-menu-bar @dialog callback))
     
     ;; Make Connect button the default when Enter is pressed
-    (.setDefaultButton (.getRootPane dialog) connect-button)
+    (let [root-pane (seesaw/to-root @dialog)]
+      (when-let [root (.getRootPane root-pane)]
+        (.setDefaultButton root connect-button)))
     
     ;; Handle window closing
-    (seesaw/listen dialog :window-closing
+    (seesaw/listen @dialog :window-closing
                    (fn [e]
-                     (seesaw/dispose! dialog)
+                     (seesaw/dispose! @dialog)
                      (callback :cancel)))
     
     ;; Pack and center the dialog
-    (seesaw/pack! dialog)
-    (.setLocationRelativeTo dialog parent)
+    (doto @dialog
+      seesaw/pack!
+      (.setLocationRelativeTo parent))
     
     ;; Log dialog creation
     (logging/log-info {:id ::show-dialog
@@ -215,4 +216,4 @@
                        :msg (str "Showing startup dialog with URL: " saved-url)})
     
     ;; Show dialog
-    (seesaw/show! dialog)))
+    (seesaw/show! @dialog)))

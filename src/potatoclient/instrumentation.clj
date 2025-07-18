@@ -240,11 +240,11 @@
 ;; UI.control-panel namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.ui.control-panel/create-stream-button [:=> [:cat :potatoclient.specs/stream-key string?] :potatoclient.specs/jtoggle-button])
-(m/=> potatoclient.ui.control-panel/toggle-stream [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/jtoggle-button] any?])
-(m/=> potatoclient.ui.control-panel/create-control-button [:=> [:cat keyword? string? any?] :potatoclient.specs/jbutton])
-(m/=> potatoclient.ui.control-panel/create-gimbal-controls [:=> [:cat] :potatoclient.specs/jpanel])
-(m/=> potatoclient.ui.control-panel/create-control-panel [:=> [:cat] :potatoclient.specs/jpanel])
+;; New control panel functions after refactoring
+(m/=> potatoclient.ui.control-panel/create-stream-status-panel [:=> [:cat :potatoclient.specs/stream-key] :potatoclient.specs/jpanel])
+(m/=> potatoclient.ui.control-panel/create-connection-info-panel [:=> [:cat] :potatoclient.specs/jpanel])
+(m/=> potatoclient.ui.control-panel/create-stream-controls-panel [:=> [:cat] :potatoclient.specs/jpanel])
+(m/=> potatoclient.ui.control-panel/create-statistics-panel [:=> [:cat] :potatoclient.specs/jpanel])
 (m/=> potatoclient.ui.control-panel/create [:=> [:cat] :potatoclient.specs/jpanel])
 
 ;; -----------------------------------------------------------------------------
@@ -252,7 +252,7 @@
 ;; -----------------------------------------------------------------------------
 
 (m/=> potatoclient.ui.main-frame/preserve-window-state [:=> [:cat :potatoclient.specs/jframe] map?])
-(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe map?] any?])
+(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe map?] :potatoclient.specs/jframe])
 (m/=> potatoclient.ui.main-frame/reload-frame! [:=> [:cat :potatoclient.specs/jframe fn?] any?])
 (m/=> potatoclient.ui.main-frame/create-language-action [:=> [:cat keyword? string? fn?] any?])
 (m/=> potatoclient.ui.main-frame/create-theme-action [:=> [:cat keyword? fn?] any?])
