@@ -29,7 +29,7 @@
 (>defn- dispatch-message
         "Dispatch a message to the appropriate handler."
         [stream-key msg]
-        [:potatoclient.specs/stream-key map? => nil?]
+        [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
         (if-let [handler (get message-handlers (keyword (:type msg)))]
           (try
             (handler stream-key msg)
@@ -75,7 +75,7 @@
 (>defn- initialize-stream
         "Initialize a newly started stream."
         [stream]
-        [:potatoclient.specs/stream-process-map => nil?]
+        [:potatoclient.specs/stream-process-map => boolean?]
         (Thread/sleep stream-init-delay-ms)
         (process/send-command stream {:action "show"}))
 
@@ -85,7 +85,7 @@
   Creates the subprocess, registers it in state, and begins
   processing its output messages."
        [stream-key endpoint]
-       [:potatoclient.specs/stream-key string? => nil?]
+       [:potatoclient.specs/stream-key string? => :potatoclient.specs/future-instance]
        (future
          (try
            (let [url (build-stream-url endpoint)
@@ -133,7 +133,7 @@
 (>defn restart-stream
        "Restart a stream by stopping and starting it again."
        [stream-key endpoint]
-       [:potatoclient.specs/stream-key string? => nil?]
+       [:potatoclient.specs/stream-key string? => :potatoclient.specs/future-instance]
        (future
          (when (state/get-stream stream-key)
            (stop-stream stream-key)

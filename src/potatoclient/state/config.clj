@@ -39,7 +39,8 @@
        [domain]
        [:potatoclient.specs/domain => nil?]
   ;; Only update runtime state, domain is derived from URL history
-       (swap! app-config assoc :domain domain))
+       (swap! app-config assoc :domain domain)
+       nil)
 
 (>defn get-config
        "Get the entire runtime config map."

@@ -161,7 +161,7 @@
 (>defn- create-stream-toggle-button
         "Create a stream toggle button for the menu bar."
         [stream-key]
-        [:potatoclient.specs/stream-type => any?]
+        [:potatoclient.specs/stream-key => any?]
         (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
                                     :tooltip "Heat Camera (900x720)"
                                     :label-key :stream-thermal}
@@ -246,7 +246,8 @@
                            (logging/shutdown!)
                            (catch Exception e
                              (logging/log-error (str "Error during shutdown: " (.getMessage e)))))
-                         (System/exit 0))))
+                         (System/exit 0)))
+        nil)
 
 (>defn- ensure-on-edt
         "Ensure a function runs on the Event Dispatch Thread."

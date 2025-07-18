@@ -236,4 +236,5 @@
                             :msg (str "Showing startup dialog with URL: " saved-url)})
 
     ;; Show dialog
-         (seesaw/show! @dialog)))
+         (seesaw/show! @dialog)
+         nil))

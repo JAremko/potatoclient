@@ -263,6 +263,14 @@
   [:fn #(instance? Exception %)])
 
 ;; -----------------------------------------------------------------------------
+;; Concurrency Schemas
+;; -----------------------------------------------------------------------------
+
+(def future-instance
+  "Java Future instance"
+  [:fn {:error/message "must be a Future"} future?])
+
+;; -----------------------------------------------------------------------------
 ;; UI Component Schemas
 ;; -----------------------------------------------------------------------------
 
@@ -406,6 +414,7 @@
     ::rectangle rectangle
     ::icon icon
     ::exception exception
+    ::future-instance future-instance
 
     ;; UI Components
     ::jframe jframe

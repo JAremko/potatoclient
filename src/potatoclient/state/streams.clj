@@ -18,13 +18,13 @@
 (>defn set-stream!
        "Set a stream process."
        [stream-key stream]
-       [:potatoclient.specs/stream-key :potatoclient.specs/stream-process-map => nil?]
+       [:potatoclient.specs/stream-key :potatoclient.specs/stream-process-map => [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
        (swap! streams-state assoc stream-key stream))
 
 (>defn clear-stream!
        "Clear a stream process."
        [stream-key]
-       [:potatoclient.specs/stream-key => nil?]
+       [:potatoclient.specs/stream-key => [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
        (swap! streams-state assoc stream-key nil))
 
 (>defn all-streams

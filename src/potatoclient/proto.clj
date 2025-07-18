@@ -3,7 +3,8 @@
   
   Provides functions to serialize commands and deserialize state messages
   using the pronto library for Clojure protobuf support."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
+  (:require [clojure.spec.alpha :as s]
+            [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.specs :as specs]
             [pronto.core :as p]
@@ -82,11 +83,12 @@
                             :cause e})))))
 
 ;; Command factory functions
-(defn- create-command
+(>defn- create-command
         "Create a base command structure."
         [session-id client-type-key & {:keys [important? from-cv?]
                                        :or {important? false
                                             from-cv? false}}]
+        [::specs/session-id ::specs/client-type-key (? (s/* any?)) => map?]
         {:protocol-version 1
          :session-id session-id
          :important important?

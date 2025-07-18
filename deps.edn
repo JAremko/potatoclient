@@ -48,7 +48,7 @@
                               "-Dguardrails.enabled=true"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
-           :run {:extra-paths ["src/potatoclient/java"]
+           :run {:extra-paths ["target/classes"]
                  :jvm-opts ["-Djna.library.path=/usr/lib"
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -57,7 +57,7 @@
                             "-Dguardrails.enabled=true"]
                  :main-opts ["-m" "potatoclient.main"]}
 
-           :uberjar {:extra-paths ["src/potatoclient/java"]
+           :uberjar {:extra-paths ["target/classes"]
                      :jvm-opts ["-Djna.library.path=/usr/lib"
                                 "-Dgstreamer.library.path=/usr/lib"
                                 "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"

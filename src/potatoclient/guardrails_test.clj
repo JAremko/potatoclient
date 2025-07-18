@@ -3,7 +3,7 @@
   
   This namespace contains functions with intentional spec violations
   to test that Guardrails properly throws errors in development builds."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]))
+  (:require [com.fulcrologic.guardrails.core :refer [>defn >defn- => ?]]))
 
 ;; Test function with correct spec and usage - should NOT throw
 (>defn add-numbers
@@ -40,81 +40,82 @@
         [number? => boolean?]
         (and (>= n 0) (<= n 100)))
 
-(defn test-guardrails!
-  "Run tests to verify Guardrails is working.
+(>defn test-guardrails!
+       "Run tests to verify Guardrails is working.
   Should throw errors in development builds."
-  []
-  (println "\n=== Testing Guardrails Validation ===\n")
+       []
+       [=> nil?]
+       (println "\n=== Testing Guardrails Validation ===\n")
 
   ;; Check if Guardrails is enabled
-  (println "Guardrails enabled:" (System/getProperty "guardrails.enabled"))
-  (println "Release build:" (if (try (require 'potatoclient.runtime)
-                                     ((resolve 'potatoclient.runtime/release-build?))
-                                     (catch Exception _ false))
-                              "YES" "NO"))
-  (println "")
+       (println "Guardrails enabled:" (System/getProperty "guardrails.enabled"))
+       (println "Release build:" (if (try (require 'potatoclient.runtime)
+                                          ((resolve 'potatoclient.runtime/release-build?))
+                                          (catch Exception _ false))
+                                   "YES" "NO"))
+       (println "")
 
   ;; Test 1: Correct usage - should work
-  (println "Test 1: Correct usage")
-  (try
-    (println "  add-numbers(2, 3) =" (add-numbers 2 3))
-    (println "  ✓ PASS: No error thrown")
-    (catch Exception e
-      (println "  ✗ FAIL: Unexpected error:" (.getMessage e))))
+       (println "Test 1: Correct usage")
+       (try
+         (println "  add-numbers(2, 3) =" (add-numbers 2 3))
+         (println "  ✓ PASS: No error thrown")
+         (catch Exception e
+           (println "  ✗ FAIL: Unexpected error:" (.getMessage e))))
 
   ;; Test 2: Wrong input type - should throw
-  (println "\nTest 2: Wrong input type")
-  (try
-    (println "  multiply-numbers(\"5\", \"10\") =")
-    (multiply-numbers "5" "10")
-    (println "  ✗ FAIL: Should have thrown an error!")
-    (catch Exception e
-      (println "  ✓ PASS: Caught expected error")
-      (println "  Error:" (.getMessage e))))
+       (println "\nTest 2: Wrong input type")
+       (try
+         (println "  multiply-numbers(\"5\", \"10\") =")
+         (multiply-numbers "5" "10")
+         (println "  ✗ FAIL: Should have thrown an error!")
+         (catch Exception e
+           (println "  ✓ PASS: Caught expected error")
+           (println "  Error:" (.getMessage e))))
 
   ;; Test 3: Wrong output type - should throw
-  (println "\nTest 3: Wrong output type")
-  (try
-    (println "  divide-numbers(10, 2) =")
-    (let [result (divide-numbers 10 2)]
-      (println "  Result:" result "Type:" (type result))
+       (println "\nTest 3: Wrong output type")
+       (try
+         (println "  divide-numbers(10, 2) =")
+         (let [result (divide-numbers 10 2)]
+           (println "  Result:" result "Type:" (type result))
       ;; According to Guardrails docs, output validation may happen on usage
       ;; Let's try to use the result in a numeric context
-      (println "  Trying to add 1 to result:")
-      (+ result 1)
-      (println "  ✗ FAIL: Should have thrown an error!"))
-    (catch Exception e
-      (println "  ✓ PASS: Caught expected error")
-      (println "  Error:" (.getMessage e))))
+           (println "  Trying to add 1 to result:")
+           (+ result 1)
+           (println "  ✗ FAIL: Should have thrown an error!"))
+         (catch Exception e
+           (println "  ✓ PASS: Caught expected error")
+           (println "  Error:" (.getMessage e))))
 
   ;; Test 4: Such-that predicate violation - should throw
-  (println "\nTest 4: Such-that predicate violation")
-  (try
-    (println "  get-positive-result(5) =")
-    (let [result (get-positive-result 5)]
-      (println "  Result:" result)
+       (println "\nTest 4: Such-that predicate violation")
+       (try
+         (println "  get-positive-result(5) =")
+         (let [result (get-positive-result 5)]
+           (println "  Result:" result)
       ;; Force usage of result
-      (println "  Checking if result is positive:" (pos? result))
-      (println "  ✗ FAIL: Should have thrown an error!"))
-    (catch Exception e
-      (println "  ✓ PASS: Caught expected error")
-      (println "  Error:" (.getMessage e))))
+           (println "  Checking if result is positive:" (pos? result))
+           (println "  ✗ FAIL: Should have thrown an error!"))
+         (catch Exception e
+           (println "  ✓ PASS: Caught expected error")
+           (println "  Error:" (.getMessage e))))
 
   ;; Test 5: Private function - should work
-  (println "\nTest 5: Private function with spec")
-  (try
-    (println "  validate-range(50) =" (validate-range 50))
-    (println "  ✓ PASS: Private function works with spec")
-    (catch Exception e
-      (println "  ✗ FAIL: Unexpected error:" (.getMessage e))))
+       (println "\nTest 5: Private function with spec")
+       (try
+         (println "  validate-range(50) =" (validate-range 50))
+         (println "  ✓ PASS: Private function works with spec")
+         (catch Exception e
+           (println "  ✗ FAIL: Unexpected error:" (.getMessage e))))
 
   ;; Test 6: Check Guardrails configuration
-  (println "\nTest 6: Guardrails configuration check")
-  (try
-    (println "  Loading Guardrails config namespace...")
-    (require '[com.fulcrologic.guardrails.config :as gr-config])
-    (println "  Guardrails throw?: " @(resolve 'com.fulcrologic.guardrails.config/*throw?*))
-    (catch Exception e
-      (println "  Could not check config:" (.getMessage e))))
+       (println "\nTest 6: Guardrails configuration check")
+       (try
+         (println "  Loading Guardrails config namespace...")
+         (require '[com.fulcrologic.guardrails.config :as gr-config])
+         (println "  Guardrails throw?: " @(resolve 'com.fulcrologic.guardrails.config/*throw?*))
+         (catch Exception e
+           (println "  Could not check config:" (.getMessage e))))
 
-  (println "\n=== Guardrails Test Complete ==="))
+       (println "\n=== Guardrails Test Complete ==="))

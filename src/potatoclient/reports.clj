@@ -4,8 +4,9 @@
    This namespace provides utilities to generate reports about the codebase,
    including unspecced functions, code coverage, and other metrics."
   (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+            [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
   (:import (java.time LocalDateTime)
@@ -30,10 +31,11 @@
          [string? [:maybe string?] => string?]
          (str "```" (or lang "") "\n" code "\n```")))
 
-(defn- md-list-item
-  "Create a markdown list item."
-  [text & {:keys [indent] :or {indent 0}}]
-  (str (str/join (repeat indent "  ")) "- " text))
+(>defn- md-list-item
+        "Create a markdown list item."
+        [text & {:keys [indent] :or {indent 0}}]
+        [string? (? (s/* any?)) => string?]
+        (str (str/join (repeat indent "  ")) "- " text))
 
 (>defn- md-table-header
         "Create a markdown table header row."

@@ -52,6 +52,12 @@ PotatoClient is a multi-process video streaming client with dual H.264 WebSocket
   [x y]
   [number? number? | #(not= y 0) => number?]
   (/ x y))
+
+;; Variadic keyword arguments
+(>defn create-user
+  [name & {:keys [age email] :or {age 0}}]
+  [string? (? (s/* any?)) => map?]  ; Use (? (s/* any?)) for & {:keys ...}
+  {:name name :age age :email email})
 ```
 
 ### Checking for Unspecced Functions
@@ -84,6 +90,8 @@ Guardrails is controlled by:
 - Private functions use `>defn-` (not `defn ^:private`)
 - All validation happens at runtime during development only
 - Functions must return `nil` for side-effect operations (not `true` or other values)
+- For variadic keyword arguments `& {:keys [...]}`, use `(? (s/* any?))` in the spec
+- Remember to require `[clojure.spec.alpha :as s]` when using spec-based Guardrails
 
 ## Quick Reference
 

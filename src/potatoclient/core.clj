@@ -1,7 +1,8 @@
 (ns potatoclient.core
   "Core application logic for PotatoClient.
   Handles application initialization and lifecycle management."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn-]]
+  (:require [clojure.spec.alpha :as s]
+            [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
@@ -54,7 +55,7 @@
 (>defn- log-startup!
         "Log application startup."
         []
-        [=> nil?]
+        [=> boolean?]
         (logging/log-info
          {:id ::startup
           :data {:version (get-version)
@@ -63,18 +64,19 @@
                        (get-version)
                        (get-build-type))}))
 
-(defn -main
-  "Application entry point."
-  [& args]
+(>defn -main
+       "Application entry point."
+       [& args]
+       [(s/* any?) => nil?]
        (initialize-application!)
        (seesaw/invoke-later
-   ;; Preload theme icons before showing any UI
+    ;; Preload theme icons before showing any UI
         (theme/preload-theme-icons!)
-   ;; Define callback handler for dialog results
+    ;; Define callback handler for dialog results
         (letfn [(handle-dialog-result [result]
                   (case result
                     :connect
-               ;; User clicked Connect, proceed with main frame
+                ;; User clicked Connect, proceed with main frame
                     (let [params {:version (get-version)
                                   :build-type (get-build-type)}
                           frame (main-frame/create-main-frame params)]
@@ -82,16 +84,16 @@
                       (log-startup!))
 
                     :cancel
-               ;; User clicked Cancel, exit application
+                ;; User clicked Cancel, exit application
                     (do
                       (logging/log-info "User cancelled startup dialog, exiting...")
                       (System/exit 0))
 
                     :reload
-               ;; Theme or language changed, show dialog again
+                ;; Theme or language changed, show dialog again
                     (do
                       (theme/preload-theme-icons!)
                       (startup-dialog/show-startup-dialog nil handle-dialog-result))))]
-     ;; Show the initial dialog
+      ;; Show the initial dialog
           (startup-dialog/show-startup-dialog nil handle-dialog-result))))
 

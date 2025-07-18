@@ -256,4 +256,5 @@
           ;; Keep only the 10 most recent URLs by timestamp
                sorted-history (sort-by :timestamp #(compare %2 %1) new-history)
                trimmed-history (into #{} (take 10 sorted-history))]
-           (save-config! (assoc config :url-history trimmed-history)))))
+           (save-config! (assoc config :url-history trimmed-history))
+           nil)))
