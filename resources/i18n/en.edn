@@ -85,4 +85,18 @@
  :error-connection-failed "Failed to connect to server"
  :error-stream-failed "Stream failed to start"
  :error-subprocess-died "Subprocess terminated unexpectedly"
- :error-export-failed "Failed to export log file"}
+ :error-export-failed "Failed to export log file"
+ 
+ ;; Log viewer
+ :log-viewer-title "Log Viewer"
+ :log-viewer-refresh "Refresh"
+ :log-viewer-open "Open"
+ :log-viewer-close "Close"
+ :log-viewer-copy "Copy to Clipboard"
+ :log-viewer-copied "Copied to clipboard!"
+ :log-viewer-no-files "No log files found in the logs directory."
+ :log-viewer-column-filename "Filename"
+ :log-viewer-column-version "Version"
+ :log-viewer-column-created "Created"
+ :log-viewer-column-size "Size"
+ :log-viewer-file-title "Log: "}

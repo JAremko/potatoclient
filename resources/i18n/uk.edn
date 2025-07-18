@@ -85,4 +85,18 @@
  :error-connection-failed "Не вдалося підключитися до сервера"
  :error-stream-failed "Не вдалося запустити потік"
  :error-subprocess-died "Підпроцес несподівано завершився"
- :error-export-failed "Не вдалося експортувати файл журналу"}
+ :error-export-failed "Не вдалося експортувати файл журналу"
+ 
+ ;; Log viewer
+ :log-viewer-title "Перегляд журналів"
+ :log-viewer-refresh "Оновити"
+ :log-viewer-open "Відкрити"
+ :log-viewer-close "Закрити"
+ :log-viewer-copy "Копіювати в буфер обміну"
+ :log-viewer-copied "Скопійовано в буфер обміну!"
+ :log-viewer-no-files "Файли журналів не знайдено в каталозі журналів."
+ :log-viewer-column-filename "Ім'я файлу"
+ :log-viewer-column-version "Версія"
+ :log-viewer-column-created "Створено"
+ :log-viewer-column-size "Розмір"
+ :log-viewer-file-title "Журнал: "}

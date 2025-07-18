@@ -18,6 +18,7 @@
             [potatoclient.runtime :as runtime])
   (:import [java.text SimpleDateFormat]))
 
+
 (defn- get-log-directory
   []
   (logging/get-logs-directory))
@@ -95,18 +96,17 @@
                    :font {:name "Monospaced" :size 12}
                    :caret-position 0)
         frame (seesaw/frame 
-               :title (str "Log: " (.getName file))
+               :title (str (i18n/tr :log-viewer-file-title) (.getName file))
                :icon (clojure.java.io/resource "main.png")
-               :size [800 :by 600]
                :on-close :dispose)
         copy-action (seesaw/action
-                     :name "Copy to Clipboard"
+                     :name (i18n/tr :log-viewer-copy)
                      :icon (theme/key->icon :file-save)
                      :handler (fn [_] 
                                (copy-to-clipboard raw-content)
-                               (seesaw/alert parent-frame "Copied to clipboard!")))
+                               (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))
         close-action (seesaw/action
-                      :name "Close"
+                      :name (i18n/tr :log-viewer-close)
                       :icon (theme/key->icon :file-excel)
                       :handler (fn [_] (seesaw/dispose! frame)))]
     ;; Build content using idiomatic border-panel
@@ -115,14 +115,41 @@
                      :border 10
                      :hgap 10
                      :vgap 10
-                     :center (seesaw/scrollable text-area)
+                     :center (seesaw/scrollable text-area
+                                               :vscroll :always
+                                               :hscroll :as-needed)
                      :south (seesaw/horizontal-panel 
                             :items [copy-action close-action])))
-    ;; Position relative to parent
-    (seesaw/pack! frame)
+    ;; Set maximized state before showing to avoid visual glitch
+    (.setExtendedState frame java.awt.Frame/MAXIMIZED_BOTH)
     (.setLocationRelativeTo frame parent-frame)
     (seesaw/show! frame)
     frame))
+
+(defn- pack-table-columns!
+  "Auto-size table columns based on content."
+  [table]
+  (let [col-model (.getColumnModel table)]
+    (doseq [col-idx (range (.getColumnCount col-model))]
+      (let [column (.getColumn col-model col-idx)
+            header-renderer (.getHeaderRenderer column)
+            header-value (.getHeaderValue column)
+            header-width (if header-renderer
+                          (-> header-renderer
+                              (.getTableCellRendererComponent table header-value false false 0 col-idx)
+                              .getPreferredSize
+                              .width)
+                          75)
+            max-width (atom header-width)]
+        ;; Check each row's content width
+        (doseq [row (range (min 20 (.getRowCount table)))]
+          (let [renderer (.getCellRenderer table row col-idx)
+                value (.getValueAt table row col-idx)
+                comp (.getTableCellRendererComponent renderer table value false false row col-idx)
+                width (-> comp .getPreferredSize .width)]
+            (swap! max-width max width)))
+        ;; Set preferred width with some padding
+        (.setPreferredWidth column (+ @max-width 20))))))
 
 (defn- create-log-table
   "Create the main log file listing table."
@@ -130,43 +157,47 @@
   (seesaw/table 
    :id :log-table
    :model (table/table-model 
-           :columns [{:key :filename :text "Filename"}
-                     {:key :version :text "Version"}
-                     {:key :formatted-timestamp :text "Created"}
-                     {:key :formatted-size :text "Size"}])
-   :show-grid? true))
+           :columns [{:key :filename :text (i18n/tr :log-viewer-column-filename)}
+                     {:key :version :text (i18n/tr :log-viewer-column-version)}
+                     {:key :formatted-timestamp :text (i18n/tr :log-viewer-column-created)}
+                     {:key :formatted-size :text (i18n/tr :log-viewer-column-size)}])
+   :show-grid? true
+   :auto-resize :off))
 
 (defn- update-log-list!
   "Update the log table with current log files."
   [table]
   (let [log-files (get-log-files)
+        ;; Take only the most recent 20 files
+        recent-files (take 20 log-files)
         formatted-files (map (fn [log]
                                (assoc log
                                       :formatted-timestamp (format-timestamp (:timestamp log))
                                       :formatted-size (format-file-size (:size log))))
-                             log-files)]
+                             recent-files)]
     (table/clear! table)
     (doseq [log formatted-files]
-      (table/insert-at! table (table/row-count table) log))))
+      (table/insert-at! table (table/row-count table) log))
+    ;; Auto-size columns after adding data
+    (pack-table-columns! table)))
 
 (defn create-log-viewer-frame
   "Create the main log viewer window."
   []
   (let [table (create-log-table)
         frame (seesaw/frame 
-               :title "Log Viewer"
+               :title (i18n/tr :log-viewer-title)
                :icon (clojure.java.io/resource "main.png")
-               :size [700 :by 400]
                :on-close :dispose)
         
         ;; Define actions
         refresh-action (seesaw/action
-                        :name "Refresh"
+                        :name (i18n/tr :log-viewer-refresh)
                         :icon (theme/key->icon :file-import)
                         :handler (fn [_] (update-log-list! table)))
         
         open-action (seesaw/action
-                     :name "Open"
+                     :name (i18n/tr :log-viewer-open)
                      :icon (theme/key->icon :file-open)
                      :enabled? false
                      :handler (fn [_]
@@ -176,7 +207,7 @@
                                      (create-file-viewer file frame))))))
         
         close-action (seesaw/action
-                      :name "Close"
+                      :name (i18n/tr :log-viewer-close)
                       :icon (theme/key->icon :file-excel)
                       :handler (fn [_] (seesaw/dispose! frame)))]
     
@@ -203,8 +234,14 @@
                      :border 10
                      :hgap 10
                      :vgap 10
-                     :center (seesaw/scrollable table 
-                                               :border 0)
+                     :center (let [scroll-pane (seesaw/scrollable table 
+                                                            :border 0
+                                                            :vscroll :always
+                                                            :hscroll :as-needed)]  ;; Add horizontal scroll as needed
+                               ;; Set preferred viewport size for ~20 rows
+                               (.setPreferredSize (.getViewport scroll-pane)
+                                                (java.awt.Dimension. 0 (* 22 (.getRowHeight table))))
+                               scroll-pane)
                      :south (seesaw/flow-panel
                             :align :center
                             :hgap 5
@@ -221,8 +258,8 @@
   (seesaw/invoke-now
    (let [log-files (get-log-files)]
      (if (empty? log-files)
-       (seesaw/alert "No log files found in the logs directory.")
+       (seesaw/alert (i18n/tr :log-viewer-no-files))
        (let [frame (create-log-viewer-frame)]
-         (seesaw/pack! frame)
+         (.setExtendedState frame java.awt.Frame/MAXIMIZED_BOTH)
          (.setLocationRelativeTo frame nil)
          (seesaw/show! frame))))))
