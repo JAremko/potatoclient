@@ -21,7 +21,6 @@
            [java.awt Frame]
            [java.awt.event KeyEvent]))
 
-
 (defn- get-log-directory
   []
   (logging/get-logs-directory))
@@ -49,7 +48,7 @@
     (if (.exists log-dir)
       (->> (.listFiles log-dir)
            (filter #(and (.isFile %)
-                        (str/ends-with? (.getName %) ".log")))
+                         (str/ends-with? (.getName %) ".log")))
            (map (fn [file]
                   (let [parsed (parse-log-filename (.getName file))]
                     (when parsed
@@ -73,6 +72,17 @@
   [text]
   (clipboard/contents! text))
 
+(defn- dispose-frame!
+  "Dispose frame without minimize animation when maximized."
+  [frame]
+  ;; First minimize to taskbar to avoid the unmaximize animation
+  (when (= (.getExtendedState frame) Frame/MAXIMIZED_BOTH)
+    (.setExtendedState frame Frame/ICONIFIED))
+  ;; Then dispose in next EDT cycle
+  (seesaw/invoke-later
+   (fn []
+     (seesaw/dispose! frame))))
+
 (defn- format-log-content
   "Add visual separators between log entries"
   [content]
@@ -90,7 +100,7 @@
   [file parent-frame]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)
-        text-area (seesaw/text 
+        text-area (seesaw/text
                    :id :log-content
                    :multi-line? true
                    :text content
@@ -98,20 +108,21 @@
                    :wrap-lines? true
                    :font {:name "Monospaced" :size 12}
                    :caret-position 0)
-        frame (seesaw/frame 
+        frame (seesaw/frame
                :title (str (i18n/tr :log-viewer-file-title) (.getName file))
                :icon (clojure.java.io/resource "main.png")
-               :on-close :dispose)
+               :on-close :nothing ;; We'll handle close ourselves
+               :size [800 :by 600]) ;; Same default size as main frame
         copy-action (seesaw/action
                      :name (i18n/tr :log-viewer-copy)
                      :icon (theme/key->icon :file-save)
-                     :handler (fn [_] 
-                               (copy-to-clipboard raw-content)
-                               (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))
+                     :handler (fn [_]
+                                (copy-to-clipboard raw-content)
+                                (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))
         close-action (seesaw/action
                       :name (i18n/tr :log-viewer-close)
                       :icon (theme/key->icon :file-excel)
-                      :handler (fn [_] (seesaw/dispose! frame)))]
+                      :handler (fn [_] (dispose-frame! frame)))]
     ;; Build content using idiomatic border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
@@ -119,14 +130,21 @@
                      :hgap 10
                      :vgap 10
                      :center (seesaw/scrollable text-area
-                                               :vscroll :always
-                                               :hscroll :as-needed)
-                     :south (seesaw/horizontal-panel 
-                            :items [copy-action close-action])))
-    ;; Set maximized state before showing to avoid visual glitch
-    (.setExtendedState frame Frame/MAXIMIZED_BOTH)
+                                                :vscroll :always
+                                                :hscroll :as-needed)
+                     :south (seesaw/horizontal-panel
+                             :items [copy-action close-action])))
+
+    ;; Handle window close (X button)
+    (seesaw/listen frame :window-closing
+                   (fn [_] (dispose-frame! frame)))
+
+    ;; Set location relative to parent
     (.setLocationRelativeTo frame parent-frame)
+    ;; Show the frame first
     (seesaw/show! frame)
+    ;; Then maximize after showing
+    (.setExtendedState frame Frame/MAXIMIZED_BOTH)
     frame))
 
 (defn- pack-table-columns!
@@ -140,11 +158,11 @@
             header-renderer (.getHeaderRenderer column)
             header-value (.getHeaderValue column)
             header-width (if header-renderer
-                          (-> header-renderer
-                              (.getTableCellRendererComponent table header-value false false 0 col-idx)
-                              .getPreferredSize
-                              .width)
-                          75)
+                           (-> header-renderer
+                               (.getTableCellRendererComponent table header-value false false 0 col-idx)
+                               .getPreferredSize
+                               .width)
+                           75)
             max-width (atom header-width)]
         ;; Check each row's content width
         (doseq [row (range (min 20 row-count))]
@@ -159,9 +177,9 @@
 (defn- create-log-table
   "Create the main log file listing table."
   []
-  (seesaw/table 
+  (seesaw/table
    :id :log-table
-   :model (table/table-model 
+   :model (table/table-model
            :columns [{:key :filename :text (i18n/tr :log-viewer-column-filename)}
                      {:key :version :text (i18n/tr :log-viewer-column-version)}
                      {:key :formatted-timestamp :text (i18n/tr :log-viewer-column-created)}
@@ -190,71 +208,72 @@
   "Create the main log viewer window."
   []
   (let [table (create-log-table)
-        frame (seesaw/frame 
+        frame (seesaw/frame
                :title (i18n/tr :log-viewer-title)
                :icon (clojure.java.io/resource "main.png")
-               :on-close :dispose)
-        
+               :on-close :nothing ;; We'll handle close ourselves
+               :size [800 :by 600]) ;; Same default size as main frame
+
         ;; Define actions
         refresh-action (seesaw/action
                         :name (i18n/tr :log-viewer-refresh)
                         :icon (theme/key->icon :file-import)
                         :handler (fn [_] (update-log-list! table)))
-        
+
         open-action (seesaw/action
                      :name (i18n/tr :log-viewer-open)
                      :icon (theme/key->icon :file-open)
                      :enabled? false
                      :handler (fn [_]
-                               (when-let [selected-row (seesaw/selection table)]
-                                 (let [row-data (table/value-at table selected-row)]
-                                   (when-let [file (:file row-data)]
-                                     (create-file-viewer file frame))))))
-        
+                                (when-let [selected-row (seesaw/selection table)]
+                                  (let [row-data (table/value-at table selected-row)]
+                                    (when-let [file (:file row-data)]
+                                      (create-file-viewer file frame))))))
+
         close-action (seesaw/action
                       :name (i18n/tr :log-viewer-close)
                       :icon (theme/key->icon :file-excel)
-                      :handler (fn [_] (seesaw/dispose! frame)))]
-    
+                      :handler (fn [_] (dispose-frame! frame)))]
+
     ;; Wire up event handlers using idiomatic listen
     (seesaw/listen table
                    ;; Handle selection changes
                    :selection (fn [_]
-                               (seesaw/config! open-action 
-                                              :enabled? (some? (seesaw/selection table))))
-                   
+                                (seesaw/config! open-action
+                                                :enabled? (some? (seesaw/selection table))))
+
                    ;; Handle double-clicks
                    :mouse-clicked (fn [e]
-                                   (when (= 2 (.getClickCount e))
-                                     (.actionPerformed open-action nil)))
-                   
+                                    (when (= 2 (.getClickCount e))
+                                      (.actionPerformed open-action nil)))
+
                    ;; Handle Enter key
                    :key-pressed (fn [e]
-                                 (when (= (.getKeyCode e) KeyEvent/VK_ENTER)
-                                   ((:handler (meta open-action)) nil))))
-    
+                                  (when (= (.getKeyCode e) KeyEvent/VK_ENTER)
+                                    ((:handler (meta open-action)) nil))))
+
     ;; Build UI using border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
                      :border 10
                      :hgap 10
                      :vgap 10
-                     :center (let [scroll-pane (seesaw/scrollable table 
-                                                            :border 0
-                                                            :vscroll :always
-                                                            :hscroll :as-needed)]  ;; Add horizontal scroll as needed
-                               ;; Set preferred viewport size for ~20 rows
-                               (doto (.getViewport scroll-pane)
-                                 (.setPreferredSize (Dimension. 0 (* 22 (.getRowHeight table)))))
-                               scroll-pane)
+                     :center (seesaw/scrollable table
+                                                :border 0
+                                                :vscroll :always
+                                                :hscroll :as-needed)
                      :south (seesaw/flow-panel
-                            :align :center
-                            :hgap 5
-                            :items [refresh-action open-action close-action])))
-    
+                             :align :center
+                             :hgap 5
+                             :items [refresh-action open-action close-action])))
+
     ;; Initialize table data
     (update-log-list! table)
-    
+
+    ;; Handle window close (X button)
+    (seesaw/listen frame :window-closing
+                   (fn [_] (dispose-frame! frame)))
+
     frame))
 
 (defn show-log-viewer
@@ -265,6 +284,9 @@
      (if (empty? log-files)
        (seesaw/alert (i18n/tr :log-viewer-no-files))
        (let [frame (create-log-viewer-frame)]
-         (.setExtendedState frame Frame/MAXIMIZED_BOTH)
+         ;; Set location relative to null centers on screen
          (.setLocationRelativeTo frame nil)
-         (seesaw/show! frame))))))
+         ;; Show the frame first
+         (seesaw/show! frame)
+         ;; Then maximize after showing
+         (.setExtendedState frame Frame/MAXIMIZED_BOTH))))))

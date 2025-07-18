@@ -885,6 +885,25 @@ The ArcherBC2 example demonstrates sophisticated data binding patterns:
 3. **Blocking EDT** - Move long operations to background threads
 4. **Inefficient layouts** - Prefer MigLayout for complex forms
 5. **Not disposing resources** - Always dispose frames, dialogs, and timers
+6. **Maximize animation on close** - When closing maximized frames, use this hack to avoid the minimize animation:
+   ```clojure
+   ;; HACK: Minimize to taskbar first if maximized, then dispose
+   ;; to avoid the jarring unmaximize animation
+   (defn- dispose-frame! [frame]
+     ;; First minimize to taskbar to avoid the unmaximize animation
+     (when (= (.getExtendedState frame) Frame/MAXIMIZED_BOTH)
+       (.setExtendedState frame Frame/ICONIFIED))
+     ;; Then dispose in next EDT cycle
+     (seesaw/invoke-later
+       (fn []
+         (seesaw/dispose! frame))))
+   
+   ;; IMPORTANT: Set :on-close :nothing and handle X button yourself
+   (seesaw/frame :on-close :nothing ...)
+   (seesaw/listen frame :window-closing
+                  (fn [_] (dispose-frame! frame)))
+   ```
+   Note: This is a workaround for a Swing quirk where maximized frames animate to normal state before disposal. The frame briefly appears in the taskbar before disappearing.
 
 ## Malli Integration
 
