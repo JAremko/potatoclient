@@ -3,7 +3,9 @@
    This namespace contains all the common schemas used across multiple namespaces."
   (:require [malli.core :as m]
             [malli.registry :as mr]
-            [malli.util :as mu]))
+            [malli.util :as mu]
+            [clojure.core.async.impl.channels]
+            [clojure.data.json]))
 
 ;; -----------------------------------------------------------------------------
 ;; Core Domain Schemas
@@ -62,17 +64,9 @@
   "Application configuration - open schema to allow future extensions"
   [:map {:closed false}
    [:theme theme-key]
-   [:domain {:optional true} domain]  ;; Keep for backward compatibility only
-   [:url-history {:optional true} url-history]  ;; History of URLs
+   [:domain {:optional true} domain] ;; Keep for backward compatibility only
+   [:url-history {:optional true} url-history] ;; History of URLs
    [:locale locale]])
-
-;; -----------------------------------------------------------------------------
-;; State Schemas
-;; -----------------------------------------------------------------------------
-
-(def stream-process
-  "Stream process information"
-  [:maybe :map])
 
 ;; -----------------------------------------------------------------------------
 ;; Process Schemas
@@ -93,13 +87,32 @@
    [:writer [:fn #(instance? java.io.BufferedWriter %)]]
    [:stdout-reader [:fn #(instance? java.io.BufferedReader %)]]
    [:stderr-reader [:fn #(instance? java.io.BufferedReader %)]]
-   [:output-chan any?] ;; core.async channel
+   [:output-chan [:fn {:error/message "must be a core.async channel"}
+                  #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
    [:stream-id string?]
-   [:state [:fn #(instance? clojure.lang.Atom %)]]])
+   [:state [:fn {:error/message "must be an atom containing process state"}
+            #(and (instance? clojure.lang.Atom %)
+                  (contains? #{:starting :running :stopping :stopped :failed} @%))]]])
+
+;; -----------------------------------------------------------------------------
+;; State Schemas
+;; -----------------------------------------------------------------------------
+
+(def stream-process
+  "Stream process information"
+  [:maybe stream-process-map])
 
 (def process-command
-  "Command to send to process"
-  [:map-of keyword? any?])
+  "Command to send to process - JSON serializable map with action"
+  [:and
+   [:map {:closed false}
+    [:action [:enum "show" "shutdown" "ping" "noop"]]]
+   [:fn {:error/message "values must be JSON serializable"}
+    (fn [m]
+      (try
+        (clojure.data.json/write-str m)
+        true
+        (catch Exception _ false)))]])
 
 ;; -----------------------------------------------------------------------------
 ;; IPC/Message Schemas
@@ -141,11 +154,13 @@
 (def payload-type
   "Command payload types"
   [:enum :ping :pong :noop :frozen :gimbal-angle-to
-         :lrf-request :lrf-single-pulse])
+   :lrf-request :lrf-single-pulse])
 
 (def payload
-  "Command payload"
-  [:map-of keyword? any?])
+  "Command payload - must match protobuf payload types"
+  [:map-of
+   [:enum :ping :pong :noop :frozen :gimbal-angle-to :lrf-request :lrf-single-pulse]
+   [:map]])
 
 (def command
   "Protocol command structure"
@@ -164,23 +179,30 @@
 
 (def event-type
   "UI event type"
-  keyword?)
+  [:enum
+   ;; Window events
+   :resized :moved :maximized :unmaximized :minimized
+   :restored :focused :unfocused :opened :closing
+   ;; Mouse events
+   :mouse-click :mouse-press :mouse-release :mouse-move
+   :mouse-drag-start :mouse-drag :mouse-drag-end
+   :mouse-enter :mouse-exit :mouse-wheel])
 
 (def x-coord
-  "X coordinate"
-  number?)
+  "X coordinate in pixels"
+  int?)
 
 (def y-coord
-  "Y coordinate"
-  number?)
+  "Y coordinate in pixels"
+  int?)
 
 (def ndc-x
-  "Normalized device coordinate X"
-  number?)
+  "Normalized device coordinate X (-1.0 to 1.0)"
+  [:and number? [:>= -1.0] [:<= 1.0]])
 
 (def ndc-y
-  "Normalized device coordinate Y"
-  number?)
+  "Normalized device coordinate Y (-1.0 to 1.0)"
+  [:and number? [:>= -1.0] [:<= 1.0]])
 
 (def mouse-button
   "Mouse button number"
@@ -191,8 +213,8 @@
   pos-int?)
 
 (def wheel-rotation
-  "Mouse wheel rotation"
-  number?)
+  "Mouse wheel rotation - negative for up, positive for down"
+  int?)
 
 (def window-event
   "Window event structure"
@@ -200,6 +222,8 @@
    [:type event-type]
    [:x x-coord]
    [:y y-coord]
+   [:width {:optional true} pos-int?]
+   [:height {:optional true} pos-int?]
    [:button {:optional true} mouse-button]
    [:clickCount {:optional true} click-count]
    [:wheelRotation {:optional true} wheel-rotation]])
@@ -312,8 +336,8 @@
   keyword?)
 
 (def translation-args
-  "Translation arguments"
-  [:vector any?])
+  "Translation arguments - typically strings, numbers, or keywords"
+  [:vector [:or string? number? keyword?]])
 
 (def translations-map
   "Translation definitions"
@@ -334,27 +358,26 @@
     ::locale locale
     ::locale-code locale-code
     ::stream-key stream-key
-    
+
     ;; Configuration
     ::config-key config-key
     ::config config
     ::url-history-entry url-history-entry
     ::url-history url-history
-    
+
     ;; State
     ::stream-process stream-process
-    
+
     ;; Process
     ::process process
     ::process-state process-state
     ::stream-process-map stream-process-map
     ::process-command process-command
-    
-    
-    ;; IPC
+
+;; IPC
     ::message-type message-type
     ::message message
-    
+
     ;; Protocol
     ::protocol-version protocol-version
     ::session-id session-id
@@ -364,7 +387,7 @@
     ::payload-type payload-type
     ::payload payload
     ::command command
-    
+
     ;; UI Events
     ::event-type event-type
     ::x-coord x-coord
@@ -376,14 +399,14 @@
     ::wheel-rotation wheel-rotation
     ::window-event window-event
     ::navigation-event navigation-event
-    
+
     ;; Java interop
     ::file file
     ::color color
     ::rectangle rectangle
     ::icon icon
     ::exception exception
-    
+
     ;; UI Components
     ::jframe jframe
     ::jpanel jpanel
@@ -395,12 +418,12 @@
     ::action action
     ::jtoggle-button jtoggle-button
     ::table-cell-renderer table-cell-renderer
-    
+
     ;; UI State
     ::extended-state extended-state
     ::window-state window-state
     ::frame-params frame-params
-    
+
     ;; I18n
     ::translation-key translation-key
     ::translation-args translation-args

@@ -45,29 +45,29 @@
 (m/=> potatoclient.theme/get-current-theme [:=> [:cat] :potatoclient.specs/theme-key])
 (m/=> potatoclient.theme/get-theme [:=> [:cat :potatoclient.specs/theme-key] [:map-of keyword? any?]])
 (m/=> potatoclient.theme/get-theme-color [:=> [:cat :potatoclient.specs/theme-key keyword?] :potatoclient.specs/color])
-(m/=> potatoclient.theme/apply-theme! [:=> [:cat :potatoclient.specs/jframe :potatoclient.specs/theme-key] any?])
+(m/=> potatoclient.theme/apply-theme! [:=> [:cat :potatoclient.specs/jframe :potatoclient.specs/theme-key] nil?])
 (m/=> potatoclient.theme/get-available-themes [:=> [:cat] [:sequential :potatoclient.specs/theme-key]])
 (m/=> potatoclient.theme/get-theme-name [:=> [:cat :potatoclient.specs/theme-key] string?])
-(m/=> potatoclient.theme/apply-nimbus-theme! [:=> [:cat :potatoclient.specs/theme-key] any?])
-(m/=> potatoclient.theme/apply-darklaf-theme! [:=> [:cat :potatoclient.specs/theme-key] any?])
-(m/=> potatoclient.theme/initialize-theme! [:=> [:cat] any?])
-(m/=> potatoclient.theme/set-theme! [:=> [:cat :potatoclient.specs/theme-key] any?])
+(m/=> potatoclient.theme/apply-nimbus-theme! [:=> [:cat :potatoclient.specs/theme-key] nil?])
+(m/=> potatoclient.theme/apply-darklaf-theme! [:=> [:cat :potatoclient.specs/theme-key] nil?])
+(m/=> potatoclient.theme/initialize-theme! [:=> [:cat :potatoclient.specs/theme-key] nil?])
+(m/=> potatoclient.theme/set-theme! [:=> [:cat :potatoclient.specs/theme-key] boolean?])
 (m/=> potatoclient.theme/get-theme-i18n-key [:=> [:cat :potatoclient.specs/theme-key] keyword?])
-(m/=> potatoclient.theme/preload-theme-icons! [:=> [:cat] any?])
+(m/=> potatoclient.theme/preload-theme-icons! [:=> [:cat] nil?])
 (m/=> potatoclient.theme/key->icon [:=> [:cat keyword? :potatoclient.specs/theme-key] :potatoclient.specs/icon])
 
 ;; -----------------------------------------------------------------------------
 ;; I18n namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.i18n/init! [:=> [:cat] any?])
-(m/=> potatoclient.i18n/load-translation-file [:=> [:cat :potatoclient.specs/locale] [:maybe map?]])
-(m/=> potatoclient.i18n/load-translations! [:=> [:cat] map?])
+(m/=> potatoclient.i18n/init! [:=> [:cat] nil?])
+(m/=> potatoclient.i18n/load-translation-file [:=> [:cat :potatoclient.specs/locale-code] [:maybe [:map-of keyword? string?]]])
+(m/=> potatoclient.i18n/load-translations! [:=> [:cat] :potatoclient.specs/translations-map])
 (m/=> potatoclient.i18n/get-current-locale [:=> [:cat] :potatoclient.specs/locale])
-(m/=> potatoclient.i18n/tr [:=> [:cat :potatoclient.specs/translation-key [:* any?]] string?])
+(m/=> potatoclient.i18n/tr [:=> [:cat :potatoclient.specs/translation-key :potatoclient.specs/translation-args] string?])
 (m/=> potatoclient.i18n/get-available-locales [:=> [:cat] [:sequential :potatoclient.specs/locale]])
-(m/=> potatoclient.i18n/set-locale! [:=> [:cat :potatoclient.specs/locale] any?])
-(m/=> potatoclient.i18n/reload-translations! [:=> [:cat] any?])
+(m/=> potatoclient.i18n/set-locale! [:=> [:cat :potatoclient.specs/locale] nil?])
+(m/=> potatoclient.i18n/reload-translations! [:=> [:cat] :potatoclient.specs/translations-map])
 
 ;; -----------------------------------------------------------------------------
 ;; Config namespace schemas
@@ -75,21 +75,21 @@
 
 (m/=> potatoclient.config/get-config-dir [:=> [:cat] :potatoclient.specs/file])
 (m/=> potatoclient.config/get-config-file [:=> [:cat] :potatoclient.specs/file])
-(m/=> potatoclient.config/ensure-config-dir! [:=> [:cat] any?])
+(m/=> potatoclient.config/ensure-config-dir! [:=> [:cat] nil?])
 (m/=> potatoclient.config/load-config [:=> [:cat] :potatoclient.specs/config])
 (m/=> potatoclient.config/save-config! [:=> [:cat :potatoclient.specs/config] boolean?])
 (m/=> potatoclient.config/get-theme [:=> [:cat] :potatoclient.specs/theme-key])
 (m/=> potatoclient.config/save-theme! [:=> [:cat :potatoclient.specs/theme-key] boolean?])
-(m/=> potatoclient.config/extract-domain [:=> [:cat string?] string?])
+(m/=> potatoclient.config/extract-domain [:=> [:cat string?] :potatoclient.specs/domain])
 (m/=> potatoclient.config/get-most-recent-url [:=> [:cat] [:maybe string?]])
-(m/=> potatoclient.config/get-domain [:=> [:cat] string?])
+(m/=> potatoclient.config/get-domain [:=> [:cat] :potatoclient.specs/domain])
 (m/=> potatoclient.config/get-locale [:=> [:cat] :potatoclient.specs/locale])
 (m/=> potatoclient.config/save-locale! [:=> [:cat :potatoclient.specs/locale] boolean?])
-(m/=> potatoclient.config/update-config! [:=> [:cat keyword? any?] boolean?])
+(m/=> potatoclient.config/update-config! [:=> [:cat :potatoclient.specs/config-key any?] boolean?])
 (m/=> potatoclient.config/get-config-location [:=> [:cat] string?])
 (m/=> potatoclient.config/initialize! [:=> [:cat] :potatoclient.specs/config])
 (m/=> potatoclient.config/get-url-history [:=> [:cat] :potatoclient.specs/url-history])
-(m/=> potatoclient.config/add-url-to-history [:=> [:cat string?] any?])
+(m/=> potatoclient.config/add-url-to-history [:=> [:cat string?] nil?])
 (m/=> potatoclient.config/get-recent-urls [:=> [:cat] [:vector string?]])
 
 ;; -----------------------------------------------------------------------------
@@ -98,23 +98,27 @@
 
 (m/=> potatoclient.state/get-stream [:=> [:cat :potatoclient.specs/stream-key] [:maybe :potatoclient.specs/stream-process-map]])
 (m/=> potatoclient.state/all-streams [:=> [:cat] [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]])
-(m/=> potatoclient.state/set-stream! [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] any?])
-(m/=> potatoclient.state/clear-stream! [:=> [:cat :potatoclient.specs/stream-key] any?])
-(m/=> potatoclient.state/get-ui-element [:=> [:cat keyword?] any?])
-(m/=> potatoclient.state/register-ui-element! [:=> [:cat keyword? any?] any?])
+(m/=> potatoclient.state/set-stream! [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] nil?])
+(m/=> potatoclient.state/clear-stream! [:=> [:cat :potatoclient.specs/stream-key] nil?])
+(m/=> potatoclient.state/get-ui-element [:=> [:cat keyword?] [:maybe [:or :potatoclient.specs/jbutton :potatoclient.specs/jtoggle-button :potatoclient.specs/jframe :potatoclient.specs/jpanel]]])
+(m/=> potatoclient.state/register-ui-element! [:=> [:cat keyword? [:or :potatoclient.specs/jbutton :potatoclient.specs/jtoggle-button :potatoclient.specs/jframe :potatoclient.specs/jpanel]] nil?])
 (m/=> potatoclient.state/get-locale [:=> [:cat] :potatoclient.specs/locale])
-(m/=> potatoclient.state/set-locale! [:=> [:cat :potatoclient.specs/locale] any?])
+(m/=> potatoclient.state/set-locale! [:=> [:cat :potatoclient.specs/locale] nil?])
 (m/=> potatoclient.state/get-domain [:=> [:cat] :potatoclient.specs/domain])
-(m/=> potatoclient.state/set-domain! [:=> [:cat string?] any?])
-(m/=> potatoclient.state/current-state [:=> [:cat] map?])
+(m/=> potatoclient.state/set-domain! [:=> [:cat :potatoclient.specs/domain] nil?])
+(m/=> potatoclient.state/current-state [:=> [:cat] [:map
+                                                    [:streams [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
+                                                    [:config [:map
+                                                              [:locale :potatoclient.specs/locale]
+                                                              [:domain :potatoclient.specs/domain]]]]])
 
 ;; -----------------------------------------------------------------------------
 ;; State.streams namespace schemas
 ;; -----------------------------------------------------------------------------
 
 (m/=> potatoclient.state.streams/get-stream [:=> [:cat :potatoclient.specs/stream-key] [:maybe :potatoclient.specs/stream-process-map]])
-(m/=> potatoclient.state.streams/set-stream! [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] any?])
-(m/=> potatoclient.state.streams/clear-stream! [:=> [:cat :potatoclient.specs/stream-key] any?])
+(m/=> potatoclient.state.streams/set-stream! [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] nil?])
+(m/=> potatoclient.state.streams/clear-stream! [:=> [:cat :potatoclient.specs/stream-key] nil?])
 (m/=> potatoclient.state.streams/all-streams [:=> [:cat] [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]])
 
 ;; -----------------------------------------------------------------------------
@@ -122,17 +126,19 @@
 ;; -----------------------------------------------------------------------------
 
 (m/=> potatoclient.state.config/get-locale [:=> [:cat] :potatoclient.specs/locale])
-(m/=> potatoclient.state.config/set-locale! [:=> [:cat :potatoclient.specs/locale] any?])
+(m/=> potatoclient.state.config/set-locale! [:=> [:cat :potatoclient.specs/locale] nil?])
 (m/=> potatoclient.state.config/get-domain [:=> [:cat] :potatoclient.specs/domain])
-(m/=> potatoclient.state.config/set-domain! [:=> [:cat string?] any?])
-(m/=> potatoclient.state.config/get-config [:=> [:cat] map?])
+(m/=> potatoclient.state.config/set-domain! [:=> [:cat :potatoclient.specs/domain] nil?])
+(m/=> potatoclient.state.config/get-config [:=> [:cat] [:map
+                                                        [:locale :potatoclient.specs/locale]
+                                                        [:domain :potatoclient.specs/domain]]])
 
 ;; -----------------------------------------------------------------------------
 ;; State.ui namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.state.ui/register-ui-element! [:=> [:cat keyword? any?] any?])
-(m/=> potatoclient.state.ui/get-ui-element [:=> [:cat keyword?] any?])
+(m/=> potatoclient.state.ui/register-ui-element! [:=> [:cat keyword? [:or :potatoclient.specs/jbutton :potatoclient.specs/jtoggle-button :potatoclient.specs/jframe :potatoclient.specs/jpanel]] nil?])
+(m/=> potatoclient.state.ui/get-ui-element [:=> [:cat keyword?] [:maybe [:or :potatoclient.specs/jbutton :potatoclient.specs/jtoggle-button :potatoclient.specs/jframe :potatoclient.specs/jpanel]]])
 (m/=> potatoclient.state.ui/all-ui-elements [:=> [:cat] [:sequential keyword?]])
 
 ;; -----------------------------------------------------------------------------
@@ -156,23 +162,28 @@
 (m/=> potatoclient.proto/map->ProtoMapper_potatoclient_proto_proto-mapper [:=> [:cat map?] any?])
 
 ;; Command serialization/deserialization
-(m/=> potatoclient.proto/serialize-cmd [:=> [:cat map?] bytes?])
+(m/=> potatoclient.proto/serialize-cmd [:=> [:cat :potatoclient.specs/command] bytes?])
 (m/=> potatoclient.proto/deserialize-state [:=> [:cat bytes?] map?])
 
 ;; Command factory functions
-(m/=> potatoclient.proto/cmd-ping [:=> [:cat pos-int? keyword?] map?])
-(m/=> potatoclient.proto/cmd-noop [:=> [:cat pos-int? keyword?] map?])
-(m/=> potatoclient.proto/cmd-frozen [:=> [:cat pos-int? keyword?] map?])
+(m/=> potatoclient.proto/cmd-ping [:=> [:cat pos-int? [:enum :internal-cv :local :certificate :lira]] :potatoclient.specs/command])
+(m/=> potatoclient.proto/cmd-noop [:=> [:cat pos-int? [:enum :internal-cv :local :certificate :lira]] :potatoclient.specs/command])
+(m/=> potatoclient.proto/cmd-frozen [:=> [:cat pos-int? [:enum :internal-cv :local :certificate :lira]] :potatoclient.specs/command])
 
 ;; State accessor functions
-(m/=> potatoclient.proto/get-system-info [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-camera-day [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-camera-heat [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-gps-info [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-compass-info [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-lrf-info [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-time-info [:=> [:cat map?] any?])
-(m/=> potatoclient.proto/get-location [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-system-info [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-camera-day [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-camera-heat [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-gps-info [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-compass-info [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-lrf-info [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-time-info [:=> [:cat map?] [:maybe map?]])
+(m/=> potatoclient.proto/get-location [:=> [:cat map?] [:maybe [:map
+                                                                [:latitude number?]
+                                                                [:longitude number?]
+                                                                [:altitude number?]
+                                                                [:heading {:optional true} number?]
+                                                                [:timestamp {:optional true} any?]]]])
 
 ;; State query functions
 (m/=> potatoclient.proto/cameras-available? [:=> [:cat map?] boolean?])
@@ -184,29 +195,29 @@
 
 ;; Legacy proto functions (if they still exist)
 (m/=> potatoclient.proto/create-builder [:=> [:cat keyword?] any?])
-(m/=> potatoclient.proto/set-field! [:=> [:cat any? keyword? any?] any?])
+(m/=> potatoclient.proto/set-field! [:=> [:cat any? keyword? any?] nil?])
 (m/=> potatoclient.proto/build-message [:=> [:cat any?] any?])
 (m/=> potatoclient.proto/create-message [:=> [:cat keyword? map?] any?])
 (m/=> potatoclient.proto/message->bytes [:=> [:cat any?] bytes?])
-(m/=> potatoclient.proto/write-delimited [:=> [:cat any? any?] any?])
+(m/=> potatoclient.proto/write-delimited [:=> [:cat any? any?] nil?])
 (m/=> potatoclient.proto/parse-command [:=> [:cat bytes?] [:maybe :potatoclient.specs/command]])
 (m/=> potatoclient.proto/create-gimbal-angle-command [:=> [:cat number? number?] :potatoclient.specs/command])
 (m/=> potatoclient.proto/create-lrf-request-command [:=> [:cat] :potatoclient.specs/command])
 (m/=> potatoclient.proto/create-lrf-single-pulse-command [:=> [:cat] :potatoclient.specs/command])
-(m/=> potatoclient.proto/create-window-event [:=> [:cat map?] bytes?])
-(m/=> potatoclient.proto/create-navigation-event [:=> [:cat map?] bytes?])
-(m/=> potatoclient.proto/handle-window-event [:=> [:cat :potatoclient.specs/stream-process-map map?] any?])
-(m/=> potatoclient.proto/handle-navigation-event [:=> [:cat :potatoclient.specs/stream-process-map map?] any?])
-(m/=> potatoclient.proto/handle-gimbal-command [:=> [:cat number? number?] any?])
-(m/=> potatoclient.proto/handle-lrf-command [:=> [:cat keyword?] any?])
+(m/=> potatoclient.proto/create-window-event [:=> [:cat :potatoclient.specs/window-event] bytes?])
+(m/=> potatoclient.proto/create-navigation-event [:=> [:cat :potatoclient.specs/navigation-event] bytes?])
+(m/=> potatoclient.proto/handle-window-event [:=> [:cat :potatoclient.specs/stream-process-map :potatoclient.specs/window-event] nil?])
+(m/=> potatoclient.proto/handle-navigation-event [:=> [:cat :potatoclient.specs/stream-process-map :potatoclient.specs/navigation-event] nil?])
+(m/=> potatoclient.proto/handle-gimbal-command [:=> [:cat number? number?] nil?])
+(m/=> potatoclient.proto/handle-lrf-command [:=> [:cat :potatoclient.specs/payload-type] nil?])
 
 ;; -----------------------------------------------------------------------------
 ;; Logging namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.logging/init! [:=> [:cat] any?])
-(m/=> potatoclient.logging/shutdown! [:=> [:cat] any?])
-(m/=> potatoclient.logging/get-logs-directory [:=> [:cat] any?])
+(m/=> potatoclient.logging/init! [:=> [:cat] nil?])
+(m/=> potatoclient.logging/shutdown! [:=> [:cat] nil?])
+(m/=> potatoclient.logging/get-logs-directory [:=> [:cat] :potatoclient.specs/file])
 
 ;; -----------------------------------------------------------------------------
 ;; IPC namespace schemas
@@ -214,26 +225,26 @@
 
 (m/=> potatoclient.ipc/parse-message [:=> [:cat string?] [:maybe :potatoclient.specs/message]])
 (m/=> potatoclient.ipc/format-error [:=> [:cat string? :potatoclient.specs/exception] string?])
-(m/=> potatoclient.ipc/handle-message [:=> [:cat :potatoclient.specs/stream-key string?] any?])
-(m/=> potatoclient.ipc/process-stream-output [:=> [:cat :potatoclient.specs/stream-key any?] any?])
-(m/=> potatoclient.ipc/start-output-processor [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] any?])
-(m/=> potatoclient.ipc/start-stream [:=> [:cat :potatoclient.specs/stream-key string?] any?])
-(m/=> potatoclient.ipc/stop-stream [:=> [:cat :potatoclient.specs/stream-key] any?])
-(m/=> potatoclient.ipc/restart-stream [:=> [:cat :potatoclient.specs/stream-key string?] any?])
-(m/=> potatoclient.ipc/send-command-to-stream [:=> [:cat :potatoclient.specs/stream-key map?] boolean?])
-(m/=> potatoclient.ipc/broadcast-command [:=> [:cat map?] any?])
+(m/=> potatoclient.ipc/handle-message [:=> [:cat :potatoclient.specs/stream-key string?] nil?])
+(m/=> potatoclient.ipc/process-stream-output [:=> [:cat :potatoclient.specs/stream-key any?] nil?])
+(m/=> potatoclient.ipc/start-output-processor [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/stream-process-map] nil?])
+(m/=> potatoclient.ipc/start-stream [:=> [:cat :potatoclient.specs/stream-key string?] nil?])
+(m/=> potatoclient.ipc/stop-stream [:=> [:cat :potatoclient.specs/stream-key] nil?])
+(m/=> potatoclient.ipc/restart-stream [:=> [:cat :potatoclient.specs/stream-key string?] nil?])
+(m/=> potatoclient.ipc/send-command-to-stream [:=> [:cat :potatoclient.specs/stream-key :potatoclient.specs/process-command] boolean?])
+(m/=> potatoclient.ipc/broadcast-command [:=> [:cat :potatoclient.specs/process-command] nil?])
 
 ;; -----------------------------------------------------------------------------
 ;; Process namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.process/start-stream-process [:=> [:cat string? string? string?] :potatoclient.specs/stream-process-map])
-(m/=> potatoclient.process/send-command [:=> [:cat :potatoclient.specs/stream-process-map map?] boolean?])
-(m/=> potatoclient.process/stop-stream [:=> [:cat :potatoclient.specs/stream-process-map] any?])
+(m/=> potatoclient.process/start-stream-process [:=> [:cat string? string? :potatoclient.specs/domain] :potatoclient.specs/stream-process-map])
+(m/=> potatoclient.process/send-command [:=> [:cat :potatoclient.specs/stream-process-map :potatoclient.specs/process-command] boolean?])
+(m/=> potatoclient.process/stop-stream [:=> [:cat :potatoclient.specs/stream-process-map] nil?])
 (m/=> potatoclient.process/cleanup-all-processes
       [:function
-       [:=> [:cat] any?]
-       [:=> [:cat [:map-of keyword? any?]] any?]])
+       [:=> [:cat] nil?]
+       [:=> [:cat [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]] nil?]])
 (m/=> potatoclient.process/process-alive? [:=> [:cat :potatoclient.specs/stream-process-map] boolean?])
 
 ;; -----------------------------------------------------------------------------
@@ -251,54 +262,62 @@
 ;; UI.main-frame namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.ui.main-frame/preserve-window-state [:=> [:cat :potatoclient.specs/jframe] map?])
-(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe map?] :potatoclient.specs/jframe])
-(m/=> potatoclient.ui.main-frame/reload-frame! [:=> [:cat :potatoclient.specs/jframe fn?] any?])
-(m/=> potatoclient.ui.main-frame/create-language-action [:=> [:cat keyword? string? fn?] any?])
-(m/=> potatoclient.ui.main-frame/create-theme-action [:=> [:cat keyword? fn?] any?])
+(m/=> potatoclient.ui.main-frame/preserve-window-state [:=> [:cat :potatoclient.specs/jframe] :potatoclient.specs/window-state])
+(m/=> potatoclient.ui.main-frame/restore-window-state! [:=> [:cat :potatoclient.specs/jframe :potatoclient.specs/window-state] :potatoclient.specs/jframe])
+(m/=> potatoclient.ui.main-frame/reload-frame! [:=> [:cat :potatoclient.specs/jframe fn?] nil?])
+(m/=> potatoclient.ui.main-frame/create-language-action [:=> [:cat :potatoclient.specs/locale string? fn?] :potatoclient.specs/action])
+(m/=> potatoclient.ui.main-frame/create-theme-action [:=> [:cat :potatoclient.specs/theme-key fn?] :potatoclient.specs/action])
 (m/=> potatoclient.ui.main-frame/create-theme-menu [:=> [:cat fn?] :potatoclient.specs/jmenu])
 (m/=> potatoclient.ui.main-frame/create-language-menu [:=> [:cat fn?] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/show-about-dialog [:=> [:cat any?] any?])
-(m/=> potatoclient.ui.main-frame/open-logs-viewer [:=> [:cat] any?])
-(m/=> potatoclient.ui.main-frame/create-help-menu [:=> [:cat any?] :potatoclient.specs/jmenu])
-(m/=> potatoclient.ui.main-frame/create-stream-toggle-button [:=> [:cat keyword?] any?])
-(m/=> potatoclient.ui.main-frame/create-menu-bar [:=> [:cat fn? any?] :potatoclient.specs/jmenu-bar])
+(m/=> potatoclient.ui.main-frame/show-about-dialog [:=> [:cat [:or :potatoclient.specs/jframe nil?]] nil?])
+(m/=> potatoclient.ui.main-frame/open-logs-viewer [:=> [:cat] nil?])
+(m/=> potatoclient.ui.main-frame/create-help-menu [:=> [:cat [:or :potatoclient.specs/jframe nil?]] :potatoclient.specs/jmenu])
+(m/=> potatoclient.ui.main-frame/create-stream-toggle-button [:=> [:cat :potatoclient.specs/stream-key] :potatoclient.specs/jtoggle-button])
+(m/=> potatoclient.ui.main-frame/create-menu-bar [:=> [:cat fn? [:or :potatoclient.specs/jframe nil?]] :potatoclient.specs/jmenu-bar])
 (m/=> potatoclient.ui.main-frame/create-main-content [:=> [:cat] :potatoclient.specs/jpanel])
-(m/=> potatoclient.ui.main-frame/add-window-close-handler! [:=> [:cat :potatoclient.specs/jframe] any?])
+(m/=> potatoclient.ui.main-frame/add-window-close-handler! [:=> [:cat :potatoclient.specs/jframe] nil?])
 (m/=> potatoclient.ui.main-frame/ensure-on-edt [:=> [:cat fn?] fn?])
 (m/=> potatoclient.ui.main-frame/ensure-on-edt-later [:=> [:cat fn?] fn?])
-(m/=> potatoclient.ui.main-frame/create-main-frame [:=> [:cat map?] :potatoclient.specs/jframe])
+(m/=> potatoclient.ui.main-frame/create-main-frame [:=> [:cat :potatoclient.specs/frame-params] :potatoclient.specs/jframe])
 
 ;; -----------------------------------------------------------------------------
 ;; Log Viewer namespace schemas
 ;; -----------------------------------------------------------------------------
 
 (m/=> potatoclient.ui.log-viewer/get-log-directory [:=> [:cat] :potatoclient.specs/file])
-(m/=> potatoclient.ui.log-viewer/parse-log-filename [:=> [:cat string?] [:maybe map?]])
+(m/=> potatoclient.ui.log-viewer/parse-log-filename [:=> [:cat string?] [:maybe [:map
+                                                                                 [:version string?]
+                                                                                 [:type string?]
+                                                                                 [:timestamp string?]]]])
 (m/=> potatoclient.ui.log-viewer/format-timestamp [:=> [:cat string?] string?])
-(m/=> potatoclient.ui.log-viewer/get-log-files [:=> [:cat] [:sequential map?]])
+(m/=> potatoclient.ui.log-viewer/get-log-files [:=> [:cat] [:sequential [:map
+                                                                         [:file :potatoclient.specs/file]
+                                                                         [:name string?]
+                                                                         [:timestamp string?]
+                                                                         [:version string?]
+                                                                         [:size int?]]]])
 (m/=> potatoclient.ui.log-viewer/format-file-size [:=> [:cat int?] string?])
-(m/=> potatoclient.ui.log-viewer/copy-to-clipboard [:=> [:cat string?] any?])
+(m/=> potatoclient.ui.log-viewer/copy-to-clipboard [:=> [:cat string?] nil?])
 (m/=> potatoclient.ui.log-viewer/format-log-content [:=> [:cat string?] string?])
 (m/=> potatoclient.ui.log-viewer/create-file-viewer [:=> [:cat :potatoclient.specs/file :potatoclient.specs/jframe] :potatoclient.specs/jframe])
-(m/=> potatoclient.ui.log-viewer/pack-table-columns! [:=> [:cat any?] any?])
+(m/=> potatoclient.ui.log-viewer/pack-table-columns! [:=> [:cat any?] nil?])
 (m/=> potatoclient.ui.log-viewer/create-log-table [:=> [:cat] any?])
-(m/=> potatoclient.ui.log-viewer/update-log-list! [:=> [:cat any?] any?])
+(m/=> potatoclient.ui.log-viewer/update-log-list! [:=> [:cat any?] nil?])
 (m/=> potatoclient.ui.log-viewer/create-log-viewer-frame [:=> [:cat] :potatoclient.specs/jframe])
-(m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] any?])
+(m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] nil?])
 
 ;; -----------------------------------------------------------------------------
 ;; UI startup-dialog namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.ui.startup-dialog/reload-dialog! [:=> [:cat :potatoclient.specs/jframe fn?] any?])
-(m/=> potatoclient.ui.startup-dialog/create-language-action [:=> [:cat keyword? string? :potatoclient.specs/jframe fn?] any?])
-(m/=> potatoclient.ui.startup-dialog/create-theme-action [:=> [:cat keyword? :potatoclient.specs/jframe fn?] any?])
+(m/=> potatoclient.ui.startup-dialog/reload-dialog! [:=> [:cat :potatoclient.specs/jframe fn?] nil?])
+(m/=> potatoclient.ui.startup-dialog/create-language-action [:=> [:cat :potatoclient.specs/locale string? :potatoclient.specs/jframe fn?] :potatoclient.specs/action])
+(m/=> potatoclient.ui.startup-dialog/create-theme-action [:=> [:cat :potatoclient.specs/theme-key :potatoclient.specs/jframe fn?] :potatoclient.specs/action])
 (m/=> potatoclient.ui.startup-dialog/create-menu-bar [:=> [:cat :potatoclient.specs/jframe fn?] :potatoclient.specs/jmenu-bar])
-(m/=> potatoclient.ui.startup-dialog/extract-domain [:=> [:cat string?] string?])
+(m/=> potatoclient.ui.startup-dialog/extract-domain [:=> [:cat string?] :potatoclient.specs/domain])
 (m/=> potatoclient.ui.startup-dialog/validate-domain [:=> [:cat string?] boolean?])
-(m/=> potatoclient.ui.startup-dialog/create-content-panel [:=> [:cat string?] any?])
-(m/=> potatoclient.ui.startup-dialog/show-startup-dialog [:=> [:cat [:maybe :potatoclient.specs/jframe] fn?] any?])
+(m/=> potatoclient.ui.startup-dialog/create-content-panel [:=> [:cat string?] :potatoclient.specs/jpanel])
+(m/=> potatoclient.ui.startup-dialog/show-startup-dialog [:=> [:cat [:maybe :potatoclient.specs/jframe] fn?] [:maybe string?]])
 
 ;; -----------------------------------------------------------------------------
 ;; UI Utils namespace schemas
@@ -307,7 +326,7 @@
 (m/=> potatoclient.ui.utils/mk-debounced-transform [:=> [:cat fn?] fn?])
 (m/=> potatoclient.ui.utils/debounce [:=> [:cat fn? pos-int?] fn?])
 (m/=> potatoclient.ui.utils/throttle [:=> [:cat fn? pos-int?] fn?])
-(m/=> potatoclient.ui.utils/batch-updates [:=> [:cat [:sequential fn?]] any?])
+(m/=> potatoclient.ui.utils/batch-updates [:=> [:cat [:sequential fn?]] nil?])
 (m/=> potatoclient.ui.utils/with-busy-cursor [:=> [:cat any? fn?] any?])
 (m/=> potatoclient.ui.utils/preserve-selection [:=> [:cat any? fn?] any?])
 
@@ -321,15 +340,15 @@
 ;; Core namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.core/-main [:=> [:cat [:* any?]] any?])
-(m/=> potatoclient.core/start-application [:=> [:cat] any?])
-(m/=> potatoclient.core/shutdown-application [:=> [:cat] any?])
+(m/=> potatoclient.core/-main [:=> [:cat [:* string?]] nil?])
+(m/=> potatoclient.core/start-application [:=> [:cat] nil?])
+(m/=> potatoclient.core/shutdown-application [:=> [:cat] nil?])
 
 ;; -----------------------------------------------------------------------------
 ;; Main namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.main/-main [:=> [:cat [:* any?]] any?])
+(m/=> potatoclient.main/-main [:=> [:cat [:* string?]] nil?])
 
 ;; -----------------------------------------------------------------------------
 ;; Instrumentation control
@@ -355,10 +374,10 @@
 
 (m/=> find-unspecced-functions [:=> [:cat] [:map-of symbol? [:sequential symbol?]]])
 (m/=> report-unspecced-functions [:=> [:cat] [:map
-                                                                         [:status keyword?]
-                                                                         [:message string?]
-                                                                         [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
-                                                                         [:total {:optional true} nat-int?]]])
+                                              [:status keyword?]
+                                              [:message string?]
+                                              [:data {:optional true} [:map-of symbol? [:sequential symbol?]]]
+                                              [:total {:optional true} nat-int?]]])
 
 (defn start!
   "Start function instrumentation.
