@@ -46,14 +46,18 @@
 
 (def config-key
   "Valid configuration keys"
-  [:enum :theme :domain :locale :url])
+  [:enum :theme :domain :locale :url-history])
+
+(def url-history
+  "Set of previously used URLs (max 10)"
+  [:set string?])
 
 (def config
   "Application configuration - open schema to allow future extensions"
   [:map {:closed false}
    [:theme theme-key]
-   [:domain {:optional true} domain]  ;; Keep for backward compatibility
-   [:url {:optional true} string?]     ;; Store original URL as entered
+   [:domain {:optional true} domain]  ;; Keep for backward compatibility only
+   [:url-history {:optional true} url-history]  ;; History of URLs
    [:locale locale]])
 
 ;; -----------------------------------------------------------------------------
@@ -328,6 +332,7 @@
     ;; Configuration
     ::config-key config-key
     ::config config
+    ::url-history url-history
     
     ;; State
     ::stream-process stream-process

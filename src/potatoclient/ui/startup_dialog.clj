@@ -104,26 +104,36 @@
   [saved-url]
   (let [url-label (seesaw/label :text (i18n/tr :startup-server-url)
                                 :font {:size 14})
-        url-field (seesaw/text :text saved-url
-                               :columns 30
-                               :font {:size 14}
-                               :border (border/compound-border
-                                        (border/line-border :thickness 1 :color :gray)
-                                        (border/empty-border :thickness 5)))]
+        ;; Get URL history for combobox
+        recent-urls (config/get-recent-urls)
+        ;; Create items for combobox - saved URL first, then history
+        combo-items (vec (distinct (concat (when saved-url [saved-url]) recent-urls)))
+        ;; Create editable combobox
+        url-combobox (seesaw/combobox :model combo-items
+                                      :editable? true
+                                      :font {:size 14}
+                                      :border (border/compound-border
+                                               (border/line-border :thickness 1 :color :gray)
+                                               (border/empty-border :thickness 5)))
+        ;; Get the editor component to set initial text
+        editor (.getEditor url-combobox)]
+    ;; Set the saved URL as the initial text
+    (when saved-url
+      (.setItem editor saved-url))
     
     (mig/mig-panel
      :constraints ["wrap 1, insets 20, gap 10"
                    "[grow, fill]"
                    "[]"]
      :items [[url-label ""]
-             [url-field "growx, h 40!"]
+             [url-combobox "growx, h 40!"]
              [(seesaw/separator) "growx, gaptop 10, gapbottom 10"]])))
 
 
 (defn show-startup-dialog
   "Show the startup dialog and call the callback with :connect, :cancel, or :reload."
   [parent callback]
-  (let [saved-url (config/get-url)
+  (let [saved-url (config/get-most-recent-url)
         domain (config/get-domain)  ;; This extracts domain from URL
         ;; Create buttons first to get reference to connect button
         connect-button (seesaw/button :text (i18n/tr :startup-button-connect)
@@ -133,7 +143,7 @@
                                      :font {:size 14}
                                      :preferred-size [120 :by 35])
         content (create-content-panel saved-url)
-        url-field (first (seesaw/select content [:JTextField]))
+        url-combobox (first (seesaw/select content [:JComboBox]))
         buttons-panel (seesaw/flow-panel
                        :align :center
                        :hgap 15
@@ -153,12 +163,13 @@
     ;; Event handlers
     (seesaw/listen connect-button :action
                    (fn [e]
-                     (let [text (seesaw/text url-field)
+                     (let [;; Get text from editable combobox
+                           text (str (seesaw/value url-combobox))
                            extracted (extract-domain text)]
                        (if (validate-domain extracted)
                          (do
-                           ;; Save the original URL as entered
-                           (config/save-url! text)
+                           ;; Add URL to history (this is the only place we save URLs)
+                           (config/add-url-to-history text)
                            ;; Update state with extracted domain
                            (state/set-domain! extracted)
                            (seesaw/dispose! dialog)

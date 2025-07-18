@@ -90,11 +90,11 @@
 
 
 (defn load-config
-  "Load configuration from file, return default if not found"
+  "Load configuration from file, return minimal config if not found"
   []
   (let [config-file (get-config-file)
-        default-config {:theme :sol-dark
-                        :url "wss://sych.local"
+        ;; Minimal config - no URL by default
+        minimal-config {:theme :sol-dark
                         :locale :english}]
     (if (.exists ^java.io.File config-file)
       (try
@@ -106,22 +106,20 @@
                               (-> file-data
                                   (assoc :url (str "wss://" (:domain file-data)))
                                   (dissoc :domain))
-                              file-data)
-              merged-config (merge default-config migrated-data)]
-          ;; Validate the merged config
-          (if (m/validate ::specs/config merged-config)
-            merged-config
+                              file-data)]
+          ;; Validate without merging defaults
+          (if (m/validate ::specs/config migrated-data)
+            migrated-data
             (do
               (logging/log-warn {:id ::invalid-config
-                                 :data {:config merged-config
-                                        :errors (m/explain ::specs/config merged-config)}
-                                 :msg "Invalid config detected, using empty config"})
-              ;; Return empty config so UI doesn't prefill with defaults
-              {})))
+                                 :data {:config migrated-data
+                                        :errors (m/explain ::specs/config migrated-data)}
+                                 :msg "Invalid config detected, using minimal config"})
+              minimal-config)))
         (catch Exception e
           (logging/log-error (str "Error loading config: " (.getMessage ^Exception e)))
-          default-config))
-      default-config)))
+          minimal-config))
+      minimal-config)))
 
 
 (defn save-config!
@@ -154,38 +152,8 @@
     (save-config! (assoc config :theme theme-key))))
 
 
-(defn get-url
-  "Get the saved URL from config"
-  []
-  (or (:url (load-config)) ""))
 
 
-(defn save-url!
-  "Save the URL to config"
-  [url]
-  (let [config (load-config)]
-    (save-config! (assoc config :url url))))
-
-
-(defn get-domain
-  "Get the domain extracted from the saved URL (or legacy domain field)"
-  []
-  (let [config (load-config)]
-    (if-let [url (:url config)]
-      ;; Extract domain from URL
-      (extract-domain url)
-      ;; Fallback to legacy domain field
-      (:domain config "sych.local"))))
-
-
-(defn save-domain!
-  "Save the domain to config (stores as URL for consistency)"
-  [domain]
-  ;; Only add wss:// if it's not already a URL
-  (if (or (clojure.string/includes? domain "://")
-          (clojure.string/starts-with? domain "//"))
-    (save-url! domain)
-    (save-url! (str "wss://" domain))))
 
 
 (defn get-locale
@@ -233,4 +201,47 @@
       ((resolve 'potatoclient.state/set-locale!) locale))
     ;; Return the loaded config
     config))
+
+;; -----------------------------------------------------------------------------
+;; URL History Management
+;; -----------------------------------------------------------------------------
+
+(defn get-url-history
+  "Get URL history from current config"
+  []
+  (let [config (load-config)]
+    (or (:url-history config) #{})))
+
+(defn get-recent-urls
+  "Get up to 10 most recent unique URLs as a vector"
+  []
+  (vec (take 10 (reverse (sort (get-url-history))))))
+
+(defn get-most-recent-url
+  "Get the most recently used URL from history"
+  []
+  (first (get-recent-urls)))
+
+(defn get-domain
+  "Get the domain from the most recent URL or legacy domain field"
+  []
+  (let [config (load-config)]
+    ;; Try to get domain from most recent URL in history
+    (if-let [recent-url (first (get-recent-urls))]
+      (extract-domain recent-url)
+      ;; Fallback to legacy domain field, no default
+      (:domain config ""))))
+
+(defn add-url-to-history
+  "Add a URL to the history, maintaining max 10 unique URLs"
+  [url]
+  (when (and url (not (clojure.string/blank? url)))
+    (let [config (load-config)
+          current-history (or (:url-history config) #{})
+          new-history (conj current-history url)
+          ;; Keep only the 10 most recent URLs
+          trimmed-history (if (> (count new-history) 10)
+                           (into #{} (take 10 (reverse (sort new-history))))
+                           new-history)]
+      (save-config! (assoc config :url-history trimmed-history)))))
 

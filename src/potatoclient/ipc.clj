@@ -65,25 +65,13 @@
 (defn- build-stream-url
   "Build the WebSocket URL for a stream."
   [endpoint]
-  ;; Get the user's original URL and extract domain from it
-  (let [url (config/get-url)
-        domain (config/get-domain)
-        ;; Build the final URL
-        stream-url (if (and url (clojure.string/includes? url "://"))
-                     ;; Remove any trailing slashes or paths from URL before appending endpoint
-                     (let [base-url (clojure.string/replace url #"/+$" "")
-                           ;; Extract just the protocol and host
-                           base-url (if-let [idx (clojure.string/index-of base-url "/" 
-                                                                          (+ 3 (clojure.string/index-of base-url "://")))]
-                                      (subs base-url 0 idx)
-                                      base-url)]
-                       (str base-url endpoint))
-                     ;; Otherwise default to wss:// with domain
-                     (str "wss://" domain endpoint))]
+  ;; Get domain from state (which was set from user input)
+  (let [domain (state/get-domain)
+        ;; Always build URL as wss://domain/endpoint
+        stream-url (str "wss://" domain endpoint)]
     (logging/log-debug
      {:id ::build-stream-url
-      :data {:url url
-             :domain domain
+      :data {:domain domain
              :endpoint endpoint
              :stream-url stream-url}
       :msg "Building stream URL"})

@@ -32,11 +32,12 @@
   (config/get-domain))
 
 (defn set-domain!
-  "Update the domain configuration persistently."
+  "Update the domain in runtime state (not persisted)."
   [domain]
   {:pre [(string? domain)
          (not (clojure.string/blank? domain))]}
-  (config/save-domain! domain))
+  ;; Only update runtime state, domain is derived from URL history
+  (swap! app-config assoc :domain domain))
 
 (defn get-config
   "Get the entire runtime config map."

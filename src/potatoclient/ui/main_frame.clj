@@ -213,8 +213,8 @@
                    (try
                      ;; Save current config state
                      (let [current-config {:theme (theme/get-current-theme)
-                                           :url (config/get-url)
-                                           :locale (state/get-locale)}]
+                                           :locale (state/get-locale)
+                                           :url-history (config/get-url-history)}]
                        (config/save-config! current-config))
                      (process/cleanup-all-processes)
                      (logging/shutdown!)

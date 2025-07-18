@@ -81,15 +81,16 @@
 (m/=> potatoclient.config/get-theme [:=> [:cat] :potatoclient.specs/theme-key])
 (m/=> potatoclient.config/save-theme! [:=> [:cat :potatoclient.specs/theme-key] boolean?])
 (m/=> potatoclient.config/extract-domain [:=> [:cat string?] string?])
-(m/=> potatoclient.config/get-url [:=> [:cat] [:maybe string?]])
-(m/=> potatoclient.config/save-url! [:=> [:cat string?] boolean?])
+(m/=> potatoclient.config/get-most-recent-url [:=> [:cat] [:maybe string?]])
 (m/=> potatoclient.config/get-domain [:=> [:cat] string?])
-(m/=> potatoclient.config/save-domain! [:=> [:cat string?] boolean?])
 (m/=> potatoclient.config/get-locale [:=> [:cat] :potatoclient.specs/locale])
 (m/=> potatoclient.config/save-locale! [:=> [:cat :potatoclient.specs/locale] boolean?])
 (m/=> potatoclient.config/update-config! [:=> [:cat keyword? any?] boolean?])
 (m/=> potatoclient.config/get-config-location [:=> [:cat] string?])
 (m/=> potatoclient.config/initialize! [:=> [:cat] :potatoclient.specs/config])
+(m/=> potatoclient.config/get-url-history [:=> [:cat] :potatoclient.specs/url-history])
+(m/=> potatoclient.config/add-url-to-history [:=> [:cat string?] any?])
+(m/=> potatoclient.config/get-recent-urls [:=> [:cat] [:vector string?]])
 
 ;; -----------------------------------------------------------------------------
 ;; State namespace schemas
