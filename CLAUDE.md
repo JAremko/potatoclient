@@ -64,7 +64,7 @@ make report-unspecced  # Generate report of functions without Malli specs
 
 ## Development vs Release Builds
 
-### Development Build (`make build`)
+### Development Build (`make run`)
 - **Instrumentation**: Available via `(potatoclient.instrumentation/start!)`
 - **Logging**: All levels (DEBUG, INFO, WARN, ERROR) to console and timestamped file in `./logs/`
 - **Window Title**: Shows `[DEVELOPMENT]`
@@ -109,6 +109,83 @@ make report-unspecced  # Generate report of functions without Malli specs
 - Optimized lock-free data pushing
 - Direct pipeline without frame rate limiting
 - Trust-all SSL certificates (development/testing only)
+
+## UI Utilities
+
+PotatoClient includes a set of UI utility functions in `potatoclient.ui.utils` adapted from the ArcherBC2 example:
+
+### Debouncing for Seesaw Bindings
+
+The `mk-debounced-transform` function prevents rapid UI updates by only propagating changes when values actually differ:
+
+```clojure
+(require '[potatoclient.ui.utils :as ui-utils]
+         '[seesaw.bind :as bind])
+
+;; Debounce slider updates
+(bind/bind *state
+           (bind/some (ui-utils/mk-debounced-transform #(:brightness %)))
+           (bind/value brightness-slider))
+
+;; Debounce complex state extraction
+(bind/bind *state
+           (bind/some (ui-utils/mk-debounced-transform 
+                       #(get-in % [:profile :settings :volume])))
+           (bind/value volume-slider))
+```
+
+### General Purpose Debouncing
+
+For non-binding scenarios, use the `debounce` function:
+
+```clojure
+;; Auto-save with 1-second delay
+(def save-settings! 
+  (ui-utils/debounce 
+    (fn [settings] 
+      (config/save-config! settings))
+    1000))
+
+;; Search as you type
+(def search!
+  (ui-utils/debounce
+    (fn [query]
+      (perform-search query))
+    300))
+```
+
+### Throttling
+
+Unlike debouncing, throttling guarantees regular execution during continuous calls:
+
+```clojure
+;; Update preview at most every 100ms during typing
+(def update-preview!
+  (ui-utils/throttle 
+    (fn [text]
+      (render-markdown-preview text))
+    100))
+```
+
+### Other UI Helpers
+
+```clojure
+;; Batch multiple UI updates
+(ui-utils/batch-updates
+  [#(seesaw/config! label1 :text "Updated")
+   #(seesaw/config! label2 :visible? false)  
+   #(seesaw/config! button :enabled? true)])
+
+;; Show busy cursor during long operations
+(ui-utils/with-busy-cursor frame
+  (fn []
+    (process-large-file)))
+
+;; Preserve text selection during updates
+(ui-utils/preserve-selection text-area
+  (fn []
+    (seesaw/text! text-area (format-code (seesaw/text text-area)))))
+```
 
 ## Development Tasks
 
@@ -272,6 +349,828 @@ When recreating frames (e.g., theme switching), perform all operations in a sing
 3. Use `invoke-now` only when you need the result immediately
 4. Avoid nested `invoke-later` calls - they create separate EDT cycles
 5. Group related UI operations in a single EDT invocation
+
+## Idiomatic Seesaw Patterns
+
+### Core Principles
+
+Seesaw provides a Clojure-friendly wrapper over Swing. Follow these patterns for maintainable UI code:
+
+### 1. Use Actions Instead of Separate Buttons and Handlers
+
+**Bad**:
+```clojure
+(let [button (seesaw/button :text "Click Me" :icon my-icon)
+      handler (fn [e] (do-something))]
+  (seesaw/listen button :action handler))
+```
+
+**Good**:
+```clojure
+(seesaw/action 
+  :name "Click Me"
+  :icon my-icon
+  :handler (fn [e] (do-something)))
+```
+
+### 2. Layout with Keyword Parameters
+
+**Bad**:
+```clojure
+(let [panel (JPanel. (BorderLayout.))]
+  (.add panel component BorderLayout/CENTER)
+  (.setHgap (.getLayout panel) 10))
+```
+
+**Good**:
+```clojure
+(seesaw/border-panel
+  :center component
+  :hgap 10
+  :vgap 10
+  :border 10)
+```
+
+### 3. Event Handling with listen
+
+**Bad**:
+```clojure
+(.addActionListener button listener)
+(.addMouseListener component mouse-listener)
+```
+
+**Good**:
+```clojure
+(seesaw/listen component
+  :action (fn [e] ...)
+  :mouse-clicked (fn [e] ...)
+  :selection (fn [e] ...))
+```
+
+### 4. Component Selection and IDs
+
+Always add `:id` to components for easy selection:
+
+```clojure
+(seesaw/text :id :username-field :columns 20)
+;; Later...
+(seesaw/select frame [:#username-field])
+```
+
+### 5. Dynamic Updates with config!
+
+**Bad**:
+```clojure
+(.setText label "New Text")
+(.setEnabled button false)
+```
+
+**Good**:
+```clojure
+(seesaw/config! label :text "New Text")
+(seesaw/config! button :enabled? false)
+```
+
+### 6. Proper Resource Management
+
+**Bad**:
+```clojure
+(.dispose frame)
+(.show frame)
+```
+
+**Good**:
+```clojure
+(seesaw/dispose! frame)
+(seesaw/show! frame)
+(seesaw/pack! frame)  ; Size to preferred dimensions
+```
+
+### 7. Table Management
+
+Use Seesaw's table abstractions:
+
+```clojure
+;; Create table with model
+(seesaw/table 
+  :id :data-table
+  :model (table/table-model 
+          :columns [{:key :name :text "Name"}
+                    {:key :age :text "Age"}]))
+
+;; Update data
+(table/clear! table)
+(table/insert-at! table 0 {:name "John" :age 30})
+```
+
+### 8. Common Layout Patterns
+
+```clojure
+;; Main window structure
+(seesaw/frame
+  :title "My App"
+  :content (seesaw/border-panel
+            :north toolbar
+            :center (seesaw/scrollable main-content)
+            :south status-bar
+            :border 5))
+
+;; Form layout
+(seesaw/mig-panel
+  :constraints ["wrap 2"]
+  :items [["Username:"] [username-field "growx"]
+          ["Password:"] [password-field "growx"]])
+
+;; Button panel
+(seesaw/flow-panel
+  :align :center
+  :hgap 5
+  :items [ok-action cancel-action])
+```
+
+### 9. Threading Considerations
+
+- **From menu/button handlers**: Already on EDT, use `invoke-now` if needed
+- **From background threads**: Use `invoke-later` or `invoke-now`
+- **For immediate UI updates**: Prefer `invoke-now` to avoid visual delays
+
+```clojure
+(defn show-dialog []
+  (seesaw/invoke-now
+    (let [dialog (create-dialog)]
+      (seesaw/pack! dialog)
+      (seesaw/show! dialog))))
+```
+
+### 10. Essential Seesaw Utilities
+
+#### Dialog Functions
+
+```clojure
+;; Simple alert
+(seesaw/alert "Hello World!")
+(seesaw/alert parent "Error occurred!" :type :error)
+
+;; Input dialog
+(seesaw/input "Enter your name:")
+(seesaw/input "Choose option:" 
+              :choices ["Option 1" "Option 2"]
+              :value "Option 1")
+
+;; Custom dialog with return value
+(seesaw/custom-dialog
+  :parent frame
+  :title "Settings"
+  :modal? true
+  :content my-panel
+  :on-close :dispose)
+```
+
+#### Value and Selection
+
+```clojure
+;; Get/set values uniformly
+(seesaw/value text-field)           ; get text
+(seesaw/value checkbox)             ; get boolean
+(seesaw/value! slider 50)           ; set value
+
+;; Get all values from a container
+(seesaw/value panel)                ; {:field-id "text", :check-id true}
+
+;; Selection handling
+(seesaw/selection list-box)         ; get selected items
+(seesaw/selection! table [0 2 4])   ; select rows
+```
+
+#### Widget Selection
+
+```clojure
+;; CSS-like selectors
+(seesaw/select frame [:#my-button])      ; by id
+(seesaw/select frame [:.my-class])       ; by class
+(seesaw/select frame [:JButton])         ; by type
+(seesaw/select panel [:#panel :> :*])    ; children
+
+;; Group widgets by ID
+(let [{:keys [name email phone]} (seesaw/group-by-id form)]
+  (println (seesaw/value name)))
+```
+
+#### Scrolling
+
+```clojure
+;; Make scrollable
+(seesaw/scrollable text-area)
+(seesaw/scrollable table 
+                   :hscroll :as-needed
+                   :vscroll :always)
+
+;; Programmatic scrolling
+(seesaw/scroll! widget :to :top)
+(seesaw/scroll! widget :to [:point 0 100])
+```
+
+#### Common Widget Patterns
+
+```clojure
+;; Text components
+(seesaw/text :id :input
+             :columns 20
+             :editable? true)
+
+(seesaw/text :id :output
+             :multi-line? true
+             :wrap-lines? true
+             :editable? false)
+
+;; Lists and tables
+(seesaw/listbox :id :items
+                :model ["A" "B" "C"]
+                :selection-mode :multiple)
+
+(seesaw/table :id :data
+              :model [:columns [:name :age]
+                      :rows [{:name "John" :age 30}]])
+
+;; Forms with MigLayout
+(seesaw/mig-panel
+  :constraints ["wrap 2", "[right]rel[grow,fill]"]
+  :items [["Name:"] [(seesaw/text :id :name)]
+          ["Email:"] [(seesaw/text :id :email)]
+          [""] [(seesaw/flow-panel 
+                 :items [(seesaw/button :text "OK")
+                         (seesaw/button :text "Cancel")])
+                "span 2, align right"]])
+```
+
+#### Utility Functions
+
+```clojure
+;; Convert between Seesaw widgets and Swing components
+(seesaw/to-widget component)     ; Swing -> Seesaw
+(seesaw/to-root widget)          ; Find containing frame/dialog
+
+;; Sizing
+(seesaw/width widget)            ; Get width
+(seesaw/height widget)           ; Get height
+```
+
+### 11. Advanced Patterns from ArcherBC2 Example
+
+#### Data Binding with seesaw.bind
+
+The ArcherBC2 example demonstrates sophisticated data binding patterns:
+
+```clojure
+;; Basic atom binding
+(require '[seesaw.bind :as sb])
+
+(def *state (atom {:name "John" :age 30}))
+
+;; Bind atom to widget
+(sb/bind *state
+         (sb/transform #(:name %))
+         (sb/value text-field))
+
+;; Two-way binding
+(sb/bind (sb/property slider :value)
+         *state
+         (sb/property label :text))
+
+;; Complex transformations with debouncing
+(defn mk-debounced-transform [xf]
+  (let [*last-val (atom nil)]
+    (fn [state]
+      (let [last-val @*last-val
+            new-val (xf state)]
+        (when (or (nil? last-val)
+                  (not= last-val new-val))
+          (reset! *last-val new-val)
+          new-val)))))
+
+;; Use debounced transform to prevent excessive updates
+(sb/bind *state
+         (sb/some (mk-debounced-transform #(:value %)))
+         (sb/value widget))
+
+;; Binding with multiple targets (tee)
+(sb/bind *state
+         (sb/tee 
+          (sb/bind (sb/transform :enabled)
+                   (sb/property button :enabled?))
+          (sb/bind (sb/transform :text)
+                   (sb/value label))))
+```
+
+#### Custom Formatters for JFormattedTextField
+
+The example shows how to create custom formatters for specialized input:
+
+```clojure
+;; Number formatter with custom parsing
+(defn mk-number-formatter [fallback-val fraction-digits]
+  (proxy [javax.swing.text.DefaultFormatter] []
+    (stringToValue [s]
+      (parse-number s fraction-digits))
+    (valueToString [value]
+      (format-number (or value (fallback-val)) fraction-digits))))
+
+;; Wrap formatter for proper behavior
+(defn wrap-formatter [formatter]
+  (doto formatter
+    (.setCommitsOnValidEdit false)
+    (.setOverwriteMode false)))
+
+;; Create formatted text field
+(let [formatter (wrap-formatter (mk-number-formatter #(get @*state :default) 2))
+      factory (DefaultFormatterFactory. formatter formatter formatter formatter)
+      field (seesaw/construct JFormattedTextField factory)]
+  ;; Handle commits on Enter or focus lost
+  (seesaw/listen field
+    :key-pressed (fn [e]
+                   (when (#{KeyEvent/VK_ENTER KeyEvent/VK_ESCAPE} (.getKeyCode e))
+                     (.commitEdit field)))
+    :focus-lost (fn [e]
+                  (.commitEdit field))))
+```
+
+#### Drag and Drop Support
+
+```clojure
+(require '[seesaw.dnd :as dnd])
+
+;; File drop handler
+(defn make-file-drop-handler [handle-fn]
+  (dnd/default-transfer-handler
+   :import [dnd/file-list-flavor
+            (fn [{:keys [data drop?]}]
+              (when drop?
+                (let [file (first data)]
+                  (handle-fn (.getAbsolutePath file)))))]
+   :export {:actions (constantly :none)}))
+
+;; Apply to component
+(seesaw/config! panel :transfer-handler (make-file-drop-handler process-file))
+
+;; List reordering with DnD
+(defn make-list-dnd-handler [*state list-box]
+  (dnd/default-transfer-handler
+   :import [dnd/string-flavor
+            (fn [{:keys [data drop? drop-location]}]
+              (when (and drop? (:insert? drop-location))
+                (let [src-idx (:index data)
+                      dst-idx (:index drop-location)]
+                  (swap! *state move-item src-idx dst-idx))))]
+   :export {:actions (constantly :copy)
+            :start (fn [_] [dnd/string-flavor 
+                           {:index (.getSelectedIndex list-box)}])}))
+```
+
+#### Frame Lifecycle Management
+
+```clojure
+;; Preserve window state during reload
+(defn maximized? [frame]
+  (= (.getExtendedState frame) JFrame/MAXIMIZED_BOTH))
+
+(defn reload-frame! [frame frame-constructor]
+  (seesaw/invoke-later
+   (let [was-maximized? (maximized? frame)]
+     (seesaw/config! frame :on-close :nothing)
+     (seesaw/dispose! frame)
+     (let [new-frame (frame-constructor)]
+       (if was-maximized?
+         (do (seesaw/show! new-frame)
+             (.setExtendedState new-frame JFrame/MAXIMIZED_BOTH))
+         (seesaw/show! new-frame))))))
+
+;; Safe frame disposal
+(defn dispose-frame! [frame]
+  (seesaw/invoke-later
+   (seesaw/config! frame :on-close :nothing)
+   (seesaw/dispose! frame)))
+```
+
+#### Tree Widget Patterns
+
+```clojure
+;; Simple tree model
+(require '[seesaw.tree :as st])
+
+(defn make-file-tree []
+  (seesaw/tree 
+   :id :file-tree
+   :model (st/simple-tree-model
+           :children
+           :files
+           {:files ["a.txt" "b.txt"]})
+   :renderer (fn [renderer {:keys [value]}]
+               (seesaw/config! renderer :text (str value)))))
+
+;; Tree path selection
+(defn select-tree-path [tree path-vector]
+  (let [tree-path (TreePath. (to-array path-vector))]
+    (.setSelectionPath tree tree-path)
+    (.scrollPathToVisible tree tree-path)))
+```
+
+#### Status Bar Pattern
+
+```clojure
+;; Status bar with icon and text
+(defn make-status-bar [*status-atom]
+  (let [icon-good (load-icon :status-good)
+        icon-bad (load-icon :status-bad)
+        icon-label (seesaw/label :icon icon-good)
+        text-label (seesaw/text :editable? false)]
+    
+    (sb/bind *status-atom
+             (sb/tee
+              (sb/bind (sb/transform :ok?)
+                       (sb/transform #(if % icon-good icon-bad))
+                       (sb/property icon-label :icon))
+              (sb/bind (sb/transform :text)
+                       (sb/value text-label))))
+    
+    (seesaw/horizontal-panel
+     :items [icon-label text-label])))
+```
+
+#### Menu and Action Management
+
+```clojure
+;; Reusable action with keyboard shortcut
+(defn make-save-action [*state frame]
+  (let [handler (fn [_] (save-file *state))]
+    ;; Register global key binding
+    (seesaw.keymap/map-key frame "control S" handler :scope :global)
+    ;; Return action
+    (seesaw/action
+     :name "Save"
+     :tip "Save file (Ctrl+S)"
+     :icon (load-icon :save)
+     :handler handler)))
+
+;; Dynamic menu construction
+(defn make-file-menu [*state frame]
+  (seesaw/menu
+   :text "File"
+   :items [(make-new-action *state frame)
+           (make-open-action *state frame)
+           :separator
+           (make-save-action *state frame)
+           (make-save-as-action *state frame)]))
+```
+
+#### Forms and Validation
+
+```clojure
+;; Input validation pattern
+(defn create-validated-input [*state path spec]
+  (let [field (seesaw/text :columns 20)]
+    ;; Bind to state
+    (sb/bind *state
+             (sb/transform #(get-in % path))
+             (sb/value field))
+    
+    ;; Validate on change
+    (seesaw/listen field
+      :document (fn [_]
+                  (let [value (seesaw/value field)]
+                    (if (s/valid? spec value)
+                      (do (swap! *state assoc-in path value)
+                          (seesaw/config! field :foreground :black))
+                      (seesaw/config! field :foreground :red)))))
+    field))
+
+;; Form with multiple validated inputs
+(defn create-form [*state]
+  (seesaw/mig-panel
+   :items [["Name:"] [(create-validated-input *state [:name] string?)]
+           ["Age:"] [(create-validated-input *state [:age] pos-int?)]
+           ["Email:"] [(create-validated-input *state [:email] email-spec)]]))
+```
+
+#### Widget Factories
+
+```clojure
+;; Consistent widget creation
+(defn input-with-units [*state path spec units]
+  (seesaw/horizontal-panel
+   :items [(create-validated-input *state path spec)
+           (seesaw/label :text (str " " units " ")
+                        :focusable? false)]))
+
+;; Reusable button styles
+(defn icon-button [icon-key action]
+  (seesaw/button :icon (load-icon icon-key)
+                :action action
+                :focusable? false))
+```
+
+### 12. Performance Considerations
+
+- **Debounce rapid updates**: Use debounced transforms for high-frequency state changes
+- **Batch UI updates**: Group multiple UI changes in single `invoke-later` call
+- **Lazy rendering**: For large lists/tables, implement virtual rendering
+- **Cache computations**: Store expensive calculations in atoms/memoization
+
+### 13. Common Pitfalls to Avoid
+
+1. **Forgetting EDT requirements**: Always use invoke-later/invoke-now from background threads
+2. **Memory leaks**: Remove listeners and bindings when disposing components
+3. **Blocking EDT**: Move long operations to background threads
+4. **Over-nesting layouts**: Keep layout hierarchy shallow for better performance
+5. **Ignoring component lifecycle**: Properly dispose frames and release resources
+
+```clojure
+;; Frame utilities
+(seesaw/pack! frame)                    ; Size to preferred
+(seesaw/show! frame)                    ; Make visible
+(seesaw/hide! frame)                    ; Hide
+(seesaw/dispose! frame)                 ; Clean up
+(seesaw/move! frame :to [100 100])      ; Position
+(seesaw/to-root event)                  ; Get root window
+
+;; Widget state
+(seesaw/config! widget :enabled? false)  ; Disable
+(seesaw/config! widget :visible? true)   ; Show
+(seesaw/config widget :text)             ; Get property
+
+;; Constraints and sizing
+[:fill-h 20]                            ; Fill horizontally with gap
+[:fill-v 10]                            ; Fill vertically with gap
+:fill-h                                 ; Fill remaining horizontal space
+:fill-v                                 ; Fill remaining vertical space
+```
+
+### 11. Advanced Patterns from ArcherBC2 Example
+
+#### Data Binding with seesaw.bind
+
+The ArcherBC2 example demonstrates sophisticated data binding patterns:
+
+```clojure
+;; Basic atom binding
+(require '[seesaw.bind :as sb])
+
+(def *state (atom {:name "John" :age 30}))
+
+;; Bind atom to widget
+(sb/bind *state
+         (sb/transform #(get % :name))
+         (sb/value text-field))
+
+;; Two-way binding
+(sb/bind (sb/funnel 
+          [(sb/selection list-box) 
+           (sb/value text-field)]
+          vector)
+         (sb/transform process-inputs)
+         (sb/value output-label))
+
+;; Debounced binding (prevent rapid updates)
+;; Use the utility from potatoclient.ui.utils
+(require '[potatoclient.ui.utils :as ui-utils])
+
+(sb/bind *state
+         (sb/some (ui-utils/mk-debounced-transform #(get % :value)))
+         (sb/value slider))
+
+;; Complex binding with tee (multiple destinations)
+(sb/bind *state
+         (sb/tee
+          (sb/bind (sb/transform #(if (:valid %) :green :red))
+                   (sb/property label :foreground))
+          (sb/bind (sb/transform #(:message %))
+                   (sb/value label))))
+```
+
+#### Custom Formatters for JFormattedTextField
+
+```clojure
+;; Number formatter with validation
+(defn mk-number-formatter [fallback-val fraction-digits]
+  (proxy [CustomNumberFormatter] []
+    (stringToValue [s]
+      (or (parse-double s) fallback-val))
+    (valueToString [value]
+      (format (str "%." fraction-digits "f") 
+              (or value fallback-val)))))
+
+;; Create formatted text field
+(defn input-number [*state path spec & opts]
+  (let [fmt (mk-number-formatter 0.0 2)
+        field (ssc/formatted-text-field 
+               :formatter fmt
+               :columns 10)]
+    ;; Bind to state
+    (sb/bind *state
+             (sb/transform #(get-in % path))
+             (sb/value field))
+    field))
+```
+
+#### Drag and Drop Support
+
+```clojure
+;; File drop handler
+(ssc/config! panel
+  :transfer-handler
+  (ssc/default-transfer-handler
+    :import [ssc/file-list-flavor 
+             (fn [{:keys [data]}]
+               (handle-dropped-files data))]))
+
+;; List reordering with DnD
+(defn make-reorderable-list [*state items-path]
+  (let [lb (ssc/listbox :model @items-path)]
+    (ssc/config! lb
+      :drag-enabled? true
+      :drop-mode :insert
+      :transfer-handler
+      (ssc/default-transfer-handler
+        :import [ssc/string-flavor
+                 (fn [{:keys [drop-location]}]
+                   (let [src-idx (ssc/selection lb)
+                         dst-idx (:index drop-location)]
+                     (swap! *state move-item src-idx dst-idx)))]
+        :export {:actions (constantly :move)
+                 :start (fn [_] 
+                         [ssc/string-flavor 
+                          (str (ssc/selection lb))])}))))
+```
+
+#### Frame Lifecycle Management
+
+```clojure
+;; Preserve and restore window state
+(defn preserve-window-state [frame]
+  {:bounds (.getBounds frame)
+   :extended-state (.getExtendedState frame)
+   :divider-locations (map #(.getDividerLocation %)
+                          (ssc/select frame [:JSplitPane]))})
+
+(defn reload-frame! [old-frame frame-constructor]
+  (ssc/invoke-later
+    (let [state (preserve-window-state old-frame)]
+      (ssc/config! old-frame :on-close :nothing)
+      (.dispose old-frame)
+      (-> (frame-constructor state)
+          (restore-window-state! state)
+          ssc/pack!
+          ssc/show!))))
+```
+
+#### Tree Widget Patterns
+
+```clojure
+;; Custom tree model
+(defn make-tree-model [root-data]
+  (ssc/simple-tree-model
+    :children (fn [node] (:children node))
+    :root root-data))
+
+;; Tree with custom rendering
+(ssc/tree 
+  :id :nav-tree
+  :model tree-model
+  :renderer (ssc/default-tree-renderer
+              (fn [value]
+                {:text (:name value)
+                 :icon (get-icon-for (:type value))}))
+  :listen [:selection (fn [e]
+                       (handle-selection 
+                         (ssc/selection e)))])
+```
+
+#### Status Bar Pattern
+
+```clojure
+;; Reactive status bar
+(defn make-status-bar [*status]
+  (let [icon (ssc/label :id :status-icon)
+        text (ssc/label :id :status-text)]
+    (sb/bind *status
+             (sb/tee
+              (sb/bind (sb/transform #(if (:ok %) ok-icon err-icon))
+                       (sb/property icon :icon))
+              (sb/bind (sb/transform :message)
+                       (sb/value text))))
+    (ssc/horizontal-panel
+      :items [icon text :fill-h])))
+```
+
+#### Menu and Action Management
+
+```clojure
+;; Centralized action creation with keyboard shortcuts
+(defn make-actions [*state frame]
+  {:save (ssc/action
+          :name "Save"
+          :icon (get-icon :file-save)
+          :key "control S"
+          :handler (fn [_] (save-file *state)))
+   
+   :open (ssc/action
+          :name "Open..."
+          :icon (get-icon :file-open)
+          :key "control O"
+          :handler (fn [_] (open-file-dialog frame)))})
+
+;; Apply global key mappings
+(defn setup-global-keys [frame actions]
+  (doseq [[k action] actions]
+    (when-let [key (:key (meta action))]
+      (ssc/map-key frame key 
+                   (:handler (meta action))
+                   :scope :global))))
+```
+
+#### Forms and Validation
+
+```clojure
+;; Form with real-time validation
+(defn validated-form [*state validators]
+  (let [fields (atom {})
+        validate! (fn [field-id value]
+                   (let [validator (get validators field-id)
+                         valid? (validator value)]
+                     (swap! fields assoc-in [field-id :valid?] valid?)
+                     valid?))]
+    
+    (ssc/mig-panel
+      :items (for [[id label validator] validators]
+               [[label "right"]
+                [(doto (ssc/text :id id)
+                   (ssc/listen 
+                     :document
+                     (fn [_] 
+                       (let [value (ssc/value (ssc/select root [id]))]
+                         (validate! id value)))))]
+                "growx, wrap"]))))
+```
+
+#### Widget Factories
+
+```clojure
+;; Consistent widget creation
+(defn input-field
+  [*state path spec & {:keys [columns tip units]}]
+  (let [field (ssc/formatted-text-field
+                :columns (or columns 10)
+                :tip tip)]
+    ;; Add validation
+    (ssc/listen field :focus-lost
+                (fn [e]
+                  (when-not (s/valid? spec (ssc/value field))
+                    (ssc/alert "Invalid input!"))))
+    ;; Add binding
+    (sb/bind *state
+             (sb/transform #(get-in % path))
+             (sb/value field))
+    ;; Add units label if specified
+    (if units
+      (ssc/horizontal-panel 
+        :items [field (ssc/label (str " " units))])
+      field)))
+```
+
+### 12. Performance Considerations
+
+```clojure
+;; Use the debouncing utilities from potatoclient.ui.utils
+(require '[potatoclient.ui.utils :as ui-utils])
+
+;; Debounce rapid updates
+(def save! (ui-utils/debounce save-to-disk 1000))
+
+;; Throttle expensive operations
+(def render! (ui-utils/throttle render-preview 100))
+
+;; Batch UI updates for better performance
+(ui-utils/batch-updates
+  [#(update-label label1)
+   #(update-label label2)
+   #(refresh-table table)])
+
+;; Lazy rendering for large lists
+(ssc/table :model model
+           :renderer (proxy [DefaultTableCellRenderer] []
+                      (getTableCellRendererComponent [table value selected focus row col]
+                        ;; Only render visible cells
+                        (when (.isShowing table)
+                          (proxy-super getTableCellRendererComponent 
+                                      table value selected focus row col)))))
+```
+
+### 13. Common Pitfalls to Avoid
+
+1. **Forgetting EDT requirements** - Always use invoke-now/invoke-later for UI operations
+2. **Memory leaks with listeners** - Remove listeners when components are disposed
+3. **Blocking EDT** - Move long operations to background threads
+4. **Inefficient layouts** - Prefer MigLayout for complex forms
+5. **Not disposing resources** - Always dispose frames, dialogs, and timers
 
 ## Malli Integration
 

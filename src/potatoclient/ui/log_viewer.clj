@@ -220,22 +220,11 @@
 (defn show-log-viewer
   "Show the log viewer window, ensuring it runs on the EDT."
   []
-  (if (javax.swing.SwingUtilities/isEventDispatchThread)
-    ;; Already on EDT, execute immediately
-    (let [log-files (get-log-files)]
-      (if (empty? log-files)
-        (seesaw/alert "No log files found in the logs directory.")
-        (let [frame (create-log-viewer-frame)]
-          (seesaw/pack! frame)
-          (.setLocationRelativeTo frame nil)
-          (seesaw/show! frame))))
-    ;; Not on EDT, schedule execution
-    (seesaw/invoke-later
-     (fn []
-       (let [log-files (get-log-files)]
-         (if (empty? log-files)
-           (seesaw/alert "No log files found in the logs directory.")
-           (let [frame (create-log-viewer-frame)]
-             (seesaw/pack! frame)
-             (.setLocationRelativeTo frame nil)
-             (seesaw/show! frame))))))))
+  (seesaw/invoke-now
+   (let [log-files (get-log-files)]
+     (if (empty? log-files)
+       (seesaw/alert "No log files found in the logs directory.")
+       (let [frame (create-log-viewer-frame)]
+         (seesaw/pack! frame)
+         (.setLocationRelativeTo frame nil)
+         (seesaw/show! frame))))))

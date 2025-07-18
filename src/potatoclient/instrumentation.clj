@@ -30,6 +30,7 @@
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.utils :as ui-utils]
             ;; Main namespaces
             [potatoclient.core :as core]
             [potatoclient.main :as main]
@@ -279,6 +280,17 @@
 (m/=> potatoclient.ui.log-viewer/update-log-list! [:=> [:cat any?] any?])
 (m/=> potatoclient.ui.log-viewer/create-log-viewer-frame [:=> [:cat] :potatoclient.specs/jframe])
 (m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] any?])
+
+;; -----------------------------------------------------------------------------
+;; UI Utils namespace schemas
+;; -----------------------------------------------------------------------------
+
+(m/=> potatoclient.ui.utils/mk-debounced-transform [:=> [:cat fn?] fn?])
+(m/=> potatoclient.ui.utils/debounce [:=> [:cat fn? pos-int?] fn?])
+(m/=> potatoclient.ui.utils/throttle [:=> [:cat fn? pos-int?] fn?])
+(m/=> potatoclient.ui.utils/batch-updates [:=> [:cat [:sequential fn?]] any?])
+(m/=> potatoclient.ui.utils/with-busy-cursor [:=> [:cat any? fn?] any?])
+(m/=> potatoclient.ui.utils/preserve-selection [:=> [:cat any? fn?] any?])
 
 ;; -----------------------------------------------------------------------------
 ;; Runtime namespace schemas
