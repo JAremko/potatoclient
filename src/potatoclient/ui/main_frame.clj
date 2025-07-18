@@ -213,7 +213,7 @@
                    (try
                      ;; Save current config state
                      (let [current-config {:theme (theme/get-current-theme)
-                                           :domain (config/get-domain)
+                                           :url (config/get-url)
                                            :locale (state/get-locale)}]
                        (config/save-config! current-config))
                      (process/cleanup-all-processes)
@@ -253,12 +253,12 @@
         ;; Create frame constructor that preserves window state
         frame-cons (fn [state]
                      (create-main-frame (assoc params :window-state state)))
-        url (config/get-url)
+        domain (config/get-domain)
         title (format "%s v%s [%s] - %s"
                       (i18n/tr :app-title)
                       version
                       build-type
-                      url)
+                      domain)
         frame (seesaw/frame
                :title title
                :icon (clojure.java.io/resource "main.png")

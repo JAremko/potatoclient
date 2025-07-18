@@ -23,6 +23,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     // Immutable fields
     private final String streamId;
     private final String streamUrl;
+    private final String domain;
     private final Scanner scanner;
     private final ObjectMapper mapper = new ObjectMapper(); // For command parsing
     
@@ -46,13 +47,14 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     private WebSocketClientBuiltIn webSocketClient;
     private GStreamerPipeline gstreamerPipeline;
     
-    public VideoStreamManager(String streamId, String streamUrl) {
+    public VideoStreamManager(String streamId, String streamUrl, String domain) {
         this.streamId = streamId;
         this.streamUrl = streamUrl;
+        this.domain = domain;
         this.scanner = new Scanner(System.in);
         this.eventFilter = new EventFilter();
         this.messageProtocol = new MessageProtocol(streamId);
-        this.frameManager = new FrameManager(streamId, this, messageProtocol);
+        this.frameManager = new FrameManager(streamId, domain, this, messageProtocol);
         
         this.reconnectExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "VideoStream-Reconnect-" + streamId);
@@ -429,8 +431,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     }
     
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: VideoStreamManager <streamId> <url>");
+        if (args.length < 3) {
+            System.err.println("Usage: VideoStreamManager <streamId> <url> <domain>");
             System.exit(1);
         }
         
@@ -439,7 +441,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             System.err.println("[" + level + "] " + message);
         });
         
-        VideoStreamManager manager = new VideoStreamManager(args[0], args[1]);
+        VideoStreamManager manager = new VideoStreamManager(args[0], args[1], args[2]);
         manager.run();
     }
 }

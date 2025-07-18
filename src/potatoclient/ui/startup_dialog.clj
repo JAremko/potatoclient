@@ -19,24 +19,28 @@
   Handles: domain.com, http://domain.com, wss://domain.com:8080/path?query, IP addresses, etc."
   [input]
   (let [cleaned (clojure.string/trim input)]
-    (try
-      ;; If it's already just a domain/IP, return as-is
-      (if (and (not (clojure.string/includes? cleaned "://"))
-               (not (clojure.string/includes? cleaned "/")))
-        cleaned
-        ;; Otherwise, try to parse as URL
-        (let [;; Add protocol if missing
-              url-str (if (clojure.string/includes? cleaned "://")
-                        cleaned
-                        (str "http://" cleaned))
-              url (URL. url-str)
-              host (.getHost url)]
-          (if (clojure.string/blank? host)
-            cleaned  ; Fallback to original if parsing fails
-            host)))
-      (catch Exception _
-        ;; If all parsing fails, return the cleaned input
-        cleaned))))
+    ;; If it's already just a domain/IP (no protocol, no path), return as-is
+    (if (and (not (clojure.string/includes? cleaned "://"))
+             (not (re-find #"[/?#&:]" cleaned)))
+      cleaned
+      ;; Otherwise extract the domain/IP part
+      (let [;; Remove protocol if present
+            after-protocol (if-let [idx (clojure.string/index-of cleaned "://")]
+                             (subs cleaned (+ idx 3))
+                             cleaned)
+            ;; Take everything up to the first separator (excluding port)
+            domain (if-let [sep-idx (some #(clojure.string/index-of after-protocol %)
+                                          ["/" "?" "#" "&"])]
+                     (subs after-protocol 0 sep-idx)
+                     after-protocol)
+            ;; Remove port if present
+            domain (if-let [port-idx (clojure.string/index-of domain ":")]
+                     (subs domain 0 port-idx)
+                     domain)]
+        ;; Return the extracted domain or original if extraction failed
+        (if (clojure.string/blank? domain)
+          cleaned
+          domain)))))
 
 (defn- validate-domain
   "Validate if the input is a valid domain name or IP address using Malli spec."
@@ -195,8 +199,9 @@
     
     ;; Log dialog creation
     (logging/log-info {:id ::show-dialog
-                       :data {:domain domain}
-                       :msg (str "Showing startup dialog for domain: " domain)})
+                       :data {:url saved-url
+                              :domain domain}
+                       :msg (str "Showing startup dialog with URL: " saved-url)})
     
     ;; Show dialog
     (seesaw/show! dialog)))

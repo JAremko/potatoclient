@@ -10,6 +10,7 @@ import java.net.URL;
  */
 public class FrameManager {
     private final String streamId;
+    private final String domain;
     private volatile JFrame frame;
     private volatile Component videoComponent;
     private final MessageProtocol messageProtocol;
@@ -21,8 +22,9 @@ public class FrameManager {
     
     private final FrameEventListener listener;
     
-    public FrameManager(String streamId, FrameEventListener listener, MessageProtocol messageProtocol) {
+    public FrameManager(String streamId, String domain, FrameEventListener listener, MessageProtocol messageProtocol) {
         this.streamId = streamId;
+        this.domain = domain;
         this.listener = listener;
         this.messageProtocol = messageProtocol;
     }
@@ -43,9 +45,12 @@ public class FrameManager {
     }
     
     private JFrame createJFrame() {
-        String title = streamId.equals(Constants.StreamConfig.HEAT_STREAM_ID) 
-            ? Constants.StreamConfig.HEAT_STREAM_TITLE 
-            : Constants.StreamConfig.DAY_STREAM_TITLE;
+        String baseTitle = streamId.equals(Constants.StreamConfig.HEAT_STREAM_ID) 
+            ? "Heat Stream" 
+            : "Day Stream";
+        
+        // Include domain in title to help distinguish instances
+        String title = baseTitle + " - " + domain;
             
         JFrame newFrame = new JFrame(title);
         newFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

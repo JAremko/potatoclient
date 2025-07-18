@@ -6,6 +6,7 @@
   (:require [clojure.core.async :as async :refer [go-loop <!]]
             [potatoclient.state :as state]
             [potatoclient.process :as process]
+            [potatoclient.config :as config]
             [potatoclient.logging :as logging]
             [potatoclient.events.stream :as stream-events]
             [malli.core :as m]
@@ -64,11 +65,29 @@
 (defn- build-stream-url
   "Build the WebSocket URL for a stream."
   [endpoint]
-  (let [domain (state/get-domain)]
-    ;; If domain already has a protocol, use it; otherwise default to wss://
-    (if (clojure.string/includes? domain "://")
-      (str domain endpoint)
-      (str "wss://" domain endpoint))))
+  ;; Get the user's original URL and extract domain from it
+  (let [url (config/get-url)
+        domain (config/get-domain)
+        ;; Build the final URL
+        stream-url (if (and url (clojure.string/includes? url "://"))
+                     ;; Remove any trailing slashes or paths from URL before appending endpoint
+                     (let [base-url (clojure.string/replace url #"/+$" "")
+                           ;; Extract just the protocol and host
+                           base-url (if-let [idx (clojure.string/index-of base-url "/" 
+                                                                          (+ 3 (clojure.string/index-of base-url "://")))]
+                                      (subs base-url 0 idx)
+                                      base-url)]
+                       (str base-url endpoint))
+                     ;; Otherwise default to wss:// with domain
+                     (str "wss://" domain endpoint))]
+    (logging/log-debug
+     {:id ::build-stream-url
+      :data {:url url
+             :domain domain
+             :endpoint endpoint
+             :stream-url stream-url}
+      :msg "Building stream URL"})
+    stream-url))
 
 
 (defn- initialize-stream
@@ -91,7 +110,8 @@
   (future
     (try
       (let [url (build-stream-url endpoint)
-            stream (process/start-stream-process (name stream-key) url)]
+            domain (config/get-domain)
+            stream (process/start-stream-process (name stream-key) url domain)]
         (state/set-stream! stream-key stream)
         (process-stream-messages stream-key stream)
         (initialize-stream stream)

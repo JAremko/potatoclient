@@ -73,7 +73,7 @@
 
 (defn- create-process-builder
   "Create a configured ProcessBuilder for the video stream subprocess."
-  [stream-id url]
+  [stream-id url domain]
   (let [java-exe (get-java-executable)
         classpath (System/getProperty "java.class.path")
         app-env (get-appimage-environment)
@@ -81,7 +81,7 @@
         main-class "potatoclient.java.VideoStreamManager"
         cmd (vec (concat [java-exe "-cp" classpath]
                         jvm-args
-                        [main-class stream-id url]))]
+                        [main-class stream-id url domain]))]
     (doto (ProcessBuilder. cmd)
       (-> .environment (.putAll ^java.util.Map (build-process-environment app-env))))))
 
@@ -165,8 +165,8 @@
 
 (defn- create-stream-process
   "Create the process and I/O resources."
-  [stream-id url]
-  (let [^ProcessBuilder pb (create-process-builder stream-id url)
+  [stream-id url domain]
+  (let [^ProcessBuilder pb (create-process-builder stream-id url domain)
         ^Process process (.start pb)
         writer (BufferedWriter. (OutputStreamWriter. (.getOutputStream process)))
         stdout-reader (BufferedReader. (InputStreamReader. (.getInputStream process)))
@@ -183,8 +183,8 @@
 (defn start-stream-process
   "Start a video stream subprocess.
   Returns a map containing process info and communication channels."
-  [stream-id url]
-  (let [stream (create-stream-process stream-id url)]
+  [stream-id url domain]
+  (let [stream (create-stream-process stream-id url domain)]
     ;; Start reader threads
     (create-stdout-reader (:stdout-reader stream) (:output-chan stream) stream-id)
     (create-stderr-reader (:stderr-reader stream) (:output-chan stream) stream-id)

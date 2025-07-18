@@ -16,24 +16,28 @@
   "Extract domain/IP from various URL formats."
   [input]
   (let [cleaned (str/trim input)]
-    (try
-      ;; If it's already just a domain/IP, return as-is
-      (if (and (not (str/includes? cleaned "://"))
-               (not (str/includes? cleaned "/")))
-        cleaned
-        ;; Otherwise, try to parse as URL
-        (let [;; Add protocol if missing
-              url-str (if (str/includes? cleaned "://")
-                        cleaned
-                        (str "http://" cleaned))
-              url (URL. url-str)
-              host (.getHost url)]
-          (if (str/blank? host)
-            cleaned  ; Fallback to original if parsing fails
-            host)))
-      (catch Exception _
-        ;; If all parsing fails, return the cleaned input
-        cleaned))))
+    ;; If it's already just a domain/IP (no protocol, no path), return as-is
+    (if (and (not (str/includes? cleaned "://"))
+             (not (re-find #"[/?#&:]" cleaned)))
+      cleaned
+      ;; Otherwise extract the domain/IP part
+      (let [;; Remove protocol if present
+            after-protocol (if-let [idx (str/index-of cleaned "://")]
+                             (subs cleaned (+ idx 3))
+                             cleaned)
+            ;; Take everything up to the first separator (excluding port)
+            domain (if-let [sep-idx (some #(str/index-of after-protocol %)
+                                          ["/" "?" "#" "&"])]
+                     (subs after-protocol 0 sep-idx)
+                     after-protocol)
+            ;; Remove port if present
+            domain (if-let [port-idx (str/index-of domain ":")]
+                     (subs domain 0 port-idx)
+                     domain)]
+        ;; Return the extracted domain or original if extraction failed
+        (if (str/blank? domain)
+          cleaned
+          domain)))))
 
 
 (defn- get-config-dir
@@ -108,9 +112,12 @@
           (if (m/validate ::specs/config merged-config)
             merged-config
             (do
-              (logging/log-warn "Invalid config detected, will use defaults")
-              ;; We'll save the default config later in initialize!
-              default-config)))
+              (logging/log-warn {:id ::invalid-config
+                                 :data {:config merged-config
+                                        :errors (m/explain ::specs/config merged-config)}
+                                 :msg "Invalid config detected, using empty config"})
+              ;; Return empty config so UI doesn't prefill with defaults
+              {})))
         (catch Exception e
           (logging/log-error (str "Error loading config: " (.getMessage ^Exception e)))
           default-config))
@@ -137,7 +144,7 @@
 (defn get-theme
   "Get the saved theme from config"
   []
-  (:theme (load-config)))
+  (or (:theme (load-config)) :sol-dark))
 
 
 (defn save-theme!
@@ -150,7 +157,7 @@
 (defn get-url
   "Get the saved URL from config"
   []
-  (:url (load-config)))
+  (or (:url (load-config)) ""))
 
 
 (defn save-url!
@@ -184,7 +191,7 @@
 (defn get-locale
   "Get the saved locale from config"
   []
-  (:locale (load-config)))
+  (or (:locale (load-config)) :english))
 
 
 (defn save-locale!
@@ -214,15 +221,14 @@
         config-file (get-config-file)]
     ;; Log config location on first run
     (logging/log-info (str "Configuration file location: " (get-config-location)))
-    ;; If config file doesn't exist or was invalid, save defaults
-    (when (or (not (.exists ^java.io.File config-file))
-              (not (m/validate ::specs/config config)))
+    ;; Only save defaults if config file doesn't exist
+    (when (not (.exists ^java.io.File config-file))
       (logging/log-info "Creating default config file")
       (save-config! config))
-    ;; Initialize theme from saved config
-    (theme/initialize-theme! (:theme config))
+    ;; Initialize theme from saved config (or default)
+    (theme/initialize-theme! (or (:theme config) :sol-dark))
     ;; Set initial locale
-    (when-let [locale (:locale config)]
+    (when-let [locale (or (:locale config) :english)]
       (require '[potatoclient.state :as state])
       ((resolve 'potatoclient.state/set-locale!) locale))
     ;; Return the loaded config

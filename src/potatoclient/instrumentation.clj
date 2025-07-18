@@ -226,7 +226,7 @@
 ;; Process namespace schemas
 ;; -----------------------------------------------------------------------------
 
-(m/=> potatoclient.process/start-stream-process [:=> [:cat string? string?] :potatoclient.specs/stream-process-map])
+(m/=> potatoclient.process/start-stream-process [:=> [:cat string? string? string?] :potatoclient.specs/stream-process-map])
 (m/=> potatoclient.process/send-command [:=> [:cat :potatoclient.specs/stream-process-map map?] boolean?])
 (m/=> potatoclient.process/stop-stream [:=> [:cat :potatoclient.specs/stream-process-map] any?])
 (m/=> potatoclient.process/cleanup-all-processes
