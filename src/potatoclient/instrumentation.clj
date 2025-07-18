@@ -273,9 +273,10 @@
 (m/=> potatoclient.ui.log-viewer/get-log-files [:=> [:cat] [:sequential map?]])
 (m/=> potatoclient.ui.log-viewer/format-file-size [:=> [:cat int?] string?])
 (m/=> potatoclient.ui.log-viewer/copy-to-clipboard [:=> [:cat string?] any?])
+(m/=> potatoclient.ui.log-viewer/format-log-content [:=> [:cat string?] string?])
 (m/=> potatoclient.ui.log-viewer/create-file-viewer [:=> [:cat :potatoclient.specs/file :potatoclient.specs/jframe] :potatoclient.specs/jframe])
 (m/=> potatoclient.ui.log-viewer/create-log-table [:=> [:cat] any?])
-(m/=> potatoclient.ui.log-viewer/update-log-list [:=> [:cat any?] any?])
+(m/=> potatoclient.ui.log-viewer/update-log-list! [:=> [:cat any?] any?])
 (m/=> potatoclient.ui.log-viewer/create-log-viewer-frame [:=> [:cat] :potatoclient.specs/jframe])
 (m/=> potatoclient.ui.log-viewer/show-log-viewer [:=> [:cat] any?])
 

@@ -1,4 +1,11 @@
 (ns potatoclient.ui.log-viewer
+  "Log viewer window for browsing and viewing log files.
+  
+  Uses idiomatic Seesaw patterns including:
+  - border-panel for layout management
+  - listen for event handling
+  - config! for dynamic component updates
+  - Built-in Seesaw functions instead of Java interop where possible"
   (:require [seesaw.core :as seesaw]
             [seesaw.table :as table]
             [clojure.java.io :as io]
@@ -8,12 +15,8 @@
             [potatoclient.logging :as logging]
             [potatoclient.config :as config]
             [potatoclient.runtime :as runtime])
-  (:import [java.awt Dimension BorderLayout Toolkit]
-           [java.awt.datatransfer StringSelection]
-           [java.awt.event KeyEvent]
-           [java.io File]
-           [java.text SimpleDateFormat]
-           [java.util Date]))
+  (:import [java.awt.datatransfer StringSelection]
+           [java.text SimpleDateFormat]))
 
 (defn- get-log-directory
   []
@@ -62,9 +65,10 @@
     :else (format "%.1f MB" (/ size (* 1024.0 1024.0)))))
 
 (defn- copy-to-clipboard
+  "Copy text to system clipboard."
   [text]
   (let [selection (StringSelection. text)
-        clipboard (.getSystemClipboard (Toolkit/getDefaultToolkit))]
+        clipboard (.getSystemClipboard (java.awt.Toolkit/getDefaultToolkit))]
     (.setContents clipboard selection selection)))
 
 (defn- format-log-content
@@ -80,52 +84,62 @@
          (str/join "\n"))))
 
 (defn- create-file-viewer
+  "Create a viewer window for displaying log file contents."
   [file parent-frame]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)
-        text-area (seesaw/text :multi-line? true
-                               :text content
-                               :editable? false
-                               :wrap-lines? true
-                               :font {:name "Monospaced" :size 12})
-        copy-button (seesaw/button :text "Copy to Clipboard"
-                                   :icon (theme/key->icon :file-save)
-                                   :listen [:action (fn [_] 
-                                                      (copy-to-clipboard raw-content)
-                                                      (seesaw/alert "Copied to clipboard!"))])
-        frame (seesaw/frame :title (str "Log: " (.getName file))
-                            :icon (clojure.java.io/resource "main.png")
-                            :size [800 :by 600]
-                            :on-close :dispose)
-        close-button (seesaw/button :text "Close"
-                                    :icon (theme/key->icon :file-excel)
-                                    :listen [:action (fn [_] 
-                                                       (.dispose frame))])
-        button-panel (seesaw/horizontal-panel :items [copy-button close-button])]
+        text-area (seesaw/text 
+                   :id :log-content
+                   :multi-line? true
+                   :text content
+                   :editable? false
+                   :wrap-lines? true
+                   :font {:name "Monospaced" :size 12}
+                   :caret-position 0)
+        frame (seesaw/frame 
+               :title (str "Log: " (.getName file))
+               :icon (clojure.java.io/resource "main.png")
+               :size [800 :by 600]
+               :on-close :dispose)
+        copy-action (seesaw/action
+                     :name "Copy to Clipboard"
+                     :icon (theme/key->icon :file-save)
+                     :handler (fn [_] 
+                               (copy-to-clipboard raw-content)
+                               (seesaw/alert parent-frame "Copied to clipboard!")))
+        close-action (seesaw/action
+                      :name "Close"
+                      :icon (theme/key->icon :file-excel)
+                      :handler (fn [_] (seesaw/dispose! frame)))]
+    ;; Build content using idiomatic border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
-                     :center (seesaw/scrollable text-area)
-                     :south button-panel
-                     :vgap 10
+                     :border 10
                      :hgap 10
-                     :border 10))
+                     :vgap 10
+                     :center (seesaw/scrollable text-area)
+                     :south (seesaw/horizontal-panel 
+                            :items [copy-action close-action])))
+    ;; Position relative to parent
+    (seesaw/pack! frame)
     (.setLocationRelativeTo frame parent-frame)
-    ;; Set caret to beginning so view starts at top
-    (.setCaretPosition text-area 0)
     (seesaw/show! frame)
     frame))
 
 (defn- create-log-table
+  "Create the main log file listing table."
   []
-  (let [columns [{:key :filename :text "Filename"}
-                 {:key :version :text "Version"}
-                 {:key :formatted-timestamp :text "Created"}
-                 {:key :formatted-size :text "Size"}]
-        model (table/table-model :columns columns)]
-    (seesaw/table :model model
-                  :show-grid? true)))
+  (seesaw/table 
+   :id :log-table
+   :model (table/table-model 
+           :columns [{:key :filename :text "Filename"}
+                     {:key :version :text "Version"}
+                     {:key :formatted-timestamp :text "Created"}
+                     {:key :formatted-size :text "Size"}])
+   :show-grid? true))
 
-(defn- update-log-list
+(defn- update-log-list!
+  "Update the log table with current log files."
   [table]
   (let [log-files (get-log-files)
         formatted-files (map (fn [log]
@@ -138,82 +152,90 @@
       (table/insert-at! table (table/row-count table) log))))
 
 (defn create-log-viewer-frame
+  "Create the main log viewer window."
   []
   (let [table (create-log-table)
-        refresh-button (seesaw/button :text "Refresh"
-                                      :icon (theme/key->icon :file-import)
-                                      :listen [:action (fn [_] (update-log-list table))])
-        open-button (seesaw/button :text "Open"
-                                   :icon (theme/key->icon :file-open)
-                                   :enabled? false)
-        close-button (seesaw/button :text "Close"
-                                    :icon (theme/key->icon :file-excel))
-        button-panel (seesaw/horizontal-panel :items [refresh-button open-button close-button])
-        frame (seesaw/frame :title "Log Viewer"
-                            :icon (clojure.java.io/resource "main.png")
-                            :size [700 :by 400]
-                            :on-close :dispose)]
+        frame (seesaw/frame 
+               :title "Log Viewer"
+               :icon (clojure.java.io/resource "main.png")
+               :size [700 :by 400]
+               :on-close :dispose)
+        
+        ;; Define actions
+        refresh-action (seesaw/action
+                        :name "Refresh"
+                        :icon (theme/key->icon :file-import)
+                        :handler (fn [_] (update-log-list! table)))
+        
+        open-action (seesaw/action
+                     :name "Open"
+                     :icon (theme/key->icon :file-open)
+                     :enabled? false
+                     :handler (fn [_]
+                               (when-let [selected-row (seesaw/selection table)]
+                                 (let [row-data (table/value-at table selected-row)]
+                                   (when-let [file (:file row-data)]
+                                     (create-file-viewer file frame))))))
+        
+        close-action (seesaw/action
+                      :name "Close"
+                      :icon (theme/key->icon :file-excel)
+                      :handler (fn [_] (seesaw/dispose! frame)))]
     
-    ;; Selection listener
-    (seesaw/listen table :selection
-                   (fn [_]
-                     (let [selected (seesaw/selection table)]
-                       (seesaw/config! open-button :enabled? (some? selected)))))
+    ;; Wire up event handlers using idiomatic listen
+    (seesaw/listen table
+                   ;; Handle selection changes
+                   :selection (fn [_]
+                               (seesaw/config! open-action 
+                                              :enabled? (some? (seesaw/selection table))))
+                   
+                   ;; Handle double-clicks
+                   :mouse-clicked (fn [e]
+                                   (when (= 2 (.getClickCount e))
+                                     (.actionPerformed open-action nil)))
+                   
+                   ;; Handle Enter key
+                   :key-pressed (fn [e]
+                                 (when (= (.getKeyCode e) java.awt.event.KeyEvent/VK_ENTER)
+                                   (.actionPerformed open-action nil))))
     
-    ;; Function to open selected file
-    (let [open-selected-file (fn []
-                               (let [selected-row (seesaw/selection table)]
-                                 (when selected-row
-                                   (let [row-data (table/value-at table selected-row)]
-                                     (when-let [file (:file row-data)]
-                                       (create-file-viewer file frame))))))]
-      
-      ;; Double-click listener
-      (seesaw/listen table :mouse-clicked
-                     (fn [e]
-                       (when (= 2 (.getClickCount e))
-                         (open-selected-file))))
-      
-      ;; Enter key listener
-      (seesaw/listen table :key-pressed
-                     (fn [e]
-                       (when (= (.getKeyCode e) java.awt.event.KeyEvent/VK_ENTER)
-                         (open-selected-file))))
-    
-      ;; Open button listener
-      (seesaw/listen open-button :action (fn [_] (open-selected-file))))
-    
-    ;; Close button listener
-    (seesaw/listen close-button :action (fn [_] (.dispose frame)))
-    
-    ;; Set up frame content
+    ;; Build UI using border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
-                     :center (seesaw/scrollable table)
-                     :south button-panel
-                     :vgap 10
+                     :border 10
                      :hgap 10
-                     :border 10))
+                     :vgap 10
+                     :center (seesaw/scrollable table 
+                                               :border 0)
+                     :south (seesaw/flow-panel
+                            :align :center
+                            :hgap 5
+                            :items [refresh-action open-action close-action])))
     
-    ;; Populate table
-    (update-log-list table)
+    ;; Initialize table data
+    (update-log-list! table)
     
     frame))
 
 (defn show-log-viewer
+  "Show the log viewer window, ensuring it runs on the EDT."
   []
   (if (javax.swing.SwingUtilities/isEventDispatchThread)
+    ;; Already on EDT, execute immediately
     (let [log-files (get-log-files)]
       (if (empty? log-files)
         (seesaw/alert "No log files found in the logs directory.")
         (let [frame (create-log-viewer-frame)]
+          (seesaw/pack! frame)
           (.setLocationRelativeTo frame nil)
           (seesaw/show! frame))))
+    ;; Not on EDT, schedule execution
     (seesaw/invoke-later
      (fn []
        (let [log-files (get-log-files)]
          (if (empty? log-files)
            (seesaw/alert "No log files found in the logs directory.")
            (let [frame (create-log-viewer-frame)]
+             (seesaw/pack! frame)
              (.setLocationRelativeTo frame nil)
              (seesaw/show! frame))))))))
