@@ -1,7 +1,8 @@
 (ns potatoclient.ui.utils
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
-  (:require [seesaw.bind :as bind]))
+  (:require [seesaw.bind :as bind]
+            [seesaw.cursor :as cursor]))
 
 (defn mk-debounced-transform
   "Creates a debounced transform function for use with seesaw.bind.
@@ -150,7 +151,7 @@
   The cursor is guaranteed to be restored even if an exception occurs."
   [component f]
   (let [original-cursor (.getCursor component)
-        busy-cursor (java.awt.Cursor/getPredefinedCursor java.awt.Cursor/WAIT_CURSOR)]
+        busy-cursor (cursor/cursor :wait)]
     (try
       (seesaw.core/invoke-now
         (.setCursor component busy-cursor))

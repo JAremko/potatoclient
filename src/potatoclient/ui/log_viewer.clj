@@ -8,6 +8,7 @@
   - Built-in Seesaw functions instead of Java interop where possible"
   (:require [seesaw.core :as seesaw]
             [seesaw.table :as table]
+            [seesaw.clipboard :as clipboard]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [potatoclient.theme :as theme]
@@ -15,8 +16,7 @@
             [potatoclient.logging :as logging]
             [potatoclient.config :as config]
             [potatoclient.runtime :as runtime])
-  (:import [java.awt.datatransfer StringSelection]
-           [java.text SimpleDateFormat]))
+  (:import [java.text SimpleDateFormat]))
 
 (defn- get-log-directory
   []
@@ -67,9 +67,7 @@
 (defn- copy-to-clipboard
   "Copy text to system clipboard."
   [text]
-  (let [selection (StringSelection. text)
-        clipboard (.getSystemClipboard (java.awt.Toolkit/getDefaultToolkit))]
-    (.setContents clipboard selection selection)))
+  (clipboard/contents! text))
 
 (defn- format-log-content
   "Add visual separators between log entries"

@@ -17,8 +17,7 @@
             [potatoclient.ipc :as ipc]
             [malli.core :as m]
             [potatoclient.specs :as specs])
-  (:import [javax.swing JFrame]
-           [java.awt.event WindowAdapter]))
+  (:import [javax.swing JFrame]))
 
 ;; Additional schemas not in specs
 (def display-name :string)
@@ -49,7 +48,7 @@
   (seesaw/invoke-later
    (let [state (preserve-window-state frame)]
      (seesaw/config! frame :on-close :nothing)
-     (.dispose ^javax.swing.JFrame frame)
+     (seesaw/dispose! frame)
      (let [new-frame (frame-cons state)]
        (seesaw/show! new-frame)))))
 
@@ -110,12 +109,11 @@
                   (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
                   (catch Exception _ "dev"))
         build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")]
-    (javax.swing.JOptionPane/showMessageDialog
-     parent
-     (str (i18n/tr :about-text) "\n\n"
-          (i18n/tr :app-version) ": " version " [" build-type "]")
-     (i18n/tr :about-title)
-     javax.swing.JOptionPane/INFORMATION_MESSAGE)))
+    (seesaw/alert parent
+                  (str (i18n/tr :about-text) "\n\n"
+                       (i18n/tr :app-version) ": " version " [" build-type "]")
+                  :title (i18n/tr :about-title)
+                  :type :info)))
 
 (defn- open-logs-viewer
   "Open the log viewer window."
@@ -203,21 +201,21 @@
 (defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
   [frame]
-  (.addWindowListener ^javax.swing.JFrame frame
-                      (proxy [WindowAdapter] []
-                        (windowClosing [_]
-                          (logging/log-info "Shutting down PotatoClient...")
-                          (try
-                            ;; Save current config state
-                            (let [current-config {:theme (theme/get-current-theme)
-                                                  :domain (config/get-domain)
-                                                  :locale (state/get-locale)}]
-                              (config/save-config! current-config))
-                            (process/cleanup-all-processes)
-                            (logging/shutdown!)
-                            (catch Exception e
-                              (logging/log-error (str "Error during shutdown: " (.getMessage e)))))
-                          (System/exit 0)))))
+  (seesaw/listen frame
+                 :window-closing 
+                 (fn [_]
+                   (logging/log-info "Shutting down PotatoClient...")
+                   (try
+                     ;; Save current config state
+                     (let [current-config {:theme (theme/get-current-theme)
+                                           :domain (config/get-domain)
+                                           :locale (state/get-locale)}]
+                       (config/save-config! current-config))
+                     (process/cleanup-all-processes)
+                     (logging/shutdown!)
+                     (catch Exception e
+                       (logging/log-error (str "Error during shutdown: " (.getMessage e)))))
+                   (System/exit 0))))
 
 (defn- ensure-on-edt
   "Ensure a function runs on the Event Dispatch Thread."
