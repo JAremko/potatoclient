@@ -3,23 +3,17 @@
   
   Provides the main control interface for connecting/disconnecting
   video streams and managing application settings."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [potatoclient.state :as state]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
-            [potatoclient.theme :as theme]
-            [potatoclient.config :as config]
-            [potatoclient.specs :as specs]
             [potatoclient.ipc :as ipc]
+            [potatoclient.state :as state]
+            [potatoclient.theme :as theme]
             [seesaw.core :as seesaw]
-            [seesaw.action :as action]
-            [seesaw.border :as border]
-            [seesaw.mig :as mig]
-            [seesaw.bind :as bind]
-            [malli.core :as m]))
+            [seesaw.mig :as mig])
+  (:import (javax.swing JPanel)))
 
 ;; UI styling constants
 (def ^:private panel-border-width 10)
-(def ^:private section-gap 15)
 (def ^:private header-font {:name "Arial" :style :bold :size 16})
 (def ^:private label-font {:name "Arial" :size 12})
 (def ^:private status-font {:name "Arial" :style :italic :size 11})
@@ -28,7 +22,7 @@
   "Create a status panel for a single stream."
   [stream-key]
   [:potatoclient.specs/stream-key => [:fn {:error/message "must be a Swing panel"}
-                                      #(instance? javax.swing.JPanel %)]]
+                                      #(instance? JPanel %)]]
   (let [stream-name (case stream-key
                       :heat (i18n/tr :stream-thermal)
                       :day (i18n/tr :stream-day))
@@ -43,7 +37,7 @@
     ;; Update status when stream state changes
     (add-watch state/app-state
                (keyword (str "control-panel-" (name stream-key)))
-               (fn [_ _ old-state new-state]
+               (fn [_ _ _ new-state]
                  (let [stream (get new-state stream-key)]
                    (seesaw/invoke-later
                      (if stream
@@ -72,7 +66,7 @@
   "Create panel showing current connection information."
   []
   [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? javax.swing.JPanel %)]]
+       #(instance? JPanel %)]]
   (let [domain-label (seesaw/label :id :domain-info
                                    :text ""
                                    :font label-font)
@@ -101,7 +95,7 @@
   "Create panel with stream control buttons."
   []
   [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? javax.swing.JPanel %)]]
+       #(instance? JPanel %)]]
   (let [heat-toggle (seesaw/toggle :id :heat-toggle
                                    :text (i18n/tr :stream-thermal)
                                    :icon (theme/key->icon :heat))
@@ -117,7 +111,7 @@
         ;; Wire up actions
         setup-toggle! (fn [toggle stream-key endpoint]
                         (seesaw/listen toggle :action
-                                       (fn [e]
+                                       (fn [_]
                                          (if (seesaw/config toggle :selected?)
                                            (ipc/start-stream stream-key endpoint)
                                            (ipc/stop-stream stream-key))))
@@ -147,7 +141,7 @@
   "Create panel showing stream statistics."
   []
   [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? javax.swing.JPanel %)]]
+       #(instance? JPanel %)]]
   (let [stats-label (seesaw/text :id :stats-info
                                  :text (i18n/tr :no-statistics)
                                  :font status-font
@@ -169,7 +163,7 @@
   video streams and application settings."
   []
   [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? javax.swing.JPanel %)]]
+       #(instance? JPanel %)]]
   (let [header (seesaw/label :text (i18n/tr :control-panel-title)
                              :font header-font
                              :halign :center)

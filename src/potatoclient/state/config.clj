@@ -1,10 +1,9 @@
 (ns potatoclient.state.config
   "Runtime configuration state management."
-  (:require [potatoclient.config :as config]
-            [malli.core :as m]
-            [potatoclient.specs :as specs]
-            [clojure.string]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+  (:require [clojure.string]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+            [potatoclient.config :as config])
+  (:import (java.util Locale)))
 
 ;; Runtime configuration state
 (defonce ^:private app-config
@@ -25,8 +24,8 @@
   (let [locale-map {:english ["en" "US"]
                     :ukrainian ["uk" "UA"]}
         [lang country] (get locale-map locale ["en" "US"])]
-    (java.util.Locale/setDefault
-      (java.util.Locale. ^String lang ^String country))))
+    (Locale/setDefault
+      (Locale. ^String lang ^String country))))
 
 (>defn get-domain
   "Get the current domain configuration from persistent config."

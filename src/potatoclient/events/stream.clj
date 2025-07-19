@@ -105,7 +105,7 @@
 
       :mouse-wheel
       (str "Wheel " (format-wheel-direction wheelRotation) " "
-           (Math/abs wheelRotation) " @ " coords)
+           (^[double] Math/abs wheelRotation) " @ " coords)
 
       ;; Unknown type
       (str type " @ " coords))))
@@ -169,9 +169,3 @@
                                :message (format-window-event event)
                                :data event})
     nil))
-
-(>defn stream-connected?
-  "Check if a stream is currently connected."
-  [stream-key]
-  [:potatoclient.specs/stream-key => boolean?]
-  (some? (state/get-stream stream-key)))

@@ -1,17 +1,18 @@
 (ns potatoclient.ui.startup-dialog
   "Startup dialog for server connection with theme and localization support."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [seesaw.core :as seesaw]
-            [seesaw.action :as action]
-            [seesaw.mig :as mig]
-            [seesaw.border :as border]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [malli.core :as m]
-            [potatoclient.i18n :as i18n]
-            [potatoclient.theme :as theme]
             [potatoclient.config :as config]
-            [potatoclient.state :as state]
+            [potatoclient.i18n :as i18n]
+            [potatoclient.logging :as logging]
             [potatoclient.specs :as specs]
-            [potatoclient.logging :as logging]))
+            [potatoclient.state :as state]
+            [potatoclient.theme :as theme]
+            [seesaw.action :as action]
+            [seesaw.border :as border]
+            [seesaw.core :as seesaw]
+            [seesaw.mig :as mig])
+  (:import (javax.swing JFrame JPanel)))
 
 (>defn- extract-domain
   "Extract domain/IP from various URL formats.
@@ -52,7 +53,7 @@
   "Reload the dialog with new theme/locale."
   [dialog callback]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    ifn? => nil?]
   (seesaw/dispose! dialog)
   ;; Call the callback with :reload result
@@ -63,7 +64,7 @@
   [lang-key display-name dialog callback]
   [:potatoclient.specs/locale string?
    [:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    ifn? => any?]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
@@ -72,7 +73,7 @@
     (action/action
       :name (str display-name "    ")
       :icon flag-icon
-      :handler (fn [e]
+      :handler (fn [_]
                  (when-not (= (state/get-locale) lang-key)
                    (state/set-locale! lang-key)
                    (config/update-config! :locale lang-key)
@@ -83,14 +84,14 @@
   [theme-key dialog callback]
   [:potatoclient.specs/theme-key
    [:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    ifn? => any?]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
         theme-name (i18n/tr theme-i18n-key)]
     (action/action
       :name (str theme-name "    ")
       :icon (theme/key->icon theme-key)
-      :handler (fn [e]
+      :handler (fn [_]
                  (when-not (= (theme/get-current-theme) theme-key)
                    (when (theme/set-theme! theme-key)
                      (config/save-theme! theme-key)
@@ -100,7 +101,7 @@
   "Create menu bar for startup dialog."
   [dialog callback]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    ifn? => any?]
   (seesaw/menubar
     :items [(seesaw/menu
@@ -118,7 +119,7 @@
   "Create the main content panel for the startup dialog."
   [saved-url]
   [[:maybe string?] => [:fn {:error/message "must be a Swing panel"}
-                        #(instance? javax.swing.JPanel %)]]
+                        #(instance? JPanel %)]]
   (let [url-label (seesaw/label :text (i18n/tr :startup-server-url)
                                 :font {:size 14})
         ;; Get URL history for combobox
@@ -149,7 +150,7 @@
   "Show the startup dialog and call the callback with :connect, :cancel, or :reload."
   [parent callback]
   [[:maybe [:fn {:error/message "must be a JFrame"}
-            #(instance? javax.swing.JFrame %)]]
+            #(instance? JFrame %)]]
    ifn? => nil?]
   (let [saved-url (config/get-most-recent-url)
         domain (config/get-domain) ;; This extracts domain from URL
@@ -160,7 +161,7 @@
         ;; Create button actions that can reference the dialog
         connect-action (action/action
                          :name (i18n/tr :startup-button-connect)
-                         :handler (fn [e]
+                         :handler (fn [_]
                                     (let [text (str (seesaw/value url-combobox))
                                           extracted (extract-domain text)]
                                       (if (validate-domain extracted)
@@ -182,7 +183,7 @@
                                                       :type :error)))))
         cancel-action (action/action
                         :name (i18n/tr :startup-button-cancel)
-                        :handler (fn [e]
+                        :handler (fn [_]
                                    (seesaw/dispose! @dialog)
                                    (callback :cancel)))
         ;; Create buttons with actions
@@ -220,7 +221,7 @@
 
     ;; Handle window closing
     (seesaw/listen @dialog :window-closing
-                   (fn [e]
+                   (fn [_]
                      (seesaw/dispose! @dialog)
                      (callback :cancel)))
 

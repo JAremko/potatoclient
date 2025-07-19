@@ -1,8 +1,6 @@
 (ns potatoclient.state.streams
   "Stream process state management."
-  (:require [malli.core :as m]
-            [potatoclient.specs :as specs]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]))
 
 ;; Stream process references
 (defonce ^:private streams-state

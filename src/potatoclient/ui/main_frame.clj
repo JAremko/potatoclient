@@ -3,39 +3,29 @@
   
   Provides a clean-slate constructor for the main window that ensures
   proper initialization of all UI elements including theme-aware icons."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [seesaw.core :as seesaw]
-            [seesaw.action :as action]
-            [potatoclient.state :as state]
-            [potatoclient.process :as process]
-            [potatoclient.ui.control-panel :as control-panel]
-            [potatoclient.ui.log-viewer :as log-viewer]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
-            [potatoclient.theme :as theme]
-            [potatoclient.runtime :as runtime]
-            [potatoclient.logging :as logging]
             [potatoclient.ipc :as ipc]
-            [malli.core :as m]
-            [potatoclient.specs :as specs])
-  (:import [javax.swing Box SwingUtilities]
-           [java.awt Rectangle]))
+            [potatoclient.logging :as logging]
+            [potatoclient.process :as process]
+            [potatoclient.runtime :as runtime]
+            [potatoclient.state :as state]
+            [potatoclient.theme :as theme]
+            [potatoclient.ui.control-panel :as control-panel]
+            [potatoclient.ui.log-viewer :as log-viewer]
+            [seesaw.action :as action]
+            [seesaw.core :as seesaw])
+  (:import (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
-(def display-name :string)
 (def version :string)
-(def build-type :string)
-(def frame-params
-  [:map
-   [:version version]
-   [:build-type build-type]
-   [:window-state {:optional true} specs/window-state]])
 
 (>defn preserve-window-state
   "Extract window state for restoration."
   [frame]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)] => :potatoclient.specs/window-state]
+    #(instance? JFrame %)] => :potatoclient.specs/window-state]
   {:bounds (.getBounds frame)
    :extended-state (.getExtendedState frame)})
 
@@ -43,10 +33,10 @@
   "Restore window state to a frame."
   [frame state]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    :potatoclient.specs/window-state
    => [:fn {:error/message "must be a JFrame"}
-       #(instance? javax.swing.JFrame %)]]
+       #(instance? JFrame %)]]
   (doto frame
     (.setBounds (:bounds state))
     (.setExtendedState (:extended-state state))))
@@ -55,7 +45,7 @@
   "Reload the frame following the ArcherBC2 pattern."
   [frame frame-cons]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    ifn? => nil?]
   (seesaw/invoke-later
     (let [state (preserve-window-state frame)]
@@ -122,7 +112,7 @@
   "Show the About dialog."
   [parent]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)] => nil?]
+    #(instance? JFrame %)] => nil?]
   (let [version (try
                   (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
                   (catch Exception _ "dev"))
@@ -143,7 +133,7 @@
   "Create the Help menu."
   [parent]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)] => any?]
+    #(instance? JFrame %)] => any?]
   (let [menu-items [(action/action
                       :name (i18n/tr :menu-help-about)
                       :icon (theme/key->icon :tab-icon-description)
@@ -175,7 +165,7 @@
                         :icon (theme/key->icon stream-key)
                         :selected? @is-connected
                         :tip tooltip
-                        :handler (fn [e]
+                        :handler (fn [_]
                                    (let [current-state @is-connected]
                                      (if current-state
                                        (ipc/stop-stream stream-key)
@@ -199,7 +189,7 @@
   "Create the application menu bar."
   [reload-fn parent]
   [ifn? [:fn {:error/message "must be a JFrame"}
-         #(instance? javax.swing.JFrame %)] => any?]
+         #(instance? JFrame %)] => any?]
   (let [heat-button (doto (create-stream-toggle-button :heat)
                       (seesaw/config! :text ""))
         day-button (doto (create-stream-toggle-button :day)
@@ -219,7 +209,7 @@
   "Create the main content panel."
   []
   [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? javax.swing.JPanel %)]]
+       #(instance? JPanel %)]]
   ;; Since we removed the log view, just show the control panel
   (control-panel/create))
 
@@ -227,7 +217,7 @@
   "Add window close handler for proper cleanup."
   [frame]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)] => nil?]
+    #(instance? JFrame %)] => nil?]
   (seesaw/listen frame
                  :window-closing
                  (fn [_]
@@ -245,24 +235,6 @@
                    (System/exit 0)))
   nil)
 
-(>defn- ensure-on-edt
-  "Ensure a function runs on the Event Dispatch Thread."
-  [f]
-  [ifn? => ifn?]
-  (fn [& args]
-    (if (SwingUtilities/isEventDispatchThread)
-      (apply f args)
-      (seesaw/invoke-now (apply f args)))))
-
-(>defn- ensure-on-edt-later
-  "Ensure a function runs on the Event Dispatch Thread using invoke-later."
-  [f]
-  [ifn? => ifn?]
-  (fn [& args]
-    (if (SwingUtilities/isEventDispatchThread)
-      (apply f args)
-      (seesaw/invoke-later (apply f args)))))
-
 (>defn create-main-frame
   "Create a new main application frame with clean state.
   
@@ -273,7 +245,7 @@
   IMPORTANT: This should be called on the Event Dispatch Thread."
   [params]
   [map? => [:fn {:error/message "must be a JFrame"}
-            #(instance? javax.swing.JFrame %)]]
+            #(instance? JFrame %)]]
   (let [{:keys [version build-type window-state]} params
         ;; Preload icons before creating UI components
         _ (theme/preload-theme-icons!)

@@ -36,7 +36,7 @@
   "Find functions using raw defn/defn- instead of >defn/>defn-."
   [lines]
   [[:sequential string?] => [:sequential string?]]
-  (for [[idx line] (map-indexed vector lines)
+  (for [[_ line] (map-indexed vector lines)
         :let [trimmed (str/trim line)]
         :when (and (or (str/starts-with? trimmed "(defn ")
                        (str/starts-with? trimmed "(defn-"))
@@ -99,17 +99,3 @@
                 acc))
             {}
             results)))
-
-(>defn generate-report
-  "Generate a report of functions not using Guardrails."
-  []
-  [=> string?]
-  (let [unspecced (find-unspecced-functions)
-        total-unspecced (reduce + (map count (vals unspecced)))]
-    (str "# Functions Not Using Guardrails\n\n"
-         "Total functions without Guardrails: " total-unspecced "\n\n"
-         (str/join "\n"
-                   (for [[ns-sym funcs] (sort-by key unspecced)]
-                     (str "## " ns-sym " (" (count funcs) " functions)\n"
-                          (str/join "\n" (map #(str "- " %) (sort funcs)))
-                          "\n"))))))

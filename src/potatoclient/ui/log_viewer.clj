@@ -6,27 +6,25 @@
   - listen for event handling
   - config! for dynamic component updates
   - Built-in Seesaw functions instead of Java interop where possible"
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [seesaw.core :as seesaw]
-            [seesaw.table :as table]
-            [seesaw.clipboard :as clipboard]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io]
             [clojure.string :as str]
-            [potatoclient.theme :as theme]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
-            [potatoclient.config :as config]
-            [potatoclient.runtime :as runtime])
-  (:import [java.text SimpleDateFormat]
-           [java.awt Dimension]
-           [java.awt Frame]
-           [java.awt.event KeyEvent]
-           [javax.swing Timer]))
+            [potatoclient.theme :as theme]
+            [seesaw.clipboard :as clipboard]
+            [seesaw.core :as seesaw]
+            [seesaw.table :as table])
+  (:import (java.awt Frame)
+           (java.awt.event ActionListener KeyEvent)
+           (java.io File)
+           (java.text SimpleDateFormat)
+           (javax.swing JFrame JTable Timer)))
 
 (>defn- get-log-directory
   []
   [=> [:fn {:error/message "must be a File"}
-       #(instance? java.io.File %)]]
+       #(instance? File %)]]
   (logging/get-logs-directory))
 
 (>defn- parse-log-filename
@@ -88,14 +86,14 @@
   "Dispose frame without minimize animation when maximized."
   [frame]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)] => nil?]
+    #(instance? JFrame %)] => nil?]
   (let [frame-title (.getTitle frame)]
           ;; Always minimize to taskbar first to avoid any unmaximize animation
     (.setExtendedState frame Frame/ICONIFIED)
           ;; Then dispose in next EDT cycle using a timer
     (let [timer (Timer.
                   100  ; 100ms delay
-                  (reify java.awt.event.ActionListener
+                  (reify ActionListener
                     (actionPerformed [_ _]
                            ;; Ensure disposal happens on EDT
                       (seesaw/invoke-now
@@ -128,11 +126,11 @@
   "Create a viewer window for displaying log file contents."
   [file parent-frame]
   [[:fn {:error/message "must be a File"}
-    #(instance? java.io.File %)]
+    #(instance? File %)]
    [:fn {:error/message "must be a JFrame"}
-    #(instance? javax.swing.JFrame %)]
+    #(instance? JFrame %)]
    => [:fn {:error/message "must be a JFrame"}
-       #(instance? javax.swing.JFrame %)]]
+       #(instance? JFrame %)]]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)
         text-area (seesaw/text
@@ -157,7 +155,7 @@
         close-action (seesaw/action
                        :name (i18n/tr :log-viewer-close)
                        :icon (theme/key->icon :file-excel)
-                       :handler (fn [e]
+                       :handler (fn [_]
                                   (dispose-frame! frame)))]
     ;; Build content using idiomatic border-panel
     (seesaw/config! frame :content
@@ -173,7 +171,7 @@
 
     ;; Handle window close (X button)
     (seesaw/listen frame :window-closing
-                   (fn [e]
+                   (fn [_]
                      (dispose-frame! frame)))
 
     ;; Set location relative to parent
@@ -188,7 +186,7 @@
   "Auto-size table columns based on content using Seesaw's table utilities."
   [table]
   [[:fn {:error/message "must be a JTable"}
-    #(instance? javax.swing.JTable %)] => nil?]
+    #(instance? JTable %)] => nil?]
   ;; Use Seesaw's table utilities where possible
   (let [col-model (.getColumnModel table)
         row-count (table/row-count table)]
@@ -217,7 +215,7 @@
   "Create the main log file listing table."
   []
   [=> [:fn {:error/message "must be a JTable"}
-       #(instance? javax.swing.JTable %)]]
+       #(instance? JTable %)]]
   (seesaw/table
     :id :log-table
     :model (table/table-model
@@ -232,7 +230,7 @@
   "Update the log table with current log files."
   [table]
   [[:fn {:error/message "must be a JTable"}
-    #(instance? javax.swing.JTable %)] => nil?]
+    #(instance? JTable %)] => nil?]
   (let [log-files (get-log-files)
         ;; Take only the most recent 20 files
         recent-files (take 20 log-files)
@@ -251,7 +249,7 @@
   "Create the main log viewer window."
   []
   [=> [:fn {:error/message "must be a JFrame"}
-       #(instance? javax.swing.JFrame %)]]
+       #(instance? JFrame %)]]
   (let [table (create-log-table)
         frame (seesaw/frame
                 :title (i18n/tr :log-viewer-title)
@@ -278,7 +276,7 @@
         close-action (seesaw/action
                        :name (i18n/tr :log-viewer-close)
                        :icon (theme/key->icon :file-excel)
-                       :handler (fn [e]
+                       :handler (fn [_]
                                   (dispose-frame! frame)))]
 
     ;; Wire up event handlers using idiomatic listen
@@ -318,7 +316,7 @@
 
     ;; Handle window close (X button)
     (seesaw/listen frame :window-closing
-                   (fn [e]
+                   (fn [_]
                      (dispose-frame! frame)))
 
     frame))

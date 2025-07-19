@@ -1,6 +1,6 @@
 (ns potatoclient.state.ui
   "UI component state management."
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]))
 
 ;; UI component references for updates
 (defonce ^:private ui-refs
