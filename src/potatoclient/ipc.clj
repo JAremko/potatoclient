@@ -9,7 +9,9 @@
             [potatoclient.events.stream :as stream-events]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
-            [potatoclient.state :as state]))
+            [potatoclient.state :as state])
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)
+           (java.time Duration)))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -50,7 +52,7 @@
   "Process messages from a stream's output channel."
   [stream-key stream]
   [:potatoclient.specs/stream-key :potatoclient.specs/stream-process-map => [:fn {:error/message "must be a core.async channel"}
-                                                                             #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+                                                                             #(instance? ManyToManyChannel %)]]
   (go-loop []
     (when-let [msg (<! (:output-chan stream))]
       (dispatch-message stream-key msg)
@@ -130,34 +132,3 @@
                   :error (.getMessage e)}
            :msg "Error stopping stream"})))
     nil))
-
-(>defn restart-stream
-  "Restart a stream by stopping and starting it again."
-  [stream-key endpoint]
-  [:potatoclient.specs/stream-key string? => :potatoclient.specs/future-instance]
-  (future
-    (when (state/get-stream stream-key)
-      (stop-stream stream-key)
-      (Thread/sleep (* 2 stream-init-delay-ms)))
-    (start-stream stream-key endpoint)))
-
-(>defn send-command-to-stream
-  "Send a command to a specific stream."
-  [stream-key command]
-  [:potatoclient.specs/stream-key :potatoclient.specs/process-command => boolean?]
-  (if-let [stream (state/get-stream stream-key)]
-    (process/send-command stream command)
-    (do
-      (logging/log-warn
-        {:id ::stream-not-connected
-         :data {:stream stream-key}
-         :msg "Cannot send command - stream not connected"})
-      false)))
-
-(>defn broadcast-command
-  "Send a command to all active streams."
-  [command]
-  [:potatoclient.specs/process-command => nil?]
-  (doseq [[stream-key stream] (state/all-streams)
-          :when stream]
-    (send-command-to-stream stream-key command)))

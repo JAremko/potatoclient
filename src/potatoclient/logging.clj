@@ -5,7 +5,7 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.runtime :as runtime]
             [taoensso.telemere :as tel])
-  (:import (java.time LocalDateTime)
+  (:import (java.time LocalDateTime ZoneId)
            (java.time.format DateTimeFormatter)))
 
 (>defn- get-version
@@ -77,7 +77,7 @@
        (tel/format-signal-fn
          {:format-inst-fn
           (fn [inst]
-            (.format formatter (LocalDateTime/ofInstant inst (java.time.ZoneId/systemDefault))))})
+            (.format formatter (LocalDateTime/ofInstant inst (ZoneId/systemDefault))))})
        :stream (io/writer log-file :append true)})))
 
 (>defn- cleanup-old-logs!

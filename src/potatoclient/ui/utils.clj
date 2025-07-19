@@ -89,7 +89,7 @@
         (future-cancel @timeout))
       (reset! timeout
               (future
-                (^[Duration] Thread/sleep wait-ms)
+                (Thread/sleep wait-ms)
                 (apply f args))))))
 
 (>defn throttle

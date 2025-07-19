@@ -5,7 +5,13 @@
             [malli.registry :as mr]
             [malli.util :as mu]
             [clojure.core.async.impl.channels]
-            [clojure.data.json]))
+            [clojure.data.json])
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)
+           (clojure.lang Atom)
+           (java.awt Color Rectangle)
+           (java.io BufferedReader BufferedWriter File)
+           (javax.swing AbstractButton Action Icon JFrame JMenu JMenuBar JPanel JScrollPane JTextField JToggleButton)
+           (javax.swing.table DefaultTableCellRenderer)))
 
 ;; -----------------------------------------------------------------------------
 ;; Core Domain Schemas
@@ -74,7 +80,7 @@
 
 (def process
   "Java Process instance"
-  [:fn #(instance? java.lang.Process %)])
+  [:fn #(instance? Process %)])
 
 (def process-state
   "Process lifecycle state"
@@ -84,14 +90,14 @@
   "Complete stream process structure"
   [:map
    [:process process]
-   [:writer [:fn #(instance? java.io.BufferedWriter %)]]
-   [:stdout-reader [:fn #(instance? java.io.BufferedReader %)]]
-   [:stderr-reader [:fn #(instance? java.io.BufferedReader %)]]
+   [:writer [:fn #(instance? BufferedWriter %)]]
+   [:stdout-reader [:fn #(instance? BufferedReader %)]]
+   [:stderr-reader [:fn #(instance? BufferedReader %)]]
    [:output-chan [:fn {:error/message "must be a core.async channel"}
-                  #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+                  #(instance? ManyToManyChannel %)]]
    [:stream-id string?]
    [:state [:fn {:error/message "must be an atom containing process state"}
-            #(and (instance? clojure.lang.Atom %)
+            #(and (instance? Atom %)
                   (contains? #{:starting :running :stopping :stopped :failed} @%))]]])
 
 ;; -----------------------------------------------------------------------------
@@ -244,19 +250,19 @@
 
 (def file
   "Java File instance"
-  [:fn #(instance? java.io.File %)])
+  [:fn #(instance? File %)])
 
 (def color
   "Java AWT Color instance"
-  [:fn #(instance? java.awt.Color %)])
+  [:fn #(instance? Color %)])
 
 (def rectangle
   "Java AWT Rectangle instance"
-  [:fn #(instance? java.awt.Rectangle %)])
+  [:fn #(instance? Rectangle %)])
 
 (def icon
   "Swing Icon instance"
-  [:maybe [:fn #(instance? javax.swing.Icon %)]])
+  [:maybe [:fn #(instance? Icon %)]])
 
 (def exception
   "Java Exception instance"
@@ -276,43 +282,43 @@
 
 (def jframe
   "Swing JFrame instance"
-  [:fn #(instance? javax.swing.JFrame %)])
+  [:fn #(instance? JFrame %)])
 
 (def jpanel
   "Swing JPanel instance"
-  [:fn #(instance? javax.swing.JPanel %)])
+  [:fn #(instance? JPanel %)])
 
 (def jbutton
   "Swing button instance"
-  [:fn #(instance? javax.swing.AbstractButton %)])
+  [:fn #(instance? AbstractButton %)])
 
 (def jtext-field
   "Swing JTextField instance"
-  [:fn #(instance? javax.swing.JTextField %)])
+  [:fn #(instance? JTextField %)])
 
 (def jscroll-pane
   "Swing JScrollPane instance"
-  [:fn #(instance? javax.swing.JScrollPane %)])
+  [:fn #(instance? JScrollPane %)])
 
 (def jmenu-bar
   "Swing JMenuBar instance"
-  [:fn #(instance? javax.swing.JMenuBar %)])
+  [:fn #(instance? JMenuBar %)])
 
 (def jmenu
   "Swing JMenu instance"
-  [:fn #(instance? javax.swing.JMenu %)])
+  [:fn #(instance? JMenu %)])
 
 (def action
   "Swing Action instance"
-  [:fn #(instance? javax.swing.Action %)])
+  [:fn #(instance? Action %)])
 
 (def jtoggle-button
   "Swing JToggleButton instance"
-  [:fn #(instance? javax.swing.JToggleButton %)])
+  [:fn #(instance? JToggleButton %)])
 
 (def table-cell-renderer
   "Swing table cell renderer"
-  [:fn #(instance? javax.swing.table.DefaultTableCellRenderer %)])
+  [:fn #(instance? DefaultTableCellRenderer %)])
 
 ;; -----------------------------------------------------------------------------
 ;; UI State Schemas

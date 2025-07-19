@@ -59,17 +59,6 @@
     (set-theme! initial-theme))
   nil)
 
-(>defn get-theme-name
-  "Get human-readable name for a theme key"
-  [theme-key]
-  [:potatoclient.specs/theme-key => string?]
-  (case theme-key
-    :sol-light "Sol Light"
-    :sol-dark "Sol Dark"
-    :dark "Dark"
-    :hi-dark "Hi-Dark"
-    "Unknown"))
-
 (>defn get-theme-i18n-key
   "Get the i18n key for a theme"
   [theme-key]
@@ -140,8 +129,7 @@
     (println (log-theme "INFO" (format "Preloading icons for theme: %s" (name (get-current-theme))))))
   (let [icons-to-preload [:actions-group-menu :actions-group-theme :icon-languages
                           :file-export :sol-dark :sol-light :dark :hi-dark
-                          :day :heat]
-        theme-name (name (get-current-theme))]
+                          :day :heat]]
     (doseq [icon-key icons-to-preload]
       (key->icon icon-key))
     (when (is-development-mode?)

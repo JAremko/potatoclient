@@ -5,7 +5,8 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.logging :as logging]
             [potatoclient.state :as state]
-            [tongue.core :as tongue]))
+            [tongue.core :as tongue])
+  (:import (java.io PushbackReader)))
 
 ;; Atom to hold translations and translator instance
 (defonce translations-atom (atom {}))
@@ -19,7 +20,7 @@
     (let [resource-path (str "i18n/" (name locale) ".edn")
           resource (io/resource resource-path)]
       (when resource
-        (with-open [rdr (-> resource io/reader java.io.PushbackReader.)]
+        (with-open [rdr (-> resource io/reader PushbackReader.)]
           (edn/read rdr))))
     (catch Exception e
       (logging/log-error (str "Failed to load translation file for locale: " locale " Error: " (.getMessage e)))
@@ -75,21 +76,3 @@
     (load-translations!))
   ;; Set initial locale
   (state/set-locale! (state/get-locale)))
-
-(>defn get-current-locale
-  "Get the current locale"
-  []
-  [=> :potatoclient.specs/locale]
-  (state/get-locale))
-
-(>defn get-available-locales
-  "Get a list of available locales"
-  []
-  [=> [:sequential :potatoclient.specs/locale]]
-  [:english :ukrainian])
-
-(>defn set-locale!
-  "Set the current locale"
-  [locale]
-  [:potatoclient.specs/locale => nil?]
-  (state/set-locale! locale))

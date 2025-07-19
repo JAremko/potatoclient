@@ -9,7 +9,8 @@
             [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
-  (:import (java.time LocalDateTime)
+  (:import (java.io File)
+           (java.time LocalDateTime)
            (java.time.format DateTimeFormatter)))
 
 ;; -----------------------------------------------------------------------------
@@ -23,7 +24,7 @@
   (str (str/join (repeat level "#")) " " text))
 
 (>defn- md-code-block
-  "Create a markdown code block with optional language."
+  "Create a Markdown code block with optional language."
   ([code]
    [string? => string?]
    (md-code-block code nil))
@@ -32,29 +33,23 @@
    (str "```" (or lang "") "\n" code "\n```")))
 
 (>defn- md-list-item
-  "Create a markdown list item."
+  "Create a Markdown list item."
   [text & {:keys [indent] :or {indent 0}}]
   [string? (? (s/* any?)) => string?]
   (str (str/join (repeat indent "  ")) "- " text))
 
 (>defn- md-table-header
-  "Create a markdown table header row."
+  "Create a Markdown table header row."
   [headers]
   [[:sequential string?] => string?]
   (str "| " (str/join " | " headers) " |\n"
        "|" (str/join "|" (repeat (count headers) " --- ")) "|"))
 
 (>defn- md-table-row
-  "Create a markdown table row."
+  "Create a Markdown table row."
   [cells]
   [[:sequential string?] => string?]
   (str "| " (str/join " | " cells) " |"))
-
-(>defn- md-link
-  "Create a markdown link."
-  [text url]
-  [string? string? => string?]
-  (str "[" text "](" url ")"))
 
 (>defn- md-bold
   "Create bold text."
@@ -91,13 +86,13 @@
 (>defn- get-report-dir
   "Get the directory for storing reports."
   []
-  [=> [:fn #(instance? java.io.File %)]]
+  [=> [:fn #(instance? File %)]]
   (io/file "reports"))
 
 (>defn- ensure-report-dir!
   "Ensure the report directory exists."
   []
-  [=> [:fn #(instance? java.io.File %)]]
+  [=> [:fn #(instance? File %)]]
   (let [dir (get-report-dir)]
     (when-not (.exists dir)
       (.mkdirs dir))
@@ -179,15 +174,3 @@
        (let [path (write-report! filename content)]
          (println (str "Report generated: " path))
          path)))))
-
-(>defn generate-all-reports!
-  "Generate all available reports.
-   Returns a map of report type to file path."
-  []
-  [=> [:map-of keyword? [:maybe string?]]]
-  (if (runtime/release-build?)
-    (do
-      (println "Reports are not available in release builds")
-      {})
-    {:unspecced-functions (generate-unspecced-functions-report!)}))
-

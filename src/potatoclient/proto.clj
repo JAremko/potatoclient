@@ -19,9 +19,6 @@
    :certificate "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED"
    :lira "JON_GUI_DATA_CLIENT_TYPE_LIRA"})
 
-;; Command payload types
-(def command-types #{:ping :noop :frozen})
-
 ;; Client type values schema
 (def client-type-values
   [:enum "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV"

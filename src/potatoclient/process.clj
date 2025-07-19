@@ -13,15 +13,12 @@
   (:import (clojure.core.async.impl.channels ManyToManyChannel)
            (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter)
            (java.lang Process ProcessBuilder)
-           (java.util Map)))
+           (java.time Duration)
+           (java.util List Map)))
 
 ;; Configuration constants
-(def ^:private read-timeout-ms 100)
 (def ^:private shutdown-grace-period-ms 50)
 (def ^:private channel-buffer-size 100)
-
-;; Process lifecycle states
-(def ^:private process-states #{:starting :running :stopping :stopped :failed})
 
 (>defn- get-java-executable
   "Find the Java executable, checking java.home first."
@@ -99,7 +96,7 @@
         cmd (vec (concat [java-exe "-cp" classpath]
                          jvm-args
                          [main-class stream-id url domain]))]
-    (doto (ProcessBuilder. cmd)
+    (doto (ProcessBuilder. ^List cmd)
       (-> .environment (.putAll ^Map (build-process-environment app-env))))))
 
 (>defn- parse-json-message
@@ -108,7 +105,7 @@
   [string? string? => map?]
   (try
     (json/read-str line :key-fn keyword)
-    (catch Exception e
+    (catch Exception _
       ;; Non-JSON stdout - wrap as log message
       {:type "log"
        :streamId stream-id
@@ -233,7 +230,7 @@
         (.newLine writer)
         (.flush writer))
       true
-      (catch Exception e
+      (catch Exception _
         false))
     false))
 
@@ -281,7 +278,7 @@
   ([streams-map]
    [[:map-of :potatoclient.specs/stream-key (? :potatoclient.specs/stream-process-map)] => nil?]
    ;; Original version that accepts a map
-   (doseq [[stream-key stream-data] streams-map]
+   (doseq [[_ stream-data] streams-map]
      (when (and (map? stream-data)
                 (:process stream-data))
        (when-let [stream-id (:stream-id stream-data)]
@@ -290,13 +287,3 @@
             :data {:stream-id stream-id}
             :msg "Stream stopped by main app shutdown"}))
        (stop-stream stream-data)))))
-
-(>defn process-alive?
-  "Check if a stream process is still alive."
-  [stream]
-  [:potatoclient.specs/stream-process-map => boolean?]
-  (and stream
-       (:process stream)
-       (let [^Process process (:process stream)]
-         (.isAlive process))
-       (= @(:state stream) :running)))
