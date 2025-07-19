@@ -358,85 +358,85 @@
 (def registry
   "Malli registry with all PotatoClient schemas"
   (merge
-   (m/default-schemas)
-   (mu/schemas)
-   {;; Core domain
-    ::theme-key theme-key
-    ::domain domain
-    ::locale locale
-    ::locale-code locale-code
-    ::stream-key stream-key
+    (m/default-schemas)
+    (mu/schemas)
+    {;; Core domain
+     ::theme-key theme-key
+     ::domain domain
+     ::locale locale
+     ::locale-code locale-code
+     ::stream-key stream-key
 
     ;; Configuration
-    ::config-key config-key
-    ::config config
-    ::url-history-entry url-history-entry
-    ::url-history url-history
+     ::config-key config-key
+     ::config config
+     ::url-history-entry url-history-entry
+     ::url-history url-history
 
     ;; State
-    ::stream-process stream-process
+     ::stream-process stream-process
 
     ;; Process
-    ::process process
-    ::process-state process-state
-    ::stream-process-map stream-process-map
-    ::process-command process-command
+     ::process process
+     ::process-state process-state
+     ::stream-process-map stream-process-map
+     ::process-command process-command
 
 ;; IPC
-    ::message-type message-type
-    ::message message
+     ::message-type message-type
+     ::message message
 
     ;; Protocol
-    ::protocol-version protocol-version
-    ::session-id session-id
-    ::important important
-    ::from-cv-subsystem from-cv-subsystem
-    ::client-type client-type
-    ::payload-type payload-type
-    ::payload payload
-    ::command command
+     ::protocol-version protocol-version
+     ::session-id session-id
+     ::important important
+     ::from-cv-subsystem from-cv-subsystem
+     ::client-type client-type
+     ::payload-type payload-type
+     ::payload payload
+     ::command command
 
     ;; UI Events
-    ::event-type event-type
-    ::x-coord x-coord
-    ::y-coord y-coord
-    ::ndc-x ndc-x
-    ::ndc-y ndc-y
-    ::mouse-button mouse-button
-    ::click-count click-count
-    ::wheel-rotation wheel-rotation
-    ::window-event window-event
-    ::navigation-event navigation-event
+     ::event-type event-type
+     ::x-coord x-coord
+     ::y-coord y-coord
+     ::ndc-x ndc-x
+     ::ndc-y ndc-y
+     ::mouse-button mouse-button
+     ::click-count click-count
+     ::wheel-rotation wheel-rotation
+     ::window-event window-event
+     ::navigation-event navigation-event
 
     ;; Java interop
-    ::file file
-    ::color color
-    ::rectangle rectangle
-    ::icon icon
-    ::exception exception
-    ::future-instance future-instance
+     ::file file
+     ::color color
+     ::rectangle rectangle
+     ::icon icon
+     ::exception exception
+     ::future-instance future-instance
 
     ;; UI Components
-    ::jframe jframe
-    ::jpanel jpanel
-    ::jbutton jbutton
-    ::jtext-field jtext-field
-    ::jscroll-pane jscroll-pane
-    ::jmenu-bar jmenu-bar
-    ::jmenu jmenu
-    ::action action
-    ::jtoggle-button jtoggle-button
-    ::table-cell-renderer table-cell-renderer
+     ::jframe jframe
+     ::jpanel jpanel
+     ::jbutton jbutton
+     ::jtext-field jtext-field
+     ::jscroll-pane jscroll-pane
+     ::jmenu-bar jmenu-bar
+     ::jmenu jmenu
+     ::action action
+     ::jtoggle-button jtoggle-button
+     ::table-cell-renderer table-cell-renderer
 
     ;; UI State
-    ::extended-state extended-state
-    ::window-state window-state
-    ::frame-params frame-params
+     ::extended-state extended-state
+     ::window-state window-state
+     ::frame-params frame-params
 
     ;; I18n
-    ::translation-key translation-key
-    ::translation-args translation-args
-    ::translations-map translations-map}))
+     ::translation-key translation-key
+     ::translation-args translation-args
+     ::translations-map translations-map}))
 
 ;; Set as default registry for this namespace
 (mr/set-default-registry! registry)

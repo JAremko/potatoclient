@@ -29,17 +29,17 @@
 
 ;; State inspection (useful for debugging/REPL)
 (>defn current-state
-       "Get a snapshot of all application state.
+  "Get a snapshot of all application state.
   Useful for debugging - not for normal application use."
-       []
-       [=> [:map
-            [:streams [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
-            [:config [:map
-                      [:locale :potatoclient.specs/locale]
-                      [:domain :potatoclient.specs/domain]]]]]
-       {:streams (streams/all-streams)
-        :config (config/get-config)
-        :ui-elements (ui/all-ui-elements)})
+  []
+  [=> [:map
+       [:streams [:map-of :potatoclient.specs/stream-key [:maybe :potatoclient.specs/stream-process-map]]]
+       [:config [:map
+                 [:locale :potatoclient.specs/locale]
+                 [:domain :potatoclient.specs/domain]]]]]
+  {:streams (streams/all-streams)
+   :config (config/get-config)
+   :ui-elements (ui/all-ui-elements)})
 
 ;; Legacy compatibility - these are still used in some places
 (def app-state streams/app-state)

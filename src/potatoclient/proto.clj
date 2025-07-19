@@ -45,7 +45,7 @@
 
 ;; Serialization functions
 (>defn serialize-cmd
-       "Serialize a Clojure command map to protobuf bytes.
+  "Serialize a Clojure command map to protobuf bytes.
   
   The command should have the structure:
   {:protocol-version 1
@@ -56,142 +56,142 @@
    :payload {:ping {}}}
    
   Returns the serialized bytes or throws an exception with details."
-       [cmd-map]
-       [:potatoclient.specs/command => bytes?]
-       (try
-         (-> (p/clj-map->proto-map proto-mapper JonSharedCmd$Root cmd-map)
-             (p/proto-map->bytes))
-         (catch Exception e
-           (throw (ex-info "Failed to serialize command"
-                           {:error (.getMessage e)
-                            :command cmd-map
-                            :cause e})))))
+  [cmd-map]
+  [:potatoclient.specs/command => bytes?]
+  (try
+    (-> (p/clj-map->proto-map proto-mapper JonSharedCmd$Root cmd-map)
+        (p/proto-map->bytes))
+    (catch Exception e
+      (throw (ex-info "Failed to serialize command"
+                      {:error (.getMessage e)
+                       :command cmd-map
+                       :cause e})))))
 
 (>defn deserialize-state
-       "Deserialize protobuf bytes to a Clojure state map.
+  "Deserialize protobuf bytes to a Clojure state map.
   
   Returns a map with kebab-case keys representing the current state.
   Throws an exception if deserialization fails."
-       [proto-bytes]
-       [bytes? => map?]
-       (try
-         (p/bytes->proto-map proto-mapper JonSharedData$JonGUIState proto-bytes)
-         (catch Exception e
-           (throw (ex-info "Failed to deserialize state"
-                           {:error (.getMessage e)
-                            :bytes-length (count proto-bytes)
-                            :cause e})))))
+  [proto-bytes]
+  [bytes? => map?]
+  (try
+    (p/bytes->proto-map proto-mapper JonSharedData$JonGUIState proto-bytes)
+    (catch Exception e
+      (throw (ex-info "Failed to deserialize state"
+                      {:error (.getMessage e)
+                       :bytes-length (count proto-bytes)
+                       :cause e})))))
 
 ;; Command factory functions
 (>defn- create-command
-        "Create a base command structure."
-        [session-id client-type-key & {:keys [important? from-cv?]
-                                       :or {important? false
-                                            from-cv? false}}]
-        [::specs/session-id ::specs/client-type-key (? (s/* any?)) => map?]
-        {:protocol-version 1
-         :session-id session-id
-         :important important?
-         :from-cv-subsystem from-cv?
-         :client-type (get client-types client-type-key)})
+  "Create a base command structure."
+  [session-id client-type-key & {:keys [important? from-cv?]
+                                 :or {important? false
+                                      from-cv? false}}]
+  [::specs/session-id ::specs/client-type-key (? (s/* any?)) => map?]
+  {:protocol-version 1
+   :session-id session-id
+   :important important?
+   :from-cv-subsystem from-cv?
+   :client-type (get client-types client-type-key)})
 
 (>defn cmd-ping
-       "Create a ping command for heartbeat/keepalive."
-       [session-id client-type-key]
-       [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-       (assoc (create-command session-id client-type-key)
-              :payload {:ping {}}))
+  "Create a ping command for heartbeat/keepalive."
+  [session-id client-type-key]
+  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
+  (assoc (create-command session-id client-type-key)
+         :payload {:ping {}}))
 
 (>defn cmd-noop
-       "Create a no-operation command."
-       [session-id client-type-key]
-       [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-       (assoc (create-command session-id client-type-key)
-              :payload {:noop {}}))
+  "Create a no-operation command."
+  [session-id client-type-key]
+  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
+  (assoc (create-command session-id client-type-key)
+         :payload {:noop {}}))
 
 (>defn cmd-frozen
-       "Create a frozen command (marks important state)."
-       [session-id client-type-key]
-       [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-       (assoc (create-command session-id client-type-key :important? true)
-              :payload {:frozen {}}))
+  "Create a frozen command (marks important state)."
+  [session-id client-type-key]
+  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
+  (assoc (create-command session-id client-type-key :important? true)
+         :payload {:frozen {}}))
 
 ;; State accessor functions with nil-safety
 (>defn get-system-info
-       "Extract system information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :system))
+  "Extract system information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :system))
 
 (>defn get-camera-day
-       "Extract day camera information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :camera-day))
+  "Extract day camera information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :camera-day))
 
 (>defn get-camera-heat
-       "Extract heat camera information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :camera-heat))
+  "Extract heat camera information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :camera-heat))
 
 (>defn get-gps-info
-       "Extract GPS information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :gps))
+  "Extract GPS information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :gps))
 
 (>defn get-compass-info
-       "Extract compass information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :compass))
+  "Extract compass information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :compass))
 
 (>defn get-lrf-info
-       "Extract laser range finder information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :lrf))
+  "Extract laser range finder information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :lrf))
 
 (>defn get-time-info
-       "Extract time information from state."
-       [state]
-       [map? => (? map?)]
-       (get state :time))
+  "Extract time information from state."
+  [state]
+  [map? => (? map?)]
+  (get state :time))
 
 ;; Higher-level state queries
 (>defn get-location
-       "Extract location data (GPS + compass) from state."
-       [state]
-       [map? => (? [:map
-                    [:latitude number?]
-                    [:longitude number?]
-                    [:altitude number?]
-                    [:heading {:optional true} number?]
-                    [:timestamp {:optional true} [:or string? inst?]]])]
-       (when-let [gps (get-gps-info state)]
-         {:latitude (:latitude gps)
-          :longitude (:longitude gps)
-          :altitude (:altitude gps)
-          :heading (get-in state [:compass :heading])
-          :timestamp (get-in state [:time :timestamp])}))
+  "Extract location data (GPS + compass) from state."
+  [state]
+  [map? => (? [:map
+               [:latitude number?]
+               [:longitude number?]
+               [:altitude number?]
+               [:heading {:optional true} number?]
+               [:timestamp {:optional true} [:or string? inst?]]])]
+  (when-let [gps (get-gps-info state)]
+    {:latitude (:latitude gps)
+     :longitude (:longitude gps)
+     :altitude (:altitude gps)
+     :heading (get-in state [:compass :heading])
+     :timestamp (get-in state [:time :timestamp])}))
 
 (>defn cameras-available?
-       "Check if camera data is available in state."
-       [state]
-       [map? => boolean?]
-       (or (some? (get-camera-day state))
-           (some? (get-camera-heat state))))
+  "Check if camera data is available in state."
+  [state]
+  [map? => boolean?]
+  (or (some? (get-camera-day state))
+      (some? (get-camera-heat state))))
 
 ;; Validation functions
 (>defn valid-command?
-       "Check if a command map is valid for serialization."
-       [cmd-map]
-       [map? => boolean?]
-       (m/validate command-schema cmd-map))
+  "Check if a command map is valid for serialization."
+  [cmd-map]
+  [map? => boolean?]
+  (m/validate command-schema cmd-map))
 
 (>defn explain-invalid-command
-       "Get explanation for why a command is invalid."
-       [cmd-map]
-       [map? => string?]
-       (str (m/explain command-schema cmd-map)))
+  "Get explanation for why a command is invalid."
+  [cmd-map]
+  [map? => string?]
+  (str (m/explain command-schema cmd-map)))

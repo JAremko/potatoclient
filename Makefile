@@ -22,7 +22,7 @@ help: ## Show this help message
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Development:"
-	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced|fmt|fmt-check):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Quick Start with MCP:"
 	@echo "  1. make mcp-server    # Start MCP server (keep terminal open)"
@@ -148,6 +148,26 @@ clean-cache: ## Clean Clojure compilation cache to ensure fresh code runs
 build-macos-dev: ## Build unsigned macOS .app bundle for development
 	@echo "Building macOS development version..."
 	./scripts/build-macos-dev.sh
+
+# Format code
+.PHONY: fmt
+fmt: ## Format all Clojure code using cljfmt
+	@echo "Formatting Clojure code..."
+	clojure -M:format fix
+	@echo "✓ Code formatting complete"
+
+# Check formatting
+.PHONY: fmt-check
+fmt-check: ## Check if code is properly formatted (exit 1 if not)
+	@echo "Checking code formatting..."
+	@if clojure -M:format check 2>&1 | grep -q "files formatted incorrectly"; then \
+		echo "❌ Code formatting issues found!"; \
+		echo "Run 'make fmt' to fix them."; \
+		clojure -M:format check; \
+		exit 1; \
+	else \
+		echo "✓ All files are properly formatted"; \
+	fi
 
 .PHONY: all
 all: clean build ## Clean and build everything

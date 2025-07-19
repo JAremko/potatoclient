@@ -1,0 +1,13 @@
+{:indentation? true
+ :remove-trailing-whitespace? true
+ :remove-surrounding-whitespace? true
+ :remove-consecutive-blank-lines? true
+ :insert-missing-whitespace? true
+ :function-arguments-indentation :cursive
+ :parallel? true
+ :paths ["src" "test" "dev"]
+ :extra-indents {>defn [[:inner 0]]
+                 >defn- [[:inner 0]]
+                 >def [[:inner 0]]
+                 => [[:inner 0]]}
+ :split-keypairs-over-multiple-lines? false}

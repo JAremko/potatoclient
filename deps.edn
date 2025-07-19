@@ -89,4 +89,7 @@
                   :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
                                                                      :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}}
                   :main-opts ["-m" "cognitect.test-runner"]
-                  :exec-fn cognitect.test-runner.api/test}}}
+                  :exec-fn cognitect.test-runner.api/test}
+
+           :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
+                    :main-opts ["-m" "cljfmt.main"]}}}
