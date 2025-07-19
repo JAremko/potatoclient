@@ -20,7 +20,8 @@
   (:import [java.text SimpleDateFormat]
            [java.awt Dimension]
            [java.awt Frame]
-           [java.awt.event KeyEvent]))
+           [java.awt.event KeyEvent]
+           [javax.swing Timer]))
 
 (>defn- get-log-directory
         []
@@ -80,7 +81,7 @@
 (>defn- copy-to-clipboard
         "Copy text to system clipboard."
         [text]
-        [string? => nil?]
+        [string? => any?]
         (clipboard/contents! text))
 
 (>defn- dispose-frame!
@@ -88,13 +89,27 @@
         [frame]
         [[:fn {:error/message "must be a JFrame"}
           #(instance? javax.swing.JFrame %)] => nil?]
-  ;; First minimize to taskbar to avoid the unmaximize animation
-        (when (= (.getExtendedState frame) Frame/MAXIMIZED_BOTH)
-          (.setExtendedState frame Frame/ICONIFIED))
-  ;; Then dispose in next EDT cycle
-        (seesaw/invoke-later
-         (fn []
-           (seesaw/dispose! frame))))
+        (let [frame-title (.getTitle frame)]
+          ;; Always minimize to taskbar first to avoid any unmaximize animation
+          (.setExtendedState frame Frame/ICONIFIED)
+          ;; Then dispose in next EDT cycle using a timer
+          (let [timer (Timer. 
+                       100  ; 100ms delay
+                       (reify java.awt.event.ActionListener
+                         (actionPerformed [_ _]
+                           ;; Ensure disposal happens on EDT
+                           (seesaw/invoke-now
+                             (try
+                               (seesaw/dispose! frame)
+                               (logging/log-debug {:id ::frame-disposed
+                                                   :frame-title frame-title})
+                               (catch Exception e
+                                 (logging/log-error {:id ::dispose-error
+                                                     :frame-title frame-title
+                                                     :error (.getMessage e)})))))))]
+            (.setRepeats timer false)  ; Ensure timer only fires once
+            (.start timer)))
+        nil)
 
 (>defn- format-log-content
         "Add visual separators between log entries"
@@ -142,7 +157,8 @@
               close-action (seesaw/action
                             :name (i18n/tr :log-viewer-close)
                             :icon (theme/key->icon :file-excel)
-                            :handler (fn [_] (dispose-frame! frame)))]
+                            :handler (fn [e]
+                                       (dispose-frame! frame)))]
     ;; Build content using idiomatic border-panel
           (seesaw/config! frame :content
                           (seesaw/border-panel
@@ -157,7 +173,8 @@
 
     ;; Handle window close (X button)
           (seesaw/listen frame :window-closing
-                         (fn [_] (dispose-frame! frame)))
+                         (fn [e]
+                           (dispose-frame! frame)))
 
     ;; Set location relative to parent
           (.setLocationRelativeTo frame parent-frame)
@@ -261,7 +278,8 @@
              close-action (seesaw/action
                            :name (i18n/tr :log-viewer-close)
                            :icon (theme/key->icon :file-excel)
-                           :handler (fn [_] (dispose-frame! frame)))]
+                           :handler (fn [e]
+                                      (dispose-frame! frame)))]
 
     ;; Wire up event handlers using idiomatic listen
          (seesaw/listen table
@@ -300,22 +318,30 @@
 
     ;; Handle window close (X button)
          (seesaw/listen frame :window-closing
-                        (fn [_] (dispose-frame! frame)))
+                        (fn [e]
+                          (dispose-frame! frame)))
 
          frame))
 
 (>defn show-log-viewer
        "Show the log viewer window, ensuring it runs on the EDT."
        []
-       [=> nil?]
+       [=> any?]
        (seesaw/invoke-now
+        (logging/log-info {:id ::show-log-viewer-start})
         (let [log-files (get-log-files)]
+          (logging/log-info {:id ::log-files-found :count (count log-files)})
           (if (empty? log-files)
             (seesaw/alert (i18n/tr :log-viewer-no-files))
-            (let [frame (create-log-viewer-frame)]
-         ;; Set location relative to null centers on screen
-              (.setLocationRelativeTo frame nil)
-         ;; Show the frame first
-              (seesaw/show! frame)
-         ;; Then maximize after showing
-              (.setExtendedState frame Frame/MAXIMIZED_BOTH))))))
+            (do
+              (logging/log-info {:id ::creating-log-viewer-frame})
+              (let [frame (create-log-viewer-frame)]
+                (logging/log-info {:id ::frame-created :frame-class (class frame)})
+                ;; Set location relative to null centers on screen
+                (.setLocationRelativeTo frame nil)
+                ;; Show the frame first
+                (seesaw/show! frame)
+                (logging/log-info {:id ::frame-shown})
+                ;; Then maximize after showing
+                (.setExtendedState frame Frame/MAXIMIZED_BOTH)
+                (logging/log-info {:id ::frame-maximized})))))))

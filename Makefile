@@ -16,7 +16,7 @@ help: ## Show this help message
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Build & Run:"
-	@grep -E '^(build|release|run|dev|clean|rebuild|proto|compile-java|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(build|release|dev|clean|rebuild|proto|compile-java|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "MCP Server (for Claude integration):"
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
@@ -54,11 +54,6 @@ release: proto compile-java ## Build release version (without instrumentation)
 	@echo "Building release version..."
 	POTATOCLIENT_RELEASE=true clojure -T:build release
 
-# Run target (production-like)
-.PHONY: run
-run: build ## Build and run the application (production-like)
-	@echo "Running application (production-like)..."
-	java -Dswing.noxp=true -Dsun.java2d.noddraw=true -Dswing.defaultlaf=javax.swing.plaf.metal.MetalLookAndFeel --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH)
 
 # Clean proto files
 .PHONY: clean-proto
@@ -69,12 +64,11 @@ clean-proto: ## Clean generated proto Java files
 
 # Clean target
 .PHONY: clean
-clean: clean-proto ## Clean all build artifacts
+clean: clean-proto clean-cache ## Clean all build artifacts
 	@echo "Cleaning build artifacts..."
 	clojure -T:build clean
 	rm -rf target/
 	rm -rf dist/
-	rm -rf .cpcache/
 
 # NREPL target
 .PHONY: nrepl
@@ -112,9 +106,10 @@ test: ## Run tests
 
 # Report unspecced functions
 .PHONY: report-unspecced
-report-unspecced: build ## Generate report of functions without Malli specs
+report-unspecced: proto compile-java ## Generate report of functions without Malli specs
 	@echo "Generating unspecced functions report..."
-	java --enable-native-access=ALL-UNNAMED -jar $(JAR_PATH) --report-unspecced
+	@echo "Running report from source..."
+	clojure -M:run --report-unspecced
 
 # Check dependencies
 .PHONY: check-deps
@@ -130,14 +125,23 @@ rebuild: clean build ## Clean and rebuild the project
 
 # Development target - runs with all validation, logging, and debugging features
 .PHONY: dev
-dev: proto compile-java ## Run development version with full validation, reflection warnings, and debug logging
+dev: clean-cache proto compile-java ## Run development version with full validation, reflection warnings, and debug logging
 	@echo "Running development version with:"
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ Reflection warnings"
 	@echo "  ✓ All log levels (DEBUG, INFO, WARN, ERROR)"
 	@echo "  ✓ GStreamer debug output"
+	@echo "  ✓ Running from source (no AOT compilation)"
 	@echo ""
 	GST_DEBUG=3 clojure -M:run
+
+# Clean cache target
+.PHONY: clean-cache
+clean-cache: ## Clean Clojure compilation cache to ensure fresh code runs
+	@echo "Cleaning compilation cache..."
+	@rm -rf .cpcache/
+	@rm -rf target/classes/
+	@find . -name "*.class" -type f -delete 2>/dev/null || true
 
 # Build for macOS development (unsigned, uses system Java)
 .PHONY: build-macos-dev

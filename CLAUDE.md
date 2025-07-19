@@ -93,6 +93,36 @@ Guardrails is controlled by:
 - For variadic keyword arguments `& {:keys [...]}`, use `(? (s/* any?))` in the spec
 - Remember to require `[clojure.spec.alpha :as s]` when using spec-based Guardrails
 
+### Handling Spec Failures
+
+When Guardrails reports a spec failure, evaluate which needs adjustment:
+
+1. **Check the function's actual behavior** - Does it naturally return a value?
+   ```clojure
+   ;; If clipboard/contents! returns the clipboard object for chaining:
+   (>defn- copy-to-clipboard
+           [text]
+           [string? => any?]  ; Fix the spec, not the function
+           (clipboard/contents! text))
+   ```
+
+2. **Check the function's intent** - Should it be a pure side-effect?
+   ```clojure
+   ;; If the function should only perform side effects:
+   (>defn- log-message
+           [msg]
+           [string? => nil?]
+           (println msg)
+           nil)  ; Add explicit nil return
+   ```
+
+3. **Consider idiomatic Clojure** - Many functions return useful values for chaining or debugging
+   - File operations often return the file object
+   - State mutations often return the new state
+   - UI operations often return the component for chaining
+
+**Rule of thumb**: Preserve the natural behavior of functions unless there's a specific reason to enforce `nil` returns. Adjust the spec to match reality rather than forcing artificial constraints.
+
 ## Quick Reference
 
 **IMPORTANT**: Use `make dev` for all development work. This command takes 30-40 seconds to start, so set appropriate timeouts in your tools. Do not use short timeouts!
@@ -971,23 +1001,33 @@ The ArcherBC2 example demonstrates sophisticated data binding patterns:
 5. **Not disposing resources** - Always dispose frames, dialogs, and timers
 6. **Maximize animation on close** - When closing maximized frames, use this hack to avoid the minimize animation:
    ```clojure
-   ;; HACK: Minimize to taskbar first if maximized, then dispose
+   ;; HACK: Always minimize to taskbar first, then dispose after delay
    ;; to avoid the jarring unmaximize animation
-   (defn- dispose-frame! [frame]
-     ;; First minimize to taskbar to avoid the unmaximize animation
-     (when (= (.getExtendedState frame) Frame/MAXIMIZED_BOTH)
-       (.setExtendedState frame Frame/ICONIFIED))
-     ;; Then dispose in next EDT cycle
-     (seesaw/invoke-later
-       (fn []
-         (seesaw/dispose! frame))))
+   (>defn- dispose-frame!
+           [frame]
+           [[:fn {:error/message "must be a JFrame"}
+             #(instance? javax.swing.JFrame %)] => nil?]
+           (let [frame-title (.getTitle frame)]
+             ;; Always minimize to taskbar first (regardless of current state)
+             (.setExtendedState frame Frame/ICONIFIED)
+             ;; Use a Swing Timer to delay disposal - invoke-later doesn't work after iconification!
+             (let [timer (javax.swing.Timer. 
+                          100  ; 100ms delay
+                          (reify java.awt.event.ActionListener
+                            (actionPerformed [_ _]
+                              ;; Ensure disposal happens on EDT
+                              (seesaw/invoke-now
+                                (seesaw/dispose! frame)))))]
+               (.setRepeats timer false)
+               (.start timer)))
+           nil)
    
    ;; IMPORTANT: Set :on-close :nothing and handle X button yourself
    (seesaw/frame :on-close :nothing ...)
    (seesaw/listen frame :window-closing
                   (fn [_] (dispose-frame! frame)))
    ```
-   Note: This is a workaround for a Swing quirk where maximized frames animate to normal state before disposal. The frame briefly appears in the taskbar before disappearing.
+   Note: This is a workaround for a Swing quirk where maximized frames animate to normal state before disposal. The frame briefly appears in the taskbar before disappearing. We use a Timer instead of invoke-later because invoke-later callbacks don't execute after frame iconification.
 
 ## Malli Integration
 

@@ -135,7 +135,7 @@
 (>defn- handle-window-closed
         "Handle window closed event - terminate the associated process."
         [stream-key]
-        [:potatoclient.specs/stream-type => nil?]
+        [:potatoclient.specs/stream-key => nil?]
         (logging/log-stream-event stream-key :window-closed
                                   {:message "Stream window closed by X button"})
         (when-let [stream (state/get-stream stream-key)]
@@ -153,7 +153,7 @@
 (>defn handle-response-event
        "Handle a response event from a stream."
        [stream-key msg]
-       [:potatoclient.specs/stream-type map? => nil?]
+       [:potatoclient.specs/stream-key map? => nil?]
        (logging/log-stream-event stream-key :response
                                  {:status (:status msg)
                                   :data msg})
@@ -189,7 +189,7 @@
 (>defn stream-connected?
        "Check if a stream is currently connected."
        [stream-key]
-       [:potatoclient.specs/stream-type => boolean?]
+       [:potatoclient.specs/stream-key => boolean?]
        (some? (state/get-stream stream-key)))
 
 (>defn all-streams-connected?

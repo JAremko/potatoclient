@@ -136,7 +136,7 @@
 (>defn- open-logs-viewer
         "Open the log viewer window."
         []
-        [=> nil?]
+        [=> any?]
         (log-viewer/show-log-viewer))
 
 (>defn- create-help-menu

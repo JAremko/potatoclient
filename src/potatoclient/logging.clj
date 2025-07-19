@@ -97,6 +97,8 @@
               (doseq [file files-to-delete]
                 (try
                   (.delete file)
+                  ;; Can't use logging here as we're in the logging initialization
+                  ;; Using println is appropriate for bootstrap logging
                   (println (str "Deleted old log file: " (.getName file)))
                   (catch Exception e
                     (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e))))))))))
