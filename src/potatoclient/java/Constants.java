@@ -11,7 +11,6 @@ public final class Constants {
     public static final int MOUSE_EVENT_THROTTLE_MS = 50;
     public static final int WINDOW_EVENT_THROTTLE_MS = 100;
     public static final int DOUBLE_CLICK_WINDOW_MS = 200;
-    public static final long COMMAND_THREAD_SLEEP_MS = 100;
 
     // GStreamer constants
     public static final int QUEUE_MAX_BUFFERS = 5;

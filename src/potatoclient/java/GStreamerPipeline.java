@@ -47,6 +47,7 @@ public class GStreamerPipeline {
         this.callback = callback;
     }
     
+    @SuppressWarnings("unused")
     public void initialize(Component videoComponent) {
         pipelineLock.lock();
         try {
@@ -80,7 +81,7 @@ public class GStreamerPipeline {
                         };
                         Gst.init(GSTREAMER_APP_NAME, args);
                     } else {
-                        Gst.init(GSTREAMER_APP_NAME, new String[]{});
+                        Gst.init(GSTREAMER_APP_NAME);
                     }
                     gstreamerVersion = Gst.getVersionString();
                     callback.onLog("INFO", "GStreamer initialized successfully. Version: " + gstreamerVersion);
@@ -144,29 +145,7 @@ public class GStreamerPipeline {
             // H264 decoder - try multiple options in order of preference
             // Priority: Hardware decoders > Software decoders
             Element decoder = null;
-            String[] decoderOptions;
-
-            if (isAppImage) {
-                // In AppImage, prefer software decoders for better compatibility
-                decoderOptions = new String[] {
-                    "avdec_h264",      // FFmpeg/libav software decoder (most reliable in AppImage)
-                    "openh264dec",     // OpenH264 software decoder
-                    "decodebin"        // Auto-negotiating decoder (fallback)
-                };
-            } else {
-                // Normal priority: hardware first
-                decoderOptions = new String[] {
-                    "nvh264dec",       // NVIDIA hardware decoder (NVDEC)
-                    "nvdec",           // Newer NVIDIA decoder
-                    "d3d11h264dec",    // Windows Direct3D 11 hardware decoder
-                    "msdkh264dec",     // Intel Media SDK hardware decoder
-                    "vaapih264dec",    // VA-API hardware decoder (Linux)
-                    "vtdec_h264",      // macOS VideoToolbox hardware decoder
-                    "avdec_h264",      // FFmpeg/libav software decoder (most common)
-                    "openh264dec",     // OpenH264 software decoder
-                    "decodebin"        // Auto-negotiating decoder (fallback)
-                };
-            }
+            String[] decoderOptions = getStrings();
 
             for (String decoderName : decoderOptions) {
                 try {
@@ -270,15 +249,12 @@ public class GStreamerPipeline {
                 appsrc.link(decoder);
                 
                 // decodebin uses dynamic pads, so we need to handle pad-added signal
-                decoder.connect(new Element.PAD_ADDED() {
-                    @Override
-                    public void padAdded(Element element, Pad pad) {
-                        if (pad.getName().startsWith("src")) {
-                            Pad sinkPad = queue.getStaticPad("sink");
-                            if (!sinkPad.isLinked()) {
-                                pad.link(sinkPad);
-                                callback.onLog("DEBUG", "Linked decoder to queue");
-                            }
+                decoder.connect((Element.PAD_ADDED) (element, pad) -> {
+                    if (pad.getName().startsWith("src")) {
+                        Pad sinkPad = queue.getStaticPad("sink");
+                        if (!sinkPad.isLinked()) {
+                            pad.link(sinkPad);
+                            callback.onLog("DEBUG", "Linked decoder to queue");
                         }
                     }
                 });
@@ -293,17 +269,9 @@ public class GStreamerPipeline {
             
             // Set up bus for error handling
             Bus bus = pipeline.getBus();
-            bus.connect(new Bus.ERROR() {
-                public void errorMessage(GstObject source, int code, String message) {
-                    callback.onLog("ERROR", "Pipeline error: " + message);
-                }
-            });
+            bus.connect((Bus.ERROR) (bus1, source, message) -> callback.onLog("ERROR", "Pipeline error: " + message));
             
-            bus.connect(new Bus.WARNING() {
-                public void warningMessage(GstObject source, int code, String message) {
-                    callback.onLog("WARN", "Pipeline warning: " + message);
-                }
-            });
+            bus.connect((Bus.WARNING) (bus1, source, message) -> callback.onLog("WARN", "Pipeline warning: " + message));
             
             // Store video component for later overlay setup
             if (videoComponent != null && videosink != null) {
@@ -324,7 +292,6 @@ public class GStreamerPipeline {
                 pipeline = null;
                 appsrc = null;
                 videosink = null;
-                return;
             } else if (ret == StateChangeReturn.NO_PREROLL) {
                 callback.onLog("INFO", "GStreamer pipeline started (live source, no preroll)");
             } else {
@@ -333,6 +300,33 @@ public class GStreamerPipeline {
         } finally {
             pipelineLock.unlock();
         }
+    }
+
+    private String[] getStrings() {
+        String[] decoderOptions;
+
+        if (isAppImage) {
+            // In AppImage, prefer software decoders for better compatibility
+            decoderOptions = new String[] {
+                "avdec_h264",      // FFmpeg/libav software decoder (most reliable in AppImage)
+                "openh264dec",     // OpenH264 software decoder
+                "decodebin"        // Auto-negotiating decoder (fallback)
+            };
+        } else {
+            // Normal priority: hardware first
+            decoderOptions = new String[] {
+                "nvh264dec",       // NVIDIA hardware decoder (NVDEC)
+                "nvdec",           // Newer NVIDIA decoder
+                "d3d11h264dec",    // Windows Direct3D 11 hardware decoder
+                "msdkh264dec",     // Intel Media SDK hardware decoder
+                "vaapih264dec",    // VA-API hardware decoder (Linux)
+                "vtdec_h264",      // macOS VideoToolbox hardware decoder
+                "avdec_h264",      // FFmpeg/libav software decoder (most common)
+                "openh264dec",     // OpenH264 software decoder
+                "decodebin"        // Auto-negotiating decoder (fallback)
+            };
+        }
+        return decoderOptions;
     }
 
     private void setupVideoOverlay() {
@@ -508,12 +502,5 @@ public class GStreamerPipeline {
     public boolean isActive() {
         return pipeline != null;
     }
-    
-    public long getFrameCount() {
-        return frameCount.get();
-    }
-    
-    public boolean hasReceivedFirstKeyframe() {
-        return hasReceivedKeyframe;
-    }
+
 }

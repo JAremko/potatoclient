@@ -148,7 +148,6 @@ public class WebSocketClientBuiltIn {
     }
     
     private void scheduleReconnect() {
-        // Simple reconnection with 1 second delay
         new Thread(() -> {
             try {
                 Thread.sleep(1000);

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,17 +23,13 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     // Immutable fields
     private final String streamId;
     private final String streamUrl;
-    private final String domain;
     private final Scanner scanner;
     private final ObjectMapper mapper = new ObjectMapper(); // For command parsing
     
     // Thread-safe primitives
     private final AtomicBoolean running = new AtomicBoolean(true);
-    
-    // Threading and synchronization
-    private Thread commandThread;
-    private Thread shutdownHook;
-    
+    private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+
     // Executor services
     private final ScheduledExecutorService reconnectExecutor;
     private final ScheduledExecutorService eventThrottleExecutor;
@@ -49,7 +46,6 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     public VideoStreamManager(String streamId, String streamUrl, String domain) {
         this.streamId = streamId;
         this.streamUrl = streamUrl;
-        this.domain = domain;
         this.scanner = new Scanner(System.in);
         this.eventFilter = new EventFilter();
         this.messageProtocol = new MessageProtocol(streamId);
@@ -112,7 +108,6 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     }
     
     private void redirectSystemErr() {
-        // Keep reference to original err for fallback
         final PrintStream originalErr = System.err;
         
         System.setErr(new PrintStream(System.err) {
@@ -204,31 +199,25 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         redirectSystemErr();
         
         // Add minimal shutdown hook
-        shutdownHook = new Thread(() -> {
-            running.set(false);
-            try {
-                messageProtocol.sendResponse("shutdown", null);
-            } catch (Exception ignored) {}
-        }, "VideoStream-Shutdown-" + streamId);
+        // Trigger proper shutdown sequence
+        Thread shutdownHook = new Thread(this::shutdown, "VideoStream-Shutdown-" + streamId);
         Runtime.getRuntime().addShutdownHook(shutdownHook);
         
         // Start command reader thread
-        commandThread = new Thread(this::readCommands, "VideoStream-Commands-" + streamId);
+        // Threading and synchronization
+        Thread commandThread = new Thread(this::readCommands, "VideoStream-Commands-" + streamId);
         commandThread.setDaemon(true);
         commandThread.start();
         
-        // Main event loop
-        while (running.get()) {
-            try {
-                Thread.sleep(COMMAND_THREAD_SLEEP_MS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                messageProtocol.sendException("Main thread interrupted", e);
-                break;
-            }
+        // Main thread waits here until shutdown
+        try {
+            shutdownLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            messageProtocol.sendException("Main thread interrupted", e);
         }
         
-        // Exit when main loop ends
+        // Exit when shutdown is complete
         System.exit(0);
     }
     
@@ -275,9 +264,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         
         // Wait for frame creation to complete
         try {
-            SwingUtilities.invokeAndWait(() -> {
-                frameManager.showFrame();
-            });
+            SwingUtilities.invokeAndWait(frameManager::showFrame);
         } catch (Exception e) {
             messageProtocol.sendException("Failed to create/show frame", e);
             return;
@@ -342,10 +329,10 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             
         } catch (Exception e) {
             messageProtocol.sendLog("WARN", "Error during shutdown: " + e.getMessage());
+        } finally {
+            // Signal main thread to exit
+            shutdownLatch.countDown();
         }
-        
-        // Exit cleanly
-        System.exit(0);
     }
     
     private void shutdownExecutors() {
@@ -389,11 +376,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
             shutdown();
         }
     }
-    
-    private void cleanup() {
-        shutdown();
-    }
-    
+
     // MouseEventHandler.EventCallback implementation
     @Override
     public void onNavigationEvent(EventFilter.EventType type, String eventName, int x, int y, Map<String, Object> details) {
@@ -436,9 +419,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         }
         
         // Configure GStreamer paths on Windows before creating the manager
-        GStreamerUtils.configureGStreamerPaths((level, message) -> {
-            System.err.println("[" + level + "] " + message);
-        });
+        GStreamerUtils.configureGStreamerPaths((level, message) -> System.err.println("[" + level + "] " + message));
         
         VideoStreamManager manager = new VideoStreamManager(args[0], args[1], args[2]);
         manager.run();

@@ -25,7 +25,6 @@ public class WindowEventHandler {
     // Window state tracking
     private volatile Point lastWindowLocation;
     private volatile Dimension lastWindowSize;
-    private volatile int lastWindowState = JFrame.NORMAL;
     private final AtomicLong lastWindowEventTime = new AtomicLong(0);
     
     // Throttled event tasks
@@ -93,8 +92,7 @@ public class WindowEventHandler {
                            (newState & Frame.MAXIMIZED_BOTH) == 0) {
                     sendFilteredWindowEvent(EventFilter.EventType.WINDOW_UNMAXIMIZED, "unmaximized", details);
                 }
-                
-                lastWindowState = newState;
+
             }
         });
         
@@ -103,10 +101,10 @@ public class WindowEventHandler {
             @Override
             public void componentResized(ComponentEvent e) {
                 lastResizeEvent = e;
-                scheduleWindowEvent("resized", () -> {
-                    if (lastResizeEvent != null && frame != null) {
+                scheduleWindowEvent(() -> {
+                    if (lastResizeEvent != null) {
                         Dimension newSize = frame.getSize();
-                        if (lastWindowSize == null || !newSize.equals(lastWindowSize)) {
+                        if (!newSize.equals(lastWindowSize)) {
                             Map<String, Object> details = new HashMap<>();
                             details.put("width", newSize.width);
                             details.put("height", newSize.height);
@@ -124,10 +122,10 @@ public class WindowEventHandler {
             @Override
             public void componentMoved(ComponentEvent e) {
                 lastMoveEvent = e;
-                scheduleWindowEvent("moved", () -> {
-                    if (lastMoveEvent != null && frame != null) {
+                scheduleWindowEvent(() -> {
+                    if (lastMoveEvent != null) {
                         Point newLocation = frame.getLocation();
-                        if (lastWindowLocation == null || !newLocation.equals(lastWindowLocation)) {
+                        if (!newLocation.equals(lastWindowLocation)) {
                             Map<String, Object> details = new HashMap<>();
                             details.put("x", newLocation.x);
                             details.put("y", newLocation.y);
@@ -144,8 +142,8 @@ public class WindowEventHandler {
         });
     }
     
-    private void scheduleWindowEvent(String eventType, Runnable task, ScheduledFuture<?> currentTask, 
-                                   Consumer<ScheduledFuture<?>> taskSetter) {
+    private void scheduleWindowEvent(Runnable task, ScheduledFuture<?> currentTask,
+                                     Consumer<ScheduledFuture<?>> taskSetter) {
         long now = System.currentTimeMillis();
         long lastTime = lastWindowEventTime.get();
         
@@ -174,12 +172,12 @@ public class WindowEventHandler {
     
     private String getStateString(int state) {
         var sb = new StringBuilder(32);
-        if ((state & Frame.NORMAL) == Frame.NORMAL || state == 0) sb.append("normal,");
+        sb.append("normal,");
         if ((state & Frame.ICONIFIED) == Frame.ICONIFIED) sb.append("minimized,");
         if ((state & Frame.MAXIMIZED_HORIZ) == Frame.MAXIMIZED_HORIZ) sb.append("maximized_horizontal,");
         if ((state & Frame.MAXIMIZED_VERT) == Frame.MAXIMIZED_VERT) sb.append("maximized_vertical,");
         if ((state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) sb.append("maximized,");
-        return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
+        return !sb.isEmpty() ? sb.substring(0, sb.length() - 1) : "";
     }
     
     private void sendFilteredWindowEvent(EventFilter.EventType type, String eventName, Map<String, Object> details) {
@@ -196,16 +194,5 @@ public class WindowEventHandler {
             pendingWindowMoveTask.cancel(false);
         }
     }
-    
-    public Point getLastWindowLocation() {
-        return lastWindowLocation;
-    }
-    
-    public Dimension getLastWindowSize() {
-        return lastWindowSize;
-    }
-    
-    public int getLastWindowState() {
-        return lastWindowState;
-    }
+
 }

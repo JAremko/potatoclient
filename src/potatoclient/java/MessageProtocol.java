@@ -54,7 +54,7 @@ public class MessageProtocol {
             sendMessage(resp);
         } catch (Exception e) {
             // Can't use sendException here as it might cause infinite recursion
-            e.printStackTrace();
+            System.err.println("[MessageProtocol] Error sending response: " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
     
@@ -68,7 +68,7 @@ public class MessageProtocol {
             sendMessage(log);
         } catch (Exception e) {
             // Can't use sendException here as it might cause infinite recursion
-            e.printStackTrace();
+            System.err.println("[MessageProtocol] Error sending log: " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
     
@@ -87,7 +87,7 @@ public class MessageProtocol {
             sendMessage(log);
         } catch (Exception e) {
             // Last resort - print to stderr
-            e.printStackTrace();
+            System.err.println("[MessageProtocol] Error sending exception: " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
     
@@ -113,33 +113,29 @@ public class MessageProtocol {
             event.put("ndcY", ndcY);
             event.put("canvasWidth", canvasWidth);
             event.put("canvasHeight", canvasHeight);
-            if (details != null) {
-                event.putAll(details);
-            }
-            
-            Map<String, Object> nav = new HashMap<>(navTemplate);
-            nav.put("event", event);
-            nav.put("timestamp", System.currentTimeMillis());
-            
-            sendMessage(nav);
+            noDetails(details, event, navTemplate);
         } catch (Exception e) {
             sendException("Navigation event error", e);
         }
     }
-    
+
+    private void noDetails(Map<String, Object> details, Map<String, Object> event, Map<String, Object> navTemplate) throws Exception {
+        if (details != null) {
+            event.putAll(details);
+        }
+
+        Map<String, Object> nav = new HashMap<>(navTemplate);
+        nav.put("event", event);
+        nav.put("timestamp", System.currentTimeMillis());
+
+        sendMessage(nav);
+    }
+
     public void sendWindowEvent(String eventType, Map<String, Object> details) {
         try {
             Map<String, Object> event = new HashMap<>(2 + (details != null ? details.size() : 0));
             event.put("type", eventType);
-            if (details != null) {
-                event.putAll(details);
-            }
-            
-            Map<String, Object> windowEvent = new HashMap<>(windowTemplate);
-            windowEvent.put("event", event);
-            windowEvent.put("timestamp", System.currentTimeMillis());
-            
-            sendMessage(windowEvent);
+            noDetails(details, event, windowTemplate);
         } catch (Exception e) {
             sendException("Window event error", e);
         }
