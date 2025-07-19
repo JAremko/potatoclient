@@ -50,28 +50,7 @@ public class EventFilter {
         this.filteredEvents = EnumSet.copyOf(DEFAULT_FILTERED_EVENTS);
     }
     
-    public EventFilter(EnumSet<EventType> customFilters) {
-        this.filteredEvents = EnumSet.copyOf(customFilters);
-    }
-    
-    public boolean isFiltered(EventType type) {
-        return filteredEvents.contains(type);
-    }
-    
-    public void addFilter(EventType type) {
-        filteredEvents.add(type);
-    }
-    
-    public void removeFilter(EventType type) {
-        filteredEvents.remove(type);
-    }
-    
-    public void setFilters(EnumSet<EventType> filters) {
-        filteredEvents.clear();
-        filteredEvents.addAll(filters);
-    }
-    
-    public EnumSet<EventType> getFilters() {
-        return EnumSet.copyOf(filteredEvents);
+    public boolean isUnfiltered(EventType type) {
+        return !filteredEvents.contains(type);
     }
 }

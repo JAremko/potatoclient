@@ -183,7 +183,7 @@ public class WindowEventHandler {
     }
     
     private void sendFilteredWindowEvent(EventFilter.EventType type, String eventName, Map<String, Object> details) {
-        if (!eventFilter.isFiltered(type)) {
+        if (eventFilter.isUnfiltered(type)) {
             callback.onWindowEvent(type, eventName, details);
         }
     }

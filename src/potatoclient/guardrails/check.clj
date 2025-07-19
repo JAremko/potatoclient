@@ -3,11 +3,10 @@
   
   This namespace provides tools to analyze source code and find functions that are not
   using Guardrails, helping maintain consistent validation across the codebase."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.set :as set])
-  (:import [java.io File]))
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn]])
+  (:import (java.io File)))
 
 (>defn file->lines
   "Read a file and return its lines."
@@ -114,9 +113,3 @@
                      (str "## " ns-sym " (" (count funcs) " functions)\n"
                           (str/join "\n" (map #(str "- " %) (sort funcs)))
                           "\n"))))))
-
-(>defn check-and-report!
-  "Check for functions not using Guardrails and print a report."
-  []
-  [=> nil?]
-  (println (generate-report)))

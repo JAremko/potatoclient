@@ -112,7 +112,7 @@
   
   Stops the subprocess and removes it from state."
   [stream-key]
-  [:potatoclient.specs/stream-key => nil?]
+  [:potatoclient.specs/stream-key => :potatoclient.specs/future-instance]
   (future
     (try
       (when-let [stream (state/get-stream stream-key)]
@@ -128,7 +128,8 @@
           {:id ::stream-stop-error
            :data {:stream stream-key
                   :error (.getMessage e)}
-           :msg "Error stopping stream"})))))
+           :msg "Error stopping stream"})))
+    nil))
 
 (>defn restart-stream
   "Restart a stream by stopping and starting it again."

@@ -2,7 +2,6 @@ package potatoclient.java;
 
 import org.freedesktop.gstreamer.*;
 import org.freedesktop.gstreamer.elements.*;
-import org.freedesktop.gstreamer.message.*;
 import org.freedesktop.gstreamer.interfaces.VideoOverlay;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
@@ -21,8 +20,7 @@ public class GStreamerPipeline {
         void onPipelineError(String message);
         boolean isRunning();
     }
-    
-    private final String streamId;
+
     private final EventCallback callback;
     private final ReentrantLock pipelineLock = new ReentrantLock();
     
@@ -45,8 +43,7 @@ public class GStreamerPipeline {
     private final AtomicLong poolHits = new AtomicLong(0);
     private final AtomicLong poolMisses = new AtomicLong(0);
     
-    public GStreamerPipeline(String streamId, EventCallback callback) {
-        this.streamId = streamId;
+    public GStreamerPipeline(EventCallback callback) {
         this.callback = callback;
     }
     
@@ -55,11 +52,7 @@ public class GStreamerPipeline {
         try {
             // Configure Windows paths if needed
             if (Platform.isWindows()) {
-                GStreamerUtils.configureGStreamerPaths(new GStreamerUtils.EventCallback() {
-                    public void onLog(String level, String message) {
-                        callback.onLog(level, message);
-                    }
-                });
+                GStreamerUtils.configureGStreamerPaths(callback::onLog);
             }
             
             // Initialize GStreamer if needed
@@ -152,7 +145,7 @@ public class GStreamerPipeline {
             // Priority: Hardware decoders > Software decoders
             Element decoder = null;
             String[] decoderOptions;
-            
+
             if (isAppImage) {
                 // In AppImage, prefer software decoders for better compatibility
                 decoderOptions = new String[] {
@@ -174,7 +167,7 @@ public class GStreamerPipeline {
                     "decodebin"        // Auto-negotiating decoder (fallback)
                 };
             }
-            
+
             for (String decoderName : decoderOptions) {
                 try {
                     decoder = ElementFactory.make(decoderName, "decoder");
@@ -341,7 +334,7 @@ public class GStreamerPipeline {
             pipelineLock.unlock();
         }
     }
-    
+
     private void setupVideoOverlay() {
         if (overlaySet || pendingVideoComponent == null || videosink == null) {
             return;

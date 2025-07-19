@@ -8,14 +8,11 @@ public final class Constants {
     private Constants() {}
     
     // Timing constants (milliseconds)
-    public static final int RECONNECT_DELAY_MS = 1000;
     public static final int MOUSE_EVENT_THROTTLE_MS = 50;
     public static final int WINDOW_EVENT_THROTTLE_MS = 100;
     public static final int DOUBLE_CLICK_WINDOW_MS = 200;
     public static final long COMMAND_THREAD_SLEEP_MS = 100;
-    public static final long WEBSOCKET_CLOSE_WAIT_MS = 100;
-    public static final long RECONNECT_CLOSE_WAIT_MS = 50;
-    
+
     // GStreamer constants
     public static final int QUEUE_MAX_BUFFERS = 5;
     public static final long QUEUE_MAX_TIME_NS = 1_000_000_000L; // 1 second
@@ -33,11 +30,9 @@ public final class Constants {
     // Stream configurations
     public static final class StreamConfig {
         public static final String HEAT_STREAM_ID = "heat";
-        public static final String HEAT_STREAM_TITLE = "Heat Stream (900x720)";
         public static final int HEAT_STREAM_WIDTH = 900;
         public static final int HEAT_STREAM_HEIGHT = 720;
         
-        public static final String DAY_STREAM_TITLE = "Day Stream (1920x1080)";
         public static final int DAY_STREAM_DISPLAY_WIDTH = 960;
         public static final int DAY_STREAM_DISPLAY_HEIGHT = 540;
     }
@@ -59,8 +54,4 @@ public final class Constants {
     // Buffer pooling
     public static final int BUFFER_POOL_SIZE = 10;
     public static final int MAX_BUFFER_SIZE = 2 * 1024 * 1024; // 2MB max frame size
-    
-    // Frame rate limiting
-    public static final int TARGET_FPS = 30;
-    public static final long FRAME_INTERVAL_NS = 1_000_000_000L / TARGET_FPS; // 33.33ms
 }

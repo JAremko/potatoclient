@@ -127,48 +127,23 @@ public class ByteBufferPool {
      * Clear the pool and release resources
      */
     public void clear() {
-        ByteBuffer buffer;
-        while ((buffer = pool.poll()) != null) {
+        while (pool.poll() != null) {
             currentSize.decrementAndGet();
             // Direct buffers will be cleaned up by GC
         }
     }
-    
-    public static class PoolStats {
-        public final int currentSize;
-        public final int maxSize;
-        public final int bufferSize;
-        public final boolean direct;
-        public final long acquireCount;
-        public final long hitCount;
-        public final long missCount;
-        public final long returnCount;
-        public final long dropCount;
-        public final double hitRate;
-        
-        public PoolStats(int currentSize, int maxSize, int bufferSize, boolean direct,
-                        long acquireCount, long hitCount, long missCount, 
-                        long returnCount, long dropCount, double hitRate) {
-            this.currentSize = currentSize;
-            this.maxSize = maxSize;
-            this.bufferSize = bufferSize;
-            this.direct = direct;
-            this.acquireCount = acquireCount;
-            this.hitCount = hitCount;
-            this.missCount = missCount;
-            this.returnCount = returnCount;
-            this.dropCount = dropCount;
-            this.hitRate = hitRate;
-        }
-        
+
+    public record PoolStats(int currentSize, int maxSize, int bufferSize, boolean direct, long acquireCount,
+                            long hitCount, long missCount, long returnCount, long dropCount, double hitRate) {
+
         @Override
-        public String toString() {
-            return String.format(
-                "ByteBufferPool[size=%d/%d, bufferSize=%d, direct=%b, " +
-                "acquires=%d, hits=%d, misses=%d, returns=%d, drops=%d, hitRate=%.2f%%]",
-                currentSize, maxSize, bufferSize, direct,
-                acquireCount, hitCount, missCount, returnCount, dropCount, hitRate * 100
-            );
+            public String toString() {
+                return String.format(
+                        "ByteBufferPool[size=%d/%d, bufferSize=%d, direct=%b, " +
+                                "acquires=%d, hits=%d, misses=%d, returns=%d, drops=%d, hitRate=%.2f%%]",
+                        currentSize, maxSize, bufferSize, direct,
+                        acquireCount, hitCount, missCount, returnCount, dropCount, hitRate * 100
+                );
+            }
         }
-    }
 }

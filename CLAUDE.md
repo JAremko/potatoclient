@@ -89,7 +89,7 @@ Guardrails is controlled by:
 - Use precise specs from `potatoclient.specs` namespace
 - Private functions use `>defn-` (not `defn ^:private`)
 - All validation happens at runtime during development only
-- Functions must return `nil` for side-effect operations (not `true` or other values)
+- **Prefer updating specs over changing function behavior** - If a function naturally returns a useful value (e.g., `:stopped`, a process object, etc.), update the spec to expect that value rather than forcing the function to return `nil`
 - For variadic keyword arguments `& {:keys [...]}`, use `(? (s/* any?))` in the spec
 - Remember to require `[clojure.spec.alpha :as s]` when using spec-based Guardrails
 
@@ -97,7 +97,23 @@ Guardrails is controlled by:
 
 When Guardrails reports a spec failure, evaluate which needs adjustment:
 
-1. **Check the function's actual behavior** - Does it naturally return a value?
+1. **Prefer informative return values** - If a function naturally returns meaningful data, update the spec
+   ```clojure
+   ;; BAD: Forcing nil return when function has useful result
+   (>defn- stop-process
+           [process]
+           [::process => nil?]
+           (do-stop process)
+           nil)  ; Artificial constraint
+   
+   ;; GOOD: Let function return its natural, informative value
+   (>defn- stop-process
+           [process]
+           [::process => ::process-state]  ; Returns :stopped, :failed, etc.
+           (do-stop process))
+   ```
+
+2. **Check the function's actual behavior** - Does it naturally return a value?
    ```clojure
    ;; If clipboard/contents! returns the clipboard object for chaining:
    (>defn- copy-to-clipboard
@@ -106,22 +122,23 @@ When Guardrails reports a spec failure, evaluate which needs adjustment:
            (clipboard/contents! text))
    ```
 
-2. **Check the function's intent** - Should it be a pure side-effect?
+3. **Side-effect-only functions should return nil** - Only when the return value is truly meaningless
    ```clojure
-   ;; If the function should only perform side effects:
+   ;; Functions that only perform side effects with no useful return:
    (>defn- log-message
            [msg]
            [string? => nil?]
            (println msg)
-           nil)  ; Add explicit nil return
+           nil)  ; Explicit nil for pure side-effect
    ```
 
-3. **Consider idiomatic Clojure** - Many functions return useful values for chaining or debugging
+4. **Consider idiomatic Clojure** - Many functions return useful values for chaining or debugging
+   - Process operations often return status (`:stopped`, `:running`)
    - File operations often return the file object
    - State mutations often return the new state
    - UI operations often return the component for chaining
 
-**Rule of thumb**: Preserve the natural behavior of functions unless there's a specific reason to enforce `nil` returns. Adjust the spec to match reality rather than forcing artificial constraints.
+**Rule of thumb**: Preserve the natural, informative behavior of functions. Only enforce `nil` returns for pure side-effect operations with no meaningful return value. Update specs to match the function's natural behavior rather than artificially constraining it.
 
 ## Quick Reference
 

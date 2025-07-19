@@ -16,7 +16,7 @@ public class MouseEventHandler {
     // Click caching for double-click detection
     private record ClickInfo(int x, int y, int button, int modifiers, long timestamp) {
         boolean isDoubleClick(int x, int y, int button, long timestamp) {
-            // Check if it's a double-click (same button, close position, within time window)
+            // Check if it's a double click (same button, close position, within time window)
             return this.button == button &&
                    Math.abs(this.x - x) <= DOUBLE_CLICK_MAX_DISTANCE &&
                    Math.abs(this.y - y) <= DOUBLE_CLICK_MAX_DISTANCE &&
@@ -288,7 +288,7 @@ public class MouseEventHandler {
     }
     
     private void sendFilteredEvent(EventFilter.EventType type, String eventName, int x, int y, Map<String, Object> details) {
-        if (!eventFilter.isFiltered(type)) {
+        if (eventFilter.isUnfiltered(type)) {
             callback.onNavigationEvent(type, eventName, x, y, details);
         }
     }

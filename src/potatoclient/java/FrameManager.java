@@ -152,12 +152,5 @@ public class FrameManager {
     public Component getVideoComponent() {
         return videoComponent;
     }
-    
-    public boolean isFrameCreated() {
-        return frame != null;
-    }
-    
-    public boolean isFrameVisible() {
-        return frame != null && frame.isVisible();
-    }
+
 }

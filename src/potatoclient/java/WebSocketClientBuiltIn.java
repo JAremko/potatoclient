@@ -224,10 +224,10 @@ public class WebSocketClientBuiltIn {
         long messages = messagesReceived.get();
         long bytes = bytesReceived.get();
         
-        System.out.println(String.format(
-            "WebSocket Stats: messages=%d, bytes=%d, %s",
+        System.out.printf(
+                "WebSocket Stats: messages=%d, bytes=%d, %s%n",
             messages, bytes, poolStats
-        ));
+        );
     }
     
     public boolean isOpen() {

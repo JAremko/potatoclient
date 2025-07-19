@@ -249,7 +249,7 @@
 (>defn stop-stream
   "Stop a stream process gracefully, then forcefully if needed."
   [stream]
-  [:potatoclient.specs/stream-process-map => nil?]
+  [:potatoclient.specs/stream-process-map => :potatoclient.specs/process-state]
   (when stream
     (reset! (:state stream) :stopping)
 
@@ -268,7 +268,8 @@
     (close-resource (:stderr-reader stream) #(.close %))
     (close-resource (:output-chan stream) async/close!)
 
-    (reset! (:state stream) :stopped)))
+    (reset! (:state stream) :stopped)
+    :stopped))
 
 (>defn cleanup-all-processes
   "Clean up all processes - useful for shutdown hooks."

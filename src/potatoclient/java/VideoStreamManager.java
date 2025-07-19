@@ -3,7 +3,6 @@ package potatoclient.java;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -44,8 +43,8 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
     private final FrameManager frameManager;
     private MouseEventHandler mouseEventHandler;
     private WindowEventHandler windowEventHandler;
-    private WebSocketClientBuiltIn webSocketClient;
-    private GStreamerPipeline gstreamerPipeline;
+    private final WebSocketClientBuiltIn webSocketClient;
+    private final GStreamerPipeline gstreamerPipeline;
     
     public VideoStreamManager(String streamId, String streamUrl, String domain) {
         this.streamId = streamId;
@@ -69,7 +68,7 @@ public class VideoStreamManager implements MouseEventHandler.EventCallback,
         
         // Initialize modules
         this.webSocketClient = createWebSocketClient();
-        this.gstreamerPipeline = new GStreamerPipeline(streamId, this);
+        this.gstreamerPipeline = new GStreamerPipeline( this);
     }
     
     private WebSocketClientBuiltIn createWebSocketClient() {

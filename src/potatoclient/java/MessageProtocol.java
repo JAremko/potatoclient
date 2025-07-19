@@ -14,7 +14,6 @@ import static potatoclient.java.Constants.*;
  * Encapsulates message formatting and JSON serialization.
  */
 public class MessageProtocol {
-    private final String streamId;
     private final ObjectMapper mapper;
     
     // Pre-allocated message templates to reduce garbage
@@ -24,7 +23,6 @@ public class MessageProtocol {
     private final Map<String, Object> windowTemplate;
     
     public MessageProtocol(String streamId) {
-        this.streamId = streamId;
         this.mapper = new ObjectMapper();
         
         // Initialize templates

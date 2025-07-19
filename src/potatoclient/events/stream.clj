@@ -1,29 +1,15 @@
 (ns potatoclient.events.stream
   "Event handling for video stream windows"
   (:require
-    [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [potatoclient.logging :as logging]
-    [seesaw.core :as seesaw]
-    [potatoclient.state :as state]
     [potatoclient.process :as process]
-    [potatoclient.specs])
-  (:import
-    [javax.swing JFrame JDialog]))
-
-;; Event type definitions
-(def window-event-types
-  #{:resized :moved :maximized :unmaximized :minimized
-    :restored :focused :unfocused :opened :closing})
-
-(def mouse-event-types
-  #{:mouse-click :mouse-press :mouse-release :mouse-move
-    :mouse-drag-start :mouse-drag :mouse-drag-end
-    :mouse-enter :mouse-exit :mouse-wheel})
+    [potatoclient.specs]
+    [potatoclient.state :as state]))
 
 (def mouse-button-names
   {1 "Left" 2 "Middle" 3 "Right"})
 
-;; Window event formatting
 (>defn- format-dimensions
   [width height]
   [int? int? => string?]
@@ -55,7 +41,6 @@
   [map? => string?]
   (format-window-event-details event))
 
-;; Navigation event formatting
 (>defn- format-coordinates
   "Format coordinates with optional NDC values."
   [{:keys [x y ndcX ndcY]}]
@@ -185,17 +170,8 @@
                                :data event})
     nil))
 
-;; Utility functions
 (>defn stream-connected?
   "Check if a stream is currently connected."
   [stream-key]
   [:potatoclient.specs/stream-key => boolean?]
   (some? (state/get-stream stream-key)))
-
-(>defn all-streams-connected?
-  "Check if all streams are connected."
-  []
-  [=> boolean?]
-  (and (stream-connected? :heat)
-       (stream-connected? :day)))
-

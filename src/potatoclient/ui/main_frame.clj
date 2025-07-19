@@ -178,12 +178,8 @@
                         :handler (fn [e]
                                    (let [current-state @is-connected]
                                      (if current-state
-                                       (do
-                                         (ipc/stop-stream stream-key)
-                                         (reset! is-connected false))
-                                       (do
-                                         (ipc/start-stream stream-key endpoint)
-                                         (reset! is-connected true))))))
+                                       (ipc/stop-stream stream-key)
+                                       (ipc/start-stream stream-key endpoint)))))
         button (seesaw/toggle :action toggle-action)]
 
     ;; Update button state when stream state changes
