@@ -7,7 +7,9 @@
             [malli.core :as m]
             [potatoclient.logging :as logging]
             [potatoclient.specs :as specs]
-            [potatoclient.theme :as theme]))
+            [potatoclient.theme :as theme])
+  (:import (java.io File)
+           (java.util Date)))
 
 (def ^:private config-file-name "potatoclient-config.edn")
 
@@ -85,8 +87,8 @@
   []
   [=> nil?]
   (let [config-dir (get-config-dir)]
-    (when-not (.exists ^java.io.File config-dir)
-      (.mkdirs ^java.io.File config-dir))))
+    (when-not (.exists ^File config-dir)
+      (.mkdirs ^File config-dir))))
 
 (>defn load-config
   "Load configuration from file, return minimal config if not found"
@@ -96,7 +98,7 @@
         ;; Minimal config - no URL by default
         minimal-config {:theme :sol-dark
                         :locale :english}]
-    (if (.exists ^java.io.File config-file)
+    (if (.exists ^File config-file)
       (try
         (let [file-data (-> config-file
                             slurp
@@ -138,37 +140,12 @@
       (logging/log-error (str "Invalid config, not saving: " (m/explain ::specs/config config)))
       false)))
 
-(>defn get-theme
-  "Get the saved theme from config"
-  []
-  [=> :potatoclient.specs/theme-key]
-  (or (:theme (load-config)) :sol-dark))
-
 (>defn save-theme!
   "Save the current theme to config"
   [theme-key]
   [:potatoclient.specs/theme-key => boolean?]
   (let [config (load-config)]
     (save-config! (assoc config :theme theme-key))))
-
-(>defn extract-domain
-  "Public version of extract-domain for external use"
-  [input]
-  [string? => :potatoclient.specs/domain]
-  (extract-domain* input))
-
-(>defn get-locale
-  "Get the saved locale from config"
-  []
-  [=> :potatoclient.specs/locale]
-  (or (:locale (load-config)) :english))
-
-(>defn save-locale!
-  "Save the locale to config"
-  [locale]
-  [:potatoclient.specs/locale => boolean?]
-  (let [config (load-config)]
-    (save-config! (assoc config :locale locale))))
 
 (>defn update-config!
   "Update a specific configuration key-value pair"
@@ -181,7 +158,7 @@
   "Get the full path to the configuration file (for debugging)"
   []
   [=> string?]
-  (.getAbsolutePath ^java.io.File (get-config-file)))
+  (.getAbsolutePath ^File (get-config-file)))
 
 (>defn initialize!
   "Initialize configuration system"
@@ -192,7 +169,7 @@
     ;; Log config location on first run
     (logging/log-info (str "Configuration file location: " (get-config-location)))
     ;; Only save defaults if config file doesn't exist
-    (when (not (.exists ^java.io.File config-file))
+    (when (not (.exists ^File config-file))
       (logging/log-info "Creating default config file")
       (save-config! config))
     ;; Initialize theme from saved config (or default)
@@ -251,7 +228,7 @@
           ;; Remove any existing entry for this URL
           filtered-history (into #{} (remove #(= (:url %) url) current-history))
           ;; Add new entry with current timestamp
-          new-entry {:url url :timestamp (java.util.Date.)}
+          new-entry {:url url :timestamp (Date.)}
           new-history (conj filtered-history new-entry)
           ;; Keep only the 10 most recent URLs by timestamp
           sorted-history (sort-by :timestamp #(compare %2 %1) new-history)

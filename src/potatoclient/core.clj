@@ -2,7 +2,7 @@
   "Core application logic for PotatoClient.
   Handles application initialization and lifecycle management."
   (:require [clojure.spec.alpha :as s]
-            [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
+            [com.fulcrologic.guardrails.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
@@ -41,7 +41,7 @@
         (try
           (process/cleanup-all-processes)
           (logging/shutdown!)
-          (catch Exception e
+          (catch Exception _
             nil))))))
 
 (>defn- initialize-application!
@@ -66,7 +66,7 @@
 
 (>defn -main
   "Application entry point."
-  [& args]
+  [& _]
   [(s/* any?) => nil?]
   (initialize-application!)
   (seesaw/invoke-later

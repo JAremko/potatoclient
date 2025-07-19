@@ -3,7 +3,7 @@
   
   This namespace is automatically loaded when running in development mode
   to enable various debugging and development features."
-  (:require [com.fulcrologic.guardrails.core :refer [>defn]]
+  (:require [com.fulcrologic.guardrails.core :refer [>defn =>]]
             [potatoclient.logging :as logging]))
 
 (>defn enable-verbose-logging!

@@ -1,9 +1,11 @@
 (ns potatoclient.ui.utils
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [seesaw.bind :as bind]
-            [seesaw.cursor :as cursor]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+            [seesaw.cursor :as cursor])
+  (:import (java.awt Component)
+           (java.time Duration)
+           (javax.swing.text JTextComponent)))
 
 (>defn mk-debounced-transform
   "Creates a debounced transform function for use with seesaw.bind.
@@ -87,7 +89,7 @@
         (future-cancel @timeout))
       (reset! timeout
               (future
-                (Thread/sleep wait-ms)
+                (^[Duration] Thread/sleep wait-ms)
                 (apply f args))))))
 
 (>defn throttle
@@ -156,7 +158,7 @@
   The cursor is guaranteed to be restored even if an exception occurs."
   [component f]
   [[:fn {:error/message "must be a Swing Component"}
-    #(instance? java.awt.Component %)]
+    #(instance? Component %)]
    ifn? => any?]
   (let [original-cursor (.getCursor component)
         busy-cursor (cursor/cursor :wait)]
@@ -181,7 +183,7 @@
         (seesaw/text! text-area (process-text (seesaw/text text-area)))))"
   [text-component update-fn]
   [[:fn {:error/message "must be a text component"}
-    #(instance? javax.swing.text.JTextComponent %)]
+    #(instance? JTextComponent %)]
    ifn? => nil?]
   (let [caret-pos (.getCaretPosition text-component)
         selection-start (.getSelectionStart text-component)
