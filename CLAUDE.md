@@ -205,7 +205,7 @@ make clean            # Clean all build artifacts
 - `potatoclient.core` - Application initialization, menu creation
 - `potatoclient.state` - Centralized state management with specs
 - `potatoclient.process` - Subprocess lifecycle with type hints
-- `potatoclient.proto` - Protobuf serialization
+- `potatoclient.proto` - Direct Protobuf serialization (custom implementation)
 - `potatoclient.ipc` - Message routing and dispatch
 - `potatoclient.config` - Platform-specific configuration
 - `potatoclient.i18n` - Localization (English, Ukrainian)
@@ -302,22 +302,6 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
     (seesaw/text! text-area (format-code (seesaw/text text-area)))))
 ```
 
-## Development Workflow
-
-### Starting Development
-
-**Always use `make dev`**:
-```bash
-make dev  # Wait 30-40 seconds for startup
-```
-
-⚠️ **IMPORTANT**: The startup takes 30-40 seconds because it:
-- Compiles all proto files
-- Compiles Java sources
-- Initializes the Clojure runtime with full validation
-- Loads all development features
-
-Set your tool timeouts accordingly - do not use short timeouts!
 
 ### Common Development Tasks
 
@@ -353,6 +337,40 @@ Set your tool timeouts accordingly - do not use short timeouts!
 1. Edit `.proto` files
 2. Run `make proto`
 3. Update `potatoclient.proto` accessors
+
+### Protobuf Implementation Details
+
+PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wrapper library):
+
+**Key Features**:
+- Custom kebab-case conversion for Clojure idioms
+- Direct manipulation of Protobuf builders and messages
+- No external wrapper dependencies
+- Protobuf version 4.29.5 with protoc 29.5
+
+**Serialization** (Clojure map → Protobuf bytes):
+```clojure
+;; Example: Serialize a command
+(proto/encode-command {:action :connect :url "wss://example.com"})
+```
+
+**Deserialization** (Protobuf bytes → Clojure map):
+```clojure
+;; Example: Deserialize GUI state
+(proto/decode-gui-state proto-bytes)
+;; Returns: {:connected true :stream-type :heat ...}
+```
+
+**Case Conversion**:
+- Protobuf fields use `camelCase` (Java convention)
+- Clojure maps use `:kebab-case` keywords
+- Automatic bidirectional conversion handled by `proto.clj`
+
+**Adding New Message Types**:
+1. Define in `.proto` files using camelCase
+2. Run `make proto` to regenerate Java classes
+3. Use existing `encode-*` / `decode-*` patterns in `proto.clj`
+4. Keys automatically converted to kebab-case in Clojure
 
 ## Localization
 
@@ -1210,9 +1228,10 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 
 ## Technical Details
 
-**Build**: Java 17+, Protobuf 3.15.0 (bundled)
+**Build**: Java 17+, Protobuf 4.29.5 (bundled)
 **Streams**: Heat (900x720), Day (1920x1080)
 **WebSocket**: Built-in Java 17 HttpClient (no external dependencies)
+**Protobuf**: Direct implementation with custom kebab-case conversion (no external wrapper libraries)
 
 **Performance Optimizations**:
 - Zero-allocation streaming with dual buffer pools (WebSocket + GStreamer)
@@ -1238,78 +1257,8 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 
 ## CI/CD & Release Process
 
-### GitHub Actions Workflow
-The CI pipeline (`/.github/workflows/release.yml`) automatically:
-1. Builds release versions with embedded release marker
-2. Enables AOT compilation and direct linking
-3. Creates platform-specific packages:
-   - **Linux**: AppImage with bundled JRE and GStreamer
-   - **Windows**: Installer (.exe) and portable (.zip) with dependencies
-   - **macOS**: DMG with bundled JRE (GStreamer required separately)
+The CI pipeline automatically builds optimized release versions with:
+- **Platform packages**: Linux (AppImage), Windows (.exe/.zip), macOS (DMG)
+- **Release optimizations**: AOT compilation, direct linking, no dev overhead
+- **Self-identification**: Release builds show `[RELEASE]` in window title
 
-### Release Optimization
-Release builds from CI have:
-- **No instrumentation overhead**: Malli completely disabled
-- **AOT compilation**: All Clojure code pre-compiled to bytecode
-- **Direct linking**: Function calls are statically linked
-- **Stripped metadata**: Smaller JAR size without dev metadata
-- **Embedded release marker**: Self-identifying as release build
-
-### Verifying Release Builds
-Users can verify they're running an optimized release:
-1. Check console output on startup
-2. Look for `[RELEASE]` in window title
-3. No log files created
-4. Only critical messages (warnings/errors) appear on console
-
-## Recent Optimizations
-
-### WebSocket Client Migration & Hot Path Optimization
-1. **Replaced Java-WebSocket with Java 17's HttpClient**: Eliminated external dependency
-2. **Built-in WSS Support**: Native WebSocket Secure connections with certificate trust override
-3. **Simplified Reconnection**: Fixed 1-second delay instead of exponential backoff
-4. **Zero-Allocation Streaming**: 
-   - Dual buffer pools (WebSocket + GStreamer layers)
-   - Direct ByteBuffers for native interop
-   - Eliminated unnecessary buffer copies for single-fragment messages
-   - Pool statistics tracking for performance monitoring
-5. **Memory Management**:
-   - Automatic message buffer trimming every 60 seconds
-   - Pre-allocated buffer pools to reduce startup allocations
-   - Proper buffer lifecycle management with automatic returns to pool
-
-### Video Streaming Performance
-1. **Buffer Pooling**: Implemented zero-allocation streaming with reusable buffers
-2. **Lock Optimization**: Minimized lock contention by acquiring/releasing locks only during critical operations
-3. **Pipeline Simplification**: Removed unnecessary elements (videorate) for better performance
-4. **Fixed Keyframe Bug**: Removed faulty keyframe detection that prevented video playback
-
-### Window Event Handling
-1. **Fixed X Button**: Removed duplicate window listeners that prevented proper close handling
-2. **Consistent Behavior**: All close methods now follow the same IPC message flow
-
-### Logging System Simplification
-1. **Telemere Integration**: Replaced custom logging with high-performance Telemere library
-2. **Removed Log UI**: Eliminated in-app log viewer for cleaner interface
-3. **Smart Logging**: Development builds log everything to timestamped files, release builds only output critical events
-4. **Zero Overhead**: Conditional evaluation ensures no performance impact in production
-
-### Logging Best Practices
-
-1. **Use appropriate log levels**: DEBUG for development details, INFO for normal operations, WARN for issues, ERROR for failures
-2. **Check logs during development**: Look in `./logs/` directory for timestamped log files
-3. **Monitor production logs**: Only warnings and errors appear on stdout/stderr in release builds
-
-### Common Guardrails Errors and Solutions
-
-**"Return value should be nil"**:
-- Your function spec says `=> nil?` but you're returning a value
-- Fix: Add explicit `nil` at the end of the function
-
-**"should be an int"**:
-- You're passing the wrong type to a function
-- Fix: Check the function's input specs and fix the caller
-
-**"Return value should be positive"**:
-- Your such-that predicate (`|`) is failing
-- Fix: Ensure your function returns values that satisfy the predicate
