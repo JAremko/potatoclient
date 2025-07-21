@@ -81,9 +81,24 @@ jobs:
     
     - name: Download AppImage tools
       run: |
-        wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-        wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        # Download linuxdeploy with error handling
+        echo "Downloading linuxdeploy..."
+        if ! wget -O linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage; then
+          echo "Failed to download linuxdeploy, retrying..."
+          sleep 2
+          wget -O linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        fi
+        
+        # Download appimagetool from the new repository with error handling
+        echo "Downloading appimagetool..."
+        if ! wget -O appimagetool-x86_64.AppImage https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage; then
+          echo "Failed to download appimagetool, retrying..."
+          sleep 2
+          wget -O appimagetool-x86_64.AppImage https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+        fi
+        
         chmod +x *.AppImage
+        ls -la *.AppImage
     
     - name: Create AppDir structure  
       run: |
