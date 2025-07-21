@@ -4,11 +4,10 @@
   Provides functions to serialize commands and deserialize state messages
   using the pronto library for Clojure protobuf support."
   (:require [clojure.spec.alpha :as s]
+            [clojure.string :as str]
             [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [potatoclient.specs :as specs]
-            [pronto.core :as p]
-            [pronto.utils :as u])
+            [potatoclient.specs :as specs])
   (:import (cmd JonSharedCmd$Root)
            (ser JonSharedData$JonGUIState)))
 
@@ -36,9 +35,106 @@
    [:client-type client-type-values]
    [:payload ::specs/payload]])
 
-;; Define the mapper for state and command messages
-(p/defmapper proto-mapper [JonSharedData$JonGUIState JonSharedCmd$Root]
-  :key-name-fn u/->kebab-case)
+;; Utility functions for case conversion
+(>defn- camel->kebab
+  "Convert camelCase or PascalCase to kebab-case."
+  [s]
+  [string? => string?]
+  (-> s
+      (str/replace #"([a-z])([A-Z])" "$1-$2")
+      (str/replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+      str/lower-case))
+
+(>defn- kebab->camel
+  "Convert kebab-case to camelCase."
+  [s]
+  [string? => string?]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
+;; Protobuf message conversion functions
+(>defn- proto-map->clj-map
+  "Convert a protobuf message to a Clojure map with kebab-case keys.
+  Recursively processes nested messages."
+  [proto-msg]
+  [any? => map?]
+  (let [descriptor (.getDescriptorForType proto-msg)
+        fields (.getFields descriptor)]
+    (reduce
+     (fn [acc field]
+       (let [field-name (.getName field)
+             kebab-name (camel->kebab field-name)
+             value (.getField proto-msg field)]
+         (cond
+           ;; Skip unset fields
+           (and (not (.isRepeated field))
+                (= value (.getDefaultValue field)))
+           acc
+           
+           ;; Handle repeated fields
+           (.isRepeated field)
+           (if (seq value)
+             (assoc acc (keyword kebab-name)
+                    (mapv #(if (instance? com.google.protobuf.Message %)
+                             (proto-map->clj-map %)
+                             %)
+                          value))
+             acc)
+           
+           ;; Handle message types
+           (instance? com.google.protobuf.Message value)
+           (if (.hasField proto-msg field)
+             (assoc acc (keyword kebab-name) (proto-map->clj-map value))
+             acc)
+           
+           ;; Handle enum types
+           (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
+           (assoc acc (keyword kebab-name) (.getName value))
+           
+           ;; Handle primitive types
+           :else
+           (assoc acc (keyword kebab-name) value))))
+     {}
+     fields)))
+
+(>defn- clj-map->proto-builder
+  "Convert a Clojure map to a protobuf builder.
+  Handles nested messages and repeated fields."
+  [builder clj-map]
+  [any? map? => any?]
+  (let [descriptor (.getDescriptorForType builder)]
+    (doseq [[k v] clj-map]
+      (let [field-name (kebab->camel (name k))
+            field (.findFieldByName descriptor field-name)]
+        (when field
+          (cond
+            ;; Handle repeated fields
+            (.isRepeated field)
+            (doseq [item v]
+              (if (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+                (let [item-builder (.newBuilderForField builder field)]
+                  (clj-map->proto-builder item-builder item)
+                  (.addRepeatedField builder field (.build item-builder)))
+                (.addRepeatedField builder field item)))
+            
+            ;; Handle message types
+            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+            (let [nested-builder (.newBuilderForField builder field)]
+              (clj-map->proto-builder nested-builder v)
+              (.setField builder field (.build nested-builder)))
+            
+            ;; Handle enum types
+            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
+            (let [enum-type (.getEnumType field)
+                  enum-value (.findValueByName enum-type v)]
+              (when enum-value
+                (.setField builder field enum-value)))
+            
+            ;; Handle primitive types
+            :else
+            (.setField builder field v)))))
+    builder))
 
 ;; Serialization functions
 (>defn serialize-cmd
@@ -56,8 +152,9 @@
   [cmd-map]
   [:potatoclient.specs/command => bytes?]
   (try
-    (-> (p/clj-map->proto-map proto-mapper JonSharedCmd$Root cmd-map)
-        (p/proto-map->bytes))
+    (let [builder (JonSharedCmd$Root/newBuilder)]
+      (clj-map->proto-builder builder cmd-map)
+      (.toByteArray (.build builder)))
     (catch Exception e
       (throw (ex-info "Failed to serialize command"
                       {:error (.getMessage e)
@@ -72,7 +169,8 @@
   [proto-bytes]
   [bytes? => map?]
   (try
-    (p/bytes->proto-map proto-mapper JonSharedData$JonGUIState proto-bytes)
+    (let [proto-msg (JonSharedData$JonGUIState/parseFrom proto-bytes)]
+      (proto-map->clj-map proto-msg))
     (catch Exception e
       (throw (ex-info "Failed to deserialize state"
                       {:error (.getMessage e)
