@@ -358,6 +358,176 @@
   [:map-of keyword? [:map-of keyword? string?]])
 
 ;; -----------------------------------------------------------------------------
+;; Command Domain Schemas
+;; -----------------------------------------------------------------------------
+
+(def azimuth-degrees
+  "Azimuth angle in degrees [0, 360)"
+  [:double {:min 0.0 :max 360.0}])
+
+(def elevation-degrees
+  "Elevation angle in degrees [-90, 90]"
+  [:double {:min -90.0 :max 90.0}])
+
+(def rotation-speed
+  "Rotation speed normalized [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def gps-latitude
+  "GPS latitude in degrees [-90, 90]"
+  [:double {:min -90.0 :max 90.0}])
+
+(def gps-longitude
+  "GPS longitude in degrees [-180, 180)"
+  [:double {:min -180.0 :max 180.0}])
+
+(def gps-altitude
+  "GPS altitude in meters (Dead Sea to Everest)"
+  [:double {:min -433.0 :max 8848.86}])
+
+(def zoom-level
+  "Zoom level normalized [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def zoom-table-index
+  "Zoom table index value"
+  [:int {:min 0}])
+
+(def digital-zoom-level
+  "Digital zoom level [1.0, ∞)"
+  [:double {:min 1.0}])
+
+(def focus-value
+  "Focus value normalized [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def iris-value
+  "Iris value normalized [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def clahe-level
+  "CLAHE level normalized [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def clahe-shift
+  "CLAHE shift value [-1, 1]"
+  [:double {:min -1.0 :max 1.0}])
+
+(def relative-angle
+  "Relative angle in degrees (-360, 360)"
+  [:double {:min -360.0 :max 360.0}])
+
+(def bank-angle
+  "Bank angle in degrees [-180, 180)"
+  [:double {:min -180.0 :max 180.0}])
+
+(def scan-linger-time
+  "Scan linger time in seconds"
+  [:double {:min 0.0}])
+
+(def scan-node-index
+  "Scan node index"
+  [:int {:min 0}])
+
+;; -----------------------------------------------------------------------------
+;; Protobuf Types
+;; -----------------------------------------------------------------------------
+
+(def protobuf-message
+  "Google Protobuf Message instance"
+  [:fn {:error/message "must be a protobuf message"}
+   #(instance? com.google.protobuf.Message %)])
+
+(def protobuf-builder
+  "Google Protobuf Message Builder instance"
+  [:fn {:error/message "must be a protobuf message builder"}
+   #(instance? com.google.protobuf.Message$Builder %)])
+
+;; -----------------------------------------------------------------------------
+;; Command Enum Types
+;; -----------------------------------------------------------------------------
+
+(def rotary-direction
+  "Rotary platform direction enum"
+  [:fn {:error/message "must be a JonGuiDataRotaryDirection enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataRotaryDirection %)])
+
+(def rotary-mode
+  "Rotary platform mode enum"
+  [:fn {:error/message "must be a JonGuiDataRotaryMode enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataRotaryMode %)])
+
+(def video-channel
+  "Video channel enum"
+  [:fn {:error/message "must be a JonGuiDataVideoChannel enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataVideoChannel %)])
+
+(def day-camera-palette
+  "Day camera palette enum"
+  [:fn {:error/message "must be a JonGuiDataDayCameraPalette enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraPalette %)])
+
+(def day-camera-agc-mode
+  "Day camera AGC mode enum"
+  [:fn {:error/message "must be a JonGuiDataDayCameraAgcMode enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraAgcMode %)])
+
+(def day-camera-exposure-mode
+  "Day camera exposure mode enum"
+  [:fn {:error/message "must be a JonGuiDataDayCameraExposureMode enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraExposureMode %)])
+
+(def day-camera-wdr-mode
+  "Day camera WDR mode enum"
+  [:fn {:error/message "must be a JonGuiDataDayCameraWdrMode enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraWdrMode %)])
+
+(def day-camera-defog-status
+  "Day camera defog status enum"
+  [:fn {:error/message "must be a JonGuiDataDayCameraDefogStatus enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraDefogStatus %)])
+
+(def boolean-enum
+  "Boolean value enum"
+  [:fn {:error/message "must be a JonGuiDataBoolean enum"}
+   #(instance? data.JonGuiDataTypes$JonGuiDataBoolean %)])
+
+;; -----------------------------------------------------------------------------
+;; Command Structures
+;; -----------------------------------------------------------------------------
+
+(def cmd-root-builder
+  "JonSharedCmd Root builder"
+  [:fn {:error/message "must be a JonSharedCmd$Root$Builder"}
+   #(instance? cmd.JonSharedCmd$Root$Builder %)])
+
+(def rotary-axis-builder
+  "JonSharedCmdRotary Axis builder"
+  [:fn {:error/message "must be a JonSharedCmdRotary$Axis$Builder"}
+   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Axis$Builder %)])
+
+(def rotary-axis-command-map
+  "Map for rotary axis commands"
+  [:map
+   [:azimuth {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth$Builder %)]]
+   [:elevation {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation$Builder %)]]])
+
+(def command-payload-map
+  "Command payload structure"
+  [:map
+   [:pld bytes?]
+   [:should-buffer boolean?]])
+
+;; -----------------------------------------------------------------------------
+;; Channel Types
+;; -----------------------------------------------------------------------------
+
+(def core-async-channel
+  "core.async channel"
+  [:fn {:error/message "must be a core.async channel"}
+   #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)])
+
+;; -----------------------------------------------------------------------------
 ;; Registry Setup
 ;; -----------------------------------------------------------------------------
 
@@ -442,7 +612,50 @@
     ;; I18n
      ::translation-key translation-key
      ::translation-args translation-args
-     ::translations-map translations-map}))
+     ::translations-map translations-map
+     
+     ;; Command Domain
+     ::azimuth-degrees azimuth-degrees
+     ::elevation-degrees elevation-degrees
+     ::rotation-speed rotation-speed
+     ::gps-latitude gps-latitude
+     ::gps-longitude gps-longitude
+     ::gps-altitude gps-altitude
+     ::zoom-level zoom-level
+     ::zoom-table-index zoom-table-index
+     ::digital-zoom-level digital-zoom-level
+     ::focus-value focus-value
+     ::iris-value iris-value
+     ::clahe-level clahe-level
+     ::clahe-shift clahe-shift
+     ::relative-angle relative-angle
+     ::bank-angle bank-angle
+     ::scan-linger-time scan-linger-time
+     ::scan-node-index scan-node-index
+     
+     ;; Protobuf Types
+     ::protobuf-message protobuf-message
+     ::protobuf-builder protobuf-builder
+     
+     ;; Command Enums
+     ::rotary-direction rotary-direction
+     ::rotary-mode rotary-mode
+     ::video-channel video-channel
+     ::day-camera-palette day-camera-palette
+     ::day-camera-agc-mode day-camera-agc-mode
+     ::day-camera-exposure-mode day-camera-exposure-mode
+     ::day-camera-wdr-mode day-camera-wdr-mode
+     ::day-camera-defog-status day-camera-defog-status
+     ::boolean-enum boolean-enum
+     
+     ;; Command Structures
+     ::cmd-root-builder cmd-root-builder
+     ::rotary-axis-builder rotary-axis-builder
+     ::rotary-axis-command-map rotary-axis-command-map
+     ::command-payload-map command-payload-map
+     
+     ;; Channel Types
+     ::core-async-channel core-async-channel}))
 
 ;; Set as default registry for this namespace
 (mr/set-default-registry! registry)

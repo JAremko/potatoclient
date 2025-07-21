@@ -53,9 +53,35 @@ Settings stored in platform-specific locations:
 │  - UI (Swing)   │                   │ - WebSocket      │
 │  - State Mgmt   │                   │ - GStreamer      │
 │  - Config       │                   └──────────────────┘
-└─────────────────┘                   ┌──────────────────┐
-                                      │ Stream Process 2 │
+│  - Commands     │                   ┌──────────────────┐
+└─────────────────┘                   │ Stream Process 2 │
                                       └──────────────────┘
+```
+
+### Command System
+
+PotatoClient includes a command system for sending control messages via Protobuf:
+
+- **Command Infrastructure**: Core async channel-based message routing
+- **Rotary Platform**: Full gimbal control (azimuth, elevation, scanning)
+- **Camera Control**: Zoom, focus, exposure, image enhancement
+- **Read-only Mode**: Safety mode allowing only ping/frozen commands
+- **JSON Output**: Commands serialized as Base64-encoded Protobuf
+
+```clojure
+;; Initialize command system
+(require '[potatoclient.cmd.core :as cmd])
+(cmd/init!)
+
+;; Send commands
+(require '[potatoclient.cmd.rotary :as rotary])
+(rotary/rotary-start)
+(rotary/set-platform-azimuth 45.0)
+
+;; Camera control
+(require '[potatoclient.cmd.day-camera :as camera])
+(camera/zoom-in)
+(camera/set-stabilization true)
 ```
 
 ## Development
