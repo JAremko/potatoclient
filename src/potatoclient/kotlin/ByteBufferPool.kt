@@ -15,20 +15,37 @@ class ByteBufferPool(
 ) {
     // Use ConcurrentLinkedQueue for lock-free operations
     private val pool = ConcurrentLinkedQueue<ByteBuffer>()
+
     // Separate currentSize for fast capacity checks
     @Volatile
     private var currentSize = 0
+
     // Performance metrics - use padding to avoid false sharing
-    @Volatile private var p0: Long = 0L; @Volatile private var p1: Long = 0L
+    @Volatile private var p0: Long = 0L
+
+    @Volatile private var p1: Long = 0L
     private val acquireCount = AtomicLong(0)
-    @Volatile private var p2: Long = 0L; @Volatile private var p3: Long = 0L
+
+    @Volatile private var p2: Long = 0L
+
+    @Volatile private var p3: Long = 0L
     private val hitCount = AtomicLong(0)
-    @Volatile private var p4: Long = 0L; @Volatile private var p5: Long = 0L
+
+    @Volatile private var p4: Long = 0L
+
+    @Volatile private var p5: Long = 0L
     private val missCount = AtomicLong(0)
-    @Volatile private var p6: Long = 0L; @Volatile private var p7: Long = 0L
+
+    @Volatile private var p6: Long = 0L
+
+    @Volatile private var p7: Long = 0L
     private val returnCount = AtomicLong(0)
-    @Volatile private var p8: Long = 0L; @Volatile private var p9: Long = 0L
+
+    @Volatile private var p8: Long = 0L
+
+    @Volatile private var p9: Long = 0L
     private val dropCount = AtomicLong(0)
+
     init {
         // Pre-allocate half the pool to reduce startup allocations
         val preAllocate = maxPoolSize / 2
@@ -40,6 +57,7 @@ class ByteBufferPool(
         pool.addAll(buffers)
         currentSize = preAllocate
     }
+
     /**
      * Acquire a buffer from the pool or allocate a new one.
      * The returned buffer is cleared and ready for use.
@@ -59,6 +77,7 @@ class ByteBufferPool(
             allocateBuffer()
         }
     }
+
     /**
      * Return a buffer to the pool for reuse.
      * The buffer will be cleared before being returned to the pool.
@@ -68,9 +87,9 @@ class ByteBufferPool(
         if (buffer == null || buffer.capacity() != bufferSize) {
             return // Don't pool wrong-sized buffers
         }
-        
+
         returnCount.incrementAndGet()
-        
+
         // Quick capacity check without synchronization
         val size = currentSize
         if (size < maxPoolSize) {
@@ -86,25 +105,22 @@ class ByteBufferPool(
             // Pool is full, let GC handle it
         }
     }
-    
+
     /**
      * Acquire a buffer and ensure it has at least the requested capacity.
      * If the standard buffer is too small, a larger non-pooled buffer is returned.
      */
-    fun acquireWithCapacity(minCapacity: Int): ByteBuffer {
-        return if (minCapacity <= bufferSize) {
+    fun acquireWithCapacity(minCapacity: Int): ByteBuffer =
+        if (minCapacity <= bufferSize) {
             acquire()
         } else {
             // Need larger buffer - don't use pool
             missCount.incrementAndGet()
             if (direct) ByteBuffer.allocateDirect(minCapacity) else ByteBuffer.allocate(minCapacity)
         }
-    }
-    
-    private fun allocateBuffer(): ByteBuffer {
-        return if (direct) ByteBuffer.allocateDirect(bufferSize) else ByteBuffer.allocate(bufferSize)
-    }
-    
+
+    private fun allocateBuffer(): ByteBuffer = if (direct) ByteBuffer.allocateDirect(bufferSize) else ByteBuffer.allocate(bufferSize)
+
     /**
      * Get pool statistics for monitoring
      */
@@ -113,7 +129,7 @@ class ByteBufferPool(
         val hits = hitCount.get()
         val misses = missCount.get()
         val hitRate = if (acquires > 0) hits.toDouble() / acquires else 0.0
-        
+
         return PoolStats(
             currentSize = currentSize,
             maxSize = maxPoolSize,
@@ -124,10 +140,10 @@ class ByteBufferPool(
             missCount = misses,
             returnCount = returnCount.get(),
             dropCount = dropCount.get(),
-            hitRate = hitRate
+            hitRate = hitRate,
         )
     }
-    
+
     /**
      * Clear the pool and release resources
      */
@@ -148,12 +164,11 @@ class ByteBufferPool(
         val missCount: Long,
         val returnCount: Long,
         val dropCount: Long,
-        val hitRate: Double
+        val hitRate: Double,
     ) {
-        override fun toString(): String {
-            return "ByteBufferPool[size=$currentSize/$maxSize, bufferSize=$bufferSize, direct=$direct, " +
-                    "acquires=$acquireCount, hits=$hitCount, misses=$missCount, returns=$returnCount, " +
-                    "drops=$dropCount, hitRate=${String.format("%.2f", hitRate * 100)}%]"
-        }
+        override fun toString(): String =
+            "ByteBufferPool[size=$currentSize/$maxSize, bufferSize=$bufferSize, direct=$direct, " +
+                "acquires=$acquireCount, hits=$hitCount, misses=$missCount, returns=$returnCount, " +
+                "drops=$dropCount, hitRate=${String.format("%.2f", hitRate * 100)}%]"
     }
 }

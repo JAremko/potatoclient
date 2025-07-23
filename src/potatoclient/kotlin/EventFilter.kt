@@ -25,30 +25,29 @@ class EventFilter {
         WINDOW_FOCUSED,
         WINDOW_UNFOCUSED,
         WINDOW_MOVED,
-        WINDOW_RESIZED
+        WINDOW_RESIZED,
     }
-    
+
     companion object {
         // Default filtered events (configurable)
-        private val DEFAULT_FILTERED_EVENTS = EnumSet.of(
-            EventType.MOUSE_MOVE,
-            EventType.MOUSE_PRESS,
-            EventType.MOUSE_RELEASE,
-            EventType.WINDOW_MOVED,
-            EventType.WINDOW_RESIZED,
-            EventType.WINDOW_OPENED,
-            EventType.WINDOW_MINIMIZED,
-            EventType.WINDOW_RESTORED,
-            EventType.WINDOW_MAXIMIZED,
-            EventType.WINDOW_UNMAXIMIZED,
-            EventType.WINDOW_FOCUSED,
-            EventType.WINDOW_UNFOCUSED
-        )
+        private val DEFAULT_FILTERED_EVENTS =
+            EnumSet.of(
+                EventType.MOUSE_MOVE,
+                EventType.MOUSE_PRESS,
+                EventType.MOUSE_RELEASE,
+                EventType.WINDOW_MOVED,
+                EventType.WINDOW_RESIZED,
+                EventType.WINDOW_OPENED,
+                EventType.WINDOW_MINIMIZED,
+                EventType.WINDOW_RESTORED,
+                EventType.WINDOW_MAXIMIZED,
+                EventType.WINDOW_UNMAXIMIZED,
+                EventType.WINDOW_FOCUSED,
+                EventType.WINDOW_UNFOCUSED,
+            )
     }
-    
+
     private val filteredEvents: EnumSet<EventType> = EnumSet.copyOf(DEFAULT_FILTERED_EVENTS)
-    
-    fun isUnfiltered(type: EventType): Boolean {
-        return !filteredEvents.contains(type)
-    }
+
+    fun isUnfiltered(type: EventType): Boolean = !filteredEvents.contains(type)
 }

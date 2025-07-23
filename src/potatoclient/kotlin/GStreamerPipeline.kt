@@ -3,37 +3,63 @@ package potatoclient.kotlin
 import com.sun.jna.Native
 import com.sun.jna.Platform
 import com.sun.jna.Pointer
-import org.freedesktop.gstreamer.*
+import org.freedesktop.gstreamer.Buffer
+import org.freedesktop.gstreamer.Bus
+import org.freedesktop.gstreamer.Caps
+import org.freedesktop.gstreamer.Element
+import org.freedesktop.gstreamer.ElementFactory
+import org.freedesktop.gstreamer.FlowReturn
+import org.freedesktop.gstreamer.Format
+import org.freedesktop.gstreamer.Gst
+import org.freedesktop.gstreamer.Pipeline
+import org.freedesktop.gstreamer.Registry
+import org.freedesktop.gstreamer.State
+import org.freedesktop.gstreamer.StateChangeReturn
 import org.freedesktop.gstreamer.elements.AppSrc
 import org.freedesktop.gstreamer.interfaces.VideoOverlay
 import java.awt.Component
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.ReentrantLock
 
-class GStreamerPipeline(private val callback: EventCallback) {
+class GStreamerPipeline(
+    private val callback: EventCallback,
+) {
     interface EventCallback {
-        fun onLog(level: String, message: String)
+        fun onLog(
+            level: String,
+            message: String,
+        )
+
         fun onPipelineError(message: String)
+
         fun isRunning(): Boolean
     }
 
     private val pipelineLock = ReentrantLock()
 
     @Volatile private var pipeline: Pipeline? = null
+
     @Volatile private var appsrc: AppSrc? = null
+
     @Volatile private var videosink: Element? = null
+
     @Volatile private var videoOverlay: VideoOverlay? = null
+
     @Volatile private var selectedDecoder: String? = null
+
     @Volatile private var isAppImage = false
+
     @Volatile private var gstreamerVersion: String? = null
 
     private val frameCount = AtomicLong(0)
     private val startTime = AtomicLong(0)
+
     @Volatile private var hasReceivedKeyframe = false
+
     @Volatile private var pendingVideoComponent: Component? = null
+
     @Volatile private var overlaySet = false
 
     // Buffer pool for zero-allocation streaming
@@ -46,11 +72,16 @@ class GStreamerPipeline(private val callback: EventCallback) {
         try {
             // Configure Windows paths if needed
             if (Platform.isWindows()) {
-                GStreamerUtils.configureGStreamerPaths(object : GStreamerUtils.EventCallback {
-                    override fun onLog(level: String, message: String) {
-                        callback.onLog(level, message)
-                    }
-                })
+                GStreamerUtils.configureGStreamerPaths(
+                    object : GStreamerUtils.EventCallback {
+                        override fun onLog(
+                            level: String,
+                            message: String,
+                        ) {
+                            callback.onLog(level, message)
+                        }
+                    },
+                )
             }
 
             // Initialize GStreamer if needed
@@ -119,16 +150,17 @@ class GStreamerPipeline(private val callback: EventCallback) {
             pipeline = Pipeline("video-pipeline")
 
             // AppSrc for receiving video data
-            appsrc = AppSrc("appsrc").apply {
-                set("is-live", true)
-                set("format", Format.TIME)
-                set("caps", Caps.fromString(Constants.H264_CAPS))
-                set("max-bytes", 0L)
-                set("block", false)
-                set("emit-signals", false)
-                set("min-latency", 0L)
-                set("max-latency", 0L)
-            }
+            appsrc =
+                AppSrc("appsrc").apply {
+                    set("is-live", true)
+                    set("format", Format.TIME)
+                    set("caps", Caps.fromString(Constants.H264_CAPS))
+                    set("max-bytes", 0L)
+                    set("block", false)
+                    set("emit-signals", false)
+                    set("min-latency", 0L)
+                    set("max-latency", 0L)
+                }
 
             // H264 parser
             val h264parse = ElementFactory.make("h264parse", "h264parse")
@@ -180,7 +212,10 @@ class GStreamerPipeline(private val callback: EventCallback) {
             }
 
             if (decoder == null) {
-                callback.onLog("ERROR", "Failed to create any H264 decoder. Please ensure GStreamer is properly installed with at least one of: gstreamer1.0-libav (for avdec_h264), gstreamer1.0-plugins-bad (for hardware decoders), or gstreamer1.0-plugins-good (for decodebin)")
+                callback.onLog(
+                    "ERROR",
+                    "Failed to create any H264 decoder. Please ensure GStreamer is properly installed with at least one of: gstreamer1.0-libav (for avdec_h264), gstreamer1.0-plugins-bad (for hardware decoders), or gstreamer1.0-plugins-good (for decodebin)",
+                )
                 return
             }
 
@@ -201,23 +236,24 @@ class GStreamerPipeline(private val callback: EventCallback) {
             callback.onLog("INFO", "Using direct pipeline without color conversion")
 
             // Video sink - platform specific
-            videosink = when {
-                Platform.isLinux() -> {
-                    callback.onLog("DEBUG", "Creating Linux video sink...")
-                    ElementFactory.make("xvimagesink", "videosink") ?: run {
-                        callback.onLog("DEBUG", "xvimagesink not available, trying ximagesink...")
-                        ElementFactory.make("ximagesink", "videosink")
+            videosink =
+                when {
+                    Platform.isLinux() -> {
+                        callback.onLog("DEBUG", "Creating Linux video sink...")
+                        ElementFactory.make("xvimagesink", "videosink") ?: run {
+                            callback.onLog("DEBUG", "xvimagesink not available, trying ximagesink...")
+                            ElementFactory.make("ximagesink", "videosink")
+                        }
                     }
+                    Platform.isWindows() -> {
+                        ElementFactory.make("d3dvideosink", "videosink")
+                            ?: ElementFactory.make("directdrawsink", "videosink")
+                    }
+                    Platform.isMac() -> {
+                        ElementFactory.make("osxvideosink", "videosink")
+                    }
+                    else -> null
                 }
-                Platform.isWindows() -> {
-                    ElementFactory.make("d3dvideosink", "videosink")
-                        ?: ElementFactory.make("directdrawsink", "videosink")
-                }
-                Platform.isMac() -> {
-                    ElementFactory.make("osxvideosink", "videosink")
-                }
-                else -> null
-            }
 
             // Fallback to autovideosink
             if (videosink == null) {
@@ -248,15 +284,17 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 appsrc?.link(decoder)
 
                 // decodebin uses dynamic pads, so we need to handle pad-added signal
-                decoder.connect(Element.PAD_ADDED { element, pad ->
-                    if (pad.name.startsWith("src")) {
-                        val sinkPad = queue.getStaticPad("sink")
-                        if (!sinkPad.isLinked) {
-                            pad.link(sinkPad)
-                            callback.onLog("DEBUG", "Linked decoder to queue")
+                decoder.connect(
+                    Element.PAD_ADDED { element, pad ->
+                        if (pad.name.startsWith("src")) {
+                            val sinkPad = queue.getStaticPad("sink")
+                            if (!sinkPad.isLinked) {
+                                pad.link(sinkPad)
+                                callback.onLog("DEBUG", "Linked decoder to queue")
+                            }
                         }
-                    }
-                })
+                    },
+                )
 
                 // Link remaining elements
                 queue.link(videosink)
@@ -268,13 +306,17 @@ class GStreamerPipeline(private val callback: EventCallback) {
 
             // Set up bus for error handling
             val bus = pipeline?.bus
-            bus?.connect(Bus.ERROR { _, source, message ->
-                callback.onLog("ERROR", "Pipeline error: $message")
-            })
+            bus?.connect(
+                Bus.ERROR { _, source, message ->
+                    callback.onLog("ERROR", "Pipeline error: $message")
+                },
+            )
 
-            bus?.connect(Bus.WARNING { _, source, message ->
-                callback.onLog("WARN", "Pipeline warning: $message")
-            })
+            bus?.connect(
+                Bus.WARNING { _, source, message ->
+                    callback.onLog("WARN", "Pipeline warning: $message")
+                },
+            )
 
             // Store video component for later overlay setup
             if (videoComponent != null && videosink != null) {
@@ -311,29 +353,28 @@ class GStreamerPipeline(private val callback: EventCallback) {
         }
     }
 
-    private fun getDecoderOptions(): Array<String> {
-        return if (isAppImage) {
+    private fun getDecoderOptions(): Array<String> =
+        if (isAppImage) {
             // In AppImage, prefer software decoders for better compatibility
             arrayOf(
-                "avdec_h264",      // FFmpeg/libav software decoder (most reliable in AppImage)
-                "openh264dec",     // OpenH264 software decoder
-                "decodebin"        // Auto-negotiating decoder (fallback)
+                "avdec_h264", // FFmpeg/libav software decoder (most reliable in AppImage)
+                "openh264dec", // OpenH264 software decoder
+                "decodebin", // Auto-negotiating decoder (fallback)
             )
         } else {
             // Normal priority: hardware first
             arrayOf(
-                "nvh264dec",       // NVIDIA hardware decoder (NVDEC)
-                "nvdec",           // Newer NVIDIA decoder
-                "d3d11h264dec",    // Windows Direct3D 11 hardware decoder
-                "msdkh264dec",     // Intel Media SDK hardware decoder
-                "vaapih264dec",    // VA-API hardware decoder (Linux)
-                "vtdec_h264",      // macOS VideoToolbox hardware decoder
-                "avdec_h264",      // FFmpeg/libav software decoder (most common)
-                "openh264dec",     // OpenH264 software decoder
-                "decodebin"        // Auto-negotiating decoder (fallback)
+                "nvh264dec", // NVIDIA hardware decoder (NVDEC)
+                "nvdec", // Newer NVIDIA decoder
+                "d3d11h264dec", // Windows Direct3D 11 hardware decoder
+                "msdkh264dec", // Intel Media SDK hardware decoder
+                "vaapih264dec", // VA-API hardware decoder (Linux)
+                "vtdec_h264", // macOS VideoToolbox hardware decoder
+                "avdec_h264", // FFmpeg/libav software decoder (most common)
+                "openh264dec", // OpenH264 software decoder
+                "decodebin", // Auto-negotiating decoder (fallback)
             )
         }
-    }
 
     private fun setupVideoOverlay() {
         if (overlaySet || pendingVideoComponent == null || videosink == null) {
@@ -349,15 +390,16 @@ class GStreamerPipeline(private val callback: EventCallback) {
             videoOverlay = VideoOverlay.wrap(videosink)
 
             // Get native window handle
-            val windowHandle = when {
-                Platform.isLinux() -> Native.getComponentID(pendingVideoComponent).toLong()
-                Platform.isWindows() -> {
-                    val p = Native.getComponentPointer(pendingVideoComponent)
-                    Pointer.nativeValue(p)
+            val windowHandle =
+                when {
+                    Platform.isLinux() -> Native.getComponentID(pendingVideoComponent).toLong()
+                    Platform.isWindows() -> {
+                        val p = Native.getComponentPointer(pendingVideoComponent)
+                        Pointer.nativeValue(p)
+                    }
+                    Platform.isMac() -> Native.getComponentID(pendingVideoComponent).toLong()
+                    else -> 0L
                 }
-                Platform.isMac() -> Native.getComponentID(pendingVideoComponent).toLong()
-                else -> 0L
-            }
 
             if (windowHandle != 0L) {
                 videoOverlay?.setWindowHandle(windowHandle)
@@ -483,8 +525,15 @@ class GStreamerPipeline(private val callback: EventCallback) {
         val misses = poolMisses.get()
         val hitRate = if (hits + misses > 0) (hits * 100.0) / (hits + misses) else 0.0
 
-        callback.onLog("DEBUG", String.format("%d frames, %.1f fps, pool hit rate: %.1f%%",
-                                            frames, fps, hitRate))
+        callback.onLog(
+            "DEBUG",
+            String.format(
+                "%d frames, %.1f fps, pool hit rate: %.1f%%",
+                frames,
+                fps,
+                hitRate,
+            ),
+        )
     }
 
     fun stop() {
@@ -513,8 +562,15 @@ class GStreamerPipeline(private val callback: EventCallback) {
             val misses = poolMisses.get()
             if (hits + misses > 0) {
                 val hitRate = (hits * 100.0) / (hits + misses)
-                callback.onLog("INFO", String.format("Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)",
-                                                   hitRate, hits, misses))
+                callback.onLog(
+                    "INFO",
+                    String.format(
+                        "Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)",
+                        hitRate,
+                        hits,
+                        misses,
+                    ),
+                )
             }
         } finally {
             pipelineLock.unlock()

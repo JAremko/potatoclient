@@ -3,13 +3,12 @@
    Implements the command pattern from the TypeScript web example."
   (:require [clojure.core.async :as async]
             [clojure.string :as str]
-            [potatoclient.runtime :as runtime]
             [potatoclient.logging :as logging]
+            [potatoclient.runtime :as runtime]
             [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [cmd JonSharedCmd$Root JonSharedCmd$Root$Builder
+  (:import [cmd JonSharedCmd$Root
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
-           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis
-            JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Elevation]
+           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis]
            [data JonSharedDataTypes$JonGuiDataClientType]
            [com.google.protobuf.util JsonFormat]))
 

@@ -1,10 +1,10 @@
 (ns potatoclient.cmd.debug
   "Debug utilities for inspecting protobuf command messages"
-  (:require [potatoclient.cmd.core :as cmd-core]
-            [potatoclient.cmd.rotary :as cmd-rotary]
+  (:require [clojure.string :as str]
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+            [potatoclient.cmd.core :as cmd-core]
             [potatoclient.cmd.day-camera :as cmd-camera]
-            [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
+            [potatoclient.cmd.rotary :as cmd-rotary])
   (:import [com.google.protobuf.util JsonFormat]
            [cmd JonSharedCmd$Root]))
 
@@ -80,17 +80,17 @@
 
   ;; Ping command
   (inspect-command
-    #(cmd-core/send-cmd-ping)
+    cmd-core/send-cmd-ping
     "Ping Command")
 
   ;; Frozen command
   (inspect-command
-    #(cmd-core/send-cmd-frozen)
+    cmd-core/send-cmd-frozen
     "Frozen Command")
 
   ;; Noop command
   (inspect-command
-    #(cmd-core/send-cmd-noop)
+    cmd-core/send-cmd-noop
     "Noop Command")
 
   nil)
@@ -105,7 +105,7 @@
 
   ;; Start command
   (inspect-command
-    #(cmd-rotary/rotary-start)
+    cmd-rotary/rotary-start
     "Rotary Start")
 
   ;; Set azimuth
@@ -132,7 +132,7 @@
 
   ;; Power on
   (inspect-command
-    #(cmd-camera/power-on)
+    cmd-camera/power-on
     "Camera Power On")
 
   ;; Zoom direct value - not implemented yet

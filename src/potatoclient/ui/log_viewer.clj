@@ -149,7 +149,7 @@
         copy-action (seesaw/action
                       :name (i18n/tr :log-viewer-copy)
                       :icon (theme/key->icon :file-save)
-                      :handler (fn [_]
+                      :handler (fn [e]
                                  (copy-to-clipboard raw-content)
                                  (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))
         close-action (seesaw/action

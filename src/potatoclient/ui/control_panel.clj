@@ -44,13 +44,13 @@
                        (do
                          (seesaw/config! status-label
                                          :text (i18n/tr :status-connected)
-                                         :foreground :green)
+                                         :foreground (java.awt.Color/GREEN))
                          (seesaw/config! info-label
                                          :text (str "PID: " (:pid stream))))
                        (do
                          (seesaw/config! status-label
                                          :text (i18n/tr :status-disconnected)
-                                         :foreground :red)
+                                         :foreground (java.awt.Color/RED))
                          (seesaw/config! info-label :text "")))))))
 
     (mig/mig-panel

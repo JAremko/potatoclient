@@ -1,61 +1,85 @@
 (ns potatoclient.cmd.day-camera
   "Day camera command functions for PotatoClient - TEMPORARY STUB"
-  (:require [potatoclient.cmd.core :as cmd-core]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+            [potatoclient.cmd.core :as cmd-core]))
 
 ;; Temporary stub functions until protobuf enums are fixed
 
-(>defn power-on []
+(>defn power-on
+  "Power on the day camera."
+  []
   [=> nil?]
   (println "Day camera power-on - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn power-off []
+(>defn power-off
+  "Power off the day camera."
+  []
   [=> nil?]
   (println "Day camera power-off - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn zoom-in []
+(>defn zoom-in
+  "Zoom in the day camera."
+  []
   [=> nil?]
   (println "Day camera zoom-in - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn zoom-out []
+(>defn zoom-out
+  "Zoom out the day camera."
+  []
   [=> nil?]
   (println "Day camera zoom-out - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-auto []
+(>defn focus-auto
+  "Set day camera to auto focus."
+  []
   [=> nil?]
   (println "Day camera focus-auto - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-manual []
+(>defn focus-manual
+  "Set day camera to manual focus."
+  []
   [=> nil?]
   (println "Day camera focus-manual - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
 ;; String conversion stubs
-(>defn string->palette [value]
+(>defn string->palette
+  "Convert string to palette enum value."
+  [value]
   [string? => any?]
   nil)
 
-(>defn string->agc-mode [value]
+(>defn string->agc-mode
+  "Convert string to AGC mode enum value."
+  [value]
   [string? => any?]
   nil)
 
-(>defn string->exposure-mode [value]
+(>defn string->exposure-mode
+  "Convert string to exposure mode enum value."
+  [value]
   [string? => any?]
   nil)
 
-(>defn string->wdr-mode [value]
+(>defn string->wdr-mode
+  "Convert string to WDR mode enum value."
+  [value]
   [string? => any?]
   nil)
 
-(>defn string->boolean-enum [value]
+(>defn string->boolean-enum
+  "Convert string to boolean enum value."
+  [value]
   [string? => any?]
   nil)
 
-(>defn string->defog-status [value]
+(>defn string->defog-status
+  "Convert string to defog status enum value."
+  [value]
   [string? => any?]
   nil)

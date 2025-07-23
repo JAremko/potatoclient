@@ -3,8 +3,7 @@ package potatoclient.kotlin
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.awt.Component
 import java.net.URI
-import java.nio.ByteBuffer
-import java.util.*
+import java.util.Scanner
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -15,30 +14,31 @@ import javax.swing.JFrame
 class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
-    private val domain: String
+    private val domain: String,
 ) : MouseEventHandler.EventCallback,
     WindowEventHandler.EventCallback,
     GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener {
-    
     // Core components
     private val scanner = Scanner(System.`in`)
     private val mapper = ObjectMapper() // For command parsing
-    
+
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
     private val shutdownLatch = CountDownLatch(1)
 
     // Executor services
-    private val reconnectExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor { r ->
-        Thread(r, "VideoStream-Reconnect-$streamId").apply { isDaemon = true }
-    }
-    private val eventThrottleExecutor: ScheduledExecutorService = Executors.newScheduledThreadPool(
-        Constants.EVENT_THROTTLE_POOL_SIZE
-    ) { r ->
-        Thread(r, "VideoStream-EventThrottle-$streamId").apply { isDaemon = true }
-    }
-    
+    private val reconnectExecutor: ScheduledExecutorService =
+        Executors.newSingleThreadScheduledExecutor { r ->
+            Thread(r, "VideoStream-Reconnect-$streamId").apply { isDaemon = true }
+        }
+    private val eventThrottleExecutor: ScheduledExecutorService =
+        Executors.newScheduledThreadPool(
+            Constants.EVENT_THROTTLE_POOL_SIZE,
+        ) { r ->
+            Thread(r, "VideoStream-EventThrottle-$streamId").apply { isDaemon = true }
+        }
+
     // Module instances
     private val eventFilter = EventFilter()
     private val messageProtocol = MessageProtocol(streamId)
@@ -47,21 +47,22 @@ class VideoStreamManager(
     private var windowEventHandler: WindowEventHandler? = null
     private val webSocketClient: WebSocketClientBuiltIn
     private val gstreamerPipeline = GStreamerPipeline(this)
-    
+
     init {
         webSocketClient = createWebSocketClient()
     }
-    
-    private fun createWebSocketClient(): WebSocketClientBuiltIn {
-        return try {
+
+    private fun createWebSocketClient(): WebSocketClientBuiltIn =
+        try {
             val uri = URI(streamUrl)
-            val headers = mutableMapOf(
-                "Origin" to "https://${uri.host}",
-                "User-Agent" to Constants.WS_USER_AGENT,
-                "Cache-Control" to Constants.WS_CACHE_CONTROL,
-                "Pragma" to Constants.WS_PRAGMA
-            )
-            
+            val headers =
+                mutableMapOf(
+                    "Origin" to "https://${uri.host}",
+                    "User-Agent" to Constants.WS_USER_AGENT,
+                    "Cache-Control" to Constants.WS_CACHE_CONTROL,
+                    "Pragma" to Constants.WS_PRAGMA,
+                )
+
             WebSocketClientBuiltIn(
                 serverUri = uri,
                 headers = headers,
@@ -70,7 +71,7 @@ class VideoStreamManager(
                     if (running.get()) {
                         // Push to pipeline (it handles its own synchronization)
                         gstreamerPipeline.pushVideoData(data)
-                        
+
                         // Return buffer to pool if it's from the pool
                         // Only direct buffers from the pool need to be released
                         if (data.isDirect && data.capacity() <= Constants.MAX_BUFFER_SIZE) {
@@ -86,22 +87,21 @@ class VideoStreamManager(
                 },
                 onError = { error ->
                     messageProtocol.sendException("WebSocket error", error as Exception)
-                }
+                },
             )
         } catch (e: Exception) {
             throw RuntimeException("Failed to create WebSocket client", e)
         }
-    }
-    
+
     fun start() {
         try {
             messageProtocol.sendLog("INFO", "Starting video stream manager for $streamId")
             messageProtocol.sendResponse("starting", streamId)
-            
+
             // Create and show frame
             frameManager.createFrame()
             frameManager.showFrame()
-            
+
             // Start command reader thread
             Thread({
                 try {
@@ -113,24 +113,23 @@ class VideoStreamManager(
                 isDaemon = true
                 start()
             }
-            
+
             // Connect WebSocket
             webSocketClient.connect()
-            
+
             // Wait for shutdown
             try {
                 shutdownLatch.await()
             } catch (e: InterruptedException) {
                 Thread.currentThread().interrupt()
             }
-            
         } catch (e: Exception) {
             messageProtocol.sendException("Startup error", e)
         } finally {
             cleanup()
         }
     }
-    
+
     private fun readCommands() {
         while (running.get() && scanner.hasNextLine()) {
             try {
@@ -146,10 +145,10 @@ class VideoStreamManager(
             }
         }
     }
-    
+
     private fun handleCommand(command: Map<String, Any>) {
         val cmd = command["command"] as? String ?: return
-        
+
         when (cmd) {
             "stop" -> {
                 messageProtocol.sendLog("INFO", "Received stop command")
@@ -168,36 +167,36 @@ class VideoStreamManager(
             }
         }
     }
-    
+
     private fun stop() {
         if (running.compareAndSet(true, false)) {
             messageProtocol.sendLog("INFO", "Stopping video stream manager")
             shutdownLatch.countDown()
         }
     }
-    
+
     private fun cleanup() {
         try {
             // Stop accepting new tasks
             running.set(false)
-            
+
             // Close WebSocket
             webSocketClient.close()
-            
+
             // Stop GStreamer pipeline
             gstreamerPipeline.stop()
-            
+
             // Clean up event handlers
             mouseEventHandler?.cleanup()
             windowEventHandler?.cleanup()
-            
+
             // Dispose frame
             frameManager.disposeFrame()
-            
+
             // Shutdown executors
             reconnectExecutor.shutdown()
             eventThrottleExecutor.shutdown()
-            
+
             try {
                 if (!reconnectExecutor.awaitTermination(Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                     reconnectExecutor.shutdownNow()
@@ -210,72 +209,80 @@ class VideoStreamManager(
                 eventThrottleExecutor.shutdownNow()
                 Thread.currentThread().interrupt()
             }
-            
+
             // Send final response
             messageProtocol.sendResponse("stopped", streamId)
-            
         } catch (e: Exception) {
             messageProtocol.sendException("Cleanup error", e)
         }
     }
-    
+
     // MouseEventHandler.EventCallback implementation
     override fun onNavigationEvent(
         type: EventFilter.EventType,
         eventName: String,
         x: Int,
         y: Int,
-        details: Map<String, Any>?
+        details: Map<String, Any>?,
     ) {
         frameManager.getVideoComponent()?.let { videoComponent ->
             messageProtocol.sendNavigationEvent(eventName, x, y, videoComponent, details)
         }
     }
-    
+
     // WindowEventHandler.EventCallback implementation
-    override fun onWindowEvent(type: EventFilter.EventType, eventName: String, details: Map<String, Any>?) {
+    override fun onWindowEvent(
+        type: EventFilter.EventType,
+        eventName: String,
+        details: Map<String, Any>?,
+    ) {
         messageProtocol.sendWindowEvent(eventName, details)
     }
-    
+
     // GStreamerPipeline.EventCallback implementation
-    override fun onLog(level: String, message: String) {
+    override fun onLog(
+        level: String,
+        message: String,
+    ) {
         if (running.get()) {
             messageProtocol.sendLog(level, message)
         }
     }
-    
+
     override fun onPipelineError(message: String) {
         messageProtocol.sendLog("ERROR", "Pipeline error: $message")
         // Could trigger reconnection or other error handling
     }
-    
+
     override fun isRunning(): Boolean = running.get()
-    
+
     // FrameManager.FrameEventListener implementation
-    override fun onFrameCreated(frame: JFrame, videoComponent: Component) {
+    override fun onFrameCreated(
+        frame: JFrame,
+        videoComponent: Component,
+    ) {
         try {
             // Initialize GStreamer pipeline with video component
             gstreamerPipeline.initialize(videoComponent)
-            
+
             // Set up event handlers
             mouseEventHandler = MouseEventHandler(videoComponent, this, eventFilter, eventThrottleExecutor)
             mouseEventHandler?.attachListeners()
-            
+
             windowEventHandler = WindowEventHandler(frame, this, eventFilter, eventThrottleExecutor)
             windowEventHandler?.attachListeners()
-            
+
             messageProtocol.sendLog("INFO", "Frame created and event handlers attached")
-            
         } catch (e: Exception) {
             messageProtocol.sendException("Frame setup error", e)
         }
     }
-    
+
     override fun onFrameClosing() {
         messageProtocol.sendLog("INFO", "Frame closing requested")
         stop()
     }
-    
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -283,11 +290,11 @@ class VideoStreamManager(
                 System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain>")
                 System.exit(1)
             }
-            
+
             val streamId = args[0]
             val streamUrl = args[1]
             val domain = args[2]
-            
+
             try {
                 val manager = VideoStreamManager(streamId, streamUrl, domain)
                 manager.start()
