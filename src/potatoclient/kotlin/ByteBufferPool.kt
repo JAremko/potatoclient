@@ -2,7 +2,6 @@ package potatoclient.kotlin
 
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -12,15 +11,13 @@ import java.util.concurrent.atomic.AtomicLong
 class ByteBufferPool(
     private val maxPoolSize: Int,
     private val bufferSize: Int,
-    private val direct: Boolean
+    private val direct: Boolean,
 ) {
     // Use ConcurrentLinkedQueue for lock-free operations
     private val pool = ConcurrentLinkedQueue<ByteBuffer>()
-    
     // Separate currentSize for fast capacity checks
     @Volatile
     private var currentSize = 0
-    
     // Performance metrics - use padding to avoid false sharing
     @Volatile private var p0: Long = 0L; @Volatile private var p1: Long = 0L
     private val acquireCount = AtomicLong(0)
@@ -32,7 +29,6 @@ class ByteBufferPool(
     private val returnCount = AtomicLong(0)
     @Volatile private var p8: Long = 0L; @Volatile private var p9: Long = 0L
     private val dropCount = AtomicLong(0)
-    
     init {
         // Pre-allocate half the pool to reduce startup allocations
         val preAllocate = maxPoolSize / 2
@@ -44,14 +40,12 @@ class ByteBufferPool(
         pool.addAll(buffers)
         currentSize = preAllocate
     }
-    
     /**
      * Acquire a buffer from the pool or allocate a new one.
      * The returned buffer is cleared and ready for use.
      */
     fun acquire(): ByteBuffer {
         acquireCount.incrementAndGet()
-        
         // Fast path - try to get from pool
         val buffer = pool.poll()
         return if (buffer != null) {
@@ -65,7 +59,6 @@ class ByteBufferPool(
             allocateBuffer()
         }
     }
-    
     /**
      * Return a buffer to the pool for reuse.
      * The buffer will be cleared before being returned to the pool.

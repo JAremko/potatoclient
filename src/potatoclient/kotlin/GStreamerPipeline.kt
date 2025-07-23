@@ -21,7 +21,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
     }
 
     private val pipelineLock = ReentrantLock()
-    
+
     @Volatile private var pipeline: Pipeline? = null
     @Volatile private var appsrc: AppSrc? = null
     @Volatile private var videosink: Element? = null
@@ -29,18 +29,18 @@ class GStreamerPipeline(private val callback: EventCallback) {
     @Volatile private var selectedDecoder: String? = null
     @Volatile private var isAppImage = false
     @Volatile private var gstreamerVersion: String? = null
-    
+
     private val frameCount = AtomicLong(0)
     private val startTime = AtomicLong(0)
     @Volatile private var hasReceivedKeyframe = false
     @Volatile private var pendingVideoComponent: Component? = null
     @Volatile private var overlaySet = false
-    
+
     // Buffer pool for zero-allocation streaming
     private val bufferPool = ConcurrentLinkedQueue<Buffer>()
     private val poolHits = AtomicLong(0)
     private val poolMisses = AtomicLong(0)
-    
+
     fun initialize(videoComponent: Component) {
         pipelineLock.lock()
         try {
@@ -52,11 +52,11 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     }
                 })
             }
-            
+
             // Initialize GStreamer if needed
             if (!Gst.isInitialized()) {
                 callback.onLog("INFO", "Initializing GStreamer...")
-                
+
                 // Check for plugin path from environment or system property
                 var gstPluginPath = System.getenv("GST_PLUGIN_PATH_1_0")
                 if (gstPluginPath.isNullOrEmpty()) {
@@ -65,11 +65,11 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 if (gstPluginPath.isNullOrEmpty()) {
                     gstPluginPath = System.getProperty("gstreamer.plugin.path")
                 }
-                
+
                 if (!gstPluginPath.isNullOrEmpty()) {
                     callback.onLog("DEBUG", "Found GST plugin path: $gstPluginPath")
                 }
-                
+
                 try {
                     // Initialize with plugin path if available
                     if (!gstPluginPath.isNullOrEmpty()) {
@@ -80,14 +80,14 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     }
                     gstreamerVersion = Gst.getVersionString()
                     callback.onLog("INFO", "GStreamer initialized successfully. Version: $gstreamerVersion")
-                    
+
                     // Check if running in AppImage
                     val appDir = System.getenv("APPDIR")
                     isAppImage = !appDir.isNullOrEmpty()
                     if (isAppImage) {
                         callback.onLog("INFO", "Running in AppImage environment")
                     }
-                    
+
                     // Force plugin registry update
                     val registry = Registry.get()
                     if (registry != null && !gstPluginPath.isNullOrEmpty()) {
@@ -104,7 +104,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     return
                 }
             }
-            
+
             // Log GStreamer environment
             callback.onLog("DEBUG", "GST_PLUGIN_PATH: ${System.getenv("GST_PLUGIN_PATH")}")
             callback.onLog("DEBUG", "GST_PLUGIN_PATH_1_0: ${System.getenv("GST_PLUGIN_PATH_1_0")}")
@@ -114,10 +114,10 @@ class GStreamerPipeline(private val callback: EventCallback) {
             callback.onLog("DEBUG", "LD_LIBRARY_PATH: ${System.getenv("LD_LIBRARY_PATH")}")
             callback.onLog("DEBUG", "APPDIR: ${System.getenv("APPDIR")}")
             callback.onLog("DEBUG", "Java library path: ${System.getProperty("java.library.path")}")
-            
+
             // Create pipeline elements
             pipeline = Pipeline("video-pipeline")
-            
+
             // AppSrc for receiving video data
             appsrc = AppSrc("appsrc").apply {
                 set("is-live", true)
@@ -129,7 +129,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 set("min-latency", 0L)
                 set("max-latency", 0L)
             }
-            
+
             // H264 parser
             val h264parse = ElementFactory.make("h264parse", "h264parse")
             if (h264parse == null) {
@@ -137,7 +137,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 return
             }
             h264parse.set("config-interval", 1)
-            
+
             // H264 decoder - try multiple options in order of preference
             var decoder: Element? = null
             val decoderOptions = getDecoderOptions()
@@ -148,7 +148,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     if (decoder != null) {
                         selectedDecoder = decoderName
                         callback.onLog("INFO", "Using H264 decoder: $decoderName")
-                        
+
                         // Configure decoder-specific settings
                         when (decoderName) {
                             "avdec_h264" -> {
@@ -178,12 +178,12 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     callback.onLog("DEBUG", "Failed to create $decoderName: ${e.message}")
                 }
             }
-            
+
             if (decoder == null) {
                 callback.onLog("ERROR", "Failed to create any H264 decoder. Please ensure GStreamer is properly installed with at least one of: gstreamer1.0-libav (for avdec_h264), gstreamer1.0-plugins-bad (for hardware decoders), or gstreamer1.0-plugins-good (for decodebin)")
                 return
             }
-            
+
             // Queue for buffering with optimized settings
             val queue = ElementFactory.make("queue", "queue")
             if (queue == null) {
@@ -196,10 +196,10 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 set("max-size-time", Constants.QUEUE_MAX_TIME_NS)
                 set("max-size-bytes", 0L)
             }
-            
+
             // Skip video converter/scaler - test direct pipeline
             callback.onLog("INFO", "Using direct pipeline without color conversion")
-            
+
             // Video sink - platform specific
             videosink = when {
                 Platform.isLinux() -> {
@@ -218,18 +218,18 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 }
                 else -> null
             }
-            
+
             // Fallback to autovideosink
             if (videosink == null) {
                 callback.onLog("WARN", "Platform-specific video sink not available, using autovideosink")
                 videosink = ElementFactory.make("autovideosink", "videosink")
             }
-            
+
             if (videosink == null) {
                 callback.onLog("ERROR", "Failed to create any video sink - check GStreamer plugins installation")
                 return
             }
-            
+
             videosink?.apply {
                 set("sync", false)
                 set("async", false)
@@ -238,15 +238,15 @@ class GStreamerPipeline(private val callback: EventCallback) {
                     set("force-aspect-ratio", true)
                 }
             }
-            
+
             // Add elements to pipeline and link based on decoder type
             if (selectedDecoder == "decodebin") {
                 // decodebin handles parsing internally
                 pipeline?.addMany(appsrc, decoder, queue, videosink)
-                
+
                 // Link appsrc to decoder
                 appsrc?.link(decoder)
-                
+
                 // decodebin uses dynamic pads, so we need to handle pad-added signal
                 decoder.connect(Element.PAD_ADDED { element, pad ->
                     if (pad.name.startsWith("src")) {
@@ -257,7 +257,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                         }
                     }
                 })
-                
+
                 // Link remaining elements
                 queue.link(videosink)
             } else {
@@ -265,35 +265,35 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 pipeline?.addMany(appsrc, h264parse, decoder, queue, videosink)
                 Element.linkMany(appsrc, h264parse, decoder, queue, videosink)
             }
-            
+
             // Set up bus for error handling
             val bus = pipeline?.bus
             bus?.connect(Bus.ERROR { _, source, message ->
                 callback.onLog("ERROR", "Pipeline error: $message")
             })
-            
+
             bus?.connect(Bus.WARNING { _, source, message ->
                 callback.onLog("WARN", "Pipeline warning: $message")
             })
-            
+
             // Store video component for later overlay setup
             if (videoComponent != null && videosink != null) {
                 pendingVideoComponent = videoComponent
                 callback.onLog("DEBUG", "Deferring video overlay setup until first frame")
             }
-            
+
             // Configure pipeline for low latency
             pipeline?.apply {
                 set("latency", 0L)
                 set("delay", 0L)
             }
-            
+
             // Start pipeline
             val ret = pipeline?.play()
             when (ret) {
                 StateChangeReturn.FAILURE -> {
                     callback.onLog("ERROR", "Failed to start GStreamer pipeline")
-                    pipeline?.setState(State.NULL)
+                    pipeline?.state = State.NULL
                     pipeline?.dispose()
                     pipeline = null
                     appsrc = null
@@ -339,15 +339,15 @@ class GStreamerPipeline(private val callback: EventCallback) {
         if (overlaySet || pendingVideoComponent == null || videosink == null) {
             return
         }
-        
+
         try {
             // Ensure component is realized
             if (!pendingVideoComponent!!.isDisplayable) {
                 callback.onLog("WARN", "Video component not yet displayable")
             }
-            
+
             videoOverlay = VideoOverlay.wrap(videosink)
-            
+
             // Get native window handle
             val windowHandle = when {
                 Platform.isLinux() -> Native.getComponentID(pendingVideoComponent).toLong()
@@ -358,7 +358,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                 Platform.isMac() -> Native.getComponentID(pendingVideoComponent).toLong()
                 else -> 0L
             }
-            
+
             if (windowHandle != 0L) {
                 videoOverlay?.setWindowHandle(windowHandle)
                 overlaySet = true
@@ -370,11 +370,11 @@ class GStreamerPipeline(private val callback: EventCallback) {
             callback.onLog("ERROR", "Failed to setup video overlay: ${e.message}")
         }
     }
-    
+
     private fun acquireBuffer(size: Int): Buffer {
         // Try to get a buffer from the pool
         val buffer = bufferPool.poll()
-        
+
         return if (buffer != null) {
             // GStreamer buffers are mutable, we can reuse any buffer
             poolHits.incrementAndGet()
@@ -385,33 +385,33 @@ class GStreamerPipeline(private val callback: EventCallback) {
             Buffer(minOf(size, Constants.MAX_BUFFER_SIZE))
         }
     }
-    
+
     private fun releaseBuffer(buffer: Buffer?) {
         if (buffer != null && bufferPool.size < Constants.BUFFER_POOL_SIZE) {
             bufferPool.offer(buffer)
         }
     }
-    
+
     @Suppress("NOTHING_TO_INLINE")
     private inline fun isActive(): Boolean {
         // Volatile read, no lock needed
         return pipeline != null && appsrc != null
     }
-    
+
     fun pushVideoData(data: ByteBuffer) {
         // Fast path - volatile reads only, no lock
         if (!isActive() || !callback.isRunning()) {
             return
         }
-        
+
         val dataSize = data.remaining()
-        
+
         // Try lock with timeout to avoid blocking on the hot path
         if (!pipelineLock.tryLock()) {
             // Pipeline is busy, skip this frame rather than blocking
             return
         }
-        
+
         var buffer: Buffer? = null
         try {
             // Double-check after acquiring lock
@@ -419,26 +419,26 @@ class GStreamerPipeline(private val callback: EventCallback) {
             if (pipeline == null || currentAppsrc == null) {
                 return
             }
-            
+
             // Acquire and fill buffer while holding lock to ensure atomicity
             buffer = acquireBuffer(dataSize)
-            
+
             // Map buffer directly - avoid intermediate ByteBuffer reference
             buffer.map(false).put(data)
             buffer.unmap()
-            
+
             // Set start time if needed
             startTime.compareAndSet(0, System.nanoTime())
-            
+
             // Push buffer to pipeline
             val ret = currentAppsrc.pushBuffer(buffer)
             when (ret) {
                 FlowReturn.OK -> {
                     // Buffer successfully pushed, don't release it
                     buffer = null
-                    
+
                     val frames = frameCount.incrementAndGet()
-                    
+
                     // First keyframe handling - do minimal work
                     if (!hasReceivedKeyframe) {
                         hasReceivedKeyframe = true
@@ -446,7 +446,7 @@ class GStreamerPipeline(private val callback: EventCallback) {
                             setupVideoOverlay()
                         }
                     }
-                    
+
                     // Periodic logging - only if actually needed
                     if (frames % Constants.FRAME_LOG_INTERVAL == 0L) {
                         logFrameStats(frames)
@@ -464,29 +464,29 @@ class GStreamerPipeline(private val callback: EventCallback) {
             }
         } finally {
             pipelineLock.unlock()
-            
+
             // Release buffer if not consumed (outside of lock)
             buffer?.let { releaseBuffer(it) }
         }
     }
-    
+
     @Suppress("NOTHING_TO_INLINE")
     private inline fun logFrameStats(frames: Long) {
         if (!callback.isRunning()) return
-        
+
         val elapsedNs = System.nanoTime() - startTime.get()
         val elapsedSec = elapsedNs / 1e9
         val fps = frames / elapsedSec
-        
+
         // Log buffer pool stats
         val hits = poolHits.get()
         val misses = poolMisses.get()
         val hitRate = if (hits + misses > 0) (hits * 100.0) / (hits + misses) else 0.0
-        
-        callback.onLog("DEBUG", String.format("%d frames, %.1f fps, pool hit rate: %.1f%%", 
+
+        callback.onLog("DEBUG", String.format("%d frames, %.1f fps, pool hit rate: %.1f%%",
                                             frames, fps, hitRate))
     }
-    
+
     fun stop() {
         pipelineLock.lock()
         try {
@@ -504,16 +504,16 @@ class GStreamerPipeline(private val callback: EventCallback) {
             hasReceivedKeyframe = false
             pendingVideoComponent = null
             overlaySet = false
-            
+
             // Clear buffer pool
             bufferPool.clear()
-            
+
             // Log final buffer pool statistics
             val hits = poolHits.get()
             val misses = poolMisses.get()
             if (hits + misses > 0) {
                 val hitRate = (hits * 100.0) / (hits + misses)
-                callback.onLog("INFO", String.format("Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)", 
+                callback.onLog("INFO", String.format("Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)",
                                                    hitRate, hits, misses))
             }
         } finally {

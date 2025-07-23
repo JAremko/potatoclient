@@ -13,16 +13,12 @@ object Constants {
     const val QUEUE_MAX_BUFFERS = 5
     const val QUEUE_MAX_TIME_NS = 1_000_000_000L // 1 second
     const val FRAME_LOG_INTERVAL = 300
-    
     // Thread pool sizes
     const val EVENT_THROTTLE_POOL_SIZE = 2
-    
     // Executor shutdown timeouts
     const val EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS = 1L
-    
     // UI constants
     const val DOUBLE_CLICK_MAX_DISTANCE = 3 // pixels
-    
     // Stream configurations
     object StreamConfig {
         const val HEAT_STREAM_ID = "heat"
