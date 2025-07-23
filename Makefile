@@ -22,7 +22,7 @@ help: ## Show this help message
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Development:"
-	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced|fmt|fmt-check|lint-clj|lint-kotlin|lint-kotlin-detekt|lint):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced|fmt|fmt-check|lint-clj|lint-kotlin|lint-kotlin-detekt|lint|lint-report|lint-report-warnings):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Quick Start with MCP:"
 	@echo "  1. make mcp-server    # Start MCP server (keep terminal open)"
@@ -224,6 +224,20 @@ lint-kotlin-detekt: ## Run detekt for advanced Kotlin static analysis
 .PHONY: lint
 lint: fmt-check lint-clj lint-kotlin lint-kotlin-detekt ## Run all linters (format check, clj-kondo, ktlint, detekt)
 	@echo "✓ All linting checks passed!"
+
+# Generate lint report
+.PHONY: lint-report
+lint-report: ## Generate comprehensive lint report (use --no-errors to exclude errors)
+	@echo "Generating lint report..."
+	@bb scripts/lint-report.bb
+	@echo "✓ Report generated at reports/lint-report.md"
+
+# Generate lint report without errors
+.PHONY: lint-report-warnings
+lint-report-warnings: ## Generate lint report with warnings only
+	@echo "Generating lint report (warnings only)..."
+	@bb scripts/lint-report.bb --no-errors
+	@echo "✓ Report generated at reports/lint-report.md"
 
 .PHONY: all
 all: clean build ## Clean and build everything

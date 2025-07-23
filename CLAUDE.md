@@ -147,10 +147,17 @@ When Guardrails reports a spec failure, evaluate which needs adjustment:
 **IMPORTANT**: Use `make dev` for all development work. This command takes 30-40 seconds to start, so set appropriate timeouts in your tools. Do not use short timeouts!
 
 ```bash
+# Development
 make dev              # PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings
 make nrepl            # REPL on port 7888 for interactive development
 make report-unspecced # Check which functions need Guardrails specs
 make clean            # Clean all build artifacts
+
+# Code Quality
+make lint             # Run all linters (clj-kondo, ktlint, detekt)
+make lint-report      # Generate comprehensive lint report
+make fmt              # Format all Clojure code
+make fmt-check        # Check if code is properly formatted
 ```
 
 ### Development Workflow
@@ -197,6 +204,117 @@ make clean            # Clean all build artifacts
 - **Metadata**: Stripped (smaller JAR)
 - **Performance**: Optimized with AOT compilation and direct linking
 - **Auto-Detection**: Release JARs automatically know they're release builds (no flags needed)
+
+## Code Quality and Linting
+
+PotatoClient includes comprehensive linting for both Clojure and Kotlin code to maintain code quality and consistency.
+
+### Linting Tools
+
+**Clojure**
+- **clj-kondo** (v2025.06.05) - Fast static analyzer with custom configuration
+  - Configured for Guardrails, Seesaw, and Telemere macros
+  - Custom hooks for `>defn`, `>defn-`, and `>def` macros
+  - Reduced false positives through precise lint-as mappings
+
+**Kotlin**
+- **ktlint** (v1.5.0) - Code style checker following IntelliJ IDEA conventions
+  - Enforces consistent formatting and style
+  - Auto-downloads on first use
+  - Configuration in `.ktlint/editorconfig`
+  
+- **detekt** (v1.23.7) - Advanced static analysis tool
+  - Identifies code smells, complexity issues, and potential bugs
+  - Comprehensive rule set in `detekt.yml`
+  - Provides technical debt estimates
+
+### Linting Commands
+
+```bash
+# Run all linters
+make lint
+
+# Run specific linters
+make lint-clj          # Clojure linting with clj-kondo
+make lint-kotlin       # Kotlin style checking with ktlint
+make lint-kotlin-detekt # Advanced Kotlin analysis with detekt
+
+# Generate comprehensive lint report
+make lint-report       # Full report with all issues
+make lint-report-warnings # Report excluding errors
+```
+
+### Lint Report Generation
+
+The project includes a Babashka script that aggregates all linting results into a unified Markdown report:
+
+```bash
+# Generate report with default settings
+make lint-report
+
+# Custom report options
+bb scripts/lint-report.bb --no-errors    # Exclude errors
+bb scripts/lint-report.bb --clj-only     # Only Clojure linting
+bb scripts/lint-report.bb --kotlin-only  # Only Kotlin linting
+bb scripts/lint-report.bb --output custom-report.md
+```
+
+Report includes:
+- Summary of total errors and warnings
+- Breakdown by linter (clj-kondo, ktlint, detekt)
+- Issues organized by file with line numbers
+- Specific rule violations and descriptions
+
+### clj-kondo Configuration
+
+Custom configuration in `.clj-kondo/config.edn`:
+- **Guardrails support**: `>defn`, `>defn-`, `>def` properly recognized
+- **Seesaw macros**: UI construction functions linted correctly
+- **Telemere logging**: Log macros understood without false positives
+- **Custom hooks**: For complex macro transformations
+- **Namespace grouping**: Organized imports validation
+
+Common issues detected:
+- Unresolved symbols and namespaces
+- Unused imports and bindings
+- Missing docstrings
+- Unsorted namespaces
+- Type mismatches (with Malli integration)
+
+### Kotlin Linting Configuration
+
+**ktlint** (`.ktlint/editorconfig`):
+- IntelliJ IDEA code style
+- 120 character line limit
+- 4-space indentation
+- Import ordering enforcement
+- Trailing comma rules
+
+**detekt** (`detekt.yml`):
+- Complexity thresholds (cognitive and cyclomatic)
+- Exception handling patterns
+- Naming conventions
+- Performance anti-patterns
+- Code smell detection
+
+### Integration with Development Workflow
+
+1. **During Development**: Run `make lint` regularly to catch issues early
+2. **Before Commits**: Use `make lint-report-warnings` to focus on non-error issues
+3. **CI/CD Integration**: All linters can be integrated into GitHub Actions
+4. **IDE Integration**: IntelliJ IDEA with Cursive automatically uses clj-kondo
+
+### Fixing Common Issues
+
+**Clojure**:
+- Missing docstrings: Add docstrings to public functions
+- Unused imports: Remove or use `:refer :all` sparingly
+- Unresolved symbols: Often due to macros - check lint-as configuration
+
+**Kotlin**:
+- Trailing spaces: Configure your editor to trim on save
+- Import ordering: Use IntelliJ's "Optimize Imports" (Ctrl+Alt+O)
+- Complexity warnings: Refactor large functions into smaller ones
 
 ## Architecture
 
