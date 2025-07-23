@@ -17,7 +17,7 @@
             JonSharedCmdRotary$RotateAzimuth JonSharedCmdRotary$RotateElevation
             JonSharedCmdRotary$RotateAzimuthRelative JonSharedCmdRotary$RotateElevationRelative
             JonSharedCmdRotary$RotateAzimuthRelativeSet JonSharedCmdRotary$RotateElevationRelativeSet
-            JonSharedCmdRotary$SetUseRotaryAsCompass JonSharedCmdRotary$GetMeteo
+            JonSharedCmdRotary$setUseRotaryAsCompass JonSharedCmdRotary$GetMeteo
             JonSharedCmdRotary$RotateToGPS JonSharedCmdRotary$SetOriginGPS
             JonSharedCmdRotary$SetMode JonSharedCmdRotary$RotateToNDC
             JonSharedCmdRotary$ScanStart JonSharedCmdRotary$ScanStop
@@ -27,9 +27,9 @@
             JonSharedCmdRotary$ScanDeleteNode JonSharedCmdRotary$ScanUpdateNode
             JonSharedCmdRotary$ScanAddNode]
            [data
-            JonGuiDataTypes$JonGuiDataRotaryDirection
-            JonGuiDataTypes$JonGuiDataRotaryMode
-            JonGuiDataTypes$JonGuiDataVideoChannel]))
+            JonSharedDataTypes$JonGuiDataRotaryDirection
+            JonSharedDataTypes$JonGuiDataRotaryMode
+            JonSharedDataTypes$JonGuiDataVideoChannel]))
 
 ;; ============================================================================
 ;; Basic Commands
@@ -338,7 +338,7 @@
   [value]
   [boolean? => nil?]
   (let [root-msg (cmd-core/create-root-message)
-        set-compass (-> (JonSharedCmdRotary$SetUseRotaryAsCompass/newBuilder)
+        set-compass (-> (JonSharedCmdRotary$setUseRotaryAsCompass/newBuilder)
                         (.setFlag value))
         rotary-root (-> (JonSharedCmdRotary$Root/newBuilder)
                         (.setSetUseRotaryAsCompass set-compass))]
@@ -390,7 +390,7 @@
 (>defn set-rotary-mode
   "Set rotary mode"
   [mode]
-  [#(instance? JonGuiDataTypes$JonGuiDataRotaryMode %) => nil?]
+  [#(instance? JonSharedDataTypes$JonGuiDataRotaryMode %) => nil?]
   (let [root-msg (cmd-core/create-root-message)
         set-mode (-> (JonSharedCmdRotary$SetMode/newBuilder)
                      (.setMode mode))
@@ -492,22 +492,22 @@
 (>defn string->rotary-mode
   "Convert string to rotary mode enum"
   [value]
-  [string? => #(instance? JonGuiDataTypes$JonGuiDataRotaryMode %)]
+  [string? => #(instance? JonSharedDataTypes$JonGuiDataRotaryMode %)]
   (case value
-    "init" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
-    "speed" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
-    "position" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
-    "stabilization" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
-    "targeting" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
-    "video_tracker" JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER
-    JonGuiDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED))
+    "init" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+    "speed" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
+    "position" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
+    "stabilization" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+    "targeting" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
+    "video_tracker" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER
+    JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED))
 
 (>defn string->rotary-direction
   "Convert string to rotary direction enum"
   [value]
   [string? => :potatoclient.specs/rotary-direction]
   (case (.toLowerCase value)
-    "clockwise" JonGuiDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+    "clockwise" JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
     ("counterclockwise" "counter clockwise")
-    JonGuiDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE
-    JonGuiDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED))
+    JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE
+    JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED))

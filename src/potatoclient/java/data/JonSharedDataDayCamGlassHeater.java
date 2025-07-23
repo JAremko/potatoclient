@@ -3,7 +3,7 @@
 // source: jon_shared_data_day_cam_glass_heater.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataDayCamGlassHeater {
   private JonSharedDataDayCamGlassHeater() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataDayCamGlassHeater {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataDayCamGlassHeaterOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataDayCamGlassHeater)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataDayCamGlassHeater)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -42,11 +42,11 @@ public final class JonSharedDataDayCamGlassHeater {
     boolean getStatus();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataDayCamGlassHeater}
+   * Protobuf type {@code data.JonGuiDataDayCamGlassHeater}
    */
   public static final class JonGuiDataDayCamGlassHeater extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataDayCamGlassHeater)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataDayCamGlassHeater)
       JonGuiDataDayCamGlassHeaterOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -67,15 +67,15 @@ public final class JonSharedDataDayCamGlassHeater {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataDayCamGlassHeater.internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor;
+      return data.JonSharedDataDayCamGlassHeater.internal_static_data_JonGuiDataDayCamGlassHeater_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataDayCamGlassHeater.internal_static_ser_JonGuiDataDayCamGlassHeater_fieldAccessorTable
+      return data.JonSharedDataDayCamGlassHeater.internal_static_data_JonGuiDataDayCamGlassHeater_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.class, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder.class);
+              data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.class, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder.class);
     }
 
     public static final int TEMPERATURE_FIELD_NUMBER = 1;
@@ -147,10 +147,10 @@ public final class JonSharedDataDayCamGlassHeater {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater)) {
+      if (!(obj instanceof data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater other = (ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater) obj;
+      data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater other = (data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater) obj;
 
       if (java.lang.Double.doubleToLongBits(getTemperature())
           != java.lang.Double.doubleToLongBits(
@@ -179,44 +179,44 @@ public final class JonSharedDataDayCamGlassHeater {
       return hash;
     }
 
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(byte[] data)
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -224,26 +224,26 @@ public final class JonSharedDataDayCamGlassHeater {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseDelimitedFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -256,7 +256,7 @@ public final class JonSharedDataDayCamGlassHeater {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater prototype) {
+    public static Builder newBuilder(data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -272,26 +272,26 @@ public final class JonSharedDataDayCamGlassHeater {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataDayCamGlassHeater}
+     * Protobuf type {@code data.JonGuiDataDayCamGlassHeater}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataDayCamGlassHeater)
-        ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataDayCamGlassHeater)
+        data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataDayCamGlassHeater.internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor;
+        return data.JonSharedDataDayCamGlassHeater.internal_static_data_JonGuiDataDayCamGlassHeater_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataDayCamGlassHeater.internal_static_ser_JonGuiDataDayCamGlassHeater_fieldAccessorTable
+        return data.JonSharedDataDayCamGlassHeater.internal_static_data_JonGuiDataDayCamGlassHeater_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.class, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder.class);
+                data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.class, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.newBuilder()
+      // Construct using data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.newBuilder()
       private Builder() {
 
       }
@@ -313,17 +313,17 @@ public final class JonSharedDataDayCamGlassHeater {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataDayCamGlassHeater.internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor;
+        return data.JonSharedDataDayCamGlassHeater.internal_static_data_JonGuiDataDayCamGlassHeater_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstanceForType() {
-        return ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance();
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstanceForType() {
+        return data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater build() {
-        ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result = buildPartial();
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater build() {
+        data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -331,14 +331,14 @@ public final class JonSharedDataDayCamGlassHeater {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater buildPartial() {
-        ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result = new ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater(this);
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater buildPartial() {
+        data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result = new data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result) {
+      private void buildPartial0(data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.temperature_ = temperature_;
@@ -350,16 +350,16 @@ public final class JonSharedDataDayCamGlassHeater {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater) {
-          return mergeFrom((ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater)other);
+        if (other instanceof data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater) {
+          return mergeFrom((data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater other) {
-        if (other == ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater other) {
+        if (other == data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance()) return this;
         if (other.getTemperature() != 0D) {
           setTemperature(other.getTemperature());
         }
@@ -483,16 +483,16 @@ public final class JonSharedDataDayCamGlassHeater {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataDayCamGlassHeater)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataDayCamGlassHeater)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataDayCamGlassHeater)
-    private static final ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataDayCamGlassHeater)
+    private static final data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater();
+      DEFAULT_INSTANCE = new data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater();
     }
 
-    public static ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstance() {
+    public static data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -528,17 +528,17 @@ public final class JonSharedDataDayCamGlassHeater {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstanceForType() {
+    public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor;
+    internal_static_data_JonGuiDataDayCamGlassHeater_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataDayCamGlassHeater_fieldAccessorTable;
+      internal_static_data_JonGuiDataDayCamGlassHeater_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -549,21 +549,21 @@ public final class JonSharedDataDayCamGlassHeater {
   static {
     java.lang.String[] descriptorData = {
       "\n*jon_shared_data_day_cam_glass_heater.p" +
-      "roto\022\003ser\"B\n\033JonGuiDataDayCamGlassHeater" +
-      "\022\023\n\013temperature\030\001 \001(\001\022\016\n\006status\030\002 \001(\010B\\Z" +
-      "Zgit-codecommit.eu-central-1.amazonaws.c" +
-      "om/v1/repos/jettison/jonp/data/day_cam_g" +
-      "lass_heaterb\006proto3"
+      "roto\022\004data\"B\n\033JonGuiDataDayCamGlassHeate" +
+      "r\022\023\n\013temperature\030\001 \001(\001\022\016\n\006status\030\002 \001(\010B\\" +
+      "ZZgit-codecommit.eu-central-1.amazonaws." +
+      "com/v1/repos/jettison/jonp/data/day_cam_" +
+      "glass_heaterb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor =
+    internal_static_data_JonGuiDataDayCamGlassHeater_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataDayCamGlassHeater_fieldAccessorTable = new
+    internal_static_data_JonGuiDataDayCamGlassHeater_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor,
+        internal_static_data_JonGuiDataDayCamGlassHeater_descriptor,
         new java.lang.String[] { "Temperature", "Status", });
     descriptor.resolveAllFeaturesImmutable();
   }

@@ -3,7 +3,7 @@
 // source: jon_shared_data_lrf.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataLrf {
   private JonSharedDataLrf() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataLrf {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataLrfOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataLrf)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataLrf)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -48,30 +48,30 @@ public final class JonSharedDataLrf {
     int getMeasureId();
 
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      * @return Whether the target field is set.
      */
     boolean hasTarget();
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      * @return The target.
      */
-    ser.JonSharedDataLrf.JonGuiDataTarget getTarget();
+    data.JonSharedDataLrf.JonGuiDataTarget getTarget();
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      */
-    ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder();
+    data.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
      * @return The enum numeric value on the wire for pointerMode.
      */
     int getPointerModeValue();
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
      * @return The pointerMode.
      */
-    ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode();
+    data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode();
 
     /**
      * <code>bool fogModeEnabled = 6;</code>
@@ -86,11 +86,11 @@ public final class JonSharedDataLrf {
     boolean getIsRefining();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataLrf}
+   * Protobuf type {@code data.JonGuiDataLrf}
    */
   public static final class JonGuiDataLrf extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataLrf)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataLrf)
       JonGuiDataLrfOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -112,15 +112,15 @@ public final class JonSharedDataLrf {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataLrf_descriptor;
+      return data.JonSharedDataLrf.internal_static_data_JonGuiDataLrf_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataLrf_fieldAccessorTable
+      return data.JonSharedDataLrf.internal_static_data_JonGuiDataLrf_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataLrf.JonGuiDataLrf.class, ser.JonSharedDataLrf.JonGuiDataLrf.Builder.class);
+              data.JonSharedDataLrf.JonGuiDataLrf.class, data.JonSharedDataLrf.JonGuiDataLrf.Builder.class);
     }
 
     private int bitField0_;
@@ -158,9 +158,9 @@ public final class JonSharedDataLrf {
     }
 
     public static final int TARGET_FIELD_NUMBER = 4;
-    private ser.JonSharedDataLrf.JonGuiDataTarget target_;
+    private data.JonSharedDataLrf.JonGuiDataTarget target_;
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      * @return Whether the target field is set.
      */
     @java.lang.Override
@@ -168,37 +168,37 @@ public final class JonSharedDataLrf {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      * @return The target.
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataTarget getTarget() {
-      return target_ == null ? ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
+    public data.JonSharedDataLrf.JonGuiDataTarget getTarget() {
+      return target_ == null ? data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
     }
     /**
-     * <code>.ser.JonGuiDataTarget target = 4;</code>
+     * <code>.data.JonGuiDataTarget target = 4;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder() {
-      return target_ == null ? ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
+    public data.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder() {
+      return target_ == null ? data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
     }
 
     public static final int POINTER_MODE_FIELD_NUMBER = 5;
     private int pointerMode_ = 0;
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
      * @return The enum numeric value on the wire for pointerMode.
      */
     @java.lang.Override public int getPointerModeValue() {
       return pointerMode_;
     }
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
      * @return The pointerMode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode() {
-      ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes result = ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.forNumber(pointerMode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode() {
+      data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes result = data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.forNumber(pointerMode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.UNRECOGNIZED : result;
     }
 
     public static final int FOGMODEENABLED_FIELD_NUMBER = 6;
@@ -249,7 +249,7 @@ public final class JonSharedDataLrf {
       if (((bitField0_ & 0x00000001) != 0)) {
         output.writeMessage(4, getTarget());
       }
-      if (pointerMode_ != ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED.getNumber()) {
+      if (pointerMode_ != data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED.getNumber()) {
         output.writeEnum(5, pointerMode_);
       }
       if (fogModeEnabled_ != false) {
@@ -283,7 +283,7 @@ public final class JonSharedDataLrf {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, getTarget());
       }
-      if (pointerMode_ != ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED.getNumber()) {
+      if (pointerMode_ != data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(5, pointerMode_);
       }
@@ -305,10 +305,10 @@ public final class JonSharedDataLrf {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataLrf.JonGuiDataLrf)) {
+      if (!(obj instanceof data.JonSharedDataLrf.JonGuiDataLrf)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataLrf.JonGuiDataLrf other = (ser.JonSharedDataLrf.JonGuiDataLrf) obj;
+      data.JonSharedDataLrf.JonGuiDataLrf other = (data.JonSharedDataLrf.JonGuiDataLrf) obj;
 
       if (getIsScanning()
           != other.getIsScanning()) return false;
@@ -362,44 +362,44 @@ public final class JonSharedDataLrf {
       return hash;
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(byte[] data)
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -407,26 +407,26 @@ public final class JonSharedDataLrf {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseDelimitedFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataLrf parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataLrf parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -439,7 +439,7 @@ public final class JonSharedDataLrf {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataLrf.JonGuiDataLrf prototype) {
+    public static Builder newBuilder(data.JonSharedDataLrf.JonGuiDataLrf prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -455,26 +455,26 @@ public final class JonSharedDataLrf {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataLrf}
+     * Protobuf type {@code data.JonGuiDataLrf}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataLrf)
-        ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataLrf)
+        data.JonSharedDataLrf.JonGuiDataLrfOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataLrf_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataLrf_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataLrf_fieldAccessorTable
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataLrf_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataLrf.JonGuiDataLrf.class, ser.JonSharedDataLrf.JonGuiDataLrf.Builder.class);
+                data.JonSharedDataLrf.JonGuiDataLrf.class, data.JonSharedDataLrf.JonGuiDataLrf.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataLrf.JonGuiDataLrf.newBuilder()
+      // Construct using data.JonSharedDataLrf.JonGuiDataLrf.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -511,17 +511,17 @@ public final class JonSharedDataLrf {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataLrf_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataLrf_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataLrf getDefaultInstanceForType() {
-        return ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance();
+      public data.JonSharedDataLrf.JonGuiDataLrf getDefaultInstanceForType() {
+        return data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataLrf build() {
-        ser.JonSharedDataLrf.JonGuiDataLrf result = buildPartial();
+      public data.JonSharedDataLrf.JonGuiDataLrf build() {
+        data.JonSharedDataLrf.JonGuiDataLrf result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -529,14 +529,14 @@ public final class JonSharedDataLrf {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataLrf buildPartial() {
-        ser.JonSharedDataLrf.JonGuiDataLrf result = new ser.JonSharedDataLrf.JonGuiDataLrf(this);
+      public data.JonSharedDataLrf.JonGuiDataLrf buildPartial() {
+        data.JonSharedDataLrf.JonGuiDataLrf result = new data.JonSharedDataLrf.JonGuiDataLrf(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataLrf.JonGuiDataLrf result) {
+      private void buildPartial0(data.JonSharedDataLrf.JonGuiDataLrf result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.isScanning_ = isScanning_;
@@ -568,16 +568,16 @@ public final class JonSharedDataLrf {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataLrf.JonGuiDataLrf) {
-          return mergeFrom((ser.JonSharedDataLrf.JonGuiDataLrf)other);
+        if (other instanceof data.JonSharedDataLrf.JonGuiDataLrf) {
+          return mergeFrom((data.JonSharedDataLrf.JonGuiDataLrf)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataLrf.JonGuiDataLrf other) {
-        if (other == ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataLrf.JonGuiDataLrf other) {
+        if (other == data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance()) return this;
         if (other.getIsScanning() != false) {
           setIsScanning(other.getIsScanning());
         }
@@ -775,31 +775,31 @@ public final class JonSharedDataLrf {
         return this;
       }
 
-      private ser.JonSharedDataLrf.JonGuiDataTarget target_;
+      private data.JonSharedDataLrf.JonGuiDataTarget target_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.JonGuiDataTarget, ser.JonSharedDataLrf.JonGuiDataTarget.Builder, ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder> targetBuilder_;
+          data.JonSharedDataLrf.JonGuiDataTarget, data.JonSharedDataLrf.JonGuiDataTarget.Builder, data.JonSharedDataLrf.JonGuiDataTargetOrBuilder> targetBuilder_;
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        * @return Whether the target field is set.
        */
       public boolean hasTarget() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        * @return The target.
        */
-      public ser.JonSharedDataLrf.JonGuiDataTarget getTarget() {
+      public data.JonSharedDataLrf.JonGuiDataTarget getTarget() {
         if (targetBuilder_ == null) {
-          return target_ == null ? ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
+          return target_ == null ? data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
         } else {
           return targetBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
-      public Builder setTarget(ser.JonSharedDataLrf.JonGuiDataTarget value) {
+      public Builder setTarget(data.JonSharedDataLrf.JonGuiDataTarget value) {
         if (targetBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -813,10 +813,10 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
       public Builder setTarget(
-          ser.JonSharedDataLrf.JonGuiDataTarget.Builder builderForValue) {
+          data.JonSharedDataLrf.JonGuiDataTarget.Builder builderForValue) {
         if (targetBuilder_ == null) {
           target_ = builderForValue.build();
         } else {
@@ -827,13 +827,13 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
-      public Builder mergeTarget(ser.JonSharedDataLrf.JonGuiDataTarget value) {
+      public Builder mergeTarget(data.JonSharedDataLrf.JonGuiDataTarget value) {
         if (targetBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
             target_ != null &&
-            target_ != ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance()) {
+            target_ != data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance()) {
             getTargetBuilder().mergeFrom(value);
           } else {
             target_ = value;
@@ -848,7 +848,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
       public Builder clearTarget() {
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -861,33 +861,33 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
-      public ser.JonSharedDataLrf.JonGuiDataTarget.Builder getTargetBuilder() {
+      public data.JonSharedDataLrf.JonGuiDataTarget.Builder getTargetBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return getTargetFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
-      public ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder() {
+      public data.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder() {
         if (targetBuilder_ != null) {
           return targetBuilder_.getMessageOrBuilder();
         } else {
           return target_ == null ?
-              ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
+              data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance() : target_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataTarget target = 4;</code>
+       * <code>.data.JonGuiDataTarget target = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.JonGuiDataTarget, ser.JonSharedDataLrf.JonGuiDataTarget.Builder, ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder> 
+          data.JonSharedDataLrf.JonGuiDataTarget, data.JonSharedDataLrf.JonGuiDataTarget.Builder, data.JonSharedDataLrf.JonGuiDataTargetOrBuilder> 
           getTargetFieldBuilder() {
         if (targetBuilder_ == null) {
           targetBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataLrf.JonGuiDataTarget, ser.JonSharedDataLrf.JonGuiDataTarget.Builder, ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder>(
+              data.JonSharedDataLrf.JonGuiDataTarget, data.JonSharedDataLrf.JonGuiDataTarget.Builder, data.JonSharedDataLrf.JonGuiDataTargetOrBuilder>(
                   getTarget(),
                   getParentForChildren(),
                   isClean());
@@ -898,14 +898,14 @@ public final class JonSharedDataLrf {
 
       private int pointerMode_ = 0;
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
        * @return The enum numeric value on the wire for pointerMode.
        */
       @java.lang.Override public int getPointerModeValue() {
         return pointerMode_;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
        * @param value The enum numeric value on the wire for pointerMode to set.
        * @return This builder for chaining.
        */
@@ -916,20 +916,20 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
        * @return The pointerMode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode() {
-        ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes result = ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.forNumber(pointerMode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode() {
+        data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes result = data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.forNumber(pointerMode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
        * @param value The pointerMode to set.
        * @return This builder for chaining.
        */
-      public Builder setPointerMode(ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes value) {
+      public Builder setPointerMode(data.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -939,7 +939,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.data.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearPointerMode() {
@@ -1013,16 +1013,16 @@ public final class JonSharedDataLrf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataLrf)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataLrf)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataLrf)
-    private static final ser.JonSharedDataLrf.JonGuiDataLrf DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataLrf)
+    private static final data.JonSharedDataLrf.JonGuiDataLrf DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataLrf.JonGuiDataLrf();
+      DEFAULT_INSTANCE = new data.JonSharedDataLrf.JonGuiDataLrf();
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataLrf getDefaultInstance() {
+    public static data.JonSharedDataLrf.JonGuiDataLrf getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1058,14 +1058,14 @@ public final class JonSharedDataLrf {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataLrf getDefaultInstanceForType() {
+    public data.JonSharedDataLrf.JonGuiDataLrf getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface JonGuiDataTargetOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataTarget)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataTarget)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1141,15 +1141,15 @@ public final class JonSharedDataLrf {
     double getDistance3B();
 
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
      * @return The enum numeric value on the wire for observerFixType.
      */
     int getObserverFixTypeValue();
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
      * @return The observerFixType.
      */
-    ser.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType();
+    data.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType();
 
     /**
      * <code>int32 session_id = 14;</code>
@@ -1164,19 +1164,19 @@ public final class JonSharedDataLrf {
     int getTargetId();
 
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      * @return Whether the targetColor field is set.
      */
     boolean hasTargetColor();
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      * @return The targetColor.
      */
-    ser.JonSharedDataLrf.RgbColor getTargetColor();
+    data.JonSharedDataLrf.RgbColor getTargetColor();
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      */
-    ser.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder();
+    data.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder();
 
     /**
      * <code>uint32 type = 17;</code>
@@ -1213,11 +1213,11 @@ public final class JonSharedDataLrf {
     int getUuidPart4();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataTarget}
+   * Protobuf type {@code data.JonGuiDataTarget}
    */
   public static final class JonGuiDataTarget extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataTarget)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataTarget)
       JonGuiDataTargetOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -1239,15 +1239,15 @@ public final class JonSharedDataLrf {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataTarget_descriptor;
+      return data.JonSharedDataLrf.internal_static_data_JonGuiDataTarget_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataTarget_fieldAccessorTable
+      return data.JonSharedDataLrf.internal_static_data_JonGuiDataTarget_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataLrf.JonGuiDataTarget.class, ser.JonSharedDataLrf.JonGuiDataTarget.Builder.class);
+              data.JonSharedDataLrf.JonGuiDataTarget.class, data.JonSharedDataLrf.JonGuiDataTarget.Builder.class);
     }
 
     private int bitField0_;
@@ -1386,19 +1386,19 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_FIX_TYPE_FIELD_NUMBER = 13;
     private int observerFixType_ = 0;
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
      * @return The enum numeric value on the wire for observerFixType.
      */
     @java.lang.Override public int getObserverFixTypeValue() {
       return observerFixType_;
     }
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
      * @return The observerFixType.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType() {
-      ser.JonSharedDataTypes.JonGuiDataGpsFixType result = ser.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(observerFixType_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType() {
+      data.JonSharedDataTypes.JonGuiDataGpsFixType result = data.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(observerFixType_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
     }
 
     public static final int SESSION_ID_FIELD_NUMBER = 14;
@@ -1424,9 +1424,9 @@ public final class JonSharedDataLrf {
     }
 
     public static final int TARGET_COLOR_FIELD_NUMBER = 16;
-    private ser.JonSharedDataLrf.RgbColor targetColor_;
+    private data.JonSharedDataLrf.RgbColor targetColor_;
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      * @return Whether the targetColor field is set.
      */
     @java.lang.Override
@@ -1434,19 +1434,19 @@ public final class JonSharedDataLrf {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      * @return The targetColor.
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.RgbColor getTargetColor() {
-      return targetColor_ == null ? ser.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
+    public data.JonSharedDataLrf.RgbColor getTargetColor() {
+      return targetColor_ == null ? data.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
     }
     /**
-     * <code>.ser.RgbColor target_color = 16;</code>
+     * <code>.data.RgbColor target_color = 16;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder() {
-      return targetColor_ == null ? ser.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
+    public data.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder() {
+      return targetColor_ == null ? data.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
     }
 
     public static final int TYPE_FIELD_NUMBER = 17;
@@ -1558,7 +1558,7 @@ public final class JonSharedDataLrf {
       if (java.lang.Double.doubleToRawLongBits(distance3B_) != 0) {
         output.writeDouble(12, distance3B_);
       }
-      if (observerFixType_ != ser.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
+      if (observerFixType_ != data.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
         output.writeEnum(13, observerFixType_);
       }
       if (sessionId_ != 0) {
@@ -1642,7 +1642,7 @@ public final class JonSharedDataLrf {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(12, distance3B_);
       }
-      if (observerFixType_ != ser.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
+      if (observerFixType_ != data.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(13, observerFixType_);
       }
@@ -1688,10 +1688,10 @@ public final class JonSharedDataLrf {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataLrf.JonGuiDataTarget)) {
+      if (!(obj instanceof data.JonSharedDataLrf.JonGuiDataTarget)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataLrf.JonGuiDataTarget other = (ser.JonSharedDataLrf.JonGuiDataTarget) obj;
+      data.JonSharedDataLrf.JonGuiDataTarget other = (data.JonSharedDataLrf.JonGuiDataTarget) obj;
 
       if (getTimestamp()
           != other.getTimestamp()) return false;
@@ -1820,44 +1820,44 @@ public final class JonSharedDataLrf {
       return hash;
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(byte[] data)
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1865,26 +1865,26 @@ public final class JonSharedDataLrf {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseDelimitedFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.JonGuiDataTarget parseFrom(
+    public static data.JonSharedDataLrf.JonGuiDataTarget parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1897,7 +1897,7 @@ public final class JonSharedDataLrf {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataLrf.JonGuiDataTarget prototype) {
+    public static Builder newBuilder(data.JonSharedDataLrf.JonGuiDataTarget prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1913,26 +1913,26 @@ public final class JonSharedDataLrf {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataTarget}
+     * Protobuf type {@code data.JonGuiDataTarget}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataTarget)
-        ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataTarget)
+        data.JonSharedDataLrf.JonGuiDataTargetOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataTarget_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataTarget_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataTarget_fieldAccessorTable
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataTarget_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataLrf.JonGuiDataTarget.class, ser.JonSharedDataLrf.JonGuiDataTarget.Builder.class);
+                data.JonSharedDataLrf.JonGuiDataTarget.class, data.JonSharedDataLrf.JonGuiDataTarget.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataLrf.JonGuiDataTarget.newBuilder()
+      // Construct using data.JonSharedDataLrf.JonGuiDataTarget.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1983,17 +1983,17 @@ public final class JonSharedDataLrf {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataLrf.internal_static_ser_JonGuiDataTarget_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_JonGuiDataTarget_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataTarget getDefaultInstanceForType() {
-        return ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance();
+      public data.JonSharedDataLrf.JonGuiDataTarget getDefaultInstanceForType() {
+        return data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataTarget build() {
-        ser.JonSharedDataLrf.JonGuiDataTarget result = buildPartial();
+      public data.JonSharedDataLrf.JonGuiDataTarget build() {
+        data.JonSharedDataLrf.JonGuiDataTarget result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2001,14 +2001,14 @@ public final class JonSharedDataLrf {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.JonGuiDataTarget buildPartial() {
-        ser.JonSharedDataLrf.JonGuiDataTarget result = new ser.JonSharedDataLrf.JonGuiDataTarget(this);
+      public data.JonSharedDataLrf.JonGuiDataTarget buildPartial() {
+        data.JonSharedDataLrf.JonGuiDataTarget result = new data.JonSharedDataLrf.JonGuiDataTarget(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataLrf.JonGuiDataTarget result) {
+      private void buildPartial0(data.JonSharedDataLrf.JonGuiDataTarget result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.timestamp_ = timestamp_;
@@ -2082,16 +2082,16 @@ public final class JonSharedDataLrf {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataLrf.JonGuiDataTarget) {
-          return mergeFrom((ser.JonSharedDataLrf.JonGuiDataTarget)other);
+        if (other instanceof data.JonSharedDataLrf.JonGuiDataTarget) {
+          return mergeFrom((data.JonSharedDataLrf.JonGuiDataTarget)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataLrf.JonGuiDataTarget other) {
-        if (other == ser.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataLrf.JonGuiDataTarget other) {
+        if (other == data.JonSharedDataLrf.JonGuiDataTarget.getDefaultInstance()) return this;
         if (other.getTimestamp() != 0L) {
           setTimestamp(other.getTimestamp());
         }
@@ -2691,14 +2691,14 @@ public final class JonSharedDataLrf {
 
       private int observerFixType_ = 0;
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
        * @return The enum numeric value on the wire for observerFixType.
        */
       @java.lang.Override public int getObserverFixTypeValue() {
         return observerFixType_;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
        * @param value The enum numeric value on the wire for observerFixType to set.
        * @return This builder for chaining.
        */
@@ -2709,20 +2709,20 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
        * @return The observerFixType.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType() {
-        ser.JonSharedDataTypes.JonGuiDataGpsFixType result = ser.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(observerFixType_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType() {
+        data.JonSharedDataTypes.JonGuiDataGpsFixType result = data.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(observerFixType_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
        * @param value The observerFixType to set.
        * @return This builder for chaining.
        */
-      public Builder setObserverFixType(ser.JonSharedDataTypes.JonGuiDataGpsFixType value) {
+      public Builder setObserverFixType(data.JonSharedDataTypes.JonGuiDataGpsFixType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2732,7 +2732,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.data.JonGuiDataGpsFixType observer_fix_type = 13;</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverFixType() {
@@ -2806,31 +2806,31 @@ public final class JonSharedDataLrf {
         return this;
       }
 
-      private ser.JonSharedDataLrf.RgbColor targetColor_;
+      private data.JonSharedDataLrf.RgbColor targetColor_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.RgbColor, ser.JonSharedDataLrf.RgbColor.Builder, ser.JonSharedDataLrf.RgbColorOrBuilder> targetColorBuilder_;
+          data.JonSharedDataLrf.RgbColor, data.JonSharedDataLrf.RgbColor.Builder, data.JonSharedDataLrf.RgbColorOrBuilder> targetColorBuilder_;
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        * @return Whether the targetColor field is set.
        */
       public boolean hasTargetColor() {
         return ((bitField0_ & 0x00008000) != 0);
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        * @return The targetColor.
        */
-      public ser.JonSharedDataLrf.RgbColor getTargetColor() {
+      public data.JonSharedDataLrf.RgbColor getTargetColor() {
         if (targetColorBuilder_ == null) {
-          return targetColor_ == null ? ser.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
+          return targetColor_ == null ? data.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
         } else {
           return targetColorBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
-      public Builder setTargetColor(ser.JonSharedDataLrf.RgbColor value) {
+      public Builder setTargetColor(data.JonSharedDataLrf.RgbColor value) {
         if (targetColorBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2844,10 +2844,10 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
       public Builder setTargetColor(
-          ser.JonSharedDataLrf.RgbColor.Builder builderForValue) {
+          data.JonSharedDataLrf.RgbColor.Builder builderForValue) {
         if (targetColorBuilder_ == null) {
           targetColor_ = builderForValue.build();
         } else {
@@ -2858,13 +2858,13 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
-      public Builder mergeTargetColor(ser.JonSharedDataLrf.RgbColor value) {
+      public Builder mergeTargetColor(data.JonSharedDataLrf.RgbColor value) {
         if (targetColorBuilder_ == null) {
           if (((bitField0_ & 0x00008000) != 0) &&
             targetColor_ != null &&
-            targetColor_ != ser.JonSharedDataLrf.RgbColor.getDefaultInstance()) {
+            targetColor_ != data.JonSharedDataLrf.RgbColor.getDefaultInstance()) {
             getTargetColorBuilder().mergeFrom(value);
           } else {
             targetColor_ = value;
@@ -2879,7 +2879,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
       public Builder clearTargetColor() {
         bitField0_ = (bitField0_ & ~0x00008000);
@@ -2892,33 +2892,33 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
-      public ser.JonSharedDataLrf.RgbColor.Builder getTargetColorBuilder() {
+      public data.JonSharedDataLrf.RgbColor.Builder getTargetColorBuilder() {
         bitField0_ |= 0x00008000;
         onChanged();
         return getTargetColorFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
-      public ser.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder() {
+      public data.JonSharedDataLrf.RgbColorOrBuilder getTargetColorOrBuilder() {
         if (targetColorBuilder_ != null) {
           return targetColorBuilder_.getMessageOrBuilder();
         } else {
           return targetColor_ == null ?
-              ser.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
+              data.JonSharedDataLrf.RgbColor.getDefaultInstance() : targetColor_;
         }
       }
       /**
-       * <code>.ser.RgbColor target_color = 16;</code>
+       * <code>.data.RgbColor target_color = 16;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.RgbColor, ser.JonSharedDataLrf.RgbColor.Builder, ser.JonSharedDataLrf.RgbColorOrBuilder> 
+          data.JonSharedDataLrf.RgbColor, data.JonSharedDataLrf.RgbColor.Builder, data.JonSharedDataLrf.RgbColorOrBuilder> 
           getTargetColorFieldBuilder() {
         if (targetColorBuilder_ == null) {
           targetColorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataLrf.RgbColor, ser.JonSharedDataLrf.RgbColor.Builder, ser.JonSharedDataLrf.RgbColorOrBuilder>(
+              data.JonSharedDataLrf.RgbColor, data.JonSharedDataLrf.RgbColor.Builder, data.JonSharedDataLrf.RgbColorOrBuilder>(
                   getTargetColor(),
                   getParentForChildren(),
                   isClean());
@@ -3099,16 +3099,16 @@ public final class JonSharedDataLrf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataTarget)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataTarget)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataTarget)
-    private static final ser.JonSharedDataLrf.JonGuiDataTarget DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataTarget)
+    private static final data.JonSharedDataLrf.JonGuiDataTarget DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataLrf.JonGuiDataTarget();
+      DEFAULT_INSTANCE = new data.JonSharedDataLrf.JonGuiDataTarget();
     }
 
-    public static ser.JonSharedDataLrf.JonGuiDataTarget getDefaultInstance() {
+    public static data.JonSharedDataLrf.JonGuiDataTarget getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3144,14 +3144,14 @@ public final class JonSharedDataLrf {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataTarget getDefaultInstanceForType() {
+    public data.JonSharedDataLrf.JonGuiDataTarget getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface RgbColorOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.RgbColor)
+      // @@protoc_insertion_point(interface_extends:data.RgbColor)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -3173,11 +3173,11 @@ public final class JonSharedDataLrf {
     int getBlue();
   }
   /**
-   * Protobuf type {@code ser.RgbColor}
+   * Protobuf type {@code data.RgbColor}
    */
   public static final class RgbColor extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.RgbColor)
+      // @@protoc_insertion_point(message_implements:data.RgbColor)
       RgbColorOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -3198,15 +3198,15 @@ public final class JonSharedDataLrf {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataLrf.internal_static_ser_RgbColor_descriptor;
+      return data.JonSharedDataLrf.internal_static_data_RgbColor_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataLrf.internal_static_ser_RgbColor_fieldAccessorTable
+      return data.JonSharedDataLrf.internal_static_data_RgbColor_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataLrf.RgbColor.class, ser.JonSharedDataLrf.RgbColor.Builder.class);
+              data.JonSharedDataLrf.RgbColor.class, data.JonSharedDataLrf.RgbColor.Builder.class);
     }
 
     public static final int RED_FIELD_NUMBER = 1;
@@ -3296,10 +3296,10 @@ public final class JonSharedDataLrf {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataLrf.RgbColor)) {
+      if (!(obj instanceof data.JonSharedDataLrf.RgbColor)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataLrf.RgbColor other = (ser.JonSharedDataLrf.RgbColor) obj;
+      data.JonSharedDataLrf.RgbColor other = (data.JonSharedDataLrf.RgbColor) obj;
 
       if (getRed()
           != other.getRed()) return false;
@@ -3329,44 +3329,44 @@ public final class JonSharedDataLrf {
       return hash;
     }
 
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(byte[] data)
+    public static data.JonSharedDataLrf.RgbColor parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.RgbColor parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3374,26 +3374,26 @@ public final class JonSharedDataLrf {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataLrf.RgbColor parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataLrf.RgbColor parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataLrf.RgbColor parseDelimitedFrom(
+    public static data.JonSharedDataLrf.RgbColor parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataLrf.RgbColor parseFrom(
+    public static data.JonSharedDataLrf.RgbColor parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3406,7 +3406,7 @@ public final class JonSharedDataLrf {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataLrf.RgbColor prototype) {
+    public static Builder newBuilder(data.JonSharedDataLrf.RgbColor prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3422,26 +3422,26 @@ public final class JonSharedDataLrf {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.RgbColor}
+     * Protobuf type {@code data.RgbColor}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.RgbColor)
-        ser.JonSharedDataLrf.RgbColorOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.RgbColor)
+        data.JonSharedDataLrf.RgbColorOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataLrf.internal_static_ser_RgbColor_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_RgbColor_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataLrf.internal_static_ser_RgbColor_fieldAccessorTable
+        return data.JonSharedDataLrf.internal_static_data_RgbColor_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataLrf.RgbColor.class, ser.JonSharedDataLrf.RgbColor.Builder.class);
+                data.JonSharedDataLrf.RgbColor.class, data.JonSharedDataLrf.RgbColor.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataLrf.RgbColor.newBuilder()
+      // Construct using data.JonSharedDataLrf.RgbColor.newBuilder()
       private Builder() {
 
       }
@@ -3464,17 +3464,17 @@ public final class JonSharedDataLrf {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataLrf.internal_static_ser_RgbColor_descriptor;
+        return data.JonSharedDataLrf.internal_static_data_RgbColor_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.RgbColor getDefaultInstanceForType() {
-        return ser.JonSharedDataLrf.RgbColor.getDefaultInstance();
+      public data.JonSharedDataLrf.RgbColor getDefaultInstanceForType() {
+        return data.JonSharedDataLrf.RgbColor.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.RgbColor build() {
-        ser.JonSharedDataLrf.RgbColor result = buildPartial();
+      public data.JonSharedDataLrf.RgbColor build() {
+        data.JonSharedDataLrf.RgbColor result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3482,14 +3482,14 @@ public final class JonSharedDataLrf {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataLrf.RgbColor buildPartial() {
-        ser.JonSharedDataLrf.RgbColor result = new ser.JonSharedDataLrf.RgbColor(this);
+      public data.JonSharedDataLrf.RgbColor buildPartial() {
+        data.JonSharedDataLrf.RgbColor result = new data.JonSharedDataLrf.RgbColor(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataLrf.RgbColor result) {
+      private void buildPartial0(data.JonSharedDataLrf.RgbColor result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.red_ = red_;
@@ -3504,16 +3504,16 @@ public final class JonSharedDataLrf {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataLrf.RgbColor) {
-          return mergeFrom((ser.JonSharedDataLrf.RgbColor)other);
+        if (other instanceof data.JonSharedDataLrf.RgbColor) {
+          return mergeFrom((data.JonSharedDataLrf.RgbColor)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataLrf.RgbColor other) {
-        if (other == ser.JonSharedDataLrf.RgbColor.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataLrf.RgbColor other) {
+        if (other == data.JonSharedDataLrf.RgbColor.getDefaultInstance()) return this;
         if (other.getRed() != 0) {
           setRed(other.getRed());
         }
@@ -3677,16 +3677,16 @@ public final class JonSharedDataLrf {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.RgbColor)
+      // @@protoc_insertion_point(builder_scope:data.RgbColor)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.RgbColor)
-    private static final ser.JonSharedDataLrf.RgbColor DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.RgbColor)
+    private static final data.JonSharedDataLrf.RgbColor DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataLrf.RgbColor();
+      DEFAULT_INSTANCE = new data.JonSharedDataLrf.RgbColor();
     }
 
-    public static ser.JonSharedDataLrf.RgbColor getDefaultInstance() {
+    public static data.JonSharedDataLrf.RgbColor getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3722,27 +3722,27 @@ public final class JonSharedDataLrf {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataLrf.RgbColor getDefaultInstanceForType() {
+    public data.JonSharedDataLrf.RgbColor getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataLrf_descriptor;
+    internal_static_data_JonGuiDataLrf_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataLrf_fieldAccessorTable;
+      internal_static_data_JonGuiDataLrf_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataTarget_descriptor;
+    internal_static_data_JonGuiDataTarget_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataTarget_fieldAccessorTable;
+      internal_static_data_JonGuiDataTarget_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_RgbColor_descriptor;
+    internal_static_data_RgbColor_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_RgbColor_fieldAccessorTable;
+      internal_static_data_RgbColor_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3752,57 +3752,57 @@ public final class JonSharedDataLrf {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\031jon_shared_data_lrf.proto\022\003ser\032\033jon_sh" +
-      "ared_data_types.proto\"\336\001\n\rJonGuiDataLrf\022" +
-      "\023\n\013is_scanning\030\001 \001(\010\022\024\n\014is_measuring\030\002 \001" +
-      "(\010\022\022\n\nmeasure_id\030\003 \001(\005\022%\n\006target\030\004 \001(\0132\025" +
-      ".ser.JonGuiDataTarget\022:\n\014pointer_mode\030\005 " +
-      "\001(\0162$.ser.JonGuiDatatLrfLaserPointerMode" +
-      "s\022\026\n\016fogModeEnabled\030\006 \001(\010\022\023\n\013is_refining" +
-      "\030\007 \001(\010\"\232\004\n\020JonGuiDataTarget\022\021\n\ttimestamp" +
-      "\030\001 \001(\003\022\030\n\020target_longitude\030\002 \001(\001\022\027\n\017targ" +
-      "et_latitude\030\003 \001(\001\022\027\n\017target_altitude\030\004 \001" +
-      "(\001\022\032\n\022observer_longitude\030\005 \001(\001\022\031\n\021observ" +
-      "er_latitude\030\006 \001(\001\022\031\n\021observer_altitude\030\007" +
-      " \001(\001\022\030\n\020observer_azimuth\030\010 \001(\001\022\032\n\022observ" +
-      "er_elevation\030\t \001(\001\022\025\n\robserver_bank\030\n \001(" +
-      "\001\022\023\n\013distance_2d\030\013 \001(\001\022\023\n\013distance_3b\030\014 " +
-      "\001(\001\0224\n\021observer_fix_type\030\r \001(\0162\031.ser.Jon" +
-      "GuiDataGpsFixType\022\022\n\nsession_id\030\016 \001(\005\022\021\n" +
-      "\ttarget_id\030\017 \001(\005\022#\n\014target_color\030\020 \001(\0132\r" +
-      ".ser.RgbColor\022\014\n\004type\030\021 \001(\r\022\022\n\nuuid_part" +
-      "1\030\022 \001(\005\022\022\n\nuuid_part2\030\023 \001(\005\022\022\n\nuuid_part" +
-      "3\030\024 \001(\005\022\022\n\nuuid_part4\030\025 \001(\005\"4\n\010RgbColor\022" +
-      "\013\n\003red\030\001 \001(\r\022\r\n\005green\030\002 \001(\r\022\014\n\004blue\030\003 \001(" +
-      "\rBKZIgit-codecommit.eu-central-1.amazona" +
-      "ws.com/v1/repos/jettison/jonp/data/lrfb\006" +
-      "proto3"
+      "\n\031jon_shared_data_lrf.proto\022\004data\032\033jon_s" +
+      "hared_data_types.proto\"\340\001\n\rJonGuiDataLrf" +
+      "\022\023\n\013is_scanning\030\001 \001(\010\022\024\n\014is_measuring\030\002 " +
+      "\001(\010\022\022\n\nmeasure_id\030\003 \001(\005\022&\n\006target\030\004 \001(\0132" +
+      "\026.data.JonGuiDataTarget\022;\n\014pointer_mode\030" +
+      "\005 \001(\0162%.data.JonGuiDatatLrfLaserPointerM" +
+      "odes\022\026\n\016fogModeEnabled\030\006 \001(\010\022\023\n\013is_refin" +
+      "ing\030\007 \001(\010\"\234\004\n\020JonGuiDataTarget\022\021\n\ttimest" +
+      "amp\030\001 \001(\003\022\030\n\020target_longitude\030\002 \001(\001\022\027\n\017t" +
+      "arget_latitude\030\003 \001(\001\022\027\n\017target_altitude\030" +
+      "\004 \001(\001\022\032\n\022observer_longitude\030\005 \001(\001\022\031\n\021obs" +
+      "erver_latitude\030\006 \001(\001\022\031\n\021observer_altitud" +
+      "e\030\007 \001(\001\022\030\n\020observer_azimuth\030\010 \001(\001\022\032\n\022obs" +
+      "erver_elevation\030\t \001(\001\022\025\n\robserver_bank\030\n" +
+      " \001(\001\022\023\n\013distance_2d\030\013 \001(\001\022\023\n\013distance_3b" +
+      "\030\014 \001(\001\0225\n\021observer_fix_type\030\r \001(\0162\032.data" +
+      ".JonGuiDataGpsFixType\022\022\n\nsession_id\030\016 \001(" +
+      "\005\022\021\n\ttarget_id\030\017 \001(\005\022$\n\014target_color\030\020 \001" +
+      "(\0132\016.data.RgbColor\022\014\n\004type\030\021 \001(\r\022\022\n\nuuid" +
+      "_part1\030\022 \001(\005\022\022\n\nuuid_part2\030\023 \001(\005\022\022\n\nuuid" +
+      "_part3\030\024 \001(\005\022\022\n\nuuid_part4\030\025 \001(\005\"4\n\010RgbC" +
+      "olor\022\013\n\003red\030\001 \001(\r\022\r\n\005green\030\002 \001(\r\022\014\n\004blue" +
+      "\030\003 \001(\rBKZIgit-codecommit.eu-central-1.am" +
+      "azonaws.com/v1/repos/jettison/jonp/data/" +
+      "lrfb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_ser_JonGuiDataLrf_descriptor =
+    internal_static_data_JonGuiDataLrf_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataLrf_fieldAccessorTable = new
+    internal_static_data_JonGuiDataLrf_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataLrf_descriptor,
+        internal_static_data_JonGuiDataLrf_descriptor,
         new java.lang.String[] { "IsScanning", "IsMeasuring", "MeasureId", "Target", "PointerMode", "FogModeEnabled", "IsRefining", });
-    internal_static_ser_JonGuiDataTarget_descriptor =
+    internal_static_data_JonGuiDataTarget_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_ser_JonGuiDataTarget_fieldAccessorTable = new
+    internal_static_data_JonGuiDataTarget_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataTarget_descriptor,
+        internal_static_data_JonGuiDataTarget_descriptor,
         new java.lang.String[] { "Timestamp", "TargetLongitude", "TargetLatitude", "TargetAltitude", "ObserverLongitude", "ObserverLatitude", "ObserverAltitude", "ObserverAzimuth", "ObserverElevation", "ObserverBank", "Distance2D", "Distance3B", "ObserverFixType", "SessionId", "TargetId", "TargetColor", "Type", "UuidPart1", "UuidPart2", "UuidPart3", "UuidPart4", });
-    internal_static_ser_RgbColor_descriptor =
+    internal_static_data_RgbColor_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_ser_RgbColor_fieldAccessorTable = new
+    internal_static_data_RgbColor_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_RgbColor_descriptor,
+        internal_static_data_RgbColor_descriptor,
         new java.lang.String[] { "Red", "Green", "Blue", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

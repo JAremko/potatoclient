@@ -9,7 +9,7 @@
             [malli.core :as m]
             [potatoclient.specs :as specs])
   (:import (cmd JonSharedCmd$Root)
-           (ser JonSharedData$JonGUIState)))
+           (data JonSharedData$JonGUIState)))
 
 ;; Client type constants for better readability
 (def client-types

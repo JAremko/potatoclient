@@ -1,16 +1,18 @@
 # PotatoClient
 
-Multi-process video streaming client with dual H.264 WebSocket streams.
+High-performance multi-process video streaming client with dual H.264 WebSocket streams. Features zero-allocation streaming and hardware-accelerated decoding.
 
 ## Features
 
 - Dual video streams: Heat (900x720) and Day (1920x1080)
-- Hardware-accelerated H.264 decoding
+- Hardware-accelerated H.264 decoding with automatic fallback
+- Zero-allocation video streaming on the hot path
 - Cross-platform: Windows, macOS, Linux
 - Dark/Light themes (Sol Dark, Sol Light, Dark, Hi-Dark)
 - Multilingual: English, Ukrainian
 - Smart logging: file logging in dev, console-only in production
 - Comprehensive runtime validation with Malli schemas
+- Optimized Kotlin implementation for video processing
 
 ## Quick Start
 
@@ -29,7 +31,8 @@ make nrepl        # REPL on port 7888
 
 - Java 17+ with `--enable-native-access=ALL-UNNAMED`
 - GStreamer 1.0+ with H.264 support
-- Hardware decoder: NVIDIA, Intel QSV, VA-API, or VideoToolbox
+- Hardware decoder: NVIDIA (nvh264dec), Intel QSV, VA-API, or VideoToolbox
+- Kotlin 2.2.0 (bundled for builds)
 
 ## Configuration
 
@@ -44,17 +47,39 @@ Settings stored in platform-specific locations:
  :locale :english}    ; :english or :ukrainian
 ```
 
+## Performance
+
+PotatoClient is optimized for high-performance video streaming:
+
+### Zero-Allocation Streaming
+- **Lock-free buffer pools** for video frames
+- **Pre-allocated objects** for event handling
+- **Direct ByteBuffers** for optimal native interop
+- **Fast path optimization** for single-fragment WebSocket messages
+
+### Hardware Acceleration
+- **Automatic decoder selection** (NVIDIA > Intel QSV > VA-API > Software)
+- **Direct pipeline** without unnecessary color conversions
+- **Try-lock patterns** to avoid blocking the video pipeline
+
+### Kotlin Optimizations
+- **Inline functions** for hot path code (where applicable)
+- **Volatile fields** for lock-free status checks
+- **Thread-local storage** for event objects
+- **Pre-calculated values** to avoid repeated computations
+
 ## Architecture
 
 ```
 ┌─────────────────┐     JSON/IPC      ┌──────────────────┐
 │  Main Process   │ ←───────────────→ │ Stream Process 1 │
-│   (Clojure)     │                   │     (Java)       │
+│   (Clojure)     │                   │    (Kotlin)      │
 │  - UI (Swing)   │                   │ - WebSocket      │
 │  - State Mgmt   │                   │ - GStreamer      │
-│  - Config       │                   └──────────────────┘
-│  - Commands     │                   ┌──────────────────┐
-└─────────────────┘                   │ Stream Process 2 │
+│  - Config       │                   │ - Zero-alloc     │
+│  - Commands     │                   └──────────────────┘
+└─────────────────┘                   ┌──────────────────┐
+                                      │ Stream Process 2 │
                                       └──────────────────┘
 ```
 
@@ -90,6 +115,7 @@ PotatoClient includes a command system for sending control messages via Protobuf
 # Build tasks
 make clean        # Clean all artifacts
 make proto        # Generate protobuf classes
+make compile-kotlin # Compile Kotlin sources
 make test         # Run tests
 make release      # Build optimized release JAR
 

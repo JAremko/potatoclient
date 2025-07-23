@@ -3,7 +3,7 @@
 // source: jon_shared_data.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedData {
   private JonSharedData() {}
@@ -26,7 +26,7 @@ public final class JonSharedData {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGUIStateOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGUIState)
+      // @@protoc_insertion_point(interface_extends:data.JonGUIState)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -36,210 +36,210 @@ public final class JonSharedData {
     int getProtocolVersion();
 
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      * @return Whether the system field is set.
      */
     boolean hasSystem();
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      * @return The system.
      */
-    ser.JonSharedDataSystem.JonGuiDataSystem getSystem();
+    data.JonSharedDataSystem.JonGuiDataSystem getSystem();
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      */
-    ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder();
+    data.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      * @return Whether the meteoInternal field is set.
      */
     boolean hasMeteoInternal();
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      * @return The meteoInternal.
      */
-    ser.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal();
+    data.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal();
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      */
-    ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder();
+    data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      * @return Whether the lrf field is set.
      */
     boolean hasLrf();
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      * @return The lrf.
      */
-    ser.JonSharedDataLrf.JonGuiDataLrf getLrf();
+    data.JonSharedDataLrf.JonGuiDataLrf getLrf();
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      */
-    ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder();
+    data.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      * @return Whether the time field is set.
      */
     boolean hasTime();
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      * @return The time.
      */
-    ser.JonSharedDataTime.JonGuiDataTime getTime();
+    data.JonSharedDataTime.JonGuiDataTime getTime();
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      */
-    ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder();
+    data.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      * @return Whether the gps field is set.
      */
     boolean hasGps();
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      * @return The gps.
      */
-    ser.JonSharedDataGps.JonGuiDataGps getGps();
+    data.JonSharedDataGps.JonGuiDataGps getGps();
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      */
-    ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder();
+    data.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      * @return Whether the compass field is set.
      */
     boolean hasCompass();
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      * @return The compass.
      */
-    ser.JonSharedDataCompass.JonGuiDataCompass getCompass();
+    data.JonSharedDataCompass.JonGuiDataCompass getCompass();
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      */
-    ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder();
+    data.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      * @return Whether the rotary field is set.
      */
     boolean hasRotary();
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      * @return The rotary.
      */
-    ser.JonSharedDataRotary.JonGuiDataRotary getRotary();
+    data.JonSharedDataRotary.JonGuiDataRotary getRotary();
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      */
-    ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder();
+    data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      * @return Whether the cameraDay field is set.
      */
     boolean hasCameraDay();
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      * @return The cameraDay.
      */
-    ser.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay();
+    data.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay();
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      */
-    ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder();
+    data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      * @return Whether the cameraHeat field is set.
      */
     boolean hasCameraHeat();
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      * @return The cameraHeat.
      */
-    ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat();
+    data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat();
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      */
-    ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder();
+    data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      * @return Whether the compassCalibration field is set.
      */
     boolean hasCompassCalibration();
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      * @return The compassCalibration.
      */
-    ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration();
+    data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration();
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      */
-    ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder();
+    data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      * @return Whether the recOsd field is set.
      */
     boolean hasRecOsd();
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      * @return The recOsd.
      */
-    ser.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd();
+    data.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd();
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      */
-    ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder();
+    data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      * @return Whether the dayCamGlassHeater field is set.
      */
     boolean hasDayCamGlassHeater();
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      * @return The dayCamGlassHeater.
      */
-    ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater();
+    data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater();
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      */
-    ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder();
+    data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      * @return Whether the actualSpaceTime field is set.
      */
     boolean hasActualSpaceTime();
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      * @return The actualSpaceTime.
      */
-    ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime();
+    data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime();
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      */
-    ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder();
+    data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder();
   }
   /**
    * <pre>
    * Root message
    * </pre>
    *
-   * Protobuf type {@code ser.JonGUIState}
+   * Protobuf type {@code data.JonGUIState}
    */
   public static final class JonGUIState extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGUIState)
+      // @@protoc_insertion_point(message_implements:data.JonGUIState)
       JonGUIStateOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -260,15 +260,15 @@ public final class JonSharedData {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedData.internal_static_ser_JonGUIState_descriptor;
+      return data.JonSharedData.internal_static_data_JonGUIState_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedData.internal_static_ser_JonGUIState_fieldAccessorTable
+      return data.JonSharedData.internal_static_data_JonGUIState_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedData.JonGUIState.class, ser.JonSharedData.JonGUIState.Builder.class);
+              data.JonSharedData.JonGUIState.class, data.JonSharedData.JonGUIState.Builder.class);
     }
 
     private int bitField0_;
@@ -284,9 +284,9 @@ public final class JonSharedData {
     }
 
     public static final int SYSTEM_FIELD_NUMBER = 2;
-    private ser.JonSharedDataSystem.JonGuiDataSystem system_;
+    private data.JonSharedDataSystem.JonGuiDataSystem system_;
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      * @return Whether the system field is set.
      */
     @java.lang.Override
@@ -294,25 +294,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      * @return The system.
      */
     @java.lang.Override
-    public ser.JonSharedDataSystem.JonGuiDataSystem getSystem() {
-      return system_ == null ? ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
+    public data.JonSharedDataSystem.JonGuiDataSystem getSystem() {
+      return system_ == null ? data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
     }
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.data.JonGuiDataSystem system = 2;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
-      return system_ == null ? ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
+    public data.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
+      return system_ == null ? data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
     }
 
     public static final int METEO_INTERNAL_FIELD_NUMBER = 3;
-    private ser.JonSharedDataTypes.JonGuiDataMeteo meteoInternal_;
+    private data.JonSharedDataTypes.JonGuiDataMeteo meteoInternal_;
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      * @return Whether the meteoInternal field is set.
      */
     @java.lang.Override
@@ -320,25 +320,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      * @return The meteoInternal.
      */
     @java.lang.Override
-    public ser.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal() {
-      return meteoInternal_ == null ? ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
+    public data.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal() {
+      return meteoInternal_ == null ? data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
     }
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
-      return meteoInternal_ == null ? ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
+    public data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
+      return meteoInternal_ == null ? data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
     }
 
     public static final int LRF_FIELD_NUMBER = 4;
-    private ser.JonSharedDataLrf.JonGuiDataLrf lrf_;
+    private data.JonSharedDataLrf.JonGuiDataLrf lrf_;
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      * @return Whether the lrf field is set.
      */
     @java.lang.Override
@@ -346,25 +346,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      * @return The lrf.
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataLrf getLrf() {
-      return lrf_ == null ? ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
+    public data.JonSharedDataLrf.JonGuiDataLrf getLrf() {
+      return lrf_ == null ? data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
     }
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.data.JonGuiDataLrf lrf = 4;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
-      return lrf_ == null ? ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
+    public data.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
+      return lrf_ == null ? data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
     }
 
     public static final int TIME_FIELD_NUMBER = 5;
-    private ser.JonSharedDataTime.JonGuiDataTime time_;
+    private data.JonSharedDataTime.JonGuiDataTime time_;
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      * @return Whether the time field is set.
      */
     @java.lang.Override
@@ -372,25 +372,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      * @return The time.
      */
     @java.lang.Override
-    public ser.JonSharedDataTime.JonGuiDataTime getTime() {
-      return time_ == null ? ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
+    public data.JonSharedDataTime.JonGuiDataTime getTime() {
+      return time_ == null ? data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
     }
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.data.JonGuiDataTime time = 5;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
-      return time_ == null ? ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
+    public data.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
+      return time_ == null ? data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
     }
 
     public static final int GPS_FIELD_NUMBER = 6;
-    private ser.JonSharedDataGps.JonGuiDataGps gps_;
+    private data.JonSharedDataGps.JonGuiDataGps gps_;
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      * @return Whether the gps field is set.
      */
     @java.lang.Override
@@ -398,25 +398,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      * @return The gps.
      */
     @java.lang.Override
-    public ser.JonSharedDataGps.JonGuiDataGps getGps() {
-      return gps_ == null ? ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
+    public data.JonSharedDataGps.JonGuiDataGps getGps() {
+      return gps_ == null ? data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
     }
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.data.JonGuiDataGps gps = 6;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
-      return gps_ == null ? ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
+    public data.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
+      return gps_ == null ? data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
     }
 
     public static final int COMPASS_FIELD_NUMBER = 7;
-    private ser.JonSharedDataCompass.JonGuiDataCompass compass_;
+    private data.JonSharedDataCompass.JonGuiDataCompass compass_;
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      * @return Whether the compass field is set.
      */
     @java.lang.Override
@@ -424,25 +424,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000020) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      * @return The compass.
      */
     @java.lang.Override
-    public ser.JonSharedDataCompass.JonGuiDataCompass getCompass() {
-      return compass_ == null ? ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
+    public data.JonSharedDataCompass.JonGuiDataCompass getCompass() {
+      return compass_ == null ? data.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
     }
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.data.JonGuiDataCompass compass = 7;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
-      return compass_ == null ? ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
+    public data.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
+      return compass_ == null ? data.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
     }
 
     public static final int ROTARY_FIELD_NUMBER = 8;
-    private ser.JonSharedDataRotary.JonGuiDataRotary rotary_;
+    private data.JonSharedDataRotary.JonGuiDataRotary rotary_;
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      * @return Whether the rotary field is set.
      */
     @java.lang.Override
@@ -450,25 +450,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000040) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      * @return The rotary.
      */
     @java.lang.Override
-    public ser.JonSharedDataRotary.JonGuiDataRotary getRotary() {
-      return rotary_ == null ? ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
+    public data.JonSharedDataRotary.JonGuiDataRotary getRotary() {
+      return rotary_ == null ? data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
     }
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.data.JonGuiDataRotary rotary = 8;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
-      return rotary_ == null ? ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
+    public data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
+      return rotary_ == null ? data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
     }
 
     public static final int CAMERA_DAY_FIELD_NUMBER = 9;
-    private ser.JonSharedDataCameraDay.JonGuiDataCameraDay cameraDay_;
+    private data.JonSharedDataCameraDay.JonGuiDataCameraDay cameraDay_;
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      * @return Whether the cameraDay field is set.
      */
     @java.lang.Override
@@ -476,25 +476,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000080) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      * @return The cameraDay.
      */
     @java.lang.Override
-    public ser.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay() {
-      return cameraDay_ == null ? ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
+    public data.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay() {
+      return cameraDay_ == null ? data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
     }
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
-      return cameraDay_ == null ? ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
+    public data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
+      return cameraDay_ == null ? data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
     }
 
     public static final int CAMERA_HEAT_FIELD_NUMBER = 10;
-    private ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat cameraHeat_;
+    private data.JonSharedDataCameraHeat.JonGuiDataCameraHeat cameraHeat_;
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      * @return Whether the cameraHeat field is set.
      */
     @java.lang.Override
@@ -502,25 +502,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000100) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      * @return The cameraHeat.
      */
     @java.lang.Override
-    public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat() {
-      return cameraHeat_ == null ? ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
+    public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat() {
+      return cameraHeat_ == null ? data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
     }
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
-      return cameraHeat_ == null ? ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
+    public data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
+      return cameraHeat_ == null ? data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
     }
 
     public static final int COMPASS_CALIBRATION_FIELD_NUMBER = 11;
-    private ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration compassCalibration_;
+    private data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration compassCalibration_;
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      * @return Whether the compassCalibration field is set.
      */
     @java.lang.Override
@@ -528,25 +528,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000200) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      * @return The compassCalibration.
      */
     @java.lang.Override
-    public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration() {
-      return compassCalibration_ == null ? ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
+    public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration() {
+      return compassCalibration_ == null ? data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
     }
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
-      return compassCalibration_ == null ? ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
+    public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
+      return compassCalibration_ == null ? data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
     }
 
     public static final int REC_OSD_FIELD_NUMBER = 12;
-    private ser.JonSharedDataRecOsd.JonGuiDataRecOsd recOsd_;
+    private data.JonSharedDataRecOsd.JonGuiDataRecOsd recOsd_;
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      * @return Whether the recOsd field is set.
      */
     @java.lang.Override
@@ -554,25 +554,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000400) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      * @return The recOsd.
      */
     @java.lang.Override
-    public ser.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd() {
-      return recOsd_ == null ? ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
+    public data.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd() {
+      return recOsd_ == null ? data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
     }
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
-      return recOsd_ == null ? ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
+    public data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
+      return recOsd_ == null ? data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
     }
 
     public static final int DAY_CAM_GLASS_HEATER_FIELD_NUMBER = 13;
-    private ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater dayCamGlassHeater_;
+    private data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater dayCamGlassHeater_;
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      * @return Whether the dayCamGlassHeater field is set.
      */
     @java.lang.Override
@@ -580,25 +580,25 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000800) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      * @return The dayCamGlassHeater.
      */
     @java.lang.Override
-    public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater() {
-      return dayCamGlassHeater_ == null ? ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
+    public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater() {
+      return dayCamGlassHeater_ == null ? data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
     }
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
-      return dayCamGlassHeater_ == null ? ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
+    public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
+      return dayCamGlassHeater_ == null ? data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
     }
 
     public static final int ACTUAL_SPACE_TIME_FIELD_NUMBER = 14;
-    private ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime actualSpaceTime_;
+    private data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime actualSpaceTime_;
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      * @return Whether the actualSpaceTime field is set.
      */
     @java.lang.Override
@@ -606,19 +606,19 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00001000) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      * @return The actualSpaceTime.
      */
     @java.lang.Override
-    public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime() {
-      return actualSpaceTime_ == null ? ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
+    public data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime() {
+      return actualSpaceTime_ == null ? data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
     }
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
      */
     @java.lang.Override
-    public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
-      return actualSpaceTime_ == null ? ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
+    public data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
+      return actualSpaceTime_ == null ? data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -752,10 +752,10 @@ public final class JonSharedData {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedData.JonGUIState)) {
+      if (!(obj instanceof data.JonSharedData.JonGUIState)) {
         return super.equals(obj);
       }
-      ser.JonSharedData.JonGUIState other = (ser.JonSharedData.JonGUIState) obj;
+      data.JonSharedData.JonGUIState other = (data.JonSharedData.JonGUIState) obj;
 
       if (getProtocolVersion()
           != other.getProtocolVersion()) return false;
@@ -894,44 +894,44 @@ public final class JonSharedData {
       return hash;
     }
 
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(byte[] data)
+    public static data.JonSharedData.JonGUIState parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(java.io.InputStream input)
+    public static data.JonSharedData.JonGUIState parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -939,26 +939,26 @@ public final class JonSharedData {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedData.JonGUIState parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedData.JonGUIState parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedData.JonGUIState parseDelimitedFrom(
+    public static data.JonSharedData.JonGUIState parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedData.JonGUIState parseFrom(
+    public static data.JonSharedData.JonGUIState parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -971,7 +971,7 @@ public final class JonSharedData {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedData.JonGUIState prototype) {
+    public static Builder newBuilder(data.JonSharedData.JonGUIState prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -991,26 +991,26 @@ public final class JonSharedData {
      * Root message
      * </pre>
      *
-     * Protobuf type {@code ser.JonGUIState}
+     * Protobuf type {@code data.JonGUIState}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGUIState)
-        ser.JonSharedData.JonGUIStateOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGUIState)
+        data.JonSharedData.JonGUIStateOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedData.internal_static_ser_JonGUIState_descriptor;
+        return data.JonSharedData.internal_static_data_JonGUIState_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedData.internal_static_ser_JonGUIState_fieldAccessorTable
+        return data.JonSharedData.internal_static_data_JonGUIState_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedData.JonGUIState.class, ser.JonSharedData.JonGUIState.Builder.class);
+                data.JonSharedData.JonGUIState.class, data.JonSharedData.JonGUIState.Builder.class);
       }
 
-      // Construct using ser.JonSharedData.JonGUIState.newBuilder()
+      // Construct using data.JonSharedData.JonGUIState.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1114,17 +1114,17 @@ public final class JonSharedData {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedData.internal_static_ser_JonGUIState_descriptor;
+        return data.JonSharedData.internal_static_data_JonGUIState_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedData.JonGUIState getDefaultInstanceForType() {
-        return ser.JonSharedData.JonGUIState.getDefaultInstance();
+      public data.JonSharedData.JonGUIState getDefaultInstanceForType() {
+        return data.JonSharedData.JonGUIState.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedData.JonGUIState build() {
-        ser.JonSharedData.JonGUIState result = buildPartial();
+      public data.JonSharedData.JonGUIState build() {
+        data.JonSharedData.JonGUIState result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1132,14 +1132,14 @@ public final class JonSharedData {
       }
 
       @java.lang.Override
-      public ser.JonSharedData.JonGUIState buildPartial() {
-        ser.JonSharedData.JonGUIState result = new ser.JonSharedData.JonGUIState(this);
+      public data.JonSharedData.JonGUIState buildPartial() {
+        data.JonSharedData.JonGUIState result = new data.JonSharedData.JonGUIState(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedData.JonGUIState result) {
+      private void buildPartial0(data.JonSharedData.JonGUIState result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.protocolVersion_ = protocolVersion_;
@@ -1228,16 +1228,16 @@ public final class JonSharedData {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedData.JonGUIState) {
-          return mergeFrom((ser.JonSharedData.JonGUIState)other);
+        if (other instanceof data.JonSharedData.JonGUIState) {
+          return mergeFrom((data.JonSharedData.JonGUIState)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedData.JonGUIState other) {
-        if (other == ser.JonSharedData.JonGUIState.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedData.JonGUIState other) {
+        if (other == data.JonSharedData.JonGUIState.getDefaultInstance()) return this;
         if (other.getProtocolVersion() != 0) {
           setProtocolVersion(other.getProtocolVersion());
         }
@@ -1451,31 +1451,31 @@ public final class JonSharedData {
         return this;
       }
 
-      private ser.JonSharedDataSystem.JonGuiDataSystem system_;
+      private data.JonSharedDataSystem.JonGuiDataSystem system_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataSystem.JonGuiDataSystem, ser.JonSharedDataSystem.JonGuiDataSystem.Builder, ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder> systemBuilder_;
+          data.JonSharedDataSystem.JonGuiDataSystem, data.JonSharedDataSystem.JonGuiDataSystem.Builder, data.JonSharedDataSystem.JonGuiDataSystemOrBuilder> systemBuilder_;
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        * @return Whether the system field is set.
        */
       public boolean hasSystem() {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        * @return The system.
        */
-      public ser.JonSharedDataSystem.JonGuiDataSystem getSystem() {
+      public data.JonSharedDataSystem.JonGuiDataSystem getSystem() {
         if (systemBuilder_ == null) {
-          return system_ == null ? ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
+          return system_ == null ? data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
         } else {
           return systemBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
-      public Builder setSystem(ser.JonSharedDataSystem.JonGuiDataSystem value) {
+      public Builder setSystem(data.JonSharedDataSystem.JonGuiDataSystem value) {
         if (systemBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1489,10 +1489,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
       public Builder setSystem(
-          ser.JonSharedDataSystem.JonGuiDataSystem.Builder builderForValue) {
+          data.JonSharedDataSystem.JonGuiDataSystem.Builder builderForValue) {
         if (systemBuilder_ == null) {
           system_ = builderForValue.build();
         } else {
@@ -1503,13 +1503,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
-      public Builder mergeSystem(ser.JonSharedDataSystem.JonGuiDataSystem value) {
+      public Builder mergeSystem(data.JonSharedDataSystem.JonGuiDataSystem value) {
         if (systemBuilder_ == null) {
           if (((bitField0_ & 0x00000002) != 0) &&
             system_ != null &&
-            system_ != ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance()) {
+            system_ != data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance()) {
             getSystemBuilder().mergeFrom(value);
           } else {
             system_ = value;
@@ -1524,7 +1524,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
       public Builder clearSystem() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1537,33 +1537,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
-      public ser.JonSharedDataSystem.JonGuiDataSystem.Builder getSystemBuilder() {
+      public data.JonSharedDataSystem.JonGuiDataSystem.Builder getSystemBuilder() {
         bitField0_ |= 0x00000002;
         onChanged();
         return getSystemFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
-      public ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
+      public data.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
         if (systemBuilder_ != null) {
           return systemBuilder_.getMessageOrBuilder();
         } else {
           return system_ == null ?
-              ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
+              data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.data.JonGuiDataSystem system = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataSystem.JonGuiDataSystem, ser.JonSharedDataSystem.JonGuiDataSystem.Builder, ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder> 
+          data.JonSharedDataSystem.JonGuiDataSystem, data.JonSharedDataSystem.JonGuiDataSystem.Builder, data.JonSharedDataSystem.JonGuiDataSystemOrBuilder> 
           getSystemFieldBuilder() {
         if (systemBuilder_ == null) {
           systemBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataSystem.JonGuiDataSystem, ser.JonSharedDataSystem.JonGuiDataSystem.Builder, ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder>(
+              data.JonSharedDataSystem.JonGuiDataSystem, data.JonSharedDataSystem.JonGuiDataSystem.Builder, data.JonSharedDataSystem.JonGuiDataSystemOrBuilder>(
                   getSystem(),
                   getParentForChildren(),
                   isClean());
@@ -1572,31 +1572,31 @@ public final class JonSharedData {
         return systemBuilder_;
       }
 
-      private ser.JonSharedDataTypes.JonGuiDataMeteo meteoInternal_;
+      private data.JonSharedDataTypes.JonGuiDataMeteo meteoInternal_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataTypes.JonGuiDataMeteo, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder, ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> meteoInternalBuilder_;
+          data.JonSharedDataTypes.JonGuiDataMeteo, data.JonSharedDataTypes.JonGuiDataMeteo.Builder, data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> meteoInternalBuilder_;
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        * @return Whether the meteoInternal field is set.
        */
       public boolean hasMeteoInternal() {
         return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        * @return The meteoInternal.
        */
-      public ser.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal() {
+      public data.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal() {
         if (meteoInternalBuilder_ == null) {
-          return meteoInternal_ == null ? ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
+          return meteoInternal_ == null ? data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
         } else {
           return meteoInternalBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
-      public Builder setMeteoInternal(ser.JonSharedDataTypes.JonGuiDataMeteo value) {
+      public Builder setMeteoInternal(data.JonSharedDataTypes.JonGuiDataMeteo value) {
         if (meteoInternalBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1610,10 +1610,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
       public Builder setMeteoInternal(
-          ser.JonSharedDataTypes.JonGuiDataMeteo.Builder builderForValue) {
+          data.JonSharedDataTypes.JonGuiDataMeteo.Builder builderForValue) {
         if (meteoInternalBuilder_ == null) {
           meteoInternal_ = builderForValue.build();
         } else {
@@ -1624,13 +1624,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
-      public Builder mergeMeteoInternal(ser.JonSharedDataTypes.JonGuiDataMeteo value) {
+      public Builder mergeMeteoInternal(data.JonSharedDataTypes.JonGuiDataMeteo value) {
         if (meteoInternalBuilder_ == null) {
           if (((bitField0_ & 0x00000004) != 0) &&
             meteoInternal_ != null &&
-            meteoInternal_ != ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance()) {
+            meteoInternal_ != data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance()) {
             getMeteoInternalBuilder().mergeFrom(value);
           } else {
             meteoInternal_ = value;
@@ -1645,7 +1645,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
       public Builder clearMeteoInternal() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1658,33 +1658,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
-      public ser.JonSharedDataTypes.JonGuiDataMeteo.Builder getMeteoInternalBuilder() {
+      public data.JonSharedDataTypes.JonGuiDataMeteo.Builder getMeteoInternalBuilder() {
         bitField0_ |= 0x00000004;
         onChanged();
         return getMeteoInternalFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
-      public ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
+      public data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
         if (meteoInternalBuilder_ != null) {
           return meteoInternalBuilder_.getMessageOrBuilder();
         } else {
           return meteoInternal_ == null ?
-              ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
+              data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.data.JonGuiDataMeteo meteo_internal = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataTypes.JonGuiDataMeteo, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder, ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> 
+          data.JonSharedDataTypes.JonGuiDataMeteo, data.JonSharedDataTypes.JonGuiDataMeteo.Builder, data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> 
           getMeteoInternalFieldBuilder() {
         if (meteoInternalBuilder_ == null) {
           meteoInternalBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataTypes.JonGuiDataMeteo, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder, ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder>(
+              data.JonSharedDataTypes.JonGuiDataMeteo, data.JonSharedDataTypes.JonGuiDataMeteo.Builder, data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder>(
                   getMeteoInternal(),
                   getParentForChildren(),
                   isClean());
@@ -1693,31 +1693,31 @@ public final class JonSharedData {
         return meteoInternalBuilder_;
       }
 
-      private ser.JonSharedDataLrf.JonGuiDataLrf lrf_;
+      private data.JonSharedDataLrf.JonGuiDataLrf lrf_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.JonGuiDataLrf, ser.JonSharedDataLrf.JonGuiDataLrf.Builder, ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder> lrfBuilder_;
+          data.JonSharedDataLrf.JonGuiDataLrf, data.JonSharedDataLrf.JonGuiDataLrf.Builder, data.JonSharedDataLrf.JonGuiDataLrfOrBuilder> lrfBuilder_;
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        * @return Whether the lrf field is set.
        */
       public boolean hasLrf() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        * @return The lrf.
        */
-      public ser.JonSharedDataLrf.JonGuiDataLrf getLrf() {
+      public data.JonSharedDataLrf.JonGuiDataLrf getLrf() {
         if (lrfBuilder_ == null) {
-          return lrf_ == null ? ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
+          return lrf_ == null ? data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
         } else {
           return lrfBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
-      public Builder setLrf(ser.JonSharedDataLrf.JonGuiDataLrf value) {
+      public Builder setLrf(data.JonSharedDataLrf.JonGuiDataLrf value) {
         if (lrfBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1731,10 +1731,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
       public Builder setLrf(
-          ser.JonSharedDataLrf.JonGuiDataLrf.Builder builderForValue) {
+          data.JonSharedDataLrf.JonGuiDataLrf.Builder builderForValue) {
         if (lrfBuilder_ == null) {
           lrf_ = builderForValue.build();
         } else {
@@ -1745,13 +1745,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
-      public Builder mergeLrf(ser.JonSharedDataLrf.JonGuiDataLrf value) {
+      public Builder mergeLrf(data.JonSharedDataLrf.JonGuiDataLrf value) {
         if (lrfBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
             lrf_ != null &&
-            lrf_ != ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance()) {
+            lrf_ != data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance()) {
             getLrfBuilder().mergeFrom(value);
           } else {
             lrf_ = value;
@@ -1766,7 +1766,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
       public Builder clearLrf() {
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -1779,33 +1779,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
-      public ser.JonSharedDataLrf.JonGuiDataLrf.Builder getLrfBuilder() {
+      public data.JonSharedDataLrf.JonGuiDataLrf.Builder getLrfBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return getLrfFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
-      public ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
+      public data.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
         if (lrfBuilder_ != null) {
           return lrfBuilder_.getMessageOrBuilder();
         } else {
           return lrf_ == null ?
-              ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
+              data.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.data.JonGuiDataLrf lrf = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataLrf.JonGuiDataLrf, ser.JonSharedDataLrf.JonGuiDataLrf.Builder, ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder> 
+          data.JonSharedDataLrf.JonGuiDataLrf, data.JonSharedDataLrf.JonGuiDataLrf.Builder, data.JonSharedDataLrf.JonGuiDataLrfOrBuilder> 
           getLrfFieldBuilder() {
         if (lrfBuilder_ == null) {
           lrfBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataLrf.JonGuiDataLrf, ser.JonSharedDataLrf.JonGuiDataLrf.Builder, ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder>(
+              data.JonSharedDataLrf.JonGuiDataLrf, data.JonSharedDataLrf.JonGuiDataLrf.Builder, data.JonSharedDataLrf.JonGuiDataLrfOrBuilder>(
                   getLrf(),
                   getParentForChildren(),
                   isClean());
@@ -1814,31 +1814,31 @@ public final class JonSharedData {
         return lrfBuilder_;
       }
 
-      private ser.JonSharedDataTime.JonGuiDataTime time_;
+      private data.JonSharedDataTime.JonGuiDataTime time_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataTime.JonGuiDataTime, ser.JonSharedDataTime.JonGuiDataTime.Builder, ser.JonSharedDataTime.JonGuiDataTimeOrBuilder> timeBuilder_;
+          data.JonSharedDataTime.JonGuiDataTime, data.JonSharedDataTime.JonGuiDataTime.Builder, data.JonSharedDataTime.JonGuiDataTimeOrBuilder> timeBuilder_;
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        * @return Whether the time field is set.
        */
       public boolean hasTime() {
         return ((bitField0_ & 0x00000010) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        * @return The time.
        */
-      public ser.JonSharedDataTime.JonGuiDataTime getTime() {
+      public data.JonSharedDataTime.JonGuiDataTime getTime() {
         if (timeBuilder_ == null) {
-          return time_ == null ? ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
+          return time_ == null ? data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
         } else {
           return timeBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
-      public Builder setTime(ser.JonSharedDataTime.JonGuiDataTime value) {
+      public Builder setTime(data.JonSharedDataTime.JonGuiDataTime value) {
         if (timeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1852,10 +1852,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
       public Builder setTime(
-          ser.JonSharedDataTime.JonGuiDataTime.Builder builderForValue) {
+          data.JonSharedDataTime.JonGuiDataTime.Builder builderForValue) {
         if (timeBuilder_ == null) {
           time_ = builderForValue.build();
         } else {
@@ -1866,13 +1866,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
-      public Builder mergeTime(ser.JonSharedDataTime.JonGuiDataTime value) {
+      public Builder mergeTime(data.JonSharedDataTime.JonGuiDataTime value) {
         if (timeBuilder_ == null) {
           if (((bitField0_ & 0x00000010) != 0) &&
             time_ != null &&
-            time_ != ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance()) {
+            time_ != data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance()) {
             getTimeBuilder().mergeFrom(value);
           } else {
             time_ = value;
@@ -1887,7 +1887,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
       public Builder clearTime() {
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -1900,33 +1900,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
-      public ser.JonSharedDataTime.JonGuiDataTime.Builder getTimeBuilder() {
+      public data.JonSharedDataTime.JonGuiDataTime.Builder getTimeBuilder() {
         bitField0_ |= 0x00000010;
         onChanged();
         return getTimeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
-      public ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
+      public data.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
         if (timeBuilder_ != null) {
           return timeBuilder_.getMessageOrBuilder();
         } else {
           return time_ == null ?
-              ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
+              data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.data.JonGuiDataTime time = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataTime.JonGuiDataTime, ser.JonSharedDataTime.JonGuiDataTime.Builder, ser.JonSharedDataTime.JonGuiDataTimeOrBuilder> 
+          data.JonSharedDataTime.JonGuiDataTime, data.JonSharedDataTime.JonGuiDataTime.Builder, data.JonSharedDataTime.JonGuiDataTimeOrBuilder> 
           getTimeFieldBuilder() {
         if (timeBuilder_ == null) {
           timeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataTime.JonGuiDataTime, ser.JonSharedDataTime.JonGuiDataTime.Builder, ser.JonSharedDataTime.JonGuiDataTimeOrBuilder>(
+              data.JonSharedDataTime.JonGuiDataTime, data.JonSharedDataTime.JonGuiDataTime.Builder, data.JonSharedDataTime.JonGuiDataTimeOrBuilder>(
                   getTime(),
                   getParentForChildren(),
                   isClean());
@@ -1935,31 +1935,31 @@ public final class JonSharedData {
         return timeBuilder_;
       }
 
-      private ser.JonSharedDataGps.JonGuiDataGps gps_;
+      private data.JonSharedDataGps.JonGuiDataGps gps_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataGps.JonGuiDataGps, ser.JonSharedDataGps.JonGuiDataGps.Builder, ser.JonSharedDataGps.JonGuiDataGpsOrBuilder> gpsBuilder_;
+          data.JonSharedDataGps.JonGuiDataGps, data.JonSharedDataGps.JonGuiDataGps.Builder, data.JonSharedDataGps.JonGuiDataGpsOrBuilder> gpsBuilder_;
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        * @return Whether the gps field is set.
        */
       public boolean hasGps() {
         return ((bitField0_ & 0x00000020) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        * @return The gps.
        */
-      public ser.JonSharedDataGps.JonGuiDataGps getGps() {
+      public data.JonSharedDataGps.JonGuiDataGps getGps() {
         if (gpsBuilder_ == null) {
-          return gps_ == null ? ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
+          return gps_ == null ? data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
         } else {
           return gpsBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
-      public Builder setGps(ser.JonSharedDataGps.JonGuiDataGps value) {
+      public Builder setGps(data.JonSharedDataGps.JonGuiDataGps value) {
         if (gpsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1973,10 +1973,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
       public Builder setGps(
-          ser.JonSharedDataGps.JonGuiDataGps.Builder builderForValue) {
+          data.JonSharedDataGps.JonGuiDataGps.Builder builderForValue) {
         if (gpsBuilder_ == null) {
           gps_ = builderForValue.build();
         } else {
@@ -1987,13 +1987,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
-      public Builder mergeGps(ser.JonSharedDataGps.JonGuiDataGps value) {
+      public Builder mergeGps(data.JonSharedDataGps.JonGuiDataGps value) {
         if (gpsBuilder_ == null) {
           if (((bitField0_ & 0x00000020) != 0) &&
             gps_ != null &&
-            gps_ != ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance()) {
+            gps_ != data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance()) {
             getGpsBuilder().mergeFrom(value);
           } else {
             gps_ = value;
@@ -2008,7 +2008,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
       public Builder clearGps() {
         bitField0_ = (bitField0_ & ~0x00000020);
@@ -2021,33 +2021,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
-      public ser.JonSharedDataGps.JonGuiDataGps.Builder getGpsBuilder() {
+      public data.JonSharedDataGps.JonGuiDataGps.Builder getGpsBuilder() {
         bitField0_ |= 0x00000020;
         onChanged();
         return getGpsFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
-      public ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
+      public data.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
         if (gpsBuilder_ != null) {
           return gpsBuilder_.getMessageOrBuilder();
         } else {
           return gps_ == null ?
-              ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
+              data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.data.JonGuiDataGps gps = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataGps.JonGuiDataGps, ser.JonSharedDataGps.JonGuiDataGps.Builder, ser.JonSharedDataGps.JonGuiDataGpsOrBuilder> 
+          data.JonSharedDataGps.JonGuiDataGps, data.JonSharedDataGps.JonGuiDataGps.Builder, data.JonSharedDataGps.JonGuiDataGpsOrBuilder> 
           getGpsFieldBuilder() {
         if (gpsBuilder_ == null) {
           gpsBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataGps.JonGuiDataGps, ser.JonSharedDataGps.JonGuiDataGps.Builder, ser.JonSharedDataGps.JonGuiDataGpsOrBuilder>(
+              data.JonSharedDataGps.JonGuiDataGps, data.JonSharedDataGps.JonGuiDataGps.Builder, data.JonSharedDataGps.JonGuiDataGpsOrBuilder>(
                   getGps(),
                   getParentForChildren(),
                   isClean());
@@ -2056,31 +2056,31 @@ public final class JonSharedData {
         return gpsBuilder_;
       }
 
-      private ser.JonSharedDataCompass.JonGuiDataCompass compass_;
+      private data.JonSharedDataCompass.JonGuiDataCompass compass_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCompass.JonGuiDataCompass, ser.JonSharedDataCompass.JonGuiDataCompass.Builder, ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder> compassBuilder_;
+          data.JonSharedDataCompass.JonGuiDataCompass, data.JonSharedDataCompass.JonGuiDataCompass.Builder, data.JonSharedDataCompass.JonGuiDataCompassOrBuilder> compassBuilder_;
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        * @return Whether the compass field is set.
        */
       public boolean hasCompass() {
         return ((bitField0_ & 0x00000040) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        * @return The compass.
        */
-      public ser.JonSharedDataCompass.JonGuiDataCompass getCompass() {
+      public data.JonSharedDataCompass.JonGuiDataCompass getCompass() {
         if (compassBuilder_ == null) {
-          return compass_ == null ? ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
+          return compass_ == null ? data.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
         } else {
           return compassBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
-      public Builder setCompass(ser.JonSharedDataCompass.JonGuiDataCompass value) {
+      public Builder setCompass(data.JonSharedDataCompass.JonGuiDataCompass value) {
         if (compassBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2094,10 +2094,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
       public Builder setCompass(
-          ser.JonSharedDataCompass.JonGuiDataCompass.Builder builderForValue) {
+          data.JonSharedDataCompass.JonGuiDataCompass.Builder builderForValue) {
         if (compassBuilder_ == null) {
           compass_ = builderForValue.build();
         } else {
@@ -2108,13 +2108,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
-      public Builder mergeCompass(ser.JonSharedDataCompass.JonGuiDataCompass value) {
+      public Builder mergeCompass(data.JonSharedDataCompass.JonGuiDataCompass value) {
         if (compassBuilder_ == null) {
           if (((bitField0_ & 0x00000040) != 0) &&
             compass_ != null &&
-            compass_ != ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance()) {
+            compass_ != data.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance()) {
             getCompassBuilder().mergeFrom(value);
           } else {
             compass_ = value;
@@ -2129,7 +2129,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
       public Builder clearCompass() {
         bitField0_ = (bitField0_ & ~0x00000040);
@@ -2142,33 +2142,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
-      public ser.JonSharedDataCompass.JonGuiDataCompass.Builder getCompassBuilder() {
+      public data.JonSharedDataCompass.JonGuiDataCompass.Builder getCompassBuilder() {
         bitField0_ |= 0x00000040;
         onChanged();
         return getCompassFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
-      public ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
+      public data.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
         if (compassBuilder_ != null) {
           return compassBuilder_.getMessageOrBuilder();
         } else {
           return compass_ == null ?
-              ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
+              data.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.data.JonGuiDataCompass compass = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCompass.JonGuiDataCompass, ser.JonSharedDataCompass.JonGuiDataCompass.Builder, ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder> 
+          data.JonSharedDataCompass.JonGuiDataCompass, data.JonSharedDataCompass.JonGuiDataCompass.Builder, data.JonSharedDataCompass.JonGuiDataCompassOrBuilder> 
           getCompassFieldBuilder() {
         if (compassBuilder_ == null) {
           compassBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataCompass.JonGuiDataCompass, ser.JonSharedDataCompass.JonGuiDataCompass.Builder, ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder>(
+              data.JonSharedDataCompass.JonGuiDataCompass, data.JonSharedDataCompass.JonGuiDataCompass.Builder, data.JonSharedDataCompass.JonGuiDataCompassOrBuilder>(
                   getCompass(),
                   getParentForChildren(),
                   isClean());
@@ -2177,31 +2177,31 @@ public final class JonSharedData {
         return compassBuilder_;
       }
 
-      private ser.JonSharedDataRotary.JonGuiDataRotary rotary_;
+      private data.JonSharedDataRotary.JonGuiDataRotary rotary_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataRotary.JonGuiDataRotary, ser.JonSharedDataRotary.JonGuiDataRotary.Builder, ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> rotaryBuilder_;
+          data.JonSharedDataRotary.JonGuiDataRotary, data.JonSharedDataRotary.JonGuiDataRotary.Builder, data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> rotaryBuilder_;
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        * @return Whether the rotary field is set.
        */
       public boolean hasRotary() {
         return ((bitField0_ & 0x00000080) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        * @return The rotary.
        */
-      public ser.JonSharedDataRotary.JonGuiDataRotary getRotary() {
+      public data.JonSharedDataRotary.JonGuiDataRotary getRotary() {
         if (rotaryBuilder_ == null) {
-          return rotary_ == null ? ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
+          return rotary_ == null ? data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
         } else {
           return rotaryBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
-      public Builder setRotary(ser.JonSharedDataRotary.JonGuiDataRotary value) {
+      public Builder setRotary(data.JonSharedDataRotary.JonGuiDataRotary value) {
         if (rotaryBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2215,10 +2215,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
       public Builder setRotary(
-          ser.JonSharedDataRotary.JonGuiDataRotary.Builder builderForValue) {
+          data.JonSharedDataRotary.JonGuiDataRotary.Builder builderForValue) {
         if (rotaryBuilder_ == null) {
           rotary_ = builderForValue.build();
         } else {
@@ -2229,13 +2229,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
-      public Builder mergeRotary(ser.JonSharedDataRotary.JonGuiDataRotary value) {
+      public Builder mergeRotary(data.JonSharedDataRotary.JonGuiDataRotary value) {
         if (rotaryBuilder_ == null) {
           if (((bitField0_ & 0x00000080) != 0) &&
             rotary_ != null &&
-            rotary_ != ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance()) {
+            rotary_ != data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance()) {
             getRotaryBuilder().mergeFrom(value);
           } else {
             rotary_ = value;
@@ -2250,7 +2250,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
       public Builder clearRotary() {
         bitField0_ = (bitField0_ & ~0x00000080);
@@ -2263,33 +2263,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
-      public ser.JonSharedDataRotary.JonGuiDataRotary.Builder getRotaryBuilder() {
+      public data.JonSharedDataRotary.JonGuiDataRotary.Builder getRotaryBuilder() {
         bitField0_ |= 0x00000080;
         onChanged();
         return getRotaryFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
-      public ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
+      public data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
         if (rotaryBuilder_ != null) {
           return rotaryBuilder_.getMessageOrBuilder();
         } else {
           return rotary_ == null ?
-              ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
+              data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.data.JonGuiDataRotary rotary = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataRotary.JonGuiDataRotary, ser.JonSharedDataRotary.JonGuiDataRotary.Builder, ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> 
+          data.JonSharedDataRotary.JonGuiDataRotary, data.JonSharedDataRotary.JonGuiDataRotary.Builder, data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> 
           getRotaryFieldBuilder() {
         if (rotaryBuilder_ == null) {
           rotaryBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataRotary.JonGuiDataRotary, ser.JonSharedDataRotary.JonGuiDataRotary.Builder, ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder>(
+              data.JonSharedDataRotary.JonGuiDataRotary, data.JonSharedDataRotary.JonGuiDataRotary.Builder, data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder>(
                   getRotary(),
                   getParentForChildren(),
                   isClean());
@@ -2298,31 +2298,31 @@ public final class JonSharedData {
         return rotaryBuilder_;
       }
 
-      private ser.JonSharedDataCameraDay.JonGuiDataCameraDay cameraDay_;
+      private data.JonSharedDataCameraDay.JonGuiDataCameraDay cameraDay_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCameraDay.JonGuiDataCameraDay, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> cameraDayBuilder_;
+          data.JonSharedDataCameraDay.JonGuiDataCameraDay, data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> cameraDayBuilder_;
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        * @return Whether the cameraDay field is set.
        */
       public boolean hasCameraDay() {
         return ((bitField0_ & 0x00000100) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        * @return The cameraDay.
        */
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay() {
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay() {
         if (cameraDayBuilder_ == null) {
-          return cameraDay_ == null ? ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
+          return cameraDay_ == null ? data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
         } else {
           return cameraDayBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
-      public Builder setCameraDay(ser.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
+      public Builder setCameraDay(data.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
         if (cameraDayBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2336,10 +2336,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
       public Builder setCameraDay(
-          ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder builderForValue) {
+          data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder builderForValue) {
         if (cameraDayBuilder_ == null) {
           cameraDay_ = builderForValue.build();
         } else {
@@ -2350,13 +2350,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
-      public Builder mergeCameraDay(ser.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
+      public Builder mergeCameraDay(data.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
         if (cameraDayBuilder_ == null) {
           if (((bitField0_ & 0x00000100) != 0) &&
             cameraDay_ != null &&
-            cameraDay_ != ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance()) {
+            cameraDay_ != data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance()) {
             getCameraDayBuilder().mergeFrom(value);
           } else {
             cameraDay_ = value;
@@ -2371,7 +2371,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
       public Builder clearCameraDay() {
         bitField0_ = (bitField0_ & ~0x00000100);
@@ -2384,33 +2384,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder getCameraDayBuilder() {
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder getCameraDayBuilder() {
         bitField0_ |= 0x00000100;
         onChanged();
         return getCameraDayFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
         if (cameraDayBuilder_ != null) {
           return cameraDayBuilder_.getMessageOrBuilder();
         } else {
           return cameraDay_ == null ?
-              ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
+              data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.data.JonGuiDataCameraDay camera_day = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCameraDay.JonGuiDataCameraDay, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> 
+          data.JonSharedDataCameraDay.JonGuiDataCameraDay, data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> 
           getCameraDayFieldBuilder() {
         if (cameraDayBuilder_ == null) {
           cameraDayBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataCameraDay.JonGuiDataCameraDay, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder>(
+              data.JonSharedDataCameraDay.JonGuiDataCameraDay, data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder>(
                   getCameraDay(),
                   getParentForChildren(),
                   isClean());
@@ -2419,31 +2419,31 @@ public final class JonSharedData {
         return cameraDayBuilder_;
       }
 
-      private ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat cameraHeat_;
+      private data.JonSharedDataCameraHeat.JonGuiDataCameraHeat cameraHeat_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> cameraHeatBuilder_;
+          data.JonSharedDataCameraHeat.JonGuiDataCameraHeat, data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> cameraHeatBuilder_;
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        * @return Whether the cameraHeat field is set.
        */
       public boolean hasCameraHeat() {
         return ((bitField0_ & 0x00000200) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        * @return The cameraHeat.
        */
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat() {
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat() {
         if (cameraHeatBuilder_ == null) {
-          return cameraHeat_ == null ? ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
+          return cameraHeat_ == null ? data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
         } else {
           return cameraHeatBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
-      public Builder setCameraHeat(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
+      public Builder setCameraHeat(data.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
         if (cameraHeatBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2457,10 +2457,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
       public Builder setCameraHeat(
-          ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder builderForValue) {
+          data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder builderForValue) {
         if (cameraHeatBuilder_ == null) {
           cameraHeat_ = builderForValue.build();
         } else {
@@ -2471,13 +2471,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
-      public Builder mergeCameraHeat(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
+      public Builder mergeCameraHeat(data.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
         if (cameraHeatBuilder_ == null) {
           if (((bitField0_ & 0x00000200) != 0) &&
             cameraHeat_ != null &&
-            cameraHeat_ != ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance()) {
+            cameraHeat_ != data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance()) {
             getCameraHeatBuilder().mergeFrom(value);
           } else {
             cameraHeat_ = value;
@@ -2492,7 +2492,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
       public Builder clearCameraHeat() {
         bitField0_ = (bitField0_ & ~0x00000200);
@@ -2505,33 +2505,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder getCameraHeatBuilder() {
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder getCameraHeatBuilder() {
         bitField0_ |= 0x00000200;
         onChanged();
         return getCameraHeatFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
         if (cameraHeatBuilder_ != null) {
           return cameraHeatBuilder_.getMessageOrBuilder();
         } else {
           return cameraHeat_ == null ?
-              ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
+              data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.data.JonGuiDataCameraHeat camera_heat = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> 
+          data.JonSharedDataCameraHeat.JonGuiDataCameraHeat, data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> 
           getCameraHeatFieldBuilder() {
         if (cameraHeatBuilder_ == null) {
           cameraHeatBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder>(
+              data.JonSharedDataCameraHeat.JonGuiDataCameraHeat, data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder>(
                   getCameraHeat(),
                   getParentForChildren(),
                   isClean());
@@ -2540,31 +2540,31 @@ public final class JonSharedData {
         return cameraHeatBuilder_;
       }
 
-      private ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration compassCalibration_;
+      private data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration compassCalibration_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> compassCalibrationBuilder_;
+          data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> compassCalibrationBuilder_;
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        * @return Whether the compassCalibration field is set.
        */
       public boolean hasCompassCalibration() {
         return ((bitField0_ & 0x00000400) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        * @return The compassCalibration.
        */
-      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration() {
+      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration() {
         if (compassCalibrationBuilder_ == null) {
-          return compassCalibration_ == null ? ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
+          return compassCalibration_ == null ? data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
         } else {
           return compassCalibrationBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
-      public Builder setCompassCalibration(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
+      public Builder setCompassCalibration(data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
         if (compassCalibrationBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2578,10 +2578,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
       public Builder setCompassCalibration(
-          ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder builderForValue) {
+          data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder builderForValue) {
         if (compassCalibrationBuilder_ == null) {
           compassCalibration_ = builderForValue.build();
         } else {
@@ -2592,13 +2592,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
-      public Builder mergeCompassCalibration(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
+      public Builder mergeCompassCalibration(data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
         if (compassCalibrationBuilder_ == null) {
           if (((bitField0_ & 0x00000400) != 0) &&
             compassCalibration_ != null &&
-            compassCalibration_ != ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance()) {
+            compassCalibration_ != data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance()) {
             getCompassCalibrationBuilder().mergeFrom(value);
           } else {
             compassCalibration_ = value;
@@ -2613,7 +2613,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
       public Builder clearCompassCalibration() {
         bitField0_ = (bitField0_ & ~0x00000400);
@@ -2626,33 +2626,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
-      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder getCompassCalibrationBuilder() {
+      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder getCompassCalibrationBuilder() {
         bitField0_ |= 0x00000400;
         onChanged();
         return getCompassCalibrationFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
-      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
+      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
         if (compassCalibrationBuilder_ != null) {
           return compassCalibrationBuilder_.getMessageOrBuilder();
         } else {
           return compassCalibration_ == null ?
-              ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
+              data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.data.JonGuiDataCompassCalibration compass_calibration = 11;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> 
+          data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> 
           getCompassCalibrationFieldBuilder() {
         if (compassCalibrationBuilder_ == null) {
           compassCalibrationBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder>(
+              data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder>(
                   getCompassCalibration(),
                   getParentForChildren(),
                   isClean());
@@ -2661,31 +2661,31 @@ public final class JonSharedData {
         return compassCalibrationBuilder_;
       }
 
-      private ser.JonSharedDataRecOsd.JonGuiDataRecOsd recOsd_;
+      private data.JonSharedDataRecOsd.JonGuiDataRecOsd recOsd_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataRecOsd.JonGuiDataRecOsd, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> recOsdBuilder_;
+          data.JonSharedDataRecOsd.JonGuiDataRecOsd, data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> recOsdBuilder_;
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        * @return Whether the recOsd field is set.
        */
       public boolean hasRecOsd() {
         return ((bitField0_ & 0x00000800) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        * @return The recOsd.
        */
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd() {
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd() {
         if (recOsdBuilder_ == null) {
-          return recOsd_ == null ? ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
+          return recOsd_ == null ? data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
         } else {
           return recOsdBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
-      public Builder setRecOsd(ser.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
+      public Builder setRecOsd(data.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
         if (recOsdBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2699,10 +2699,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
       public Builder setRecOsd(
-          ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder builderForValue) {
+          data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder builderForValue) {
         if (recOsdBuilder_ == null) {
           recOsd_ = builderForValue.build();
         } else {
@@ -2713,13 +2713,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
-      public Builder mergeRecOsd(ser.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
+      public Builder mergeRecOsd(data.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
         if (recOsdBuilder_ == null) {
           if (((bitField0_ & 0x00000800) != 0) &&
             recOsd_ != null &&
-            recOsd_ != ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance()) {
+            recOsd_ != data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance()) {
             getRecOsdBuilder().mergeFrom(value);
           } else {
             recOsd_ = value;
@@ -2734,7 +2734,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
       public Builder clearRecOsd() {
         bitField0_ = (bitField0_ & ~0x00000800);
@@ -2747,33 +2747,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder getRecOsdBuilder() {
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder getRecOsdBuilder() {
         bitField0_ |= 0x00000800;
         onChanged();
         return getRecOsdFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
         if (recOsdBuilder_ != null) {
           return recOsdBuilder_.getMessageOrBuilder();
         } else {
           return recOsd_ == null ?
-              ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
+              data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.data.JonGuiDataRecOsd rec_osd = 12;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataRecOsd.JonGuiDataRecOsd, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> 
+          data.JonSharedDataRecOsd.JonGuiDataRecOsd, data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> 
           getRecOsdFieldBuilder() {
         if (recOsdBuilder_ == null) {
           recOsdBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataRecOsd.JonGuiDataRecOsd, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder>(
+              data.JonSharedDataRecOsd.JonGuiDataRecOsd, data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder>(
                   getRecOsd(),
                   getParentForChildren(),
                   isClean());
@@ -2782,31 +2782,31 @@ public final class JonSharedData {
         return recOsdBuilder_;
       }
 
-      private ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater dayCamGlassHeater_;
+      private data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater dayCamGlassHeater_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> dayCamGlassHeaterBuilder_;
+          data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> dayCamGlassHeaterBuilder_;
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        * @return Whether the dayCamGlassHeater field is set.
        */
       public boolean hasDayCamGlassHeater() {
         return ((bitField0_ & 0x00001000) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        * @return The dayCamGlassHeater.
        */
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater() {
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater() {
         if (dayCamGlassHeaterBuilder_ == null) {
-          return dayCamGlassHeater_ == null ? ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
+          return dayCamGlassHeater_ == null ? data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
         } else {
           return dayCamGlassHeaterBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
-      public Builder setDayCamGlassHeater(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
+      public Builder setDayCamGlassHeater(data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
         if (dayCamGlassHeaterBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2820,10 +2820,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
       public Builder setDayCamGlassHeater(
-          ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder builderForValue) {
+          data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder builderForValue) {
         if (dayCamGlassHeaterBuilder_ == null) {
           dayCamGlassHeater_ = builderForValue.build();
         } else {
@@ -2834,13 +2834,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
-      public Builder mergeDayCamGlassHeater(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
+      public Builder mergeDayCamGlassHeater(data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
         if (dayCamGlassHeaterBuilder_ == null) {
           if (((bitField0_ & 0x00001000) != 0) &&
             dayCamGlassHeater_ != null &&
-            dayCamGlassHeater_ != ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance()) {
+            dayCamGlassHeater_ != data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance()) {
             getDayCamGlassHeaterBuilder().mergeFrom(value);
           } else {
             dayCamGlassHeater_ = value;
@@ -2855,7 +2855,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
       public Builder clearDayCamGlassHeater() {
         bitField0_ = (bitField0_ & ~0x00001000);
@@ -2868,33 +2868,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder getDayCamGlassHeaterBuilder() {
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder getDayCamGlassHeaterBuilder() {
         bitField0_ |= 0x00001000;
         onChanged();
         return getDayCamGlassHeaterFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
-      public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
+      public data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
         if (dayCamGlassHeaterBuilder_ != null) {
           return dayCamGlassHeaterBuilder_.getMessageOrBuilder();
         } else {
           return dayCamGlassHeater_ == null ?
-              ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
+              data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.data.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> 
+          data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> 
           getDayCamGlassHeaterFieldBuilder() {
         if (dayCamGlassHeaterBuilder_ == null) {
           dayCamGlassHeaterBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder>(
+              data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, data.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder>(
                   getDayCamGlassHeater(),
                   getParentForChildren(),
                   isClean());
@@ -2903,31 +2903,31 @@ public final class JonSharedData {
         return dayCamGlassHeaterBuilder_;
       }
 
-      private ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime actualSpaceTime_;
+      private data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime actualSpaceTime_;
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> actualSpaceTimeBuilder_;
+          data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> actualSpaceTimeBuilder_;
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        * @return Whether the actualSpaceTime field is set.
        */
       public boolean hasActualSpaceTime() {
         return ((bitField0_ & 0x00002000) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        * @return The actualSpaceTime.
        */
-      public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime() {
+      public data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime() {
         if (actualSpaceTimeBuilder_ == null) {
-          return actualSpaceTime_ == null ? ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
+          return actualSpaceTime_ == null ? data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
         } else {
           return actualSpaceTimeBuilder_.getMessage();
         }
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
-      public Builder setActualSpaceTime(ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
+      public Builder setActualSpaceTime(data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
         if (actualSpaceTimeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2941,10 +2941,10 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
       public Builder setActualSpaceTime(
-          ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder builderForValue) {
+          data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder builderForValue) {
         if (actualSpaceTimeBuilder_ == null) {
           actualSpaceTime_ = builderForValue.build();
         } else {
@@ -2955,13 +2955,13 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
-      public Builder mergeActualSpaceTime(ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
+      public Builder mergeActualSpaceTime(data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
         if (actualSpaceTimeBuilder_ == null) {
           if (((bitField0_ & 0x00002000) != 0) &&
             actualSpaceTime_ != null &&
-            actualSpaceTime_ != ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance()) {
+            actualSpaceTime_ != data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance()) {
             getActualSpaceTimeBuilder().mergeFrom(value);
           } else {
             actualSpaceTime_ = value;
@@ -2976,7 +2976,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
       public Builder clearActualSpaceTime() {
         bitField0_ = (bitField0_ & ~0x00002000);
@@ -2989,33 +2989,33 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
-      public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder getActualSpaceTimeBuilder() {
+      public data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder getActualSpaceTimeBuilder() {
         bitField0_ |= 0x00002000;
         onChanged();
         return getActualSpaceTimeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
-      public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
+      public data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
         if (actualSpaceTimeBuilder_ != null) {
           return actualSpaceTimeBuilder_.getMessageOrBuilder();
         } else {
           return actualSpaceTime_ == null ?
-              ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
+              data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
         }
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.data.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> 
+          data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> 
           getActualSpaceTimeFieldBuilder() {
         if (actualSpaceTimeBuilder_ == null) {
           actualSpaceTimeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder>(
+              data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, data.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder>(
                   getActualSpaceTime(),
                   getParentForChildren(),
                   isClean());
@@ -3024,16 +3024,16 @@ public final class JonSharedData {
         return actualSpaceTimeBuilder_;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGUIState)
+      // @@protoc_insertion_point(builder_scope:data.JonGUIState)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGUIState)
-    private static final ser.JonSharedData.JonGUIState DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGUIState)
+    private static final data.JonSharedData.JonGUIState DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedData.JonGUIState();
+      DEFAULT_INSTANCE = new data.JonSharedData.JonGUIState();
     }
 
-    public static ser.JonSharedData.JonGUIState getDefaultInstance() {
+    public static data.JonSharedData.JonGUIState getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3069,17 +3069,17 @@ public final class JonSharedData {
     }
 
     @java.lang.Override
-    public ser.JonSharedData.JonGUIState getDefaultInstanceForType() {
+    public data.JonSharedData.JonGUIState getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGUIState_descriptor;
+    internal_static_data_JonGUIState_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGUIState_fieldAccessorTable;
+      internal_static_data_JonGUIState_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3089,74 +3089,74 @@ public final class JonSharedData {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\025jon_shared_data.proto\022\003ser\032\033jon_shared" +
-      "_data_types.proto\032\032jon_shared_data_time." +
-      "proto\032\034jon_shared_data_system.proto\032\031jon" +
-      "_shared_data_lrf.proto\032\031jon_shared_data_" +
-      "gps.proto\032\035jon_shared_data_compass.proto" +
-      "\032)jon_shared_data_compass_calibration.pr" +
-      "oto\032\034jon_shared_data_rotary.proto\032 jon_s" +
-      "hared_data_camera_day.proto\032!jon_shared_" +
-      "data_camera_heat.proto\032\035jon_shared_data_" +
-      "rec_osd.proto\032*jon_shared_data_day_cam_g" +
-      "lass_heater.proto\032\'jon_shared_data_actua" +
-      "l_space_time.proto\"\362\004\n\013JonGUIState\022\030\n\020pr" +
-      "otocol_version\030\001 \001(\r\022%\n\006system\030\002 \001(\0132\025.s" +
-      "er.JonGuiDataSystem\022,\n\016meteo_internal\030\003 " +
-      "\001(\0132\024.ser.JonGuiDataMeteo\022\037\n\003lrf\030\004 \001(\0132\022" +
-      ".ser.JonGuiDataLrf\022!\n\004time\030\005 \001(\0132\023.ser.J" +
-      "onGuiDataTime\022\037\n\003gps\030\006 \001(\0132\022.ser.JonGuiD" +
-      "ataGps\022\'\n\007compass\030\007 \001(\0132\026.ser.JonGuiData" +
-      "Compass\022%\n\006rotary\030\010 \001(\0132\025.ser.JonGuiData" +
-      "Rotary\022,\n\ncamera_day\030\t \001(\0132\030.ser.JonGuiD" +
-      "ataCameraDay\022.\n\013camera_heat\030\n \001(\0132\031.ser." +
-      "JonGuiDataCameraHeat\022>\n\023compass_calibrat" +
-      "ion\030\013 \001(\0132!.ser.JonGuiDataCompassCalibra" +
-      "tion\022&\n\007rec_osd\030\014 \001(\0132\025.ser.JonGuiDataRe" +
-      "cOsd\022>\n\024day_cam_glass_heater\030\r \001(\0132 .ser" +
-      ".JonGuiDataDayCamGlassHeater\0229\n\021actual_s" +
-      "pace_time\030\016 \001(\0132\036.ser.JonGuiDataActualSp" +
-      "aceTimeBGZEgit-codecommit.eu-central-1.a" +
-      "mazonaws.com/v1/repos/jettison/jonp/data" +
-      "b\006proto3"
+      "\n\025jon_shared_data.proto\022\004data\032\033jon_share" +
+      "d_data_types.proto\032\032jon_shared_data_time" +
+      ".proto\032\034jon_shared_data_system.proto\032\031jo" +
+      "n_shared_data_lrf.proto\032\031jon_shared_data" +
+      "_gps.proto\032\035jon_shared_data_compass.prot" +
+      "o\032)jon_shared_data_compass_calibration.p" +
+      "roto\032\034jon_shared_data_rotary.proto\032 jon_" +
+      "shared_data_camera_day.proto\032!jon_shared" +
+      "_data_camera_heat.proto\032\035jon_shared_data" +
+      "_rec_osd.proto\032*jon_shared_data_day_cam_" +
+      "glass_heater.proto\032\'jon_shared_data_actu" +
+      "al_space_time.proto\"\377\004\n\013JonGUIState\022\030\n\020p" +
+      "rotocol_version\030\001 \001(\r\022&\n\006system\030\002 \001(\0132\026." +
+      "data.JonGuiDataSystem\022-\n\016meteo_internal\030" +
+      "\003 \001(\0132\025.data.JonGuiDataMeteo\022 \n\003lrf\030\004 \001(" +
+      "\0132\023.data.JonGuiDataLrf\022\"\n\004time\030\005 \001(\0132\024.d" +
+      "ata.JonGuiDataTime\022 \n\003gps\030\006 \001(\0132\023.data.J" +
+      "onGuiDataGps\022(\n\007compass\030\007 \001(\0132\027.data.Jon" +
+      "GuiDataCompass\022&\n\006rotary\030\010 \001(\0132\026.data.Jo" +
+      "nGuiDataRotary\022-\n\ncamera_day\030\t \001(\0132\031.dat" +
+      "a.JonGuiDataCameraDay\022/\n\013camera_heat\030\n \001" +
+      "(\0132\032.data.JonGuiDataCameraHeat\022?\n\023compas" +
+      "s_calibration\030\013 \001(\0132\".data.JonGuiDataCom" +
+      "passCalibration\022\'\n\007rec_osd\030\014 \001(\0132\026.data." +
+      "JonGuiDataRecOsd\022?\n\024day_cam_glass_heater" +
+      "\030\r \001(\0132!.data.JonGuiDataDayCamGlassHeate" +
+      "r\022:\n\021actual_space_time\030\016 \001(\0132\037.data.JonG" +
+      "uiDataActualSpaceTimeBGZEgit-codecommit." +
+      "eu-central-1.amazonaws.com/v1/repos/jett" +
+      "ison/jonp/datab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
-          ser.JonSharedDataTime.getDescriptor(),
-          ser.JonSharedDataSystem.getDescriptor(),
-          ser.JonSharedDataLrf.getDescriptor(),
-          ser.JonSharedDataGps.getDescriptor(),
-          ser.JonSharedDataCompass.getDescriptor(),
-          ser.JonSharedDataCompassCalibration.getDescriptor(),
-          ser.JonSharedDataRotary.getDescriptor(),
-          ser.JonSharedDataCameraDay.getDescriptor(),
-          ser.JonSharedDataCameraHeat.getDescriptor(),
-          ser.JonSharedDataRecOsd.getDescriptor(),
-          ser.JonSharedDataDayCamGlassHeater.getDescriptor(),
-          ser.JonSharedDataActualSpaceTime.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTime.getDescriptor(),
+          data.JonSharedDataSystem.getDescriptor(),
+          data.JonSharedDataLrf.getDescriptor(),
+          data.JonSharedDataGps.getDescriptor(),
+          data.JonSharedDataCompass.getDescriptor(),
+          data.JonSharedDataCompassCalibration.getDescriptor(),
+          data.JonSharedDataRotary.getDescriptor(),
+          data.JonSharedDataCameraDay.getDescriptor(),
+          data.JonSharedDataCameraHeat.getDescriptor(),
+          data.JonSharedDataRecOsd.getDescriptor(),
+          data.JonSharedDataDayCamGlassHeater.getDescriptor(),
+          data.JonSharedDataActualSpaceTime.getDescriptor(),
         });
-    internal_static_ser_JonGUIState_descriptor =
+    internal_static_data_JonGUIState_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGUIState_fieldAccessorTable = new
+    internal_static_data_JonGUIState_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGUIState_descriptor,
+        internal_static_data_JonGUIState_descriptor,
         new java.lang.String[] { "ProtocolVersion", "System", "MeteoInternal", "Lrf", "Time", "Gps", "Compass", "Rotary", "CameraDay", "CameraHeat", "CompassCalibration", "RecOsd", "DayCamGlassHeater", "ActualSpaceTime", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
-    ser.JonSharedDataTime.getDescriptor();
-    ser.JonSharedDataSystem.getDescriptor();
-    ser.JonSharedDataLrf.getDescriptor();
-    ser.JonSharedDataGps.getDescriptor();
-    ser.JonSharedDataCompass.getDescriptor();
-    ser.JonSharedDataCompassCalibration.getDescriptor();
-    ser.JonSharedDataRotary.getDescriptor();
-    ser.JonSharedDataCameraDay.getDescriptor();
-    ser.JonSharedDataCameraHeat.getDescriptor();
-    ser.JonSharedDataRecOsd.getDescriptor();
-    ser.JonSharedDataDayCamGlassHeater.getDescriptor();
-    ser.JonSharedDataActualSpaceTime.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTime.getDescriptor();
+    data.JonSharedDataSystem.getDescriptor();
+    data.JonSharedDataLrf.getDescriptor();
+    data.JonSharedDataGps.getDescriptor();
+    data.JonSharedDataCompass.getDescriptor();
+    data.JonSharedDataCompassCalibration.getDescriptor();
+    data.JonSharedDataRotary.getDescriptor();
+    data.JonSharedDataCameraDay.getDescriptor();
+    data.JonSharedDataCameraHeat.getDescriptor();
+    data.JonSharedDataRecOsd.getDescriptor();
+    data.JonSharedDataDayCamGlassHeater.getDescriptor();
+    data.JonSharedDataActualSpaceTime.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

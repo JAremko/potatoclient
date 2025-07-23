@@ -3,7 +3,7 @@
 // source: jon_shared_data_camera_heat.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataCameraHeat {
   private JonSharedDataCameraHeat() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataCameraHeat {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataCameraHeatOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataCameraHeat)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataCameraHeat)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -36,26 +36,26 @@ public final class JonSharedDataCameraHeat {
     float getZoomPos();
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
      * @return The enum numeric value on the wire for agcMode.
      */
     int getAgcModeValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
      * @return The agcMode.
      */
-    ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode();
+    data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode();
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
      * @return The enum numeric value on the wire for filter.
      */
     int getFilterValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
      * @return The filter.
      */
-    ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter();
+    data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter();
 
     /**
      * <code>bool auto_focus = 4;</code>
@@ -88,15 +88,15 @@ public final class JonSharedDataCameraHeat {
     boolean getDdeEnabled();
 
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     int getFxModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
      * @return The fxMode.
      */
-    ser.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode();
+    data.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode();
 
     /**
      * <code>float digital_zoom_level = 10;</code>
@@ -111,11 +111,11 @@ public final class JonSharedDataCameraHeat {
     float getClaheLevel();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataCameraHeat}
+   * Protobuf type {@code data.JonGuiDataCameraHeat}
    */
   public static final class JonGuiDataCameraHeat extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataCameraHeat)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataCameraHeat)
       JonGuiDataCameraHeatOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -139,15 +139,15 @@ public final class JonSharedDataCameraHeat {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataCameraHeat.internal_static_ser_JonGuiDataCameraHeat_descriptor;
+      return data.JonSharedDataCameraHeat.internal_static_data_JonGuiDataCameraHeat_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataCameraHeat.internal_static_ser_JonGuiDataCameraHeat_fieldAccessorTable
+      return data.JonSharedDataCameraHeat.internal_static_data_JonGuiDataCameraHeat_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.class, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder.class);
+              data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.class, data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder.class);
     }
 
     public static final int ZOOM_POS_FIELD_NUMBER = 1;
@@ -164,37 +164,37 @@ public final class JonSharedDataCameraHeat {
     public static final int AGC_MODE_FIELD_NUMBER = 2;
     private int agcMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
      * @return The enum numeric value on the wire for agcMode.
      */
     @java.lang.Override public int getAgcModeValue() {
       return agcMode_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
      * @return The agcMode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode() {
-      ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes result = ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.forNumber(agcMode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode() {
+      data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes result = data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.forNumber(agcMode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
     }
 
     public static final int FILTER_FIELD_NUMBER = 3;
     private int filter_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
      * @return The enum numeric value on the wire for filter.
      */
     @java.lang.Override public int getFilterValue() {
       return filter_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
      * @return The filter.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter() {
-      ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters result = ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.forNumber(filter_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter() {
+      data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters result = data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.forNumber(filter_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
     }
 
     public static final int AUTO_FOCUS_FIELD_NUMBER = 4;
@@ -255,19 +255,19 @@ public final class JonSharedDataCameraHeat {
     public static final int FX_MODE_FIELD_NUMBER = 9;
     private int fxMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     @java.lang.Override public int getFxModeValue() {
       return fxMode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
      * @return The fxMode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode() {
-      ser.JonSharedDataTypes.JonGuiDataFxModeHeat result = ser.JonSharedDataTypes.JonGuiDataFxModeHeat.forNumber(fxMode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode() {
+      data.JonSharedDataTypes.JonGuiDataFxModeHeat result = data.JonSharedDataTypes.JonGuiDataFxModeHeat.forNumber(fxMode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
     }
 
     public static final int DIGITAL_ZOOM_LEVEL_FIELD_NUMBER = 10;
@@ -309,10 +309,10 @@ public final class JonSharedDataCameraHeat {
       if (java.lang.Float.floatToRawIntBits(zoomPos_) != 0) {
         output.writeFloat(1, zoomPos_);
       }
-      if (agcMode_ != ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED.getNumber()) {
+      if (agcMode_ != data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, agcMode_);
       }
-      if (filter_ != ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED.getNumber()) {
+      if (filter_ != data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED.getNumber()) {
         output.writeEnum(3, filter_);
       }
       if (autoFocus_ != false) {
@@ -330,7 +330,7 @@ public final class JonSharedDataCameraHeat {
       if (ddeEnabled_ != false) {
         output.writeBool(8, ddeEnabled_);
       }
-      if (fxMode_ != ser.JonSharedDataTypes.JonGuiDataFxModeHeat.JON_GUI_DATA_FX_MODE_HEAT_DEFAULT.getNumber()) {
+      if (fxMode_ != data.JonSharedDataTypes.JonGuiDataFxModeHeat.JON_GUI_DATA_FX_MODE_HEAT_DEFAULT.getNumber()) {
         output.writeEnum(9, fxMode_);
       }
       if (java.lang.Float.floatToRawIntBits(digitalZoomLevel_) != 0) {
@@ -352,11 +352,11 @@ public final class JonSharedDataCameraHeat {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, zoomPos_);
       }
-      if (agcMode_ != ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED.getNumber()) {
+      if (agcMode_ != data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, agcMode_);
       }
-      if (filter_ != ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED.getNumber()) {
+      if (filter_ != data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, filter_);
       }
@@ -380,7 +380,7 @@ public final class JonSharedDataCameraHeat {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, ddeEnabled_);
       }
-      if (fxMode_ != ser.JonSharedDataTypes.JonGuiDataFxModeHeat.JON_GUI_DATA_FX_MODE_HEAT_DEFAULT.getNumber()) {
+      if (fxMode_ != data.JonSharedDataTypes.JonGuiDataFxModeHeat.JON_GUI_DATA_FX_MODE_HEAT_DEFAULT.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(9, fxMode_);
       }
@@ -402,10 +402,10 @@ public final class JonSharedDataCameraHeat {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat)) {
+      if (!(obj instanceof data.JonSharedDataCameraHeat.JonGuiDataCameraHeat)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat other = (ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat) obj;
+      data.JonSharedDataCameraHeat.JonGuiDataCameraHeat other = (data.JonSharedDataCameraHeat.JonGuiDataCameraHeat) obj;
 
       if (java.lang.Float.floatToIntBits(getZoomPos())
           != java.lang.Float.floatToIntBits(
@@ -472,44 +472,44 @@ public final class JonSharedDataCameraHeat {
       return hash;
     }
 
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(byte[] data)
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -517,26 +517,26 @@ public final class JonSharedDataCameraHeat {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseDelimitedFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -549,7 +549,7 @@ public final class JonSharedDataCameraHeat {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat prototype) {
+    public static Builder newBuilder(data.JonSharedDataCameraHeat.JonGuiDataCameraHeat prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -565,26 +565,26 @@ public final class JonSharedDataCameraHeat {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataCameraHeat}
+     * Protobuf type {@code data.JonGuiDataCameraHeat}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataCameraHeat)
-        ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataCameraHeat)
+        data.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataCameraHeat.internal_static_ser_JonGuiDataCameraHeat_descriptor;
+        return data.JonSharedDataCameraHeat.internal_static_data_JonGuiDataCameraHeat_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataCameraHeat.internal_static_ser_JonGuiDataCameraHeat_fieldAccessorTable
+        return data.JonSharedDataCameraHeat.internal_static_data_JonGuiDataCameraHeat_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.class, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder.class);
+                data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.class, data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.newBuilder()
+      // Construct using data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.newBuilder()
       private Builder() {
 
       }
@@ -615,17 +615,17 @@ public final class JonSharedDataCameraHeat {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataCameraHeat.internal_static_ser_JonGuiDataCameraHeat_descriptor;
+        return data.JonSharedDataCameraHeat.internal_static_data_JonGuiDataCameraHeat_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstanceForType() {
-        return ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance();
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstanceForType() {
+        return data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat build() {
-        ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat result = buildPartial();
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat build() {
+        data.JonSharedDataCameraHeat.JonGuiDataCameraHeat result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -633,14 +633,14 @@ public final class JonSharedDataCameraHeat {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat buildPartial() {
-        ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat result = new ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat(this);
+      public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat buildPartial() {
+        data.JonSharedDataCameraHeat.JonGuiDataCameraHeat result = new data.JonSharedDataCameraHeat.JonGuiDataCameraHeat(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat result) {
+      private void buildPartial0(data.JonSharedDataCameraHeat.JonGuiDataCameraHeat result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.zoomPos_ = zoomPos_;
@@ -679,16 +679,16 @@ public final class JonSharedDataCameraHeat {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat) {
-          return mergeFrom((ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat)other);
+        if (other instanceof data.JonSharedDataCameraHeat.JonGuiDataCameraHeat) {
+          return mergeFrom((data.JonSharedDataCameraHeat.JonGuiDataCameraHeat)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat other) {
-        if (other == ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataCameraHeat.JonGuiDataCameraHeat other) {
+        if (other == data.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance()) return this;
         if (other.getZoomPos() != 0F) {
           setZoomPos(other.getZoomPos());
         }
@@ -854,14 +854,14 @@ public final class JonSharedDataCameraHeat {
 
       private int agcMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
        * @return The enum numeric value on the wire for agcMode.
        */
       @java.lang.Override public int getAgcModeValue() {
         return agcMode_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
        * @param value The enum numeric value on the wire for agcMode to set.
        * @return This builder for chaining.
        */
@@ -872,20 +872,20 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
        * @return The agcMode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode() {
-        ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes result = ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.forNumber(agcMode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode() {
+        data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes result = data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.forNumber(agcMode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
        * @param value The agcMode to set.
        * @return This builder for chaining.
        */
-      public Builder setAgcMode(ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes value) {
+      public Builder setAgcMode(data.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -895,7 +895,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearAgcMode() {
@@ -907,14 +907,14 @@ public final class JonSharedDataCameraHeat {
 
       private int filter_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
        * @return The enum numeric value on the wire for filter.
        */
       @java.lang.Override public int getFilterValue() {
         return filter_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
        * @param value The enum numeric value on the wire for filter to set.
        * @return This builder for chaining.
        */
@@ -925,20 +925,20 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
        * @return The filter.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter() {
-        ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters result = ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.forNumber(filter_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter() {
+        data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters result = data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.forNumber(filter_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
        * @param value The filter to set.
        * @return This builder for chaining.
        */
-      public Builder setFilter(ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters value) {
+      public Builder setFilter(data.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -948,7 +948,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.data.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearFilter() {
@@ -1120,14 +1120,14 @@ public final class JonSharedDataCameraHeat {
 
       private int fxMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
        * @return The enum numeric value on the wire for fxMode.
        */
       @java.lang.Override public int getFxModeValue() {
         return fxMode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
        * @param value The enum numeric value on the wire for fxMode to set.
        * @return This builder for chaining.
        */
@@ -1138,20 +1138,20 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
        * @return The fxMode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode() {
-        ser.JonSharedDataTypes.JonGuiDataFxModeHeat result = ser.JonSharedDataTypes.JonGuiDataFxModeHeat.forNumber(fxMode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode() {
+        data.JonSharedDataTypes.JonGuiDataFxModeHeat result = data.JonSharedDataTypes.JonGuiDataFxModeHeat.forNumber(fxMode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
        * @param value The fxMode to set.
        * @return This builder for chaining.
        */
-      public Builder setFxMode(ser.JonSharedDataTypes.JonGuiDataFxModeHeat value) {
+      public Builder setFxMode(data.JonSharedDataTypes.JonGuiDataFxModeHeat value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1161,7 +1161,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.data.JonGuiDataFxModeHeat fx_mode = 9;</code>
        * @return This builder for chaining.
        */
       public Builder clearFxMode() {
@@ -1235,16 +1235,16 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataCameraHeat)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataCameraHeat)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataCameraHeat)
-    private static final ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataCameraHeat)
+    private static final data.JonSharedDataCameraHeat.JonGuiDataCameraHeat DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat();
+      DEFAULT_INSTANCE = new data.JonSharedDataCameraHeat.JonGuiDataCameraHeat();
     }
 
-    public static ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstance() {
+    public static data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1280,17 +1280,17 @@ public final class JonSharedDataCameraHeat {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstanceForType() {
+    public data.JonSharedDataCameraHeat.JonGuiDataCameraHeat getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataCameraHeat_descriptor;
+    internal_static_data_JonGuiDataCameraHeat_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataCameraHeat_fieldAccessorTable;
+      internal_static_data_JonGuiDataCameraHeat_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1300,34 +1300,34 @@ public final class JonSharedDataCameraHeat {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n!jon_shared_data_camera_heat.proto\022\003ser" +
-      "\032\033jon_shared_data_types.proto\"\350\002\n\024JonGui" +
-      "DataCameraHeat\022\020\n\010zoom_pos\030\001 \001(\002\0229\n\010agc_" +
-      "mode\030\002 \001(\0162\'.ser.JonGuiDataVideoChannelH" +
-      "eatAGCModes\0226\n\006filter\030\003 \001(\0162&.ser.JonGui" +
-      "DataVideoChannelHeatFilters\022\022\n\nauto_focu" +
-      "s\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n\022zoom_" +
-      "table_pos_max\030\006 \001(\005\022\021\n\tdde_level\030\007 \001(\005\022\023" +
-      "\n\013dde_enabled\030\010 \001(\010\022*\n\007fx_mode\030\t \001(\0162\031.s" +
-      "er.JonGuiDataFxModeHeat\022\032\n\022digital_zoom_" +
-      "level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BSZQgit-" +
-      "codecommit.eu-central-1.amazonaws.com/v1" +
-      "/repos/jettison/jonp/data/camera_heatb\006p" +
-      "roto3"
+      "\n!jon_shared_data_camera_heat.proto\022\004dat" +
+      "a\032\033jon_shared_data_types.proto\"\353\002\n\024JonGu" +
+      "iDataCameraHeat\022\020\n\010zoom_pos\030\001 \001(\002\022:\n\010agc" +
+      "_mode\030\002 \001(\0162(.data.JonGuiDataVideoChanne" +
+      "lHeatAGCModes\0227\n\006filter\030\003 \001(\0162\'.data.Jon" +
+      "GuiDataVideoChannelHeatFilters\022\022\n\nauto_f" +
+      "ocus\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n\022zo" +
+      "om_table_pos_max\030\006 \001(\005\022\021\n\tdde_level\030\007 \001(" +
+      "\005\022\023\n\013dde_enabled\030\010 \001(\010\022+\n\007fx_mode\030\t \001(\0162" +
+      "\032.data.JonGuiDataFxModeHeat\022\032\n\022digital_z" +
+      "oom_level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BSZQ" +
+      "git-codecommit.eu-central-1.amazonaws.co" +
+      "m/v1/repos/jettison/jonp/data/camera_hea" +
+      "tb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_ser_JonGuiDataCameraHeat_descriptor =
+    internal_static_data_JonGuiDataCameraHeat_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataCameraHeat_fieldAccessorTable = new
+    internal_static_data_JonGuiDataCameraHeat_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataCameraHeat_descriptor,
+        internal_static_data_JonGuiDataCameraHeat_descriptor,
         new java.lang.String[] { "ZoomPos", "AgcMode", "Filter", "AutoFocus", "ZoomTablePos", "ZoomTablePosMax", "DdeLevel", "DdeEnabled", "FxMode", "DigitalZoomLevel", "ClaheLevel", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

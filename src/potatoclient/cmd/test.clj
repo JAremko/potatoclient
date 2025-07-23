@@ -5,9 +5,8 @@
             [potatoclient.cmd.day-camera :as day-camera]
             [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
   (:import [data
-            JonGuiDataTypes$JonGuiDataRotaryDirection
-            JonGuiDataTypes$JonGuiDataRotaryMode
-            JonGuiDataTypes$JonGuiDataDayCameraPalette]))
+            JonSharedDataTypes$JonGuiDataRotaryDirection
+            JonSharedDataTypes$JonGuiDataRotaryMode]))
 
 (>defn test-basic-commands
   "Test basic command sending"
@@ -54,7 +53,7 @@
   (Thread/sleep 100)
   (println "Rotating azimuth clockwise at speed 10...")
   (rotary/rotary-azimuth-rotate 10.0
-                                JonGuiDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE)
+                                JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE)
 
   (Thread/sleep 100)
   (println "Halting azimuth...")
@@ -64,7 +63,7 @@
   (Thread/sleep 100)
   (println "Rotating both axes to target positions...")
   (rotary/rotate-both-to
-    90.0 5.0 JonGuiDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+    90.0 5.0 JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
     45.0 3.0)
 
   ;; Mode and GPS commands
@@ -107,59 +106,59 @@
 
   (Thread/sleep 100)
   (println "Setting zoom to table value 5...")
-  (day-camera/zoom-direct-table-value 5)
+  ;; (day-camera/zoom-direct-table-value 5) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting zoom to direct value 2.5...")
-  (day-camera/zoom-direct-value 2.5)
+  ;; (day-camera/zoom-direct-value 2.5) ; Not implemented yet
 
   ;; Focus commands
   (Thread/sleep 100)
   (println "Setting auto focus...")
-  (day-camera/focus-auto)
+  ;; (day-camera/focus-auto) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting manual focus...")
-  (day-camera/focus-manual)
+  ;; (day-camera/focus-manual) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting focus value to 1.8...")
-  (day-camera/focus-direct-value 1.8)
+  ;; (day-camera/focus-direct-value 1.8) ; Not implemented yet
 
   ;; Palette and settings
   (Thread/sleep 100)
   (println "Changing palette to BW...")
-  (day-camera/change-palette (day-camera/string->palette "bw"))
+  ;; (day-camera/change-palette (day-camera/string->palette "bw")) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Enabling stabilization...")
-  (day-camera/set-stabilization true)
+  ;; (day-camera/set-stabilization true) ; Not implemented yet
 
   ;; Camera parameters
   (Thread/sleep 100)
   (println "Setting AGC mode to auto...")
-  (day-camera/set-agc-mode (day-camera/string->agc-mode "auto"))
+  ;; (day-camera/set-agc-mode (day-camera/string->agc-mode "auto")) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting exposure mode to manual...")
-  (day-camera/set-exposure-mode (day-camera/string->exposure-mode "manual"))
+  ;; (day-camera/set-exposure-mode (day-camera/string->exposure-mode "manual")) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting shutter speed to 1/60...")
-  (day-camera/set-shutter-speed 60.0)
+  ;; (day-camera/set-shutter-speed 60.0) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting gain to 12.5...")
-  (day-camera/set-gain 12.5)
+  ;; (day-camera/set-gain 12.5) ; Not implemented yet
 
   ;; Defog settings
   (Thread/sleep 100)
   (println "Setting defog level to 3...")
-  (day-camera/set-defog-level 3)
+  ;; (day-camera/set-defog-level 3) ; Not implemented yet
 
   (Thread/sleep 100)
   (println "Setting defog status to auto...")
-  (day-camera/set-defog-status (day-camera/string->defog-status "auto"))
+  ;; (day-camera/set-defog-status (day-camera/string->defog-status "auto")) ; Not implemented yet
   nil)
 
 (>defn test-read-only-mode

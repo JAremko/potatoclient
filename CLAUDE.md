@@ -1,6 +1,6 @@
 # Developer Guide
 
-PotatoClient is a multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Java) handle video streams.
+PotatoClient is a high-performance multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Kotlin) handle video streams with zero-allocation streaming and hardware acceleration.
 
 ## Important: Function Validation with Guardrails
 
@@ -218,14 +218,15 @@ make clean            # Clean all build artifacts
 - `potatoclient.cmd.rotary` - Rotary platform commands
 - `potatoclient.cmd.day-camera` - Day camera commands
 
-**Java (Stream Processes)**
-- `VideoStreamManager` - WebSocket + GStreamer pipeline
-- `WebSocketClientBuiltIn` - Java 17's built-in HttpClient for WSS connections
-- Hardware decoder selection and fallback
-- Auto-reconnection with 1-second delay
-- Buffer pooling for zero-allocation streaming
-- Optimized lock-free data pushing
-- Direct pipeline without frame rate limiting
+**Kotlin (Stream Processes)**
+- `VideoStreamManager` - WebSocket + GStreamer pipeline coordinator
+- `WebSocketClientBuiltIn` - Java 17's HttpClient with Kotlin optimizations
+- `ByteBufferPool` - Lock-free buffer pool with cache-line padding
+- `GStreamerPipeline` - Try-lock patterns for non-blocking video pipeline
+- Hardware decoder selection with automatic fallback
+- Zero-allocation streaming on the hot path
+- Pre-allocated objects and thread-local storage
+- Direct pipeline without unnecessary color conversions
 - Trust-all SSL certificates (development/testing only)
 
 ## UI Utilities
@@ -328,13 +329,14 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
 
 **Add Event Type**
 1. Define in `potatoclient.events.stream`
-2. Handle in `VideoStreamManager.java`
+2. Handle in `VideoStreamManager.kt`
 3. Add to `ipc/message-handlers` dispatch table
 
 **Modify Pipeline**
-- Edit `GStreamerPipeline.java` for pipeline structure
-- Decoder priority in `GStreamerPipeline.java` constructor
+- Edit `GStreamerPipeline.kt` for pipeline structure
+- Decoder priority in `GStreamerPipeline.kt` init block
 - Pipeline: appsrc → h264parse → decoder → queue → videosink
+- Try-lock patterns to avoid blocking
 
 **Update Protocol**
 1. Edit `.proto` files
@@ -351,12 +353,19 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 - No external wrapper dependencies
 - Protobuf version 4.29.5 with protoc 29.5
 - Google's JsonFormat for protobuf to JSON conversion (debugging)
+- **protobuf-java-util** dependency required for JsonFormat functionality
 
 **Package Structure for Generated Classes**:
 - Proto files generate classes in simple package names (not `com.potatocode.jon`)
 - Command messages: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
 - Platform-specific commands: Sub-packages like `cmd.RotaryPlatform`
-- Data types: `data` package (e.g., `data.JonGuiDataTypes`)
+- Data types: `data` package (e.g., `data.JonSharedDataTypes`)
+
+**Important Package Name Changes**:
+- The preprocessing script (`scripts/preprocess_protos.py`) automatically converts:
+  - `package ser;` → `package data;` for data-related proto files
+  - References from `ser.` → `data.` in command proto files
+- All Clojure code expects the `data` package for data types, not `ser`
 
 **Serialization** (Clojure map → Protobuf bytes):
 ```clojure
@@ -412,7 +421,12 @@ The Clojure implementation follows the same patterns as the TypeScript version i
 - Command classes: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
 - Rotary platform: `cmd.RotaryPlatform` package (e.g., `cmd.RotaryPlatform.JonSharedCmdRotary$Root`)
 - Day camera: `cmd.DayCamera` package (e.g., `cmd.DayCamera.JonSharedCmdDayCamera$Root`)
-- Data types: `data` package (e.g., `data.JonGuiDataTypes$JonGuiDataRotaryDirection`)
+- Data types: `data` package (e.g., `data.JonSharedDataTypes$JonGuiDataRotaryDirection`)
+
+**Critical Class Name Change**:
+- The data types class is `JonSharedDataTypes`, not `JonGuiDataTypes`
+- All enums are nested classes within `JonSharedDataTypes`
+- Example: `data.JonSharedDataTypes$JonGuiDataClientType`
 
 ### Command Validation and Specs
 
@@ -624,8 +638,8 @@ PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-perf
 (logging/log-stream-event :day :error {:message "Timeout"})
 ```
 
-### Java Integration
-Java subprocesses send log messages via IPC, which are processed by the Clojure logging system. This ensures consistent logging behavior and allows the main process to control what gets logged based on build type.
+### Kotlin/Java Integration
+Kotlin subprocesses send log messages via IPC, which are processed by the Clojure logging system. This ensures consistent logging behavior and allows the main process to control what gets logged based on build type.
 
 ## Configuration
 
@@ -1463,9 +1477,9 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 
 ## Technical Details
 
-**Build**: Java 17+, Protobuf 4.29.5 (bundled)
+**Build**: Java 17+, Kotlin 2.2.0, Protobuf 4.29.5 (bundled)
 **Streams**: Heat (900x720), Day (1920x1080)
-**WebSocket**: Built-in Java 17 HttpClient (no external dependencies)
+**WebSocket**: Built-in Java 17 HttpClient with Kotlin coroutine-friendly wrappers
 **Protobuf**: Direct implementation with custom kebab-case conversion (no external wrapper libraries)
 
 **Performance Optimizations**:
@@ -1494,6 +1508,64 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 
 The CI pipeline automatically builds optimized release versions with:
 - **Platform packages**: Linux (AppImage), Windows (.exe/.zip), macOS (DMG)
+- **Build steps**: Proto generation → Kotlin compilation → Java compilation → Clojure AOT
 - **Release optimizations**: AOT compilation, direct linking, no dev overhead
+- **Kotlin support**: Downloads Kotlin 2.2.0 compiler during build
 - **Self-identification**: Release builds show `[RELEASE]` in window title
+
+### Build System Details
+
+**Dynamic Classpath Configuration**:
+The build system (`build.clj`) uses a dynamic basis function to handle compiled protobuf classes:
+- Development builds can use a static basis
+- CI builds need to include `target/classes` after protobuf compilation
+- The `get-basis` function checks if `target/classes` exists and adds it to the classpath
+
+**Important Build Sequence**:
+1. Clean previous artifacts
+2. Generate protobuf source files
+3. Compile Java protobuf classes to `target/classes`
+4. Compile Kotlin subprocesses
+5. Run Clojure compilation (which needs the protobuf classes)
+6. Create JAR with all components
+
+**Common Build Issues**:
+- `ClassNotFoundException` for protobuf classes: Ensure `target/classes` is on classpath during Clojure compilation
+- Package name mismatches: Check that preprocessing script is converting `ser` → `data` correctly
+- Missing dependencies: Ensure `protobuf-java-util` is included for JsonFormat support
+- Wrong class names: Remember `JonSharedDataTypes` not `JonGuiDataTypes`
+- Case-sensitive builder methods: Java protobuf builders use camelCase (e.g., `setUseRotaryAsCompass` not `SetUseRotaryAsCompass`)
+
+### Troubleshooting Protobuf Issues
+
+**When encountering protobuf-related errors**:
+
+1. **Check the package name**:
+   ```bash
+   # Verify generated Java files have correct package
+   grep -n "^package" target/classes/java/cmd/*.java
+   grep -n "^package" target/classes/java/data/*.java
+   ```
+
+2. **Verify preprocessing worked**:
+   ```bash
+   # Original proto files should have 'ser' package
+   grep "^package" proto/jon_shared_data*.proto
+   # Generated Java should have 'data' package
+   grep "^package" target/classes/java/data/*.java
+   ```
+
+3. **Check class name references**:
+   ```bash
+   # Find references to old class names
+   grep -r "JonGuiDataTypes" src/
+   # Should use JonSharedDataTypes instead
+   ```
+
+4. **Ensure dependencies match**:
+   ```clojure
+   ;; In deps.edn, must have both:
+   com.google.protobuf/protobuf-java {:mvn/version "4.29.5"}
+   com.google.protobuf/protobuf-java-util {:mvn/version "4.29.5"}
+   ```
 

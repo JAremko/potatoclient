@@ -3,7 +3,7 @@
 // source: jon_shared_data_types.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataTypes {
   private JonSharedDataTypes() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataTypes {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
-   * Protobuf enum {@code ser.JonGuiDataVideoChannelHeatFilters}
+   * Protobuf enum {@code data.JonGuiDataVideoChannelHeatFilters}
    */
   public enum JonGuiDataVideoChannelHeatFilters
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -143,7 +143,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(0);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(0);
     }
 
     private static final JonGuiDataVideoChannelHeatFilters[] VALUES = values();
@@ -166,11 +166,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataVideoChannelHeatFilters)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataVideoChannelHeatFilters)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataVideoChannelHeatAGCModes}
+   * Protobuf enum {@code data.JonGuiDataVideoChannelHeatAGCModes}
    */
   public enum JonGuiDataVideoChannelHeatAGCModes
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -278,7 +278,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(1);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(1);
     }
 
     private static final JonGuiDataVideoChannelHeatAGCModes[] VALUES = values();
@@ -301,11 +301,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataVideoChannelHeatAGCModes)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataVideoChannelHeatAGCModes)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataGpsUnits}
+   * Protobuf enum {@code data.JonGuiDataGpsUnits}
    */
   public enum JonGuiDataGpsUnits
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -413,7 +413,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(2);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(2);
     }
 
     private static final JonGuiDataGpsUnits[] VALUES = values();
@@ -436,11 +436,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataGpsUnits)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataGpsUnits)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataGpsFixType}
+   * Protobuf enum {@code data.JonGuiDataGpsFixType}
    */
   public enum JonGuiDataGpsFixType
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -566,7 +566,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(3);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(3);
     }
 
     private static final JonGuiDataGpsFixType[] VALUES = values();
@@ -589,11 +589,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataGpsFixType)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataGpsFixType)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataCompassUnits}
+   * Protobuf enum {@code data.JonGuiDataCompassUnits}
    */
   public enum JonGuiDataCompassUnits
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -710,7 +710,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(4);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(4);
     }
 
     private static final JonGuiDataCompassUnits[] VALUES = values();
@@ -733,11 +733,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataCompassUnits)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataCompassUnits)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataAccumulatorStateIdx}
+   * Protobuf enum {@code data.JonGuiDataAccumulatorStateIdx}
    */
   public enum JonGuiDataAccumulatorStateIdx
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -908,7 +908,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(5);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(5);
     }
 
     private static final JonGuiDataAccumulatorStateIdx[] VALUES = values();
@@ -931,11 +931,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataAccumulatorStateIdx)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataAccumulatorStateIdx)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataTimeFormats}
+   * Protobuf enum {@code data.JonGuiDataTimeFormats}
    */
   public enum JonGuiDataTimeFormats
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1034,7 +1034,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(6);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(6);
     }
 
     private static final JonGuiDataTimeFormats[] VALUES = values();
@@ -1057,11 +1057,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataTimeFormats)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataTimeFormats)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataRotaryDirection}
+   * Protobuf enum {@code data.JonGuiDataRotaryDirection}
    */
   public enum JonGuiDataRotaryDirection
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1160,7 +1160,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(7);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(7);
     }
 
     private static final JonGuiDataRotaryDirection[] VALUES = values();
@@ -1183,11 +1183,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataRotaryDirection)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataRotaryDirection)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataLrfScanModes}
+   * Protobuf enum {@code data.JonGuiDataLrfScanModes}
    */
   public enum JonGuiDataLrfScanModes
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1322,7 +1322,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(8);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(8);
     }
 
     private static final JonGuiDataLrfScanModes[] VALUES = values();
@@ -1345,11 +1345,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataLrfScanModes)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataLrfScanModes)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDatatLrfLaserPointerModes}
+   * Protobuf enum {@code data.JonGuiDatatLrfLaserPointerModes}
    */
   public enum JonGuiDatatLrfLaserPointerModes
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1457,7 +1457,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(9);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(9);
     }
 
     private static final JonGuiDatatLrfLaserPointerModes[] VALUES = values();
@@ -1480,11 +1480,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDatatLrfLaserPointerModes)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDatatLrfLaserPointerModes)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataCompassCalibrateStatus}
+   * Protobuf enum {@code data.JonGuiDataCompassCalibrateStatus}
    */
   public enum JonGuiDataCompassCalibrateStatus
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1610,7 +1610,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(10);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(10);
     }
 
     private static final JonGuiDataCompassCalibrateStatus[] VALUES = values();
@@ -1633,11 +1633,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataCompassCalibrateStatus)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataCompassCalibrateStatus)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataRotaryMode}
+   * Protobuf enum {@code data.JonGuiDataRotaryMode}
    */
   public enum JonGuiDataRotaryMode
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1772,7 +1772,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(11);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(11);
     }
 
     private static final JonGuiDataRotaryMode[] VALUES = values();
@@ -1795,11 +1795,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataRotaryMode)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataRotaryMode)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataVideoChannel}
+   * Protobuf enum {@code data.JonGuiDataVideoChannel}
    */
   public enum JonGuiDataVideoChannel
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -1898,7 +1898,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(12);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(12);
     }
 
     private static final JonGuiDataVideoChannel[] VALUES = values();
@@ -1921,11 +1921,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataVideoChannel)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataVideoChannel)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataRecOsdScreen}
+   * Protobuf enum {@code data.JonGuiDataRecOsdScreen}
    */
   public enum JonGuiDataRecOsdScreen
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -2042,7 +2042,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(13);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(13);
     }
 
     private static final JonGuiDataRecOsdScreen[] VALUES = values();
@@ -2065,11 +2065,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataRecOsdScreen)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataRecOsdScreen)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataFxModeDay}
+   * Protobuf enum {@code data.JonGuiDataFxModeDay}
    */
   public enum JonGuiDataFxModeDay
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -2204,7 +2204,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(14);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(14);
     }
 
     private static final JonGuiDataFxModeDay[] VALUES = values();
@@ -2227,11 +2227,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataFxModeDay)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataFxModeDay)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataFxModeHeat}
+   * Protobuf enum {@code data.JonGuiDataFxModeHeat}
    */
   public enum JonGuiDataFxModeHeat
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -2366,7 +2366,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(15);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(15);
     }
 
     private static final JonGuiDataFxModeHeat[] VALUES = values();
@@ -2389,11 +2389,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataFxModeHeat)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataFxModeHeat)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataSystemLocalizations}
+   * Protobuf enum {@code data.JonGuiDataSystemLocalizations}
    */
   public enum JonGuiDataSystemLocalizations
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -2510,7 +2510,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(16);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(16);
     }
 
     private static final JonGuiDataSystemLocalizations[] VALUES = values();
@@ -2533,11 +2533,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataSystemLocalizations)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataSystemLocalizations)
   }
 
   /**
-   * Protobuf enum {@code ser.JonGuiDataClientType}
+   * Protobuf enum {@code data.JonGuiDataClientType}
    */
   public enum JonGuiDataClientType
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -2654,7 +2654,7 @@ public final class JonSharedDataTypes {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.getDescriptor().getEnumTypes().get(17);
+      return data.JonSharedDataTypes.getDescriptor().getEnumTypes().get(17);
     }
 
     private static final JonGuiDataClientType[] VALUES = values();
@@ -2677,11 +2677,11 @@ public final class JonSharedDataTypes {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:ser.JonGuiDataClientType)
+    // @@protoc_insertion_point(enum_scope:data.JonGuiDataClientType)
   }
 
   public interface JonGuiDataMeteoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataMeteo)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataMeteo)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -2703,11 +2703,11 @@ public final class JonSharedDataTypes {
     float getPressure();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataMeteo}
+   * Protobuf type {@code data.JonGuiDataMeteo}
    */
   public static final class JonGuiDataMeteo extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataMeteo)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataMeteo)
       JonGuiDataMeteoOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -2728,15 +2728,15 @@ public final class JonSharedDataTypes {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataTypes.internal_static_ser_JonGuiDataMeteo_descriptor;
+      return data.JonSharedDataTypes.internal_static_data_JonGuiDataMeteo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataTypes.internal_static_ser_JonGuiDataMeteo_fieldAccessorTable
+      return data.JonSharedDataTypes.internal_static_data_JonGuiDataMeteo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataTypes.JonGuiDataMeteo.class, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder.class);
+              data.JonSharedDataTypes.JonGuiDataMeteo.class, data.JonSharedDataTypes.JonGuiDataMeteo.Builder.class);
     }
 
     public static final int TEMPERATURE_FIELD_NUMBER = 1;
@@ -2826,10 +2826,10 @@ public final class JonSharedDataTypes {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataTypes.JonGuiDataMeteo)) {
+      if (!(obj instanceof data.JonSharedDataTypes.JonGuiDataMeteo)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataTypes.JonGuiDataMeteo other = (ser.JonSharedDataTypes.JonGuiDataMeteo) obj;
+      data.JonSharedDataTypes.JonGuiDataMeteo other = (data.JonSharedDataTypes.JonGuiDataMeteo) obj;
 
       if (java.lang.Float.floatToIntBits(getTemperature())
           != java.lang.Float.floatToIntBits(
@@ -2865,44 +2865,44 @@ public final class JonSharedDataTypes {
       return hash;
     }
 
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(byte[] data)
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2910,26 +2910,26 @@ public final class JonSharedDataTypes {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseDelimitedFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
+    public static data.JonSharedDataTypes.JonGuiDataMeteo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2942,7 +2942,7 @@ public final class JonSharedDataTypes {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataTypes.JonGuiDataMeteo prototype) {
+    public static Builder newBuilder(data.JonSharedDataTypes.JonGuiDataMeteo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2958,26 +2958,26 @@ public final class JonSharedDataTypes {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataMeteo}
+     * Protobuf type {@code data.JonGuiDataMeteo}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataMeteo)
-        ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataMeteo)
+        data.JonSharedDataTypes.JonGuiDataMeteoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataTypes.internal_static_ser_JonGuiDataMeteo_descriptor;
+        return data.JonSharedDataTypes.internal_static_data_JonGuiDataMeteo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataTypes.internal_static_ser_JonGuiDataMeteo_fieldAccessorTable
+        return data.JonSharedDataTypes.internal_static_data_JonGuiDataMeteo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataTypes.JonGuiDataMeteo.class, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder.class);
+                data.JonSharedDataTypes.JonGuiDataMeteo.class, data.JonSharedDataTypes.JonGuiDataMeteo.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataTypes.JonGuiDataMeteo.newBuilder()
+      // Construct using data.JonSharedDataTypes.JonGuiDataMeteo.newBuilder()
       private Builder() {
 
       }
@@ -3000,17 +3000,17 @@ public final class JonSharedDataTypes {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataTypes.internal_static_ser_JonGuiDataMeteo_descriptor;
+        return data.JonSharedDataTypes.internal_static_data_JonGuiDataMeteo_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstanceForType() {
-        return ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance();
+      public data.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstanceForType() {
+        return data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataMeteo build() {
-        ser.JonSharedDataTypes.JonGuiDataMeteo result = buildPartial();
+      public data.JonSharedDataTypes.JonGuiDataMeteo build() {
+        data.JonSharedDataTypes.JonGuiDataMeteo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3018,14 +3018,14 @@ public final class JonSharedDataTypes {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataMeteo buildPartial() {
-        ser.JonSharedDataTypes.JonGuiDataMeteo result = new ser.JonSharedDataTypes.JonGuiDataMeteo(this);
+      public data.JonSharedDataTypes.JonGuiDataMeteo buildPartial() {
+        data.JonSharedDataTypes.JonGuiDataMeteo result = new data.JonSharedDataTypes.JonGuiDataMeteo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataTypes.JonGuiDataMeteo result) {
+      private void buildPartial0(data.JonSharedDataTypes.JonGuiDataMeteo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.temperature_ = temperature_;
@@ -3040,16 +3040,16 @@ public final class JonSharedDataTypes {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataTypes.JonGuiDataMeteo) {
-          return mergeFrom((ser.JonSharedDataTypes.JonGuiDataMeteo)other);
+        if (other instanceof data.JonSharedDataTypes.JonGuiDataMeteo) {
+          return mergeFrom((data.JonSharedDataTypes.JonGuiDataMeteo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataTypes.JonGuiDataMeteo other) {
-        if (other == ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataTypes.JonGuiDataMeteo other) {
+        if (other == data.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance()) return this;
         if (other.getTemperature() != 0F) {
           setTemperature(other.getTemperature());
         }
@@ -3213,16 +3213,16 @@ public final class JonSharedDataTypes {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataMeteo)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataMeteo)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataMeteo)
-    private static final ser.JonSharedDataTypes.JonGuiDataMeteo DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataMeteo)
+    private static final data.JonSharedDataTypes.JonGuiDataMeteo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataTypes.JonGuiDataMeteo();
+      DEFAULT_INSTANCE = new data.JonSharedDataTypes.JonGuiDataMeteo();
     }
 
-    public static ser.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstance() {
+    public static data.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3258,17 +3258,17 @@ public final class JonSharedDataTypes {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstanceForType() {
+    public data.JonSharedDataTypes.JonGuiDataMeteo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataMeteo_descriptor;
+    internal_static_data_JonGuiDataMeteo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataMeteo_fieldAccessorTable;
+      internal_static_data_JonGuiDataMeteo_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3278,139 +3278,139 @@ public final class JonSharedDataTypes {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\033jon_shared_data_types.proto\022\003ser\"J\n\017Jo" +
-      "nGuiDataMeteo\022\023\n\013temperature\030\001 \001(\002\022\020\n\010hu" +
-      "midity\030\002 \001(\002\022\020\n\010pressure\030\003 \001(\002*\263\002\n!JonGu" +
-      "iDataVideoChannelHeatFilters\0226\n2JON_GUI_" +
-      "DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFI" +
-      "ED\020\000\0224\n0JON_GUI_DATA_VIDEO_CHANNEL_HEAT_" +
-      "FILTER_HOT_WHITE\020\001\0224\n0JON_GUI_DATA_VIDEO" +
-      "_CHANNEL_HEAT_FILTER_HOT_BLACK\020\002\0220\n,JON_" +
-      "GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA" +
-      "\020\003\0228\n4JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FI" +
-      "LTER_SEPIA_INVERSE\020\004*\356\001\n\"JonGuiDataVideo" +
-      "ChannelHeatAGCModes\0228\n4JON_GUI_DATA_VIDE" +
-      "O_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED\020\000\022.\n" +
-      "*JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MOD" +
-      "E_1\020\001\022.\n*JON_GUI_DATA_VIDEO_CHANNEL_HEAT" +
-      "_AGC_MODE_2\020\002\022.\n*JON_GUI_DATA_VIDEO_CHAN" +
-      "NEL_HEAT_AGC_MODE_3\020\003*\320\001\n\022JonGuiDataGpsU" +
-      "nits\022&\n\"JON_GUI_DATA_GPS_UNITS_UNSPECIFI" +
-      "ED\020\000\022*\n&JON_GUI_DATA_GPS_UNITS_DECIMAL_D" +
-      "EGREES\020\001\0222\n.JON_GUI_DATA_GPS_UNITS_DEGRE" +
-      "ES_MINUTES_SECONDS\020\002\0222\n.JON_GUI_DATA_GPS" +
-      "_UNITS_DEGREES_DECIMAL_MINUTES\020\003*\361\001\n\024Jon" +
-      "GuiDataGpsFixType\022)\n%JON_GUI_DATA_GPS_FI" +
-      "X_TYPE_UNSPECIFIED\020\000\022\"\n\036JON_GUI_DATA_GPS" +
-      "_FIX_TYPE_NONE\020\001\022 \n\034JON_GUI_DATA_GPS_FIX" +
-      "_TYPE_1D\020\002\022 \n\034JON_GUI_DATA_GPS_FIX_TYPE_" +
-      "2D\020\003\022 \n\034JON_GUI_DATA_GPS_FIX_TYPE_3D\020\004\022$" +
-      "\n JON_GUI_DATA_GPS_FIX_TYPE_MANUAL\020\005*\333\001\n" +
-      "\026JonGuiDataCompassUnits\022*\n&JON_GUI_DATA_" +
-      "COMPASS_UNITS_UNSPECIFIED\020\000\022&\n\"JON_GUI_D" +
-      "ATA_COMPASS_UNITS_DEGREES\020\001\022#\n\037JON_GUI_D" +
-      "ATA_COMPASS_UNITS_MILS\020\002\022#\n\037JON_GUI_DATA" +
-      "_COMPASS_UNITS_GRAD\020\003\022#\n\037JON_GUI_DATA_CO" +
-      "MPASS_UNITS_MRAD\020\004*\337\003\n\035JonGuiDataAccumul" +
-      "atorStateIdx\022.\n*JON_GUI_DATA_ACCUMULATOR" +
-      "_STATE_UNSPECIFIED\020\000\022*\n&JON_GUI_DATA_ACC" +
-      "UMULATOR_STATE_UNKNOWN\020\001\022(\n$JON_GUI_DATA" +
-      "_ACCUMULATOR_STATE_EMPTY\020\002\022$\n JON_GUI_DA" +
-      "TA_ACCUMULATOR_STATE_1\020\003\022$\n JON_GUI_DATA" +
-      "_ACCUMULATOR_STATE_2\020\004\022$\n JON_GUI_DATA_A" +
-      "CCUMULATOR_STATE_3\020\005\022$\n JON_GUI_DATA_ACC" +
-      "UMULATOR_STATE_4\020\006\022$\n JON_GUI_DATA_ACCUM" +
-      "ULATOR_STATE_5\020\007\022$\n JON_GUI_DATA_ACCUMUL" +
-      "ATOR_STATE_6\020\010\022\'\n#JON_GUI_DATA_ACCUMULAT" +
-      "OR_STATE_FULL\020\t\022+\n\'JON_GUI_DATA_ACCUMULA" +
-      "TOR_STATE_CHARGING\020\n*\217\001\n\025JonGuiDataTimeF" +
-      "ormats\022(\n$JON_GUI_DATA_TIME_FORMAT_UNSPE" +
-      "CIFIED\020\000\022\"\n\036JON_GUI_DATA_TIME_FORMAT_H_M" +
-      "_S\020\001\022(\n$JON_GUI_DATA_TIME_FORMAT_Y_m_D_H" +
-      "_M_S\020\002*\254\001\n\031JonGuiDataRotaryDirection\022-\n)" +
-      "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIE" +
-      "D\020\000\022+\n\'JON_GUI_DATA_ROTARY_DIRECTION_CLO" +
-      "CKWISE\020\001\0223\n/JON_GUI_DATA_ROTARY_DIRECTIO" +
-      "N_COUNTER_CLOCKWISE\020\002*\352\002\n\026JonGuiDataLrfS" +
-      "canModes\022*\n&JON_GUI_DATA_LRF_SCAN_MODE_U" +
-      "NSPECIFIED\020\000\022.\n*JON_GUI_DATA_LRF_SCAN_MO" +
-      "DE_1_HZ_CONTINUOUS\020\001\022.\n*JON_GUI_DATA_LRF" +
-      "_SCAN_MODE_4_HZ_CONTINUOUS\020\002\022/\n+JON_GUI_" +
-      "DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS\020\003\022/\n" +
-      "+JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTIN" +
-      "UOUS\020\004\0220\n,JON_GUI_DATA_LRF_SCAN_MODE_100" +
-      "_HZ_CONTINUOUS\020\005\0220\n,JON_GUI_DATA_LRF_SCA" +
-      "N_MODE_200_HZ_CONTINUOUS\020\006*\337\001\n\037JonGuiDat" +
-      "atLrfLaserPointerModes\0223\n/JON_GUI_DATA_L" +
-      "RF_LASER_POINTER_MODE_UNSPECIFIED\020\000\022+\n\'J" +
-      "ON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF\020\001" +
-      "\022,\n(JON_GUI_DATA_LRF_LASER_POINTER_MODE_" +
-      "ON_1\020\002\022,\n(JON_GUI_DATA_LRF_LASER_POINTER" +
-      "_MODE_ON_2\020\003*\362\002\n JonGuiDataCompassCalibr" +
-      "ateStatus\0225\n1JON_GUI_DATA_COMPASS_CALIBR" +
-      "ATE_STATUS_UNSPECIFIED\020\000\0229\n5JON_GUI_DATA" +
-      "_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATIN" +
-      "G\020\001\022;\n7JON_GUI_DATA_COMPASS_CALIBRATE_ST" +
-      "ATUS_CALIBRATING_SHORT\020\002\022:\n6JON_GUI_DATA" +
-      "_COMPASS_CALIBRATE_STATUS_CALIBRATING_LO" +
-      "NG\020\003\0222\n.JON_GUI_DATA_COMPASS_CALIBRATE_S" +
-      "TATUS_FINISHED\020\004\022/\n+JON_GUI_DATA_COMPASS" +
-      "_CALIBRATE_STATUS_ERROR\020\005*\270\002\n\024JonGuiData" +
-      "RotaryMode\022(\n$JON_GUI_DATA_ROTARY_MODE_U" +
-      "NSPECIFIED\020\000\022+\n\'JON_GUI_DATA_ROTARY_MODE" +
-      "_INITIALIZATION\020\001\022\"\n\036JON_GUI_DATA_ROTARY" +
-      "_MODE_SPEED\020\002\022%\n!JON_GUI_DATA_ROTARY_MOD" +
-      "E_POSITION\020\003\022*\n&JON_GUI_DATA_ROTARY_MODE" +
-      "_STABILIZATION\020\004\022&\n\"JON_GUI_DATA_ROTARY_" +
-      "MODE_TARGETING\020\005\022*\n&JON_GUI_DATA_ROTARY_" +
-      "MODE_VIDEO_TRACKER\020\006*\215\001\n\026JonGuiDataVideo" +
-      "Channel\022*\n&JON_GUI_DATA_VIDEO_CHANNEL_UN" +
-      "SPECIFIED\020\000\022#\n\037JON_GUI_DATA_VIDEO_CHANNE" +
-      "L_HEAT\020\001\022\"\n\036JON_GUI_DATA_VIDEO_CHANNEL_D" +
-      "AY\020\002*\373\001\n\026JonGuiDataRecOsdScreen\022+\n\'JON_G" +
-      "UI_DATA_REC_OSD_SCREEN_UNSPECIFIED\020\000\022$\n " +
-      "JON_GUI_DATA_REC_OSD_SCREEN_MAIN\020\001\022+\n\'JO" +
-      "N_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE\020\002\022" +
-      "*\n&JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESUL" +
-      "T\020\003\0225\n1JON_GUI_DATA_REC_OSD_SCREEN_LRF_R" +
-      "ESULT_SIMPLIFIED\020\004*\373\001\n\023JonGuiDataFxModeD" +
-      "ay\022$\n JON_GUI_DATA_FX_MODE_DAY_DEFAULT\020\000" +
-      "\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_A\020\001\022\036\n\032JON_" +
-      "GUI_DATA_FX_MODE_DAY_B\020\002\022\036\n\032JON_GUI_DATA" +
-      "_FX_MODE_DAY_C\020\003\022\036\n\032JON_GUI_DATA_FX_MODE" +
-      "_DAY_D\020\004\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_E\020\005" +
-      "\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_F\020\006*\203\002\n\024Jon" +
-      "GuiDataFxModeHeat\022%\n!JON_GUI_DATA_FX_MOD" +
-      "E_HEAT_DEFAULT\020\000\022\037\n\033JON_GUI_DATA_FX_MODE" +
-      "_HEAT_A\020\001\022\037\n\033JON_GUI_DATA_FX_MODE_HEAT_B" +
-      "\020\002\022\037\n\033JON_GUI_DATA_FX_MODE_HEAT_C\020\003\022\037\n\033J" +
-      "ON_GUI_DATA_FX_MODE_HEAT_D\020\004\022\037\n\033JON_GUI_" +
-      "DATA_FX_MODE_HEAT_E\020\005\022\037\n\033JON_GUI_DATA_FX" +
-      "_MODE_HEAT_F\020\006*\365\001\n\035JonGuiDataSystemLocal" +
-      "izations\0220\n,JON_GUI_DATA_SYSTEM_LOCALIZA" +
-      "TION_UNSPECIFIED\020\000\022\'\n#JON_GUI_DATA_SYSTE" +
-      "M_LOCALIZATION_EN\020\001\022\'\n#JON_GUI_DATA_SYST" +
-      "EM_LOCALIZATION_UA\020\002\022\'\n#JON_GUI_DATA_SYS" +
-      "TEM_LOCALIZATION_AR\020\003\022\'\n#JON_GUI_DATA_SY" +
-      "STEM_LOCALIZATION_CS\020\004*\355\001\n\024JonGuiDataCli" +
-      "entType\022(\n$JON_GUI_DATA_CLIENT_TYPE_UNSP" +
-      "ECIFIED\020\000\022(\n$JON_GUI_DATA_CLIENT_TYPE_IN" +
-      "TERNAL_CV\020\001\022*\n&JON_GUI_DATA_CLIENT_TYPE_" +
-      "LOCAL_NETWORK\020\002\0222\n.JON_GUI_DATA_CLIENT_T" +
-      "YPE_CERTIFICATE_PROTECTED\020\003\022!\n\035JON_GUI_D" +
-      "ATA_CLIENT_TYPE_LIRA\020\004BHZFgit-codecommit" +
-      ".eu-central-1.amazonaws.com/v1/repos/jet" +
-      "tison/jonp/typesb\006proto3"
+      "\n\033jon_shared_data_types.proto\022\004data\"J\n\017J" +
+      "onGuiDataMeteo\022\023\n\013temperature\030\001 \001(\002\022\020\n\010h" +
+      "umidity\030\002 \001(\002\022\020\n\010pressure\030\003 \001(\002*\263\002\n!JonG" +
+      "uiDataVideoChannelHeatFilters\0226\n2JON_GUI" +
+      "_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIF" +
+      "IED\020\000\0224\n0JON_GUI_DATA_VIDEO_CHANNEL_HEAT" +
+      "_FILTER_HOT_WHITE\020\001\0224\n0JON_GUI_DATA_VIDE" +
+      "O_CHANNEL_HEAT_FILTER_HOT_BLACK\020\002\0220\n,JON" +
+      "_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPI" +
+      "A\020\003\0228\n4JON_GUI_DATA_VIDEO_CHANNEL_HEAT_F" +
+      "ILTER_SEPIA_INVERSE\020\004*\356\001\n\"JonGuiDataVide" +
+      "oChannelHeatAGCModes\0228\n4JON_GUI_DATA_VID" +
+      "EO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED\020\000\022." +
+      "\n*JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MO" +
+      "DE_1\020\001\022.\n*JON_GUI_DATA_VIDEO_CHANNEL_HEA" +
+      "T_AGC_MODE_2\020\002\022.\n*JON_GUI_DATA_VIDEO_CHA" +
+      "NNEL_HEAT_AGC_MODE_3\020\003*\320\001\n\022JonGuiDataGps" +
+      "Units\022&\n\"JON_GUI_DATA_GPS_UNITS_UNSPECIF" +
+      "IED\020\000\022*\n&JON_GUI_DATA_GPS_UNITS_DECIMAL_" +
+      "DEGREES\020\001\0222\n.JON_GUI_DATA_GPS_UNITS_DEGR" +
+      "EES_MINUTES_SECONDS\020\002\0222\n.JON_GUI_DATA_GP" +
+      "S_UNITS_DEGREES_DECIMAL_MINUTES\020\003*\361\001\n\024Jo" +
+      "nGuiDataGpsFixType\022)\n%JON_GUI_DATA_GPS_F" +
+      "IX_TYPE_UNSPECIFIED\020\000\022\"\n\036JON_GUI_DATA_GP" +
+      "S_FIX_TYPE_NONE\020\001\022 \n\034JON_GUI_DATA_GPS_FI" +
+      "X_TYPE_1D\020\002\022 \n\034JON_GUI_DATA_GPS_FIX_TYPE" +
+      "_2D\020\003\022 \n\034JON_GUI_DATA_GPS_FIX_TYPE_3D\020\004\022" +
+      "$\n JON_GUI_DATA_GPS_FIX_TYPE_MANUAL\020\005*\333\001" +
+      "\n\026JonGuiDataCompassUnits\022*\n&JON_GUI_DATA" +
+      "_COMPASS_UNITS_UNSPECIFIED\020\000\022&\n\"JON_GUI_" +
+      "DATA_COMPASS_UNITS_DEGREES\020\001\022#\n\037JON_GUI_" +
+      "DATA_COMPASS_UNITS_MILS\020\002\022#\n\037JON_GUI_DAT" +
+      "A_COMPASS_UNITS_GRAD\020\003\022#\n\037JON_GUI_DATA_C" +
+      "OMPASS_UNITS_MRAD\020\004*\337\003\n\035JonGuiDataAccumu" +
+      "latorStateIdx\022.\n*JON_GUI_DATA_ACCUMULATO" +
+      "R_STATE_UNSPECIFIED\020\000\022*\n&JON_GUI_DATA_AC" +
+      "CUMULATOR_STATE_UNKNOWN\020\001\022(\n$JON_GUI_DAT" +
+      "A_ACCUMULATOR_STATE_EMPTY\020\002\022$\n JON_GUI_D" +
+      "ATA_ACCUMULATOR_STATE_1\020\003\022$\n JON_GUI_DAT" +
+      "A_ACCUMULATOR_STATE_2\020\004\022$\n JON_GUI_DATA_" +
+      "ACCUMULATOR_STATE_3\020\005\022$\n JON_GUI_DATA_AC" +
+      "CUMULATOR_STATE_4\020\006\022$\n JON_GUI_DATA_ACCU" +
+      "MULATOR_STATE_5\020\007\022$\n JON_GUI_DATA_ACCUMU" +
+      "LATOR_STATE_6\020\010\022\'\n#JON_GUI_DATA_ACCUMULA" +
+      "TOR_STATE_FULL\020\t\022+\n\'JON_GUI_DATA_ACCUMUL" +
+      "ATOR_STATE_CHARGING\020\n*\217\001\n\025JonGuiDataTime" +
+      "Formats\022(\n$JON_GUI_DATA_TIME_FORMAT_UNSP" +
+      "ECIFIED\020\000\022\"\n\036JON_GUI_DATA_TIME_FORMAT_H_" +
+      "M_S\020\001\022(\n$JON_GUI_DATA_TIME_FORMAT_Y_m_D_" +
+      "H_M_S\020\002*\254\001\n\031JonGuiDataRotaryDirection\022-\n" +
+      ")JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFI" +
+      "ED\020\000\022+\n\'JON_GUI_DATA_ROTARY_DIRECTION_CL" +
+      "OCKWISE\020\001\0223\n/JON_GUI_DATA_ROTARY_DIRECTI" +
+      "ON_COUNTER_CLOCKWISE\020\002*\352\002\n\026JonGuiDataLrf" +
+      "ScanModes\022*\n&JON_GUI_DATA_LRF_SCAN_MODE_" +
+      "UNSPECIFIED\020\000\022.\n*JON_GUI_DATA_LRF_SCAN_M" +
+      "ODE_1_HZ_CONTINUOUS\020\001\022.\n*JON_GUI_DATA_LR" +
+      "F_SCAN_MODE_4_HZ_CONTINUOUS\020\002\022/\n+JON_GUI" +
+      "_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS\020\003\022/" +
+      "\n+JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTI" +
+      "NUOUS\020\004\0220\n,JON_GUI_DATA_LRF_SCAN_MODE_10" +
+      "0_HZ_CONTINUOUS\020\005\0220\n,JON_GUI_DATA_LRF_SC" +
+      "AN_MODE_200_HZ_CONTINUOUS\020\006*\337\001\n\037JonGuiDa" +
+      "tatLrfLaserPointerModes\0223\n/JON_GUI_DATA_" +
+      "LRF_LASER_POINTER_MODE_UNSPECIFIED\020\000\022+\n\'" +
+      "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF\020" +
+      "\001\022,\n(JON_GUI_DATA_LRF_LASER_POINTER_MODE" +
+      "_ON_1\020\002\022,\n(JON_GUI_DATA_LRF_LASER_POINTE" +
+      "R_MODE_ON_2\020\003*\362\002\n JonGuiDataCompassCalib" +
+      "rateStatus\0225\n1JON_GUI_DATA_COMPASS_CALIB" +
+      "RATE_STATUS_UNSPECIFIED\020\000\0229\n5JON_GUI_DAT" +
+      "A_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATI" +
+      "NG\020\001\022;\n7JON_GUI_DATA_COMPASS_CALIBRATE_S" +
+      "TATUS_CALIBRATING_SHORT\020\002\022:\n6JON_GUI_DAT" +
+      "A_COMPASS_CALIBRATE_STATUS_CALIBRATING_L" +
+      "ONG\020\003\0222\n.JON_GUI_DATA_COMPASS_CALIBRATE_" +
+      "STATUS_FINISHED\020\004\022/\n+JON_GUI_DATA_COMPAS" +
+      "S_CALIBRATE_STATUS_ERROR\020\005*\270\002\n\024JonGuiDat" +
+      "aRotaryMode\022(\n$JON_GUI_DATA_ROTARY_MODE_" +
+      "UNSPECIFIED\020\000\022+\n\'JON_GUI_DATA_ROTARY_MOD" +
+      "E_INITIALIZATION\020\001\022\"\n\036JON_GUI_DATA_ROTAR" +
+      "Y_MODE_SPEED\020\002\022%\n!JON_GUI_DATA_ROTARY_MO" +
+      "DE_POSITION\020\003\022*\n&JON_GUI_DATA_ROTARY_MOD" +
+      "E_STABILIZATION\020\004\022&\n\"JON_GUI_DATA_ROTARY" +
+      "_MODE_TARGETING\020\005\022*\n&JON_GUI_DATA_ROTARY" +
+      "_MODE_VIDEO_TRACKER\020\006*\215\001\n\026JonGuiDataVide" +
+      "oChannel\022*\n&JON_GUI_DATA_VIDEO_CHANNEL_U" +
+      "NSPECIFIED\020\000\022#\n\037JON_GUI_DATA_VIDEO_CHANN" +
+      "EL_HEAT\020\001\022\"\n\036JON_GUI_DATA_VIDEO_CHANNEL_" +
+      "DAY\020\002*\373\001\n\026JonGuiDataRecOsdScreen\022+\n\'JON_" +
+      "GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED\020\000\022$\n" +
+      " JON_GUI_DATA_REC_OSD_SCREEN_MAIN\020\001\022+\n\'J" +
+      "ON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE\020\002" +
+      "\022*\n&JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESU" +
+      "LT\020\003\0225\n1JON_GUI_DATA_REC_OSD_SCREEN_LRF_" +
+      "RESULT_SIMPLIFIED\020\004*\373\001\n\023JonGuiDataFxMode" +
+      "Day\022$\n JON_GUI_DATA_FX_MODE_DAY_DEFAULT\020" +
+      "\000\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_A\020\001\022\036\n\032JON" +
+      "_GUI_DATA_FX_MODE_DAY_B\020\002\022\036\n\032JON_GUI_DAT" +
+      "A_FX_MODE_DAY_C\020\003\022\036\n\032JON_GUI_DATA_FX_MOD" +
+      "E_DAY_D\020\004\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_E\020" +
+      "\005\022\036\n\032JON_GUI_DATA_FX_MODE_DAY_F\020\006*\203\002\n\024Jo" +
+      "nGuiDataFxModeHeat\022%\n!JON_GUI_DATA_FX_MO" +
+      "DE_HEAT_DEFAULT\020\000\022\037\n\033JON_GUI_DATA_FX_MOD" +
+      "E_HEAT_A\020\001\022\037\n\033JON_GUI_DATA_FX_MODE_HEAT_" +
+      "B\020\002\022\037\n\033JON_GUI_DATA_FX_MODE_HEAT_C\020\003\022\037\n\033" +
+      "JON_GUI_DATA_FX_MODE_HEAT_D\020\004\022\037\n\033JON_GUI" +
+      "_DATA_FX_MODE_HEAT_E\020\005\022\037\n\033JON_GUI_DATA_F" +
+      "X_MODE_HEAT_F\020\006*\365\001\n\035JonGuiDataSystemLoca" +
+      "lizations\0220\n,JON_GUI_DATA_SYSTEM_LOCALIZ" +
+      "ATION_UNSPECIFIED\020\000\022\'\n#JON_GUI_DATA_SYST" +
+      "EM_LOCALIZATION_EN\020\001\022\'\n#JON_GUI_DATA_SYS" +
+      "TEM_LOCALIZATION_UA\020\002\022\'\n#JON_GUI_DATA_SY" +
+      "STEM_LOCALIZATION_AR\020\003\022\'\n#JON_GUI_DATA_S" +
+      "YSTEM_LOCALIZATION_CS\020\004*\355\001\n\024JonGuiDataCl" +
+      "ientType\022(\n$JON_GUI_DATA_CLIENT_TYPE_UNS" +
+      "PECIFIED\020\000\022(\n$JON_GUI_DATA_CLIENT_TYPE_I" +
+      "NTERNAL_CV\020\001\022*\n&JON_GUI_DATA_CLIENT_TYPE" +
+      "_LOCAL_NETWORK\020\002\0222\n.JON_GUI_DATA_CLIENT_" +
+      "TYPE_CERTIFICATE_PROTECTED\020\003\022!\n\035JON_GUI_" +
+      "DATA_CLIENT_TYPE_LIRA\020\004BHZFgit-codecommi" +
+      "t.eu-central-1.amazonaws.com/v1/repos/je" +
+      "ttison/jonp/typesb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_ser_JonGuiDataMeteo_descriptor =
+    internal_static_data_JonGuiDataMeteo_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataMeteo_fieldAccessorTable = new
+    internal_static_data_JonGuiDataMeteo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataMeteo_descriptor,
+        internal_static_data_JonGuiDataMeteo_descriptor,
         new java.lang.String[] { "Temperature", "Humidity", "Pressure", });
     descriptor.resolveAllFeaturesImmutable();
   }

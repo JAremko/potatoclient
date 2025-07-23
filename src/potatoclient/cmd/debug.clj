@@ -1,6 +1,8 @@
 (ns potatoclient.cmd.debug
   "Debug utilities for inspecting protobuf command messages"
   (:require [potatoclient.cmd.core :as cmd-core]
+            [potatoclient.cmd.rotary :as cmd-rotary]
+            [potatoclient.cmd.day-camera :as cmd-camera]
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
   (:import [com.google.protobuf.util JsonFormat]
@@ -97,26 +99,26 @@
   "Demonstrate rotary command structures"
   []
   [=> nil?]
-  (require '[potatoclient.cmd.rotary :as rotary])
+  ;; Rotary namespace already imported above
 
   (println "\n==== Rotary Command Structures ====")
 
   ;; Start command
   (inspect-command
-    #(rotary/rotary-start)
+    #(cmd-rotary/rotary-start)
     "Rotary Start")
 
   ;; Set azimuth
   (inspect-command
-    #(rotary/set-platform-azimuth 45.0)
+    #(cmd-rotary/rotary-set-platform-azimuth 45.0)
     "Set Platform Azimuth to 45°")
 
-  ;; Complex rotation
-  (inspect-command
-    #(rotary/rotate-both-to
-       90.0 5.0 (rotary/string->direction "clockwise")
-       45.0 3.0)
-    "Rotate Both Axes")
+  ;; Complex rotation - commented out as function doesn't exist
+  ;; (inspect-command
+  ;;   #(cmd-rotary/rotate-both-to
+  ;;      90.0 5.0 (cmd-rotary/string->direction "clockwise")
+  ;;      45.0 3.0)
+  ;;   "Rotate Both Axes")
 
   nil)
 
@@ -124,24 +126,24 @@
   "Demonstrate day camera command structures"
   []
   [=> nil?]
-  (require '[potatoclient.cmd.day-camera :as camera])
+  ;; Camera namespace already imported above
 
   (println "\n==== Day Camera Command Structures ====")
 
   ;; Power on
   (inspect-command
-    #(camera/power-on)
+    #(cmd-camera/power-on)
     "Camera Power On")
 
-  ;; Zoom direct value
-  (inspect-command
-    #(camera/zoom-direct-value 2.5)
-    "Zoom to 2.5x")
+  ;; Zoom direct value - not implemented yet
+  ;; (inspect-command
+  ;;   #(cmd-camera/zoom-direct-value 2.5)
+  ;;   "Zoom to 2.5x")
 
-  ;; Change palette
-  (inspect-command
-    #(camera/change-palette (camera/string->palette "bw"))
-    "Change Palette to B&W")
+  ;; Change palette - not implemented yet
+  ;; (inspect-command
+  ;;   #(cmd-camera/change-palette (cmd-camera/string->palette "bw"))
+  ;;   "Change Palette to B&W")
 
   nil)
 

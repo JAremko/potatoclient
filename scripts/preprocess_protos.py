@@ -54,6 +54,15 @@ def process_file(input_path, output_path):
     
     processed = remove_buf_validate(content)
     
+    # Fix package names to match expected structure
+    filename = os.path.basename(input_path)
+    if filename.startswith('jon_shared_data'):
+        # Data files should use 'data' package
+        processed = re.sub(r'^package\s+ser\s*;', 'package data;', processed, flags=re.MULTILINE)
+    else:
+        # In cmd files, update references from ser. to data.
+        processed = re.sub(r'\bser\.', 'data.', processed)
+    
     with open(output_path, 'w') as f:
         f.write(processed)
 

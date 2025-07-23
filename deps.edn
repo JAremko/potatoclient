@@ -8,6 +8,9 @@
         tongue/tongue {:mvn/version "0.4.4"}
         ;; Malli for data and function schema validation
         metosin/malli {:mvn/version "0.19.1"}
+        ;; Kotlin dependencies
+        org.jetbrains.kotlin/kotlin-stdlib-jdk8 {:mvn/version "2.2.0"}
+        org.jetbrains.kotlin/kotlin-reflect {:mvn/version "2.2.0"}
         ;; Java dependencies for the stream handler
         com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.2"}
         org.slf4j/slf4j-nop {:mvn/version "2.0.9"
@@ -19,6 +22,7 @@
         net.java.dev.jna/jna {:mvn/version "5.13.0"}
         ;; Protocol Buffer dependencies
         com.google.protobuf/protobuf-java {:mvn/version "4.29.5"}
+        com.google.protobuf/protobuf-java-util {:mvn/version "4.29.5"}
         ;; DarkLaf for theming support
         com.github.weisj/darklaf-core {:mvn/version "3.0.2"}
         ;; Function specs
@@ -26,7 +30,7 @@
         ;; Telemere for logging
         com.taoensso/telemere {:mvn/version "1.0.0-RC1"}}
 
- :aliases {:dev {:extra-paths ["dev" "src/potatoclient/java"]
+ :aliases {:dev {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                               cider/cider-nrepl {:mvn/version "0.45.0"}}
                  :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -36,7 +40,7 @@
                             "-Dclojure.main.report=stderr"
                             "-Dguardrails.enabled=true"]}
 
-           :nrepl {:extra-paths ["dev" "src/potatoclient/java" "target/classes"]
+           :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
                                 cider/cider-nrepl {:mvn/version "0.45.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
@@ -70,8 +74,8 @@
                                  :main-class potatoclient.main
                                  :compile-ns :all}}
 
-           :compile-java {:extra-paths ["src/potatoclient/java"]
-                          :jvm-opts ["--release" "17"]}
+           :compile-kotlin {:extra-paths ["src/potatoclient/kotlin"]
+                            :jvm-opts ["--release" "17"]}
 
            :mcp {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"

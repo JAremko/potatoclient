@@ -8289,15 +8289,15 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
      * @return The mode.
      */
-    ser.JonSharedDataTypes.JonGuiDataFxModeDay getMode();
+    data.JonSharedDataTypes.JonGuiDataFxModeDay getMode();
   }
   /**
    * Protobuf type {@code cmd.DayCamera.SetFxMode}
@@ -8340,19 +8340,19 @@ public final class JonSharedCmdDayCamera {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
      * @return The mode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeDay getMode() {
-      ser.JonSharedDataTypes.JonGuiDataFxModeDay result = ser.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(mode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataFxModeDay getMode() {
+      data.JonSharedDataTypes.JonGuiDataFxModeDay result = data.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(mode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8369,7 +8369,7 @@ public final class JonSharedCmdDayCamera {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (mode_ != ser.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
+      if (mode_ != data.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
         output.writeEnum(1, mode_);
       }
       getUnknownFields().writeTo(output);
@@ -8381,7 +8381,7 @@ public final class JonSharedCmdDayCamera {
       if (size != -1) return size;
 
       size = 0;
-      if (mode_ != ser.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
+      if (mode_ != data.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, mode_);
       }
@@ -8649,14 +8649,14 @@ public final class JonSharedCmdDayCamera {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -8667,20 +8667,20 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
        * @return The mode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataFxModeDay getMode() {
-        ser.JonSharedDataTypes.JonGuiDataFxModeDay result = ser.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(mode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataFxModeDay getMode() {
+        data.JonSharedDataTypes.JonGuiDataFxModeDay result = data.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(mode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
-      public Builder setMode(ser.JonSharedDataTypes.JonGuiDataFxModeDay value) {
+      public Builder setMode(data.JonSharedDataTypes.JonGuiDataFxModeDay value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8690,7 +8690,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.data.JonGuiDataFxModeDay mode = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -19243,42 +19243,42 @@ public final class JonSharedCmdDayCamera {
       "hift_clahe_level\030\021 \001(\0132\036.cmd.DayCamera.S" +
       "hiftClaheLevelH\000B\005\n\003cmd\"\010\n\006GetPos\"\014\n\nNex" +
       "tFxMode\"\014\n\nPrevFxMode\"\017\n\rRefreshFxMode\"\t" +
-      "\n\007HaltAll\"3\n\tSetFxMode\022&\n\004mode\030\001 \001(\0162\030.s" +
-      "er.JonGuiDataFxModeDay\"$\n\023SetDigitalZoom" +
-      "Level\022\r\n\005value\030\001 \001(\002\"\241\002\n\005Focus\022,\n\tset_va" +
-      "lue\030\001 \001(\0132\027.cmd.DayCamera.SetValueH\000\022#\n\004" +
-      "move\030\002 \001(\0132\023.cmd.DayCamera.MoveH\000\022#\n\004hal" +
-      "t\030\003 \001(\0132\023.cmd.DayCamera.HaltH\000\022\'\n\006offset" +
-      "\030\004 \001(\0132\025.cmd.DayCamera.OffsetH\000\0220\n\013reset" +
-      "_focus\030\005 \001(\0132\031.cmd.DayCamera.ResetFocusH" +
-      "\000\022>\n\023save_to_table_focus\030\006 \001(\0132\037.cmd.Day" +
-      "Camera.SaveToTableFocusH\000B\005\n\003cmd\"\325\003\n\004Zoo" +
-      "m\022,\n\tset_value\030\001 \001(\0132\027.cmd.DayCamera.Set" +
-      "ValueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.DayCamera.Mo" +
-      "veH\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCamera.HaltH" +
-      "\000\022@\n\024set_zoom_table_value\030\004 \001(\0132 .cmd.Da" +
-      "yCamera.SetZoomTableValueH\000\022>\n\023next_zoom" +
-      "_table_pos\030\005 \001(\0132\037.cmd.DayCamera.NextZoo" +
-      "mTablePosH\000\022>\n\023prev_zoom_table_pos\030\006 \001(\013" +
-      "2\037.cmd.DayCamera.PrevZoomTablePosH\000\022\'\n\006o" +
-      "ffset\030\007 \001(\0132\025.cmd.DayCamera.OffsetH\000\022.\n\n" +
-      "reset_zoom\030\010 \001(\0132\030.cmd.DayCamera.ResetZo" +
-      "omH\000\0223\n\rsave_to_table\030\t \001(\0132\032.cmd.DayCam" +
-      "era.SaveToTableH\000B\005\n\003cmd\"\022\n\020NextZoomTabl" +
-      "ePos\"\022\n\020PrevZoomTablePos\"\030\n\007SetIris\022\r\n\005v" +
-      "alue\030\001 \001(\002\"\"\n\021SetInfraRedFilter\022\r\n\005value" +
-      "\030\001 \001(\010\"\034\n\013SetAutoIris\022\r\n\005value\030\001 \001(\010\"\"\n\021" +
-      "SetZoomTableValue\022\r\n\005value\030\001 \001(\005\"\006\n\004Stop" +
-      "\"\007\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMeteo\"\013" +
-      "\n\tResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTable" +
-      "\"\022\n\020SaveToTableFocusBQZOgit-codecommit.e" +
-      "u-central-1.amazonaws.com/v1/repos/jetti" +
-      "son/jonp/cmd/day_camerab\006proto3"
+      "\n\007HaltAll\"4\n\tSetFxMode\022\'\n\004mode\030\001 \001(\0162\031.d" +
+      "ata.JonGuiDataFxModeDay\"$\n\023SetDigitalZoo" +
+      "mLevel\022\r\n\005value\030\001 \001(\002\"\241\002\n\005Focus\022,\n\tset_v" +
+      "alue\030\001 \001(\0132\027.cmd.DayCamera.SetValueH\000\022#\n" +
+      "\004move\030\002 \001(\0132\023.cmd.DayCamera.MoveH\000\022#\n\004ha" +
+      "lt\030\003 \001(\0132\023.cmd.DayCamera.HaltH\000\022\'\n\006offse" +
+      "t\030\004 \001(\0132\025.cmd.DayCamera.OffsetH\000\0220\n\013rese" +
+      "t_focus\030\005 \001(\0132\031.cmd.DayCamera.ResetFocus" +
+      "H\000\022>\n\023save_to_table_focus\030\006 \001(\0132\037.cmd.Da" +
+      "yCamera.SaveToTableFocusH\000B\005\n\003cmd\"\325\003\n\004Zo" +
+      "om\022,\n\tset_value\030\001 \001(\0132\027.cmd.DayCamera.Se" +
+      "tValueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.DayCamera.M" +
+      "oveH\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCamera.Halt" +
+      "H\000\022@\n\024set_zoom_table_value\030\004 \001(\0132 .cmd.D" +
+      "ayCamera.SetZoomTableValueH\000\022>\n\023next_zoo" +
+      "m_table_pos\030\005 \001(\0132\037.cmd.DayCamera.NextZo" +
+      "omTablePosH\000\022>\n\023prev_zoom_table_pos\030\006 \001(" +
+      "\0132\037.cmd.DayCamera.PrevZoomTablePosH\000\022\'\n\006" +
+      "offset\030\007 \001(\0132\025.cmd.DayCamera.OffsetH\000\022.\n" +
+      "\nreset_zoom\030\010 \001(\0132\030.cmd.DayCamera.ResetZ" +
+      "oomH\000\0223\n\rsave_to_table\030\t \001(\0132\032.cmd.DayCa" +
+      "mera.SaveToTableH\000B\005\n\003cmd\"\022\n\020NextZoomTab" +
+      "lePos\"\022\n\020PrevZoomTablePos\"\030\n\007SetIris\022\r\n\005" +
+      "value\030\001 \001(\002\"\"\n\021SetInfraRedFilter\022\r\n\005valu" +
+      "e\030\001 \001(\010\"\034\n\013SetAutoIris\022\r\n\005value\030\001 \001(\010\"\"\n" +
+      "\021SetZoomTableValue\022\r\n\005value\030\001 \001(\005\"\006\n\004Sto" +
+      "p\"\007\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMeteo\"" +
+      "\013\n\tResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTabl" +
+      "e\"\022\n\020SaveToTableFocusBQZOgit-codecommit." +
+      "eu-central-1.amazonaws.com/v1/repos/jett" +
+      "ison/jonp/cmd/day_camerab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_DayCamera_SetValue_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -19461,7 +19461,7 @@ public final class JonSharedCmdDayCamera {
         internal_static_cmd_DayCamera_SaveToTableFocus_descriptor,
         new java.lang.String[] { });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

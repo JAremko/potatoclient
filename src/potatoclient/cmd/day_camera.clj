@@ -1,404 +1,61 @@
 (ns potatoclient.cmd.day-camera
-  "Day camera command functions for PotatoClient"
+  "Day camera command functions for PotatoClient - TEMPORARY STUB"
   (:require [potatoclient.cmd.core :as cmd-core]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [cmd
-            JonSharedCmd$Root JonSharedCmd$Root$Builder]
-           [cmd.DayCamera
-            JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$Root$Builder
-            JonSharedCmdDayCamera$ZoomIn JonSharedCmdDayCamera$ZoomOut
-            JonSharedCmdDayCamera$ZoomDirectTableValue JonSharedCmdDayCamera$ZoomDirectValue
-            JonSharedCmdDayCamera$FocusIn JonSharedCmdDayCamera$FocusOut
-            JonSharedCmdDayCamera$FocusAuto JonSharedCmdDayCamera$FocusManual
-            JonSharedCmdDayCamera$FocusDirectValue JonSharedCmdDayCamera$FocusWideToPosition
-            JonSharedCmdDayCamera$ChangePalette JonSharedCmdDayCamera$SetStab
-            JonSharedCmdDayCamera$PowerOff JonSharedCmdDayCamera$PowerOn
-            JonSharedCmdDayCamera$SetParametersAutomatically
-            JonSharedCmdDayCamera$SetAgcMode JonSharedCmdDayCamera$SetExposureMode
-            JonSharedCmdDayCamera$SetWdrMode JonSharedCmdDayCamera$SetShutterSpeed
-            JonSharedCmdDayCamera$SetShutterSpeedTableIndex JonSharedCmdDayCamera$SetGain
-            JonSharedCmdDayCamera$ChangeProfile JonSharedCmdDayCamera$SetDefogLevel
-            JonSharedCmdDayCamera$SetDefogStatus]
-           [data
-            JonGuiDataTypes$JonGuiDataDayCameraPalette
-            JonGuiDataTypes$JonGuiDataDayCameraAgcMode
-            JonGuiDataTypes$JonGuiDataDayCameraExposureMode
-            JonGuiDataTypes$JonGuiDataDayCameraWdrMode
-            JonGuiDataTypes$JonGuiDataDayCameraDefogStatus
-            JonGuiDataTypes$JonGuiDataBoolean]))
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]))
 
-;; ============================================================================
-;; Zoom Commands
-;; ============================================================================
+;; Temporary stub functions until protobuf enums are fixed
 
-(>defn zoom-in
-  "Zoom in the day camera"
-  []
+(>defn power-on []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setZoomIn (JonSharedCmdDayCamera$ZoomIn/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera power-on - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn zoom-out
-  "Zoom out the day camera"
-  []
+(>defn power-off []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setZoomOut (JonSharedCmdDayCamera$ZoomOut/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera power-off - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn zoom-direct-table-value
-  "Set zoom to a specific table value"
-  [value]
-  [:potatoclient.specs/zoom-table-index => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        zoom-direct (-> (JonSharedCmdDayCamera$ZoomDirectTableValue/newBuilder)
-                        (.setValue value))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setZoomDirectTableValue zoom-direct))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn zoom-direct-value
-  "Set zoom to a specific direct value"
-  [value]
-  [:potatoclient.specs/digital-zoom-level => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        zoom-direct (-> (JonSharedCmdDayCamera$ZoomDirectValue/newBuilder)
-                        (.setValue (double value)))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setZoomDirectValue zoom-direct))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-;; ============================================================================
-;; Focus Commands
-;; ============================================================================
-
-(>defn focus-in
-  "Focus in (closer) the day camera"
-  []
+(>defn zoom-in []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusIn (JonSharedCmdDayCamera$FocusIn/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera zoom-in - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-out
-  "Focus out (farther) the day camera"
-  []
+(>defn zoom-out []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusOut (JonSharedCmdDayCamera$FocusOut/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera zoom-out - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-auto
-  "Set day camera to auto focus mode"
-  []
+(>defn focus-auto []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusAuto (JonSharedCmdDayCamera$FocusAuto/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera focus-auto - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-manual
-  "Set day camera to manual focus mode"
-  []
+(>defn focus-manual []
   [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusManual (JonSharedCmdDayCamera$FocusManual/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+  (println "Day camera focus-manual - NOT IMPLEMENTED (missing protobuf enums)")
   nil)
 
-(>defn focus-direct-value
-  "Set focus to a specific value"
-  [value]
-  [:potatoclient.specs/focus-value => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        focus-direct (-> (JonSharedCmdDayCamera$FocusDirectValue/newBuilder)
-                         (.setValue (double value)))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusDirectValue focus-direct))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+;; String conversion stubs
+(>defn string->palette [value]
+  [string? => any?]
   nil)
 
-(>defn focus-wide-to-position
-  "Focus from wide angle to specific position"
-  []
-  [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setFocusWideToPosition (JonSharedCmdDayCamera$FocusWideToPosition/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+(>defn string->agc-mode [value]
+  [string? => any?]
   nil)
 
-;; ============================================================================
-;; Power Commands
-;; ============================================================================
-
-(>defn power-on
-  "Power on the day camera"
-  []
-  [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setPowerOn (JonSharedCmdDayCamera$PowerOn/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+(>defn string->exposure-mode [value]
+  [string? => any?]
   nil)
 
-(>defn power-off
-  "Power off the day camera"
-  []
-  [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setPowerOff (JonSharedCmdDayCamera$PowerOff/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+(>defn string->wdr-mode [value]
+  [string? => any?]
   nil)
 
-;; ============================================================================
-;; Palette Commands
-;; ============================================================================
-
-(>defn change-palette
-  "Change the day camera palette"
-  [palette]
-  [:potatoclient.specs/day-camera-palette => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        change-pal (-> (JonSharedCmdDayCamera$ChangePalette/newBuilder)
-                       (.setPalette palette))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setChangePalette change-pal))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+(>defn string->boolean-enum [value]
+  [string? => any?]
   nil)
 
-;; ============================================================================
-;; Stabilization Commands
-;; ============================================================================
-
-(>defn set-stabilization
-  "Set stabilization on/off"
-  [enabled]
-  [boolean? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        bool-value (if enabled
-                     JonGuiDataTypes$JonGuiDataBoolean/JON_GUI_DATA_BOOLEAN_TRUE
-                     JonGuiDataTypes$JonGuiDataBoolean/JON_GUI_DATA_BOOLEAN_FALSE)
-        set-stab (-> (JonSharedCmdDayCamera$SetStab/newBuilder)
-                     (.setStab bool-value))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetStab set-stab))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
+(>defn string->defog-status [value]
+  [string? => any?]
   nil)
-
-;; ============================================================================
-;; Camera Settings Commands
-;; ============================================================================
-
-(>defn set-parameters-automatically
-  "Set camera parameters automatically"
-  []
-  [=> nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetParametersAutomatically
-                          (JonSharedCmdDayCamera$SetParametersAutomatically/newBuilder)))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-agc-mode
-  "Set automatic gain control mode"
-  [mode]
-  [:potatoclient.specs/day-camera-agc-mode => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-mode (-> (JonSharedCmdDayCamera$SetAgcMode/newBuilder)
-                     (.setMode mode))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetAgcMode set-mode))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-exposure-mode
-  "Set exposure mode"
-  [mode]
-  [:potatoclient.specs/day-camera-exposure-mode => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-mode (-> (JonSharedCmdDayCamera$SetExposureMode/newBuilder)
-                     (.setMode mode))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetExposureMode set-mode))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-wdr-mode
-  "Set wide dynamic range mode"
-  [mode]
-  [:potatoclient.specs/day-camera-wdr-mode => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-mode (-> (JonSharedCmdDayCamera$SetWdrMode/newBuilder)
-                     (.setMode mode))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetWdrMode set-mode))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-shutter-speed
-  "Set shutter speed"
-  [speed]
-  [number? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-speed (-> (JonSharedCmdDayCamera$SetShutterSpeed/newBuilder)
-                      (.setSpeed (double speed)))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetShutterSpeed set-speed))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-shutter-speed-table-index
-  "Set shutter speed by table index"
-  [index]
-  [int? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-index (-> (JonSharedCmdDayCamera$SetShutterSpeedTableIndex/newBuilder)
-                      (.setIndex index))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetShutterSpeedTableIndex set-index))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-gain
-  "Set camera gain"
-  [gain]
-  [number? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-gain-msg (-> (JonSharedCmdDayCamera$SetGain/newBuilder)
-                         (.setGain (double gain)))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetGain set-gain-msg))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn change-profile
-  "Change camera profile"
-  [name]
-  [string? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        change-prof (-> (JonSharedCmdDayCamera$ChangeProfile/newBuilder)
-                        (.setName name))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setChangeProfile change-prof))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-;; ============================================================================
-;; Defog Commands
-;; ============================================================================
-
-(>defn set-defog-level
-  "Set defog level"
-  [level]
-  [int? => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-level (-> (JonSharedCmdDayCamera$SetDefogLevel/newBuilder)
-                      (.setLevel level))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetDefogLevel set-level))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-(>defn set-defog-status
-  "Set defog status"
-  [status]
-  [:potatoclient.specs/day-camera-defog-status => nil?]
-  (let [root-msg (cmd-core/create-root-message)
-        set-status (-> (JonSharedCmdDayCamera$SetDefogStatus/newBuilder)
-                       (.setStatus status))
-        camera-root (-> (JonSharedCmdDayCamera$Root/newBuilder)
-                        (.setSetDefogStatus set-status))]
-    (.setDayCamera root-msg camera-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
-
-;; ============================================================================
-;; Utility Functions
-;; ============================================================================
-
-(>defn string->palette
-  "Convert string to day camera palette enum"
-  [value]
-  [string? => :potatoclient.specs/day-camera-palette]
-  (case (.toLowerCase value)
-    "normal" JonGuiDataTypes$JonGuiDataDayCameraPalette/JON_GUI_DATA_DAY_CAMERA_PALETTE_NORMAL
-    "bw" JonGuiDataTypes$JonGuiDataDayCameraPalette/JON_GUI_DATA_DAY_CAMERA_PALETTE_BW
-    JonGuiDataTypes$JonGuiDataDayCameraPalette/JON_GUI_DATA_DAY_CAMERA_PALETTE_UNSPECIFIED))
-
-(>defn string->agc-mode
-  "Convert string to AGC mode enum"
-  [value]
-  [string? => :potatoclient.specs/day-camera-agc-mode]
-  (case (.toLowerCase value)
-    "off" JonGuiDataTypes$JonGuiDataDayCameraAgcMode/JON_GUI_DATA_DAY_CAMERA_AGC_MODE_OFF
-    "manual" JonGuiDataTypes$JonGuiDataDayCameraAgcMode/JON_GUI_DATA_DAY_CAMERA_AGC_MODE_MANUAL
-    "auto" JonGuiDataTypes$JonGuiDataDayCameraAgcMode/JON_GUI_DATA_DAY_CAMERA_AGC_MODE_AUTO
-    JonGuiDataTypes$JonGuiDataDayCameraAgcMode/JON_GUI_DATA_DAY_CAMERA_AGC_MODE_UNSPECIFIED))
-
-(>defn string->exposure-mode
-  "Convert string to exposure mode enum"
-  [value]
-  [string? => :potatoclient.specs/day-camera-exposure-mode]
-  (case (.toLowerCase value)
-    "auto" JonGuiDataTypes$JonGuiDataDayCameraExposureMode/JON_GUI_DATA_DAY_CAMERA_EXPOSURE_MODE_AUTO
-    "manual" JonGuiDataTypes$JonGuiDataDayCameraExposureMode/JON_GUI_DATA_DAY_CAMERA_EXPOSURE_MODE_MANUAL
-    JonGuiDataTypes$JonGuiDataDayCameraExposureMode/JON_GUI_DATA_DAY_CAMERA_EXPOSURE_MODE_UNSPECIFIED))
-
-(>defn string->wdr-mode
-  "Convert string to WDR mode enum"
-  [value]
-  [string? => :potatoclient.specs/day-camera-wdr-mode]
-  (case (.toLowerCase value)
-    "off" JonGuiDataTypes$JonGuiDataDayCameraWdrMode/JON_GUI_DATA_DAY_CAMERA_WDR_MODE_OFF
-    "on" JonGuiDataTypes$JonGuiDataDayCameraWdrMode/JON_GUI_DATA_DAY_CAMERA_WDR_MODE_ON
-    "auto" JonGuiDataTypes$JonGuiDataDayCameraWdrMode/JON_GUI_DATA_DAY_CAMERA_WDR_MODE_AUTO
-    JonGuiDataTypes$JonGuiDataDayCameraWdrMode/JON_GUI_DATA_DAY_CAMERA_WDR_MODE_UNSPECIFIED))
-
-(>defn string->defog-status
-  "Convert string to defog status enum"
-  [value]
-  [string? => :potatoclient.specs/day-camera-defog-status]
-  (case (.toLowerCase value)
-    "off" JonGuiDataTypes$JonGuiDataDayCameraDefogStatus/JON_GUI_DATA_DAY_CAMERA_DEFOG_STATUS_OFF
-    "on" JonGuiDataTypes$JonGuiDataDayCameraDefogStatus/JON_GUI_DATA_DAY_CAMERA_DEFOG_STATUS_ON
-    "auto" JonGuiDataTypes$JonGuiDataDayCameraDefogStatus/JON_GUI_DATA_DAY_CAMERA_DEFOG_STATUS_AUTO
-    JonGuiDataTypes$JonGuiDataDayCameraDefogStatus/JON_GUI_DATA_DAY_CAMERA_DEFOG_STATUS_UNSPECIFIED))

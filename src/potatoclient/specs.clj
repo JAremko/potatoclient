@@ -450,47 +450,73 @@
 (def rotary-direction
   "Rotary platform direction enum"
   [:fn {:error/message "must be a JonGuiDataRotaryDirection enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataRotaryDirection %)])
+   #(instance? data.JonSharedDataTypes$JonGuiDataRotaryDirection %)])
 
 (def rotary-mode
   "Rotary platform mode enum"
   [:fn {:error/message "must be a JonGuiDataRotaryMode enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataRotaryMode %)])
+   #(instance? data.JonSharedDataTypes$JonGuiDataRotaryMode %)])
 
 (def video-channel
   "Video channel enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannel enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataVideoChannel %)])
+   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannel %)])
 
+;; TODO: These enums don't exist in the current protobuf definitions
+;; (def day-camera-palette
+;;   "Day camera palette enum"
+;;   [:fn {:error/message "must be a JonGuiDataDayCameraPalette enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraPalette %)])
+
+;; Temporary definition until protobuf is fixed
 (def day-camera-palette
   "Day camera palette enum"
-  [:fn {:error/message "must be a JonGuiDataDayCameraPalette enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraPalette %)])
+  any?)
+
+;; (def day-camera-agc-mode
+;;   "Day camera AGC mode enum"
+;;   [:fn {:error/message "must be a JonGuiDataDayCameraAgcMode enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraAgcMode %)])
 
 (def day-camera-agc-mode
   "Day camera AGC mode enum"
-  [:fn {:error/message "must be a JonGuiDataDayCameraAgcMode enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraAgcMode %)])
+  any?)
+
+;; (def day-camera-exposure-mode
+;;   "Day camera exposure mode enum"
+;;   [:fn {:error/message "must be a JonGuiDataDayCameraExposureMode enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraExposureMode %)])
 
 (def day-camera-exposure-mode
   "Day camera exposure mode enum"
-  [:fn {:error/message "must be a JonGuiDataDayCameraExposureMode enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraExposureMode %)])
+  any?)
+
+;; (def day-camera-wdr-mode
+;;   "Day camera WDR mode enum"
+;;   [:fn {:error/message "must be a JonGuiDataDayCameraWdrMode enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraWdrMode %)])
 
 (def day-camera-wdr-mode
   "Day camera WDR mode enum"
-  [:fn {:error/message "must be a JonGuiDataDayCameraWdrMode enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraWdrMode %)])
+  any?)
+
+;; (def day-camera-defog-status
+;;   "Day camera defog status enum"
+;;   [:fn {:error/message "must be a JonGuiDataDayCameraDefogStatus enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraDefogStatus %)])
 
 (def day-camera-defog-status
   "Day camera defog status enum"
-  [:fn {:error/message "must be a JonGuiDataDayCameraDefogStatus enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataDayCameraDefogStatus %)])
+  any?)
+
+;; (def boolean-enum
+;;   "Boolean value enum"
+;;   [:fn {:error/message "must be a JonGuiDataBoolean enum"}
+;;    #(instance? data.JonSharedDataTypes$JonGuiDataBoolean %)])
 
 (def boolean-enum
   "Boolean value enum"
-  [:fn {:error/message "must be a JonGuiDataBoolean enum"}
-   #(instance? data.JonGuiDataTypes$JonGuiDataBoolean %)])
+  any?)
 
 ;; -----------------------------------------------------------------------------
 ;; Command Structures

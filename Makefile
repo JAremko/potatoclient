@@ -16,7 +16,7 @@ help: ## Show this help message
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Build & Run:"
-	@grep -E '^(build|release|dev|clean|rebuild|proto|compile-java|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(build|release|dev|clean|rebuild|proto|compile-kotlin|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "MCP Server (for Claude integration):"
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
@@ -36,21 +36,27 @@ proto: ## Generate Java classes from proto files
 	@echo "Applying protobuf compatibility fixes..."
 	./scripts/fix-proto-compatibility.sh
 
-# Compile Java sources
-.PHONY: compile-java
-compile-java: ## Compile Java source files
-	@echo "Compiling Java sources..."
-	clojure -T:build compile-java
+# Compile Kotlin sources
+.PHONY: compile-kotlin
+compile-kotlin: ## Compile Kotlin source files
+	@echo "Compiling Kotlin sources..."
+	clojure -T:build compile-kotlin
+
+# Compile Java protobuf sources
+.PHONY: compile-java-proto
+compile-java-proto: ## Compile Java protobuf source files
+	@echo "Compiling Java protobuf sources..."
+	clojure -T:build compile-java-proto
 
 # Build target
 .PHONY: build
-build: proto compile-java ## Build the project (creates JAR file)
+build: proto compile-kotlin compile-java-proto ## Build the project (creates JAR file)
 	@echo "Building project..."
 	clojure -T:build uber
 
 # Release build target
 .PHONY: release
-release: proto compile-java ## Build release version (without instrumentation)
+release: ## Build release version (without instrumentation)
 	@echo "Building release version..."
 	POTATOCLIENT_RELEASE=true clojure -T:build release
 
@@ -72,7 +78,7 @@ clean: clean-proto clean-cache ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: proto compile-java ## Start NREPL server on port 7888 for development
+nrepl: proto compile-kotlin compile-java-proto ## Start NREPL server on port 7888 for development
 	@echo "Starting NREPL server on port 7888..."
 	@echo "Connect your editor to port 7888"
 	clojure -M:nrepl
@@ -106,7 +112,7 @@ test: ## Run tests
 
 # Report unspecced functions
 .PHONY: report-unspecced
-report-unspecced: proto compile-java ## Generate report of functions without Malli specs
+report-unspecced: proto compile-kotlin compile-java-proto ## Generate report of functions without Malli specs
 	@echo "Generating unspecced functions report..."
 	@echo "Running report from source..."
 	clojure -M:run --report-unspecced
@@ -125,7 +131,7 @@ rebuild: clean build ## Clean and rebuild the project
 
 # Development target - runs with all validation, logging, and debugging features
 .PHONY: dev
-dev: clean-cache proto compile-java ## Run development version with full validation, reflection warnings, and debug logging
+dev: clean-cache proto compile-kotlin compile-java-proto ## Run development version with full validation, reflection warnings, and debug logging
 	@echo "Running development version with:"
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ Reflection warnings"

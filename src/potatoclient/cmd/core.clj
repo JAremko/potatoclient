@@ -10,7 +10,7 @@
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis
             JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Elevation]
-           [data JonGuiDataTypes$JonGuiDataClientType]
+           [data JonSharedDataTypes$JonGuiDataClientType]
            [com.google.protobuf.util JsonFormat]))
 
 ;; ============================================================================
@@ -52,7 +52,7 @@
   [=> :potatoclient.specs/cmd-root-builder]
   (-> (JonSharedCmd$Root/newBuilder)
       (.setProtocolVersion PROTOCOL_VERSION)
-      (.setClientType JonGuiDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_WEB)))
+      (.setClientType JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK)))
 
 (>defn create-axis-message
   "Create a new Axis message builder for rotary platform"
@@ -162,7 +162,8 @@
           (.includingDefaultValueFields)
           (.print root-msg)))
     (catch Exception e
-      (logging/log-error "Failed to decode protobuf to JSON" {:error (.getMessage e)})
+      (logging/log-error {:id ::decode-proto-failed
+                          :error (.getMessage e)})
       nil)))
 
 ;; ============================================================================
@@ -190,8 +191,8 @@
       ;; In development mode, decode and log the protobuf structure
       (when-not runtime/release-build?
         (when-let [proto-json (decode-proto-to-json (:pld cmd))]
-          (logging/log-info "Command protobuf structure"
-                            {:type "command"
+          (logging/log-info {:id ::command-proto-structure
+                             :type "command"
                              :json proto-json
                              :size (count (:pld cmd))})))
 

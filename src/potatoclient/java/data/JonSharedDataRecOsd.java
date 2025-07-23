@@ -3,7 +3,7 @@
 // source: jon_shared_data_rec_osd.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataRecOsd {
   private JonSharedDataRecOsd() {}
@@ -26,19 +26,19 @@ public final class JonSharedDataRecOsd {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataRecOsdOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataRecOsd)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataRecOsd)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
      * @return The enum numeric value on the wire for screen.
      */
     int getScreenValue();
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
      * @return The screen.
      */
-    ser.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen();
+    data.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen();
 
     /**
      * <code>bool heat_osd_enabled = 2;</code>
@@ -77,11 +77,11 @@ public final class JonSharedDataRecOsd {
     int getDayCrosshairOffsetVertical();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataRecOsd}
+   * Protobuf type {@code data.JonGuiDataRecOsd}
    */
   public static final class JonGuiDataRecOsd extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataRecOsd)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataRecOsd)
       JonGuiDataRecOsdOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -103,33 +103,33 @@ public final class JonSharedDataRecOsd {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataRecOsd.internal_static_ser_JonGuiDataRecOsd_descriptor;
+      return data.JonSharedDataRecOsd.internal_static_data_JonGuiDataRecOsd_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataRecOsd.internal_static_ser_JonGuiDataRecOsd_fieldAccessorTable
+      return data.JonSharedDataRecOsd.internal_static_data_JonGuiDataRecOsd_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataRecOsd.JonGuiDataRecOsd.class, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder.class);
+              data.JonSharedDataRecOsd.JonGuiDataRecOsd.class, data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder.class);
     }
 
     public static final int SCREEN_FIELD_NUMBER = 1;
     private int screen_ = 0;
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
      * @return The enum numeric value on the wire for screen.
      */
     @java.lang.Override public int getScreenValue() {
       return screen_;
     }
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
      * @return The screen.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen() {
-      ser.JonSharedDataTypes.JonGuiDataRecOsdScreen result = ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.forNumber(screen_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen() {
+      data.JonSharedDataTypes.JonGuiDataRecOsdScreen result = data.JonSharedDataTypes.JonGuiDataRecOsdScreen.forNumber(screen_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRecOsdScreen.UNRECOGNIZED : result;
     }
 
     public static final int HEAT_OSD_ENABLED_FIELD_NUMBER = 2;
@@ -212,7 +212,7 @@ public final class JonSharedDataRecOsd {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (screen_ != ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED.getNumber()) {
+      if (screen_ != data.JonSharedDataTypes.JonGuiDataRecOsdScreen.JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, screen_);
       }
       if (heatOsdEnabled_ != false) {
@@ -242,7 +242,7 @@ public final class JonSharedDataRecOsd {
       if (size != -1) return size;
 
       size = 0;
-      if (screen_ != ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED.getNumber()) {
+      if (screen_ != data.JonSharedDataTypes.JonGuiDataRecOsdScreen.JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, screen_);
       }
@@ -280,10 +280,10 @@ public final class JonSharedDataRecOsd {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataRecOsd.JonGuiDataRecOsd)) {
+      if (!(obj instanceof data.JonSharedDataRecOsd.JonGuiDataRecOsd)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataRecOsd.JonGuiDataRecOsd other = (ser.JonSharedDataRecOsd.JonGuiDataRecOsd) obj;
+      data.JonSharedDataRecOsd.JonGuiDataRecOsd other = (data.JonSharedDataRecOsd.JonGuiDataRecOsd) obj;
 
       if (screen_ != other.screen_) return false;
       if (getHeatOsdEnabled()
@@ -330,44 +330,44 @@ public final class JonSharedDataRecOsd {
       return hash;
     }
 
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(byte[] data)
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -375,26 +375,26 @@ public final class JonSharedDataRecOsd {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseDelimitedFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -407,7 +407,7 @@ public final class JonSharedDataRecOsd {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataRecOsd.JonGuiDataRecOsd prototype) {
+    public static Builder newBuilder(data.JonSharedDataRecOsd.JonGuiDataRecOsd prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -423,26 +423,26 @@ public final class JonSharedDataRecOsd {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataRecOsd}
+     * Protobuf type {@code data.JonGuiDataRecOsd}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataRecOsd)
-        ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataRecOsd)
+        data.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataRecOsd.internal_static_ser_JonGuiDataRecOsd_descriptor;
+        return data.JonSharedDataRecOsd.internal_static_data_JonGuiDataRecOsd_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataRecOsd.internal_static_ser_JonGuiDataRecOsd_fieldAccessorTable
+        return data.JonSharedDataRecOsd.internal_static_data_JonGuiDataRecOsd_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataRecOsd.JonGuiDataRecOsd.class, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder.class);
+                data.JonSharedDataRecOsd.JonGuiDataRecOsd.class, data.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataRecOsd.JonGuiDataRecOsd.newBuilder()
+      // Construct using data.JonSharedDataRecOsd.JonGuiDataRecOsd.newBuilder()
       private Builder() {
 
       }
@@ -469,17 +469,17 @@ public final class JonSharedDataRecOsd {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataRecOsd.internal_static_ser_JonGuiDataRecOsd_descriptor;
+        return data.JonSharedDataRecOsd.internal_static_data_JonGuiDataRecOsd_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstanceForType() {
-        return ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance();
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstanceForType() {
+        return data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsd build() {
-        ser.JonSharedDataRecOsd.JonGuiDataRecOsd result = buildPartial();
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsd build() {
+        data.JonSharedDataRecOsd.JonGuiDataRecOsd result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -487,14 +487,14 @@ public final class JonSharedDataRecOsd {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataRecOsd.JonGuiDataRecOsd buildPartial() {
-        ser.JonSharedDataRecOsd.JonGuiDataRecOsd result = new ser.JonSharedDataRecOsd.JonGuiDataRecOsd(this);
+      public data.JonSharedDataRecOsd.JonGuiDataRecOsd buildPartial() {
+        data.JonSharedDataRecOsd.JonGuiDataRecOsd result = new data.JonSharedDataRecOsd.JonGuiDataRecOsd(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataRecOsd.JonGuiDataRecOsd result) {
+      private void buildPartial0(data.JonSharedDataRecOsd.JonGuiDataRecOsd result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.screen_ = screen_;
@@ -521,16 +521,16 @@ public final class JonSharedDataRecOsd {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataRecOsd.JonGuiDataRecOsd) {
-          return mergeFrom((ser.JonSharedDataRecOsd.JonGuiDataRecOsd)other);
+        if (other instanceof data.JonSharedDataRecOsd.JonGuiDataRecOsd) {
+          return mergeFrom((data.JonSharedDataRecOsd.JonGuiDataRecOsd)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataRecOsd.JonGuiDataRecOsd other) {
-        if (other == ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataRecOsd.JonGuiDataRecOsd other) {
+        if (other == data.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance()) return this;
         if (other.screen_ != 0) {
           setScreenValue(other.getScreenValue());
         }
@@ -632,14 +632,14 @@ public final class JonSharedDataRecOsd {
 
       private int screen_ = 0;
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
        * @return The enum numeric value on the wire for screen.
        */
       @java.lang.Override public int getScreenValue() {
         return screen_;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
        * @param value The enum numeric value on the wire for screen to set.
        * @return This builder for chaining.
        */
@@ -650,20 +650,20 @@ public final class JonSharedDataRecOsd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
        * @return The screen.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen() {
-        ser.JonSharedDataTypes.JonGuiDataRecOsdScreen result = ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.forNumber(screen_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen() {
+        data.JonSharedDataTypes.JonGuiDataRecOsdScreen result = data.JonSharedDataTypes.JonGuiDataRecOsdScreen.forNumber(screen_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRecOsdScreen.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
        * @param value The screen to set.
        * @return This builder for chaining.
        */
-      public Builder setScreen(ser.JonSharedDataTypes.JonGuiDataRecOsdScreen value) {
+      public Builder setScreen(data.JonSharedDataTypes.JonGuiDataRecOsdScreen value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -673,7 +673,7 @@ public final class JonSharedDataRecOsd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.data.JonGuiDataRecOsdScreen screen = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearScreen() {
@@ -875,16 +875,16 @@ public final class JonSharedDataRecOsd {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataRecOsd)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataRecOsd)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataRecOsd)
-    private static final ser.JonSharedDataRecOsd.JonGuiDataRecOsd DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataRecOsd)
+    private static final data.JonSharedDataRecOsd.JonGuiDataRecOsd DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataRecOsd.JonGuiDataRecOsd();
+      DEFAULT_INSTANCE = new data.JonSharedDataRecOsd.JonGuiDataRecOsd();
     }
 
-    public static ser.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstance() {
+    public static data.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -920,17 +920,17 @@ public final class JonSharedDataRecOsd {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstanceForType() {
+    public data.JonSharedDataRecOsd.JonGuiDataRecOsd getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataRecOsd_descriptor;
+    internal_static_data_JonGuiDataRecOsd_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataRecOsd_fieldAccessorTable;
+      internal_static_data_JonGuiDataRecOsd_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -940,31 +940,31 @@ public final class JonSharedDataRecOsd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\035jon_shared_data_rec_osd.proto\022\003ser\032\033jo" +
-      "n_shared_data_types.proto\"\224\002\n\020JonGuiData" +
-      "RecOsd\022+\n\006screen\030\001 \001(\0162\033.ser.JonGuiDataR" +
-      "ecOsdScreen\022\030\n\020heat_osd_enabled\030\002 \001(\010\022\027\n" +
-      "\017day_osd_enabled\030\003 \001(\010\022(\n heat_crosshair" +
-      "_offset_horizontal\030\004 \001(\005\022&\n\036heat_crossha" +
-      "ir_offset_vertical\030\005 \001(\005\022\'\n\037day_crosshai" +
-      "r_offset_horizontal\030\006 \001(\005\022%\n\035day_crossha" +
-      "ir_offset_vertical\030\007 \001(\005BOZMgit-codecomm" +
-      "it.eu-central-1.amazonaws.com/v1/repos/j" +
-      "ettison/jonp/data/rec_osdb\006proto3"
+      "\n\035jon_shared_data_rec_osd.proto\022\004data\032\033j" +
+      "on_shared_data_types.proto\"\225\002\n\020JonGuiDat" +
+      "aRecOsd\022,\n\006screen\030\001 \001(\0162\034.data.JonGuiDat" +
+      "aRecOsdScreen\022\030\n\020heat_osd_enabled\030\002 \001(\010\022" +
+      "\027\n\017day_osd_enabled\030\003 \001(\010\022(\n heat_crossha" +
+      "ir_offset_horizontal\030\004 \001(\005\022&\n\036heat_cross" +
+      "hair_offset_vertical\030\005 \001(\005\022\'\n\037day_crossh" +
+      "air_offset_horizontal\030\006 \001(\005\022%\n\035day_cross" +
+      "hair_offset_vertical\030\007 \001(\005BOZMgit-codeco" +
+      "mmit.eu-central-1.amazonaws.com/v1/repos" +
+      "/jettison/jonp/data/rec_osdb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_ser_JonGuiDataRecOsd_descriptor =
+    internal_static_data_JonGuiDataRecOsd_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataRecOsd_fieldAccessorTable = new
+    internal_static_data_JonGuiDataRecOsd_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataRecOsd_descriptor,
+        internal_static_data_JonGuiDataRecOsd_descriptor,
         new java.lang.String[] { "Screen", "HeatOsdEnabled", "DayOsdEnabled", "HeatCrosshairOffsetHorizontal", "HeatCrosshairOffsetVertical", "DayCrosshairOffsetHorizontal", "DayCrosshairOffsetVertical", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

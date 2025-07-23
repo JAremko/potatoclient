@@ -42,6 +42,17 @@ jobs:
         rm linux-install.sh
         clojure --version
     
+    - name: Setup Build Tools
+      run: |
+        echo "Setting up Kotlin compiler..."
+        ./scripts/setup-kotlin.sh
+        # Add Kotlin to PATH for the build
+        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        
+        echo "Setting up protoc..."
+        ./scripts/download-protoc-29.5.sh
+        # Python3 is already installed on Ubuntu runners
+    
     - name: Install system dependencies
       run: |
         sudo apt-get update
@@ -76,7 +87,9 @@ jobs:
     
     - name: Build project
       run: |
-        POTATOCLIENT_RELEASE=true clojure -T:build release
+        echo "Building release JAR..."
+        # Use the release target which handles everything
+        make release
         ls -la target/
     
     - name: Download AppImage tools
@@ -358,8 +371,27 @@ jobs:
         rm linux-install.sh
         clojure --version
     
+    - name: Setup Build Tools
+      run: |
+        echo "Setting up Kotlin compiler..."
+        ./scripts/setup-kotlin.sh
+        # Add Kotlin to PATH for the build
+        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        
+        echo "Setting up protoc..."
+        ./scripts/download-protoc-29.5.sh
+        # Python3 is already installed on Ubuntu runners
+    
     - name: Build uberjar
       run: |
+        echo "Building with Kotlin support..."
+        # First compile proto files
+        make proto
+        # Then compile Kotlin
+        make compile-kotlin
+        # Then compile Java protobuf classes
+        make compile-java-proto
+        # Finally build the release JAR
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
@@ -539,6 +571,17 @@ jobs:
         brew install clojure/tools/clojure
         clojure --version
     
+    - name: Setup Build Tools
+      run: |
+        echo "Setting up Kotlin compiler..."
+        ./scripts/setup-kotlin.sh
+        # Add Kotlin to PATH for the build
+        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        
+        echo "Setting up protoc..."
+        ./scripts/download-protoc-29.5.sh
+        # Python3 is already installed on Ubuntu runners
+    
     - name: Install GStreamer
       run: |
         echo "Installing GStreamer via Homebrew..."
@@ -548,6 +591,14 @@ jobs:
     
     - name: Build uberjar
       run: |
+        echo "Building with Kotlin support..."
+        # First compile proto files
+        make proto
+        # Then compile Kotlin
+        make compile-kotlin
+        # Then compile Java protobuf classes
+        make compile-java-proto
+        # Finally build the release JAR
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/

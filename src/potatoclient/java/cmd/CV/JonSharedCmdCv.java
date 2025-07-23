@@ -4606,15 +4606,15 @@ public final class JonSharedCmdCv {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
+    data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
 
     /**
      * <code>bool value = 2;</code>
@@ -4663,19 +4663,19 @@ public final class JonSharedCmdCv {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-      ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+      data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
     }
 
     public static final int VALUE_FIELD_NUMBER = 2;
@@ -4703,7 +4703,7 @@ public final class JonSharedCmdCv {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, channel_);
       }
       if (value_ != false) {
@@ -4718,7 +4718,7 @@ public final class JonSharedCmdCv {
       if (size != -1) return size;
 
       size = 0;
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, channel_);
       }
@@ -5007,14 +5007,14 @@ public final class JonSharedCmdCv {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -5025,20 +5025,20 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The channel.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-        ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+        data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
-      public Builder setChannel(ser.JonSharedDataTypes.JonGuiDataVideoChannel value) {
+      public Builder setChannel(data.JonSharedDataTypes.JonGuiDataVideoChannel value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -5048,7 +5048,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -5146,15 +5146,15 @@ public final class JonSharedCmdCv {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
+    data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
 
     /**
      * <code>float x = 2;</code>
@@ -5215,19 +5215,19 @@ public final class JonSharedCmdCv {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-      ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+      data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
     }
 
     public static final int X_FIELD_NUMBER = 2;
@@ -5277,7 +5277,7 @@ public final class JonSharedCmdCv {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, channel_);
       }
       if (java.lang.Float.floatToRawIntBits(x_) != 0) {
@@ -5298,7 +5298,7 @@ public final class JonSharedCmdCv {
       if (size != -1) return size;
 
       size = 0;
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, channel_);
       }
@@ -5631,14 +5631,14 @@ public final class JonSharedCmdCv {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -5649,20 +5649,20 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The channel.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-        ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+        data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
-      public Builder setChannel(ser.JonSharedDataTypes.JonGuiDataVideoChannel value) {
+      public Builder setChannel(data.JonSharedDataTypes.JonGuiDataVideoChannel value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -5672,7 +5672,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -6260,18 +6260,18 @@ public final class JonSharedCmdCv {
       "\021VampireModeEnable\"\013\n\tDumpStart\"\n\n\010DumpS" +
       "top\"\024\n\022VampireModeDisable\"\031\n\027Stabilizati" +
       "onModeEnable\"\032\n\030StabilizationModeDisable" +
-      "\"K\n\014SetAutoFocus\022,\n\007channel\030\001 \001(\0162\033.ser." +
-      "JonGuiDataVideoChannel\022\r\n\005value\030\002 \001(\010\"g\n" +
-      "\rStartTrackNDC\022,\n\007channel\030\001 \001(\0162\033.ser.Jo" +
-      "nGuiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003 \001" +
-      "(\002\022\022\n\nframe_time\030\004 \001(\004\"\013\n\tStopTrackBIZGg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/cmd/cvb\006proto3"
+      "\"L\n\014SetAutoFocus\022-\n\007channel\030\001 \001(\0162\034.data" +
+      ".JonGuiDataVideoChannel\022\r\n\005value\030\002 \001(\010\"h" +
+      "\n\rStartTrackNDC\022-\n\007channel\030\001 \001(\0162\034.data." +
+      "JonGuiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003" +
+      " \001(\002\022\022\n\nframe_time\030\004 \001(\004\"\013\n\tStopTrackBIZ" +
+      "Ggit-codecommit.eu-central-1.amazonaws.c" +
+      "om/v1/repos/jettison/jonp/cmd/cvb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_CV_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -6334,7 +6334,7 @@ public final class JonSharedCmdCv {
         internal_static_cmd_CV_StopTrack_descriptor,
         new java.lang.String[] { });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

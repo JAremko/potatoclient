@@ -3,7 +3,7 @@
 // source: jon_shared_data_camera_day.proto
 // Protobuf Java Version: 4.29.5
 
-package ser;
+package data;
 
 public final class JonSharedDataCameraDay {
   private JonSharedDataCameraDay() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataCameraDay {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataCameraDayOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataCameraDay)
+      // @@protoc_insertion_point(interface_extends:data.JonGuiDataCameraDay)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -66,15 +66,15 @@ public final class JonSharedDataCameraDay {
     int getZoomTablePosMax();
 
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     int getFxModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
      * @return The fxMode.
      */
-    ser.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode();
+    data.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode();
 
     /**
      * <code>bool auto_focus = 8;</code>
@@ -101,11 +101,11 @@ public final class JonSharedDataCameraDay {
     float getClaheLevel();
   }
   /**
-   * Protobuf type {@code ser.JonGuiDataCameraDay}
+   * Protobuf type {@code data.JonGuiDataCameraDay}
    */
   public static final class JonGuiDataCameraDay extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ser.JonGuiDataCameraDay)
+      // @@protoc_insertion_point(message_implements:data.JonGuiDataCameraDay)
       JonGuiDataCameraDayOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -127,15 +127,15 @@ public final class JonSharedDataCameraDay {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return ser.JonSharedDataCameraDay.internal_static_ser_JonGuiDataCameraDay_descriptor;
+      return data.JonSharedDataCameraDay.internal_static_data_JonGuiDataCameraDay_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return ser.JonSharedDataCameraDay.internal_static_ser_JonGuiDataCameraDay_fieldAccessorTable
+      return data.JonSharedDataCameraDay.internal_static_data_JonGuiDataCameraDay_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              ser.JonSharedDataCameraDay.JonGuiDataCameraDay.class, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder.class);
+              data.JonSharedDataCameraDay.JonGuiDataCameraDay.class, data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder.class);
     }
 
     public static final int FOCUS_POS_FIELD_NUMBER = 1;
@@ -207,19 +207,19 @@ public final class JonSharedDataCameraDay {
     public static final int FX_MODE_FIELD_NUMBER = 7;
     private int fxMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     @java.lang.Override public int getFxModeValue() {
       return fxMode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
      * @return The fxMode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode() {
-      ser.JonSharedDataTypes.JonGuiDataFxModeDay result = ser.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(fxMode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode() {
+      data.JonSharedDataTypes.JonGuiDataFxModeDay result = data.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(fxMode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
     }
 
     public static final int AUTO_FOCUS_FIELD_NUMBER = 8;
@@ -298,7 +298,7 @@ public final class JonSharedDataCameraDay {
       if (zoomTablePosMax_ != 0) {
         output.writeInt32(6, zoomTablePosMax_);
       }
-      if (fxMode_ != ser.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
+      if (fxMode_ != data.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
         output.writeEnum(7, fxMode_);
       }
       if (autoFocus_ != false) {
@@ -346,7 +346,7 @@ public final class JonSharedDataCameraDay {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, zoomTablePosMax_);
       }
-      if (fxMode_ != ser.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
+      if (fxMode_ != data.JonSharedDataTypes.JonGuiDataFxModeDay.JON_GUI_DATA_FX_MODE_DAY_DEFAULT.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(7, fxMode_);
       }
@@ -376,10 +376,10 @@ public final class JonSharedDataCameraDay {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof ser.JonSharedDataCameraDay.JonGuiDataCameraDay)) {
+      if (!(obj instanceof data.JonSharedDataCameraDay.JonGuiDataCameraDay)) {
         return super.equals(obj);
       }
-      ser.JonSharedDataCameraDay.JonGuiDataCameraDay other = (ser.JonSharedDataCameraDay.JonGuiDataCameraDay) obj;
+      data.JonSharedDataCameraDay.JonGuiDataCameraDay other = (data.JonSharedDataCameraDay.JonGuiDataCameraDay) obj;
 
       if (java.lang.Float.floatToIntBits(getFocusPos())
           != java.lang.Float.floatToIntBits(
@@ -453,44 +453,44 @@ public final class JonSharedDataCameraDay {
       return hash;
     }
 
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(byte[] data)
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(java.io.InputStream input)
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -498,26 +498,26 @@ public final class JonSharedDataCameraDay {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseDelimitedFrom(java.io.InputStream input)
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseDelimitedFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -530,7 +530,7 @@ public final class JonSharedDataCameraDay {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(ser.JonSharedDataCameraDay.JonGuiDataCameraDay prototype) {
+    public static Builder newBuilder(data.JonSharedDataCameraDay.JonGuiDataCameraDay prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -546,26 +546,26 @@ public final class JonSharedDataCameraDay {
       return builder;
     }
     /**
-     * Protobuf type {@code ser.JonGuiDataCameraDay}
+     * Protobuf type {@code data.JonGuiDataCameraDay}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataCameraDay)
-        ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder {
+        // @@protoc_insertion_point(builder_implements:data.JonGuiDataCameraDay)
+        data.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return ser.JonSharedDataCameraDay.internal_static_ser_JonGuiDataCameraDay_descriptor;
+        return data.JonSharedDataCameraDay.internal_static_data_JonGuiDataCameraDay_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return ser.JonSharedDataCameraDay.internal_static_ser_JonGuiDataCameraDay_fieldAccessorTable
+        return data.JonSharedDataCameraDay.internal_static_data_JonGuiDataCameraDay_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                ser.JonSharedDataCameraDay.JonGuiDataCameraDay.class, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder.class);
+                data.JonSharedDataCameraDay.JonGuiDataCameraDay.class, data.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder.class);
       }
 
-      // Construct using ser.JonSharedDataCameraDay.JonGuiDataCameraDay.newBuilder()
+      // Construct using data.JonSharedDataCameraDay.JonGuiDataCameraDay.newBuilder()
       private Builder() {
 
       }
@@ -596,17 +596,17 @@ public final class JonSharedDataCameraDay {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return ser.JonSharedDataCameraDay.internal_static_ser_JonGuiDataCameraDay_descriptor;
+        return data.JonSharedDataCameraDay.internal_static_data_JonGuiDataCameraDay_descriptor;
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstanceForType() {
-        return ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance();
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstanceForType() {
+        return data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance();
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDay build() {
-        ser.JonSharedDataCameraDay.JonGuiDataCameraDay result = buildPartial();
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDay build() {
+        data.JonSharedDataCameraDay.JonGuiDataCameraDay result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -614,14 +614,14 @@ public final class JonSharedDataCameraDay {
       }
 
       @java.lang.Override
-      public ser.JonSharedDataCameraDay.JonGuiDataCameraDay buildPartial() {
-        ser.JonSharedDataCameraDay.JonGuiDataCameraDay result = new ser.JonSharedDataCameraDay.JonGuiDataCameraDay(this);
+      public data.JonSharedDataCameraDay.JonGuiDataCameraDay buildPartial() {
+        data.JonSharedDataCameraDay.JonGuiDataCameraDay result = new data.JonSharedDataCameraDay.JonGuiDataCameraDay(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(ser.JonSharedDataCameraDay.JonGuiDataCameraDay result) {
+      private void buildPartial0(data.JonSharedDataCameraDay.JonGuiDataCameraDay result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.focusPos_ = focusPos_;
@@ -660,16 +660,16 @@ public final class JonSharedDataCameraDay {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof ser.JonSharedDataCameraDay.JonGuiDataCameraDay) {
-          return mergeFrom((ser.JonSharedDataCameraDay.JonGuiDataCameraDay)other);
+        if (other instanceof data.JonSharedDataCameraDay.JonGuiDataCameraDay) {
+          return mergeFrom((data.JonSharedDataCameraDay.JonGuiDataCameraDay)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(ser.JonSharedDataCameraDay.JonGuiDataCameraDay other) {
-        if (other == ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance()) return this;
+      public Builder mergeFrom(data.JonSharedDataCameraDay.JonGuiDataCameraDay other) {
+        if (other == data.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance()) return this;
         if (other.getFocusPos() != 0F) {
           setFocusPos(other.getFocusPos());
         }
@@ -995,14 +995,14 @@ public final class JonSharedDataCameraDay {
 
       private int fxMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
        * @return The enum numeric value on the wire for fxMode.
        */
       @java.lang.Override public int getFxModeValue() {
         return fxMode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
        * @param value The enum numeric value on the wire for fxMode to set.
        * @return This builder for chaining.
        */
@@ -1013,20 +1013,20 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
        * @return The fxMode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode() {
-        ser.JonSharedDataTypes.JonGuiDataFxModeDay result = ser.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(fxMode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode() {
+        data.JonSharedDataTypes.JonGuiDataFxModeDay result = data.JonSharedDataTypes.JonGuiDataFxModeDay.forNumber(fxMode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
        * @param value The fxMode to set.
        * @return This builder for chaining.
        */
-      public Builder setFxMode(ser.JonSharedDataTypes.JonGuiDataFxModeDay value) {
+      public Builder setFxMode(data.JonSharedDataTypes.JonGuiDataFxModeDay value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1036,7 +1036,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.data.JonGuiDataFxModeDay fx_mode = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearFxMode() {
@@ -1174,16 +1174,16 @@ public final class JonSharedDataCameraDay {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataCameraDay)
+      // @@protoc_insertion_point(builder_scope:data.JonGuiDataCameraDay)
     }
 
-    // @@protoc_insertion_point(class_scope:ser.JonGuiDataCameraDay)
-    private static final ser.JonSharedDataCameraDay.JonGuiDataCameraDay DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:data.JonGuiDataCameraDay)
+    private static final data.JonSharedDataCameraDay.JonGuiDataCameraDay DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new ser.JonSharedDataCameraDay.JonGuiDataCameraDay();
+      DEFAULT_INSTANCE = new data.JonSharedDataCameraDay.JonGuiDataCameraDay();
     }
 
-    public static ser.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstance() {
+    public static data.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1219,17 +1219,17 @@ public final class JonSharedDataCameraDay {
     }
 
     @java.lang.Override
-    public ser.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstanceForType() {
+    public data.JonSharedDataCameraDay.JonGuiDataCameraDay getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ser_JonGuiDataCameraDay_descriptor;
+    internal_static_data_JonGuiDataCameraDay_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ser_JonGuiDataCameraDay_fieldAccessorTable;
+      internal_static_data_JonGuiDataCameraDay_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1239,32 +1239,32 @@ public final class JonSharedDataCameraDay {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n jon_shared_data_camera_day.proto\022\003ser\032" +
-      "\033jon_shared_data_types.proto\"\234\002\n\023JonGuiD" +
-      "ataCameraDay\022\021\n\tfocus_pos\030\001 \001(\002\022\020\n\010zoom_" +
-      "pos\030\002 \001(\002\022\020\n\010iris_pos\030\003 \001(\002\022\027\n\017infrared_" +
-      "filter\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n\022" +
-      "zoom_table_pos_max\030\006 \001(\005\022)\n\007fx_mode\030\007 \001(" +
-      "\0162\030.ser.JonGuiDataFxModeDay\022\022\n\nauto_focu" +
-      "s\030\010 \001(\010\022\021\n\tauto_iris\030\t \001(\010\022\032\n\022digital_zo" +
-      "om_level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BRZPg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/data/camera_dayb" +
-      "\006proto3"
+      "\n jon_shared_data_camera_day.proto\022\004data" +
+      "\032\033jon_shared_data_types.proto\"\235\002\n\023JonGui" +
+      "DataCameraDay\022\021\n\tfocus_pos\030\001 \001(\002\022\020\n\010zoom" +
+      "_pos\030\002 \001(\002\022\020\n\010iris_pos\030\003 \001(\002\022\027\n\017infrared" +
+      "_filter\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n" +
+      "\022zoom_table_pos_max\030\006 \001(\005\022*\n\007fx_mode\030\007 \001" +
+      "(\0162\031.data.JonGuiDataFxModeDay\022\022\n\nauto_fo" +
+      "cus\030\010 \001(\010\022\021\n\tauto_iris\030\t \001(\010\022\032\n\022digital_" +
+      "zoom_level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BRZ" +
+      "Pgit-codecommit.eu-central-1.amazonaws.c" +
+      "om/v1/repos/jettison/jonp/data/camera_da" +
+      "yb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_ser_JonGuiDataCameraDay_descriptor =
+    internal_static_data_JonGuiDataCameraDay_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ser_JonGuiDataCameraDay_fieldAccessorTable = new
+    internal_static_data_JonGuiDataCameraDay_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ser_JonGuiDataCameraDay_descriptor,
+        internal_static_data_JonGuiDataCameraDay_descriptor,
         new java.lang.String[] { "FocusPos", "ZoomPos", "IrisPos", "InfraredFilter", "ZoomTablePos", "ZoomTablePosMax", "FxMode", "AutoFocus", "AutoIris", "DigitalZoomLevel", "ClaheLevel", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

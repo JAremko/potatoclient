@@ -6591,15 +6591,15 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
      * @return The mode.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode();
+    data.JonSharedDataTypes.JonGuiDataRotaryMode getMode();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.SetMode}
@@ -6642,19 +6642,19 @@ public final class JonSharedCmdRotary {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
      * @return The mode.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryMode result = ser.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
+      data.JonSharedDataTypes.JonGuiDataRotaryMode result = data.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -6671,7 +6671,7 @@ public final class JonSharedCmdRotary {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (mode_ != ser.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != data.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, mode_);
       }
       getUnknownFields().writeTo(output);
@@ -6683,7 +6683,7 @@ public final class JonSharedCmdRotary {
       if (size != -1) return size;
 
       size = 0;
-      if (mode_ != ser.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != data.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, mode_);
       }
@@ -6951,14 +6951,14 @@ public final class JonSharedCmdRotary {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -6969,20 +6969,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
        * @return The mode.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryMode result = ser.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
+        data.JonSharedDataTypes.JonGuiDataRotaryMode result = data.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
-      public Builder setMode(ser.JonSharedDataTypes.JonGuiDataRotaryMode value) {
+      public Builder setMode(data.JonSharedDataTypes.JonGuiDataRotaryMode value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -6992,7 +6992,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.data.JonGuiDataRotaryMode mode = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -7064,15 +7064,15 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.SetAzimuthValue}
@@ -7126,19 +7126,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -7158,7 +7158,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(value_) != 0) {
         output.writeFloat(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -7174,7 +7174,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, direction_);
       }
@@ -7492,14 +7492,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -7510,20 +7510,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -7533,7 +7533,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -7611,15 +7611,15 @@ public final class JonSharedCmdRotary {
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateAzimuthTo}
@@ -7684,19 +7684,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -7719,7 +7719,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(speed_) != 0) {
         output.writeFloat(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(3, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -7739,7 +7739,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, direction_);
       }
@@ -8107,14 +8107,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -8125,20 +8125,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8148,7 +8148,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -8220,15 +8220,15 @@ public final class JonSharedCmdRotary {
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateAzimuth}
@@ -8282,19 +8282,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8314,7 +8314,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(speed_) != 0) {
         output.writeFloat(1, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -8330,7 +8330,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, direction_);
       }
@@ -8648,14 +8648,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -8666,20 +8666,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8689,7 +8689,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -8761,15 +8761,15 @@ public final class JonSharedCmdRotary {
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateElevation}
@@ -8823,19 +8823,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8855,7 +8855,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(speed_) != 0) {
         output.writeFloat(1, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -8871,7 +8871,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, direction_);
       }
@@ -9189,14 +9189,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -9207,20 +9207,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -9230,7 +9230,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -10254,15 +10254,15 @@ public final class JonSharedCmdRotary {
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateElevationRelative}
@@ -10327,19 +10327,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -10362,7 +10362,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(speed_) != 0) {
         output.writeFloat(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(3, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -10382,7 +10382,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, direction_);
       }
@@ -10750,14 +10750,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -10768,20 +10768,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -10791,7 +10791,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -10863,15 +10863,15 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateElevationRelativeSet}
@@ -10925,19 +10925,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -10957,7 +10957,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(value_) != 0) {
         output.writeFloat(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -10973,7 +10973,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, direction_);
       }
@@ -11291,14 +11291,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -11309,20 +11309,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -11332,7 +11332,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -11410,15 +11410,15 @@ public final class JonSharedCmdRotary {
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateAzimuthRelative}
@@ -11483,19 +11483,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -11518,7 +11518,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(speed_) != 0) {
         output.writeFloat(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(3, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -11538,7 +11538,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(2, speed_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, direction_);
       }
@@ -11906,14 +11906,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -11924,20 +11924,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -11947,7 +11947,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -12019,15 +12019,15 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
+    data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
   }
   /**
    * Protobuf type {@code cmd.RotaryPlatform.RotateAzimuthRelativeSet}
@@ -12081,19 +12081,19 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
      * @return The direction.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-      ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+      data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -12113,7 +12113,7 @@ public final class JonSharedCmdRotary {
       if (java.lang.Float.floatToRawIntBits(value_) != 0) {
         output.writeFloat(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         output.writeEnum(2, direction_);
       }
       getUnknownFields().writeTo(output);
@@ -12129,7 +12129,7 @@ public final class JonSharedCmdRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(1, value_);
       }
-      if (direction_ != ser.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
+      if (direction_ != data.JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, direction_);
       }
@@ -12447,14 +12447,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -12465,20 +12465,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return The direction.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
-        ser.JonSharedDataTypes.JonGuiDataRotaryDirection result = ser.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
+        data.JonSharedDataTypes.JonGuiDataRotaryDirection result = data.JonSharedDataTypes.JonGuiDataRotaryDirection.forNumber(direction_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(ser.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
+      public Builder setDirection(data.JonSharedDataTypes.JonGuiDataRotaryDirection value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -12488,7 +12488,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.data.JonGuiDataRotaryDirection direction = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -26250,15 +26250,15 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
+    data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
 
     /**
      * <code>float x = 2;</code>
@@ -26313,19 +26313,19 @@ public final class JonSharedCmdRotary {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-      ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-      return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+      data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+      return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
     }
 
     public static final int X_FIELD_NUMBER = 2;
@@ -26364,7 +26364,7 @@ public final class JonSharedCmdRotary {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, channel_);
       }
       if (java.lang.Float.floatToRawIntBits(x_) != 0) {
@@ -26382,7 +26382,7 @@ public final class JonSharedCmdRotary {
       if (size != -1) return size;
 
       size = 0;
-      if (channel_ != ser.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
+      if (channel_ != data.JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, channel_);
       }
@@ -26694,14 +26694,14 @@ public final class JonSharedCmdRotary {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -26712,20 +26712,20 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return The channel.
        */
       @java.lang.Override
-      public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
-        ser.JonSharedDataTypes.JonGuiDataVideoChannel result = ser.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
-        return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
+      public data.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
+        data.JonSharedDataTypes.JonGuiDataVideoChannel result = data.JonSharedDataTypes.JonGuiDataVideoChannel.forNumber(channel_);
+        return result == null ? data.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
-      public Builder setChannel(ser.JonSharedDataTypes.JonGuiDataVideoChannel value) {
+      public Builder setChannel(data.JonSharedDataTypes.JonGuiDataVideoChannel value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -26735,7 +26735,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.data.JonGuiDataVideoChannel channel = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -27103,79 +27103,79 @@ public final class JonSharedCmdRotary {
       "RotaryPlatform.ScanAddNodeH\000B\005\n\003cmd\"f\n\004A" +
       "xis\022,\n\007azimuth\030\001 \001(\0132\033.cmd.RotaryPlatfor" +
       "m.Azimuth\0220\n\televation\030\002 \001(\0132\035.cmd.Rotar" +
-      "yPlatform.Elevation\"2\n\007SetMode\022\'\n\004mode\030\001" +
-      " \001(\0162\031.ser.JonGuiDataRotaryMode\"S\n\017SetAz" +
-      "imuthValue\022\r\n\005value\030\001 \001(\002\0221\n\tdirection\030\002" +
-      " \001(\0162\036.ser.JonGuiDataRotaryDirection\"i\n\017" +
-      "RotateAzimuthTo\022\024\n\014target_value\030\001 \001(\002\022\r\n" +
-      "\005speed\030\002 \001(\002\0221\n\tdirection\030\003 \001(\0162\036.ser.Jo" +
-      "nGuiDataRotaryDirection\"Q\n\rRotateAzimuth" +
-      "\022\r\n\005speed\030\001 \001(\002\0221\n\tdirection\030\002 \001(\0162\036.ser" +
-      ".JonGuiDataRotaryDirection\"S\n\017RotateElev" +
-      "ation\022\r\n\005speed\030\001 \001(\002\0221\n\tdirection\030\002 \001(\0162" +
-      "\036.ser.JonGuiDataRotaryDirection\"\"\n\021SetEl" +
-      "evationValue\022\r\n\005value\030\001 \001(\002\"8\n\021RotateEle" +
-      "vationTo\022\024\n\014target_value\030\001 \001(\002\022\r\n\005speed\030" +
-      "\002 \001(\002\"j\n\027RotateElevationRelative\022\r\n\005valu" +
-      "e\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0221\n\tdirection\030\003 \001(" +
-      "\0162\036.ser.JonGuiDataRotaryDirection\"^\n\032Rot" +
-      "ateElevationRelativeSet\022\r\n\005value\030\001 \001(\002\0221" +
-      "\n\tdirection\030\002 \001(\0162\036.ser.JonGuiDataRotary" +
-      "Direction\"h\n\025RotateAzimuthRelative\022\r\n\005va" +
-      "lue\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0221\n\tdirection\030\003 " +
-      "\001(\0162\036.ser.JonGuiDataRotaryDirection\"\\\n\030R" +
-      "otateAzimuthRelativeSet\022\r\n\005value\030\001 \001(\002\0221" +
-      "\n\tdirection\030\002 \001(\0162\036.ser.JonGuiDataRotary" +
-      "Direction\"#\n\022SetPlatformAzimuth\022\r\n\005value" +
-      "\030\001 \001(\002\"%\n\024SetPlatformElevation\022\r\n\005value\030" +
-      "\001 \001(\002\" \n\017SetPlatformBank\022\r\n\005value\030\001 \001(\002\"" +
-      "\n\n\010GetMeteo\"\357\002\n\007Azimuth\0228\n\tset_value\030\001 \001" +
-      "(\0132#.cmd.RotaryPlatform.SetAzimuthValueH" +
-      "\000\0228\n\trotate_to\030\002 \001(\0132#.cmd.RotaryPlatfor" +
-      "m.RotateAzimuthToH\000\0223\n\006rotate\030\003 \001(\0132!.cm" +
-      "d.RotaryPlatform.RotateAzimuthH\000\022=\n\010rela" +
-      "tive\030\004 \001(\0132).cmd.RotaryPlatform.RotateAz" +
-      "imuthRelativeH\000\022D\n\014relative_set\030\005 \001(\0132,." +
-      "cmd.RotaryPlatform.RotateAzimuthRelative" +
-      "SetH\000\022/\n\004halt\030\006 \001(\0132\037.cmd.RotaryPlatform" +
-      ".HaltAzimuthH\000B\005\n\003cmd\"\007\n\005Start\"\006\n\004Stop\"\006" +
-      "\n\004Halt\"\013\n\tScanStart\"\n\n\010ScanStop\"\013\n\tScanP" +
-      "ause\"\r\n\013ScanUnpause\"\r\n\013HaltAzimuth\"\017\n\rHa" +
-      "ltElevation\"\n\n\010ScanPrev\"\n\n\010ScanNext\"\025\n\023S" +
-      "canRefreshNodeList\"\037\n\016ScanSelectNode\022\r\n\005" +
-      "index\030\001 \001(\005\"\037\n\016ScanDeleteNode\022\r\n\005index\030\001" +
-      " \001(\005\"\231\001\n\016ScanUpdateNode\022\r\n\005index\030\001 \001(\005\022\031" +
-      "\n\021DayZoomTableValue\030\002 \001(\005\022\032\n\022HeatZoomTab" +
-      "leValue\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televat" +
-      "ion\030\005 \001(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001" +
-      "\"\226\001\n\013ScanAddNode\022\r\n\005index\030\001 \001(\005\022\031\n\021DayZo" +
-      "omTableValue\030\002 \001(\005\022\032\n\022HeatZoomTableValue" +
-      "\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televation\030\005 \001" +
-      "(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001\"\375\002\n\tEl" +
-      "evation\022:\n\tset_value\030\001 \001(\0132%.cmd.RotaryP" +
-      "latform.SetElevationValueH\000\022:\n\trotate_to" +
-      "\030\002 \001(\0132%.cmd.RotaryPlatform.RotateElevat" +
-      "ionToH\000\0225\n\006rotate\030\003 \001(\0132#.cmd.RotaryPlat" +
-      "form.RotateElevationH\000\022?\n\010relative\030\004 \001(\013" +
-      "2+.cmd.RotaryPlatform.RotateElevationRel" +
-      "ativeH\000\022F\n\014relative_set\030\005 \001(\0132..cmd.Rota" +
-      "ryPlatform.RotateElevationRelativeSetH\000\022" +
-      "1\n\004halt\030\006 \001(\0132!.cmd.RotaryPlatform.HaltE" +
-      "levationH\000B\005\n\003cmd\"%\n\025setUseRotaryAsCompa" +
-      "ss\022\014\n\004flag\030\001 \001(\010\"D\n\013RotateToGPS\022\020\n\010latit" +
+      "yPlatform.Elevation\"3\n\007SetMode\022(\n\004mode\030\001" +
+      " \001(\0162\032.data.JonGuiDataRotaryMode\"T\n\017SetA" +
+      "zimuthValue\022\r\n\005value\030\001 \001(\002\0222\n\tdirection\030" +
+      "\002 \001(\0162\037.data.JonGuiDataRotaryDirection\"j" +
+      "\n\017RotateAzimuthTo\022\024\n\014target_value\030\001 \001(\002\022" +
+      "\r\n\005speed\030\002 \001(\002\0222\n\tdirection\030\003 \001(\0162\037.data" +
+      ".JonGuiDataRotaryDirection\"R\n\rRotateAzim" +
+      "uth\022\r\n\005speed\030\001 \001(\002\0222\n\tdirection\030\002 \001(\0162\037." +
+      "data.JonGuiDataRotaryDirection\"T\n\017Rotate" +
+      "Elevation\022\r\n\005speed\030\001 \001(\002\0222\n\tdirection\030\002 " +
+      "\001(\0162\037.data.JonGuiDataRotaryDirection\"\"\n\021" +
+      "SetElevationValue\022\r\n\005value\030\001 \001(\002\"8\n\021Rota" +
+      "teElevationTo\022\024\n\014target_value\030\001 \001(\002\022\r\n\005s" +
+      "peed\030\002 \001(\002\"k\n\027RotateElevationRelative\022\r\n" +
+      "\005value\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0222\n\tdirection" +
+      "\030\003 \001(\0162\037.data.JonGuiDataRotaryDirection\"" +
+      "_\n\032RotateElevationRelativeSet\022\r\n\005value\030\001" +
+      " \001(\002\0222\n\tdirection\030\002 \001(\0162\037.data.JonGuiDat" +
+      "aRotaryDirection\"i\n\025RotateAzimuthRelativ" +
+      "e\022\r\n\005value\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0222\n\tdirec" +
+      "tion\030\003 \001(\0162\037.data.JonGuiDataRotaryDirect" +
+      "ion\"]\n\030RotateAzimuthRelativeSet\022\r\n\005value" +
+      "\030\001 \001(\002\0222\n\tdirection\030\002 \001(\0162\037.data.JonGuiD" +
+      "ataRotaryDirection\"#\n\022SetPlatformAzimuth" +
+      "\022\r\n\005value\030\001 \001(\002\"%\n\024SetPlatformElevation\022" +
+      "\r\n\005value\030\001 \001(\002\" \n\017SetPlatformBank\022\r\n\005val" +
+      "ue\030\001 \001(\002\"\n\n\010GetMeteo\"\357\002\n\007Azimuth\0228\n\tset_" +
+      "value\030\001 \001(\0132#.cmd.RotaryPlatform.SetAzim" +
+      "uthValueH\000\0228\n\trotate_to\030\002 \001(\0132#.cmd.Rota" +
+      "ryPlatform.RotateAzimuthToH\000\0223\n\006rotate\030\003" +
+      " \001(\0132!.cmd.RotaryPlatform.RotateAzimuthH" +
+      "\000\022=\n\010relative\030\004 \001(\0132).cmd.RotaryPlatform" +
+      ".RotateAzimuthRelativeH\000\022D\n\014relative_set" +
+      "\030\005 \001(\0132,.cmd.RotaryPlatform.RotateAzimut" +
+      "hRelativeSetH\000\022/\n\004halt\030\006 \001(\0132\037.cmd.Rotar" +
+      "yPlatform.HaltAzimuthH\000B\005\n\003cmd\"\007\n\005Start\"" +
+      "\006\n\004Stop\"\006\n\004Halt\"\013\n\tScanStart\"\n\n\010ScanStop" +
+      "\"\013\n\tScanPause\"\r\n\013ScanUnpause\"\r\n\013HaltAzim" +
+      "uth\"\017\n\rHaltElevation\"\n\n\010ScanPrev\"\n\n\010Scan" +
+      "Next\"\025\n\023ScanRefreshNodeList\"\037\n\016ScanSelec" +
+      "tNode\022\r\n\005index\030\001 \001(\005\"\037\n\016ScanDeleteNode\022\r" +
+      "\n\005index\030\001 \001(\005\"\231\001\n\016ScanUpdateNode\022\r\n\005inde" +
+      "x\030\001 \001(\005\022\031\n\021DayZoomTableValue\030\002 \001(\005\022\032\n\022He" +
+      "atZoomTableValue\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022" +
+      "\021\n\televation\030\005 \001(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005sp" +
+      "eed\030\007 \001(\001\"\226\001\n\013ScanAddNode\022\r\n\005index\030\001 \001(\005" +
+      "\022\031\n\021DayZoomTableValue\030\002 \001(\005\022\032\n\022HeatZoomT" +
+      "ableValue\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\telev" +
+      "ation\030\005 \001(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001" +
+      "(\001\"\375\002\n\tElevation\022:\n\tset_value\030\001 \001(\0132%.cm" +
+      "d.RotaryPlatform.SetElevationValueH\000\022:\n\t" +
+      "rotate_to\030\002 \001(\0132%.cmd.RotaryPlatform.Rot" +
+      "ateElevationToH\000\0225\n\006rotate\030\003 \001(\0132#.cmd.R" +
+      "otaryPlatform.RotateElevationH\000\022?\n\010relat" +
+      "ive\030\004 \001(\0132+.cmd.RotaryPlatform.RotateEle" +
+      "vationRelativeH\000\022F\n\014relative_set\030\005 \001(\0132." +
+      ".cmd.RotaryPlatform.RotateElevationRelat" +
+      "iveSetH\000\0221\n\004halt\030\006 \001(\0132!.cmd.RotaryPlatf" +
+      "orm.HaltElevationH\000B\005\n\003cmd\"%\n\025setUseRota" +
+      "ryAsCompass\022\014\n\004flag\030\001 \001(\010\"D\n\013RotateToGPS" +
+      "\022\020\n\010latitude\030\001 \001(\002\022\021\n\tlongitude\030\002 \001(\002\022\020\n" +
+      "\010altitude\030\003 \001(\002\"E\n\014SetOriginGPS\022\020\n\010latit" +
       "ude\030\001 \001(\002\022\021\n\tlongitude\030\002 \001(\002\022\020\n\010altitude" +
-      "\030\003 \001(\002\"E\n\014SetOriginGPS\022\020\n\010latitude\030\001 \001(\002" +
-      "\022\021\n\tlongitude\030\002 \001(\002\022\020\n\010altitude\030\003 \001(\002\"Q\n" +
-      "\013RotateToNDC\022,\n\007channel\030\001 \001(\0162\033.ser.JonG" +
-      "uiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003 \001(\002" +
-      "BMZKgit-codecommit.eu-central-1.amazonaw" +
-      "s.com/v1/repos/jettison/jonp/cmd/rotaryb" +
-      "\006proto3"
+      "\030\003 \001(\002\"R\n\013RotateToNDC\022-\n\007channel\030\001 \001(\0162\034" +
+      ".data.JonGuiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022" +
+      "\t\n\001y\030\003 \001(\002BMZKgit-codecommit.eu-central-" +
+      "1.amazonaws.com/v1/repos/jettison/jonp/c" +
+      "md/rotaryb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ser.JonSharedDataTypes.getDescriptor(),
+          data.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_RotaryPlatform_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -27412,7 +27412,7 @@ public final class JonSharedCmdRotary {
         internal_static_cmd_RotaryPlatform_RotateToNDC_descriptor,
         new java.lang.String[] { "Channel", "X", "Y", });
     descriptor.resolveAllFeaturesImmutable();
-    ser.JonSharedDataTypes.getDescriptor();
+    data.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
