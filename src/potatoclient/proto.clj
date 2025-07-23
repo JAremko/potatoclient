@@ -62,41 +62,41 @@
   (let [descriptor (.getDescriptorForType proto-msg)
         fields (.getFields descriptor)]
     (reduce
-     (fn [acc field]
-       (let [field-name (.getName field)
-             kebab-name (camel->kebab field-name)
-             value (.getField proto-msg field)]
-         (cond
+      (fn [acc field]
+        (let [field-name (.getName field)
+              kebab-name (camel->kebab field-name)
+              value (.getField proto-msg field)]
+          (cond
            ;; Skip unset fields
-           (and (not (.isRepeated field))
-                (= value (.getDefaultValue field)))
-           acc
-           
+            (and (not (.isRepeated field))
+                 (= value (.getDefaultValue field)))
+            acc
+
            ;; Handle repeated fields
-           (.isRepeated field)
-           (if (seq value)
-             (assoc acc (keyword kebab-name)
-                    (mapv #(if (instance? com.google.protobuf.Message %)
-                             (proto-map->clj-map %)
-                             %)
-                          value))
-             acc)
-           
+            (.isRepeated field)
+            (if (seq value)
+              (assoc acc (keyword kebab-name)
+                     (mapv #(if (instance? com.google.protobuf.Message %)
+                              (proto-map->clj-map %)
+                              %)
+                           value))
+              acc)
+
            ;; Handle message types
-           (instance? com.google.protobuf.Message value)
-           (if (.hasField proto-msg field)
-             (assoc acc (keyword kebab-name) (proto-map->clj-map value))
-             acc)
-           
+            (instance? com.google.protobuf.Message value)
+            (if (.hasField proto-msg field)
+              (assoc acc (keyword kebab-name) (proto-map->clj-map value))
+              acc)
+
            ;; Handle enum types
-           (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
-           (assoc acc (keyword kebab-name) (.getName value))
-           
+            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
+            (assoc acc (keyword kebab-name) (.getName value))
+
            ;; Handle primitive types
-           :else
-           (assoc acc (keyword kebab-name) value))))
-     {}
-     fields)))
+            :else
+            (assoc acc (keyword kebab-name) value))))
+      {}
+      fields)))
 
 (>defn- clj-map->proto-builder
   "Convert a Clojure map to a protobuf builder.
@@ -117,20 +117,20 @@
                   (clj-map->proto-builder item-builder item)
                   (.addRepeatedField builder field (.build item-builder)))
                 (.addRepeatedField builder field item)))
-            
+
             ;; Handle message types
             (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
             (let [nested-builder (.newBuilderForField builder field)]
               (clj-map->proto-builder nested-builder v)
               (.setField builder field (.build nested-builder)))
-            
+
             ;; Handle enum types
             (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
             (let [enum-type (.getEnumType field)
                   enum-value (.findValueByName enum-type v)]
               (when enum-value
                 (.setField builder field enum-value)))
-            
+
             ;; Handle primitive types
             :else
             (.setField builder field v)))))

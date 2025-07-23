@@ -108,3 +108,8 @@ $RECYCLE.BIN/
 
 # Tools
 /tools/
+
+# Linting tools
+/.ktlint/ktlint
+/.detekt/
+/reports/

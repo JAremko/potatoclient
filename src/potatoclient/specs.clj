@@ -639,7 +639,7 @@
      ::translation-key translation-key
      ::translation-args translation-args
      ::translations-map translations-map
-     
+
      ;; Command Domain
      ::azimuth-degrees azimuth-degrees
      ::elevation-degrees elevation-degrees
@@ -658,11 +658,11 @@
      ::bank-angle bank-angle
      ::scan-linger-time scan-linger-time
      ::scan-node-index scan-node-index
-     
+
      ;; Protobuf Types
      ::protobuf-message protobuf-message
      ::protobuf-builder protobuf-builder
-     
+
      ;; Command Enums
      ::rotary-direction rotary-direction
      ::rotary-mode rotary-mode
@@ -673,13 +673,13 @@
      ::day-camera-wdr-mode day-camera-wdr-mode
      ::day-camera-defog-status day-camera-defog-status
      ::boolean-enum boolean-enum
-     
+
      ;; Command Structures
      ::cmd-root-builder cmd-root-builder
      ::rotary-axis-builder rotary-axis-builder
      ::rotary-axis-command-map rotary-axis-command-map
      ::command-payload-map command-payload-map
-     
+
      ;; Channel Types
      ::core-async-channel core-async-channel}))
 

@@ -22,7 +22,7 @@ help: ## Show this help message
 	@grep -E '^(mcp-serve|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Development:"
-	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced|fmt|fmt-check):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|check-deps|build-macos-dev|report-unspecced|fmt|fmt-check|lint-clj|lint-kotlin|lint-kotlin-detekt|lint):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Quick Start with MCP:"
 	@echo "  1. make mcp-server    # Start MCP server (keep terminal open)"
@@ -174,6 +174,56 @@ fmt-check: ## Check if code is properly formatted (exit 1 if not)
 	else \
 		echo "✓ All files are properly formatted"; \
 	fi
+
+# Lint Clojure code with clj-kondo
+.PHONY: lint-clj
+lint-clj: ## Lint Clojure code with clj-kondo
+	@echo "Linting Clojure code with clj-kondo..."
+	@clojure -M:lint --lint src test || exit 1
+	@echo "✓ Clojure linting complete"
+
+# Lint Kotlin code with ktlint
+.PHONY: lint-kotlin
+lint-kotlin: ## Lint Kotlin code with ktlint
+	@echo "Linting Kotlin code with ktlint..."
+	@if [ -f .ktlint/ktlint ]; then \
+		.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" || exit 1; \
+	else \
+		echo "ktlint not found. Installing..."; \
+		mkdir -p .ktlint; \
+		curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.5.0/ktlint && \
+		chmod a+x ktlint && \
+		mv ktlint .ktlint/; \
+		.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" || exit 1; \
+	fi
+	@echo "✓ Kotlin linting complete"
+
+# Run detekt for advanced Kotlin static analysis
+.PHONY: lint-kotlin-detekt
+lint-kotlin-detekt: ## Run detekt for advanced Kotlin static analysis
+	@echo "Running detekt for advanced Kotlin static analysis..."
+	@if [ -f .detekt/detekt-cli.jar ]; then \
+		java -jar .detekt/detekt-cli.jar \
+			--config detekt.yml \
+			--input src/potatoclient/kotlin \
+			--report html:reports/detekt.html \
+			--report txt:reports/detekt.txt || exit 1; \
+	else \
+		echo "detekt not found. Installing..."; \
+		mkdir -p .detekt reports; \
+		curl -sSL https://github.com/detekt/detekt/releases/download/v1.23.7/detekt-cli-1.23.7-all.jar -o .detekt/detekt-cli.jar && \
+		java -jar .detekt/detekt-cli.jar \
+			--config detekt.yml \
+			--input src/potatoclient/kotlin \
+			--report html:reports/detekt.html \
+			--report txt:reports/detekt.txt || exit 1; \
+	fi
+	@echo "✓ Detekt analysis complete. Reports saved to reports/detekt.*"
+
+# Run all linters
+.PHONY: lint
+lint: fmt-check lint-clj lint-kotlin lint-kotlin-detekt ## Run all linters (format check, clj-kondo, ktlint, detekt)
+	@echo "✓ All linting checks passed!"
 
 .PHONY: all
 all: clean build ## Clean and build everything
