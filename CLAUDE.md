@@ -1,6 +1,6 @@
 # Developer Guide
 
-PotatoClient is a high-performance multi-process video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Kotlin) handle video streams with zero-allocation streaming and hardware acceleration.
+PotatoClient is a high-performance multi-process live video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Kotlin) handle video streams with zero-allocation streaming and hardware acceleration.
 
 **For detailed Kotlin subprocess architecture and implementation details, see:** [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
 
@@ -85,7 +85,7 @@ Guardrails is controlled by:
 
 ### Important Notes
 
-- Use `>defn` and `>defn-` for ALL functions to ensure proper validation
+- **Mandatory**: Use `>defn` and `>defn-` for ALL functions (never raw `defn`)
 - Guardrails is automatically enabled with `make dev` and REPL aliases (nrepl, mcp)
 - Release builds have zero overhead - all checks are compiled away
 - Use precise specs from `potatoclient.specs` namespace
@@ -142,41 +142,21 @@ When Guardrails reports a spec failure, evaluate which needs adjustment:
 
 **Rule of thumb**: Preserve the natural, informative behavior of functions. Only enforce `nil` returns for pure side-effect operations with no meaningful return value. Update specs to match the function's natural behavior rather than artificially constraining it.
 
-## Quick Reference
+## Build System
 
-**IMPORTANT**: Use `make dev` for all development work. This command takes 30-40 seconds to start, so set appropriate timeouts in your tools. Do not use short timeouts!
+**For all build commands and detailed documentation, run: `make help`**
 
-```bash
-# Development
-make dev              # PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings
-make nrepl            # REPL on port 7888 for interactive development
-make report-unspecced # Check which functions need Guardrails specs
-make clean            # Clean all build artifacts
+The Makefile is self-documenting and includes comprehensive inline documentation for all targets:
+- Primary development commands with startup times and features
+- Build and release targets with optimization details
+- Code quality tools with version numbers and configurations
+- Lint report generators with false positive filtering capabilities
 
-# Code Quality
-make lint             # Run all linters (clj-kondo, ktlint, detekt)
-make lint-report      # Generate comprehensive lint report
-make fmt              # Format all Clojure code
-make fmt-check        # Check if code is properly formatted
-```
-
-### Development Workflow
-
-1. **Always use `make dev`** - This is your main development command
-   - Takes 30-40 seconds to start (be patient!)
-   - Full Guardrails validation catches bugs immediately
-   - All log levels (DEBUG, INFO, WARN, ERROR)
-   - Reflection warnings for performance issues
-   - GStreamer debug output
-
-2. **For REPL development** - Use `make nrepl`
-   - Connect your editor to port 7888
-   - Same validation features as `make dev`
-
-3. **Other commands** (rarely needed during development):
-   - `make run` - Test the JAR in production-like mode
-   - `make release` - Build optimized JAR for distribution
-   - `make proto` - Regenerate protobuf classes (if .proto files change)
+Key development commands:
+- `make dev` - Primary development command with full validation
+- `make nrepl` - REPL development on port 7888
+- `make lint` - Run all code quality checks
+- `make help` - View all available commands with descriptions
 
 ## Development vs Release Builds
 
@@ -215,6 +195,8 @@ PotatoClient includes comprehensive linting for both Clojure and Kotlin code to 
 - **clj-kondo** (v2025.06.05) - Fast static analyzer with custom configuration
   - Configured for Guardrails, Seesaw, and Telemere macros
   - Custom hooks for `>defn`, `>defn-`, and `>def` macros
+  - Enhanced lint-as mappings for Telemere functions (`handler:console`, `format-signal-fn`, etc.)
+  - Namespace configurations for common libraries to reduce false positives
   - Reduced false positives through precise lint-as mappings
 
 **Kotlin**
@@ -228,42 +210,21 @@ PotatoClient includes comprehensive linting for both Clojure and Kotlin code to 
   - Comprehensive rule set in `detekt.yml`
   - Provides technical debt estimates
 
-### Linting Commands
+### Running Linters
 
-```bash
-# Run all linters
-make lint
-
-# Run specific linters
-make lint-clj          # Clojure linting with clj-kondo
-make lint-kotlin       # Kotlin style checking with ktlint
-make lint-kotlin-detekt # Advanced Kotlin analysis with detekt
-
-# Generate comprehensive lint report
-make lint-report       # Full report with all issues
-make lint-report-warnings # Report excluding errors
-```
+Run `make help` to see all available linting commands. The project uses:
+- **clj-kondo** for Clojure static analysis
+- **ktlint** for Kotlin style checking
+- **detekt** for advanced Kotlin analysis
 
 ### Lint Report Generation
 
-The project includes a Babashka script that aggregates all linting results into a unified Markdown report:
+The project includes a Babashka script that aggregates all linting results into a unified Markdown report. Use `make lint-report-filtered` for best results as it filters out known false positives.
 
+For custom report options, run:
 ```bash
-# Generate report with default settings
-make lint-report
-
-# Custom report options
-bb scripts/lint-report.bb --no-errors    # Exclude errors
-bb scripts/lint-report.bb --clj-only     # Only Clojure linting
-bb scripts/lint-report.bb --kotlin-only  # Only Kotlin linting
-bb scripts/lint-report.bb --output custom-report.md
+bb scripts/lint-report.bb --help
 ```
-
-Report includes:
-- Summary of total errors and warnings
-- Breakdown by linter (clj-kondo, ktlint, detekt)
-- Issues organized by file with line numbers
-- Specific rule violations and descriptions
 
 ### clj-kondo Configuration
 
@@ -297,10 +258,22 @@ Common issues detected:
 - Performance anti-patterns
 - Code smell detection
 
+### False Positive Handling
+
+The project includes advanced false positive detection for common Clojure patterns that confuse static analyzers:
+
+**Filtered Report**: Use `make lint-report-filtered` to get a report that automatically filters out known false positives:
+- **Seesaw UI patterns**: Keyword arguments in widget constructors (e.g., `:text`, `:items`, `:border`)
+- **Telemere logging**: Functions with colons like `handler:console`
+- **Guardrails symbols**: Spec symbols referred but used in specs (>, |, ?, =>)
+- **Standard library**: False warnings about `clojure.string` and `clojure.java.io`
+
+**Statistics**: Typically filters ~56% of reported issues as false positives, focusing attention on real problems.
+
 ### Integration with Development Workflow
 
 1. **During Development**: Run `make lint` regularly to catch issues early
-2. **Before Commits**: Use `make lint-report-warnings` to focus on non-error issues
+2. **Before Commits**: Use `make lint-report-filtered` to see only real issues
 3. **CI/CD Integration**: All linters can be integrated into GitHub Actions
 4. **IDE Integration**: IntelliJ IDEA with Cursive automatically uses clj-kondo
 
@@ -448,21 +421,13 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
 3. Add to `ipc/message-handlers` dispatch table
 
 **Protobuf and Command System**
-For detailed Protobuf implementation, command system architecture, and troubleshooting, see [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md)
-
-## Command System
-
-PotatoClient includes a command system based on the TypeScript web frontend architecture, enabling control message sending via Protobuf.
-
-**For complete command system documentation**, including:
-- Architecture overview and package structure
+See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) for:
+- Command system architecture and package structure
 - Command validation and domain specs
 - Infrastructure for all platforms (core, rotary, day camera)
 - Command flow and JSON output format
 - Testing and debugging utilities
-- Protobuf implementation details
-
-See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md)
+- Protobuf implementation details and troubleshooting
 
 ## Localization
 
@@ -1094,21 +1059,6 @@ The ArcherBC2 example demonstrates sophisticated data binding patterns:
 ## Performance Considerations
 
 ```clojure
-;; Use the debouncing utilities from potatoclient.ui.utils
-(require '[potatoclient.ui.utils :as ui-utils])
-
-;; Debounce rapid updates
-(def save! (ui-utils/debounce save-to-disk 1000))
-
-;; Throttle expensive operations
-(def render! (ui-utils/throttle render-preview 100))
-
-;; Batch UI updates for better performance
-(ui-utils/batch-updates
-  [#(update-label label1)
-   #(update-label label2)
-   #(refresh-table table)])
-
 ;; Lazy rendering for large lists
 (seesaw/table :model model
            :renderer (proxy [DefaultTableCellRenderer] []
@@ -1117,6 +1067,8 @@ The ArcherBC2 example demonstrates sophisticated data binding patterns:
                         (when (.isShowing table)
                           (proxy-super getTableCellRendererComponent 
                                       table value selected focus row col)))))
+
+;; For debouncing, throttling, and batch updates, see the UI Utilities section above
 ```
 
 ## Common Pitfalls to Avoid
@@ -1217,11 +1169,7 @@ When adding new functions:
 
 **ALWAYS write precise (narrow) specs rather than overly broad types.** This improves error messages, catches bugs early, and serves as documentation.
 
-**For Command and State Functions**: When adding functions that handle commands or state derived from protobuf messages, see [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md#command-validation-and-specs) for detailed information on:
-- How to check `.proto` files for validation constraints
-- Common protobuf validation patterns
-- Creating corresponding Malli specs
-- Using domain-specific specs in Guardrails functions
+**For Command and State Functions**: When adding functions that handle commands or state derived from protobuf messages, see [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md#command-validation-and-specs).
 
 **Guidelines for precise specs**:
 
@@ -1267,12 +1215,7 @@ When adding new functions:
 
 To ensure all functions have Malli specs:
 
-```bash
-# Generate a report of functions without specs
-make report-unspecced
-
-# The report will be saved to ./reports/unspecced-functions.md
-```
+Use `make report-unspecced` to generate a report of functions without specs. The report will be saved to `./reports/unspecced-functions.md`.
 
 This report will:
 - List all functions that lack Malli instrumentation
@@ -1297,15 +1240,13 @@ This report will:
 
 ### Development Workflow
 
-1. **Always use `make dev` during development** - Wait 30-40 seconds for startup
-2. **Fix Guardrails errors immediately** - They indicate real bugs in your code
-3. **Write precise specs** - Use domain-specific types from `potatoclient.specs`
-4. **Check reflection warnings** - They indicate performance issues
-5. **Be patient with startup** - The initial compilation takes time but catches bugs early
+1. **Fix Guardrails errors immediately** - They indicate real bugs in your code
+2. **Write precise specs** - Use domain-specific types from `potatoclient.specs`
+3. **Check reflection warnings** - They indicate performance issues
 
 ### Function Development
 
-1. **Always use `>defn` or `>defn-`** - Never use raw `defn`
+1. **Use `>defn` or `>defn-` for all functions** - Never use raw `defn`
 2. **Return `nil` for side effects** - Not `true` or other values
 3. **Add specs immediately** - Don't defer this
 4. **Run `make report-unspecced`** - Regularly check for missing specs

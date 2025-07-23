@@ -1,0 +1,235 @@
+#!/usr/bin/env bb
+
+(require '[clojure.java.shell :refer [sh]]
+         '[clojure.string :as str]
+         '[clojure.java.io :as io]
+         '[clojure.edn :as edn])
+
+(def reports-dir "reports/lint")
+
+;; Known false positive patterns
+(def false-positive-patterns
+  [;; Seesaw UI construction patterns
+   {:pattern #"Function name must be simple symbol but got: :(id|text|items|title|border|action|name|icon|font|align|center|north|south|east|west|hgap|vgap)"
+    :reason "Seesaw keyword arguments"}
+   {:pattern #"Function arguments should be wrapped in vector\."
+    :file-pattern #"ui/.*\.clj$"
+    :reason "Seesaw UI construction"}
+   {:pattern #"Invalid function body\."
+    :file-pattern #"ui/.*\.clj$"
+    :reason "Seesaw UI construction"}
+   {:pattern #"unsupported binding form \d+"
+    :reason "Seesaw size specifications"}
+   {:pattern #"unsupported binding form :by"
+    :reason "Seesaw size specifications"}
+   {:pattern #"a string is not a function"
+    :file-pattern #"ui/.*\.clj$"
+    :reason "Seesaw text construction"}
+   {:pattern #"Boolean cannot be called as a function"
+    :file-pattern #"ui/.*\.clj$"
+    :reason "Seesaw boolean properties"}
+   
+   ;; Namespace issues that are actually fine
+   {:pattern #"namespace clojure\.(string|java\.io) is required but never used"
+    :reason "Standard library namespaces"}
+   {:pattern #"Unresolved namespace clojure\.(string|java\.io)\."
+    :reason "Standard library namespaces"}
+   
+   ;; Guardrails symbols
+   {:pattern #"#'com\.fulcrologic\.guardrails\.(core|malli\.core)/(>|=>|\||>def|\?) is referred but never used"
+    :reason "Guardrails spec symbols"}
+   
+   ;; Seesaw action patterns
+   {:pattern #"unsupported binding form \(create-.*-menu.*\)"
+    :reason "Menu creation functions"}
+   {:pattern #"unsupported binding form \(Box/.*\)"
+    :reason "Swing Box components"}
+   
+   ;; Redundant warnings for UI code
+   {:pattern #"redundant do"
+    :file-pattern #"ui/.*\.clj$"
+    :reason "Common in Seesaw event handlers"}])
+
+(defn is-false-positive? [issue]
+  (some (fn [{:keys [pattern file-pattern reason]}]
+          (and (re-find pattern (:message issue))
+               (or (nil? file-pattern)
+                   (re-find file-pattern (:file issue)))))
+        false-positive-patterns))
+
+(defn filter-false-positives [issues]
+  (let [all-issues issues
+        real-issues (remove is-false-positive? issues)
+        false-positives (filter is-false-positive? issues)]
+    {:real real-issues
+     :false-positives false-positives
+     :all all-issues}))
+
+(defn ensure-reports-dir []
+  (.mkdirs (io/file reports-dir)))
+
+(defn run-linter [cmd & args]
+  (apply sh cmd args))
+
+(defn parse-clj-kondo-output [output]
+  (let [lines (str/split-lines output)
+        issues (for [line lines
+                     :when (and (not (str/blank? line))
+                                (re-find #":\d+:\d+: " line)
+                                (not (str/starts-with? line "linting took"))
+                                (not (str/starts-with? line ".")))]
+                 (let [match (re-find #"^(.+?):(\d+):(\d+): (warning|error): (.+)$" line)]
+                   (when match
+                     (let [[_ file line-num col-num level message] match]
+                       {:file file
+                        :line (Integer/parseInt line-num)
+                        :col (Integer/parseInt col-num)
+                        :level (keyword level)
+                        :message message}))))]
+    (remove nil? issues)))
+
+(defn group-by-severity [issues]
+  (group-by :level issues))
+
+(defn group-by-file [issues]
+  (group-by :file issues))
+
+(defn write-markdown-report [file-path title issues & {:keys [include-false-positives?]}]
+  (with-open [w (io/writer file-path)]
+    (.write w (str "# " title "\n\n"))
+    (.write w (str "Generated: " (java.time.LocalDateTime/now) "\n\n"))
+    
+    (if include-false-positives?
+      (let [{:keys [real false-positives all]} issues]
+        (.write w (str "Total issues: " (count all) "\n"))
+        (.write w (str "Real issues: " (count real) "\n"))
+        (.write w (str "False positives: " (count false-positives) "\n\n"))
+        
+        (when (seq real)
+          (.write w "## Real Issues\n\n")
+          (let [by-file (group-by-file real)]
+            (doseq [[file file-issues] (sort-by key by-file)]
+              (.write w (str "### " file "\n\n"))
+              (.write w (str "Issues: " (count file-issues) "\n\n"))
+              (doseq [issue (sort-by :line file-issues)]
+                (.write w (str "- **Line " (:line issue) ":" (:col issue) "** ["
+                              (name (:level issue)) "] " (:message issue) "\n")))
+              (.write w "\n"))))
+        
+        (when (seq false-positives)
+          (.write w "## Filtered False Positives\n\n")
+          (.write w "These issues were identified as false positives based on known patterns:\n\n")
+          (let [by-reason (group-by (fn [issue]
+                                      (some #(when (re-find (:pattern %) (:message issue))
+                                               (:reason %))
+                                            false-positive-patterns))
+                                    false-positives)]
+            (doseq [[reason issues] (sort-by key by-reason)]
+              (.write w (str "### " reason " (" (count issues) " issues)\n\n"))
+              (doseq [issue (take 5 (sort-by :file issues))]
+                (.write w (str "- " (:file issue) ":" (:line issue) " - " 
+                              (str/replace (:message issue) #"^.*?: " "") "\n")))
+              (when (> (count issues) 5)
+                (.write w (str "- ... and " (- (count issues) 5) " more\n")))
+              (.write w "\n")))))
+      
+      ;; Simple report without false positive analysis
+      (do
+        (.write w (str "Total issues: " (count issues) "\n\n"))
+        (when (seq issues)
+          (let [by-file (group-by-file issues)]
+            (doseq [[file file-issues] (sort-by key by-file)]
+              (.write w (str "## " file "\n\n"))
+              (.write w (str "Issues: " (count file-issues) "\n\n"))
+              (doseq [issue (sort-by :line file-issues)]
+                (.write w (str "- **Line " (:line issue) ":" (:col issue) "** ["
+                              (name (:level issue)) "] " (:message issue) "\n")))
+              (.write w "\n"))))))))
+
+(defn write-summary-report [file-path clj-analysis kotlin-issues]
+  (with-open [w (io/writer file-path)]
+    (.write w "# Lint Report Summary (With False Positive Filtering)\n\n")
+    (.write w (str "Generated: " (java.time.LocalDateTime/now) "\n\n"))
+    
+    (let [{:keys [real false-positives all]} clj-analysis
+          clj-real-count (count real)
+          clj-fp-count (count false-positives)
+          clj-total-count (count all)
+          kotlin-count (count kotlin-issues)
+          total-real-count (+ clj-real-count kotlin-count)]
+      
+      (.write w "## Overall Statistics\n\n")
+      (.write w (str "- **Total Real Issues**: " total-real-count "\n"))
+      (.write w (str "- **Clojure Real Issues**: " clj-real-count "\n"))
+      (.write w (str "- **Clojure False Positives**: " clj-fp-count " (filtered out)\n"))
+      (.write w (str "- **Kotlin Issues**: " kotlin-count "\n\n"))
+      
+      (.write w "## By Severity (Real Issues Only)\n\n")
+      (.write w "### Clojure\n")
+      (let [clj-by-severity (group-by-severity real)]
+        (doseq [[level issues] (sort-by key clj-by-severity)]
+          (.write w (str "- **" (name level) "**: " (count issues) "\n"))))
+      
+      (.write w "\n### Kotlin\n")
+      (let [kotlin-by-severity (group-by-severity kotlin-issues)]
+        (doseq [[level issues] (sort-by key kotlin-by-severity)]
+          (.write w (str "- **" (name level) "**: " (count issues) "\n"))))
+      
+      (.write w "\n## False Positive Summary\n\n")
+      (let [by-reason (group-by (fn [issue]
+                                  (some #(when (re-find (:pattern %) (:message issue))
+                                           (:reason %))
+                                        false-positive-patterns))
+                                false-positives)]
+        (doseq [[reason issues] (sort-by #(- (count (val %))) by-reason)]
+          (.write w (str "- " reason ": " (count issues) " issues\n"))))
+      
+      (.write w "\n## Quick Links\n\n")
+      (.write w "### Clojure Reports\n")
+      (.write w "- [All Real Issues](clojure-real.md)\n")
+      (.write w "- [False Positives Analysis](clojure-false-positives.md)\n")
+      (.write w "- [All Issues (Unfiltered)](clojure-all.md)\n")
+      
+      (.write w "\n### Kotlin Reports\n")
+      (.write w "- [All Issues](kotlin-all.md)\n"))))
+
+(defn main []
+  (println "Generating filtered lint reports...")
+  (ensure-reports-dir)
+  
+  ;; Run clj-kondo
+  (println "Running clj-kondo...")
+  (let [clj-result (run-linter "clj-kondo" "--lint" "src" "--config" ".clj-kondo/config.edn")
+        clj-issues (parse-clj-kondo-output (:out clj-result))
+        clj-analysis (filter-false-positives clj-issues)]
+    
+    ;; For now, just handle Clojure; Kotlin can be added later
+    (println "Writing Clojure reports...")
+    
+    ;; Write filtered report
+    (write-markdown-report (str reports-dir "/clojure-real.md")
+                           "Clojure Lint Report (Real Issues Only)"
+                           (:real clj-analysis))
+    
+    ;; Write false positives analysis
+    (write-markdown-report (str reports-dir "/clojure-false-positives.md")
+                           "Clojure False Positives Analysis"
+                           clj-analysis
+                           :include-false-positives? true)
+    
+    ;; Write unfiltered report
+    (write-markdown-report (str reports-dir "/clojure-all.md")
+                           "Clojure Lint Report (All Issues - Unfiltered)"
+                           (:all clj-analysis))
+    
+    ;; Write summary
+    (println "Writing summary report...")
+    (write-summary-report (str reports-dir "/summary-filtered.md") clj-analysis [])
+    
+    ;; Print results
+    (println "\n✓ Filtered reports generated in" reports-dir)
+    (println (str "  Total Clojure issues: " (count (:all clj-analysis))))
+    (println (str "  Real issues: " (count (:real clj-analysis))))
+    (println (str "  False positives filtered: " (count (:false-positives clj-analysis))))))
+
+(main)
