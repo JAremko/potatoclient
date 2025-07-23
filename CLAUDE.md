@@ -187,107 +187,17 @@ Key development commands:
 
 ## Code Quality and Linting
 
-PotatoClient includes comprehensive linting for both Clojure and Kotlin code to maintain code quality and consistency.
+For comprehensive information on code quality, linting tools, and static analysis, see:
 
-### Linting Tools
+**[.claude/linting-guide.md](.claude/linting-guide.md)**
 
-**Clojure**
-- **clj-kondo** (v2025.06.05) - Fast static analyzer with custom configuration
-  - Configured for Guardrails, Seesaw, and Telemere macros
-  - Custom hooks for `>defn`, `>defn-`, and `>def` macros
-  - Enhanced lint-as mappings for Telemere functions (`handler:console`, `format-signal-fn`, etc.)
-  - Namespace configurations for common libraries to reduce false positives
-  - Reduced false positives through precise lint-as mappings
-
-**Kotlin**
-- **ktlint** (v1.5.0) - Code style checker following IntelliJ IDEA conventions
-  - Enforces consistent formatting and style
-  - Auto-downloads on first use
-  - Configuration in `.ktlint/editorconfig`
-  
-- **detekt** (v1.23.7) - Advanced static analysis tool
-  - Identifies code smells, complexity issues, and potential bugs
-  - Comprehensive rule set in `detekt.yml`
-  - Provides technical debt estimates
-
-### Running Linters
-
-Run `make help` to see all available linting commands. The project uses:
-- **clj-kondo** for Clojure static analysis
-- **ktlint** for Kotlin style checking
-- **detekt** for advanced Kotlin analysis
-
-### Lint Report Generation
-
-The project includes a Babashka script that aggregates all linting results into a unified Markdown report. Use `make lint-report-filtered` for best results as it filters out known false positives.
-
-For custom report options, run:
-```bash
-bb scripts/lint-report.bb --help
-```
-
-### clj-kondo Configuration
-
-Custom configuration in `.clj-kondo/config.edn`:
-- **Guardrails support**: `>defn`, `>defn-`, `>def` properly recognized
-- **Seesaw macros**: UI construction functions linted correctly
-- **Telemere logging**: Log macros understood without false positives
-- **Custom hooks**: For complex macro transformations
-- **Namespace grouping**: Organized imports validation
-
-Common issues detected:
-- Unresolved symbols and namespaces
-- Unused imports and bindings
-- Missing docstrings
-- Unsorted namespaces
-- Type mismatches (with Malli integration)
-
-### Kotlin Linting Configuration
-
-**ktlint** (`.ktlint/editorconfig`):
-- IntelliJ IDEA code style
-- 120 character line limit
-- 4-space indentation
-- Import ordering enforcement
-- Trailing comma rules
-
-**detekt** (`detekt.yml`):
-- Complexity thresholds (cognitive and cyclomatic)
-- Exception handling patterns
-- Naming conventions
-- Performance anti-patterns
-- Code smell detection
-
-### False Positive Handling
-
-The project includes advanced false positive detection for common Clojure patterns that confuse static analyzers:
-
-**Filtered Report**: Use `make lint-report-filtered` to get a report that automatically filters out known false positives:
-- **Seesaw UI patterns**: Keyword arguments in widget constructors (e.g., `:text`, `:items`, `:border`)
-- **Telemere logging**: Functions with colons like `handler:console`
-- **Guardrails symbols**: Spec symbols referred but used in specs (>, |, ?, =>)
-- **Standard library**: False warnings about `clojure.string` and `clojure.java.io`
-
-**Statistics**: Typically filters ~56% of reported issues as false positives, focusing attention on real problems.
-
-### Integration with Development Workflow
-
-1. **During Development**: Run `make lint` regularly to catch issues early
-2. **Before Commits**: Use `make lint-report-filtered` to see only real issues
-3. **CI/CD Integration**: All linters can be integrated into GitHub Actions
-4. **IDE Integration**: IntelliJ IDEA with Cursive automatically uses clj-kondo
-
-### Fixing Common Issues
-
-**Clojure**:
-- Missing docstrings: Add docstrings to public functions
-- Unused imports: Remove or use `:refer :all` sparingly
-- Unresolved symbols: Often due to macros - check lint-as configuration
-
-**Kotlin**:
-- Trailing spaces: Configure your editor to trim on save
-- Import ordering: Use IntelliJ's "Optimize Imports" (Ctrl+Alt+O)
-- Complexity warnings: Refactor large functions into smaller ones
+This guide covers:
+- Linting tools for Clojure (clj-kondo) and Kotlin (ktlint, detekt)
+- Running linters and generating reports
+- False positive filtering (removes ~56% of false positives)
+- Integration with development workflow
+- Periodic build verification to ensure code hasn't been broken
+- Best practices for maintaining code quality
 
 ## Architecture
 
