@@ -13,6 +13,7 @@
 
 ;; Client type constants for better readability
 (def client-types
+  "Mapping of client type keywords to protobuf enum values."
   {:internal-cv "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV"
    :local "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
    :certificate "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED"
@@ -20,6 +21,7 @@
 
 ;; Client type values schema
 (def client-type-values
+  "Schema for valid client type enum values."
   [:enum "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV"
    "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
    "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED"
@@ -27,6 +29,7 @@
 
 ;; Command schema with proper client type
 (def command-schema
+  "Malli schema for validating command structure."
   [:map
    [:protocol-version ::specs/protocol-version]
    [:session-id ::specs/session-id]

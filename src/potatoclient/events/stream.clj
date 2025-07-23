@@ -8,6 +8,7 @@
     [potatoclient.state :as state]))
 
 (def mouse-button-names
+  "Mapping of mouse button numbers to human-readable names"
   {1 "Left" 2 "Middle" 3 "Right"})
 
 (>defn- format-dimensions

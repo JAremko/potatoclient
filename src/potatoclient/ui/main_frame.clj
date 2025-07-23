@@ -19,7 +19,9 @@
   (:import (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
-(def version :string)
+(def version
+  "Version schema for validation."
+  :string)
 
 (>defn preserve-window-state
   "Extract window state for restoration."

@@ -12,20 +12,40 @@
             [potatoclient.state.ui :as ui]))
 
 ;; Re-export stream management functions
-(def get-stream streams/get-stream)
-(def set-stream! streams/set-stream!)
-(def clear-stream! streams/clear-stream!)
-(def all-streams streams/all-streams)
+(def get-stream
+  "Get stream process for given key."
+  streams/get-stream)
+(def set-stream!
+  "Set stream process for given key."
+  streams/set-stream!)
+(def clear-stream!
+  "Clear stream process for given key."
+  streams/clear-stream!)
+(def all-streams
+  "Get all stream processes."
+  streams/all-streams)
 
 ;; Re-export configuration functions
-(def get-locale config/get-locale)
-(def set-locale! config/set-locale!)
-(def get-domain config/get-domain)
-(def set-domain! config/set-domain!)
+(def get-locale
+  "Get current locale."
+  config/get-locale)
+(def set-locale!
+  "Set current locale."
+  config/set-locale!)
+(def get-domain
+  "Get configured domain."
+  config/get-domain)
+(def set-domain!
+  "Set configured domain."
+  config/set-domain!)
 
 ;; Re-export UI functions
-(def register-ui-element! ui/register-ui-element!)
-(def get-ui-element ui/get-ui-element)
+(def register-ui-element!
+  "Register UI element reference."
+  ui/register-ui-element!)
+(def get-ui-element
+  "Get UI element reference."
+  ui/get-ui-element)
 
 ;; State inspection (useful for debugging/REPL)
 (>defn current-state
@@ -42,5 +62,9 @@
    :ui-elements (ui/all-ui-elements)})
 
 ;; Legacy compatibility - these are still used in some places
-(def app-state streams/app-state)
-(def ui-elements ui/ui-elements)
+(def app-state
+  "Legacy reference to streams atom."
+  streams/app-state)
+(def ui-elements
+  "Legacy reference to UI elements atom."
+  ui/ui-elements)

@@ -1,12 +1,11 @@
 (ns potatoclient.cmd.test
   "Test namespace for demonstrating the command system"
-  (:require [potatoclient.cmd.core :as cmd-core]
-            [potatoclient.cmd.rotary :as rotary]
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+            [potatoclient.cmd.core :as cmd-core]
             [potatoclient.cmd.day-camera :as day-camera]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
+            [potatoclient.cmd.rotary :as rotary])
   (:import [data
-            JonSharedDataTypes$JonGuiDataRotaryDirection
-            JonSharedDataTypes$JonGuiDataRotaryMode]))
+            JonSharedDataTypes$JonGuiDataRotaryDirection]))
 
 (>defn test-basic-commands
   "Test basic command sending"

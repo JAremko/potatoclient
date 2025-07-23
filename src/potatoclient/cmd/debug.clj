@@ -49,11 +49,10 @@
   (println (str "\n=== " description " ==="))
   (let [;; Temporarily capture the command
         commands (atom [])
-        ;; Override the send function temporarily
-        original-send cmd-core/send-cmd-message]
-    (with-redefs [cmd-core/send-cmd-message
-                  (fn [root-msg]
-                    (swap! commands conj root-msg))]
+        ;; Create our own send-cmd-message for capturing
+        capture-send (fn [root-msg]
+                       (swap! commands conj root-msg))]
+    (with-redefs [cmd-core/send-cmd-message capture-send]
       ;; Create the command
       (create-fn))
 

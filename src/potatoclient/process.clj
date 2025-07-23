@@ -13,7 +13,6 @@
   (:import (clojure.core.async.impl.channels ManyToManyChannel)
            (java.io BufferedReader BufferedWriter InputStreamReader OutputStreamWriter)
            (java.lang Process ProcessBuilder)
-           (java.time Duration)
            (java.util List Map)))
 
 ;; Configuration constants

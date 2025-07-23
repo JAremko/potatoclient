@@ -25,4 +25,6 @@
   (keys @ui-refs))
 
 ;; Legacy compatibility
-(def ui-elements ui-refs)
+(def ui-elements
+  "Legacy alias for ui-refs atom."
+  ui-refs)

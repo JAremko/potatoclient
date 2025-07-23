@@ -1,11 +1,11 @@
 (ns potatoclient.specs
   "Shared Malli schemas for the PotatoClient application.
    This namespace contains all the common schemas used across multiple namespaces."
-  (:require [malli.core :as m]
+  (:require [clojure.core.async.impl.channels]
+            [clojure.data.json]
+            [malli.core :as m]
             [malli.registry :as mr]
-            [malli.util :as mu]
-            [clojure.core.async.impl.channels]
-            [clojure.data.json])
+            [malli.util :as mu])
   (:import (clojure.core.async.impl.channels ManyToManyChannel)
            (clojure.lang Atom)
            (java.awt Color Rectangle)
@@ -116,8 +116,8 @@
    [:fn {:error/message "values must be JSON serializable"}
     (fn [m]
       (try
-        (clojure.data.json/write-str m)
-        true
+        (let [_ (clojure.data.json/write-str m)]
+          true)
         (catch Exception _ false)))]])
 
 ;; -----------------------------------------------------------------------------

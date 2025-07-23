@@ -9,8 +9,13 @@
   (:import (java.io PushbackReader)))
 
 ;; Atom to hold translations and translator instance
-(defonce translations-atom (atom {}))
-(defonce translator-atom (atom nil))
+(defonce translations-atom
+  ;; Atom holding all loaded translations.
+  (atom {}))
+
+(defonce translator-atom
+  ;; Atom holding the tongue translator instance.
+  (atom nil))
 
 (>defn load-translation-file
   "Load a translation file from resources"
@@ -52,7 +57,6 @@
 (load-translations!)
 
 (>defn tr
-  "Translate a key using current locale"
   ([key]
    [:potatoclient.specs/translation-key => string?]
    (tr key []))

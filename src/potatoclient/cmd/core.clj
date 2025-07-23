@@ -3,9 +3,9 @@
    Implements the command pattern from the TypeScript web example."
   (:require [clojure.core.async :as async]
             [clojure.string :as str]
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]
             [potatoclient.logging :as logging]
-            [potatoclient.runtime :as runtime]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
+            [potatoclient.runtime :as runtime])
   (:import [cmd JonSharedCmd$Root
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis]
@@ -16,10 +16,13 @@
 ;; Configuration
 ;; ============================================================================
 
-(def ^:const PROTOCOL_VERSION 1)
+(def ^:const PROTOCOL_VERSION
+  "Protocol version for command communication"
+  1)
 
-;; Channel for outgoing commands
-(def command-channel (async/chan 100))
+(def command-channel
+  "Channel for outgoing commands with buffer of 100"
+  (async/chan 100))
 
 ;; Read-only mode atom
 (def ^:private read-only-mode? (atom false))

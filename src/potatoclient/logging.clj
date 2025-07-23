@@ -165,23 +165,35 @@
   (tel/stop-handlers!))
 
 ;; Convenience logging macros that match our previous API
-(defmacro log-info [& args]
+(defmacro log-info
+  "Log an info level message."
+  [& args]
   `(tel/log! :info ~@args))
 
-(defmacro log-debug [& args]
+(defmacro log-debug
+  "Log a debug level message."
+  [& args]
   `(tel/log! :debug ~@args))
 
-(defmacro log-warn [& args]
+(defmacro log-warn
+  "Log a warning level message."
+  [& args]
   `(tel/log! :warn ~@args))
 
-(defmacro log-error [& args]
+(defmacro log-error
+  "Log an error level message."
+  [& args]
   `(tel/log! :error ~@args))
 
 ;; Event logging for specific types
-(defmacro log-event [id data & [msg]]
+(defmacro log-event
+  "Log a specific event with id and data."
+  [id data & [msg]]
   `(tel/event! ~id {:level :info :data ~data :msg ~msg}))
 
-(defmacro log-stream-event [stream-type event-type data]
+(defmacro log-stream-event
+  "Log a stream-specific event."
+  [stream-type event-type data]
   `(tel/event! ::stream-event
                {:level :info
                 :data (merge {:stream ~stream-type

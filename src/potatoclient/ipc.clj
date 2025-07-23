@@ -10,8 +10,7 @@
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.state :as state])
-  (:import (clojure.core.async.impl.channels ManyToManyChannel)
-           (java.time Duration)))
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)

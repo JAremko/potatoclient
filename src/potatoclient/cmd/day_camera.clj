@@ -1,7 +1,6 @@
 (ns potatoclient.cmd.day-camera
   "Day camera command functions for PotatoClient - TEMPORARY STUB"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
-            [potatoclient.cmd.core :as cmd-core]))
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]))
 
 ;; Temporary stub functions until protobuf enums are fixed
 

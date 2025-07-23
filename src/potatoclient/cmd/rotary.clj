@@ -1,16 +1,14 @@
 (ns potatoclient.cmd.rotary
   "Rotary platform command functions for PotatoClient"
-  (:require [potatoclient.cmd.core :as cmd-core]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]])
-  (:import [cmd
-            JonSharedCmd$Root JonSharedCmd$Root$Builder]
-           [cmd.RotaryPlatform
-            JonSharedCmdRotary$Root JonSharedCmdRotary$Root$Builder
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+            [potatoclient.cmd.core :as cmd-core])
+  (:import [cmd.RotaryPlatform
+            JonSharedCmdRotary$Root
             JonSharedCmdRotary$Start JonSharedCmdRotary$Stop JonSharedCmdRotary$Halt
             JonSharedCmdRotary$SetPlatformAzimuth JonSharedCmdRotary$SetPlatformElevation
             JonSharedCmdRotary$SetPlatformBank
-            JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Azimuth$Builder
-            JonSharedCmdRotary$Elevation JonSharedCmdRotary$Elevation$Builder
+            JonSharedCmdRotary$Azimuth
+            JonSharedCmdRotary$Elevation
             JonSharedCmdRotary$HaltAzimuth JonSharedCmdRotary$HaltElevation
             JonSharedCmdRotary$SetAzimuthValue JonSharedCmdRotary$SetElevationValue
             JonSharedCmdRotary$RotateAzimuthTo JonSharedCmdRotary$RotateElevationTo
@@ -22,14 +20,10 @@
             JonSharedCmdRotary$SetMode JonSharedCmdRotary$RotateToNDC
             JonSharedCmdRotary$ScanStart JonSharedCmdRotary$ScanStop
             JonSharedCmdRotary$ScanPause JonSharedCmdRotary$ScanUnpause
-            JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanNext
-            JonSharedCmdRotary$ScanRefreshNodeList JonSharedCmdRotary$ScanSelectNode
-            JonSharedCmdRotary$ScanDeleteNode JonSharedCmdRotary$ScanUpdateNode
-            JonSharedCmdRotary$ScanAddNode]
+            JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanNext]
            [data
             JonSharedDataTypes$JonGuiDataRotaryDirection
-            JonSharedDataTypes$JonGuiDataRotaryMode
-            JonSharedDataTypes$JonGuiDataVideoChannel]))
+            JonSharedDataTypes$JonGuiDataRotaryMode]))
 
 ;; ============================================================================
 ;; Basic Commands

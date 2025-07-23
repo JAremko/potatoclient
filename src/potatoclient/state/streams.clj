@@ -32,4 +32,6 @@
   @streams-state)
 
 ;; Legacy compatibility
-(def app-state streams-state)
+(def app-state
+  "Legacy alias for streams-state atom."
+  streams-state)

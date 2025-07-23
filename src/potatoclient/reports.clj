@@ -171,6 +171,5 @@
                                "2. Add proper function specs like: `[arg-spec => return-spec]`\n"
                                "3. Run `(potatoclient.reports/generate-unspecced-functions-report!)` again to update this report\n"))
                         "\n")]
-       (let [path (write-report! filename content)]
-         (println (str "Report generated: " path))
-         path)))))
+       (doto (write-report! filename content)
+         (#(println (str "Report generated: " %))))))))

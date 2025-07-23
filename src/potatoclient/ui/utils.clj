@@ -2,9 +2,9 @@
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+            [seesaw.core :as seesaw]
             [seesaw.cursor :as cursor])
   (:import (java.awt Component)
-           (java.time Duration)
            (javax.swing.text JTextComponent)))
 
 (>defn mk-debounced-transform
@@ -138,7 +138,7 @@
   This is more efficient than multiple separate invoke-later calls."
   [updates]
   [[:sequential ifn?] => nil?]
-  (seesaw.core/invoke-later
+  (seesaw/invoke-later
     (doseq [update-fn updates]
       (update-fn))))
 
