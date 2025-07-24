@@ -1,0 +1,144 @@
+(ns potatoclient.state.builder-shadow-test
+  "Tests for the builder-based shadow state concept"
+  (:require [clojure.test :refer [deftest testing is]]))
+
+(deftest test-builder-shadow-state-concept
+  (testing "Builder pattern for shadow state"
+    ;; Simulate what our implementation does with a builder
+    (let [;; Mock builder that maintains state
+          builder (atom {:gps nil :system nil :compass nil})
+          
+          ;; Mock subsystem data
+          gps-data {:lat 45.0 :lon -73.0}
+          system-data {:battery 85}
+          
+          ;; Simulate builder methods
+          set-gps (fn [b data] (swap! b assoc :gps data))
+          get-gps (fn [b] (:gps @b))
+          has-gps (fn [b] (some? (:gps @b)))]
+      
+      ;; Initially empty
+      (is (not (has-gps builder)))
+      
+      ;; Update GPS
+      (set-gps builder gps-data)
+      (is (has-gps builder))
+      (is (= gps-data (get-gps builder)))
+      
+      ;; Update with same data - builder still has it
+      (set-gps builder gps-data)
+      (is (= gps-data (get-gps builder))))))
+
+(deftest test-shadow-state-comparison
+  (testing "Shadow state enables efficient comparison"
+    (let [;; Track comparisons
+          comparison-count (atom 0)
+          update-count (atom 0)
+          
+          ;; Shadow state
+          shadow (atom {})
+          
+          ;; Compare function
+          compare-and-update (fn [key new-val]
+                              (swap! comparison-count inc)
+                              (let [old-val (get @shadow key)]
+                                (when (not= old-val new-val)
+                                  (swap! shadow assoc key new-val)
+                                  (swap! update-count inc))))]
+      
+      ;; First update
+      (compare-and-update :gps {:lat 45.0})
+      (is (= 1 @comparison-count))
+      (is (= 1 @update-count))
+      
+      ;; Same value - compare but don't update
+      (compare-and-update :gps {:lat 45.0})
+      (is (= 2 @comparison-count))
+      (is (= 1 @update-count))
+      
+      ;; Different value
+      (compare-and-update :gps {:lat 46.0})
+      (is (= 3 @comparison-count))
+      (is (= 2 @update-count)))))
+
+(deftest test-type-safe-builder-benefits
+  (testing "Type-safe builder provides compile-time guarantees"
+    ;; Our actual implementation uses protobuf builders which:
+    ;; 1. Have type-safe setters (setGps, setSystem, etc.)
+    ;; 2. Have corresponding getters (getGps, getSystem, etc.)
+    ;; 3. Have existence checks (hasGps, hasSystem, etc.)
+    ;; 4. Implement equals() for deep comparison
+    
+    ;; This test validates the concept
+    (let [;; Simulate type checking
+          validate-gps (fn [data]
+                         (and (map? data)
+                              (number? (:lat data))
+                              (number? (:lon data))))
+          
+          ;; Type-safe setter
+          set-gps-safe (fn [builder data]
+                        (if (validate-gps data)
+                          (assoc builder :gps data)
+                          (throw (IllegalArgumentException. "Invalid GPS data"))))]
+      
+      ;; Valid data works
+      (is (= {:gps {:lat 45.0 :lon -73.0}}
+             (set-gps-safe {} {:lat 45.0 :lon -73.0})))
+      
+      ;; Invalid data throws
+      (is (thrown? IllegalArgumentException
+                   (set-gps-safe {} {:invalid "data"}))))))
+
+(deftest test-performance-benefits
+  (testing "Shadow state reduces unnecessary operations"
+    (let [;; Track expensive operations
+          expensive-ops (atom 0)
+          
+          ;; Shadow state
+          shadow (atom {})
+          
+          ;; Expensive conversion (simulates proto->EDN)
+          expensive-convert (fn [data]
+                             (swap! expensive-ops inc)
+                             (assoc data :converted true))
+          
+          ;; Update only if changed
+          update-if-changed (fn [key proto-data]
+                             (let [shadow-val (get @shadow key)]
+                               (when (not= shadow-val proto-data)
+                                 (swap! shadow assoc key proto-data)
+                                 (expensive-convert proto-data))))]
+      
+      ;; First update - conversion happens
+      (update-if-changed :gps {:lat 45.0})
+      (is (= 1 @expensive-ops))
+      
+      ;; Same data - no conversion
+      (update-if-changed :gps {:lat 45.0})
+      (is (= 1 @expensive-ops) "Should not convert unchanged data")
+      
+      ;; Different data - conversion happens
+      (update-if-changed :gps {:lat 46.0})
+      (is (= 2 @expensive-ops)))))
+
+(deftest test-atomic-guarantees
+  (testing "Builder in atom provides thread safety"
+    ;; Our implementation stores the builder in an atom
+    ;; This test validates that approach
+    (let [builder-atom (atom {:counter 0})
+          
+          ;; Concurrent updates
+          increment (fn []
+                     (dotimes [_ 1000]
+                       (swap! builder-atom update :counter inc)))]
+      
+      ;; Run concurrent updates
+      (let [futures (repeatedly 10 #(future (increment)))]
+        (doseq [f futures] @f))
+      
+      ;; Should have exactly 10,000 increments
+      (is (= 10000 (:counter @builder-atom))
+          "Atom ensures thread-safe updates"))))
+
+;; Run with: clojure -M:test -n potatoclient.state.builder-shadow-test

@@ -3,7 +3,7 @@
 // source: jon_shared_data_compass_calibration.proto
 // Protobuf Java Version: 4.29.5
 
-package data;
+package ser;
 
 public final class JonSharedDataCompassCalibration {
   private JonSharedDataCompassCalibration() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataCompassCalibration {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataCompassCalibrationOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.JonGuiDataCompassCalibration)
+      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataCompassCalibration)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -60,22 +60,22 @@ public final class JonSharedDataCompassCalibration {
     double getTargetBank();
 
     /**
-     * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
      * @return The enum numeric value on the wire for status.
      */
     int getStatusValue();
     /**
-     * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
      * @return The status.
      */
-    data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus();
+    ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus();
   }
   /**
-   * Protobuf type {@code data.JonGuiDataCompassCalibration}
+   * Protobuf type {@code ser.JonGuiDataCompassCalibration}
    */
   public static final class JonGuiDataCompassCalibration extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.JonGuiDataCompassCalibration)
+      // @@protoc_insertion_point(message_implements:ser.JonGuiDataCompassCalibration)
       JonGuiDataCompassCalibrationOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -97,15 +97,15 @@ public final class JonSharedDataCompassCalibration {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataCompassCalibration.internal_static_data_JonGuiDataCompassCalibration_descriptor;
+      return ser.JonSharedDataCompassCalibration.internal_static_ser_JonGuiDataCompassCalibration_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataCompassCalibration.internal_static_data_JonGuiDataCompassCalibration_fieldAccessorTable
+      return ser.JonSharedDataCompassCalibration.internal_static_ser_JonGuiDataCompassCalibration_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.class, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder.class);
+              ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.class, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder.class);
     }
 
     public static final int STAGE_FIELD_NUMBER = 1;
@@ -166,19 +166,19 @@ public final class JonSharedDataCompassCalibration {
     public static final int STATUS_FIELD_NUMBER = 6;
     private int status_ = 0;
     /**
-     * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
      * @return The enum numeric value on the wire for status.
      */
     @java.lang.Override public int getStatusValue() {
       return status_;
     }
     /**
-     * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
      * @return The status.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus() {
-      data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus result = data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.forNumber(status_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus() {
+      ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus result = ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.forNumber(status_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -210,7 +210,7 @@ public final class JonSharedDataCompassCalibration {
       if (java.lang.Double.doubleToRawLongBits(targetBank_) != 0) {
         output.writeDouble(5, targetBank_);
       }
-      if (status_ != data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED.getNumber()) {
+      if (status_ != ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED.getNumber()) {
         output.writeEnum(6, status_);
       }
       getUnknownFields().writeTo(output);
@@ -242,7 +242,7 @@ public final class JonSharedDataCompassCalibration {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(5, targetBank_);
       }
-      if (status_ != data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED.getNumber()) {
+      if (status_ != ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(6, status_);
       }
@@ -256,10 +256,10 @@ public final class JonSharedDataCompassCalibration {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration)) {
+      if (!(obj instanceof ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration)) {
         return super.equals(obj);
       }
-      data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration other = (data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration) obj;
+      ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration other = (ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration) obj;
 
       if (getStage()
           != other.getStage()) return false;
@@ -306,44 +306,44 @@ public final class JonSharedDataCompassCalibration {
       return hash;
     }
 
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(byte[] data)
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -351,26 +351,26 @@ public final class JonSharedDataCompassCalibration {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseDelimitedFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -383,7 +383,7 @@ public final class JonSharedDataCompassCalibration {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration prototype) {
+    public static Builder newBuilder(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -399,26 +399,26 @@ public final class JonSharedDataCompassCalibration {
       return builder;
     }
     /**
-     * Protobuf type {@code data.JonGuiDataCompassCalibration}
+     * Protobuf type {@code ser.JonGuiDataCompassCalibration}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.JonGuiDataCompassCalibration)
-        data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataCompassCalibration)
+        ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataCompassCalibration.internal_static_data_JonGuiDataCompassCalibration_descriptor;
+        return ser.JonSharedDataCompassCalibration.internal_static_ser_JonGuiDataCompassCalibration_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataCompassCalibration.internal_static_data_JonGuiDataCompassCalibration_fieldAccessorTable
+        return ser.JonSharedDataCompassCalibration.internal_static_ser_JonGuiDataCompassCalibration_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.class, data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder.class);
+                ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.class, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder.class);
       }
 
-      // Construct using data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.newBuilder()
+      // Construct using ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.newBuilder()
       private Builder() {
 
       }
@@ -444,17 +444,17 @@ public final class JonSharedDataCompassCalibration {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataCompassCalibration.internal_static_data_JonGuiDataCompassCalibration_descriptor;
+        return ser.JonSharedDataCompassCalibration.internal_static_ser_JonGuiDataCompassCalibration_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstanceForType() {
-        return data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance();
+      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstanceForType() {
+        return ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration build() {
-        data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result = buildPartial();
+      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration build() {
+        ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -462,14 +462,14 @@ public final class JonSharedDataCompassCalibration {
       }
 
       @java.lang.Override
-      public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration buildPartial() {
-        data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result = new data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration(this);
+      public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration buildPartial() {
+        ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result = new ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result) {
+      private void buildPartial0(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.stage_ = stage_;
@@ -493,16 +493,16 @@ public final class JonSharedDataCompassCalibration {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration) {
-          return mergeFrom((data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration)other);
+        if (other instanceof ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration) {
+          return mergeFrom((ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration other) {
-        if (other == data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration other) {
+        if (other == ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance()) return this;
         if (other.getStage() != 0) {
           setStage(other.getStage());
         }
@@ -756,14 +756,14 @@ public final class JonSharedDataCompassCalibration {
 
       private int status_ = 0;
       /**
-       * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
        * @return The enum numeric value on the wire for status.
        */
       @java.lang.Override public int getStatusValue() {
         return status_;
       }
       /**
-       * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
        * @param value The enum numeric value on the wire for status to set.
        * @return This builder for chaining.
        */
@@ -774,20 +774,20 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
        * @return The status.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus() {
-        data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus result = data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.forNumber(status_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus() {
+        ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus result = ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.forNumber(status_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
        * @param value The status to set.
        * @return This builder for chaining.
        */
-      public Builder setStatus(data.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus value) {
+      public Builder setStatus(ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -797,7 +797,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearStatus() {
@@ -807,16 +807,16 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.JonGuiDataCompassCalibration)
+      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataCompassCalibration)
     }
 
-    // @@protoc_insertion_point(class_scope:data.JonGuiDataCompassCalibration)
-    private static final data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.JonGuiDataCompassCalibration)
+    private static final ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration();
+      DEFAULT_INSTANCE = new ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration();
     }
 
-    public static data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstance() {
+    public static ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -852,17 +852,17 @@ public final class JonSharedDataCompassCalibration {
     }
 
     @java.lang.Override
-    public data.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstanceForType() {
+    public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_JonGuiDataCompassCalibration_descriptor;
+    internal_static_ser_JonGuiDataCompassCalibration_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_JonGuiDataCompassCalibration_fieldAccessorTable;
+      internal_static_ser_JonGuiDataCompassCalibration_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -873,29 +873,29 @@ public final class JonSharedDataCompassCalibration {
   static {
     java.lang.String[] descriptorData = {
       "\n)jon_shared_data_compass_calibration.pr" +
-      "oto\022\004data\032\033jon_shared_data_types.proto\"\301" +
-      "\001\n\034JonGuiDataCompassCalibration\022\r\n\005stage" +
-      "\030\001 \001(\r\022\023\n\013final_stage\030\002 \001(\r\022\026\n\016target_az" +
-      "imuth\030\003 \001(\001\022\030\n\020target_elevation\030\004 \001(\001\022\023\n" +
-      "\013target_bank\030\005 \001(\001\0226\n\006status\030\006 \001(\0162&.dat" +
-      "a.JonGuiDataCompassCalibrateStatusB[ZYgi" +
-      "t-codecommit.eu-central-1.amazonaws.com/" +
-      "v1/repos/jettison/jonp/data/compass_cali" +
-      "brationb\006proto3"
+      "oto\022\003ser\032\033jon_shared_data_types.proto\"\300\001" +
+      "\n\034JonGuiDataCompassCalibration\022\r\n\005stage\030" +
+      "\001 \001(\r\022\023\n\013final_stage\030\002 \001(\r\022\026\n\016target_azi" +
+      "muth\030\003 \001(\001\022\030\n\020target_elevation\030\004 \001(\001\022\023\n\013" +
+      "target_bank\030\005 \001(\001\0225\n\006status\030\006 \001(\0162%.ser." +
+      "JonGuiDataCompassCalibrateStatusB[ZYgit-" +
+      "codecommit.eu-central-1.amazonaws.com/v1" +
+      "/repos/jettison/jonp/data/compass_calibr" +
+      "ationb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_data_JonGuiDataCompassCalibration_descriptor =
+    internal_static_ser_JonGuiDataCompassCalibration_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_data_JonGuiDataCompassCalibration_fieldAccessorTable = new
+    internal_static_ser_JonGuiDataCompassCalibration_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_JonGuiDataCompassCalibration_descriptor,
+        internal_static_ser_JonGuiDataCompassCalibration_descriptor,
         new java.lang.String[] { "Stage", "FinalStage", "TargetAzimuth", "TargetElevation", "TargetBank", "Status", });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

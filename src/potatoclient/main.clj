@@ -73,7 +73,7 @@
       (apply core/-main args))
     (catch Exception e
       (binding [*out* *err*]
-        (logging/log-error (str "Fatal error during application startup: " (.getMessage e)))
+        (logging/log-error {:msg (str "Fatal error during application startup: " (.getMessage e))})
         (.printStackTrace e))
       (System/exit 1))))
 

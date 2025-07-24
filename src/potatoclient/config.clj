@@ -119,7 +119,7 @@
                                  :msg "Invalid config detected, using minimal config"})
               minimal-config)))
         (catch Exception e
-          (logging/log-error (str "Error loading config: " (.getMessage ^Exception e)))
+          (logging/log-error {:msg (str "Error loading config: " (.getMessage ^Exception e))})
           minimal-config))
       minimal-config)))
 
@@ -134,10 +134,10 @@
         (spit config-file (pr-str config)))
       true
       (catch Exception e
-        (logging/log-error (str "Error saving config: " (.getMessage ^Exception e)))
+        (logging/log-error {:msg (str "Error saving config: " (.getMessage ^Exception e))})
         false))
     (do
-      (logging/log-error (str "Invalid config, not saving: " (m/explain ::specs/config config)))
+      (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::specs/config config))})
       false)))
 
 (>defn save-theme!
@@ -167,10 +167,10 @@
   (let [config (load-config)
         config-file (get-config-file)]
     ;; Log config location on first run
-    (logging/log-info (str "Configuration file location: " (get-config-location)))
+    (logging/log-info {:msg (str "Configuration file location: " (get-config-location))})
     ;; Only save defaults if config file doesn't exist
     (when (not (.exists ^File config-file))
-      (logging/log-info "Creating default config file")
+      (logging/log-info {:msg "Creating default config file"})
       (save-config! config))
     ;; Initialize theme from saved config (or default)
     (theme/initialize-theme! (or (:theme config) :sol-dark))

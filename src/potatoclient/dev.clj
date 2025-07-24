@@ -10,7 +10,7 @@
   "Enable verbose logging for development."
   []
   [=> nil?]
-  (logging/log-info "Enabling verbose logging for development...")
+  (logging/log-info {:msg "Enabling verbose logging for development..."})
   ;; Add verbose logging configuration here
   nil)
 
@@ -18,7 +18,7 @@
   "Enable assertions for development."
   []
   [=> nil?]
-  (logging/log-info "Enabling assertions for development...")
+  (logging/log-info {:msg "Enabling assertions for development..."})
   ;; Add assertion configuration here
   nil)
 
@@ -31,7 +31,7 @@
   (enable-verbose-logging!)
   (enable-assertions!)
   ;; Add more development-specific settings here as needed
-  (logging/log-info "Additional development settings enabled."))
+  (logging/log-info {:msg "Additional development settings enabled."}))
 
 ;; Automatically enable dev settings when this namespace is loaded
 (when (or (System/getProperty "potatoclient.dev")

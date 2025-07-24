@@ -1,0 +1,116 @@
+(ns potatoclient.state.dispatch-core-test
+  "Core tests for state dispatch logic without protobuf dependencies"
+  (:require [clojure.test :refer [deftest testing is]]
+            [potatoclient.state.dispatch :as dispatch]
+            [potatoclient.state.device :as device]))
+
+(deftest test-state-change-detection
+  (testing "State change detection logic"
+    ;; Test the internal change detection function
+    (let [protobuf-changed? @#'dispatch/protobuf-changed?]
+      
+      ;; Both nil
+      (is (not (protobuf-changed? nil nil))
+          "Two nils should not be considered changed")
+      
+      ;; One nil
+      (is (protobuf-changed? nil {})
+          "nil to non-nil should be changed")
+      (is (protobuf-changed? {} nil)
+          "non-nil to nil should be changed")
+      
+      ;; Mock objects with equals
+      (let [obj1 (reify Object (equals [_ other] (= other :same)))
+            obj2 (reify Object (equals [_ other] false))]
+        
+        (is (not (protobuf-changed? obj1 :same))
+            "Equal objects should not be changed")
+        (is (protobuf-changed? obj1 obj2)
+            "Non-equal objects should be changed")))))
+
+(deftest test-validation-control
+  (testing "Validation can be enabled/disabled"
+    ;; Test validation control
+    (dispatch/enable-validation! true)
+    (is (true? @dispatch/validate-state?)
+        "Validation should be enabled")
+    
+    (dispatch/enable-validation! false)
+    (is (false? @dispatch/validate-state?)
+        "Validation should be disabled")))
+
+(deftest test-debug-control
+  (testing "Debug mode can be enabled/disabled"
+    ;; Test debug control
+    (dispatch/enable-debug! true)
+    (is (true? @dispatch/debug-mode?)
+        "Debug mode should be enabled")
+    
+    (dispatch/enable-debug! false)
+    (is (false? @dispatch/debug-mode?)
+        "Debug mode should be disabled")))
+
+(deftest test-subsystem-updates
+  (testing "Subsystem state atoms can be updated"
+    ;; Reset states
+    (device/reset-all-states!)
+    
+    ;; Verify initial state
+    (is (nil? @device/gps-state) "GPS should start nil")
+    (is (nil? @device/system-state) "System should start nil")
+    
+    ;; Update states directly
+    (reset! device/gps-state {:lat 45.0 :lon -73.0})
+    (reset! device/system-state {:battery 85})
+    
+    ;; Verify updates
+    (is (= {:lat 45.0 :lon -73.0} @device/gps-state)
+        "GPS state should be updated")
+    (is (= {:battery 85} @device/system-state)
+        "System state should be updated")
+    
+    ;; Test convenience functions
+    (is (= {:lat 45.0 :lon -73.0} (device/get-gps))
+        "get-gps should return current state")
+    (is (= {:battery 85} (device/get-system))
+        "get-system should return current state")))
+
+(deftest test-shadow-state-builder-concept
+  (testing "Shadow state builder maintains state"
+    ;; Access the shadow state builder
+    (let [builder-atom @#'dispatch/shadow-state-builder]
+      (is (some? @builder-atom)
+          "Shadow state builder should exist")
+      
+      ;; The builder is a protobuf builder instance
+      ;; We can't test it directly without protobuf classes
+      ;; but we can verify the atom exists and holds something
+      (is (instance? Object @builder-atom)
+          "Builder should be an object instance"))))
+
+(deftest test-get-schema-for-subsystem
+  (testing "Schema lookup works for all subsystems"
+    (let [get-schema @#'dispatch/get-schema-for-subsystem]
+      ;; Test all known subsystems
+      (doseq [subsystem [:system :lrf :time :gps :compass :rotary
+                        :camera-day :camera-heat :compass-calibration
+                        :rec-osd :day-cam-glass-heater :actual-space-time
+                        :meteo-internal]]
+        (is (some? (get-schema subsystem))
+            (str "Schema should exist for " subsystem)))
+      
+      ;; Unknown subsystem
+      (is (nil? (get-schema :unknown))
+          "Unknown subsystem should return nil"))))
+
+(deftest test-state-channel
+  (testing "State channel is available"
+    (let [channel (dispatch/get-state-channel)]
+      (is (some? channel)
+          "State channel should exist")
+      
+      ;; Verify it's a core.async channel
+      (is (instance? clojure.core.async.impl.channels.ManyToManyChannel channel)
+          "Should be a core.async channel"))))
+
+;; Run with: clojure -M:test -n potatoclient.state.dispatch-core-test

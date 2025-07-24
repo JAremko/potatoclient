@@ -3,7 +3,7 @@
 // source: jon_shared_data_gps.proto
 // Protobuf Java Version: 4.29.5
 
-package data;
+package ser;
 
 public final class JonSharedDataGps {
   private JonSharedDataGps() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataGps {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataGpsOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.JonGuiDataGps)
+      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataGps)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -66,15 +66,15 @@ public final class JonSharedDataGps {
     double getManualAltitude();
 
     /**
-     * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+     * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
      * @return The enum numeric value on the wire for fixType.
      */
     int getFixTypeValue();
     /**
-     * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+     * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
      * @return The fixType.
      */
-    data.JonSharedDataTypes.JonGuiDataGpsFixType getFixType();
+    ser.JonSharedDataTypes.JonGuiDataGpsFixType getFixType();
 
     /**
      * <code>bool use_manual = 8;</code>
@@ -83,11 +83,11 @@ public final class JonSharedDataGps {
     boolean getUseManual();
   }
   /**
-   * Protobuf type {@code data.JonGuiDataGps}
+   * Protobuf type {@code ser.JonGuiDataGps}
    */
   public static final class JonGuiDataGps extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.JonGuiDataGps)
+      // @@protoc_insertion_point(message_implements:ser.JonGuiDataGps)
       JonGuiDataGpsOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -109,15 +109,15 @@ public final class JonSharedDataGps {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataGps.internal_static_data_JonGuiDataGps_descriptor;
+      return ser.JonSharedDataGps.internal_static_ser_JonGuiDataGps_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataGps.internal_static_data_JonGuiDataGps_fieldAccessorTable
+      return ser.JonSharedDataGps.internal_static_ser_JonGuiDataGps_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataGps.JonGuiDataGps.class, data.JonSharedDataGps.JonGuiDataGps.Builder.class);
+              ser.JonSharedDataGps.JonGuiDataGps.class, ser.JonSharedDataGps.JonGuiDataGps.Builder.class);
     }
 
     public static final int LONGITUDE_FIELD_NUMBER = 1;
@@ -189,19 +189,19 @@ public final class JonSharedDataGps {
     public static final int FIX_TYPE_FIELD_NUMBER = 7;
     private int fixType_ = 0;
     /**
-     * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+     * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
      * @return The enum numeric value on the wire for fixType.
      */
     @java.lang.Override public int getFixTypeValue() {
       return fixType_;
     }
     /**
-     * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+     * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
      * @return The fixType.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataGpsFixType getFixType() {
-      data.JonSharedDataTypes.JonGuiDataGpsFixType result = data.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(fixType_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataGpsFixType getFixType() {
+      ser.JonSharedDataTypes.JonGuiDataGpsFixType result = ser.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(fixType_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
     }
 
     public static final int USE_MANUAL_FIELD_NUMBER = 8;
@@ -247,7 +247,7 @@ public final class JonSharedDataGps {
       if (java.lang.Double.doubleToRawLongBits(manualAltitude_) != 0) {
         output.writeDouble(6, manualAltitude_);
       }
-      if (fixType_ != data.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
+      if (fixType_ != ser.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
         output.writeEnum(7, fixType_);
       }
       if (useManual_ != false) {
@@ -286,7 +286,7 @@ public final class JonSharedDataGps {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(6, manualAltitude_);
       }
-      if (fixType_ != data.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
+      if (fixType_ != ser.JonSharedDataTypes.JonGuiDataGpsFixType.JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(7, fixType_);
       }
@@ -304,10 +304,10 @@ public final class JonSharedDataGps {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataGps.JonGuiDataGps)) {
+      if (!(obj instanceof ser.JonSharedDataGps.JonGuiDataGps)) {
         return super.equals(obj);
       }
-      data.JonSharedDataGps.JonGuiDataGps other = (data.JonSharedDataGps.JonGuiDataGps) obj;
+      ser.JonSharedDataGps.JonGuiDataGps other = (ser.JonSharedDataGps.JonGuiDataGps) obj;
 
       if (java.lang.Double.doubleToLongBits(getLongitude())
           != java.lang.Double.doubleToLongBits(
@@ -369,44 +369,44 @@ public final class JonSharedDataGps {
       return hash;
     }
 
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(byte[] data)
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -414,26 +414,26 @@ public final class JonSharedDataGps {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataGps.JonGuiDataGps parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataGps.JonGuiDataGps parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataGps.JonGuiDataGps parseDelimitedFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataGps.JonGuiDataGps parseFrom(
+    public static ser.JonSharedDataGps.JonGuiDataGps parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -446,7 +446,7 @@ public final class JonSharedDataGps {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataGps.JonGuiDataGps prototype) {
+    public static Builder newBuilder(ser.JonSharedDataGps.JonGuiDataGps prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -462,26 +462,26 @@ public final class JonSharedDataGps {
       return builder;
     }
     /**
-     * Protobuf type {@code data.JonGuiDataGps}
+     * Protobuf type {@code ser.JonGuiDataGps}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.JonGuiDataGps)
-        data.JonSharedDataGps.JonGuiDataGpsOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataGps)
+        ser.JonSharedDataGps.JonGuiDataGpsOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataGps.internal_static_data_JonGuiDataGps_descriptor;
+        return ser.JonSharedDataGps.internal_static_ser_JonGuiDataGps_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataGps.internal_static_data_JonGuiDataGps_fieldAccessorTable
+        return ser.JonSharedDataGps.internal_static_ser_JonGuiDataGps_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataGps.JonGuiDataGps.class, data.JonSharedDataGps.JonGuiDataGps.Builder.class);
+                ser.JonSharedDataGps.JonGuiDataGps.class, ser.JonSharedDataGps.JonGuiDataGps.Builder.class);
       }
 
-      // Construct using data.JonSharedDataGps.JonGuiDataGps.newBuilder()
+      // Construct using ser.JonSharedDataGps.JonGuiDataGps.newBuilder()
       private Builder() {
 
       }
@@ -509,17 +509,17 @@ public final class JonSharedDataGps {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataGps.internal_static_data_JonGuiDataGps_descriptor;
+        return ser.JonSharedDataGps.internal_static_ser_JonGuiDataGps_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataGps.JonGuiDataGps getDefaultInstanceForType() {
-        return data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance();
+      public ser.JonSharedDataGps.JonGuiDataGps getDefaultInstanceForType() {
+        return ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataGps.JonGuiDataGps build() {
-        data.JonSharedDataGps.JonGuiDataGps result = buildPartial();
+      public ser.JonSharedDataGps.JonGuiDataGps build() {
+        ser.JonSharedDataGps.JonGuiDataGps result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -527,14 +527,14 @@ public final class JonSharedDataGps {
       }
 
       @java.lang.Override
-      public data.JonSharedDataGps.JonGuiDataGps buildPartial() {
-        data.JonSharedDataGps.JonGuiDataGps result = new data.JonSharedDataGps.JonGuiDataGps(this);
+      public ser.JonSharedDataGps.JonGuiDataGps buildPartial() {
+        ser.JonSharedDataGps.JonGuiDataGps result = new ser.JonSharedDataGps.JonGuiDataGps(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataGps.JonGuiDataGps result) {
+      private void buildPartial0(ser.JonSharedDataGps.JonGuiDataGps result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.longitude_ = longitude_;
@@ -564,16 +564,16 @@ public final class JonSharedDataGps {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataGps.JonGuiDataGps) {
-          return mergeFrom((data.JonSharedDataGps.JonGuiDataGps)other);
+        if (other instanceof ser.JonSharedDataGps.JonGuiDataGps) {
+          return mergeFrom((ser.JonSharedDataGps.JonGuiDataGps)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataGps.JonGuiDataGps other) {
-        if (other == data.JonSharedDataGps.JonGuiDataGps.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataGps.JonGuiDataGps other) {
+        if (other == ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance()) return this;
         if (other.getLongitude() != 0D) {
           setLongitude(other.getLongitude());
         }
@@ -875,14 +875,14 @@ public final class JonSharedDataGps {
 
       private int fixType_ = 0;
       /**
-       * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+       * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
        * @return The enum numeric value on the wire for fixType.
        */
       @java.lang.Override public int getFixTypeValue() {
         return fixType_;
       }
       /**
-       * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+       * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
        * @param value The enum numeric value on the wire for fixType to set.
        * @return This builder for chaining.
        */
@@ -893,20 +893,20 @@ public final class JonSharedDataGps {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+       * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
        * @return The fixType.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataGpsFixType getFixType() {
-        data.JonSharedDataTypes.JonGuiDataGpsFixType result = data.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(fixType_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataGpsFixType getFixType() {
+        ser.JonSharedDataTypes.JonGuiDataGpsFixType result = ser.JonSharedDataTypes.JonGuiDataGpsFixType.forNumber(fixType_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+       * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
        * @param value The fixType to set.
        * @return This builder for chaining.
        */
-      public Builder setFixType(data.JonSharedDataTypes.JonGuiDataGpsFixType value) {
+      public Builder setFixType(ser.JonSharedDataTypes.JonGuiDataGpsFixType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -916,7 +916,7 @@ public final class JonSharedDataGps {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataGpsFixType fix_type = 7;</code>
+       * <code>.ser.JonGuiDataGpsFixType fix_type = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearFixType() {
@@ -958,16 +958,16 @@ public final class JonSharedDataGps {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.JonGuiDataGps)
+      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataGps)
     }
 
-    // @@protoc_insertion_point(class_scope:data.JonGuiDataGps)
-    private static final data.JonSharedDataGps.JonGuiDataGps DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.JonGuiDataGps)
+    private static final ser.JonSharedDataGps.JonGuiDataGps DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataGps.JonGuiDataGps();
+      DEFAULT_INSTANCE = new ser.JonSharedDataGps.JonGuiDataGps();
     }
 
-    public static data.JonSharedDataGps.JonGuiDataGps getDefaultInstance() {
+    public static ser.JonSharedDataGps.JonGuiDataGps getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1003,17 +1003,17 @@ public final class JonSharedDataGps {
     }
 
     @java.lang.Override
-    public data.JonSharedDataGps.JonGuiDataGps getDefaultInstanceForType() {
+    public ser.JonSharedDataGps.JonGuiDataGps getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_JonGuiDataGps_descriptor;
+    internal_static_ser_JonGuiDataGps_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_JonGuiDataGps_fieldAccessorTable;
+      internal_static_ser_JonGuiDataGps_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1023,30 +1023,29 @@ public final class JonSharedDataGps {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\031jon_shared_data_gps.proto\022\004data\032\033jon_s" +
-      "hared_data_types.proto\"\324\001\n\rJonGuiDataGps" +
-      "\022\021\n\tlongitude\030\001 \001(\001\022\020\n\010latitude\030\002 \001(\001\022\020\n" +
-      "\010altitude\030\003 \001(\001\022\030\n\020manual_longitude\030\004 \001(" +
-      "\001\022\027\n\017manual_latitude\030\005 \001(\001\022\027\n\017manual_alt" +
-      "itude\030\006 \001(\001\022,\n\010fix_type\030\007 \001(\0162\032.data.Jon" +
-      "GuiDataGpsFixType\022\022\n\nuse_manual\030\010 \001(\010BKZ" +
-      "Igit-codecommit.eu-central-1.amazonaws.c" +
-      "om/v1/repos/jettison/jonp/data/gpsb\006prot" +
-      "o3"
+      "\n\031jon_shared_data_gps.proto\022\003ser\032\033jon_sh" +
+      "ared_data_types.proto\"\323\001\n\rJonGuiDataGps\022" +
+      "\021\n\tlongitude\030\001 \001(\001\022\020\n\010latitude\030\002 \001(\001\022\020\n\010" +
+      "altitude\030\003 \001(\001\022\030\n\020manual_longitude\030\004 \001(\001" +
+      "\022\027\n\017manual_latitude\030\005 \001(\001\022\027\n\017manual_alti" +
+      "tude\030\006 \001(\001\022+\n\010fix_type\030\007 \001(\0162\031.ser.JonGu" +
+      "iDataGpsFixType\022\022\n\nuse_manual\030\010 \001(\010BKZIg" +
+      "it-codecommit.eu-central-1.amazonaws.com" +
+      "/v1/repos/jettison/jonp/data/gpsb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_data_JonGuiDataGps_descriptor =
+    internal_static_ser_JonGuiDataGps_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_data_JonGuiDataGps_fieldAccessorTable = new
+    internal_static_ser_JonGuiDataGps_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_JonGuiDataGps_descriptor,
+        internal_static_ser_JonGuiDataGps_descriptor,
         new java.lang.String[] { "Longitude", "Latitude", "Altitude", "ManualLongitude", "ManualLatitude", "ManualAltitude", "FixType", "UseManual", });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

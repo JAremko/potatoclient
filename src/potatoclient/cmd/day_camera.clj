@@ -19,7 +19,7 @@
             JonSharedCmdDayCamera$SetDigitalZoomLevel
             JonSharedCmdDayCamera$SetFxMode JonSharedCmdDayCamera$NextFxMode JonSharedCmdDayCamera$PrevFxMode
             JonSharedCmdDayCamera$SetClaheLevel JonSharedCmdDayCamera$ShiftClaheLevel]
-           [data
+           [ser
             JonSharedDataTypes$JonGuiDataFxModeDay]))
 
 ;; ============================================================================

@@ -3,7 +3,7 @@
 // source: jon_shared_data_system.proto
 // Protobuf Java Version: 4.29.5
 
-package data;
+package ser;
 
 public final class JonSharedDataSystem {
   private JonSharedDataSystem() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataSystem {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataSystemOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.JonGuiDataSystem)
+      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataSystem)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -60,15 +60,15 @@ public final class JonSharedDataSystem {
     float getPowerConsumption();
 
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
      * @return The enum numeric value on the wire for loc.
      */
     int getLocValue();
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
      * @return The loc.
      */
-    data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
+    ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
 
     /**
      * <code>int32 cur_video_rec_dir_year = 7;</code>
@@ -167,11 +167,11 @@ public final class JonSharedDataSystem {
     boolean getCvDumping();
   }
   /**
-   * Protobuf type {@code data.JonGuiDataSystem}
+   * Protobuf type {@code ser.JonGuiDataSystem}
    */
   public static final class JonGuiDataSystem extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.JonGuiDataSystem)
+      // @@protoc_insertion_point(message_implements:ser.JonGuiDataSystem)
       JonGuiDataSystemOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -193,15 +193,15 @@ public final class JonSharedDataSystem {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataSystem.internal_static_data_JonGuiDataSystem_descriptor;
+      return ser.JonSharedDataSystem.internal_static_ser_JonGuiDataSystem_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataSystem.internal_static_data_JonGuiDataSystem_fieldAccessorTable
+      return ser.JonSharedDataSystem.internal_static_ser_JonGuiDataSystem_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataSystem.JonGuiDataSystem.class, data.JonSharedDataSystem.JonGuiDataSystem.Builder.class);
+              ser.JonSharedDataSystem.JonGuiDataSystem.class, ser.JonSharedDataSystem.JonGuiDataSystem.Builder.class);
     }
 
     public static final int CPU_TEMPERATURE_FIELD_NUMBER = 1;
@@ -262,19 +262,19 @@ public final class JonSharedDataSystem {
     public static final int LOC_FIELD_NUMBER = 6;
     private int loc_ = 0;
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
      * @return The enum numeric value on the wire for loc.
      */
     @java.lang.Override public int getLocValue() {
       return loc_;
     }
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
      * @return The loc.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
-      data.JonSharedDataTypes.JonGuiDataSystemLocalizations result = data.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
+      ser.JonSharedDataTypes.JonGuiDataSystemLocalizations result = ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
     }
 
     public static final int CUR_VIDEO_REC_DIR_YEAR_FIELD_NUMBER = 7;
@@ -482,7 +482,7 @@ public final class JonSharedDataSystem {
       if (java.lang.Float.floatToRawIntBits(powerConsumption_) != 0) {
         output.writeFloat(5, powerConsumption_);
       }
-      if (loc_ != data.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
+      if (loc_ != ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
         output.writeEnum(6, loc_);
       }
       if (curVideoRecDirYear_ != 0) {
@@ -562,7 +562,7 @@ public final class JonSharedDataSystem {
         size += com.google.protobuf.CodedOutputStream
           .computeFloatSize(5, powerConsumption_);
       }
-      if (loc_ != data.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
+      if (loc_ != ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(6, loc_);
       }
@@ -640,10 +640,10 @@ public final class JonSharedDataSystem {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataSystem.JonGuiDataSystem)) {
+      if (!(obj instanceof ser.JonSharedDataSystem.JonGuiDataSystem)) {
         return super.equals(obj);
       }
-      data.JonSharedDataSystem.JonGuiDataSystem other = (data.JonSharedDataSystem.JonGuiDataSystem) obj;
+      ser.JonSharedDataSystem.JonGuiDataSystem other = (ser.JonSharedDataSystem.JonGuiDataSystem) obj;
 
       if (java.lang.Float.floatToIntBits(getCpuTemperature())
           != java.lang.Float.floatToIntBits(
@@ -767,44 +767,44 @@ public final class JonSharedDataSystem {
       return hash;
     }
 
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(byte[] data)
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -812,26 +812,26 @@ public final class JonSharedDataSystem {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseDelimitedFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataSystem.JonGuiDataSystem parseFrom(
+    public static ser.JonSharedDataSystem.JonGuiDataSystem parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -844,7 +844,7 @@ public final class JonSharedDataSystem {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataSystem.JonGuiDataSystem prototype) {
+    public static Builder newBuilder(ser.JonSharedDataSystem.JonGuiDataSystem prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -860,26 +860,26 @@ public final class JonSharedDataSystem {
       return builder;
     }
     /**
-     * Protobuf type {@code data.JonGuiDataSystem}
+     * Protobuf type {@code ser.JonGuiDataSystem}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.JonGuiDataSystem)
-        data.JonSharedDataSystem.JonGuiDataSystemOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataSystem)
+        ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataSystem.internal_static_data_JonGuiDataSystem_descriptor;
+        return ser.JonSharedDataSystem.internal_static_ser_JonGuiDataSystem_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataSystem.internal_static_data_JonGuiDataSystem_fieldAccessorTable
+        return ser.JonSharedDataSystem.internal_static_ser_JonGuiDataSystem_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataSystem.JonGuiDataSystem.class, data.JonSharedDataSystem.JonGuiDataSystem.Builder.class);
+                ser.JonSharedDataSystem.JonGuiDataSystem.class, ser.JonSharedDataSystem.JonGuiDataSystem.Builder.class);
       }
 
-      // Construct using data.JonSharedDataSystem.JonGuiDataSystem.newBuilder()
+      // Construct using ser.JonSharedDataSystem.JonGuiDataSystem.newBuilder()
       private Builder() {
 
       }
@@ -921,17 +921,17 @@ public final class JonSharedDataSystem {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataSystem.internal_static_data_JonGuiDataSystem_descriptor;
+        return ser.JonSharedDataSystem.internal_static_ser_JonGuiDataSystem_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataSystem.JonGuiDataSystem getDefaultInstanceForType() {
-        return data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance();
+      public ser.JonSharedDataSystem.JonGuiDataSystem getDefaultInstanceForType() {
+        return ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataSystem.JonGuiDataSystem build() {
-        data.JonSharedDataSystem.JonGuiDataSystem result = buildPartial();
+      public ser.JonSharedDataSystem.JonGuiDataSystem build() {
+        ser.JonSharedDataSystem.JonGuiDataSystem result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -939,14 +939,14 @@ public final class JonSharedDataSystem {
       }
 
       @java.lang.Override
-      public data.JonSharedDataSystem.JonGuiDataSystem buildPartial() {
-        data.JonSharedDataSystem.JonGuiDataSystem result = new data.JonSharedDataSystem.JonGuiDataSystem(this);
+      public ser.JonSharedDataSystem.JonGuiDataSystem buildPartial() {
+        ser.JonSharedDataSystem.JonGuiDataSystem result = new ser.JonSharedDataSystem.JonGuiDataSystem(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataSystem.JonGuiDataSystem result) {
+      private void buildPartial0(ser.JonSharedDataSystem.JonGuiDataSystem result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.cpuTemperature_ = cpuTemperature_;
@@ -1018,16 +1018,16 @@ public final class JonSharedDataSystem {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataSystem.JonGuiDataSystem) {
-          return mergeFrom((data.JonSharedDataSystem.JonGuiDataSystem)other);
+        if (other instanceof ser.JonSharedDataSystem.JonGuiDataSystem) {
+          return mergeFrom((ser.JonSharedDataSystem.JonGuiDataSystem)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataSystem.JonGuiDataSystem other) {
-        if (other == data.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataSystem.JonGuiDataSystem other) {
+        if (other == ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance()) return this;
         if (other.getCpuTemperature() != 0F) {
           setCpuTemperature(other.getCpuTemperature());
         }
@@ -1409,14 +1409,14 @@ public final class JonSharedDataSystem {
 
       private int loc_ = 0;
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
        * @return The enum numeric value on the wire for loc.
        */
       @java.lang.Override public int getLocValue() {
         return loc_;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
        * @param value The enum numeric value on the wire for loc to set.
        * @return This builder for chaining.
        */
@@ -1427,20 +1427,20 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
        * @return The loc.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
-        data.JonSharedDataTypes.JonGuiDataSystemLocalizations result = data.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
+        ser.JonSharedDataTypes.JonGuiDataSystemLocalizations result = ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
        * @param value The loc to set.
        * @return This builder for chaining.
        */
-      public Builder setLoc(data.JonSharedDataTypes.JonGuiDataSystemLocalizations value) {
+      public Builder setLoc(ser.JonSharedDataTypes.JonGuiDataSystemLocalizations value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1450,7 +1450,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearLoc() {
@@ -1972,16 +1972,16 @@ public final class JonSharedDataSystem {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.JonGuiDataSystem)
+      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataSystem)
     }
 
-    // @@protoc_insertion_point(class_scope:data.JonGuiDataSystem)
-    private static final data.JonSharedDataSystem.JonGuiDataSystem DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.JonGuiDataSystem)
+    private static final ser.JonSharedDataSystem.JonGuiDataSystem DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataSystem.JonGuiDataSystem();
+      DEFAULT_INSTANCE = new ser.JonSharedDataSystem.JonGuiDataSystem();
     }
 
-    public static data.JonSharedDataSystem.JonGuiDataSystem getDefaultInstance() {
+    public static ser.JonSharedDataSystem.JonGuiDataSystem getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2017,17 +2017,17 @@ public final class JonSharedDataSystem {
     }
 
     @java.lang.Override
-    public data.JonSharedDataSystem.JonGuiDataSystem getDefaultInstanceForType() {
+    public ser.JonSharedDataSystem.JonGuiDataSystem getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_JonGuiDataSystem_descriptor;
+    internal_static_ser_JonGuiDataSystem_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_JonGuiDataSystem_fieldAccessorTable;
+      internal_static_ser_JonGuiDataSystem_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2037,40 +2037,40 @@ public final class JonSharedDataSystem {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\034jon_shared_data_system.proto\022\004data\032\033jo" +
-      "n_shared_data_types.proto\"\337\004\n\020JonGuiData" +
-      "System\022\027\n\017cpu_temperature\030\001 \001(\002\022\027\n\017gpu_t" +
-      "emperature\030\002 \001(\002\022\020\n\010gpu_load\030\003 \001(\002\022\020\n\010cp" +
-      "u_load\030\004 \001(\002\022\031\n\021power_consumption\030\005 \001(\002\022" +
-      "0\n\003loc\030\006 \001(\0162#.data.JonGuiDataSystemLoca" +
-      "lizations\022\036\n\026cur_video_rec_dir_year\030\007 \001(" +
-      "\005\022\037\n\027cur_video_rec_dir_month\030\010 \001(\005\022\035\n\025cu" +
-      "r_video_rec_dir_day\030\t \001(\005\022\036\n\026cur_video_r" +
-      "ec_dir_hour\030\n \001(\005\022 \n\030cur_video_rec_dir_m" +
-      "inute\030\013 \001(\005\022 \n\030cur_video_rec_dir_second\030" +
-      "\014 \001(\005\022\023\n\013rec_enabled\030\r \001(\010\022\035\n\025important_" +
-      "rec_enabled\030\016 \001(\010\022\026\n\016low_disk_space\030\017 \001(" +
-      "\010\022\025\n\rno_disk_space\030\020 \001(\010\022\022\n\ndisk_space\030\021" +
-      " \001(\005\022\020\n\010tracking\030\022 \001(\010\022\024\n\014vampire_mode\030\023" +
-      " \001(\010\022\032\n\022stabilization_mode\030\024 \001(\010\022\025\n\rgeod" +
-      "esic_mode\030\025 \001(\010\022\022\n\ncv_dumping\030\026 \001(\010BNZLg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/data/systemb\006pro" +
-      "to3"
+      "\n\034jon_shared_data_system.proto\022\003ser\032\033jon" +
+      "_shared_data_types.proto\"\336\004\n\020JonGuiDataS" +
+      "ystem\022\027\n\017cpu_temperature\030\001 \001(\002\022\027\n\017gpu_te" +
+      "mperature\030\002 \001(\002\022\020\n\010gpu_load\030\003 \001(\002\022\020\n\010cpu" +
+      "_load\030\004 \001(\002\022\031\n\021power_consumption\030\005 \001(\002\022/" +
+      "\n\003loc\030\006 \001(\0162\".ser.JonGuiDataSystemLocali" +
+      "zations\022\036\n\026cur_video_rec_dir_year\030\007 \001(\005\022" +
+      "\037\n\027cur_video_rec_dir_month\030\010 \001(\005\022\035\n\025cur_" +
+      "video_rec_dir_day\030\t \001(\005\022\036\n\026cur_video_rec" +
+      "_dir_hour\030\n \001(\005\022 \n\030cur_video_rec_dir_min" +
+      "ute\030\013 \001(\005\022 \n\030cur_video_rec_dir_second\030\014 " +
+      "\001(\005\022\023\n\013rec_enabled\030\r \001(\010\022\035\n\025important_re" +
+      "c_enabled\030\016 \001(\010\022\026\n\016low_disk_space\030\017 \001(\010\022" +
+      "\025\n\rno_disk_space\030\020 \001(\010\022\022\n\ndisk_space\030\021 \001" +
+      "(\005\022\020\n\010tracking\030\022 \001(\010\022\024\n\014vampire_mode\030\023 \001" +
+      "(\010\022\032\n\022stabilization_mode\030\024 \001(\010\022\025\n\rgeodes" +
+      "ic_mode\030\025 \001(\010\022\022\n\ncv_dumping\030\026 \001(\010BNZLgit" +
+      "-codecommit.eu-central-1.amazonaws.com/v" +
+      "1/repos/jettison/jonp/data/systemb\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_data_JonGuiDataSystem_descriptor =
+    internal_static_ser_JonGuiDataSystem_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_data_JonGuiDataSystem_fieldAccessorTable = new
+    internal_static_ser_JonGuiDataSystem_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_JonGuiDataSystem_descriptor,
+        internal_static_ser_JonGuiDataSystem_descriptor,
         new java.lang.String[] { "CpuTemperature", "GpuTemperature", "GpuLoad", "CpuLoad", "PowerConsumption", "Loc", "CurVideoRecDirYear", "CurVideoRecDirMonth", "CurVideoRecDirDay", "CurVideoRecDirHour", "CurVideoRecDirMinute", "CurVideoRecDirSecond", "RecEnabled", "ImportantRecEnabled", "LowDiskSpace", "NoDiskSpace", "DiskSpace", "Tracking", "VampireMode", "StabilizationMode", "GeodesicMode", "CvDumping", });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

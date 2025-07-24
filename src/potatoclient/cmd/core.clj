@@ -9,7 +9,7 @@
   (:import [cmd JonSharedCmd$Root
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis]
-           [data JonSharedDataTypes$JonGuiDataClientType]
+           [ser JonSharedDataTypes$JonGuiDataClientType]
            [com.google.protobuf.util JsonFormat]))
 
 ;; ============================================================================

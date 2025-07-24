@@ -54,15 +54,15 @@ public final class JonSharedCmd {
     boolean getFromCvSubsystem();
 
     /**
-     * <code>.data.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
      * @return The enum numeric value on the wire for clientType.
      */
     int getClientTypeValue();
     /**
-     * <code>.data.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
      * @return The clientType.
      */
-    data.JonSharedDataTypes.JonGuiDataClientType getClientType();
+    ser.JonSharedDataTypes.JonGuiDataClientType getClientType();
 
     /**
      * <code>.cmd.DayCamera.Root day_camera = 20;</code>
@@ -444,19 +444,19 @@ public final class JonSharedCmd {
     public static final int CLIENT_TYPE_FIELD_NUMBER = 5;
     private int clientType_ = 0;
     /**
-     * <code>.data.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
      * @return The enum numeric value on the wire for clientType.
      */
     @java.lang.Override public int getClientTypeValue() {
       return clientType_;
     }
     /**
-     * <code>.data.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
      * @return The clientType.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataClientType getClientType() {
-      data.JonSharedDataTypes.JonGuiDataClientType result = data.JonSharedDataTypes.JonGuiDataClientType.forNumber(clientType_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataClientType.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataClientType getClientType() {
+      ser.JonSharedDataTypes.JonGuiDataClientType result = ser.JonSharedDataTypes.JonGuiDataClientType.forNumber(clientType_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataClientType.UNRECOGNIZED : result;
     }
 
     public static final int DAY_CAMERA_FIELD_NUMBER = 20;
@@ -950,7 +950,7 @@ public final class JonSharedCmd {
       if (fromCvSubsystem_ != false) {
         output.writeBool(4, fromCvSubsystem_);
       }
-      if (clientType_ != data.JonSharedDataTypes.JonGuiDataClientType.JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED.getNumber()) {
+      if (clientType_ != ser.JonSharedDataTypes.JonGuiDataClientType.JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED.getNumber()) {
         output.writeEnum(5, clientType_);
       }
       if (payloadCase_ == 20) {
@@ -1023,7 +1023,7 @@ public final class JonSharedCmd {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, fromCvSubsystem_);
       }
-      if (clientType_ != data.JonSharedDataTypes.JonGuiDataClientType.JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED.getNumber()) {
+      if (clientType_ != ser.JonSharedDataTypes.JonGuiDataClientType.JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(5, clientType_);
       }
@@ -1972,14 +1972,14 @@ public final class JonSharedCmd {
 
       private int clientType_ = 0;
       /**
-       * <code>.data.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
        * @return The enum numeric value on the wire for clientType.
        */
       @java.lang.Override public int getClientTypeValue() {
         return clientType_;
       }
       /**
-       * <code>.data.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
        * @param value The enum numeric value on the wire for clientType to set.
        * @return This builder for chaining.
        */
@@ -1990,20 +1990,20 @@ public final class JonSharedCmd {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
        * @return The clientType.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataClientType getClientType() {
-        data.JonSharedDataTypes.JonGuiDataClientType result = data.JonSharedDataTypes.JonGuiDataClientType.forNumber(clientType_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataClientType.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataClientType getClientType() {
+        ser.JonSharedDataTypes.JonGuiDataClientType result = ser.JonSharedDataTypes.JonGuiDataClientType.forNumber(clientType_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataClientType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
        * @param value The clientType to set.
        * @return This builder for chaining.
        */
-      public Builder setClientType(data.JonSharedDataTypes.JonGuiDataClientType value) {
+      public Builder setClientType(ser.JonSharedDataTypes.JonGuiDataClientType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2013,7 +2013,7 @@ public final class JonSharedCmd {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientType() {
@@ -5308,27 +5308,27 @@ public final class JonSharedCmd {
       "system.proto\032\027jon_shared_cmd_cv.proto\032)j" +
       "on_shared_cmd_day_cam_glass_heater.proto" +
       "\032\031jon_shared_cmd_lira.proto\032\033jon_shared_" +
-      "data_types.proto\"\304\005\n\004Root\022\030\n\020protocol_ve" +
+      "data_types.proto\"\303\005\n\004Root\022\030\n\020protocol_ve" +
       "rsion\030\001 \001(\r\022\022\n\nsession_id\030\002 \001(\r\022\021\n\timpor" +
-      "tant\030\003 \001(\010\022\031\n\021from_cv_subsystem\030\004 \001(\010\022/\n" +
-      "\013client_type\030\005 \001(\0162\032.data.JonGuiDataClie" +
-      "ntType\022)\n\nday_camera\030\024 \001(\0132\023.cmd.DayCame" +
-      "ra.RootH\000\022+\n\013heat_camera\030\025 \001(\0132\024.cmd.Hea" +
-      "tCamera.RootH\000\022\034\n\003gps\030\026 \001(\0132\r.cmd.Gps.Ro" +
-      "otH\000\022$\n\007compass\030\027 \001(\0132\021.cmd.Compass.Root" +
-      "H\000\022\034\n\003lrf\030\030 \001(\0132\r.cmd.Lrf.RootH\000\022(\n\tlrf_" +
-      "calib\030\031 \001(\0132\023.cmd.Lrf_calib.RootH\000\022*\n\006ro" +
-      "tary\030\032 \001(\0132\030.cmd.RotaryPlatform.RootH\000\022\034" +
-      "\n\003osd\030\033 \001(\0132\r.cmd.OSD.RootH\000\022\031\n\004ping\030\034 \001" +
-      "(\0132\t.cmd.PingH\000\022\031\n\004noop\030\035 \001(\0132\t.cmd.Noop" +
-      "H\000\022\035\n\006frozen\030\036 \001(\0132\013.cmd.FrozenH\000\022\"\n\006sys" +
-      "tem\030\037 \001(\0132\020.cmd.System.RootH\000\022\032\n\002cv\030  \001(" +
-      "\0132\014.cmd.CV.RootH\000\022;\n\024day_cam_glass_heate" +
-      "r\030! \001(\0132\033.cmd.DayCamGlassHeater.RootH\000\022\036" +
-      "\n\004lira\030\" \001(\0132\016.cmd.Lira.RootH\000B\t\n\007payloa" +
-      "dJ\004\010\006\020\024\"\006\n\004Ping\"\006\n\004Noop\"\010\n\006FrozenBFZDgit" +
-      "-codecommit.eu-central-1.amazonaws.com/v" +
-      "1/repos/jettison/jonp/cmdb\006proto3"
+      "tant\030\003 \001(\010\022\031\n\021from_cv_subsystem\030\004 \001(\010\022.\n" +
+      "\013client_type\030\005 \001(\0162\031.ser.JonGuiDataClien" +
+      "tType\022)\n\nday_camera\030\024 \001(\0132\023.cmd.DayCamer" +
+      "a.RootH\000\022+\n\013heat_camera\030\025 \001(\0132\024.cmd.Heat" +
+      "Camera.RootH\000\022\034\n\003gps\030\026 \001(\0132\r.cmd.Gps.Roo" +
+      "tH\000\022$\n\007compass\030\027 \001(\0132\021.cmd.Compass.RootH" +
+      "\000\022\034\n\003lrf\030\030 \001(\0132\r.cmd.Lrf.RootH\000\022(\n\tlrf_c" +
+      "alib\030\031 \001(\0132\023.cmd.Lrf_calib.RootH\000\022*\n\006rot" +
+      "ary\030\032 \001(\0132\030.cmd.RotaryPlatform.RootH\000\022\034\n" +
+      "\003osd\030\033 \001(\0132\r.cmd.OSD.RootH\000\022\031\n\004ping\030\034 \001(" +
+      "\0132\t.cmd.PingH\000\022\031\n\004noop\030\035 \001(\0132\t.cmd.NoopH" +
+      "\000\022\035\n\006frozen\030\036 \001(\0132\013.cmd.FrozenH\000\022\"\n\006syst" +
+      "em\030\037 \001(\0132\020.cmd.System.RootH\000\022\032\n\002cv\030  \001(\013" +
+      "2\014.cmd.CV.RootH\000\022;\n\024day_cam_glass_heater" +
+      "\030! \001(\0132\033.cmd.DayCamGlassHeater.RootH\000\022\036\n" +
+      "\004lira\030\" \001(\0132\016.cmd.Lira.RootH\000B\t\n\007payload" +
+      "J\004\010\006\020\024\"\006\n\004Ping\"\006\n\004Noop\"\010\n\006FrozenBFZDgit-" +
+      "codecommit.eu-central-1.amazonaws.com/v1" +
+      "/repos/jettison/jonp/cmdb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5345,7 +5345,7 @@ public final class JonSharedCmd {
           cmd.CV.JonSharedCmdCv.getDescriptor(),
           cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater.getDescriptor(),
           cmd.Lira.JonSharedCmdLira.getDescriptor(),
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -5384,7 +5384,7 @@ public final class JonSharedCmd {
     cmd.CV.JonSharedCmdCv.getDescriptor();
     cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater.getDescriptor();
     cmd.Lira.JonSharedCmdLira.getDescriptor();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

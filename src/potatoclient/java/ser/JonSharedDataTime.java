@@ -3,7 +3,7 @@
 // source: jon_shared_data_time.proto
 // Protobuf Java Version: 4.29.5
 
-package data;
+package ser;
 
 public final class JonSharedDataTime {
   private JonSharedDataTime() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataTime {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataTimeOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.JonGuiDataTime)
+      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataTime)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -54,11 +54,11 @@ public final class JonSharedDataTime {
     boolean getUseManualTime();
   }
   /**
-   * Protobuf type {@code data.JonGuiDataTime}
+   * Protobuf type {@code ser.JonGuiDataTime}
    */
   public static final class JonGuiDataTime extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.JonGuiDataTime)
+      // @@protoc_insertion_point(message_implements:ser.JonGuiDataTime)
       JonGuiDataTimeOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -79,15 +79,15 @@ public final class JonSharedDataTime {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataTime.internal_static_data_JonGuiDataTime_descriptor;
+      return ser.JonSharedDataTime.internal_static_ser_JonGuiDataTime_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataTime.internal_static_data_JonGuiDataTime_fieldAccessorTable
+      return ser.JonSharedDataTime.internal_static_ser_JonGuiDataTime_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataTime.JonGuiDataTime.class, data.JonSharedDataTime.JonGuiDataTime.Builder.class);
+              ser.JonSharedDataTime.JonGuiDataTime.class, ser.JonSharedDataTime.JonGuiDataTime.Builder.class);
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
@@ -195,10 +195,10 @@ public final class JonSharedDataTime {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataTime.JonGuiDataTime)) {
+      if (!(obj instanceof ser.JonSharedDataTime.JonGuiDataTime)) {
         return super.equals(obj);
       }
-      data.JonSharedDataTime.JonGuiDataTime other = (data.JonSharedDataTime.JonGuiDataTime) obj;
+      ser.JonSharedDataTime.JonGuiDataTime other = (ser.JonSharedDataTime.JonGuiDataTime) obj;
 
       if (getTimestamp()
           != other.getTimestamp()) return false;
@@ -235,44 +235,44 @@ public final class JonSharedDataTime {
       return hash;
     }
 
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(byte[] data)
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -280,26 +280,26 @@ public final class JonSharedDataTime {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataTime.JonGuiDataTime parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataTime.JonGuiDataTime parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataTime.JonGuiDataTime parseDelimitedFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataTime.JonGuiDataTime parseFrom(
+    public static ser.JonSharedDataTime.JonGuiDataTime parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -312,7 +312,7 @@ public final class JonSharedDataTime {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataTime.JonGuiDataTime prototype) {
+    public static Builder newBuilder(ser.JonSharedDataTime.JonGuiDataTime prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -328,26 +328,26 @@ public final class JonSharedDataTime {
       return builder;
     }
     /**
-     * Protobuf type {@code data.JonGuiDataTime}
+     * Protobuf type {@code ser.JonGuiDataTime}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.JonGuiDataTime)
-        data.JonSharedDataTime.JonGuiDataTimeOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataTime)
+        ser.JonSharedDataTime.JonGuiDataTimeOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataTime.internal_static_data_JonGuiDataTime_descriptor;
+        return ser.JonSharedDataTime.internal_static_ser_JonGuiDataTime_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataTime.internal_static_data_JonGuiDataTime_fieldAccessorTable
+        return ser.JonSharedDataTime.internal_static_ser_JonGuiDataTime_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataTime.JonGuiDataTime.class, data.JonSharedDataTime.JonGuiDataTime.Builder.class);
+                ser.JonSharedDataTime.JonGuiDataTime.class, ser.JonSharedDataTime.JonGuiDataTime.Builder.class);
       }
 
-      // Construct using data.JonSharedDataTime.JonGuiDataTime.newBuilder()
+      // Construct using ser.JonSharedDataTime.JonGuiDataTime.newBuilder()
       private Builder() {
 
       }
@@ -371,17 +371,17 @@ public final class JonSharedDataTime {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataTime.internal_static_data_JonGuiDataTime_descriptor;
+        return ser.JonSharedDataTime.internal_static_ser_JonGuiDataTime_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataTime.JonGuiDataTime getDefaultInstanceForType() {
-        return data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance();
+      public ser.JonSharedDataTime.JonGuiDataTime getDefaultInstanceForType() {
+        return ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataTime.JonGuiDataTime build() {
-        data.JonSharedDataTime.JonGuiDataTime result = buildPartial();
+      public ser.JonSharedDataTime.JonGuiDataTime build() {
+        ser.JonSharedDataTime.JonGuiDataTime result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -389,14 +389,14 @@ public final class JonSharedDataTime {
       }
 
       @java.lang.Override
-      public data.JonSharedDataTime.JonGuiDataTime buildPartial() {
-        data.JonSharedDataTime.JonGuiDataTime result = new data.JonSharedDataTime.JonGuiDataTime(this);
+      public ser.JonSharedDataTime.JonGuiDataTime buildPartial() {
+        ser.JonSharedDataTime.JonGuiDataTime result = new ser.JonSharedDataTime.JonGuiDataTime(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataTime.JonGuiDataTime result) {
+      private void buildPartial0(ser.JonSharedDataTime.JonGuiDataTime result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.timestamp_ = timestamp_;
@@ -414,16 +414,16 @@ public final class JonSharedDataTime {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataTime.JonGuiDataTime) {
-          return mergeFrom((data.JonSharedDataTime.JonGuiDataTime)other);
+        if (other instanceof ser.JonSharedDataTime.JonGuiDataTime) {
+          return mergeFrom((ser.JonSharedDataTime.JonGuiDataTime)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataTime.JonGuiDataTime other) {
-        if (other == data.JonSharedDataTime.JonGuiDataTime.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataTime.JonGuiDataTime other) {
+        if (other == ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance()) return this;
         if (other.getTimestamp() != 0L) {
           setTimestamp(other.getTimestamp());
         }
@@ -627,16 +627,16 @@ public final class JonSharedDataTime {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.JonGuiDataTime)
+      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataTime)
     }
 
-    // @@protoc_insertion_point(class_scope:data.JonGuiDataTime)
-    private static final data.JonSharedDataTime.JonGuiDataTime DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.JonGuiDataTime)
+    private static final ser.JonSharedDataTime.JonGuiDataTime DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataTime.JonGuiDataTime();
+      DEFAULT_INSTANCE = new ser.JonSharedDataTime.JonGuiDataTime();
     }
 
-    public static data.JonSharedDataTime.JonGuiDataTime getDefaultInstance() {
+    public static ser.JonSharedDataTime.JonGuiDataTime getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -672,17 +672,17 @@ public final class JonSharedDataTime {
     }
 
     @java.lang.Override
-    public data.JonSharedDataTime.JonGuiDataTime getDefaultInstanceForType() {
+    public ser.JonSharedDataTime.JonGuiDataTime getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_JonGuiDataTime_descriptor;
+    internal_static_ser_JonGuiDataTime_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_JonGuiDataTime_fieldAccessorTable;
+      internal_static_ser_JonGuiDataTime_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -692,22 +692,22 @@ public final class JonSharedDataTime {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\032jon_shared_data_time.proto\022\004data\"g\n\016Jo" +
-      "nGuiDataTime\022\021\n\ttimestamp\030\001 \001(\003\022\030\n\020manua" +
-      "l_timestamp\030\002 \001(\003\022\017\n\007zone_id\030\003 \001(\005\022\027\n\017us" +
-      "e_manual_time\030\004 \001(\010BLZJgit-codecommit.eu" +
-      "-central-1.amazonaws.com/v1/repos/jettis" +
-      "on/jonp/data/timeb\006proto3"
+      "\n\032jon_shared_data_time.proto\022\003ser\"g\n\016Jon" +
+      "GuiDataTime\022\021\n\ttimestamp\030\001 \001(\003\022\030\n\020manual" +
+      "_timestamp\030\002 \001(\003\022\017\n\007zone_id\030\003 \001(\005\022\027\n\017use" +
+      "_manual_time\030\004 \001(\010BLZJgit-codecommit.eu-" +
+      "central-1.amazonaws.com/v1/repos/jettiso" +
+      "n/jonp/data/timeb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_data_JonGuiDataTime_descriptor =
+    internal_static_ser_JonGuiDataTime_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_data_JonGuiDataTime_fieldAccessorTable = new
+    internal_static_ser_JonGuiDataTime_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_JonGuiDataTime_descriptor,
+        internal_static_ser_JonGuiDataTime_descriptor,
         new java.lang.String[] { "Timestamp", "ManualTimestamp", "ZoneId", "UseManualTime", });
     descriptor.resolveAllFeaturesImmutable();
   }

@@ -28,7 +28,7 @@
         (with-open [rdr (-> resource io/reader PushbackReader.)]
           (edn/read rdr))))
     (catch Exception e
-      (logging/log-error (str "Failed to load translation file for locale: " locale " Error: " (.getMessage e)))
+      (logging/log-error {:msg (str "Failed to load translation file for locale: " locale " Error: " (.getMessage e))})
       nil)))
 
 (>defn load-translations!
@@ -50,7 +50,7 @@
   "Reload all translations - useful for development"
   []
   [=> :potatoclient.specs/translations-map]
-  (logging/log-info "Reloading translations...")
+  (logging/log-info {:msg "Reloading translations..."})
   (load-translations!))
 
 ;; Initialize translations on namespace load

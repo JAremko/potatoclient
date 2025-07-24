@@ -7628,15 +7628,15 @@ public final class JonSharedCmdSystem {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
      * @return The enum numeric value on the wire for loc.
      */
     int getLocValue();
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
      * @return The loc.
      */
-    data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
+    ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
   }
   /**
    * Protobuf type {@code cmd.System.SetLocalization}
@@ -7679,19 +7679,19 @@ public final class JonSharedCmdSystem {
     public static final int LOC_FIELD_NUMBER = 1;
     private int loc_ = 0;
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
      * @return The enum numeric value on the wire for loc.
      */
     @java.lang.Override public int getLocValue() {
       return loc_;
     }
     /**
-     * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
      * @return The loc.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
-      data.JonSharedDataTypes.JonGuiDataSystemLocalizations result = data.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
+      ser.JonSharedDataTypes.JonGuiDataSystemLocalizations result = ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -7708,7 +7708,7 @@ public final class JonSharedCmdSystem {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (loc_ != data.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
+      if (loc_ != ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, loc_);
       }
       getUnknownFields().writeTo(output);
@@ -7720,7 +7720,7 @@ public final class JonSharedCmdSystem {
       if (size != -1) return size;
 
       size = 0;
-      if (loc_ != data.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
+      if (loc_ != ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, loc_);
       }
@@ -7988,14 +7988,14 @@ public final class JonSharedCmdSystem {
 
       private int loc_ = 0;
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
        * @return The enum numeric value on the wire for loc.
        */
       @java.lang.Override public int getLocValue() {
         return loc_;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
        * @param value The enum numeric value on the wire for loc to set.
        * @return This builder for chaining.
        */
@@ -8006,20 +8006,20 @@ public final class JonSharedCmdSystem {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
        * @return The loc.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
-        data.JonSharedDataTypes.JonGuiDataSystemLocalizations result = data.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
+        ser.JonSharedDataTypes.JonGuiDataSystemLocalizations result = ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.forNumber(loc_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
        * @param value The loc to set.
        * @return This builder for chaining.
        */
-      public Builder setLoc(data.JonSharedDataTypes.JonGuiDataSystemLocalizations value) {
+      public Builder setLoc(ser.JonSharedDataTypes.JonGuiDataSystemLocalizations value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8029,7 +8029,7 @@ public final class JonSharedCmdSystem {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearLoc() {
@@ -8192,16 +8192,16 @@ public final class JonSharedCmdSystem {
       "etConfigs\"\n\n\010StartRec\"\t\n\007StopRec\"\022\n\020Mark" +
       "RecImportant\"\024\n\022UnmarkRecImportant\"\020\n\016En" +
       "terTransport\"\024\n\022EnableGeodesicMode\"\025\n\023Di" +
-      "sableGeodesicMode\"C\n\017SetLocalization\0220\n\003" +
-      "loc\030\001 \001(\0162#.data.JonGuiDataSystemLocaliz" +
-      "ationsBMZKgit-codecommit.eu-central-1.am" +
-      "azonaws.com/v1/repos/jettison/jonp/cmd/s" +
-      "ystemb\006proto3"
+      "sableGeodesicMode\"B\n\017SetLocalization\022/\n\003" +
+      "loc\030\001 \001(\0162\".ser.JonGuiDataSystemLocaliza" +
+      "tionsBMZKgit-codecommit.eu-central-1.ama" +
+      "zonaws.com/v1/repos/jettison/jonp/cmd/sy" +
+      "stemb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_System_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -8288,7 +8288,7 @@ public final class JonSharedCmdSystem {
         internal_static_cmd_System_SetLocalization_descriptor,
         new java.lang.String[] { "Loc", });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -21,7 +21,7 @@
             JonSharedCmdHeatCamera$SetClaheLevel JonSharedCmdHeatCamera$ShiftClaheLevel
             JonSharedCmdHeatCamera$ResetZoom JonSharedCmdHeatCamera$SaveToTable
             JonSharedCmdHeatCamera$SetCalibMode]
-           [data
+           [ser
             JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes
             JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters
             JonSharedDataTypes$JonGuiDataFxModeHeat]))

@@ -48,7 +48,7 @@
       (apply-theme! theme-key)
       true)
     (do
-      (logging/log-error (str "Invalid theme key: " theme-key))
+      (logging/log-error {:msg (str "Invalid theme key: " theme-key)})
       false)))
 
 (>defn initialize-theme!

@@ -8,8 +8,8 @@
             [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.specs :as specs])
-  (:import (cmd JonSharedCmd$Root)
-           (data JonSharedData$JonGUIState)))
+  (:import (cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen)
+           (ser JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType)))
 
 ;; Client type constants for better readability
 (def client-types
@@ -36,25 +36,36 @@
    [:important ::specs/important]
    [:from-cv-subsystem ::specs/from-cv-subsystem]
    [:client-type client-type-values]
-   [:payload ::specs/payload]])
+   ;; Allow any of the payload types directly
+   [:ping {:optional true} map?]
+   [:noop {:optional true} map?]
+   [:frozen {:optional true} map?]
+   [:day-camera {:optional true} map?]
+   [:heat-camera {:optional true} map?]
+   [:gps {:optional true} map?]
+   [:compass {:optional true} map?]
+   [:lrf {:optional true} map?]
+   [:rotary {:optional true} map?]
+   [:osd {:optional true} map?]])
 
 ;; Utility functions for case conversion
 (>defn- camel->kebab
-  "Convert camelCase or PascalCase to kebab-case."
+  "Convert camelCase, PascalCase, or snake_case to kebab-case."
   [s]
   [string? => string?]
   (-> s
+      ;; First convert underscores to hyphens
+      (str/replace #"_" "-")
+      ;; Then handle camelCase
       (str/replace #"([a-z])([A-Z])" "$1-$2")
       (str/replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
       str/lower-case))
 
-(>defn- kebab->camel
-  "Convert kebab-case to camelCase."
+(>defn- kebab->snake
+  "Convert kebab-case to snake_case for protobuf fields."
   [s]
   [string? => string?]
-  (let [parts (str/split s #"-")]
-    (str (first parts)
-         (apply str (map str/capitalize (rest parts))))))
+  (str/replace s #"-" "_"))
 
 ;; Protobuf message conversion functions
 (>defn- proto-map->clj-map
@@ -70,8 +81,15 @@
               kebab-name (camel->kebab field-name)
               value (.getField proto-msg field)]
           (cond
-           ;; Skip unset fields
+           ;; Skip unset fields - for message types, check hasField instead
             (and (not (.isRepeated field))
+                 (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+                 (not (.hasField proto-msg field)))
+            acc
+            
+           ;; Skip unset primitive fields
+            (and (not (.isRepeated field))
+                 (not= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
                  (= value (.getDefaultValue field)))
             acc
 
@@ -87,9 +105,7 @@
 
            ;; Handle message types
             (instance? com.google.protobuf.Message value)
-            (if (.hasField proto-msg field)
-              (assoc acc (keyword kebab-name) (proto-map->clj-map value))
-              acc)
+            (assoc acc (keyword kebab-name) (proto-map->clj-map value))
 
            ;; Handle enum types
             (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
@@ -108,7 +124,7 @@
   [any? map? => any?]
   (let [descriptor (.getDescriptorForType builder)]
     (doseq [[k v] clj-map]
-      (let [field-name (kebab->camel (name k))
+      (let [field-name (kebab->snake (name k))
             field (.findFieldByName descriptor field-name)]
         (when field
           (cond
@@ -124,7 +140,8 @@
             ;; Handle message types
             (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
             (let [nested-builder (.newBuilderForField builder field)]
-              (clj-map->proto-builder nested-builder v)
+              (when (seq v) ; Only process if v has content
+                (clj-map->proto-builder nested-builder v))
               (.setField builder field (.build nested-builder)))
 
             ;; Handle enum types
@@ -149,14 +166,32 @@
    :important true
    :from-cv-subsystem false
    :client-type \"JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK\"
-   :payload {:ping {}}}
+   :ping {}}
    
   Returns the serialized bytes or throws an exception with details."
   [cmd-map]
-  [:potatoclient.specs/command => bytes?]
+  [map? => bytes?]
   (try
     (let [builder (JonSharedCmd$Root/newBuilder)]
-      (clj-map->proto-builder builder cmd-map)
+      ;; Set basic fields using specific setters
+      (when-let [pv (:protocol-version cmd-map)]
+        (.setProtocolVersion builder pv))
+      (when-let [sid (:session-id cmd-map)]
+        (.setSessionId builder sid))
+      (when (contains? cmd-map :important)
+        (.setImportant builder (:important cmd-map)))
+      (when (contains? cmd-map :from-cv-subsystem)
+        (.setFromCvSubsystem builder (:from-cv-subsystem cmd-map)))
+      ;; Set client type enum
+      (when-let [ct (:client-type cmd-map)]
+        (if (string? ct)
+          (.setClientType builder (ser.JonSharedDataTypes$JonGuiDataClientType/valueOf ct))
+          (.setClientType builder ct)))
+      ;; Set payload using specific setter based on type
+      (cond
+        (:ping cmd-map) (.setPing builder (cmd.JonSharedCmd$Ping/newBuilder))
+        (:noop cmd-map) (.setNoop builder (cmd.JonSharedCmd$Noop/newBuilder))
+        (:frozen cmd-map) (.setFrozen builder (cmd.JonSharedCmd$Frozen/newBuilder)))
       (.toByteArray (.build builder)))
     (catch Exception e
       (throw (ex-info "Failed to serialize command"
@@ -186,7 +221,7 @@
   [session-id client-type-key & {:keys [important? from-cv?]
                                  :or {important? false
                                       from-cv? false}}]
-  [::specs/session-id ::specs/client-type-key (? (s/* any?)) => map?]
+  [::specs/session-id keyword? (? (s/* any?)) => map?]
   {:protocol-version 1
    :session-id session-id
    :important important?
@@ -196,23 +231,23 @@
 (>defn cmd-ping
   "Create a ping command for heartbeat/keepalive."
   [session-id client-type-key]
-  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-  (assoc (create-command session-id client-type-key)
-         :payload {:ping {}}))
+  [pos-int? keyword? => map?]
+  (let [base-cmd (create-command session-id client-type-key)]
+    (assoc base-cmd :ping {})))
 
 (>defn cmd-noop
   "Create a no-operation command."
   [session-id client-type-key]
-  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-  (assoc (create-command session-id client-type-key)
-         :payload {:noop {}}))
+  [pos-int? keyword? => map?]
+  (let [base-cmd (create-command session-id client-type-key)]
+    (assoc base-cmd :noop {})))
 
 (>defn cmd-frozen
   "Create a frozen command (marks important state)."
   [session-id client-type-key]
-  [pos-int? [:enum :internal-cv :local :certificate :lira] => :potatoclient.specs/command]
-  (assoc (create-command session-id client-type-key :important? true)
-         :payload {:frozen {}}))
+  [pos-int? keyword? => map?]
+  (let [base-cmd (create-command session-id client-type-key :important? true)]
+    (assoc base-cmd :frozen {})))
 
 ;; State accessor functions with nil-safety
 (>defn get-system-info

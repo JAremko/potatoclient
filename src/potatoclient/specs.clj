@@ -168,7 +168,8 @@
    [:enum :ping :pong :noop :frozen :gimbal-angle-to :lrf-request :lrf-single-pulse]
    [:map]])
 
-(def command
+;; Original command spec - replaced by simplified version below
+#_(def command
   "Protocol command structure"
   [:map
    [:protocol-version protocol-version]
@@ -458,23 +459,23 @@
 (def rotary-direction
   "Rotary platform direction enum"
   [:fn {:error/message "must be a JonGuiDataRotaryDirection enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataRotaryDirection %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataRotaryDirection %)])
 
 (def rotary-mode
   "Rotary platform mode enum"
   [:fn {:error/message "must be a JonGuiDataRotaryMode enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataRotaryMode %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataRotaryMode %)])
 
 (def video-channel
   "Video channel enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannel enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannel %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannel %)])
 
 ;; TODO: These enums don't exist in the current protobuf definitions
 ;; (def day-camera-palette
 ;;   "Day camera palette enum"
 ;;   [:fn {:error/message "must be a JonGuiDataDayCameraPalette enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraPalette %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataDayCameraPalette %)])
 
 ;; Temporary definition until protobuf is fixed
 (def day-camera-palette
@@ -484,7 +485,7 @@
 ;; (def day-camera-agc-mode
 ;;   "Day camera AGC mode enum"
 ;;   [:fn {:error/message "must be a JonGuiDataDayCameraAgcMode enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraAgcMode %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataDayCameraAgcMode %)])
 
 (def day-camera-agc-mode
   "Day camera AGC mode enum"
@@ -493,7 +494,7 @@
 ;; (def day-camera-exposure-mode
 ;;   "Day camera exposure mode enum"
 ;;   [:fn {:error/message "must be a JonGuiDataDayCameraExposureMode enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraExposureMode %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataDayCameraExposureMode %)])
 
 (def day-camera-exposure-mode
   "Day camera exposure mode enum"
@@ -502,7 +503,7 @@
 ;; (def day-camera-wdr-mode
 ;;   "Day camera WDR mode enum"
 ;;   [:fn {:error/message "must be a JonGuiDataDayCameraWdrMode enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraWdrMode %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataDayCameraWdrMode %)])
 
 (def day-camera-wdr-mode
   "Day camera WDR mode enum"
@@ -511,7 +512,7 @@
 ;; (def day-camera-defog-status
 ;;   "Day camera defog status enum"
 ;;   [:fn {:error/message "must be a JonGuiDataDayCameraDefogStatus enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataDayCameraDefogStatus %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataDayCameraDefogStatus %)])
 
 (def day-camera-defog-status
   "Day camera defog status enum"
@@ -520,7 +521,7 @@
 ;; (def boolean-enum
 ;;   "Boolean value enum"
 ;;   [:fn {:error/message "must be a JonGuiDataBoolean enum"}
-;;    #(instance? data.JonSharedDataTypes$JonGuiDataBoolean %)])
+;;    #(instance? ser.JonSharedDataTypes$JonGuiDataBoolean %)])
 
 (def boolean-enum
   "Boolean value enum"
@@ -529,22 +530,22 @@
 (def day-fx-mode
   "Day camera FX mode enum"
   [:fn {:error/message "must be a JonGuiDataFxModeDay enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataFxModeDay %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeDay %)])
 
 (def heat-agc-mode
   "Heat camera AGC mode enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannelHeatAGCModes enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes %)])
 
 (def heat-filter
   "Heat camera filter enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannelHeatFilters enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters %)])
 
 (def heat-fx-mode
   "Heat camera FX mode enum"
   [:fn {:error/message "must be a JonGuiDataFxModeHeat enum"}
-   #(instance? data.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
+   #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
 
 (def dde-level
   "DDE level [0, 100]"
@@ -573,6 +574,11 @@
   [:map
    [:azimuth {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth$Builder %)]]
    [:elevation {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation$Builder %)]]])
+
+(def command
+  "Command structure - only validates payload is non-empty map"
+  [:map
+   [:payload [:and map? [:fn {:error/message "payload must be non-empty map"} seq]]]])
 
 (def command-payload-map
   "Command payload structure"

@@ -8429,15 +8429,15 @@ public final class JonSharedCmdLrf {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
      * @return The mode.
      */
-    data.JonSharedDataTypes.JonGuiDataLrfScanModes getMode();
+    ser.JonSharedDataTypes.JonGuiDataLrfScanModes getMode();
   }
   /**
    * Protobuf type {@code cmd.Lrf.SetScanMode}
@@ -8480,19 +8480,19 @@ public final class JonSharedCmdLrf {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
      * @return The mode.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataLrfScanModes getMode() {
-      data.JonSharedDataTypes.JonGuiDataLrfScanModes result = data.JonSharedDataTypes.JonGuiDataLrfScanModes.forNumber(mode_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataLrfScanModes.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataLrfScanModes getMode() {
+      ser.JonSharedDataTypes.JonGuiDataLrfScanModes result = ser.JonSharedDataTypes.JonGuiDataLrfScanModes.forNumber(mode_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataLrfScanModes.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8509,7 +8509,7 @@ public final class JonSharedCmdLrf {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (mode_ != data.JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != ser.JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, mode_);
       }
       getUnknownFields().writeTo(output);
@@ -8521,7 +8521,7 @@ public final class JonSharedCmdLrf {
       if (size != -1) return size;
 
       size = 0;
-      if (mode_ != data.JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != ser.JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, mode_);
       }
@@ -8789,14 +8789,14 @@ public final class JonSharedCmdLrf {
 
       private int mode_ = 0;
       /**
-       * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -8807,20 +8807,20 @@ public final class JonSharedCmdLrf {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
        * @return The mode.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataLrfScanModes getMode() {
-        data.JonSharedDataTypes.JonGuiDataLrfScanModes result = data.JonSharedDataTypes.JonGuiDataLrfScanModes.forNumber(mode_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataLrfScanModes.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataLrfScanModes getMode() {
+        ser.JonSharedDataTypes.JonGuiDataLrfScanModes result = ser.JonSharedDataTypes.JonGuiDataLrfScanModes.forNumber(mode_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataLrfScanModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
-      public Builder setMode(data.JonSharedDataTypes.JonGuiDataLrfScanModes value) {
+      public Builder setMode(ser.JonSharedDataTypes.JonGuiDataLrfScanModes value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -8830,7 +8830,7 @@ public final class JonSharedCmdLrf {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -9359,16 +9359,16 @@ public final class JonSharedCmdLrf {
       "ff\"\013\n\tRefineOff\"\n\n\010RefineOn\"\025\n\023TargetDes" +
       "ignatorOff\"\031\n\027TargetDesignatorOnModeA\"\031\n" +
       "\027TargetDesignatorOnModeB\"\017\n\rEnableFogMod" +
-      "e\"\020\n\016DisableFogMode\"9\n\013SetScanMode\022*\n\004mo" +
-      "de\030\001 \001(\0162\034.data.JonGuiDataLrfScanModes\"\014" +
-      "\n\nNewSessionBJZHgit-codecommit.eu-centra" +
-      "l-1.amazonaws.com/v1/repos/jettison/jonp" +
-      "/cmd/lrfb\006proto3"
+      "e\"\020\n\016DisableFogMode\"8\n\013SetScanMode\022)\n\004mo" +
+      "de\030\001 \001(\0162\033.ser.JonGuiDataLrfScanModes\"\014\n" +
+      "\nNewSessionBJZHgit-codecommit.eu-central" +
+      "-1.amazonaws.com/v1/repos/jettison/jonp/" +
+      "cmd/lrfb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_Lrf_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -9467,7 +9467,7 @@ public final class JonSharedCmdLrf {
         internal_static_cmd_Lrf_NewSession_descriptor,
         new java.lang.String[] { });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

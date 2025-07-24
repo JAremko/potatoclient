@@ -3,7 +3,7 @@
 // source: jon_shared_data_rotary.proto
 // Protobuf Java Version: 4.29.5
 
-package data;
+package ser;
 
 public final class JonSharedDataRotary {
   private JonSharedDataRotary() {}
@@ -26,7 +26,7 @@ public final class JonSharedDataRotary {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface JonGuiDataRotaryOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.JonGuiDataRotary)
+      // @@protoc_insertion_point(interface_extends:ser.JonGuiDataRotary)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -78,15 +78,15 @@ public final class JonSharedDataRotary {
     boolean getIsMoving();
 
     /**
-     * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
      * @return The mode.
      */
-    data.JonSharedDataTypes.JonGuiDataRotaryMode getMode();
+    ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode();
 
     /**
      * <code>bool is_scanning = 10;</code>
@@ -131,26 +131,26 @@ public final class JonSharedDataRotary {
     float getSunElevation();
 
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      * @return Whether the currentScanNode field is set.
      */
     boolean hasCurrentScanNode();
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      * @return The currentScanNode.
      */
-    data.JonSharedDataRotary.ScanNode getCurrentScanNode();
+    ser.JonSharedDataRotary.ScanNode getCurrentScanNode();
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      */
-    data.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder();
+    ser.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder();
   }
   /**
-   * Protobuf type {@code data.JonGuiDataRotary}
+   * Protobuf type {@code ser.JonGuiDataRotary}
    */
   public static final class JonGuiDataRotary extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.JonGuiDataRotary)
+      // @@protoc_insertion_point(message_implements:ser.JonGuiDataRotary)
       JonGuiDataRotaryOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -172,15 +172,15 @@ public final class JonSharedDataRotary {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataRotary.internal_static_data_JonGuiDataRotary_descriptor;
+      return ser.JonSharedDataRotary.internal_static_ser_JonGuiDataRotary_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataRotary.internal_static_data_JonGuiDataRotary_fieldAccessorTable
+      return ser.JonSharedDataRotary.internal_static_ser_JonGuiDataRotary_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataRotary.JonGuiDataRotary.class, data.JonSharedDataRotary.JonGuiDataRotary.Builder.class);
+              ser.JonSharedDataRotary.JonGuiDataRotary.class, ser.JonSharedDataRotary.JonGuiDataRotary.Builder.class);
     }
 
     private int bitField0_;
@@ -275,19 +275,19 @@ public final class JonSharedDataRotary {
     public static final int MODE_FIELD_NUMBER = 9;
     private int mode_ = 0;
     /**
-     * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
      * @return The mode.
      */
-    @java.lang.Override public data.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
-      data.JonSharedDataTypes.JonGuiDataRotaryMode result = data.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
-      return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
+    @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
+      ser.JonSharedDataTypes.JonGuiDataRotaryMode result = ser.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
+      return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
     }
 
     public static final int IS_SCANNING_FIELD_NUMBER = 10;
@@ -368,9 +368,9 @@ public final class JonSharedDataRotary {
     }
 
     public static final int CURRENT_SCAN_NODE_FIELD_NUMBER = 17;
-    private data.JonSharedDataRotary.ScanNode currentScanNode_;
+    private ser.JonSharedDataRotary.ScanNode currentScanNode_;
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      * @return Whether the currentScanNode field is set.
      */
     @java.lang.Override
@@ -378,19 +378,19 @@ public final class JonSharedDataRotary {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      * @return The currentScanNode.
      */
     @java.lang.Override
-    public data.JonSharedDataRotary.ScanNode getCurrentScanNode() {
-      return currentScanNode_ == null ? data.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
+    public ser.JonSharedDataRotary.ScanNode getCurrentScanNode() {
+      return currentScanNode_ == null ? ser.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
     }
     /**
-     * <code>.data.ScanNode current_scan_node = 17;</code>
+     * <code>.ser.ScanNode current_scan_node = 17;</code>
      */
     @java.lang.Override
-    public data.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder() {
-      return currentScanNode_ == null ? data.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
+    public ser.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder() {
+      return currentScanNode_ == null ? ser.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -431,7 +431,7 @@ public final class JonSharedDataRotary {
       if (isMoving_ != false) {
         output.writeBool(8, isMoving_);
       }
-      if (mode_ != data.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != ser.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
         output.writeEnum(9, mode_);
       }
       if (isScanning_ != false) {
@@ -499,7 +499,7 @@ public final class JonSharedDataRotary {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, isMoving_);
       }
-      if (mode_ != data.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
+      if (mode_ != ser.JonSharedDataTypes.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(9, mode_);
       }
@@ -545,10 +545,10 @@ public final class JonSharedDataRotary {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataRotary.JonGuiDataRotary)) {
+      if (!(obj instanceof ser.JonSharedDataRotary.JonGuiDataRotary)) {
         return super.equals(obj);
       }
-      data.JonSharedDataRotary.JonGuiDataRotary other = (data.JonSharedDataRotary.JonGuiDataRotary) obj;
+      ser.JonSharedDataRotary.JonGuiDataRotary other = (ser.JonSharedDataRotary.JonGuiDataRotary) obj;
 
       if (java.lang.Float.floatToIntBits(getAzimuth())
           != java.lang.Float.floatToIntBits(
@@ -660,44 +660,44 @@ public final class JonSharedDataRotary {
       return hash;
     }
 
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(byte[] data)
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -705,26 +705,26 @@ public final class JonSharedDataRotary {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseDelimitedFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataRotary.JonGuiDataRotary parseFrom(
+    public static ser.JonSharedDataRotary.JonGuiDataRotary parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -737,7 +737,7 @@ public final class JonSharedDataRotary {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataRotary.JonGuiDataRotary prototype) {
+    public static Builder newBuilder(ser.JonSharedDataRotary.JonGuiDataRotary prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -753,26 +753,26 @@ public final class JonSharedDataRotary {
       return builder;
     }
     /**
-     * Protobuf type {@code data.JonGuiDataRotary}
+     * Protobuf type {@code ser.JonGuiDataRotary}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.JonGuiDataRotary)
-        data.JonSharedDataRotary.JonGuiDataRotaryOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.JonGuiDataRotary)
+        ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataRotary.internal_static_data_JonGuiDataRotary_descriptor;
+        return ser.JonSharedDataRotary.internal_static_ser_JonGuiDataRotary_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataRotary.internal_static_data_JonGuiDataRotary_fieldAccessorTable
+        return ser.JonSharedDataRotary.internal_static_ser_JonGuiDataRotary_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataRotary.JonGuiDataRotary.class, data.JonSharedDataRotary.JonGuiDataRotary.Builder.class);
+                ser.JonSharedDataRotary.JonGuiDataRotary.class, ser.JonSharedDataRotary.JonGuiDataRotary.Builder.class);
       }
 
-      // Construct using data.JonSharedDataRotary.JonGuiDataRotary.newBuilder()
+      // Construct using ser.JonSharedDataRotary.JonGuiDataRotary.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -819,17 +819,17 @@ public final class JonSharedDataRotary {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataRotary.internal_static_data_JonGuiDataRotary_descriptor;
+        return ser.JonSharedDataRotary.internal_static_ser_JonGuiDataRotary_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.JonGuiDataRotary getDefaultInstanceForType() {
-        return data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance();
+      public ser.JonSharedDataRotary.JonGuiDataRotary getDefaultInstanceForType() {
+        return ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.JonGuiDataRotary build() {
-        data.JonSharedDataRotary.JonGuiDataRotary result = buildPartial();
+      public ser.JonSharedDataRotary.JonGuiDataRotary build() {
+        ser.JonSharedDataRotary.JonGuiDataRotary result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -837,14 +837,14 @@ public final class JonSharedDataRotary {
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.JonGuiDataRotary buildPartial() {
-        data.JonSharedDataRotary.JonGuiDataRotary result = new data.JonSharedDataRotary.JonGuiDataRotary(this);
+      public ser.JonSharedDataRotary.JonGuiDataRotary buildPartial() {
+        ser.JonSharedDataRotary.JonGuiDataRotary result = new ser.JonSharedDataRotary.JonGuiDataRotary(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataRotary.JonGuiDataRotary result) {
+      private void buildPartial0(ser.JonSharedDataRotary.JonGuiDataRotary result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.azimuth_ = azimuth_;
@@ -906,16 +906,16 @@ public final class JonSharedDataRotary {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataRotary.JonGuiDataRotary) {
-          return mergeFrom((data.JonSharedDataRotary.JonGuiDataRotary)other);
+        if (other instanceof ser.JonSharedDataRotary.JonGuiDataRotary) {
+          return mergeFrom((ser.JonSharedDataRotary.JonGuiDataRotary)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataRotary.JonGuiDataRotary other) {
-        if (other == data.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataRotary.JonGuiDataRotary other) {
+        if (other == ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance()) return this;
         if (other.getAzimuth() != 0F) {
           setAzimuth(other.getAzimuth());
         }
@@ -1355,14 +1355,14 @@ public final class JonSharedDataRotary {
 
       private int mode_ = 0;
       /**
-       * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -1373,20 +1373,20 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
        * @return The mode.
        */
       @java.lang.Override
-      public data.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
-        data.JonSharedDataTypes.JonGuiDataRotaryMode result = data.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
-        return result == null ? data.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
+      public ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
+        ser.JonSharedDataTypes.JonGuiDataRotaryMode result = ser.JonSharedDataTypes.JonGuiDataRotaryMode.forNumber(mode_);
+        return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
       }
       /**
-       * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
-      public Builder setMode(data.JonSharedDataTypes.JonGuiDataRotaryMode value) {
+      public Builder setMode(ser.JonSharedDataTypes.JonGuiDataRotaryMode value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -1396,7 +1396,7 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.JonGuiDataRotaryMode mode = 9;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 9;</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -1630,31 +1630,31 @@ public final class JonSharedDataRotary {
         return this;
       }
 
-      private data.JonSharedDataRotary.ScanNode currentScanNode_;
+      private ser.JonSharedDataRotary.ScanNode currentScanNode_;
       private com.google.protobuf.SingleFieldBuilder<
-          data.JonSharedDataRotary.ScanNode, data.JonSharedDataRotary.ScanNode.Builder, data.JonSharedDataRotary.ScanNodeOrBuilder> currentScanNodeBuilder_;
+          ser.JonSharedDataRotary.ScanNode, ser.JonSharedDataRotary.ScanNode.Builder, ser.JonSharedDataRotary.ScanNodeOrBuilder> currentScanNodeBuilder_;
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        * @return Whether the currentScanNode field is set.
        */
       public boolean hasCurrentScanNode() {
         return ((bitField0_ & 0x00010000) != 0);
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        * @return The currentScanNode.
        */
-      public data.JonSharedDataRotary.ScanNode getCurrentScanNode() {
+      public ser.JonSharedDataRotary.ScanNode getCurrentScanNode() {
         if (currentScanNodeBuilder_ == null) {
-          return currentScanNode_ == null ? data.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
+          return currentScanNode_ == null ? ser.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
         } else {
           return currentScanNodeBuilder_.getMessage();
         }
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
-      public Builder setCurrentScanNode(data.JonSharedDataRotary.ScanNode value) {
+      public Builder setCurrentScanNode(ser.JonSharedDataRotary.ScanNode value) {
         if (currentScanNodeBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1668,10 +1668,10 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
       public Builder setCurrentScanNode(
-          data.JonSharedDataRotary.ScanNode.Builder builderForValue) {
+          ser.JonSharedDataRotary.ScanNode.Builder builderForValue) {
         if (currentScanNodeBuilder_ == null) {
           currentScanNode_ = builderForValue.build();
         } else {
@@ -1682,13 +1682,13 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
-      public Builder mergeCurrentScanNode(data.JonSharedDataRotary.ScanNode value) {
+      public Builder mergeCurrentScanNode(ser.JonSharedDataRotary.ScanNode value) {
         if (currentScanNodeBuilder_ == null) {
           if (((bitField0_ & 0x00010000) != 0) &&
             currentScanNode_ != null &&
-            currentScanNode_ != data.JonSharedDataRotary.ScanNode.getDefaultInstance()) {
+            currentScanNode_ != ser.JonSharedDataRotary.ScanNode.getDefaultInstance()) {
             getCurrentScanNodeBuilder().mergeFrom(value);
           } else {
             currentScanNode_ = value;
@@ -1703,7 +1703,7 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
       public Builder clearCurrentScanNode() {
         bitField0_ = (bitField0_ & ~0x00010000);
@@ -1716,33 +1716,33 @@ public final class JonSharedDataRotary {
         return this;
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
-      public data.JonSharedDataRotary.ScanNode.Builder getCurrentScanNodeBuilder() {
+      public ser.JonSharedDataRotary.ScanNode.Builder getCurrentScanNodeBuilder() {
         bitField0_ |= 0x00010000;
         onChanged();
         return getCurrentScanNodeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
-      public data.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder() {
+      public ser.JonSharedDataRotary.ScanNodeOrBuilder getCurrentScanNodeOrBuilder() {
         if (currentScanNodeBuilder_ != null) {
           return currentScanNodeBuilder_.getMessageOrBuilder();
         } else {
           return currentScanNode_ == null ?
-              data.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
+              ser.JonSharedDataRotary.ScanNode.getDefaultInstance() : currentScanNode_;
         }
       }
       /**
-       * <code>.data.ScanNode current_scan_node = 17;</code>
+       * <code>.ser.ScanNode current_scan_node = 17;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          data.JonSharedDataRotary.ScanNode, data.JonSharedDataRotary.ScanNode.Builder, data.JonSharedDataRotary.ScanNodeOrBuilder> 
+          ser.JonSharedDataRotary.ScanNode, ser.JonSharedDataRotary.ScanNode.Builder, ser.JonSharedDataRotary.ScanNodeOrBuilder> 
           getCurrentScanNodeFieldBuilder() {
         if (currentScanNodeBuilder_ == null) {
           currentScanNodeBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              data.JonSharedDataRotary.ScanNode, data.JonSharedDataRotary.ScanNode.Builder, data.JonSharedDataRotary.ScanNodeOrBuilder>(
+              ser.JonSharedDataRotary.ScanNode, ser.JonSharedDataRotary.ScanNode.Builder, ser.JonSharedDataRotary.ScanNodeOrBuilder>(
                   getCurrentScanNode(),
                   getParentForChildren(),
                   isClean());
@@ -1751,16 +1751,16 @@ public final class JonSharedDataRotary {
         return currentScanNodeBuilder_;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.JonGuiDataRotary)
+      // @@protoc_insertion_point(builder_scope:ser.JonGuiDataRotary)
     }
 
-    // @@protoc_insertion_point(class_scope:data.JonGuiDataRotary)
-    private static final data.JonSharedDataRotary.JonGuiDataRotary DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.JonGuiDataRotary)
+    private static final ser.JonSharedDataRotary.JonGuiDataRotary DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataRotary.JonGuiDataRotary();
+      DEFAULT_INSTANCE = new ser.JonSharedDataRotary.JonGuiDataRotary();
     }
 
-    public static data.JonSharedDataRotary.JonGuiDataRotary getDefaultInstance() {
+    public static ser.JonSharedDataRotary.JonGuiDataRotary getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1796,14 +1796,14 @@ public final class JonSharedDataRotary {
     }
 
     @java.lang.Override
-    public data.JonSharedDataRotary.JonGuiDataRotary getDefaultInstanceForType() {
+    public ser.JonSharedDataRotary.JonGuiDataRotary getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface ScanNodeOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:data.ScanNode)
+      // @@protoc_insertion_point(interface_extends:ser.ScanNode)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1849,11 +1849,11 @@ public final class JonSharedDataRotary {
     double getSpeed();
   }
   /**
-   * Protobuf type {@code data.ScanNode}
+   * Protobuf type {@code ser.ScanNode}
    */
   public static final class ScanNode extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:data.ScanNode)
+      // @@protoc_insertion_point(message_implements:ser.ScanNode)
       ScanNodeOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -1874,15 +1874,15 @@ public final class JonSharedDataRotary {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return data.JonSharedDataRotary.internal_static_data_ScanNode_descriptor;
+      return ser.JonSharedDataRotary.internal_static_ser_ScanNode_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return data.JonSharedDataRotary.internal_static_data_ScanNode_fieldAccessorTable
+      return ser.JonSharedDataRotary.internal_static_ser_ScanNode_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              data.JonSharedDataRotary.ScanNode.class, data.JonSharedDataRotary.ScanNode.Builder.class);
+              ser.JonSharedDataRotary.ScanNode.class, ser.JonSharedDataRotary.ScanNode.Builder.class);
     }
 
     public static final int INDEX_FIELD_NUMBER = 1;
@@ -2044,10 +2044,10 @@ public final class JonSharedDataRotary {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof data.JonSharedDataRotary.ScanNode)) {
+      if (!(obj instanceof ser.JonSharedDataRotary.ScanNode)) {
         return super.equals(obj);
       }
-      data.JonSharedDataRotary.ScanNode other = (data.JonSharedDataRotary.ScanNode) obj;
+      ser.JonSharedDataRotary.ScanNode other = (ser.JonSharedDataRotary.ScanNode) obj;
 
       if (getIndex()
           != other.getIndex()) return false;
@@ -2101,44 +2101,44 @@ public final class JonSharedDataRotary {
       return hash;
     }
 
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(byte[] data)
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(java.io.InputStream input)
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2146,26 +2146,26 @@ public final class JonSharedDataRotary {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static data.JonSharedDataRotary.ScanNode parseDelimitedFrom(java.io.InputStream input)
+    public static ser.JonSharedDataRotary.ScanNode parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static data.JonSharedDataRotary.ScanNode parseDelimitedFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static data.JonSharedDataRotary.ScanNode parseFrom(
+    public static ser.JonSharedDataRotary.ScanNode parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2178,7 +2178,7 @@ public final class JonSharedDataRotary {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(data.JonSharedDataRotary.ScanNode prototype) {
+    public static Builder newBuilder(ser.JonSharedDataRotary.ScanNode prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2194,26 +2194,26 @@ public final class JonSharedDataRotary {
       return builder;
     }
     /**
-     * Protobuf type {@code data.ScanNode}
+     * Protobuf type {@code ser.ScanNode}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:data.ScanNode)
-        data.JonSharedDataRotary.ScanNodeOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ser.ScanNode)
+        ser.JonSharedDataRotary.ScanNodeOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return data.JonSharedDataRotary.internal_static_data_ScanNode_descriptor;
+        return ser.JonSharedDataRotary.internal_static_ser_ScanNode_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return data.JonSharedDataRotary.internal_static_data_ScanNode_fieldAccessorTable
+        return ser.JonSharedDataRotary.internal_static_ser_ScanNode_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                data.JonSharedDataRotary.ScanNode.class, data.JonSharedDataRotary.ScanNode.Builder.class);
+                ser.JonSharedDataRotary.ScanNode.class, ser.JonSharedDataRotary.ScanNode.Builder.class);
       }
 
-      // Construct using data.JonSharedDataRotary.ScanNode.newBuilder()
+      // Construct using ser.JonSharedDataRotary.ScanNode.newBuilder()
       private Builder() {
 
       }
@@ -2240,17 +2240,17 @@ public final class JonSharedDataRotary {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return data.JonSharedDataRotary.internal_static_data_ScanNode_descriptor;
+        return ser.JonSharedDataRotary.internal_static_ser_ScanNode_descriptor;
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.ScanNode getDefaultInstanceForType() {
-        return data.JonSharedDataRotary.ScanNode.getDefaultInstance();
+      public ser.JonSharedDataRotary.ScanNode getDefaultInstanceForType() {
+        return ser.JonSharedDataRotary.ScanNode.getDefaultInstance();
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.ScanNode build() {
-        data.JonSharedDataRotary.ScanNode result = buildPartial();
+      public ser.JonSharedDataRotary.ScanNode build() {
+        ser.JonSharedDataRotary.ScanNode result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2258,14 +2258,14 @@ public final class JonSharedDataRotary {
       }
 
       @java.lang.Override
-      public data.JonSharedDataRotary.ScanNode buildPartial() {
-        data.JonSharedDataRotary.ScanNode result = new data.JonSharedDataRotary.ScanNode(this);
+      public ser.JonSharedDataRotary.ScanNode buildPartial() {
+        ser.JonSharedDataRotary.ScanNode result = new ser.JonSharedDataRotary.ScanNode(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(data.JonSharedDataRotary.ScanNode result) {
+      private void buildPartial0(ser.JonSharedDataRotary.ScanNode result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.index_ = index_;
@@ -2292,16 +2292,16 @@ public final class JonSharedDataRotary {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof data.JonSharedDataRotary.ScanNode) {
-          return mergeFrom((data.JonSharedDataRotary.ScanNode)other);
+        if (other instanceof ser.JonSharedDataRotary.ScanNode) {
+          return mergeFrom((ser.JonSharedDataRotary.ScanNode)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(data.JonSharedDataRotary.ScanNode other) {
-        if (other == data.JonSharedDataRotary.ScanNode.getDefaultInstance()) return this;
+      public Builder mergeFrom(ser.JonSharedDataRotary.ScanNode other) {
+        if (other == ser.JonSharedDataRotary.ScanNode.getDefaultInstance()) return this;
         if (other.getIndex() != 0) {
           setIndex(other.getIndex());
         }
@@ -2625,16 +2625,16 @@ public final class JonSharedDataRotary {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:data.ScanNode)
+      // @@protoc_insertion_point(builder_scope:ser.ScanNode)
     }
 
-    // @@protoc_insertion_point(class_scope:data.ScanNode)
-    private static final data.JonSharedDataRotary.ScanNode DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ser.ScanNode)
+    private static final ser.JonSharedDataRotary.ScanNode DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new data.JonSharedDataRotary.ScanNode();
+      DEFAULT_INSTANCE = new ser.JonSharedDataRotary.ScanNode();
     }
 
-    public static data.JonSharedDataRotary.ScanNode getDefaultInstance() {
+    public static ser.JonSharedDataRotary.ScanNode getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2670,22 +2670,22 @@ public final class JonSharedDataRotary {
     }
 
     @java.lang.Override
-    public data.JonSharedDataRotary.ScanNode getDefaultInstanceForType() {
+    public ser.JonSharedDataRotary.ScanNode getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_JonGuiDataRotary_descriptor;
+    internal_static_ser_JonGuiDataRotary_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_JonGuiDataRotary_fieldAccessorTable;
+      internal_static_ser_JonGuiDataRotary_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_data_ScanNode_descriptor;
+    internal_static_ser_ScanNode_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_data_ScanNode_fieldAccessorTable;
+      internal_static_ser_ScanNode_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2695,45 +2695,45 @@ public final class JonSharedDataRotary {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\034jon_shared_data_rotary.proto\022\004data\032\033jo" +
-      "n_shared_data_types.proto\"\305\003\n\020JonGuiData" +
-      "Rotary\022\017\n\007azimuth\030\001 \001(\002\022\025\n\razimuth_speed" +
-      "\030\002 \001(\002\022\021\n\televation\030\003 \001(\002\022\027\n\017elevation_s" +
-      "peed\030\004 \001(\002\022\030\n\020platform_azimuth\030\005 \001(\002\022\032\n\022" +
-      "platform_elevation\030\006 \001(\002\022\025\n\rplatform_ban" +
-      "k\030\007 \001(\002\022\021\n\tis_moving\030\010 \001(\010\022(\n\004mode\030\t \001(\016" +
-      "2\032.data.JonGuiDataRotaryMode\022\023\n\013is_scann" +
-      "ing\030\n \001(\010\022\032\n\022is_scanning_paused\030\013 \001(\010\022\035\n" +
-      "\025use_rotary_as_compass\030\014 \001(\010\022\023\n\013scan_tar" +
-      "get\030\r \001(\005\022\027\n\017scan_target_max\030\016 \001(\005\022\023\n\013su" +
-      "n_azimuth\030\017 \001(\002\022\025\n\rsun_elevation\030\020 \001(\002\022)" +
-      "\n\021current_scan_node\030\021 \001(\0132\016.data.ScanNod" +
-      "e\"\223\001\n\010ScanNode\022\r\n\005index\030\001 \001(\005\022\031\n\021DayZoom" +
-      "TableValue\030\002 \001(\005\022\032\n\022HeatZoomTableValue\030\003" +
-      " \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televation\030\005 \001(\001" +
-      "\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001BNZLgit-c" +
-      "odecommit.eu-central-1.amazonaws.com/v1/" +
-      "repos/jettison/jonp/data/rotaryb\006proto3"
+      "\n\034jon_shared_data_rotary.proto\022\003ser\032\033jon" +
+      "_shared_data_types.proto\"\303\003\n\020JonGuiDataR" +
+      "otary\022\017\n\007azimuth\030\001 \001(\002\022\025\n\razimuth_speed\030" +
+      "\002 \001(\002\022\021\n\televation\030\003 \001(\002\022\027\n\017elevation_sp" +
+      "eed\030\004 \001(\002\022\030\n\020platform_azimuth\030\005 \001(\002\022\032\n\022p" +
+      "latform_elevation\030\006 \001(\002\022\025\n\rplatform_bank" +
+      "\030\007 \001(\002\022\021\n\tis_moving\030\010 \001(\010\022\'\n\004mode\030\t \001(\0162" +
+      "\031.ser.JonGuiDataRotaryMode\022\023\n\013is_scannin" +
+      "g\030\n \001(\010\022\032\n\022is_scanning_paused\030\013 \001(\010\022\035\n\025u" +
+      "se_rotary_as_compass\030\014 \001(\010\022\023\n\013scan_targe" +
+      "t\030\r \001(\005\022\027\n\017scan_target_max\030\016 \001(\005\022\023\n\013sun_" +
+      "azimuth\030\017 \001(\002\022\025\n\rsun_elevation\030\020 \001(\002\022(\n\021" +
+      "current_scan_node\030\021 \001(\0132\r.ser.ScanNode\"\223" +
+      "\001\n\010ScanNode\022\r\n\005index\030\001 \001(\005\022\031\n\021DayZoomTab" +
+      "leValue\030\002 \001(\005\022\032\n\022HeatZoomTableValue\030\003 \001(" +
+      "\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televation\030\005 \001(\001\022\016\n" +
+      "\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001BNZLgit-code" +
+      "commit.eu-central-1.amazonaws.com/v1/rep" +
+      "os/jettison/jonp/data/rotaryb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          data.JonSharedDataTypes.getDescriptor(),
+          ser.JonSharedDataTypes.getDescriptor(),
         });
-    internal_static_data_JonGuiDataRotary_descriptor =
+    internal_static_ser_JonGuiDataRotary_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_data_JonGuiDataRotary_fieldAccessorTable = new
+    internal_static_ser_JonGuiDataRotary_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_JonGuiDataRotary_descriptor,
+        internal_static_ser_JonGuiDataRotary_descriptor,
         new java.lang.String[] { "Azimuth", "AzimuthSpeed", "Elevation", "ElevationSpeed", "PlatformAzimuth", "PlatformElevation", "PlatformBank", "IsMoving", "Mode", "IsScanning", "IsScanningPaused", "UseRotaryAsCompass", "ScanTarget", "ScanTargetMax", "SunAzimuth", "SunElevation", "CurrentScanNode", });
-    internal_static_data_ScanNode_descriptor =
+    internal_static_ser_ScanNode_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_data_ScanNode_fieldAccessorTable = new
+    internal_static_ser_ScanNode_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_data_ScanNode_descriptor,
+        internal_static_ser_ScanNode_descriptor,
         new java.lang.String[] { "Index", "DayZoomTableValue", "HeatZoomTableValue", "Azimuth", "Elevation", "Linger", "Speed", });
     descriptor.resolveAllFeaturesImmutable();
-    data.JonSharedDataTypes.getDescriptor();
+    ser.JonSharedDataTypes.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

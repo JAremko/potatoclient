@@ -21,7 +21,7 @@
             JonSharedCmdRotary$ScanStart JonSharedCmdRotary$ScanStop
             JonSharedCmdRotary$ScanPause JonSharedCmdRotary$ScanUnpause
             JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanNext]
-           [data
+           [ser
             JonSharedDataTypes$JonGuiDataRotaryDirection
             JonSharedDataTypes$JonGuiDataRotaryMode]))
 

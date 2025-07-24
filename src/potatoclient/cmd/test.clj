@@ -13,7 +13,7 @@
             [potatoclient.cmd.osd :as osd]
             [potatoclient.cmd.rotary :as rotary]
             [potatoclient.cmd.system :as system])
-  (:import [data
+  (:import [ser
             JonSharedDataTypes$JonGuiDataRotaryDirection]))
 
 (>defn test-basic-commands

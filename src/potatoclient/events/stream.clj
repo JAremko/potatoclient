@@ -133,7 +133,7 @@
         (process/stop-stream stream)
         (state/clear-stream! stream-key)
         (catch Exception e
-          (logging/log-error (str "Error terminating " (name stream-key) " stream: " (.getMessage e))))))
+          (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))}))))
     nil))
 
 (>defn handle-response-event

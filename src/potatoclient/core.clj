@@ -86,7 +86,7 @@
                 :cancel
                 ;; User clicked Cancel, exit application
                 (do
-                  (logging/log-info "User cancelled startup dialog, exiting...")
+                  (logging/log-info {:msg "User cancelled startup dialog, exiting..."})
                   (System/exit 0))
 
                 :reload
