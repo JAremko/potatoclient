@@ -131,8 +131,8 @@
 
   ;; Power on
   (inspect-command
-    cmd-camera/power-on
-    "Camera Power On")
+    cmd-camera/start
+    "Camera Start")
 
   ;; Zoom direct value - not implemented yet
   ;; (inspect-command

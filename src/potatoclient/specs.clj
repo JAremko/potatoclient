@@ -429,6 +429,14 @@
   "Scan node index"
   [:int {:min 0}])
 
+(def normalized-value
+  "Normalized value [0, 1]"
+  [:double {:min 0.0 :max 1.0}])
+
+(def offset-value
+  "Offset value [-1, 1]"
+  [:double {:min -1.0 :max 1.0}])
+
 ;; -----------------------------------------------------------------------------
 ;; Protobuf Types
 ;; -----------------------------------------------------------------------------
@@ -517,6 +525,34 @@
 (def boolean-enum
   "Boolean value enum"
   any?)
+
+(def day-fx-mode
+  "Day camera FX mode enum"
+  [:fn {:error/message "must be a JonGuiDataFxModeDay enum"}
+   #(instance? data.JonSharedDataTypes$JonGuiDataFxModeDay %)])
+
+(def heat-agc-mode
+  "Heat camera AGC mode enum"
+  [:fn {:error/message "must be a JonGuiDataVideoChannelHeatAGCModes enum"}
+   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes %)])
+
+(def heat-filter
+  "Heat camera filter enum"
+  [:fn {:error/message "must be a JonGuiDataVideoChannelHeatFilters enum"}
+   #(instance? data.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters %)])
+
+(def heat-fx-mode
+  "Heat camera FX mode enum"
+  [:fn {:error/message "must be a JonGuiDataFxModeHeat enum"}
+   #(instance? data.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
+
+(def dde-level
+  "DDE level [0, 100]"
+  [:int {:min 0 :max 100}])
+
+(def dde-shift
+  "DDE shift value [-100, 100]"
+  [:int {:min -100 :max 100}])
 
 ;; -----------------------------------------------------------------------------
 ;; Command Structures
@@ -658,6 +694,8 @@
      ::bank-angle bank-angle
      ::scan-linger-time scan-linger-time
      ::scan-node-index scan-node-index
+     ::normalized-value normalized-value
+     ::offset-value offset-value
 
      ;; Protobuf Types
      ::protobuf-message protobuf-message
@@ -673,6 +711,12 @@
      ::day-camera-wdr-mode day-camera-wdr-mode
      ::day-camera-defog-status day-camera-defog-status
      ::boolean-enum boolean-enum
+     ::day-fx-mode day-fx-mode
+     ::heat-agc-mode heat-agc-mode
+     ::heat-filter heat-filter
+     ::heat-fx-mode heat-fx-mode
+     ::dde-level dde-level
+     ::dde-shift dde-shift
 
      ;; Command Structures
      ::cmd-root-builder cmd-root-builder

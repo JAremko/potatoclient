@@ -1,0 +1,294 @@
+Checking code formatting...
+✓ All files are properly formatted
+Linting Clojure code with clj-kondo...
+  • Guardrails support: >defn, >defn-, >def properly recognized
+  • Seesaw macros: UI construction functions linted correctly
+  • Telemere logging: Log macros understood without false positives
+.......................................
+src/potatoclient/cmd/core.clj:6:80: warning: #'com.fulcrologic.guardrails.malli.core/>def is referred but never used
+src/potatoclient/cmd/core.clj:6:85: warning: #'com.fulcrologic.guardrails.malli.core/| is referred but never used
+src/potatoclient/cmd/debug.clj:3:14: warning: namespace clojure.string is required but never used
+src/potatoclient/cmd/debug.clj:4:73: warning: #'com.fulcrologic.guardrails.malli.core/>def is referred but never used
+src/potatoclient/cmd/debug.clj:4:78: warning: #'com.fulcrologic.guardrails.malli.core/| is referred but never used
+src/potatoclient/cmd/debug.clj:4:80: warning: #'com.fulcrologic.guardrails.malli.core/? is referred but never used
+src/potatoclient/cmd/rotary.clj:3:73: warning: #'com.fulcrologic.guardrails.malli.core/>def is referred but never used
+src/potatoclient/cmd/rotary.clj:3:78: warning: #'com.fulcrologic.guardrails.malli.core/| is referred but never used
+src/potatoclient/cmd/rotary.clj:3:80: warning: #'com.fulcrologic.guardrails.malli.core/? is referred but never used
+src/potatoclient/cmd/test.clj:5:14: warning: Unsorted namespace: potatoclient.cmd.compass
+src/potatoclient/cmd/test.clj:5:14: warning: namespace potatoclient.cmd.compass is required but never used
+src/potatoclient/cmd/test.clj:6:14: warning: namespace potatoclient.cmd.cv is required but never used
+src/potatoclient/cmd/test.clj:8:14: warning: namespace potatoclient.cmd.glass-heater is required but never used
+src/potatoclient/cmd/test.clj:11:14: warning: namespace potatoclient.cmd.lrf is required but never used
+src/potatoclient/cmd/test.clj:12:14: warning: namespace potatoclient.cmd.lrf-alignment is required but never used
+src/potatoclient/core.clj:5:54: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/core.clj:22:6: warning: Unresolved namespace clojure.string. Are you missing a require?
+src/potatoclient/core.clj:22:34: warning: Unresolved namespace clojure.java.io. Are you missing a require?
+src/potatoclient/dev.clj:6:60: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/guardrails_test.clj:6:54: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/guardrails_test.clj:85:7: warning: Unused value
+src/potatoclient/guardrails_test.clj:85:12: error: Expected: number, received: string.
+src/potatoclient/i18n.clj:12:1: warning: Missing docstring.
+src/potatoclient/i18n.clj:16:1: warning: Missing docstring.
+src/potatoclient/i18n.clj:59:1: warning: Missing docstring.
+src/potatoclient/i18n.clj:59:1: error: Invalid function body.
+src/potatoclient/logging.clj::: error: More than one function overload with arity null.
+src/potatoclient/logging.clj:8:37: warning: Unused import ZoneId
+src/potatoclient/logging.clj:69:9: warning: Unused private var potatoclient.logging/create-file-handler
+src/potatoclient/logging.clj:73:9: warning: unused binding log-file
+src/potatoclient/logging.clj:74:9: warning: unused binding formatter
+src/potatoclient/logging.clj:75:6: warning: Unresolved var: tel/handler:console
+src/potatoclient/logging.clj:114:4: warning: Unresolved var: tel/remove-handler!
+src/potatoclient/logging.clj:114:24: error: Function name must be simple symbol but got: :default/console
+src/potatoclient/logging.clj:118:6: warning: Unresolved var: tel/set-min-level!
+src/potatoclient/logging.clj:118:25: error: Function name must be simple symbol but got: :warn
+src/potatoclient/logging.clj:119:25: error: Function name must be simple symbol but got: :debug
+src/potatoclient/logging.clj:125:8: warning: Unresolved var: tel/add-handler!
+src/potatoclient/logging.clj:125:25: error: Function name must be simple symbol but got: :console
+src/potatoclient/logging.clj:126:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:127:40: warning: Unresolved var: tel/format-signal-fn
+src/potatoclient/logging.clj:128:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:132:25: error: Function name must be simple symbol but got: :file
+src/potatoclient/logging.clj:133:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:134:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:138:25: error: Function name must be simple symbol but got: :console
+src/potatoclient/logging.clj:139:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:141:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:143:25: error: Function name must be simple symbol but got: :file
+src/potatoclient/logging.clj:144:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:145:25: error: Function arguments should be wrapped in vector.
+src/potatoclient/logging.clj:148:4: warning: Unresolved var: tel/set-ns-filter!
+src/potatoclient/logging.clj:165:4: warning: Unresolved var: tel/stop-handlers!
+src/potatoclient/main.clj:4:54: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/process.clj:11:14: warning: namespace potatoclient.logging is required but never used
+src/potatoclient/process.clj:12:14: warning: namespace potatoclient.state is required but never used
+src/potatoclient/process.clj:270:1: error: Invalid function body.
+src/potatoclient/proto.clj:8:54: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/reports.clj:9:54: warning: #'com.fulcrologic.guardrails.core/=> is referred but never used
+src/potatoclient/specs.clj:30:18: warning: Unresolved namespace clojure.string. Are you missing a require?
+src/potatoclient/ui/control_panel.clj::: error: More than one function overload with arity null.
+src/potatoclient/ui/control_panel.clj:16:16: warning: Unused private var potatoclient.ui.control-panel/panel-border-width
+src/potatoclient/ui/control_panel.clj:17:16: warning: Unused private var potatoclient.ui.control-panel/header-font
+src/potatoclient/ui/control_panel.clj:18:16: warning: Unused private var potatoclient.ui.control-panel/label-font
+src/potatoclient/ui/control_panel.clj:19:16: warning: Unused private var potatoclient.ui.control-panel/status-font
+src/potatoclient/ui/control_panel.clj:26:9: warning: unused binding stream-name
+src/potatoclient/ui/control_panel.clj:29:36: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/control_panel.clj:29:40: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:30:36: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:30:42: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:31:36: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:31:42: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:32:36: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:32:48: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:33:34: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/control_panel.clj:33:38: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:34:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:34:40: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:35:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:35:40: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:42:20: warning: redundant do
+src/potatoclient/ui/control_panel.clj:46:57: error: Expected: vector, received: keyword.
+src/potatoclient/ui/control_panel.clj:49:48: warning: Unused value
+src/potatoclient/ui/control_panel.clj:52:57: error: Expected: vector, received: keyword.
+src/potatoclient/ui/control_panel.clj:54:59: error: a string is not a function
+src/potatoclient/ui/control_panel.clj:59:30: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/control_panel.clj:70:36: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/control_panel.clj:76:50: error: Too many arguments to if.
+src/potatoclient/ui/control_panel.clj:88:20: warning: redundant do
+src/potatoclient/ui/control_panel.clj:91:7: error: Function name must be simple symbol but got: :border
+src/potatoclient/ui/control_panel.clj:91:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:92:7: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:92:15: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:109:62: error: Boolean cannot be called as a function.
+src/potatoclient/ui/control_panel.clj:122:38: warning: redundant do
+src/potatoclient/ui/control_panel.clj:134:7: error: Function name must be simple symbol but got: :border
+src/potatoclient/ui/control_panel.clj:134:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:135:7: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:135:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:145:34: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/control_panel.clj:146:40: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:147:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:147:40: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:148:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:148:47: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:149:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:149:45: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:150:34: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:150:46: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:155:7: error: Function name must be simple symbol but got: :border
+src/potatoclient/ui/control_panel.clj:155:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:156:7: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:156:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:167:9: warning: unused binding header
+src/potatoclient/ui/control_panel.clj:167:30: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/control_panel.clj:167:36: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/control_panel.clj:168:30: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:168:36: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:169:30: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:169:38: error: Invalid function body.
+src/potatoclient/ui/control_panel.clj:177:7: error: Function name must be simple symbol but got: :border
+src/potatoclient/ui/control_panel.clj:179:15: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj::: error: More than one function overload with arity null.
+src/potatoclient/ui/log_viewer.clj:14:14: warning: namespace potatoclient.theme is required but never used
+src/potatoclient/ui/log_viewer.clj:99:23: warning: redundant do
+src/potatoclient/ui/log_viewer.clj:135:9: warning: unused binding content
+src/potatoclient/ui/log_viewer.clj:137:21: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/log_viewer.clj:145:17: error: Function name must be simple symbol but got: :title
+src/potatoclient/ui/log_viewer.clj:145:24: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:146:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:146:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:147:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:147:27: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:148:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:148:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:150:23: error: Function name must be simple symbol but got: :name
+src/potatoclient/ui/log_viewer.clj:150:29: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:151:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:151:29: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:152:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:152:32: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:152:37: error: Unresolved symbol: _
+src/potatoclient/ui/log_viewer.clj:156:24: error: Function name must be simple symbol but got: :name
+src/potatoclient/ui/log_viewer.clj:156:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:157:24: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:157:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:158:24: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:158:33: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:166:31: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:169:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:169:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:220:5: error: Function name must be simple symbol but got: :id
+src/potatoclient/ui/log_viewer.clj:221:12: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:226:5: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:226:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:227:5: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:227:18: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:255:17: error: Function name must be simple symbol but got: :title
+src/potatoclient/ui/log_viewer.clj:255:24: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:256:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:256:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:257:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:257:27: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:258:17: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:258:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:262:26: error: Function name must be simple symbol but got: :name
+src/potatoclient/ui/log_viewer.clj:262:32: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:263:26: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:263:32: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:264:26: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:264:35: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:267:23: error: Function name must be simple symbol but got: :name
+src/potatoclient/ui/log_viewer.clj:267:29: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:268:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:268:29: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:269:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:269:33: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:270:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:270:32: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:277:24: error: Function name must be simple symbol but got: :name
+src/potatoclient/ui/log_viewer.clj:277:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:278:24: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:278:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:279:24: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:279:33: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:287:59: error: clojure.core/some? is called with 2 args but expects 1
+src/potatoclient/ui/log_viewer.clj:287:59: warning: Unused value
+src/potatoclient/ui/log_viewer.clj:305:31: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/log_viewer.clj:309:23: error: Invalid function body.
+src/potatoclient/ui/log_viewer.clj:309:30: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj::: error: More than one function overload with arity null.
+src/potatoclient/ui/main_frame.clj:19:25: warning: Unused import Box
+src/potatoclient/ui/main_frame.clj:52:3: warning: redundant do
+src/potatoclient/ui/main_frame.clj:64:44: warning: Unresolved namespace clojure.java.io. Are you missing a require?
+src/potatoclient/ui/main_frame.clj:93:9: warning: Unused private var potatoclient.ui.main-frame/create-theme-menu
+src/potatoclient/ui/main_frame.clj:98:5: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/main_frame.clj:98:11: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:99:5: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:99:11: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:100:5: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:100:12: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:103:9: warning: Unused private var potatoclient.ui.main-frame/create-language-menu
+src/potatoclient/ui/main_frame.clj:108:5: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/main_frame.clj:108:11: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:109:5: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:109:11: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:110:5: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:110:12: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:119:20: warning: Unresolved namespace clojure.string. Are you missing a require?
+src/potatoclient/ui/main_frame.clj:134:9: warning: Unused private var potatoclient.ui.main-frame/create-help-menu
+src/potatoclient/ui/main_frame.clj:143:9: warning: unused binding menu-items
+src/potatoclient/ui/main_frame.clj:149:7: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/main_frame.clj:149:13: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:150:7: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:150:13: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:151:7: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:151:14: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:186:22: warning: redundant do
+src/potatoclient/ui/main_frame.clj:187:58: error: Boolean cannot be called as a function.
+src/potatoclient/ui/main_frame.clj:195:9: warning: unused binding heat-button
+src/potatoclient/ui/main_frame.clj:196:45: error: a string is not a function
+src/potatoclient/ui/main_frame.clj:197:9: warning: unused binding day-button
+src/potatoclient/ui/main_frame.clj:198:44: error: a string is not a function
+src/potatoclient/ui/main_frame.clj:200:7: error: Function name must be simple symbol but got: :items
+src/potatoclient/ui/main_frame.clj:201:15: error: unsupported binding form (create-theme-menu reload-fn)
+src/potatoclient/ui/main_frame.clj:202:15: error: unsupported binding form (create-language-menu reload-fn)
+src/potatoclient/ui/main_frame.clj:203:15: error: unsupported binding form (create-help-menu parent)
+src/potatoclient/ui/main_frame.clj:205:15: error: unsupported binding form (Box/createHorizontalGlue)
+src/potatoclient/ui/main_frame.clj:207:15: warning: unused binding heat-button
+src/potatoclient/ui/main_frame.clj:208:15: warning: unused binding day-button
+src/potatoclient/ui/main_frame.clj:210:9: warning: Unused private var potatoclient.ui.main-frame/create-main-content
+src/potatoclient/ui/main_frame.clj:258:9: warning: unused binding title
+src/potatoclient/ui/main_frame.clj:264:17: error: Function name must be simple symbol but got: :title
+src/potatoclient/ui/main_frame.clj:265:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:266:17: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:266:27: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:267:17: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:267:23: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:268:17: error: Invalid function body.
+src/potatoclient/ui/main_frame.clj:268:26: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/main_frame.clj:271:36: error: potatoclient.ui.main-frame/create-menu-bar is called with 3 args but expects 2
+src/potatoclient/ui/startup_dialog.clj::: error: More than one function overload with arity null.
+src/potatoclient/ui/startup_dialog.clj:22:18: warning: Unresolved namespace clojure.string. Are you missing a require?
+src/potatoclient/ui/startup_dialog.clj:62:9: warning: Unused private var potatoclient.ui.startup-dialog/create-language-action
+src/potatoclient/ui/startup_dialog.clj:70:44: warning: Unresolved namespace clojure.java.io. Are you missing a require?
+src/potatoclient/ui/startup_dialog.clj:82:9: warning: Unused private var potatoclient.ui.startup-dialog/create-theme-action
+src/potatoclient/ui/startup_dialog.clj:107:5: error: Function name must be simple symbol but got: :items
+src/potatoclient/ui/startup_dialog.clj:107:13: error: unsupported binding form (seesaw/menu :text (i18n/tr :menu-view-theme) :icon (theme/key->icon :actions-group-theme) :items (map #(create-theme-action % dialog callback) (theme/get-available-themes)))
+src/potatoclient/ui/startup_dialog.clj:112:13: error: unsupported binding form (seesaw/menu :text (i18n/tr :menu-view-language) :icon (theme/key->icon :icon-languages) :items [(create-language-action :english "English" dialog callback) (create-language-action :ukrainian "Українська" dialog callback)])
+src/potatoclient/ui/startup_dialog.clj:123:33: error: Function name must be simple symbol but got: :text
+src/potatoclient/ui/startup_dialog.clj:123:39: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/startup_dialog.clj:124:33: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:124:39: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/startup_dialog.clj:162:9: warning: unused binding connect-action
+src/potatoclient/ui/startup_dialog.clj:184:9: warning: unused binding cancel-action
+src/potatoclient/ui/startup_dialog.clj:190:39: error: Function name must be simple symbol but got: :action
+src/potatoclient/ui/startup_dialog.clj:192:56: error: unsupported binding form 120
+src/potatoclient/ui/startup_dialog.clj:192:60: error: unsupported binding form :by
+src/potatoclient/ui/startup_dialog.clj:192:64: error: unsupported binding form 35
+src/potatoclient/ui/startup_dialog.clj:193:9: warning: unused binding cancel-button
+src/potatoclient/ui/startup_dialog.clj:193:38: error: Function name must be simple symbol but got: :action
+src/potatoclient/ui/startup_dialog.clj:195:55: error: unsupported binding form 120
+src/potatoclient/ui/startup_dialog.clj:195:59: error: unsupported binding form :by
+src/potatoclient/ui/startup_dialog.clj:195:63: error: unsupported binding form 35
+src/potatoclient/ui/startup_dialog.clj:196:9: warning: unused binding buttons-panel
+src/potatoclient/ui/startup_dialog.clj:197:25: error: Function name must be simple symbol but got: :align
+src/potatoclient/ui/startup_dialog.clj:199:33: warning: unused binding connect-button
+src/potatoclient/ui/startup_dialog.clj:199:48: warning: unused binding cancel-button
+src/potatoclient/ui/startup_dialog.clj:200:9: warning: unused binding main-panel
+src/potatoclient/ui/startup_dialog.clj:201:22: error: Function name must be simple symbol but got: :center
+src/potatoclient/ui/startup_dialog.clj:208:15: error: Function name must be simple symbol but got: :title
+src/potatoclient/ui/startup_dialog.clj:208:22: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/startup_dialog.clj:209:15: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:209:21: error: Function arguments should be wrapped in vector.
+src/potatoclient/ui/startup_dialog.clj:210:15: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:210:27: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:211:15: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:211:24: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:212:15: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:212:25: error: Invalid function body.
+src/potatoclient/ui/startup_dialog.clj:215:38: error: potatoclient.ui.startup-dialog/create-menu-bar is called with 3 args but expects 2
+src/potatoclient/ui/utils.clj:141:3: warning: redundant do
+src/potatoclient/ui/utils.clj:166:7: warning: redundant do
+src/potatoclient/ui/utils.clj:170:9: warning: redundant do
+test:0:0: error: file does not exist
+linting took 1196ms, errors: 201, warnings: 84
+make: *** [Makefile:256: lint-clj] Error 1
