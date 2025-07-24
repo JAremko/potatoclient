@@ -6,9 +6,10 @@
   (:import [cmd.Compass
             JonSharedCmdCompass$Root
             JonSharedCmdCompass$Start JonSharedCmdCompass$Stop
-            JonSharedCmdCompass$SetDeclination JonSharedCmdCompass$SetOffsetAngles
-            JonSharedCmdCompass$CalibrateLong JonSharedCmdCompass$CalibrateShort
-            JonSharedCmdCompass$CalibrateNext JonSharedCmdCompass$CalibrateCancel
+            JonSharedCmdCompass$SetMagneticDeclination
+            JonSharedCmdCompass$SetOffsetAngleAzimuth JonSharedCmdCompass$SetOffsetAngleElevation
+            JonSharedCmdCompass$CalibrateStartLong JonSharedCmdCompass$CalibrateStartShort
+            JonSharedCmdCompass$CalibrateNext JonSharedCmdCompass$CalibrateCencel
             JonSharedCmdCompass$GetMeteo]))
 
 ;; ============================================================================
@@ -44,26 +45,38 @@
 (>defn set-declination
   "Set magnetic declination angle"
   [angle]
-  [::specs/angle => nil?]
+  [::specs/magnetic-declination => nil?]
   (let [root-msg (cmd-core/create-root-message)
-        decl-msg (-> (JonSharedCmdCompass$SetDeclination/newBuilder)
-                     (.setAngle angle))
+        decl-msg (-> (JonSharedCmdCompass$SetMagneticDeclination/newBuilder)
+                     (.setValue angle))
         compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
-                         (.setDeclination decl-msg))]
+                         (.setSetMagneticDeclination decl-msg))]
     (.setCompass root-msg compass-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
-(>defn set-offset-angles
-  "Set compass offset angles for azimuth and elevation"
-  [azimuth-offset elevation-offset]
-  [::specs/angle ::specs/angle => nil?]
+(>defn set-offset-angle-azimuth
+  "Set compass offset angle for azimuth"
+  [angle]
+  [::specs/magnetic-declination => nil?]
   (let [root-msg (cmd-core/create-root-message)
-        offset-msg (-> (JonSharedCmdCompass$SetOffsetAngles/newBuilder)
-                       (.setAngleAz azimuth-offset)
-                       (.setAngleEl elevation-offset))
+        offset-msg (-> (JonSharedCmdCompass$SetOffsetAngleAzimuth/newBuilder)
+                       (.setValue angle))
         compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
-                         (.setOffsetAngles offset-msg))]
+                         (.setSetOffsetAngleAzimuth offset-msg))]
+    (.setCompass root-msg compass-root)
+    (cmd-core/send-cmd-message root-msg))
+  nil)
+
+(>defn set-offset-angle-elevation
+  "Set compass offset angle for elevation"
+  [angle]
+  [::specs/elevation-degrees => nil?]
+  (let [root-msg (cmd-core/create-root-message)
+        offset-msg (-> (JonSharedCmdCompass$SetOffsetAngleElevation/newBuilder)
+                       (.setValue angle))
+        compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
+                         (.setSetOffsetAngleElevation offset-msg))]
     (.setCompass root-msg compass-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -78,7 +91,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
-                         (.setCalibrateLong (JonSharedCmdCompass$CalibrateLong/newBuilder)))]
+                         (.setStartCalibrateLong (JonSharedCmdCompass$CalibrateStartLong/newBuilder)))]
     (.setCompass root-msg compass-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -89,7 +102,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
-                         (.setCalibrateShort (JonSharedCmdCompass$CalibrateShort/newBuilder)))]
+                         (.setStartCalibrateShort (JonSharedCmdCompass$CalibrateStartShort/newBuilder)))]
     (.setCompass root-msg compass-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -111,7 +124,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         compass-root (-> (JonSharedCmdCompass$Root/newBuilder)
-                         (.setCalibrateCancel (JonSharedCmdCompass$CalibrateCancel/newBuilder)))]
+                         (.setCalibrateCencel (JonSharedCmdCompass$CalibrateCencel/newBuilder)))]
     (.setCompass root-msg compass-root)
     (cmd-core/send-cmd-message root-msg))
   nil)

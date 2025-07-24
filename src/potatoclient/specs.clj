@@ -138,8 +138,8 @@
 ;; -----------------------------------------------------------------------------
 
 (def protocol-version
-  "Protocol version number"
-  pos-int?)
+  "Protocol version number (must be > 0)"
+  [:int {:min 1}])
 
 (def session-id
   "Session identifier"
@@ -364,7 +364,7 @@
 
 (def azimuth-degrees
   "Azimuth angle in degrees [0, 360)"
-  [:double {:min 0.0 :max 360.0}])
+  [:double {:min 0.0 :max 359.999999}])
 
 (def elevation-degrees
   "Elevation angle in degrees [-90, 90]"
@@ -380,15 +380,15 @@
 
 (def gps-longitude
   "GPS longitude in degrees [-180, 180)"
-  [:double {:min -180.0 :max 180.0}])
+  [:double {:min -180.0 :max 179.999999}])
 
 (def gps-altitude
   "GPS altitude in meters (Dead Sea to Everest)"
   [:double {:min -433.0 :max 8848.86}])
 
 (def zoom-level
-  "Zoom level normalized [0, 1]"
-  [:double {:min 0.0 :max 1.0}])
+  "Camera zoom level (1.0 to 100.0)"
+  [:double {:min 1.0 :max 100.0}])
 
 (def zoom-table-index
   "Zoom table index value"
@@ -416,11 +416,11 @@
 
 (def relative-angle
   "Relative angle in degrees (-360, 360)"
-  [:double {:min -360.0 :max 360.0}])
+  [:double {:min -359.999999 :max 359.999999}])
 
 (def bank-angle
   "Bank angle in degrees [-180, 180)"
-  [:double {:min -180.0 :max 180.0}])
+  [:double {:min -180.0 :max 179.999999}])
 
 (def scan-linger-time
   "Scan linger time in seconds"
@@ -435,8 +435,60 @@
   [:double {:min 0.0 :max 1.0}])
 
 (def offset-value
-  "Offset value [-1, 1]"
-  [:double {:min -1.0 :max 1.0}])
+  "LRF alignment offset value in pixels [-1920, 1920] for X, [-1080, 1080] for Y"
+  [:int {:min -1920 :max 1920}])
+
+(def offset-shift
+  "LRF alignment offset shift in pixels"
+  [:int {:min -1920 :max 1920}])
+
+(def speed-percentage
+  "Speed as percentage [0, 100]"
+  [:int {:min 0 :max 100}])
+
+(def dde-level
+  "DDE level [0, 512]"
+  [:int {:min 0 :max 512}])
+
+(def dde-shift
+  "DDE shift value [-100, 100]"
+  [:int {:min -100 :max 100}])
+
+(def scan-speed
+  "Scan speed (0, 1.0]"
+  [:double {:min 0.0000001 :max 1.0}])
+
+(def scan-linger-time
+  "Scan linger time in seconds [0, ∞)"
+  [:double {:min 0.0}])
+
+(def platform-azimuth
+  "Platform azimuth angle (-360, 360)"
+  [:double {:min -359.999999 :max 359.999999}])
+
+(def platform-elevation
+  "Platform elevation angle [-90, 90]"
+  [:double {:min -90.0 :max 90.0}])
+
+(def platform-bank
+  "Platform bank angle [-180, 180)"
+  [:double {:min -180.0 :max 179.999999}])
+
+(def magnetic-declination
+  "Magnetic declination angle [-180, 180)"
+  [:float {:min -180.0 :max 179.999999}])
+
+(def ndc-coordinate
+  "Normalized device coordinate [-1.0, 1.0]"
+  [:float {:min -1.0 :max 1.0}])
+
+(def timestamp
+  "Non-negative timestamp"
+  [:int {:min 0}])
+
+(def offset-y-value
+  "LRF alignment Y offset value in pixels [-1080, 1080]"
+  [:int {:min -1080 :max 1080}])
 
 ;; -----------------------------------------------------------------------------
 ;; Protobuf Types
@@ -547,13 +599,6 @@
   [:fn {:error/message "must be a JonGuiDataFxModeHeat enum"}
    #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
 
-(def dde-level
-  "DDE level [0, 100]"
-  [:int {:min 0 :max 100}])
-
-(def dde-shift
-  "DDE shift value [-100, 100]"
-  [:int {:min -100 :max 100}])
 
 ;; -----------------------------------------------------------------------------
 ;; Command Structures
@@ -698,10 +743,22 @@
      ::clahe-shift clahe-shift
      ::relative-angle relative-angle
      ::bank-angle bank-angle
-     ::scan-linger-time scan-linger-time
      ::scan-node-index scan-node-index
      ::normalized-value normalized-value
      ::offset-value offset-value
+     ::offset-shift offset-shift
+     ::offset-y-value offset-y-value
+     ::speed-percentage speed-percentage
+     ::dde-level dde-level
+     ::dde-shift dde-shift
+     ::scan-speed scan-speed
+     ::scan-linger-time scan-linger-time
+     ::platform-azimuth platform-azimuth
+     ::platform-elevation platform-elevation
+     ::platform-bank platform-bank
+     ::magnetic-declination magnetic-declination
+     ::ndc-coordinate ndc-coordinate
+     ::timestamp timestamp
 
      ;; Protobuf Types
      ::protobuf-message protobuf-message
@@ -721,8 +778,6 @@
      ::heat-agc-mode heat-agc-mode
      ::heat-filter heat-filter
      ::heat-fx-mode heat-fx-mode
-     ::dde-level dde-level
-     ::dde-shift dde-shift
 
      ;; Command Structures
      ::cmd-root-builder cmd-root-builder

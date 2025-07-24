@@ -34,8 +34,8 @@
   [:double {:min 0.0 :max 100.0}])
 
 (def temperature-celsius
-  "Temperature in Celsius [-273.15, 150]"
-  [:double {:min -273.15 :max 150.0}])
+  "Temperature in Celsius [-273.15, 660.32]"
+  [:double {:min -273.15 :max 660.32}])
 
 (def gps-longitude
   "GPS longitude in degrees [-180, 180]"
@@ -65,6 +65,46 @@
   "Digital zoom factor [1.0, ∞)"
   [:double {:min 1.0}])
 
+(def sun-azimuth
+  "Sun azimuth angle [0, 360)"
+  [:float {:min 0.0 :max 359.999999}])
+
+(def sun-elevation
+  "Sun elevation angle [0, 360) - unusual but matches proto"
+  [:float {:min 0.0 :max 359.999999}])
+
+(def power-consumption
+  "Power consumption in watts [0, 1000]"
+  [:float {:min 0.0 :max 1000.0}])
+
+(def disk-space
+  "Disk space percentage [0, 100]"
+  [:int {:min 0 :max 100}])
+
+(def timestamp-value
+  "Non-negative timestamp"
+  [:int {:min 0}])
+
+(def measure-id
+  "LRF measure ID [0, ∞)"
+  [:int {:min 0}])
+
+(def session-id
+  "Session ID [0, ∞)"
+  [:int {:min 0}])
+
+(def target-id
+  "Target ID [0, ∞)"
+  [:int {:min 0}])
+
+(def compass-calibration-stage
+  "Compass calibration stage [0, ∞)"
+  [:int {:min 0}])
+
+(def compass-calibration-final-stage
+  "Compass calibration final stage (> 0)"
+  [:int {:min 1}])
+
 ;; ============================================================================
 ;; Enum Schemas
 ;; ============================================================================
@@ -87,9 +127,8 @@
    "JON_GUI_DATA_SYSTEM_LOCALIZATION_CS"])
 
 (def lrf-laser-pointer-mode
-  "LRF laser pointer mode enum"
+  "LRF laser pointer mode enum (excluding UNSPECIFIED)"
   [:enum
-   "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED"
    "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF"
    "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1"
    "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2"])
@@ -142,9 +181,8 @@
    "JON_GUI_DATA_FX_MODE_HEAT_F"])
 
 (def compass-calibrate-status
-  "Compass calibration status enum"
+  "Compass calibration status enum (excluding UNSPECIFIED)"
   [:enum
-   "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED"
    "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING"
    "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT"
    "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG"
@@ -152,16 +190,14 @@
    "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR"])
 
 (def time-format
-  "Time format enum"
+  "Time format enum (excluding UNSPECIFIED)"
   [:enum
-   "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED"
    "JON_GUI_DATA_TIME_FORMAT_H_M_S"
    "JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S"])
 
 (def rec-osd-screen
-  "Recording OSD screen enum"
+  "Recording OSD screen enum (excluding UNSPECIFIED)"
   [:enum
-   "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED"
    "JON_GUI_DATA_REC_OSD_SCREEN_MAIN"
    "JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE"
    "JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT"
@@ -192,7 +228,7 @@
 (def target-schema
   "LRF target data"
   [:map
-   [:timestamp [:int {:min 0}]]
+   [:timestamp timestamp-value]
    [:target-longitude gps-longitude]
    [:target-latitude gps-latitude]
    [:target-altitude :double]
@@ -205,8 +241,8 @@
    [:distance-2d distance-decimeters]
    [:distance-3b distance-decimeters]
    [:observer-fix-type gps-fix-type]
-   [:session-id non-negative-int]
-   [:target-id non-negative-int]
+   [:session-id session-id]
+   [:target-id target-id]
    [:target-color rgb-color-schema]
    [:type :int]
    [:uuid-part1 :int]
@@ -236,7 +272,7 @@
    [:gpu-temperature temperature-celsius]
    [:gpu-load percentage]
    [:cpu-load percentage]
-   [:power-consumption [:double {:min 0.0 :max 1000.0}]]
+   [:power-consumption power-consumption]
    [:loc system-localization]
    [:cur-video-rec-dir-year non-negative-int]
    [:cur-video-rec-dir-month non-negative-int]
@@ -248,7 +284,7 @@
    [:important-rec-enabled :boolean]
    [:low-disk-space :boolean]
    [:no-disk-space :boolean]
-   [:disk-space [:int {:min 0 :max 100}]]
+   [:disk-space disk-space]
    [:tracking :boolean]
    [:vampire-mode :boolean]
    [:stabilization-mode :boolean]
@@ -260,7 +296,7 @@
   [:map
    [:is-scanning :boolean]
    [:is-measuring :boolean]
-   [:measure-id non-negative-int]
+   [:measure-id measure-id]
    [:target {:optional true} target-schema]
    [:pointer-mode lrf-laser-pointer-mode]
    [:fog-mode-enabled :boolean]
@@ -295,8 +331,8 @@
    [:use-rotary-as-compass :boolean]
    [:scan-target non-negative-int]
    [:scan-target-max non-negative-int]
-   [:sun-azimuth angle-azimuth]
-   [:sun-elevation angle-azimuth] ; Note: proto has 360 max which seems wrong
+   [:sun-azimuth sun-azimuth]
+   [:sun-elevation sun-elevation]
    [:current-scan-node scan-node-schema]])
 
 (def camera-day-schema
@@ -332,13 +368,17 @@
 (def compass-calibration-schema
   "Compass calibration data schema"
   [:map
-   [:status compass-calibrate-status]
-   [:progress {:optional true} percentage]])
+   [:stage compass-calibration-stage]
+   [:final-stage compass-calibration-final-stage]
+   [:target-azimuth angle-azimuth]
+   [:target-elevation angle-elevation]
+   [:target-bank angle-bank]
+   [:status compass-calibrate-status]])
 
 (def time-schema
   "Time data schema"
   [:map
-   [:timestamp [:int {:min 0}]]
+   [:timestamp timestamp-value]
    [:utc-time {:optional true} :string]
    [:format time-format]])
 
@@ -359,7 +399,7 @@
 (def actual-space-time-schema
   "Actual space-time data schema"
   [:map
-   [:timestamp [:int {:min 0}]]
+   [:timestamp timestamp-value]
    [:data {:optional true} :map]]) ; Schema depends on specific implementation
 
 (def meteo-schema

@@ -620,8 +620,11 @@
     (compass/set-declination 5.5)
     (is (some? (<! (capture-command!))) "Set declination sent")
     
-    (compass/set-offset-angles 2.0 -1.5)
-    (is (some? (<! (capture-command!))) "Set offset angles sent")
+    (compass/set-offset-angle-azimuth 2.0)
+    (is (some? (<! (capture-command!))) "Set offset azimuth sent")
+    
+    (compass/set-offset-angle-elevation -1.5)
+    (is (some? (<! (capture-command!))) "Set offset elevation sent")
     
     ;; Calibration
     (compass/calibrate-long)
@@ -655,11 +658,17 @@
     (cv/set-auto-focus :day true)
     (is (some? (<! (capture-command!))) "Set auto focus sent")
     
-    (cv/set-vampire-mode true)
-    (is (some? (<! (capture-command!))) "Set vampire mode sent")
+    (cv/enable-vampire-mode)
+    (is (some? (<! (capture-command!))) "Enable vampire mode sent")
     
-    (cv/set-stabilization-mode false)
-    (is (some? (<! (capture-command!))) "Set stabilization sent")
+    (cv/disable-vampire-mode)
+    (is (some? (<! (capture-command!))) "Disable vampire mode sent")
+    
+    (cv/enable-stabilization-mode)
+    (is (some? (<! (capture-command!))) "Enable stabilization sent")
+    
+    (cv/disable-stabilization-mode)
+    (is (some? (<! (capture-command!))) "Disable stabilization sent")
     
     (cv/start-video-dump)
     (is (some? (<! (capture-command!))) "Start video dump sent")

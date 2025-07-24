@@ -5,11 +5,12 @@
             [potatoclient.specs :as specs])
   (:import [cmd.CV
             JonSharedCmdCv$Root
-            JonSharedCmdCv$StartTracking JonSharedCmdCv$StopTracking
-            JonSharedCmdCv$SetAutoFocus JonSharedCmdCv$SetVampireMode
-            JonSharedCmdCv$SetStabilizationMode JonSharedCmdCv$StartVideoDump
-            JonSharedCmdCv$StopVideoDump]
-           [data JonSharedDataTypes$JonGuiDataChannels]))
+            JonSharedCmdCv$StartTrackNDC JonSharedCmdCv$StopTrack
+            JonSharedCmdCv$SetAutoFocus
+            JonSharedCmdCv$VampireModeEnable JonSharedCmdCv$VampireModeDisable
+            JonSharedCmdCv$StabilizationModeEnable JonSharedCmdCv$StabilizationModeDisable
+            JonSharedCmdCv$DumpStart JonSharedCmdCv$DumpStop]
+           [ser JonSharedDataTypes$JonGuiDataVideoChannel]))
 
 ;; ============================================================================
 ;; Tracking Commands
@@ -18,13 +19,13 @@
 (>defn start-tracking
   "Start tracking at normalized device coordinates"
   [x y]
-  [::specs/normalized-value ::specs/normalized-value => nil?]
+  [::specs/ndc-coordinate ::specs/ndc-coordinate => nil?]
   (let [root-msg (cmd-core/create-root-message)
-        tracking-msg (-> (JonSharedCmdCv$StartTracking/newBuilder)
+        tracking-msg (-> (JonSharedCmdCv$StartTrackNDC/newBuilder)
                          (.setX x)
                          (.setY y))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setStartTracking tracking-msg))]
+                    (.setStartTrackNdc tracking-msg))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -35,7 +36,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setStopTracking (JonSharedCmdCv$StopTracking/newBuilder)))]
+                    (.setStopTrack (JonSharedCmdCv$StopTrack/newBuilder)))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -47,14 +48,13 @@
 (>defn set-auto-focus
   "Enable or disable auto focus for specified channel"
   [channel enabled]
-  [[:fn {:error/message "must be a JonGuiDataChannels enum"}
-    #(instance? JonSharedDataTypes$JonGuiDataChannels %)] boolean? => nil?]
+  [::specs/video-channel boolean? => nil?]
   (let [root-msg (cmd-core/create-root-message)
         af-msg (-> (JonSharedCmdCv$SetAutoFocus/newBuilder)
                    (.setChannel channel)
                    (.setAutoFocus enabled))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setAutoFocus af-msg))]
+                    (.setSetAutoFocus af-msg))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -63,28 +63,46 @@
 ;; Mode Commands
 ;; ============================================================================
 
-(>defn set-vampire-mode
-  "Enable or disable vampire mode"
-  [enabled]
-  [boolean? => nil?]
+(>defn enable-vampire-mode
+  "Enable vampire mode"
+  []
+  [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
-        vampire-msg (-> (JonSharedCmdCv$SetVampireMode/newBuilder)
-                        (.setVampireMode enabled))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setVampireMode vampire-msg))]
+                    (.setVampireModeEnable (JonSharedCmdCv$VampireModeEnable/newBuilder)))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
-(>defn set-stabilization-mode
-  "Enable or disable stabilization mode"
-  [enabled]
-  [boolean? => nil?]
+(>defn disable-vampire-mode
+  "Disable vampire mode"
+  []
+  [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
-        stab-msg (-> (JonSharedCmdCv$SetStabilizationMode/newBuilder)
-                     (.setStabiliztionMode enabled))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setStabilizationMode stab-msg))]
+                    (.setVampireModeDisable (JonSharedCmdCv$VampireModeDisable/newBuilder)))]
+    (.setCv root-msg cv-root)
+    (cmd-core/send-cmd-message root-msg))
+  nil)
+
+(>defn enable-stabilization-mode
+  "Enable stabilization mode"
+  []
+  [=> nil?]
+  (let [root-msg (cmd-core/create-root-message)
+        cv-root (-> (JonSharedCmdCv$Root/newBuilder)
+                    (.setStabilizationModeEnable (JonSharedCmdCv$StabilizationModeEnable/newBuilder)))]
+    (.setCv root-msg cv-root)
+    (cmd-core/send-cmd-message root-msg))
+  nil)
+
+(>defn disable-stabilization-mode
+  "Disable stabilization mode"
+  []
+  [=> nil?]
+  (let [root-msg (cmd-core/create-root-message)
+        cv-root (-> (JonSharedCmdCv$Root/newBuilder)
+                    (.setStabilizationModeDisable (JonSharedCmdCv$StabilizationModeDisable/newBuilder)))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -99,7 +117,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setStartVideoDump (JonSharedCmdCv$StartVideoDump/newBuilder)))]
+                    (.setDumpStart (JonSharedCmdCv$DumpStart/newBuilder)))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -110,7 +128,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
-                    (.setStopVideoDump (JonSharedCmdCv$StopVideoDump/newBuilder)))]
+                    (.setDumpStop (JonSharedCmdCv$DumpStop/newBuilder)))]
     (.setCv root-msg cv-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -122,9 +140,8 @@
 (>defn string->channel
   "Convert string to channel enum"
   [value]
-  [string? => (? [:fn {:error/message "must be a JonGuiDataChannels enum"}
-                  #(instance? JonSharedDataTypes$JonGuiDataChannels %)])]
+  [string? => (? ::specs/video-channel)]
   (case value
-    "day" JonSharedDataTypes$JonGuiDataChannels/JON_GUI_DATA_CHANNELS_DAY_CAMERA
-    "heat" JonSharedDataTypes$JonGuiDataChannels/JON_GUI_DATA_CHANNELS_HEAT_CAMERA
+    "day" JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY
+    "heat" JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
     nil))

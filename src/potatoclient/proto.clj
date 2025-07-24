@@ -8,8 +8,8 @@
             [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.specs :as specs])
-  (:import (cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen)
-           (ser JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType)))
+  (:import (cmd JonSharedCmd$Root)
+           (ser JonSharedData$JonGUIState)))
 
 ;; Client type constants for better readability
 (def client-types
