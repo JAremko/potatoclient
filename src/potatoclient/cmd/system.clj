@@ -11,7 +11,7 @@
             JonSharedCmdSystem$UnmarkRecImportant JonSharedCmdSystem$EnterTransport
             JonSharedCmdSystem$EnableGeodesicMode JonSharedCmdSystem$DisableGeodesicMode
             JonSharedCmdSystem$SetLocalization]
-           [data JonSharedDataTypes$JonGuiDataSystemLocalizations]))
+           [ser JonSharedDataTypes$JonGuiDataSystemLocalizations]))
 
 ;; ============================================================================
 ;; System Control Commands
