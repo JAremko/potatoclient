@@ -233,7 +233,7 @@
                      (process/cleanup-all-processes)
                      (logging/shutdown!)
                      (catch Exception e
-                       (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))}))
+                       (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))})))
                    (System/exit 0)))
   nil)
 
@@ -284,4 +284,3 @@
          :msg "Main frame created and configured"}))
 
     frame))
-
