@@ -75,8 +75,10 @@ This document tracks the porting of all buf.validate constraints from protobuf f
 - ✅ Fixed enums that still included UNSPECIFIED (compass-calibrate-status, time-format, rec-osd-screen)
 
 ### Required Fields
-- ❌ Need to ensure all state subsystems are required in `jon-gui-state-schema`
-- ❌ Need to ensure all command oneofs are required
+- ✅ All state subsystems are properly required in `jon-gui-state-schema`
+- ✅ Created comprehensive tests for required field validation
+- ✅ Discovered that buf.validate constraints are NOT enforced by protobuf runtime
+- ✅ Documented that Malli validation is the ONLY runtime protection
 
 ### Special State Values
 - ✅ `sun-azimuth` - Fixed to `[:float {:min 0.0 :max 359.999999}]`

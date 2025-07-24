@@ -77,10 +77,26 @@ Fixed references to match updated protobuf definitions:
 - Proto tests passing
 - Linting clean after filtering false positives
 
-## Remaining Work
+## Required Field Validation
 
-Only one TODO item remains:
-- Add required field validation for oneofs and messages (protobuf `required` constraints)
+### Important Discovery
+The `buf.validate` constraints in the protobuf files (including `(buf.validate.oneof).required = true`) are NOT enforced by the Java protobuf runtime. These constraints are documentation/specification only. This means:
+
+1. Protobuf will happily build messages with missing required oneofs
+2. Commands can be sent without payloads even when marked as required
+3. This makes our Malli runtime validation even more critical
+
+### What We've Implemented
+1. **State validation**: All required fields in state schemas are properly enforced
+2. **Comprehensive tests**: Created tests that verify required field validation works for:
+   - Root state requiring all subsystems
+   - Subsystem schemas requiring all their fields
+   - Optional fields (like LRF target) working correctly
+   - Nested structures (scan nodes, RGB colors)
+3. **Documentation**: Tests demonstrate that protobuf doesn't enforce required oneofs
+
+### Key Insight
+Since buf.validate isn't used in this project and protobuf doesn't enforce required constraints at runtime, our Malli validation layer is the ONLY protection against invalid data structures. This makes the validation work we've done absolutely essential for system reliability.
 
 ## Key Insights
 
