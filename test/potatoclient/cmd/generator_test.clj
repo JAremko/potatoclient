@@ -13,8 +13,8 @@
             [potatoclient.logging :as logging])
   (:import [cmd JonSharedCmd$Root
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
-           [cmd.RotaryPlatform JonSharedCmdRotary$Root 
-            JonSharedCmdRotary$Axis JonSharedCmdRotary$Azimuth 
+           [cmd.RotaryPlatform JonSharedCmdRotary$Root
+            JonSharedCmdRotary$Axis JonSharedCmdRotary$Azimuth
             JonSharedCmdRotary$Elevation]
            [cmd.DayCamera JonSharedCmdDayCamera$Root]
            [cmd.HeatCamera JonSharedCmdHeatCamera$Root]
@@ -76,7 +76,7 @@
   [cmd-proto]
   (is (= 1 (.getProtocolVersion cmd-proto)) "Protocol version should be 1")
   (is (.hasClientType cmd-proto) "Should have client type")
-  (is (= "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK" 
+  (is (= "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
          (str (.getClientType cmd-proto))) "Should be local network client"))
 
 ;; ============================================================================
@@ -135,7 +135,7 @@
               (is (.hasAzimuth axis) "Should have azimuth")
               (is (< (Math/abs (- 45.5 (.getPosition (.getAzimuth axis)))) 0.001)
                   "Azimuth position should match")))))))
-  
+
   (testing "Rotary axis command with elevation only"
     (rotary/axis {:elevation (rotary/elevation -30.0)})
     (let [captured (<! (capture-command!))]
@@ -150,7 +150,7 @@
               (is (.hasElevation axis) "Should have elevation")
               (is (< (Math/abs (- -30.0 (.getPosition (.getElevation axis)))) 0.001)
                   "Elevation position should match")))))))
-  
+
   (testing "Rotary axis command with both azimuth and elevation"
     (rotary/axis {:azimuth (rotary/azimuth 180.0)
                   :elevation (rotary/elevation 45.0)})
@@ -212,7 +212,7 @@
           (validate-base-command proto-cmd)
           (is (.hasDayCamera proto-cmd) "Should have day camera")
           (is (.hasStart (.getDayCamera proto-cmd)) "Should have start")))))
-  
+
   (testing "Day camera stop command"
     (day-camera/stop)
     (let [captured (<! (capture-command!))]
@@ -271,7 +271,7 @@
           (validate-base-command proto-cmd)
           (is (.hasHeatCamera proto-cmd) "Should have heat camera")
           (is (.hasNuc (.getHeatCamera proto-cmd)) "Should have NUC")))))
-  
+
   (testing "Heat camera brightness command"
     (heat-camera/brightness 75)
     (let [captured (<! (capture-command!))]
@@ -292,22 +292,22 @@
 (deftest test-read-only-mode
   (testing "Commands blocked in read-only mode"
     (cmd-core/set-read-only-mode! true)
-    
+
     ;; Try sending a non-allowed command
     (day-camera/start)
     (let [captured (<! (capture-command!))]
       (is (nil? captured) "Should not capture day camera command in read-only mode"))
-    
+
     ;; Ping should still work
     (cmd-core/send-cmd-ping)
     (let [captured (<! (capture-command!))]
       (is (some? captured) "Should capture ping in read-only mode"))
-    
+
     ;; Frozen should still work
     (cmd-core/send-cmd-frozen)
     (let [captured (<! (capture-command!))]
       (is (some? captured) "Should capture frozen in read-only mode"))
-    
+
     ;; Reset read-only mode
     (cmd-core/set-read-only-mode! false)))
 
@@ -321,7 +321,7 @@
                       {:fn #(rotary/axis {:azimuth (rotary/azimuth 123.45)}) :name "rotary-axis"}
                       {:fn #(day-camera/zoom {:mode :zoom-mode-in :speed 0.7}) :name "day-zoom"}
                       {:fn #(heat-camera/brightness 50) :name "heat-brightness"}]]
-      
+
       (doseq [{:keys [fn name]} test-cases]
         (testing (str "Roundtrip for " name)
           (fn)
@@ -335,11 +335,11 @@
                     re-encoded (.toByteArray decoded)
                     ;; Decode again
                     final-decoded (JonSharedCmd$Root/parseFrom re-encoded)]
-                
+
                 ;; Verify they're equal
-                (is (= decoded final-decoded) 
+                (is (= decoded final-decoded)
                     (str name " should survive roundtrip"))
-                
+
                 ;; Verify JSON representation is the same
                 (is (= (command->json decoded)
                        (command->json final-decoded))
@@ -374,7 +374,7 @@
   (testing "Command system can handle rapid commands"
     (let [num-commands 100
           start-time (System/currentTimeMillis)]
-      
+
       ;; Send many commands rapidly
       (dotimes [i num-commands]
         (case (mod i 4)
@@ -382,22 +382,22 @@
           1 (rotary/axis {:azimuth (rotary/azimuth (rand 360))})
           2 (day-camera/zoom {:mode :zoom-mode-stop :speed 0.5})
           3 (heat-camera/brightness (rand-int 100))))
-      
+
       ;; Capture all commands
       (let [captured-count (atom 0)]
         (go-loop []
           (when-let [cmd (alt!
-                          @test-command-channel ([c] c)
-                          (timeout 100) nil)]
+                           @test-command-channel ([c] c)
+                           (timeout 100) nil)]
             (swap! captured-count inc)
             (recur)))
-        
+
         ;; Wait a bit
         (Thread/sleep 200)
-        
+
         (let [end-time (System/currentTimeMillis)
               duration (- end-time start-time)]
-          (is (= num-commands @captured-count) 
+          (is (= num-commands @captured-count)
               "All commands should be captured")
-          (is (< duration 1000) 
+          (is (< duration 1000)
               (str "Should send " num-commands " commands in under 1 second")))))))

@@ -170,15 +170,15 @@
 
 ;; Original command spec - replaced by simplified version below
 #_(def command
-  "Protocol command structure"
-  [:map
-   [:protocol-version protocol-version]
-   [:session-id session-id]
-   [:important important]
-   [:from-cv-subsystem from-cv-subsystem]
-   [:client-type client-type]
-   [:payload-type payload-type]
-   [:payload payload]])
+    "Protocol command structure"
+    [:map
+     [:protocol-version protocol-version]
+     [:session-id session-id]
+     [:important important]
+     [:from-cv-subsystem from-cv-subsystem]
+     [:client-type client-type]
+     [:payload-type payload-type]
+     [:payload payload]])
 
 ;; -----------------------------------------------------------------------------
 ;; UI Event Schemas
@@ -422,10 +422,6 @@
   "Bank angle in degrees [-180, 180)"
   [:double {:min -180.0 :max 179.999999}])
 
-(def scan-linger-time
-  "Scan linger time in seconds"
-  [:double {:min 0.0}])
-
 (def scan-node-index
   "Scan node index"
   [:int {:min 0}])
@@ -598,7 +594,6 @@
   "Heat camera FX mode enum"
   [:fn {:error/message "must be a JonGuiDataFxModeHeat enum"}
    #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
-
 
 ;; -----------------------------------------------------------------------------
 ;; Command Structures

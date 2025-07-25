@@ -29,10 +29,10 @@
            minutes (quot total-milliseconds 60000)
            seconds (quot (rem total-milliseconds 60000) 1000)
            milliseconds (rem total-milliseconds 1000)
-           
+
            ;; Format basic time as MM:SS.mmm
            base-format (format "%02d:%02d.%03d" minutes seconds milliseconds)]
-       
+
        (if include-nanos?
          ;; Get remaining nanoseconds for more precision
          (let [nanos-only (rem total-nanoseconds 1000000)
@@ -58,15 +58,15 @@
         ;; Less than 1 microsecond
         (< nanoseconds 1000)
         (str nanoseconds "ns")
-        
+
         ;; Less than 1 millisecond
         (< nanoseconds 1000000)
         (format "%.1fµs" (/ nanoseconds 1000.0))
-        
+
         ;; Less than 1 second
         (< nanoseconds 1000000000)
         (format "%.1fms" (/ nanoseconds 1000000.0))
-        
+
         ;; 1 second or more
         :else
         (format "%.2fs" (/ nanoseconds 1000000000.0))))
@@ -269,7 +269,7 @@
     (cond
       (< meters 1000)
       (format "%.1f m" meters)
-      
+
       :else
       (format "%.2f km" (/ meters 1000.0)))))
 

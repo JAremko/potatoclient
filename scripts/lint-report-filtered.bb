@@ -51,9 +51,9 @@
     :reason "Common in Seesaw event handlers"}
    
    ;; Telemere logging functions
-   {:pattern #"Unresolved var: tel/(handler:console|remove-handler!|set-min-level!|add-handler!|format-signal-fn|set-ns-filter!|stop-handlers!)"
+   {:pattern #"Unresolved var: tel/(handler:console|handler:file|remove-handler!|set-min-level!|add-handler!|format-signal-fn|set-ns-filter!|stop-handlers!)"
     :reason "Telemere logging API"}
-   {:pattern #"Function name must be simple symbol but got: :(default/console|console|file|warn|debug)"
+   {:pattern #"Function name must be simple symbol but got: :(default/console|console|file|warn|debug|default|trace)"
     :file-pattern #"logging\.clj$"
     :reason "Telemere handler keys"}
    {:pattern #"Function arguments should be wrapped in vector\."

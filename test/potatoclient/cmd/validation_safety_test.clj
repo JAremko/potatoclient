@@ -73,7 +73,7 @@
           (let [builder (JonSharedCmdDayCamera$Zoom/newBuilder)]
             (when (float? value)
               (.setLevel builder value)
-              (is (or (<= value 0) 
+              (is (or (<= value 0)
                       (> value 100.0)
                       (Double/isInfinite value))
                   (str "Zoom should be invalid: " value))))))))
@@ -130,7 +130,7 @@
   (testing "Commands should validate inputs before sending"
     ;; Note: These tests assume Guardrails is enabled
     (when (System/getProperty "guardrails.enabled")
-      
+
       (testing "LRF alignment with invalid offsets"
         (is (thrown? Exception
                      (potatoclient.cmd.lrf-alignment/set-offset-day 2000 0))
@@ -138,7 +138,7 @@
         (is (thrown? Exception
                      (potatoclient.cmd.lrf-alignment/set-offset-heat 0 -2000))
             "Should reject y value out of range"))
-      
+
       (testing "Camera zoom with invalid values"
         (is (thrown? Exception
                      (potatoclient.cmd.day-camera/set-zoom 0.0))
@@ -146,7 +146,7 @@
         (is (thrown? Exception
                      (potatoclient.cmd.heat-camera/set-zoom -5.0))
             "Should reject negative zoom"))
-      
+
       (testing "Rotary speed with invalid percentages"
         (is (thrown? Exception
                      (potatoclient.cmd.rotary/set-speed -10))
@@ -183,11 +183,11 @@
           (when-not (number? val)
             (is (not (m/validate ::specs/offset-value val))
                 "Non-numbers should fail offset validation"))
-          
+
           (when-not (and (number? val) (<= 0 val 100))
             (is (not (m/validate ::specs/speed-percentage val))
                 "Invalid values should fail percentage validation"))
-          
+
           (when-not (and (float? val) (< 0 val 100))
             (is (not (m/validate ::specs/zoom-level val))
                 "Invalid values should fail zoom validation")))))))
@@ -201,22 +201,22 @@
     (let [valid-offset 100
           invalid-offset 5000
           iterations 10000]
-      
+
       (testing "Valid value validation time"
         (let [start (System/nanoTime)]
           (dotimes [_ iterations]
             (m/validate ::specs/offset-value valid-offset))
           (let [elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
-            (logging/log-info {:msg (str "Valid validation: " elapsed-ms "ms for " 
+            (logging/log-info {:msg (str "Valid validation: " elapsed-ms "ms for "
                                          iterations " iterations")})
             (is (< elapsed-ms 50) "Validation should be fast"))))
-      
+
       (testing "Invalid value validation time"
         (let [start (System/nanoTime)]
           (dotimes [_ iterations]
             (m/validate ::specs/offset-value invalid-offset))
           (let [elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
-            (logging/log-info {:msg (str "Invalid validation: " elapsed-ms "ms for " 
+            (logging/log-info {:msg (str "Invalid validation: " elapsed-ms "ms for "
                                          iterations " iterations")})
             (is (< elapsed-ms 50) "Invalid validation should also be fast")))))))
 
@@ -236,10 +236,10 @@
            :temperature {:min -50.0 :max 100.0}
            :pressure {:min 500.0 :max 1500.0}
            :humidity {:min 0.0 :max 100.0}}]
-      
+
       (logging/log-info {:msg "Validation boundaries:" :boundaries boundaries})
-      
+
       ;; Verify boundaries are correctly specified in specs
       (is (not (m/validate ::specs/offset-value 1921)))
       (is (not (m/validate ::specs/offset-value -1921)))
-      (is true "Boundaries documented")))))
+      (is true "Boundaries documented"))))

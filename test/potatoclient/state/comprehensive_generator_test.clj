@@ -222,44 +222,44 @@
   [state-map]
   (let [builder (JonSharedData$JonGUIState/newBuilder)]
     (.setProtocolVersion builder (:protocol-version state-map))
-    
+
     ;; Set each subsystem if present
     (when-let [data (:system state-map)]
       (.setSystem builder (set-system-fields! (JonSharedDataSystem$JonGuiDataSystem/newBuilder) data)))
-    
+
     (when-let [data (:gps state-map)]
       (.setGps builder (set-gps-fields! (JonSharedDataGps$JonGuiDataGps/newBuilder) data)))
-    
+
     (when-let [data (:compass state-map)]
       (.setCompass builder (set-compass-fields! (JonSharedDataCompass$JonGuiDataCompass/newBuilder) data)))
-    
+
     (when-let [data (:lrf state-map)]
       (.setLrf builder (set-lrf-fields! (JonSharedDataLrf$JonGuiDataLrf/newBuilder) data)))
-    
+
     (when-let [data (:time state-map)]
       (.setTime builder (set-time-fields! (JonSharedDataTime$JonGuiDataTime/newBuilder) data)))
-    
+
     (when-let [data (:rotary state-map)]
       (.setRotary builder (set-rotary-fields! (JonSharedDataRotary$JonGuiDataRotary/newBuilder) data)))
-    
+
     (when-let [data (:camera-day state-map)]
       (.setCameraDay builder (set-camera-day-fields! (JonSharedDataCameraDay$JonGuiDataCameraDay/newBuilder) data)))
-    
+
     (when-let [data (:camera-heat state-map)]
       (.setCameraHeat builder (set-camera-heat-fields! (JonSharedDataCameraHeat$JonGuiDataCameraHeat/newBuilder) data)))
-    
+
     (when-let [data (:compass-calibration state-map)]
       (.setCompassCalibration builder (set-compass-calibration-fields! (JonSharedDataCompassCalibration$JonGuiDataCompassCalibration/newBuilder) data)))
-    
+
     (when-let [data (:rec-osd state-map)]
       (.setRecOsd builder (set-rec-osd-fields! (JonSharedDataRecOsd$JonGuiDataRecOsd/newBuilder) data)))
-    
+
     (when-let [data (:day-cam-glass-heater state-map)]
       (.setDayCamGlassHeater builder (set-glass-heater-fields! (JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater/newBuilder) data)))
-    
+
     (when-let [data (:meteo-internal state-map)]
       (.setMeteoInternal builder (set-meteo-fields! (JonSharedDataTypes$JonGuiDataMeteo/newBuilder) data)))
-    
+
     (.build builder)))
 
 (defn create-test-websocket-message
@@ -281,18 +281,18 @@
   (testing "System subsystem with all fields"
     (let [system-data (mg/generate schemas/system-schema)
           state-map {:protocol-version 1 :system system-data}]
-      
+
       (is (schemas/validate-subsystem :system system-data)
           "Generated system data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/system-state) "System state should be set")
-      
+
       ;; Check specific fields with float tolerance
       (when @device/system-state
         (is (< (Math/abs (- (:cpu-temperature system-data)
-                           (:cpu-temperature @device/system-state)))
+                            (:cpu-temperature @device/system-state)))
                0.00001)
             "CPU temperature should match")
         (is (= (:loc system-data) (:loc @device/system-state))
@@ -304,14 +304,14 @@
   (testing "GPS subsystem with all fields"
     (let [gps-data (mg/generate schemas/gps-schema)
           state-map {:protocol-version 1 :gps gps-data}]
-      
+
       (is (schemas/validate-subsystem :gps gps-data)
           "Generated GPS data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/gps-state) "GPS state should be set")
-      
+
       (when @device/gps-state
         (is (< (Math/abs (- (:latitude gps-data) (:latitude @device/gps-state)))
                0.00001)
@@ -325,14 +325,14 @@
   (testing "Compass subsystem with all fields"
     (let [compass-data (mg/generate schemas/compass-schema)
           state-map {:protocol-version 1 :compass compass-data}]
-      
+
       (is (schemas/validate-subsystem :compass compass-data)
           "Generated compass data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/compass-state) "Compass state should be set")
-      
+
       (when @device/compass-state
         (is (< (Math/abs (- (:azimuth compass-data) (:azimuth @device/compass-state)))
                0.00001)
@@ -349,14 +349,14 @@
           ;; Remove optional target for simplicity
           lrf-data (dissoc lrf-data :target)
           state-map {:protocol-version 1 :lrf lrf-data}]
-      
+
       (is (schemas/validate-subsystem :lrf lrf-data)
           "Generated LRF data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/lrf-state) "LRF state should be set")
-      
+
       (when @device/lrf-state
         (is (= (:is-scanning lrf-data) (:is-scanning @device/lrf-state))
             "Scanning state should match")
@@ -367,14 +367,14 @@
   (testing "Time subsystem with all fields"
     (let [time-data (mg/generate schemas/time-schema)
           state-map {:protocol-version 1 :time time-data}]
-      
+
       (is (schemas/validate-subsystem :time time-data)
           "Generated time data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/time-state) "Time state should be set")
-      
+
       (when @device/time-state
         (is (= (:timestamp time-data) (:timestamp @device/time-state))
             "Timestamp should match")
@@ -387,14 +387,14 @@
           ;; Skip current-scan-node for simplicity
           rotary-data (dissoc rotary-data :current-scan-node)
           state-map {:protocol-version 1 :rotary rotary-data}]
-      
+
       (is (schemas/validate-subsystem :rotary rotary-data)
           "Generated rotary data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/rotary-state) "Rotary state should be set")
-      
+
       (when @device/rotary-state
         (is (< (Math/abs (- (:azimuth rotary-data) (:azimuth @device/rotary-state)))
                0.00001)
@@ -408,14 +408,14 @@
   (testing "Day camera subsystem with all fields"
     (let [camera-data (mg/generate schemas/camera-day-schema)
           state-map {:protocol-version 1 :camera-day camera-data}]
-      
+
       (is (schemas/validate-subsystem :camera-day camera-data)
           "Generated camera data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/camera-day-state) "Day camera state should be set")
-      
+
       (when @device/camera-day-state
         (is (< (Math/abs (- (:focus-pos camera-data) (:focus-pos @device/camera-day-state)))
                0.00001)
@@ -429,14 +429,14 @@
   (testing "Heat camera subsystem with all fields"
     (let [camera-data (mg/generate schemas/camera-heat-schema)
           state-map {:protocol-version 1 :camera-heat camera-data}]
-      
+
       (is (schemas/validate-subsystem :camera-heat camera-data)
           "Generated camera data should be valid")
-      
+
       (mock-websocket-flow state-map)
-      
+
       (is (some? @device/camera-heat-state) "Heat camera state should be set")
-      
+
       (when @device/camera-heat-state
         (is (< (Math/abs (- (:zoom-pos camera-data) (:zoom-pos @device/camera-heat-state)))
                0.00001)
@@ -461,15 +461,15 @@
                      :gps gps-data
                      :compass compass-data
                      :rotary rotary-data}]
-      
+
       (mock-websocket-flow state-map)
-      
+
       ;; All subsystems should be updated
       (is (some? @device/system-state) "System state should be set")
       (is (some? @device/gps-state) "GPS state should be set")
       (is (some? @device/compass-state) "Compass state should be set")
       (is (some? @device/rotary-state) "Rotary state should be set")
-      
+
       ;; Verify no other subsystems were touched
       (is (nil? @device/lrf-state) "LRF state should remain nil")
       (is (nil? @device/camera-day-state) "Day camera state should remain nil")
@@ -491,9 +491,9 @@
                       :rec-osd (mg/generate schemas/rec-osd-schema)
                       :day-cam-glass-heater (mg/generate schemas/day-cam-glass-heater-schema)
                       :meteo-internal (mg/generate schemas/meteo-schema)}]
-      
+
       (mock-websocket-flow full-state)
-      
+
       ;; All main subsystems should be updated
       (is (some? @device/system-state) "System state should be set")
       (is (some? @device/gps-state) "GPS state should be set")
@@ -522,24 +522,24 @@
   (testing "State changes are distributed through channels"
     (let [channel (dispatch/get-state-channel)
           received (atom [])]
-      
+
       ;; Start collecting states
       (go-loop []
         (when-let [state (<! channel)]
           (swap! received conj state)
           (recur)))
-      
+
       ;; Send multiple state updates
       (dotimes [i 3]
         (let [state-map {:protocol-version 1
                          :system (assoc (mg/generate schemas/system-schema)
-                                       :cpu-temperature (+ 50.0 i))}]
+                                        :cpu-temperature (+ 50.0 i))}]
           (mock-websocket-flow state-map)
           (Thread/sleep 50)))
-      
+
       ;; Wait for delivery
       (Thread/sleep 200)
-      
+
       (is (>= (count @received) 3) "Should receive at least 3 state updates")
       (is (every? #(= 1 (:protocol-version %)) @received)
           "All states should have protocol version"))))
@@ -549,18 +549,18 @@
     (let [state-map {:protocol-version 1
                      :system (mg/generate schemas/system-schema)}
           update-count (atom 0)]
-      
+
       ;; Watch for changes
       (add-watch device/system-state ::test-watch
                  (fn [_ _ _ _] (swap! update-count inc)))
-      
+
       ;; Send same state multiple times
       (dotimes [_ 5]
         (mock-websocket-flow state-map))
-      
+
       ;; Should only update once
       (is (= 1 @update-count) "Atom should only update once for identical data")
-      
+
       ;; Cleanup
       (remove-watch device/system-state ::test-watch))))
 
@@ -608,25 +608,25 @@
                                    :offset-elevation -90.0
                                    :magnetic-declination -180.0
                                    :calibrating true}}]
-      
+
       (is (schemas/validate-state extreme-state)
           "Extreme values should be valid")
-      
+
       (mock-websocket-flow extreme-state)
-      
+
       ;; Verify values are preserved
       (is (some? @device/system-state))
       (is (some? @device/gps-state))
       (is (some? @device/compass-state))
-      
+
       (when @device/system-state
         (is (< (Math/abs (- 149.9 (:cpu-temperature @device/system-state))) 0.01)
             "Extreme CPU temp should be preserved"))
-      
+
       (when @device/gps-state
         (is (< (Math/abs (- 180.0 (:longitude @device/gps-state))) 0.00001)
             "Extreme longitude should be preserved"))
-      
+
       (when @device/compass-state
         (is (< (Math/abs (- 359.999 (:azimuth @device/compass-state))) 0.001)
             "Extreme azimuth should be preserved")))))

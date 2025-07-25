@@ -26,7 +26,7 @@
 
 ;; Shadow state - mutable protobuf builder for type-safe comparison
 ;; This maintains the last known state in protobuf form
-(defonce ^:private shadow-state-builder 
+(defonce ^:private shadow-state-builder
   (atom (JonSharedData$JonGUIState/newBuilder)))
 
 ;; ============================================================================
@@ -203,7 +203,7 @@
 
 (defrecord StateDispatch [running?]
   IStateDispatch
-  
+
   (handle-state-message [_ binary-data]
     (try
       ;; Parse protobuf message directly
@@ -217,8 +217,7 @@
         (logging/log-error {:msg "Failed to deserialize state message"
                             :error (.getMessage e)
                             :bytes-length (count binary-data)}))))
-  
-  
+
   (dispose [_]
     (reset! running? false)
     (close! state-channel)
@@ -252,7 +251,7 @@
 (>defn get-state-channel
   "Get the channel that receives decoded state maps"
   []
-  [=> [:fn {:error/message "must be a core.async channel"} 
+  [=> [:fn {:error/message "must be a core.async channel"}
        #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
   state-channel)
 

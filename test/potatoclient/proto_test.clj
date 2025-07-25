@@ -37,7 +37,7 @@
   (testing "Valid command passes validation"
     (let [cmd (proto/cmd-ping 12345 :local)]
       (is (proto/valid-command? cmd))))
-  
+
   (testing "Invalid command fails validation"
     (let [cmd {:invalid true}]
       (is (not (proto/valid-command? cmd))))))

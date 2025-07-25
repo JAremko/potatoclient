@@ -18,44 +18,44 @@
     (is (m/validate ::specs/azimuth-degrees 359.999999))
     (is (not (m/validate ::specs/azimuth-degrees 360.0)))
     (is (not (m/validate ::specs/azimuth-degrees -0.1)))
-    
+
     ;; State spec
     (is (m/validate state-schemas/angle-azimuth 0.0))
     (is (m/validate state-schemas/angle-azimuth 359.999999))
     (is (not (m/validate state-schemas/angle-azimuth 360.0))))
-  
+
   (testing "Elevation angles [-90, 90]"
     (is (m/validate ::specs/elevation-degrees -90.0))
     (is (m/validate ::specs/elevation-degrees 0.0))
     (is (m/validate ::specs/elevation-degrees 90.0))
     (is (not (m/validate ::specs/elevation-degrees -90.1)))
     (is (not (m/validate ::specs/elevation-degrees 90.1))))
-  
+
   (testing "Bank angles [-180, 180)"
     (is (m/validate ::specs/bank-angle -180.0))
     (is (m/validate ::specs/bank-angle 0.0))
     (is (m/validate ::specs/bank-angle 179.999999))
     (is (not (m/validate ::specs/bank-angle 180.0)))
     (is (not (m/validate ::specs/bank-angle -180.1))))
-  
+
   (testing "Relative angles (-360, 360)"
     (is (m/validate ::specs/relative-angle -359.999999))
     (is (m/validate ::specs/relative-angle 0.0))
     (is (m/validate ::specs/relative-angle 359.999999))
     (is (not (m/validate ::specs/relative-angle -360.0)))
     (is (not (m/validate ::specs/relative-angle 360.0))))
-  
+
   (testing "Platform angles"
     ;; Platform azimuth (-360, 360)
     (is (m/validate ::specs/platform-azimuth -359.999999))
     (is (m/validate ::specs/platform-azimuth 359.999999))
     (is (not (m/validate ::specs/platform-azimuth -360.0)))
     (is (not (m/validate ::specs/platform-azimuth 360.0)))
-    
+
     ;; Platform elevation [-90, 90]
     (is (m/validate ::specs/platform-elevation -90.0))
     (is (m/validate ::specs/platform-elevation 90.0))
-    
+
     ;; Platform bank [-180, 180)
     (is (m/validate ::specs/platform-bank -180.0))
     (is (m/validate ::specs/platform-bank 179.999999))
@@ -72,14 +72,14 @@
     (is (m/validate ::specs/gps-latitude 90.0))
     (is (not (m/validate ::specs/gps-latitude -90.1)))
     (is (not (m/validate ::specs/gps-latitude 90.1))))
-  
+
   (testing "GPS longitude [-180, 180)"
     (is (m/validate ::specs/gps-longitude -180.0))
     (is (m/validate ::specs/gps-longitude 0.0))
     (is (m/validate ::specs/gps-longitude 179.999999))
     (is (not (m/validate ::specs/gps-longitude 180.0)))
     (is (not (m/validate ::specs/gps-longitude -180.1))))
-  
+
   (testing "GPS altitude [-433, 8848.86]"
     (is (m/validate ::specs/gps-altitude -433.0))     ; Dead Sea
     (is (m/validate ::specs/gps-altitude 0.0))
@@ -93,7 +93,7 @@
 
 (deftest normalized-value-tests
   (testing "Normalized values [0, 1]"
-    (doseq [spec [::specs/normalized-value 
+    (doseq [spec [::specs/normalized-value
                   ::specs/rotation-speed
                   ::specs/focus-value
                   ::specs/iris-value
@@ -104,7 +104,7 @@
       (is (m/validate spec 1.0))
       (is (not (m/validate spec -0.1)))
       (is (not (m/validate spec 1.1)))))
-  
+
   (testing "CLAHE shift [-1, 1]"
     (is (m/validate ::specs/clahe-shift -1.0))
     (is (m/validate ::specs/clahe-shift 0.0))
@@ -123,7 +123,7 @@
     (is (m/validate ::specs/offset-value 1920))
     (is (not (m/validate ::specs/offset-value -1921)))
     (is (not (m/validate ::specs/offset-value 1921))))
-  
+
   (testing "LRF Y offset [-1080, 1080]"
     (is (m/validate ::specs/offset-y-value -1080))
     (is (m/validate ::specs/offset-y-value 0))
@@ -142,7 +142,7 @@
     (is (m/validate ::specs/dde-level 512))
     (is (not (m/validate ::specs/dde-level -1)))
     (is (not (m/validate ::specs/dde-level 513))))
-  
+
   (testing "DDE shift [-100, 100]"
     (is (m/validate ::specs/dde-shift -100))
     (is (m/validate ::specs/dde-shift 0))
@@ -161,13 +161,13 @@
     (is (m/validate ::specs/scan-speed 1.0))
     (is (not (m/validate ::specs/scan-speed 0.0)))
     (is (not (m/validate ::specs/scan-speed 1.1))))
-  
+
   (testing "Scan linger time [0, ∞)"
     (is (m/validate ::specs/scan-linger-time 0.0))
     (is (m/validate ::specs/scan-linger-time 10.0))
     (is (m/validate ::specs/scan-linger-time 3600.0))
     (is (not (m/validate ::specs/scan-linger-time -0.1))))
-  
+
   (testing "Scan node index [0, ∞)"
     (is (m/validate ::specs/scan-node-index 0))
     (is (m/validate ::specs/scan-node-index 100))
@@ -183,25 +183,25 @@
     (is (m/validate ::specs/protocol-version 100))
     (is (not (m/validate ::specs/protocol-version 0)))
     (is (not (m/validate ::specs/protocol-version -1))))
-  
+
   (testing "Timestamps >= 0"
     (is (m/validate ::specs/timestamp 0))
     (is (m/validate ::specs/timestamp 1234567890))
     (is (not (m/validate ::specs/timestamp -1))))
-  
+
   (testing "Speed percentage [0, 100]"
     (is (m/validate ::specs/speed-percentage 0))
     (is (m/validate ::specs/speed-percentage 50))
     (is (m/validate ::specs/speed-percentage 100))
     (is (not (m/validate ::specs/speed-percentage -1)))
     (is (not (m/validate ::specs/speed-percentage 101))))
-  
+
   (testing "Magnetic declination [-180, 180)"
     (is (m/validate ::specs/magnetic-declination -180.0))
     (is (m/validate ::specs/magnetic-declination 0.0))
     (is (m/validate ::specs/magnetic-declination 179.999999))
     (is (not (m/validate ::specs/magnetic-declination 180.0))))
-  
+
   (testing "NDC coordinates [-1, 1]"
     (is (m/validate ::specs/ndc-coordinate -1.0))
     (is (m/validate ::specs/ndc-coordinate 0.0))
@@ -220,38 +220,38 @@
     (is (m/validate state-schemas/temperature-celsius 660.32))   ; Aluminum melting point
     (is (not (m/validate state-schemas/temperature-celsius -273.16)))
     (is (not (m/validate state-schemas/temperature-celsius 660.33))))
-  
+
   (testing "Sun position (unusual 0-360 for elevation)"
     (is (m/validate state-schemas/sun-azimuth 0.0))
     (is (m/validate state-schemas/sun-azimuth 359.999999))
     (is (not (m/validate state-schemas/sun-azimuth 360.0)))
-    
+
     ;; Sun elevation uses 0-360 instead of -90 to 90!
     (is (m/validate state-schemas/sun-elevation 0.0))
     (is (m/validate state-schemas/sun-elevation 359.999999))
     (is (not (m/validate state-schemas/sun-elevation 360.0))))
-  
+
   (testing "Power consumption [0, 1000]"
     (is (m/validate state-schemas/power-consumption 0.0))
     (is (m/validate state-schemas/power-consumption 500.0))
     (is (m/validate state-schemas/power-consumption 1000.0))
     (is (not (m/validate state-schemas/power-consumption -0.1)))
     (is (not (m/validate state-schemas/power-consumption 1000.1))))
-  
+
   (testing "Disk space percentage [0, 100]"
     (is (m/validate state-schemas/disk-space 0))
     (is (m/validate state-schemas/disk-space 50))
     (is (m/validate state-schemas/disk-space 100))
     (is (not (m/validate state-schemas/disk-space -1)))
     (is (not (m/validate state-schemas/disk-space 101))))
-  
+
   (testing "Distance in decimeters [0, 500000]"
     (is (m/validate state-schemas/distance-decimeters 0.0))
     (is (m/validate state-schemas/distance-decimeters 250000.0))
     (is (m/validate state-schemas/distance-decimeters 500000.0))  ; 50km
     (is (not (m/validate state-schemas/distance-decimeters -0.1)))
     (is (not (m/validate state-schemas/distance-decimeters 500000.1))))
-  
+
   (testing "RGB values [0, 255]"
     (is (m/validate state-schemas/rgb-value 0))
     (is (m/validate state-schemas/rgb-value 128))
@@ -270,14 +270,14 @@
     (is (m/validate ::specs/zoom-level 100.0))
     (is (not (m/validate ::specs/zoom-level 0.9)))
     (is (not (m/validate ::specs/zoom-level 100.1))))
-  
+
   (testing "Digital zoom level [1.0, ∞)"
     (is (m/validate ::specs/digital-zoom-level 1.0))
     (is (m/validate ::specs/digital-zoom-level 10.0))
     (is (m/validate ::specs/digital-zoom-level 1000.0))
     (is (not (m/validate ::specs/digital-zoom-level 0.9)))
     (is (not (m/validate ::specs/digital-zoom-level 0.0))))
-  
+
   (testing "Zoom table index [0, ∞)"
     (is (m/validate ::specs/zoom-table-index 0))
     (is (m/validate ::specs/zoom-table-index 100))
@@ -292,7 +292,7 @@
     (is (m/validate state-schemas/compass-calibration-stage 0))
     (is (m/validate state-schemas/compass-calibration-stage 10))
     (is (not (m/validate state-schemas/compass-calibration-stage -1))))
-  
+
   (testing "Final calibration stage > 0"
     (is (m/validate state-schemas/compass-calibration-final-stage 1))
     (is (m/validate state-schemas/compass-calibration-final-stage 10))
@@ -314,7 +314,7 @@
       (is (not (m/validate spec Double/POSITIVE_INFINITY)))
       (is (not (m/validate spec Double/NEGATIVE_INFINITY)))
       (is (not (m/validate spec Float/NaN)))))
-  
+
   (testing "Very small positive values for gt: 0 constraints"
     (is (m/validate ::specs/scan-speed 0.0000001))
     (is (m/validate ::specs/scan-speed 0.00001))
@@ -334,7 +334,7 @@
       (is (not (m/validate spec 1.5)))
       (is (not (m/validate spec "1")))
       (is (not (m/validate spec nil)))))
-  
+
   (testing "Float/Double types accept both"
     (is (m/validate ::specs/azimuth-degrees 45.0))
     (is (m/validate ::specs/azimuth-degrees (double 45.0)))))
@@ -451,14 +451,14 @@
                                :day-cam-glass-heater {:enabled false
                                                       :auto-mode false}
                                :actual-space-time {:timestamp 0}}]
-      
+
       ;; Valid state should pass
       (is (m/validate state-schemas/jon-gui-state-schema minimal-valid-state))
-      
+
       ;; Missing any required field should fail
-      (doseq [field [:system :meteo-internal :lrf :time :gps :compass 
-                     :rotary :camera-day :camera-heat :compass-calibration 
+      (doseq [field [:system :meteo-internal :lrf :time :gps :compass
+                     :rotary :camera-day :camera-heat :compass-calibration
                      :rec-osd :day-cam-glass-heater :actual-space-time]]
-        (is (not (m/validate state-schemas/jon-gui-state-schema 
+        (is (not (m/validate state-schemas/jon-gui-state-schema
                              (dissoc minimal-valid-state field)))
             (str field " should be required"))))))

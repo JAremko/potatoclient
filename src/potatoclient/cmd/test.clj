@@ -299,43 +299,43 @@
   []
   [=> nil?]
   (println "\n=== Testing System Commands ===")
-  
+
   ;; Subsystem control
   (println "Starting all subsystems...")
   (system/start-all)
-  
+
   (Thread/sleep 100)
   (println "Stopping all subsystems...")
   (system/stop-all)
-  
+
   ;; Recording
   (Thread/sleep 100)
   (println "Starting recording...")
   (system/start-rec)
-  
+
   (Thread/sleep 100)
   (println "Marking recording as important...")
   (system/mark-rec-important)
-  
+
   (Thread/sleep 100)
   (println "Stopping recording...")
   (system/stop-rec)
-  
+
   ;; Localization
   (Thread/sleep 100)
   (println "Setting localization to English...")
   (when-let [loc (system/string->localization "english")]
     (system/set-localization loc))
-  
+
   ;; Mode settings
   (Thread/sleep 100)
   (println "Enabling geodesic mode...")
   (system/enable-geodesic-mode)
-  
+
   (Thread/sleep 100)
   (println "Disabling geodesic mode...")
   (system/disable-geodesic-mode)
-  
+
   (println "\nSystem command tests complete!")
   nil)
 
@@ -344,36 +344,36 @@
   []
   [=> nil?]
   (println "\n=== Testing OSD Commands ===")
-  
+
   ;; Screen displays
   (println "Showing default screen...")
   (osd/show-default-screen)
-  
+
   (Thread/sleep 100)
   (println "Showing LRF measure screen...")
   (osd/show-lrf-measure-screen)
-  
+
   (Thread/sleep 100)
   (println "Showing LRF result screen...")
   (osd/show-lrf-result-screen)
-  
+
   ;; OSD overlays
   (Thread/sleep 100)
   (println "Enabling day camera OSD...")
   (osd/enable-day-osd)
-  
+
   (Thread/sleep 100)
   (println "Enabling heat camera OSD...")
   (osd/enable-heat-osd)
-  
+
   (Thread/sleep 100)
   (println "Disabling day camera OSD...")
   (osd/disable-day-osd)
-  
+
   (Thread/sleep 100)
   (println "Disabling heat camera OSD...")
   (osd/disable-heat-osd)
-  
+
   (println "\nOSD command tests complete!")
   nil)
 
@@ -382,31 +382,31 @@
   []
   [=> nil?]
   (println "\n=== Testing GPS Commands ===")
-  
+
   ;; Basic control
   (println "Starting GPS...")
   (gps/start)
-  
+
   (Thread/sleep 100)
   (println "Setting manual position (48.8566° N, 2.3522° E, 35m)...")
   (gps/set-manual-position 48.8566 2.3522 35.0)
-  
+
   (Thread/sleep 100)
   (println "Enabling use of manual position...")
   (gps/set-use-manual-position true)
-  
+
   (Thread/sleep 100)
   (println "Getting GPS meteo data...")
   (gps/get-meteo)
-  
+
   (Thread/sleep 100)
   (println "Disabling use of manual position...")
   (gps/set-use-manual-position false)
-  
+
   (Thread/sleep 100)
   (println "Stopping GPS...")
   (gps/stop)
-  
+
   (println "\nGPS command tests complete!")
   nil)
 
@@ -415,44 +415,44 @@
   []
   [=> nil?]
   (println "\n=== Testing LRF Commands ===")
-  
+
   ;; Basic control
   (println "Starting LRF...")
   (lrf/start)
-  
+
   (Thread/sleep 100)
   (println "Triggering measurement...")
   (lrf/measure)
-  
+
   (Thread/sleep 100)
   (println "Starting new session...")
   (lrf/new-session)
-  
+
   ;; Modes
   (Thread/sleep 100)
   (println "Enabling scan mode...")
   (lrf/scan-on)
-  
+
   (Thread/sleep 100)
   (println "Enabling fog mode...")
   (lrf/enable-fog-mode)
-  
+
   (Thread/sleep 100)
   (println "Setting target designator to mode A...")
   (lrf/target-designator-mode-a)
-  
+
   (Thread/sleep 100)
   (println "Turning off target designator...")
   (lrf/target-designator-off)
-  
+
   (Thread/sleep 100)
   (println "Getting LRF meteo data...")
   (lrf/get-meteo)
-  
+
   (Thread/sleep 100)
   (println "Stopping LRF...")
   (lrf/stop)
-  
+
   (println "\nLRF command tests complete!")
   nil)
 
@@ -461,28 +461,28 @@
   []
   [=> nil?]
   (println "\n=== Testing LRF Alignment Commands ===")
-  
+
   ;; Day camera offsets
   (println "Setting day camera offset (0.5, -0.3)...")
   (lrf-alignment/set-offset-day 0.5 -0.3)
-  
+
   (Thread/sleep 100)
   (println "Shifting day camera offset by (0.1, 0.05)...")
   (lrf-alignment/shift-offset-day 0.1 0.05)
-  
+
   ;; Heat camera offsets
   (Thread/sleep 100)
   (println "Setting heat camera offset (0.2, -0.1)...")
   (lrf-alignment/set-offset-heat 0.2 -0.1)
-  
+
   (Thread/sleep 100)
   (println "Saving offsets...")
   (lrf-alignment/save-offsets)
-  
+
   (Thread/sleep 100)
   (println "Resetting offsets to defaults...")
   (lrf-alignment/reset-offsets)
-  
+
   (println "\nLRF alignment command tests complete!")
   nil)
 
@@ -491,40 +491,41 @@
   []
   [=> nil?]
   (println "\n=== Testing Compass Commands ===")
-  
+
   ;; Basic control
   (println "Starting compass...")
   (compass/start)
-  
+
   (Thread/sleep 100)
   (println "Setting declination to 5.5 degrees...")
   (compass/set-declination 5.5)
-  
+
   (Thread/sleep 100)
-  (println "Setting offset angles (1.2, -0.8)...")
-  (compass/set-offset-angles 1.2 -0.8)
-  
+  (println "Setting offset angles (azimuth: 1.2, elevation: -0.8)...")
+  (compass/set-offset-angle-azimuth 1.2)
+  (compass/set-offset-angle-elevation -0.8)
+
   ;; Calibration
   (Thread/sleep 100)
   (println "Starting short calibration...")
   (compass/calibrate-short)
-  
+
   (Thread/sleep 100)
   (println "Moving to next calibration step...")
   (compass/calibrate-next)
-  
+
   (Thread/sleep 100)
   (println "Canceling calibration...")
   (compass/calibrate-cancel)
-  
+
   (Thread/sleep 100)
   (println "Getting compass meteo data...")
   (compass/get-meteo)
-  
+
   (Thread/sleep 100)
   (println "Stopping compass...")
   (compass/stop)
-  
+
   (println "\nCompass command tests complete!")
   nil)
 
@@ -533,37 +534,37 @@
   []
   [=> nil?]
   (println "\n=== Testing Computer Vision Commands ===")
-  
+
   ;; Tracking
   (println "Starting tracking at (0.5, 0.5)...")
   (cv/start-tracking 0.5 0.5)
-  
+
   (Thread/sleep 100)
   (println "Setting auto-focus for day camera...")
   (when-let [channel (cv/string->channel "day")]
     (cv/set-auto-focus channel true))
-  
+
   (Thread/sleep 100)
   (println "Enabling vampire mode...")
-  (cv/set-vampire-mode true)
-  
+  (cv/enable-vampire-mode)
+
   (Thread/sleep 100)
   (println "Enabling stabilization mode...")
-  (cv/set-stabilization-mode true)
-  
+  (cv/enable-stabilization-mode)
+
   ;; Video recording
   (Thread/sleep 100)
   (println "Starting video dump...")
   (cv/start-video-dump)
-  
+
   (Thread/sleep 100)
   (println "Stopping video dump...")
   (cv/stop-video-dump)
-  
+
   (Thread/sleep 100)
   (println "Stopping tracking...")
   (cv/stop-tracking)
-  
+
   (println "\nComputer vision command tests complete!")
   nil)
 
@@ -572,27 +573,27 @@
   []
   [=> nil?]
   (println "\n=== Testing Glass Heater Commands ===")
-  
+
   ;; Basic control
   (println "Starting glass heater subsystem...")
   (glass-heater/start)
-  
+
   (Thread/sleep 100)
   (println "Turning heater on...")
   (glass-heater/on)
-  
+
   (Thread/sleep 100)
   (println "Getting heater status...")
   (glass-heater/get-meteo)
-  
+
   (Thread/sleep 100)
   (println "Turning heater off...")
   (glass-heater/off)
-  
+
   (Thread/sleep 100)
   (println "Stopping glass heater subsystem...")
   (glass-heater/stop)
-  
+
   (println "\nGlass heater command tests complete!")
   nil)
 

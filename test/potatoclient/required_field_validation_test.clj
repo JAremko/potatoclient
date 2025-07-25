@@ -23,16 +23,16 @@
           ping-msg (cmd.JonSharedCmd$Ping/newBuilder)]
       (.setPing root-msg ping-msg)
       (is (some? (.build root-msg)) "Command with payload should build"))
-    
+
     ;; Test that protobuf doesn't enforce required oneof at build time
     (let [root-msg (cmd-core/create-root-message)
           built-msg (.build root-msg)]
-      (is (some? built-msg) 
+      (is (some? built-msg)
           "Protobuf allows building without required oneof")
-      (is (= (.getPayloadCase built-msg) 
+      (is (= (.getPayloadCase built-msg)
              JonSharedCmd$Root$PayloadCase/PAYLOAD_NOT_SET)
           "Payload case should be NOT_SET"))
-    
+
     ;; This shows why runtime validation is critical!
     (testing "Runtime validation would catch missing payload"
       ;; In a real system, we'd have validation like:
@@ -48,7 +48,7 @@
     (let [compass-root (JonSharedCmdCompass$Root/newBuilder)]
       (.setStart compass-root (cmd.Compass.JonSharedCmdCompass$Start/newBuilder))
       (is (some? (.build compass-root)) "Compass command with payload should build"))
-    
+
     ;; Protobuf allows building without required oneof
     (let [compass-root (JonSharedCmdCompass$Root/newBuilder)
           built-msg (.build compass-root)]
@@ -57,13 +57,13 @@
       (is (= (.getCmdCase built-msg)
              JonSharedCmdCompass$Root$CmdCase/CMD_NOT_SET)
           "Command case should be NOT_SET")))
-  
+
   (testing "Rotary command - protobuf allows empty oneofs"
     ;; Valid rotary command
     (let [rotary-root (JonSharedCmdRotary$Root/newBuilder)]
       (.setStop rotary-root (cmd.RotaryPlatform.JonSharedCmdRotary$Stop/newBuilder))
       (is (some? (.build rotary-root)) "Rotary command with payload should build"))
-    
+
     ;; Protobuf allows building without required oneof
     (let [rotary-root (JonSharedCmdRotary$Root/newBuilder)
           built-msg (.build rotary-root)]
@@ -101,16 +101,16 @@
                         :stabilization-mode false
                         :geodesic-mode false
                         :cv-dumping false}]
-      
+
       ;; Valid system should pass
       (is (m/validate state-schemas/system-schema valid-system))
-      
+
       ;; Missing any required field should fail
       (doseq [field (keys valid-system)]
         (is (not (m/validate state-schemas/system-schema
                              (dissoc valid-system field)))
             (str field " should be required in system schema")))))
-  
+
   (testing "GPS subsystem requires all fields"
     (let [valid-gps {:longitude 0.0
                      :latitude 0.0
@@ -120,16 +120,16 @@
                      :manual-altitude 0.0
                      :fix-type "JON_GUI_DATA_GPS_FIX_TYPE_NONE"
                      :use-manual false}]
-      
+
       ;; Valid GPS should pass
       (is (m/validate state-schemas/gps-schema valid-gps))
-      
+
       ;; Missing any required field should fail
       (doseq [field (keys valid-gps)]
         (is (not (m/validate state-schemas/gps-schema
                              (dissoc valid-gps field)))
             (str field " should be required in GPS schema")))))
-  
+
   (testing "Compass subsystem requires all fields"
     (let [valid-compass {:azimuth 0.0
                          :elevation 0.0
@@ -138,10 +138,10 @@
                          :offset-elevation 0.0
                          :magnetic-declination 0.0
                          :calibrating false}]
-      
+
       ;; Valid compass should pass
       (is (m/validate state-schemas/compass-schema valid-compass))
-      
+
       ;; Missing any required field should fail
       (doseq [field (keys valid-compass)]
         (is (not (m/validate state-schemas/compass-schema
@@ -156,7 +156,7 @@
                                     :pointer-mode "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF"
                                     :fog-mode-enabled false
                                     :is-refining false}
-          
+
           valid-lrf-with-target (assoc valid-lrf-without-target
                                        :target {:timestamp 123456
                                                 :target-longitude 0.0
@@ -179,7 +179,7 @@
                                                 :uuid-part2 0
                                                 :uuid-part3 0
                                                 :uuid-part4 0})]
-      
+
       ;; Both with and without target should be valid
       (is (m/validate state-schemas/lrf-schema valid-lrf-without-target)
           "LRF without target should be valid")
@@ -199,22 +199,22 @@
                            :elevation 0.0
                            :linger 0.0
                            :speed 0.5}]
-      
+
       ;; Valid scan node should pass
       (is (m/validate state-schemas/scan-node-schema valid-scan-node))
-      
+
       ;; Missing any required field should fail
       (doseq [field (keys valid-scan-node)]
         (is (not (m/validate state-schemas/scan-node-schema
                              (dissoc valid-scan-node field)))
             (str field " should be required in scan node schema")))))
-  
+
   (testing "RGB color requires all components"
     (let [valid-color {:red 255 :green 128 :blue 0}]
-      
+
       ;; Valid color should pass
       (is (m/validate state-schemas/rgb-color-schema valid-color))
-      
+
       ;; Missing any component should fail
       (doseq [component [:red :green :blue]]
         (is (not (m/validate state-schemas/rgb-color-schema

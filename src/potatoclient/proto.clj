@@ -86,7 +86,7 @@
                  (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
                  (not (.hasField proto-msg field)))
             acc
-            
+
            ;; Skip unset primitive fields
             (and (not (.isRepeated field))
                  (not= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)

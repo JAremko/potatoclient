@@ -181,7 +181,7 @@
           ;; The protobuf accepts invalid values!
           (is (= x (.getX set-offsets))
               (str "Protobuf accepts out-of-range x=" x))
-          
+
           ;; This is why we need Malli validation
           (when (not= x 0)
             (is (not (m/validate ::specs/offset-value x))
@@ -231,7 +231,7 @@
               "Protobuf accepts invalid latitude")
           (is (= 300.0 (.getLongitude built))
               "Protobuf accepts invalid longitude"))))
-    
+
     (testing "Numeric fields with wrong types"
       ;; Note: This is a compile-time type check, not runtime
       ;; Protobuf setters are strongly typed in Java
@@ -244,8 +244,8 @@
 (defn generate-edge-case-numbers
   "Generate edge case numeric values that might break validation"
   []
-  {:floats [Float/MAX_VALUE 
-            Float/MIN_VALUE 
+  {:floats [Float/MAX_VALUE
+            Float/MIN_VALUE
             Float/NEGATIVE_INFINITY
             Float/POSITIVE_INFINITY
             Float/NaN
@@ -271,12 +271,12 @@
   (testing "Float edge cases in GPS coordinates"
     (let [edge-floats (-> (generate-edge-case-numbers) :floats)]
       (doseq [val edge-floats]
-        (when-not (and (number? val) 
+        (when-not (and (number? val)
                        (not (Double/isNaN val))
                        (not (Double/isInfinite val)))
-          (is (not (m/validate state-schemas/gps-schema 
-                               {:latitude val :longitude 0.0 
-                                :speed 0.0 :heading 0.0 
+          (is (not (m/validate state-schemas/gps-schema
+                               {:latitude val :longitude 0.0
+                                :speed 0.0 :heading 0.0
                                 :altitude 0.0 :source "GPS"}))
               (str "Should reject edge case float: " val))))))
 
@@ -303,7 +303,7 @@
                          :lrf {:distance -500} ; negative
                          :camera-day {:zoom 0.0} ; must be positive
                          :camera-heat {:zoom -1.0}}] ; negative
-      
+
       ;; Each invalid field should be caught by validation
       (is (not (m/validate state-schemas/jon-gui-state-schema invalid-state))
           "Should reject state with multiple invalid fields"))))
@@ -316,24 +316,24 @@
   (testing "Measure validation overhead"
     (let [valid-state (mg/generate state-schemas/jon-gui-state-schema)
           iterations 1000]
-      
+
       (testing "Time with validation"
         (let [start (System/nanoTime)]
           (dotimes [_ iterations]
             (m/validate state-schemas/jon-gui-state-schema valid-state))
           (let [elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
-            (logging/log-info {:msg (str "Validation of " iterations 
+            (logging/log-info {:msg (str "Validation of " iterations
                                          " states took " elapsed-ms "ms")})
-            (is (< elapsed-ms 200) 
+            (is (< elapsed-ms 200)
                 "Validation should be fast enough for real-time use (< 200ms for 1000 validations)"))))
-      
+
       (testing "Time without validation"
         (let [start (System/nanoTime)]
           (dotimes [_ iterations]
             ;; Just access the data without validation
             (:gps valid-state))
           (let [elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
-            (logging/log-info {:msg (str "Access without validation took " 
+            (logging/log-info {:msg (str "Access without validation took "
                                          elapsed-ms "ms")})))))))
 
 ;; ============================================================================
@@ -347,19 +347,19 @@
     ;; For numbers, go outside valid range
     (and (number? value) (m/validate pos? value))
     (* -1 value)
-    
+
     ;; For strings, return nil or empty
     (string? value)
     nil
-    
+
     ;; For booleans, return string
     (boolean? value)
     "true"
-    
+
     ;; For maps, remove required keys
     (map? value)
     (dissoc value (first (keys value)))
-    
+
     ;; Default: return nil
     :else nil))
 

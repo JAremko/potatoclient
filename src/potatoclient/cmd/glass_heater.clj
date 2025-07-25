@@ -2,10 +2,10 @@
   "Glass heater command functions for PotatoClient"
   (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.CamDayGlassHeater
+  (:import [cmd.DayCamGlassHeater
             JonSharedCmdDayCamGlassHeater$Root
             JonSharedCmdDayCamGlassHeater$Start JonSharedCmdDayCamGlassHeater$Stop
-            JonSharedCmdDayCamGlassHeater$On JonSharedCmdDayCamGlassHeater$Off
+            JonSharedCmdDayCamGlassHeater$TurnOn JonSharedCmdDayCamGlassHeater$TurnOff
             JonSharedCmdDayCamGlassHeater$GetMeteo]))
 
 ;; ============================================================================
@@ -40,7 +40,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         heater-root (-> (JonSharedCmdDayCamGlassHeater$Root/newBuilder)
-                        (.setOn (JonSharedCmdDayCamGlassHeater$On/newBuilder)))]
+                        (.setTurnOn (JonSharedCmdDayCamGlassHeater$TurnOn/newBuilder)))]
     (.setDayCamGlassHeater root-msg heater-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
@@ -51,7 +51,7 @@
   [=> nil?]
   (let [root-msg (cmd-core/create-root-message)
         heater-root (-> (JonSharedCmdDayCamGlassHeater$Root/newBuilder)
-                        (.setOff (JonSharedCmdDayCamGlassHeater$Off/newBuilder)))]
+                        (.setTurnOff (JonSharedCmdDayCamGlassHeater$TurnOff/newBuilder)))]
     (.setDayCamGlassHeater root-msg heater-root)
     (cmd-core/send-cmd-message root-msg))
   nil)

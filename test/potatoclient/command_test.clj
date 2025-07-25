@@ -11,15 +11,15 @@
     (let [root-msg (cmd-core/create-root-message)]
       (is (some? root-msg) "Should create root message")
       (is (= 1 (.getProtocolVersion root-msg)) "Should have protocol version 1")
-      
+
       ;; Add ping
       (.setPing root-msg (cmd.JonSharedCmd$Ping/newBuilder))
-      
+
       ;; Convert to bytes
       (let [proto-bytes (cmd-core/encode-cmd-message root-msg)]
         (is (bytes? proto-bytes) "Should encode to bytes")
         (is (pos? (count proto-bytes)) "Should have content")
-        
+
         ;; Parse back
         (let [parsed (JonSharedCmd$Root/parseFrom proto-bytes)]
           (is (.hasPing parsed) "Should have ping")

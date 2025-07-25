@@ -111,7 +111,7 @@
 
 (def gps-fix-type
   "GPS fix type enum (excluding UNSPECIFIED)"
-  [:enum 
+  [:enum
    "JON_GUI_DATA_GPS_FIX_TYPE_NONE"
    "JON_GUI_DATA_GPS_FIX_TYPE_1D"
    "JON_GUI_DATA_GPS_FIX_TYPE_2D"

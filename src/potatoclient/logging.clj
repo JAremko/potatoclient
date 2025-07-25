@@ -5,7 +5,7 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.runtime :as runtime]
             [taoensso.telemere :as tel])
-  (:import (java.time LocalDateTime ZoneId)
+  (:import (java.time LocalDateTime)
            (java.time.format DateTimeFormatter)))
 
 (>defn- get-version
@@ -70,15 +70,10 @@
   "Create a file handler for Telemere"
   []
   [=> fn?]
-  (let [log-file (get-log-file-path)
-        formatter (DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm:ss.SSS")]
-    (tel/handler:console
-      {:output-fn
-       (tel/format-signal-fn
-         {:format-inst-fn
-          (fn [inst]
-            (.format formatter (LocalDateTime/ofInstant inst (ZoneId/systemDefault))))})
-       :stream (io/writer log-file :append true)})))
+  (let [log-file (get-log-file-path)]
+    (tel/handler:file
+      {:output-fn tel/format-signal-fn
+       :path (.getAbsolutePath log-file)})))
 
 (>defn- cleanup-old-logs!
   "Keep only the newest N log files, delete older ones"
@@ -111,38 +106,42 @@
   (cleanup-old-logs! 50)
 
   ;; Remove default console handler
-  (tel/remove-handler! :default/console)
+  (tel/remove-handler! :default)
 
   ;; Set minimum level based on build type
   (if (runtime/release-build?)
     (tel/set-min-level! :warn) ; Only warnings and errors in production
-    (tel/set-min-level! :debug))
+    (tel/set-min-level! :trace)) ; All levels in development
 
   ;; Configure handlers based on build type
   (if (runtime/release-build?)
     ;; Production: critical events to both console and file
     (do
-      (tel/add-handler! :console
-                        (tel/handler:console
-                          {:output-fn (tel/format-signal-fn {})})
-                        {:async {:mode :dropping, :buffer-size 1024}
-                         :min-level :warn})
+      (tel/add-handler!
+        :console
+        (tel/handler:console
+          {:output-fn tel/format-signal-fn})
+        {:async {:mode :dropping, :buffer-size 1024}
+         :min-level :warn})
 
       ;; Also log to file in production for critical events
-      (tel/add-handler! :file
-                        (create-file-handler)
-                        {:async {:mode :dropping, :buffer-size 1024}
-                         :min-level :warn}))
+      (tel/add-handler!
+        :file
+        (create-file-handler)
+        {:async {:mode :dropping, :buffer-size 1024}
+         :min-level :warn}))
     ;; Development: console + file logging
     (do
-      (tel/add-handler! :console
-                        (tel/handler:console
-                          {:output-fn (tel/format-signal-fn {})})
-                        {:async {:mode :dropping, :buffer-size 1024}})
+      (tel/add-handler!
+        :console
+        (tel/handler:console
+          {:output-fn tel/format-signal-fn})
+        {:async {:mode :dropping, :buffer-size 1024}})
 
-      (tel/add-handler! :file
-                        (create-file-handler)
-                        {:async {:mode :dropping, :buffer-size 2048}})))
+      (tel/add-handler!
+        :file
+        (create-file-handler)
+        {:async {:mode :dropping, :buffer-size 2048}})))
 
   ;; Filter out noisy Java packages
   (tel/set-ns-filter! {:disallow ["com.sun.*" "java.awt.*" "javax.swing.*"]})
