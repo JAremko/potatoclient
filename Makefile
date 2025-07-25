@@ -226,25 +226,86 @@ build-macos-dev: ## Build unsigned macOS .app bundle for development
 # CODE QUALITY & LINTING
 ###############################################################################
 
-# Format code
-.PHONY: fmt
-fmt: ## Format all Clojure code using cljfmt
+# Format Clojure code
+.PHONY: fmt-clojure
+fmt-clojure: ## Format all Clojure code using cljfmt
 	@echo "Formatting Clojure code..."
 	clojure -M:format fix
-	@echo "✓ Code formatting complete"
+	@echo "✓ Clojure formatting complete"
 
-# Check formatting
-.PHONY: fmt-check
-fmt-check: ## Check if code is properly formatted (exit 1 if not)
-	@echo "Checking code formatting..."
+# Format Kotlin code
+.PHONY: fmt-kotlin
+fmt-kotlin: ## Format all Kotlin code using ktlint (JetBrains IDEA compatible)
+	@echo "Formatting Kotlin code..."
+	@if [ -f .ktlint/ktlint ]; then \
+		.ktlint/ktlint -F "src/potatoclient/kotlin/**/*.kt" || exit 1; \
+	else \
+		echo "ktlint not found. Installing..."; \
+		mkdir -p .ktlint; \
+		curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.5.0/ktlint && \
+		chmod a+x ktlint && \
+		mv ktlint .ktlint/; \
+		.ktlint/ktlint -F "src/potatoclient/kotlin/**/*.kt" || exit 1; \
+	fi
+	@echo "✓ Kotlin formatting complete"
+
+# Format all code
+.PHONY: fmt
+fmt: ## Format all Clojure and Kotlin code
+	@echo "Formatting all code..."
+	@$(MAKE) -s fmt-clojure
+	@$(MAKE) -s fmt-kotlin
+	@echo "✓ All code formatting complete"
+
+# Check Clojure formatting
+.PHONY: fmt-check-clojure
+fmt-check-clojure: ## Check if Clojure code is properly formatted
+	@echo "Checking Clojure code formatting..."
 	@if clojure -M:format check 2>&1 | grep -q "files formatted incorrectly"; then \
-		echo "❌ Code formatting issues found!"; \
-		echo "Run 'make fmt' to fix them."; \
+		echo "❌ Clojure formatting issues found!"; \
+		echo "Run 'make fmt' or 'make fmt-clojure' to fix them."; \
 		clojure -M:format check; \
 		exit 1; \
 	else \
-		echo "✓ All files are properly formatted"; \
+		echo "✓ All Clojure files are properly formatted"; \
 	fi
+
+# Check Kotlin formatting
+.PHONY: fmt-check-kotlin
+fmt-check-kotlin: ## Check if Kotlin code is properly formatted
+	@echo "Checking Kotlin code formatting..."
+	@if [ -f .ktlint/ktlint ]; then \
+		if ! .ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" > /dev/null 2>&1; then \
+			echo "❌ Kotlin formatting issues found!"; \
+			echo "Run 'make fmt' or 'make fmt-kotlin' to fix them."; \
+			.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt"; \
+			exit 1; \
+		else \
+			echo "✓ All Kotlin files are properly formatted"; \
+		fi \
+	else \
+		echo "ktlint not found. Installing..."; \
+		mkdir -p .ktlint; \
+		curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.5.0/ktlint && \
+		chmod a+x ktlint && \
+		mv ktlint .ktlint/; \
+		if ! .ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" > /dev/null 2>&1; then \
+			echo "❌ Kotlin formatting issues found!"; \
+			echo "Run 'make fmt' or 'make fmt-kotlin' to fix them."; \
+			.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt"; \
+			exit 1; \
+		else \
+			echo "✓ All Kotlin files are properly formatted"; \
+		fi \
+	fi
+
+# Check all formatting
+.PHONY: fmt-check
+fmt-check: ## Check if all code is properly formatted (exit 1 if not)
+	@echo "Checking all code formatting..."
+	@$(MAKE) -s fmt-check-clojure
+	@$(MAKE) -s fmt-check-kotlin
+	@echo "✓ All code is properly formatted"
 
 # Lint Clojure code with clj-kondo
 .PHONY: lint-clj
