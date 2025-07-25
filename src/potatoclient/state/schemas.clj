@@ -379,21 +379,25 @@
   "Time data schema"
   [:map
    [:timestamp timestamp-value]
-   [:utc-time {:optional true} :string]
-   [:format time-format]])
+   [:manual-timestamp timestamp-value]
+   [:zone-id :int]
+   [:use-manual-time :boolean]])
 
 (def rec-osd-schema
   "Recording/OSD data schema"
   [:map
-   [:recording :boolean]
-   [:osd-enabled :boolean]
-   [:screen rec-osd-screen]])
+   [:heat-osd-enabled :boolean]
+   [:day-osd-enabled :boolean]
+   [:screen rec-osd-screen]
+   [:heat-crosshair-offset-horizontal :int]
+   [:heat-crosshair-offset-vertical :int]
+   [:day-crosshair-offset-horizontal :int]
+   [:day-crosshair-offset-vertical :int]])
 
 (def day-cam-glass-heater-schema
   "Day camera glass heater schema"
   [:map
-   [:enabled :boolean]
-   [:auto-mode :boolean]
+   [:status :boolean]
    [:temperature {:optional true} temperature-celsius]])
 
 (def actual-space-time-schema
@@ -414,22 +418,24 @@
 ;; ============================================================================
 
 (def jon-gui-state-schema
-  "Complete JonGUIState schema"
+  "Complete JonGUIState schema.
+   Note: All subsystems are optional to match proto3 behavior where fields
+   can be missing. The dispatch code uses hasX() methods to check presence."
   [:map
    [:protocol-version [:int {:min 1}]]
-   [:system system-schema]
-   [:meteo-internal meteo-schema]
-   [:lrf lrf-schema]
-   [:time time-schema]
-   [:gps gps-schema]
-   [:compass compass-schema]
-   [:rotary rotary-schema]
-   [:camera-day camera-day-schema]
-   [:camera-heat camera-heat-schema]
-   [:compass-calibration compass-calibration-schema]
-   [:rec-osd rec-osd-schema]
-   [:day-cam-glass-heater day-cam-glass-heater-schema]
-   [:actual-space-time actual-space-time-schema]])
+   [:system {:optional true} system-schema]
+   [:meteo-internal {:optional true} meteo-schema]
+   [:lrf {:optional true} lrf-schema]
+   [:time {:optional true} time-schema]
+   [:gps {:optional true} gps-schema]
+   [:compass {:optional true} compass-schema]
+   [:rotary {:optional true} rotary-schema]
+   [:camera-day {:optional true} camera-day-schema]
+   [:camera-heat {:optional true} camera-heat-schema]
+   [:compass-calibration {:optional true} compass-calibration-schema]
+   [:rec-osd {:optional true} rec-osd-schema]
+   [:day-cam-glass-heater {:optional true} day-cam-glass-heater-schema]
+   [:actual-space-time {:optional true} actual-space-time-schema]])
 
 ;; ============================================================================
 ;; Validation Functions

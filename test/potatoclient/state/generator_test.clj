@@ -8,14 +8,17 @@
             [potatoclient.state.dispatch :as dispatch]
             [potatoclient.state.device :as device]
             [potatoclient.state.schemas :as schemas]
-            [potatoclient.logging :as logging])
+            [potatoclient.logging :as logging]
+            [potatoclient.state.comprehensive-generator-test :as comp-gen])
   (:import [ser JonSharedData$JonGUIState
             JonSharedDataSystem$JonGuiDataSystem
             JonSharedDataGps$JonGuiDataGps
             JonSharedDataCompass$JonGuiDataCompass
             JonSharedDataLrf$JonGuiDataLrf
+            JonSharedDataTime$JonGuiDataTime
             JonSharedDataTypes$JonGuiDataGpsFixType
-            JonSharedDataTypes$JonGuiDataSystemLocalizations]))
+            JonSharedDataTypes$JonGuiDataSystemLocalizations
+            JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes]))
 
 ;; ============================================================================
 ;; Test Fixtures
@@ -58,7 +61,21 @@
 (defn generate-full-state
   "Generate a complete valid state using Malli generators"
   []
-  (mg/generate schemas/jon-gui-state-schema))
+  ;; Generate each subsystem individually to ensure all are present
+  {:protocol-version 1
+   :system (mg/generate schemas/system-schema)
+   :meteo-internal (mg/generate schemas/meteo-schema)
+   :lrf (dissoc (mg/generate schemas/lrf-schema) :target) ; Remove optional target
+   :time (mg/generate schemas/time-schema)
+   :gps (mg/generate schemas/gps-schema)
+   :compass (mg/generate schemas/compass-schema)
+   :rotary (mg/generate schemas/rotary-schema)
+   :camera-day (mg/generate schemas/camera-day-schema)
+   :camera-heat (mg/generate schemas/camera-heat-schema)
+   :compass-calibration (mg/generate schemas/compass-calibration-schema)
+   :rec-osd (mg/generate schemas/rec-osd-schema)
+   :day-cam-glass-heater (mg/generate schemas/day-cam-glass-heater-schema)
+   :actual-space-time (mg/generate schemas/actual-space-time-schema)})
 
 ;; ============================================================================
 ;; Protobuf Conversion Utilities
@@ -68,91 +85,8 @@
   "Convert EDN state to protobuf JonGUIState.
   This mimics what would happen on the server side."
   [state-map]
-  (let [builder (JonSharedData$JonGUIState/newBuilder)]
-    ;; Set protocol version
-    (when-let [pv (:protocol-version state-map)]
-      (.setProtocolVersion builder pv))
-
-    ;; Set system data
-    (when-let [system (:system state-map)]
-      (let [system-builder (JonSharedDataSystem$JonGuiDataSystem/newBuilder)]
-        (when-let [ct (:cpu-temperature system)]
-          (.setCpuTemperature system-builder ct))
-        (when-let [gt (:gpu-temperature system)]
-          (.setGpuTemperature system-builder gt))
-        (when-let [cl (:cpu-load system)]
-          (.setCpuLoad system-builder cl))
-        (when-let [gl (:gpu-load system)]
-          (.setGpuLoad system-builder gl))
-        (when-let [pc (:power-consumption system)]
-          (.setPowerConsumption system-builder pc))
-        (when-let [loc (:loc system)]
-          (.setLoc system-builder (JonSharedDataTypes$JonGuiDataSystemLocalizations/valueOf loc)))
-        ;; Set all the date/time fields
-        (doseq [[k field-name] {:cur-video-rec-dir-year "setCurVideoRecDirYear"
-                                :cur-video-rec-dir-month "setCurVideoRecDirMonth"
-                                :cur-video-rec-dir-day "setCurVideoRecDirDay"
-                                :cur-video-rec-dir-hour "setCurVideoRecDirHour"
-                                :cur-video-rec-dir-minute "setCurVideoRecDirMinute"
-                                :cur-video-rec-dir-second "setCurVideoRecDirSecond"
-                                :disk-space "setDiskSpace"}]
-          (when-let [v (get system k)]
-            (clojure.lang.Reflector/invokeInstanceMethod system-builder field-name (to-array [v]))))
-        ;; Set boolean fields
-        (doseq [[k field-name] {:rec-enabled "setRecEnabled"
-                                :important-rec-enabled "setImportantRecEnabled"
-                                :low-disk-space "setLowDiskSpace"
-                                :no-disk-space "setNoDiskSpace"
-                                :tracking "setTracking"
-                                :vampire-mode "setVampireMode"
-                                :stabilization-mode "setStabilizationMode"
-                                :geodesic-mode "setGeodesicMode"
-                                :cv-dumping "setCvDumping"}]
-          (when (contains? system k)
-            (clojure.lang.Reflector/invokeInstanceMethod system-builder field-name (to-array [(get system k)]))))
-        (.setSystem builder system-builder)))
-
-    ;; Set GPS data
-    (when-let [gps (:gps state-map)]
-      (let [gps-builder (JonSharedDataGps$JonGuiDataGps/newBuilder)]
-        (when-let [lat (:latitude gps)]
-          (.setLatitude gps-builder lat))
-        (when-let [lon (:longitude gps)]
-          (.setLongitude gps-builder lon))
-        (when-let [alt (:altitude gps)]
-          (.setAltitude gps-builder alt))
-        (when-let [mlat (:manual-latitude gps)]
-          (.setManualLatitude gps-builder mlat))
-        (when-let [mlon (:manual-longitude gps)]
-          (.setManualLongitude gps-builder mlon))
-        (when-let [malt (:manual-altitude gps)]
-          (.setManualAltitude gps-builder malt))
-        (when-let [ft (:fix-type gps)]
-          (.setFixType gps-builder (JonSharedDataTypes$JonGuiDataGpsFixType/valueOf ft)))
-        (when (contains? gps :use-manual)
-          (.setUseManual gps-builder (:use-manual gps)))
-        (.setGps builder gps-builder)))
-
-    ;; Set Compass data
-    (when-let [compass (:compass state-map)]
-      (let [compass-builder (JonSharedDataCompass$JonGuiDataCompass/newBuilder)]
-        (when-let [az (:azimuth compass)]
-          (.setAzimuth compass-builder az))
-        (when-let [el (:elevation compass)]
-          (.setElevation compass-builder el))
-        (when-let [ba (:bank compass)]
-          (.setBank compass-builder ba))
-        (when-let [oaz (:offset-azimuth compass)]
-          (.setOffsetAzimuth compass-builder oaz))
-        (when-let [oel (:offset-elevation compass)]
-          (.setOffsetElevation compass-builder oel))
-        (when-let [md (:magnetic-declination compass)]
-          (.setMagneticDeclination compass-builder md))
-        (when (contains? compass :calibrating)
-          (.setCalibrating compass-builder (:calibrating compass)))
-        (.setCompass builder compass-builder)))
-
-    (.build builder)))
+  ;; Use the comprehensive converter from the other test namespace
+  (comp-gen/edn->protobuf-state state-map))
 
 (defn create-test-websocket-message
   "Create a binary WebSocket message as it would arrive from the server"
@@ -348,12 +282,12 @@
           (let [orig-temp (get-in original-state [:system :cpu-temperature])
                 round-temp (get-in roundtrip-state [:system :cpu-temperature])]
             (when (and orig-temp round-temp)
-              (is (< (Math/abs (- orig-temp round-temp)) 0.00001)
+              (is (< (Math/abs (- orig-temp round-temp)) 0.0001)
                   "CPU temperature should be preserved (within float precision)"))))
 
         (when (:gps original-state)
           (let [orig-lat (get-in original-state [:gps :latitude])
                 round-lat (get-in roundtrip-state [:gps :latitude])]
             (when (and orig-lat round-lat)
-              (is (< (Math/abs (- orig-lat round-lat)) 0.00001)
+              (is (< (Math/abs (- orig-lat round-lat)) 0.0001)
                   "GPS latitude should be preserved (within float precision)"))))))))

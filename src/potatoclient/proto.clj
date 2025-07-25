@@ -5,7 +5,7 @@
   using the pronto library for Clojure protobuf support."
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.core :refer [=> >defn >defn- ?]]
+            [com.fulcrologic.guardrails.core :refer [>defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.specs :as specs])
   (:import (cmd JonSharedCmd$Root)
@@ -87,10 +87,10 @@
                  (not (.hasField proto-msg field)))
             acc
 
-           ;; Skip unset primitive fields
-            (and (not (.isRepeated field))
-                 (not= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
-                 (= value (.getDefaultValue field)))
+           ;; Include all primitive fields, even with default values
+           ;; This ensures fields like zone-id=0 are preserved
+           ;; (In proto3, we can't distinguish between unset and default value)
+            false ; Never skip primitive fields
             acc
 
            ;; Handle repeated fields

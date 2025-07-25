@@ -1,7 +1,7 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient - a multiprocess video streaming client."
   (:require [clojure.spec.alpha :as s]
-            [com.fulcrologic.guardrails.core :refer [=> >defn >defn-]]
+            [com.fulcrologic.guardrails.core :refer [>defn >defn-]]
             [potatoclient.core :as core]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])

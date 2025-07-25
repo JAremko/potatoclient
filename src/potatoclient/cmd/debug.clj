@@ -1,7 +1,6 @@
 (ns potatoclient.cmd.debug
   "Debug utilities for inspecting protobuf command messages"
-  (:require [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.cmd.day-camera :as cmd-camera]
             [potatoclient.cmd.rotary :as cmd-rotary])

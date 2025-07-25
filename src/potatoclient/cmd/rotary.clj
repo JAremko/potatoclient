@@ -1,6 +1,6 @@
 (ns potatoclient.cmd.rotary
   "Rotary platform command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >def | ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
             [potatoclient.cmd.core :as cmd-core])
   (:import [cmd.RotaryPlatform
             JonSharedCmdRotary$Root

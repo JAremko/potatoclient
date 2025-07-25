@@ -22,7 +22,7 @@
 (defonce ^:private instance (atom nil))
 
 ;; Channel for raw binary state messages
-(defonce ^:private state-channel (chan 100))
+(defonce ^:private state-channel (atom (chan 100)))
 
 ;; Shadow state - mutable protobuf builder for type-safe comparison
 ;; This maintains the last known state in protobuf form
@@ -180,18 +180,30 @@
   [proto-msg]
   [any? => nil?]
   ;; Use protobuf getter methods to access subsystem messages
-  (compare-and-update-with-shadow! device-state/system-state (.getSystem proto-msg) :system)
-  (compare-and-update-with-shadow! device-state/lrf-state (.getLrf proto-msg) :lrf)
-  (compare-and-update-with-shadow! device-state/time-state (.getTime proto-msg) :time)
-  (compare-and-update-with-shadow! device-state/gps-state (.getGps proto-msg) :gps)
-  (compare-and-update-with-shadow! device-state/compass-state (.getCompass proto-msg) :compass)
-  (compare-and-update-with-shadow! device-state/rotary-state (.getRotary proto-msg) :rotary)
-  (compare-and-update-with-shadow! device-state/camera-day-state (.getCameraDay proto-msg) :camera-day)
-  (compare-and-update-with-shadow! device-state/camera-heat-state (.getCameraHeat proto-msg) :camera-heat)
-  (compare-and-update-with-shadow! device-state/compass-calibration-state (.getCompassCalibration proto-msg) :compass-calibration)
-  (compare-and-update-with-shadow! device-state/rec-osd-state (.getRecOsd proto-msg) :rec-osd)
-  (compare-and-update-with-shadow! device-state/day-cam-glass-heater-state (.getDayCamGlassHeater proto-msg) :day-cam-glass-heater)
-  (compare-and-update-with-shadow! device-state/actual-space-time-state (.getActualSpaceTime proto-msg) :actual-space-time)
+  (when (.hasSystem proto-msg)
+    (compare-and-update-with-shadow! device-state/system-state (.getSystem proto-msg) :system))
+  (when (.hasLrf proto-msg)
+    (compare-and-update-with-shadow! device-state/lrf-state (.getLrf proto-msg) :lrf))
+  (when (.hasTime proto-msg)
+    (compare-and-update-with-shadow! device-state/time-state (.getTime proto-msg) :time))
+  (when (.hasGps proto-msg)
+    (compare-and-update-with-shadow! device-state/gps-state (.getGps proto-msg) :gps))
+  (when (.hasCompass proto-msg)
+    (compare-and-update-with-shadow! device-state/compass-state (.getCompass proto-msg) :compass))
+  (when (.hasRotary proto-msg)
+    (compare-and-update-with-shadow! device-state/rotary-state (.getRotary proto-msg) :rotary))
+  (when (.hasCameraDay proto-msg)
+    (compare-and-update-with-shadow! device-state/camera-day-state (.getCameraDay proto-msg) :camera-day))
+  (when (.hasCameraHeat proto-msg)
+    (compare-and-update-with-shadow! device-state/camera-heat-state (.getCameraHeat proto-msg) :camera-heat))
+  (when (.hasCompassCalibration proto-msg)
+    (compare-and-update-with-shadow! device-state/compass-calibration-state (.getCompassCalibration proto-msg) :compass-calibration))
+  (when (.hasRecOsd proto-msg)
+    (compare-and-update-with-shadow! device-state/rec-osd-state (.getRecOsd proto-msg) :rec-osd))
+  (when (.hasDayCamGlassHeater proto-msg)
+    (compare-and-update-with-shadow! device-state/day-cam-glass-heater-state (.getDayCamGlassHeater proto-msg) :day-cam-glass-heater))
+  (when (.hasActualSpaceTime proto-msg)
+    (compare-and-update-with-shadow! device-state/actual-space-time-state (.getActualSpaceTime proto-msg) :actual-space-time))
   ;; Note: meteo-internal might need special handling if it exists
   (when (try (.hasMeteoInternal proto-msg) (catch Exception _ false))
     (compare-and-update-with-shadow! device-state/meteo-internal-state (.getMeteoInternal proto-msg) :meteo-internal))
@@ -212,7 +224,7 @@
         (update-all-subsystems! proto-msg)
         ;; Convert to EDN for channel subscribers
         (let [state-map (proto/proto-map->clj-map proto-msg)]
-          (put! state-channel state-map)))
+          (put! @state-channel state-map)))
       (catch Exception e
         (logging/log-error {:msg "Failed to deserialize state message"
                             :error (.getMessage e)
@@ -220,10 +232,12 @@
 
   (dispose [_]
     (reset! running? false)
-    (close! state-channel)
+    (close! @state-channel)
     ;; Reset the builder to a fresh instance
     (reset! shadow-state-builder (JonSharedData$JonGUIState/newBuilder))
-    (reset! instance nil)))
+    (reset! instance nil)
+    ;; Create a new channel for next use
+    (reset! state-channel (chan 100))))
 
 ;; ============================================================================
 ;; Singleton Management
@@ -253,7 +267,7 @@
   []
   [=> [:fn {:error/message "must be a core.async channel"}
        #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
-  state-channel)
+  @state-channel)
 
 (>defn dispose!
   "Clean up the singleton instance"

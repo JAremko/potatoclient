@@ -15,6 +15,7 @@
             JonSharedDataCompass$JonGuiDataCompass
             JonSharedDataLrf$JonGuiDataLrf
             JonSharedDataRotary$JonGuiDataRotary
+            JonSharedDataRotary$ScanNode
             JonSharedDataCameraDay$JonGuiDataCameraDay
             JonSharedDataCameraHeat$JonGuiDataCameraHeat
             JonSharedDataTime$JonGuiDataTime
@@ -125,9 +126,21 @@
   [builder data]
   (doto builder
     (.setTimestamp (:timestamp data))
-    ;; Time proto doesn't have format field, only timestamp-related fields
-    ;; Skip format and utc-time as they're not in the actual protobuf
-    ))
+    (.setManualTimestamp (:manual-timestamp data))
+    (.setZoneId (:zone-id data))
+    (.setUseManualTime (:use-manual-time data))))
+
+(defn set-scan-node-fields!
+  "Set fields on a ScanNode builder from EDN data"
+  [builder data]
+  (doto builder
+    (.setIndex (:index data))
+    (.setDayZoomTableValue (:day-zoom-table-value data))
+    (.setHeatZoomTableValue (:heat-zoom-table-value data))
+    (.setAzimuth (:azimuth data))
+    (.setElevation (:elevation data))
+    (.setLinger (:linger data))
+    (.setSpeed (:speed data))))
 
 (defn set-rotary-fields!
   "Set all fields on a Rotary builder from EDN data"
@@ -149,8 +162,11 @@
     (.setScanTargetMax (:scan-target-max data))
     (.setSunAzimuth (:sun-azimuth data))
     (.setSunElevation (:sun-elevation data))
-    ;; Skip current-scan-node for now
-    ))
+    ;; Set current-scan-node if present
+    (cond-> (:current-scan-node data)
+      (.setCurrentScanNode (set-scan-node-fields!
+                             (JonSharedDataRotary$ScanNode/newBuilder)
+                             (:current-scan-node data))))))
 
 (defn set-camera-day-fields!
   "Set all fields on a Day Camera builder from EDN data"
@@ -196,16 +212,19 @@
   "Set all fields on a Rec/OSD builder from EDN data"
   [builder data]
   (doto builder
-    (.setRecording (:recording data))
-    (.setOsdEnabled (:osd-enabled data))
-    (.setScreen (JonSharedDataTypes$JonGuiDataRecOsdScreen/valueOf (:screen data)))))
+    (.setHeatOsdEnabled (:heat-osd-enabled data))
+    (.setDayOsdEnabled (:day-osd-enabled data))
+    (.setScreen (JonSharedDataTypes$JonGuiDataRecOsdScreen/valueOf (:screen data)))
+    (.setHeatCrosshairOffsetHorizontal (:heat-crosshair-offset-horizontal data))
+    (.setHeatCrosshairOffsetVertical (:heat-crosshair-offset-vertical data))
+    (.setDayCrosshairOffsetHorizontal (:day-crosshair-offset-horizontal data))
+    (.setDayCrosshairOffsetVertical (:day-crosshair-offset-vertical data))))
 
 (defn set-glass-heater-fields!
   "Set all fields on a Glass Heater builder from EDN data"
   [builder data]
   (doto builder
-    (.setEnabled (:enabled data))
-    (.setAutoMode (:auto-mode data))
+    (.setStatus (:status data))
     (cond-> (:temperature data)
       (.setTemperature (:temperature data)))))
 
@@ -378,14 +397,16 @@
       (when @device/time-state
         (is (= (:timestamp time-data) (:timestamp @device/time-state))
             "Timestamp should match")
-        (is (= (:format time-data) (:format @device/time-state))
-            "Format should match")))))
+        (is (= (:manual-timestamp time-data) (:manual-timestamp @device/time-state))
+            "Manual timestamp should match")
+        (is (= (:zone-id time-data) (:zone-id @device/time-state))
+            "Zone ID should match")
+        (is (= (:use-manual-time time-data) (:use-manual-time @device/time-state))
+            "Use manual time should match")))))
 
 (deftest test-rotary-subsystem
   (testing "Rotary subsystem with all fields"
     (let [rotary-data (mg/generate schemas/rotary-schema)
-          ;; Skip current-scan-node for simplicity
-          rotary-data (dissoc rotary-data :current-scan-node)
           state-map {:protocol-version 1 :rotary rotary-data}]
 
       (is (schemas/validate-subsystem :rotary rotary-data)
@@ -593,6 +614,19 @@
                                   :stabilization-mode false
                                   :geodesic-mode true
                                   :cv-dumping false}
+                         :meteo-internal {:temperature 25.0
+                                          :humidity 60.0
+                                          :pressure 1013.25}
+                         :lrf {:is-scanning false
+                               :is-measuring false
+                               :measure-id 0
+                               :pointer-mode "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF"
+                               :fog-mode-enabled false
+                               :is-refining false}
+                         :time {:timestamp 9999999999
+                                :manual-timestamp 0
+                                :zone-id 12
+                                :use-manual-time false}
                          :gps {:longitude 180.0
                                :latitude -90.0
                                :altitude 8848.0
@@ -607,10 +641,71 @@
                                    :offset-azimuth 179.999
                                    :offset-elevation -90.0
                                    :magnetic-declination -180.0
-                                   :calibrating true}}]
+                                   :calibrating true}
+                         :rotary {:azimuth 0.0
+                                  :azimuth-speed 0.0
+                                  :elevation 0.0
+                                  :elevation-speed 0.0
+                                  :platform-azimuth 0.0
+                                  :platform-elevation 0.0
+                                  :platform-bank 0.0
+                                  :is-moving false
+                                  :mode "JON_GUI_DATA_ROTARY_MODE_INITIALIZATION"
+                                  :is-scanning false
+                                  :is-scanning-paused false
+                                  :use-rotary-as-compass false
+                                  :scan-target 0
+                                  :scan-target-max 0
+                                  :sun-azimuth 0.0
+                                  :sun-elevation 0.0
+                                  :current-scan-node {:index 0
+                                                      :day-zoom-table-value 0
+                                                      :heat-zoom-table-value 0
+                                                      :azimuth 0.0
+                                                      :elevation 0.0
+                                                      :linger 0.0
+                                                      :speed 0.5}}
+                         :camera-day {:focus-pos 0.5
+                                      :zoom-pos 0.5
+                                      :iris-pos 0.5
+                                      :infrared-filter false
+                                      :zoom-table-pos 0
+                                      :zoom-table-pos-max 10
+                                      :fx-mode "JON_GUI_DATA_FX_MODE_DAY_DEFAULT"
+                                      :auto-focus false
+                                      :auto-iris false
+                                      :digital-zoom-level 1.0
+                                      :clahe-level 0.0}
+                         :camera-heat {:zoom-pos 0.5
+                                       :agc-mode "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1"
+                                       :filter "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE"
+                                       :auto-focus false
+                                       :zoom-table-pos 0
+                                       :zoom-table-pos-max 10
+                                       :dde-level 0
+                                       :dde-enabled false
+                                       :fx-mode "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT"
+                                       :digital-zoom-level 1.0
+                                       :clahe-level 0.0}
+                         :compass-calibration {:stage 0
+                                               :final-stage 1
+                                               :target-azimuth 0.0
+                                               :target-elevation 0.0
+                                               :target-bank 0.0
+                                               :status "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING"}
+                         :rec-osd {:heat-osd-enabled false
+                                   :day-osd-enabled false
+                                   :screen "JON_GUI_DATA_REC_OSD_SCREEN_MAIN"
+                                   :heat-crosshair-offset-horizontal 0
+                                   :heat-crosshair-offset-vertical 0
+                                   :day-crosshair-offset-horizontal 0
+                                   :day-crosshair-offset-vertical 0}
+                         :day-cam-glass-heater {:status false}
+                         :actual-space-time {:timestamp 0}}]
 
       (is (schemas/validate-state extreme-state)
-          "Extreme values should be valid")
+          (str "Extreme values should be valid. Validation errors: "
+               (pr-str (schemas/explain-state extreme-state))))
 
       (mock-websocket-flow extreme-state)
 

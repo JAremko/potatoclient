@@ -4,7 +4,7 @@
   (:require [clojure.java.io]
             [clojure.spec.alpha :as s]
             [clojure.string]
-            [com.fulcrologic.guardrails.core :refer [=> >defn >defn-]]
+            [com.fulcrologic.guardrails.core :refer [>defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]

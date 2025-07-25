@@ -344,7 +344,7 @@
 ;; ============================================================================
 
 (deftest required-field-tests
-  (testing "Root state requires all subsystems"
+  (testing "Root state with optional subsystems (matching proto3 behavior)"
     (let [minimal-valid-state {:protocol-version 1
                                :system {:cpu-temperature 20.0
                                         :gpu-temperature 30.0
@@ -378,7 +378,9 @@
                                      :fog-mode-enabled false
                                      :is-refining false}
                                :time {:timestamp 1234567890
-                                      :format "JON_GUI_DATA_TIME_FORMAT_H_M_S"}
+                                      :manual-timestamp 0
+                                      :zone-id 0
+                                      :use-manual-time false}
                                :gps {:longitude 0.0
                                      :latitude 0.0
                                      :altitude 0.0
@@ -445,20 +447,28 @@
                                                      :target-elevation 0.0
                                                      :target-bank 0.0
                                                      :status "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING"}
-                               :rec-osd {:recording false
-                                         :osd-enabled false
-                                         :screen "JON_GUI_DATA_REC_OSD_SCREEN_MAIN"}
-                               :day-cam-glass-heater {:enabled false
-                                                      :auto-mode false}
+                               :rec-osd {:heat-osd-enabled false
+                                         :day-osd-enabled false
+                                         :screen "JON_GUI_DATA_REC_OSD_SCREEN_MAIN"
+                                         :heat-crosshair-offset-horizontal 0
+                                         :heat-crosshair-offset-vertical 0
+                                         :day-crosshair-offset-horizontal 0
+                                         :day-crosshair-offset-vertical 0}
+                               :day-cam-glass-heater {:status false}
                                :actual-space-time {:timestamp 0}}]
 
       ;; Valid state should pass
       (is (m/validate state-schemas/jon-gui-state-schema minimal-valid-state))
 
-      ;; Missing any required field should fail
+      ;; Test that subsystems are optional (matching proto3 behavior)
+      ;; A state with only protocol-version should be valid
+      (is (m/validate state-schemas/jon-gui-state-schema {:protocol-version 1})
+          "State with only protocol-version should be valid")
+
+      ;; Missing individual subsystems should still be valid
       (doseq [field [:system :meteo-internal :lrf :time :gps :compass
                      :rotary :camera-day :camera-heat :compass-calibration
                      :rec-osd :day-cam-glass-heater :actual-space-time]]
-        (is (not (m/validate state-schemas/jon-gui-state-schema
-                             (dissoc minimal-valid-state field)))
-            (str field " should be required"))))))
+        (is (m/validate state-schemas/jon-gui-state-schema
+                        (dissoc minimal-valid-state field))
+            (str field " should be optional (proto3 behavior)"))))))

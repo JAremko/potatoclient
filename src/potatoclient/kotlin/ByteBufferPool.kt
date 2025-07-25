@@ -21,29 +21,49 @@ class ByteBufferPool(
     private var currentSize = 0
 
     // Performance metrics - use padding to avoid false sharing
-    @Volatile private var p0: Long = 0L
+    @Suppress("UnusedPrivateProperty") // Padding for false sharing prevention
+    @Volatile
+    private var p0: Long = 0L
 
-    @Volatile private var p1: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p1: Long = 0L
     private val acquireCount = AtomicLong(0)
 
-    @Volatile private var p2: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p2: Long = 0L
 
-    @Volatile private var p3: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p3: Long = 0L
     private val hitCount = AtomicLong(0)
 
-    @Volatile private var p4: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p4: Long = 0L
 
-    @Volatile private var p5: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p5: Long = 0L
     private val missCount = AtomicLong(0)
 
-    @Volatile private var p6: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p6: Long = 0L
 
-    @Volatile private var p7: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p7: Long = 0L
     private val returnCount = AtomicLong(0)
 
-    @Volatile private var p8: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p8: Long = 0L
 
-    @Volatile private var p9: Long = 0L
+    @Suppress("UnusedPrivateProperty")
+    @Volatile
+    private var p9: Long = 0L
     private val dropCount = AtomicLong(0)
 
     init {
@@ -169,6 +189,6 @@ class ByteBufferPool(
         override fun toString(): String =
             "ByteBufferPool[size=$currentSize/$maxSize, bufferSize=$bufferSize, direct=$direct, " +
                 "acquires=$acquireCount, hits=$hitCount, misses=$missCount, returns=$returnCount, " +
-                "drops=$dropCount, hitRate=${String.format("%.2f", hitRate * 100)}%]"
+                "drops=$dropCount, hitRate=${String.format(java.util.Locale.US, "%.2f", hitRate * 100)}%]"
     }
 }

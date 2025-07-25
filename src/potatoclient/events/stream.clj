@@ -6,8 +6,7 @@
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
     [potatoclient.specs]
-    [potatoclient.state :as state])
-)
+    [potatoclient.state :as state]))
 
 (def mouse-button-names
   "Mapping of mouse button numbers to human-readable names"
