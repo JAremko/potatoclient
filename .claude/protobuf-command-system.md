@@ -33,13 +33,12 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 - Proto files generate classes in simple package names (not `com.potatocode.jon`)
 - Command messages: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
 - Platform-specific commands: Sub-packages like `cmd.RotaryPlatform`
-- Data types: `data` package (e.g., `data.JonSharedDataTypes`)
+- Data types: `ser` package (e.g., `ser.JonSharedDataTypes`)
 
-**Important Package Name Changes**:
-- The preprocessing script (`scripts/preprocess_protos.py`) automatically converts:
-  - `package ser;` → `package data;` for data-related proto files
-  - References from `ser.` → `data.` in command proto files
-- All Clojure code expects the `data` package for data types, not `ser`
+**Important Package Names**:
+- Data types are in the `ser` package (e.g., `ser.JonSharedDataTypes`)
+- Command types are in the `cmd` package and sub-packages
+- The preprocessing script maintains these package names during proto compilation
 
 **Serialization** (Clojure map → Protobuf bytes):
 ```clojure
@@ -95,12 +94,12 @@ The Clojure implementation follows the same patterns as the TypeScript version i
 - Command classes: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
 - Rotary platform: `cmd.RotaryPlatform` package (e.g., `cmd.RotaryPlatform.JonSharedCmdRotary$Root`)
 - Day camera: `cmd.DayCamera` package (e.g., `cmd.DayCamera.JonSharedCmdDayCamera$Root`)
-- Data types: `data` package (e.g., `data.JonSharedDataTypes$JonGuiDataRotaryDirection`)
+- Data types: `ser` package (e.g., `ser.JonSharedDataTypes$JonGuiDataRotaryDirection`)
 
-**Critical Class Name Change**:
+**Critical Class Names**:
 - The data types class is `JonSharedDataTypes`, not `JonGuiDataTypes`
 - All enums are nested classes within `JonSharedDataTypes`
-- Example: `data.JonSharedDataTypes$JonGuiDataClientType`
+- Example: `ser.JonSharedDataTypes$JonGuiDataClientType`
 
 ## Command Validation and Specs
 
@@ -334,12 +333,11 @@ The build system (`build.clj`) uses a dynamic basis function to handle compiled 
    grep -n "^package" target/classes/java/data/*.java
    ```
 
-2. **Verify preprocessing worked**:
+2. **Verify package names**:
    ```bash
-   # Original proto files should have 'ser' package
+   # Proto files and generated Java should have 'ser' package for data types
    grep "^package" proto/jon_shared_data*.proto
-   # Generated Java should have 'data' package
-   grep "^package" target/classes/java/data/*.java
+   grep "^package" src/potatoclient/java/ser/*.java
    ```
 
 3. **Check class name references**:

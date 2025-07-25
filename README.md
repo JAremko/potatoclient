@@ -125,6 +125,26 @@ make build-macos    # .dmg bundle
 make build-linux    # AppImage
 ```
 
+### Testing
+
+The project includes a comprehensive test suite with protobuf validation:
+
+```bash
+# Run all tests
+make test
+
+# Run specific test categories
+clojure -M:test -n potatoclient.cmd.comprehensive-command-test
+clojure -M:test -n potatoclient.cmd.generator-test
+clojure -M:test -n potatoclient.cmd.validation-safety-test
+```
+
+See [docs/TESTING_AND_VALIDATION.md](docs/TESTING_AND_VALIDATION.md) for:
+- Test organization and structure
+- Protobuf validation with `buf.validate` annotations
+- TypeScript reference implementation in `examples/web/frontend/ts/`
+- Debugging test failures
+
 ### Build Types
 
 PotatoClient has two distinct build types:

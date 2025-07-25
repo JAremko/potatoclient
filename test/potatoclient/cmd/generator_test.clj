@@ -1,7 +1,7 @@
 (ns potatoclient.cmd.generator-test
   "Generator-based tests for command system using Malli schemas"
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
-            [clojure.core.async :as async :refer [<! >! go timeout alt!]]
+            [clojure.core.async :as async :refer [<! <!! >! go go-loop timeout alt!]]
             [malli.core :as m]
             [malli.generator :as mg]
             [potatoclient.cmd.core :as cmd-core]
@@ -10,7 +10,8 @@
             [potatoclient.cmd.heat-camera :as heat-camera]
             [potatoclient.proto :as proto]
             [potatoclient.specs :as specs]
-            [potatoclient.logging :as logging])
+            [potatoclient.logging :as logging]
+            [potatoclient.cmd.test-helpers :as h])
   (:import [cmd JonSharedCmd$Root
             JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root
@@ -58,6 +59,11 @@
       @test-command-channel ([cmd] cmd)
       (timeout 1000) nil)))
 
+(defn capture-command-sync!
+  "Synchronous version for tests - blocks until command received or timeout"
+  []
+  (<!! (capture-command!)))
+
 (defn decode-command
   "Decode a captured command to protobuf"
   [{:keys [pld should-buffer]}]
@@ -75,7 +81,7 @@
   "Validate common command properties"
   [cmd-proto]
   (is (= 1 (.getProtocolVersion cmd-proto)) "Protocol version should be 1")
-  (is (.hasClientType cmd-proto) "Should have client type")
+  (is (some? (.getClientType cmd-proto)) "Should have client type")
   (is (= "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
          (str (.getClientType cmd-proto))) "Should be local network client"))
 
@@ -86,7 +92,7 @@
 (deftest test-ping-command
   (testing "Ping command generation and serialization"
     (cmd-core/send-cmd-ping)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -97,7 +103,7 @@
 (deftest test-frozen-command
   (testing "Frozen command generation"
     (cmd-core/send-cmd-frozen)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -108,7 +114,7 @@
 (deftest test-noop-command
   (testing "No-op command generation"
     (cmd-core/send-cmd-noop)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -121,9 +127,9 @@
 ;; ============================================================================
 
 (deftest test-rotary-axis-command
-  (testing "Rotary axis command with azimuth only"
-    (rotary/axis {:azimuth (rotary/azimuth 45.5)})
-    (let [captured (<! (capture-command!))]
+  (testing "Rotary azimuth set value command"
+    (rotary/rotary-azimuth-set-value 45.5 (h/direction :normal))
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -133,12 +139,13 @@
             (is (.hasAxis rotary-root) "Should have axis")
             (let [axis (.getAxis rotary-root)]
               (is (.hasAzimuth axis) "Should have azimuth")
-              (is (< (Math/abs (- 45.5 (.getPosition (.getAzimuth axis)))) 0.001)
-                  "Azimuth position should match")))))))
+              (let [set-value (.getSetValue (.getAzimuth axis))]
+                (is (< (Math/abs (- 45.5 (.getValue set-value))) 0.001)
+                    "Azimuth value should match"))))))))
 
-  (testing "Rotary axis command with elevation only"
-    (rotary/axis {:elevation (rotary/elevation -30.0)})
-    (let [captured (<! (capture-command!))]
+  (testing "Rotary elevation set value command"
+    (rotary/rotary-elevation-set-value -30.0)
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -148,24 +155,32 @@
             (is (.hasAxis rotary-root) "Should have axis")
             (let [axis (.getAxis rotary-root)]
               (is (.hasElevation axis) "Should have elevation")
-              (is (< (Math/abs (- -30.0 (.getPosition (.getElevation axis)))) 0.001)
-                  "Elevation position should match")))))))
+              (let [set-value (.getSetValue (.getElevation axis))]
+                (is (< (Math/abs (- -30.0 (.getValue set-value))) 0.001)
+                    "Elevation value should match"))))))))
 
-  (testing "Rotary axis command with both azimuth and elevation"
-    (rotary/axis {:azimuth (rotary/azimuth 180.0)
-                  :elevation (rotary/elevation 45.0)})
-    (let [captured (<! (capture-command!))]
-      (is (some? captured) "Should capture command")
+  (testing "Rotary commands for both axes"
+    ;; Send azimuth command
+    (rotary/rotary-azimuth-set-value 180.0 (h/direction :normal))
+    (let [captured (capture-command-sync!)]
+      (is (some? captured) "Should capture azimuth command")
       (when captured
-        (let [proto-cmd (decode-command captured)]
-          (validate-base-command proto-cmd)
-          (is (.hasRotary proto-cmd) "Should have rotary")
-          (let [axis (.getAxis (.getRotary proto-cmd))]
-            (is (.hasAzimuth axis) "Should have azimuth")
-            (is (.hasElevation axis) "Should have elevation")
-            (is (< (Math/abs (- 180.0 (.getPosition (.getAzimuth axis)))) 0.001)
-                "Azimuth should match")
-            (is (< (Math/abs (- 45.0 (.getPosition (.getElevation axis)))) 0.001)
+        (let [proto-cmd (decode-command captured)
+              axis (.getAxis (.getRotary proto-cmd))]
+          (is (.hasAzimuth axis) "Should have azimuth")
+          (let [set-value (.getSetValue (.getAzimuth axis))]
+            (is (< (Math/abs (- 180.0 (.getValue set-value))) 0.001)
+                "Azimuth should match")))))
+    ;; Send elevation command
+    (rotary/rotary-elevation-set-value 45.0)
+    (let [captured (capture-command-sync!)]
+      (is (some? captured) "Should capture elevation command")
+      (when captured
+        (let [proto-cmd (decode-command captured)
+              axis (.getAxis (.getRotary proto-cmd))]
+          (is (.hasElevation axis) "Should have elevation")
+          (let [set-value (.getSetValue (.getElevation axis))]
+            (is (< (Math/abs (- 45.0 (.getValue set-value))) 0.001)
                 "Elevation should match")))))))
 
 ;; ============================================================================
@@ -174,29 +189,30 @@
 
 (deftest test-rotary-movement-commands
   (testing "Various rotary movement commands"
-    ;; Test each movement command
-    (doseq [[cmd-fn expected-field] [[rotary/move-home :home]
-                                     [rotary/stop :stop]
-                                     [rotary/halt :halt]
-                                     [rotary/center :center]
-                                     [rotary/zero :zero]
-                                     [rotary/go-to-north :goToNorth]
-                                     [rotary/scan :scan]
-                                     [rotary/patrol :patrol]]]
-      (testing (str "Command: " expected-field)
-        (cmd-fn)
-        (let [captured (<! (capture-command!))]
-          (is (some? captured) "Should capture command")
-          (when captured
-            (let [proto-cmd (decode-command captured)
-                  rotary-root (.getRotary proto-cmd)
-                  field-name (str "has" (clojure.string/capitalize (name expected-field)))]
-              ;; Use reflection to check for the field
-              (is (-> rotary-root
-                      (.getClass)
-                      (.getMethod field-name (into-array Class []))
-                      (.invoke rotary-root (into-array Object [])))
-                  (str "Should have " expected-field)))))))))
+    ;; Test basic commands that exist
+    (rotary/rotary-start)
+    (let [captured (capture-command-sync!)]
+      (is (some? captured) "Should capture start command")
+      (when captured
+        (let [proto-cmd (decode-command captured)
+              rotary-root (.getRotary proto-cmd)]
+          (is (.hasStart rotary-root) "Should have start"))))
+
+    (rotary/rotary-stop)
+    (let [captured (capture-command-sync!)]
+      (is (some? captured) "Should capture stop command")
+      (when captured
+        (let [proto-cmd (decode-command captured)
+              rotary-root (.getRotary proto-cmd)]
+          (is (.hasStop rotary-root) "Should have stop"))))
+
+    (rotary/rotary-halt)
+    (let [captured (capture-command-sync!)]
+      (is (some? captured) "Should capture halt command")
+      (when captured
+        (let [proto-cmd (decode-command captured)
+              rotary-root (.getRotary proto-cmd)]
+          (is (.hasHalt rotary-root) "Should have halt"))))))
 
 ;; ============================================================================
 ;; Day Camera Command Tests
@@ -205,7 +221,7 @@
 (deftest test-day-camera-basic-commands
   (testing "Day camera start command"
     (day-camera/start)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -215,7 +231,7 @@
 
   (testing "Day camera stop command"
     (day-camera/stop)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -224,9 +240,9 @@
           (is (.hasStop (.getDayCamera proto-cmd)) "Should have stop"))))))
 
 (deftest test-day-camera-zoom-commands
-  (testing "Day camera zoom command"
-    (day-camera/zoom {:mode :zoom-mode-stop :speed 0.5})
-    (let [captured (<! (capture-command!))]
+  (testing "Day camera zoom in command"
+    (day-camera/zoom-in)
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -234,16 +250,14 @@
           (is (.hasDayCamera proto-cmd) "Should have day camera")
           (let [day-root (.getDayCamera proto-cmd)]
             (is (.hasZoom day-root) "Should have zoom")
-            (let [zoom (.getZoom day-root)]
-              (is (= "JON_GUI_DATA_ZOOM_MODE_STOP" (str (.getMode zoom)))
-                  "Zoom mode should be stop")
-              (is (< (Math/abs (- 0.5 (.getSpeed zoom))) 0.001)
-                  "Zoom speed should match"))))))))
+            (when (.hasZoom day-root)
+              (let [zoom (.getZoom day-root)]
+                (is (.hasMove zoom) "Should have move command")))))))))
 
 (deftest test-day-camera-focus-commands
-  (testing "Day camera focus command"
-    (day-camera/focus {:mode :focus-mode-far :speed 0.8})
-    (let [captured (<! (capture-command!))]
+  (testing "Day camera focus auto command"
+    (day-camera/focus-auto)
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
@@ -251,39 +265,35 @@
           (is (.hasDayCamera proto-cmd) "Should have day camera")
           (let [day-root (.getDayCamera proto-cmd)]
             (is (.hasFocus day-root) "Should have focus")
-            (let [focus (.getFocus day-root)]
-              (is (= "JON_GUI_DATA_FOCUS_MODE_FAR" (str (.getMode focus)))
-                  "Focus mode should be far")
-              (is (< (Math/abs (- 0.8 (.getSpeed focus))) 0.001)
-                  "Focus speed should match"))))))))
+            (when (.hasFocus day-root)
+              (let [focus (.getFocus day-root)]
+                (is (.hasResetFocus focus) "Should have reset focus command")))))))))
 
 ;; ============================================================================
 ;; Heat Camera Command Tests
 ;; ============================================================================
 
 (deftest test-heat-camera-commands
-  (testing "Heat camera NUC command"
-    (heat-camera/nuc)
-    (let [captured (<! (capture-command!))]
+  (testing "Heat camera calibrate command"
+    (heat-camera/calibrate)
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
           (validate-base-command proto-cmd)
           (is (.hasHeatCamera proto-cmd) "Should have heat camera")
-          (is (.hasNuc (.getHeatCamera proto-cmd)) "Should have NUC")))))
+          (is (.hasCalibrate (.getHeatCamera proto-cmd)) "Should have calibrate")))))
 
-  (testing "Heat camera brightness command"
-    (heat-camera/brightness 75)
-    (let [captured (<! (capture-command!))]
+  (testing "Heat camera AGC mode command"
+    (heat-camera/set-agc-mode (h/agc-mode :agc-1))
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture command")
       (when captured
         (let [proto-cmd (decode-command captured)]
           (validate-base-command proto-cmd)
           (is (.hasHeatCamera proto-cmd) "Should have heat camera")
           (let [heat-root (.getHeatCamera proto-cmd)]
-            (is (.hasBrightness heat-root) "Should have brightness")
-            (is (= 75 (.getValue (.getBrightness heat-root)))
-                "Brightness value should match")))))))
+            (is (.hasSetAgc heat-root) "Should have set AGC mode")))))))
 
 ;; ============================================================================
 ;; Read-Only Mode Tests
@@ -295,17 +305,17 @@
 
     ;; Try sending a non-allowed command
     (day-camera/start)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (nil? captured) "Should not capture day camera command in read-only mode"))
 
     ;; Ping should still work
     (cmd-core/send-cmd-ping)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture ping in read-only mode"))
 
     ;; Frozen should still work
     (cmd-core/send-cmd-frozen)
-    (let [captured (<! (capture-command!))]
+    (let [captured (capture-command-sync!)]
       (is (some? captured) "Should capture frozen in read-only mode"))
 
     ;; Reset read-only mode
@@ -318,14 +328,14 @@
 (deftest test-command-roundtrip
   (testing "Command serialization and deserialization"
     (let [test-cases [{:fn #(cmd-core/send-cmd-ping) :name "ping"}
-                      {:fn #(rotary/axis {:azimuth (rotary/azimuth 123.45)}) :name "rotary-axis"}
-                      {:fn #(day-camera/zoom {:mode :zoom-mode-in :speed 0.7}) :name "day-zoom"}
-                      {:fn #(heat-camera/brightness 50) :name "heat-brightness"}]]
+                      {:fn #(rotary/rotary-azimuth-set-value 123.45 (h/direction :normal)) :name "rotary-azimuth"}
+                      {:fn #(day-camera/zoom-in) :name "day-zoom"}
+                      {:fn #(heat-camera/set-agc-mode (h/agc-mode :agc-1)) :name "heat-agc"}]]
 
       (doseq [{:keys [fn name]} test-cases]
         (testing (str "Roundtrip for " name)
           (fn)
-          (let [captured (<! (capture-command!))]
+          (let [captured (capture-command-sync!)]
             (is (some? captured) (str "Should capture " name))
             (when captured
               (let [proto-bytes (:pld captured)
@@ -352,18 +362,27 @@
 (deftest test-generated-rotary-positions
   (testing "Property: All generated rotary positions are valid"
     (dotimes [_ 20]
-      (let [azimuth-pos (- (rand 360) 180)  ; -180 to 180
+      (let [azimuth-pos (rand 360)  ; 0 to 360
             elevation-pos (- (rand 180) 90)]  ; -90 to 90
-        (rotary/axis {:azimuth (rotary/azimuth azimuth-pos)
-                      :elevation (rotary/elevation elevation-pos)})
-        (let [captured (<! (capture-command!))]
-          (is (some? captured) "Should capture generated command")
+        ;; Send azimuth command
+        (rotary/rotary-azimuth-set-value azimuth-pos (h/direction :normal))
+        (let [captured (capture-command-sync!)]
+          (is (some? captured) "Should capture azimuth command")
           (when captured
             (let [proto-cmd (decode-command captured)
-                  axis (.getAxis (.getRotary proto-cmd))]
-              (is (< (Math/abs (- azimuth-pos (.getPosition (.getAzimuth axis)))) 0.001)
-                  (str "Azimuth " azimuth-pos " should be preserved"))
-              (is (< (Math/abs (- elevation-pos (.getPosition (.getElevation axis)))) 0.001)
+                  axis (.getAxis (.getRotary proto-cmd))
+                  set-value (.getSetValue (.getAzimuth axis))]
+              (is (< (Math/abs (- azimuth-pos (.getValue set-value))) 0.001)
+                  (str "Azimuth " azimuth-pos " should be preserved")))))
+        ;; Send elevation command
+        (rotary/rotary-elevation-set-value elevation-pos)
+        (let [captured (capture-command-sync!)]
+          (is (some? captured) "Should capture elevation command")
+          (when captured
+            (let [proto-cmd (decode-command captured)
+                  axis (.getAxis (.getRotary proto-cmd))
+                  set-value (.getSetValue (.getElevation axis))]
+              (is (< (Math/abs (- elevation-pos (.getValue set-value))) 0.001)
                   (str "Elevation " elevation-pos " should be preserved")))))))))
 
 ;; ============================================================================
@@ -379,9 +398,9 @@
       (dotimes [i num-commands]
         (case (mod i 4)
           0 (cmd-core/send-cmd-ping)
-          1 (rotary/axis {:azimuth (rotary/azimuth (rand 360))})
-          2 (day-camera/zoom {:mode :zoom-mode-stop :speed 0.5})
-          3 (heat-camera/brightness (rand-int 100))))
+          1 (rotary/rotary-azimuth-set-value (rand 360) (h/direction :normal))
+          2 (day-camera/zoom-in)
+          3 (heat-camera/set-agc-mode (h/agc-mode :agc-1))))
 
       ;; Capture all commands
       (let [captured-count (atom 0)]

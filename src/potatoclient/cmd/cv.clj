@@ -17,11 +17,12 @@
 ;; ============================================================================
 
 (>defn start-tracking
-  "Start tracking at normalized device coordinates with frame time"
-  [x y frame-time]
-  [::specs/ndc-coordinate ::specs/ndc-coordinate pos-int? => nil?]
+  "Start tracking at normalized device coordinates with frame time and channel"
+  [channel x y frame-time]
+  [::specs/video-channel ::specs/ndc-coordinate ::specs/ndc-coordinate pos-int? => nil?]
   (let [root-msg (cmd-core/create-root-message)
         tracking-msg (-> (JonSharedCmdCv$StartTrackNDC/newBuilder)
+                         (.setChannel channel)
                          (.setX x)
                          (.setY y)
                          (.setFrameTime frame-time)
@@ -29,8 +30,8 @@
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
                     (.setStartTrackNdc tracking-msg))]
     (.setCv root-msg cv-root)
-    (cmd-core/send-cmd-message root-msg))
-  nil)
+    (cmd-core/send-cmd-message root-msg)
+    nil))
 
 (>defn stop-tracking
   "Stop current tracking"
@@ -54,7 +55,8 @@
   (let [root-msg (cmd-core/create-root-message)
         af-msg (-> (JonSharedCmdCv$SetAutoFocus/newBuilder)
                    (.setChannel channel)
-                   (.setAutoFocus enabled))
+                   (.setValue enabled)
+                   (.build))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
                     (.setSetAutoFocus af-msg))]
     (.setCv root-msg cv-root)

@@ -264,12 +264,12 @@
 ;; ============================================================================
 
 (deftest zoom-tests
-  (testing "Camera zoom level [1.0, 100.0]"
+  (testing "Camera zoom level [0.0, 1.0]"
+    (is (m/validate ::specs/zoom-level 0.0))
+    (is (m/validate ::specs/zoom-level 0.5))
     (is (m/validate ::specs/zoom-level 1.0))
-    (is (m/validate ::specs/zoom-level 50.0))
-    (is (m/validate ::specs/zoom-level 100.0))
-    (is (not (m/validate ::specs/zoom-level 0.9)))
-    (is (not (m/validate ::specs/zoom-level 100.1))))
+    (is (not (m/validate ::specs/zoom-level -0.1)))
+    (is (not (m/validate ::specs/zoom-level 1.1))))
 
   (testing "Digital zoom level [1.0, ∞)"
     (is (m/validate ::specs/digital-zoom-level 1.0))

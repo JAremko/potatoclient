@@ -537,7 +537,7 @@
 
   ;; Tracking
   (println "Starting tracking at (0.5, 0.5)...")
-  (cv/start-tracking 0.5 0.5 (System/currentTimeMillis))
+  (cv/start-tracking ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY 0.5 0.5 (System/currentTimeMillis))
 
   (Thread/sleep 100)
   (println "Setting auto-focus for day camera...")

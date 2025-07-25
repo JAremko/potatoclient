@@ -1,7 +1,7 @@
 (ns potatoclient.cmd.comprehensive-command-test
   "Comprehensive tests for ALL 200+ command functions"
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
-            [clojure.core.async :as async :refer [<! >! go go-loop timeout alt!]]
+            [clojure.core.async :as async :refer [<! <!! >! go go-loop timeout alt!]]
             [malli.core :as m]
             [malli.generator :as mg]
             [potatoclient.cmd.core :as cmd-core]
@@ -18,7 +18,8 @@
             [potatoclient.cmd.glass-heater :as glass-heater]
             [potatoclient.proto :as proto]
             [potatoclient.specs :as specs]
-            [potatoclient.logging :as logging])
+            [potatoclient.logging :as logging]
+            [potatoclient.cmd.test-helpers :as h])
   (:import [cmd JonSharedCmd$Root]
            [com.google.protobuf.util JsonFormat]))
 
@@ -44,13 +45,17 @@
       @test-command-channel ([cmd] cmd)
       (timeout 1000) nil)))
 
+(defn capture-command-sync! []
+  "Synchronous version for tests - blocks until command received or timeout"
+  (<!! (capture-command!)))
+
 (defn decode-command [{:keys [pld]}]
   (when pld
     (JonSharedCmd$Root/parseFrom pld)))
 
 (defn validate-base-command [cmd-proto]
   (is (= 1 (.getProtocolVersion cmd-proto)) "Protocol version should be 1")
-  (is (.hasClientType cmd-proto) "Should have client type"))
+  (is (some? (.getClientType cmd-proto)) "Should have client type"))
 
 ;; ============================================================================
 ;; Core Commands
@@ -60,15 +65,15 @@
   (testing "Core command functions"
     ;; Ping
     (cmd-core/send-cmd-ping)
-    (is (some? (<! (capture-command!))) "Ping command sent")
+    (is (some? (capture-command-sync!)) "Ping command sent")
 
     ;; Frozen
     (cmd-core/send-cmd-frozen)
-    (is (some? (<! (capture-command!))) "Frozen command sent")
+    (is (some? (capture-command-sync!)) "Frozen command sent")
 
     ;; Noop
     (cmd-core/send-cmd-noop)
-    (is (some? (<! (capture-command!))) "Noop command sent")))
+    (is (some? (capture-command-sync!)) "Noop command sent")))
 
 ;; ============================================================================
 ;; Rotary Commands (42 functions)
@@ -78,113 +83,113 @@
   (testing "All rotary platform commands"
     ;; Basic control
     (rotary/rotary-start)
-    (is (some? (<! (capture-command!))) "Start command sent")
+    (is (some? (capture-command-sync!)) "Start command sent")
 
     (rotary/rotary-stop)
-    (is (some? (<! (capture-command!))) "Stop command sent")
+    (is (some? (capture-command-sync!)) "Stop command sent")
 
     (rotary/rotary-halt)
-    (is (some? (<! (capture-command!))) "Halt command sent")
+    (is (some? (capture-command-sync!)) "Halt command sent")
 
     ;; Platform position
     (rotary/rotary-set-platform-azimuth 180.0)
-    (is (some? (<! (capture-command!))) "Set platform azimuth sent")
+    (is (some? (capture-command-sync!)) "Set platform azimuth sent")
 
     (rotary/rotary-set-platform-elevation 45.0)
-    (is (some? (<! (capture-command!))) "Set platform elevation sent")
+    (is (some? (capture-command-sync!)) "Set platform elevation sent")
 
     (rotary/rotary-set-platform-bank 30.0)
-    (is (some? (<! (capture-command!))) "Set platform bank sent")
+    (is (some? (capture-command-sync!)) "Set platform bank sent")
 
     ;; Axis halt
     (rotary/rotary-halt-azimuth)
-    (is (some? (<! (capture-command!))) "Halt azimuth sent")
+    (is (some? (capture-command-sync!)) "Halt azimuth sent")
 
     (rotary/rotary-halt-elevation)
-    (is (some? (<! (capture-command!))) "Halt elevation sent")
+    (is (some? (capture-command-sync!)) "Halt elevation sent")
 
     (rotary/rotary-halt-elevation-and-azimuth)
-    (is (some? (<! (capture-command!))) "Halt both axes sent")
+    (is (some? (capture-command-sync!)) "Halt both axes sent")
 
     ;; Azimuth control
-    (rotary/rotary-azimuth-set-value 90.0 :normal)
-    (is (some? (<! (capture-command!))) "Set azimuth value sent")
+    (rotary/rotary-azimuth-set-value 90.0 (h/direction :normal))
+    (is (some? (capture-command-sync!)) "Set azimuth value sent")
 
-    (rotary/rotary-azimuth-rotate-to 270.0 0.5 :shortest)
-    (is (some? (<! (capture-command!))) "Rotate azimuth to sent")
+    (rotary/rotary-azimuth-rotate-to 270.0 0.5 (h/direction :shortest))
+    (is (some? (capture-command-sync!)) "Rotate azimuth to sent")
 
-    (rotary/rotary-azimuth-rotate 0.7 :cw)
-    (is (some? (<! (capture-command!))) "Rotate azimuth sent")
+    (rotary/rotary-azimuth-rotate 0.7 (h/direction :cw))
+    (is (some? (capture-command-sync!)) "Rotate azimuth sent")
 
-    (rotary/rotary-azimuth-rotate-relative 45.0 0.5 :ccw)
-    (is (some? (<! (capture-command!))) "Rotate azimuth relative sent")
+    (rotary/rotary-azimuth-rotate-relative 45.0 0.5 (h/direction :ccw))
+    (is (some? (capture-command-sync!)) "Rotate azimuth relative sent")
 
-    (rotary/rotary-azimuth-rotate-relative-set 30.0 :normal)
-    (is (some? (<! (capture-command!))) "Rotate azimuth relative set sent")
+    (rotary/rotary-azimuth-rotate-relative-set 30.0 (h/direction :normal))
+    (is (some? (capture-command-sync!)) "Rotate azimuth relative set sent")
 
     ;; Elevation control
     (rotary/rotary-elevation-set-value 30.0)
-    (is (some? (<! (capture-command!))) "Set elevation value sent")
+    (is (some? (capture-command-sync!)) "Set elevation value sent")
 
     (rotary/rotary-elevation-rotate-to 60.0 0.5)
-    (is (some? (<! (capture-command!))) "Rotate elevation to sent")
+    (is (some? (capture-command-sync!)) "Rotate elevation to sent")
 
-    (rotary/rotary-elevation-rotate 0.3 :up)
-    (is (some? (<! (capture-command!))) "Rotate elevation sent")
+    (rotary/rotary-elevation-rotate 0.3 (h/direction :up))
+    (is (some? (capture-command-sync!)) "Rotate elevation sent")
 
-    (rotary/rotary-elevation-rotate-relative 15.0 0.5 :down)
-    (is (some? (<! (capture-command!))) "Rotate elevation relative sent")
+    (rotary/rotary-elevation-rotate-relative 15.0 0.5 (h/direction :down))
+    (is (some? (capture-command-sync!)) "Rotate elevation relative sent")
 
-    (rotary/rotary-elevation-rotate-relative-set 20.0 :up)
-    (is (some? (<! (capture-command!))) "Rotate elevation relative set sent")
+    (rotary/rotary-elevation-rotate-relative-set 20.0 (h/direction :up))
+    (is (some? (capture-command-sync!)) "Rotate elevation relative set sent")
 
     ;; Combined axis
-    (rotary/rotate-both-to 180.0 0.5 :normal 45.0 0.5)
-    (is (some? (<! (capture-command!))) "Rotate both to sent")
+    (rotary/rotate-both-to 180.0 0.5 (h/direction :normal) 45.0 0.5)
+    (is (some? (capture-command-sync!)) "Rotate both to sent")
 
-    (rotary/rotate-both 0.5 :cw 0.3 :up)
-    (is (some? (<! (capture-command!))) "Rotate both sent")
+    (rotary/rotate-both 0.5 (h/direction :cw) 0.3 (h/direction :up))
+    (is (some? (capture-command-sync!)) "Rotate both sent")
 
-    (rotary/set-both-to 90.0 30.0 :shortest)
-    (is (some? (<! (capture-command!))) "Set both to sent")
+    (rotary/set-both-to 90.0 30.0 (h/direction :shortest))
+    (is (some? (capture-command-sync!)) "Set both to sent")
 
     ;; Other commands
     (rotary/set-calculate-base-position-from-compass true)
-    (is (some? (<! (capture-command!))) "Use rotary as compass sent")
+    (is (some? (capture-command-sync!)) "Use rotary as compass sent")
 
     (rotary/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")
+    (is (some? (capture-command-sync!)) "Get meteo sent")
 
     (rotary/set-rotate-to-gps 12.345 56.789 100.0)
-    (is (some? (<! (capture-command!))) "Rotate to GPS sent")
+    (is (some? (capture-command-sync!)) "Rotate to GPS sent")
 
     (rotary/set-origin-gps 0.0 0.0 0.0)
-    (is (some? (<! (capture-command!))) "Set origin GPS sent")
+    (is (some? (capture-command-sync!)) "Set origin GPS sent")
 
-    (rotary/set-rotary-mode :speed)
-    (is (some? (<! (capture-command!))) "Set rotary mode sent")
+    (rotary/set-rotary-mode (h/mode :speed))
+    (is (some? (capture-command-sync!)) "Set rotary mode sent")
 
-    (rotary/rotate-to-ndc :day 0.5 -0.3)
-    (is (some? (<! (capture-command!))) "Rotate to NDC sent")
+    (rotary/rotate-to-ndc (h/channel :day) 0.5 -0.3)
+    (is (some? (capture-command-sync!)) "Rotate to NDC sent")
 
     ;; Scan commands
     (rotary/scan-start)
-    (is (some? (<! (capture-command!))) "Scan start sent")
+    (is (some? (capture-command-sync!)) "Scan start sent")
 
     (rotary/scan-stop)
-    (is (some? (<! (capture-command!))) "Scan stop sent")
+    (is (some? (capture-command-sync!)) "Scan stop sent")
 
     (rotary/scan-pause)
-    (is (some? (<! (capture-command!))) "Scan pause sent")
+    (is (some? (capture-command-sync!)) "Scan pause sent")
 
     (rotary/scan-unpause)
-    (is (some? (<! (capture-command!))) "Scan unpause sent")
+    (is (some? (capture-command-sync!)) "Scan unpause sent")
 
     (rotary/scan-prev)
-    (is (some? (<! (capture-command!))) "Scan prev sent")
+    (is (some? (capture-command-sync!)) "Scan prev sent")
 
     (rotary/scan-next)
-    (is (some? (<! (capture-command!))) "Scan next sent")))
+    (is (some? (capture-command-sync!)) "Scan next sent")))
 
 ;; ============================================================================
 ;; Day Camera Commands (44 functions)
@@ -194,122 +199,122 @@
   (testing "All day camera commands"
     ;; Basic control
     (day-camera/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (day-camera/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     (day-camera/take-photo)
-    (is (some? (<! (capture-command!))) "Take photo sent")
+    (is (some? (capture-command-sync!)) "Take photo sent")
 
     (day-camera/halt-all)
-    (is (some? (<! (capture-command!))) "Halt all sent")
+    (is (some? (capture-command-sync!)) "Halt all sent")
 
     ;; Camera settings
     (day-camera/set-infrared-filter true)
-    (is (some? (<! (capture-command!))) "Set IR filter sent")
+    (is (some? (capture-command-sync!)) "Set IR filter sent")
 
     (day-camera/set-iris 50)
-    (is (some? (<! (capture-command!))) "Set iris sent")
+    (is (some? (capture-command-sync!)) "Set iris sent")
 
     (day-camera/set-auto-iris true)
-    (is (some? (<! (capture-command!))) "Set auto iris sent")
+    (is (some? (capture-command-sync!)) "Set auto iris sent")
 
     ;; Focus commands
     (day-camera/focus-set-value 0.5)
-    (is (some? (<! (capture-command!))) "Focus set value sent")
+    (is (some? (capture-command-sync!)) "Focus set value sent")
 
     (day-camera/focus-move 0.8 0.5)
-    (is (some? (<! (capture-command!))) "Focus move sent")
+    (is (some? (capture-command-sync!)) "Focus move sent")
 
     (day-camera/focus-halt)
-    (is (some? (<! (capture-command!))) "Focus halt sent")
+    (is (some? (capture-command-sync!)) "Focus halt sent")
 
     (day-camera/focus-offset 0.1)
-    (is (some? (<! (capture-command!))) "Focus offset sent")
+    (is (some? (capture-command-sync!)) "Focus offset sent")
 
     (day-camera/focus-reset)
-    (is (some? (<! (capture-command!))) "Focus reset sent")
+    (is (some? (capture-command-sync!)) "Focus reset sent")
 
     (day-camera/focus-save-to-table)
-    (is (some? (<! (capture-command!))) "Focus save to table sent")
+    (is (some? (capture-command-sync!)) "Focus save to table sent")
 
     ;; Focus convenience
     (day-camera/focus-in)
-    (is (some? (<! (capture-command!))) "Focus in sent")
+    (is (some? (capture-command-sync!)) "Focus in sent")
 
     (day-camera/focus-out)
-    (is (some? (<! (capture-command!))) "Focus out sent")
+    (is (some? (capture-command-sync!)) "Focus out sent")
 
     (day-camera/focus-step-in)
-    (is (some? (<! (capture-command!))) "Focus step in sent")
+    (is (some? (capture-command-sync!)) "Focus step in sent")
 
     (day-camera/focus-step-out)
-    (is (some? (<! (capture-command!))) "Focus step out sent")
+    (is (some? (capture-command-sync!)) "Focus step out sent")
 
     (day-camera/focus-auto)
-    (is (some? (<! (capture-command!))) "Focus auto sent")
+    (is (some? (capture-command-sync!)) "Focus auto sent")
 
     (day-camera/focus-manual)
-    (is (some? (<! (capture-command!))) "Focus manual sent")
+    (is (some? (capture-command-sync!)) "Focus manual sent")
 
     ;; Zoom commands
     (day-camera/zoom-set-value 0.7)
-    (is (some? (<! (capture-command!))) "Zoom set value sent")
+    (is (some? (capture-command-sync!)) "Zoom set value sent")
 
     (day-camera/zoom-move 0.9 0.5)
-    (is (some? (<! (capture-command!))) "Zoom move sent")
+    (is (some? (capture-command-sync!)) "Zoom move sent")
 
     (day-camera/zoom-halt)
-    (is (some? (<! (capture-command!))) "Zoom halt sent")
+    (is (some? (capture-command-sync!)) "Zoom halt sent")
 
     (day-camera/zoom-offset 0.2)
-    (is (some? (<! (capture-command!))) "Zoom offset sent")
+    (is (some? (capture-command-sync!)) "Zoom offset sent")
 
     (day-camera/zoom-reset)
-    (is (some? (<! (capture-command!))) "Zoom reset sent")
+    (is (some? (capture-command-sync!)) "Zoom reset sent")
 
     (day-camera/zoom-save-to-table)
-    (is (some? (<! (capture-command!))) "Zoom save to table sent")
+    (is (some? (capture-command-sync!)) "Zoom save to table sent")
 
     (day-camera/zoom-set-table-value 5)
-    (is (some? (<! (capture-command!))) "Zoom set table value sent")
+    (is (some? (capture-command-sync!)) "Zoom set table value sent")
 
     (day-camera/zoom-next-table-position)
-    (is (some? (<! (capture-command!))) "Zoom next table pos sent")
+    (is (some? (capture-command-sync!)) "Zoom next table pos sent")
 
     (day-camera/zoom-prev-table-position)
-    (is (some? (<! (capture-command!))) "Zoom prev table pos sent")
+    (is (some? (capture-command-sync!)) "Zoom prev table pos sent")
 
     (day-camera/set-digital-zoom-level 2.0)
-    (is (some? (<! (capture-command!))) "Set digital zoom sent")
+    (is (some? (capture-command-sync!)) "Set digital zoom sent")
 
     ;; Zoom convenience
     (day-camera/zoom-in)
-    (is (some? (<! (capture-command!))) "Zoom in sent")
+    (is (some? (capture-command-sync!)) "Zoom in sent")
 
     (day-camera/zoom-out)
-    (is (some? (<! (capture-command!))) "Zoom out sent")
+    (is (some? (capture-command-sync!)) "Zoom out sent")
 
     ;; FX & Enhancement
-    (day-camera/set-fx-mode :day-a)
-    (is (some? (<! (capture-command!))) "Set FX mode sent")
+    (day-camera/set-fx-mode (h/day-fx :day-a))
+    (is (some? (capture-command-sync!)) "Set FX mode sent")
 
     (day-camera/next-fx-mode)
-    (is (some? (<! (capture-command!))) "Next FX mode sent")
+    (is (some? (capture-command-sync!)) "Next FX mode sent")
 
     (day-camera/prev-fx-mode)
-    (is (some? (<! (capture-command!))) "Prev FX mode sent")
+    (is (some? (capture-command-sync!)) "Prev FX mode sent")
 
     (day-camera/set-clahe-level 0.5)
-    (is (some? (<! (capture-command!))) "Set CLAHE level sent")
+    (is (some? (capture-command-sync!)) "Set CLAHE level sent")
 
     (day-camera/shift-clahe-level 0.1)
-    (is (some? (<! (capture-command!))) "Shift CLAHE level sent")
+    (is (some? (capture-command-sync!)) "Shift CLAHE level sent")
 
     ;; Other
     (day-camera/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; Heat Camera Commands (35 functions)
@@ -319,112 +324,112 @@
   (testing "All heat camera commands"
     ;; Basic control
     (heat-camera/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (heat-camera/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     (heat-camera/take-photo)
-    (is (some? (<! (capture-command!))) "Take photo sent")
+    (is (some? (capture-command-sync!)) "Take photo sent")
 
     (heat-camera/calibrate)
-    (is (some? (<! (capture-command!))) "Calibrate sent")
+    (is (some? (capture-command-sync!)) "Calibrate sent")
 
     ;; Camera settings
-    (heat-camera/set-agc-mode :agc-1)
-    (is (some? (<! (capture-command!))) "Set AGC mode sent")
+    (heat-camera/set-agc-mode (h/agc-mode :agc-1))
+    (is (some? (capture-command-sync!)) "Set AGC mode sent")
 
-    (heat-camera/set-filter :hot-white)
-    (is (some? (<! (capture-command!))) "Set filter sent")
+    (heat-camera/set-filter (h/heat-filter :hot-white))
+    (is (some? (capture-command-sync!)) "Set filter sent")
 
     (heat-camera/set-auto-focus true)
-    (is (some? (<! (capture-command!))) "Set auto focus sent")
+    (is (some? (capture-command-sync!)) "Set auto focus sent")
 
     (heat-camera/set-calib-mode)
-    (is (some? (<! (capture-command!))) "Set calib mode sent")
+    (is (some? (capture-command-sync!)) "Set calib mode sent")
 
     ;; Zoom commands
     (heat-camera/zoom-in)
-    (is (some? (<! (capture-command!))) "Zoom in sent")
+    (is (some? (capture-command-sync!)) "Zoom in sent")
 
     (heat-camera/zoom-out)
-    (is (some? (<! (capture-command!))) "Zoom out sent")
+    (is (some? (capture-command-sync!)) "Zoom out sent")
 
     (heat-camera/zoom-stop)
-    (is (some? (<! (capture-command!))) "Zoom stop sent")
+    (is (some? (capture-command-sync!)) "Zoom stop sent")
 
     (heat-camera/zoom-set-table-value 3)
-    (is (some? (<! (capture-command!))) "Zoom set table value sent")
+    (is (some? (capture-command-sync!)) "Zoom set table value sent")
 
     (heat-camera/zoom-next-table-position)
-    (is (some? (<! (capture-command!))) "Zoom next table pos sent")
+    (is (some? (capture-command-sync!)) "Zoom next table pos sent")
 
     (heat-camera/zoom-prev-table-position)
-    (is (some? (<! (capture-command!))) "Zoom prev table pos sent")
+    (is (some? (capture-command-sync!)) "Zoom prev table pos sent")
 
     (heat-camera/set-digital-zoom-level 1.5)
-    (is (some? (<! (capture-command!))) "Set digital zoom sent")
+    (is (some? (capture-command-sync!)) "Set digital zoom sent")
 
     (heat-camera/zoom-reset)
-    (is (some? (<! (capture-command!))) "Zoom reset sent")
+    (is (some? (capture-command-sync!)) "Zoom reset sent")
 
     (heat-camera/zoom-save-to-table)
-    (is (some? (<! (capture-command!))) "Zoom save to table sent")
+    (is (some? (capture-command-sync!)) "Zoom save to table sent")
 
     ;; Focus commands
     (heat-camera/focus-in)
-    (is (some? (<! (capture-command!))) "Focus in sent")
+    (is (some? (capture-command-sync!)) "Focus in sent")
 
     (heat-camera/focus-out)
-    (is (some? (<! (capture-command!))) "Focus out sent")
+    (is (some? (capture-command-sync!)) "Focus out sent")
 
     (heat-camera/focus-stop)
-    (is (some? (<! (capture-command!))) "Focus stop sent")
+    (is (some? (capture-command-sync!)) "Focus stop sent")
 
     (heat-camera/focus-step-plus)
-    (is (some? (<! (capture-command!))) "Focus step plus sent")
+    (is (some? (capture-command-sync!)) "Focus step plus sent")
 
     (heat-camera/focus-step-minus)
-    (is (some? (<! (capture-command!))) "Focus step minus sent")
+    (is (some? (capture-command-sync!)) "Focus step minus sent")
 
     (heat-camera/focus-auto)
-    (is (some? (<! (capture-command!))) "Focus auto sent")
+    (is (some? (capture-command-sync!)) "Focus auto sent")
 
     (heat-camera/focus-manual)
-    (is (some? (<! (capture-command!))) "Focus manual sent")
+    (is (some? (capture-command-sync!)) "Focus manual sent")
 
     ;; DDE
     (heat-camera/enable-dde)
-    (is (some? (<! (capture-command!))) "Enable DDE sent")
+    (is (some? (capture-command-sync!)) "Enable DDE sent")
 
     (heat-camera/disable-dde)
-    (is (some? (<! (capture-command!))) "Disable DDE sent")
+    (is (some? (capture-command-sync!)) "Disable DDE sent")
 
     (heat-camera/set-dde-level 100)
-    (is (some? (<! (capture-command!))) "Set DDE level sent")
+    (is (some? (capture-command-sync!)) "Set DDE level sent")
 
     (heat-camera/shift-dde-level 10)
-    (is (some? (<! (capture-command!))) "Shift DDE level sent")
+    (is (some? (capture-command-sync!)) "Shift DDE level sent")
 
     ;; FX & Enhancement
-    (heat-camera/set-fx-mode :heat-b)
-    (is (some? (<! (capture-command!))) "Set FX mode sent")
+    (heat-camera/set-fx-mode (h/heat-fx :heat-b))
+    (is (some? (capture-command-sync!)) "Set FX mode sent")
 
     (heat-camera/next-fx-mode)
-    (is (some? (<! (capture-command!))) "Next FX mode sent")
+    (is (some? (capture-command-sync!)) "Next FX mode sent")
 
     (heat-camera/prev-fx-mode)
-    (is (some? (<! (capture-command!))) "Prev FX mode sent")
+    (is (some? (capture-command-sync!)) "Prev FX mode sent")
 
     (heat-camera/set-clahe-level 0.7)
-    (is (some? (<! (capture-command!))) "Set CLAHE level sent")
+    (is (some? (capture-command-sync!)) "Set CLAHE level sent")
 
     (heat-camera/shift-clahe-level -0.1)
-    (is (some? (<! (capture-command!))) "Shift CLAHE level sent")
+    (is (some? (capture-command-sync!)) "Shift CLAHE level sent")
 
     ;; Other
     (heat-camera/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; System Commands (14 functions)
@@ -434,46 +439,46 @@
   (testing "All system commands"
     ;; System control
     (system/reboot)
-    (is (some? (<! (capture-command!))) "Reboot sent")
+    (is (some? (capture-command-sync!)) "Reboot sent")
 
     (system/power-off)
-    (is (some? (<! (capture-command!))) "Power off sent")
+    (is (some? (capture-command-sync!)) "Power off sent")
 
     (system/reset-configs)
-    (is (some? (<! (capture-command!))) "Reset configs sent")
+    (is (some? (capture-command-sync!)) "Reset configs sent")
 
     (system/enter-transport)
-    (is (some? (<! (capture-command!))) "Enter transport sent")
+    (is (some? (capture-command-sync!)) "Enter transport sent")
 
     ;; Subsystem control
     (system/start-all)
-    (is (some? (<! (capture-command!))) "Start all sent")
+    (is (some? (capture-command-sync!)) "Start all sent")
 
     (system/stop-all)
-    (is (some? (<! (capture-command!))) "Stop all sent")
+    (is (some? (capture-command-sync!)) "Stop all sent")
 
     ;; Recording
     (system/start-rec)
-    (is (some? (<! (capture-command!))) "Start rec sent")
+    (is (some? (capture-command-sync!)) "Start rec sent")
 
     (system/stop-rec)
-    (is (some? (<! (capture-command!))) "Stop rec sent")
+    (is (some? (capture-command-sync!)) "Stop rec sent")
 
     (system/mark-rec-important)
-    (is (some? (<! (capture-command!))) "Mark rec important sent")
+    (is (some? (capture-command-sync!)) "Mark rec important sent")
 
     (system/unmark-rec-important)
-    (is (some? (<! (capture-command!))) "Unmark rec important sent")
+    (is (some? (capture-command-sync!)) "Unmark rec important sent")
 
     ;; Settings
     (system/enable-geodesic-mode)
-    (is (some? (<! (capture-command!))) "Enable geodesic sent")
+    (is (some? (capture-command-sync!)) "Enable geodesic sent")
 
     (system/disable-geodesic-mode)
-    (is (some? (<! (capture-command!))) "Disable geodesic sent")
+    (is (some? (capture-command-sync!)) "Disable geodesic sent")
 
-    (system/set-localization :ua)
-    (is (some? (<! (capture-command!))) "Set localization sent")))
+    (system/set-localization (h/localization :ua))
+    (is (some? (capture-command-sync!)) "Set localization sent")))
 
 ;; ============================================================================
 ;; OSD Commands (8 functions)
@@ -482,28 +487,28 @@
 (deftest test-all-osd-commands
   (testing "All OSD commands"
     (osd/show-default-screen)
-    (is (some? (<! (capture-command!))) "Show default screen sent")
+    (is (some? (capture-command-sync!)) "Show default screen sent")
 
     (osd/show-lrf-measure-screen)
-    (is (some? (<! (capture-command!))) "Show LRF measure sent")
+    (is (some? (capture-command-sync!)) "Show LRF measure sent")
 
     (osd/show-lrf-result-screen)
-    (is (some? (<! (capture-command!))) "Show LRF result sent")
+    (is (some? (capture-command-sync!)) "Show LRF result sent")
 
     (osd/show-lrf-result-simplified-screen)
-    (is (some? (<! (capture-command!))) "Show LRF simplified sent")
+    (is (some? (capture-command-sync!)) "Show LRF simplified sent")
 
     (osd/enable-day-osd)
-    (is (some? (<! (capture-command!))) "Enable day OSD sent")
+    (is (some? (capture-command-sync!)) "Enable day OSD sent")
 
     (osd/disable-day-osd)
-    (is (some? (<! (capture-command!))) "Disable day OSD sent")
+    (is (some? (capture-command-sync!)) "Disable day OSD sent")
 
     (osd/enable-heat-osd)
-    (is (some? (<! (capture-command!))) "Enable heat OSD sent")
+    (is (some? (capture-command-sync!)) "Enable heat OSD sent")
 
     (osd/disable-heat-osd)
-    (is (some? (<! (capture-command!))) "Disable heat OSD sent")))
+    (is (some? (capture-command-sync!)) "Disable heat OSD sent")))
 
 ;; ============================================================================
 ;; GPS Commands (5 functions)
@@ -512,19 +517,19 @@
 (deftest test-all-gps-commands
   (testing "All GPS commands"
     (gps/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (gps/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     (gps/set-manual-position 48.8566 2.3522 35.0)
-    (is (some? (<! (capture-command!))) "Set manual position sent")
+    (is (some? (capture-command-sync!)) "Set manual position sent")
 
     (gps/set-use-manual-position true)
-    (is (some? (<! (capture-command!))) "Set use manual sent")
+    (is (some? (capture-command-sync!)) "Set use manual sent")
 
     (gps/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; LRF Commands (13 functions)
@@ -534,50 +539,50 @@
   (testing "All LRF commands"
     ;; Basic control
     (lrf/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (lrf/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     (lrf/measure)
-    (is (some? (<! (capture-command!))) "Measure sent")
+    (is (some? (capture-command-sync!)) "Measure sent")
 
     (lrf/new-session)
-    (is (some? (<! (capture-command!))) "New session sent")
+    (is (some? (capture-command-sync!)) "New session sent")
 
     ;; Scan mode
     (lrf/scan-on)
-    (is (some? (<! (capture-command!))) "Scan on sent")
+    (is (some? (capture-command-sync!)) "Scan on sent")
 
     (lrf/scan-off)
-    (is (some? (<! (capture-command!))) "Scan off sent")
+    (is (some? (capture-command-sync!)) "Scan off sent")
 
     ;; Modes
     (lrf/enable-fog-mode)
-    (is (some? (<! (capture-command!))) "Enable fog mode sent")
+    (is (some? (capture-command-sync!)) "Enable fog mode sent")
 
     (lrf/disable-fog-mode)
-    (is (some? (<! (capture-command!))) "Disable fog mode sent")
+    (is (some? (capture-command-sync!)) "Disable fog mode sent")
 
     ;; Target designator
     (lrf/target-designator-off)
-    (is (some? (<! (capture-command!))) "Target designator off sent")
+    (is (some? (capture-command-sync!)) "Target designator off sent")
 
     (lrf/target-designator-mode-a)
-    (is (some? (<! (capture-command!))) "Target designator A sent")
+    (is (some? (capture-command-sync!)) "Target designator A sent")
 
     (lrf/target-designator-mode-b)
-    (is (some? (<! (capture-command!))) "Target designator B sent")
+    (is (some? (capture-command-sync!)) "Target designator B sent")
 
     ;; Other
     (lrf/refine-on)
-    (is (some? (<! (capture-command!))) "Refine on sent")
+    (is (some? (capture-command-sync!)) "Refine on sent")
 
     (lrf/refine-off)
-    (is (some? (<! (capture-command!))) "Refine off sent")
+    (is (some? (capture-command-sync!)) "Refine off sent")
 
     (lrf/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; LRF Alignment Commands (6 functions)
@@ -586,22 +591,22 @@
 (deftest test-all-lrf-alignment-commands
   (testing "All LRF alignment commands"
     (lrf-align/set-offset-day 10 20)
-    (is (some? (<! (capture-command!))) "Set offset day sent")
+    (is (some? (capture-command-sync!)) "Set offset day sent")
 
     (lrf-align/shift-offset-day 5 -5)
-    (is (some? (<! (capture-command!))) "Shift offset day sent")
+    (is (some? (capture-command-sync!)) "Shift offset day sent")
 
     (lrf-align/set-offset-heat 15 25)
-    (is (some? (<! (capture-command!))) "Set offset heat sent")
+    (is (some? (capture-command-sync!)) "Set offset heat sent")
 
     (lrf-align/shift-offset-heat -10 10)
-    (is (some? (<! (capture-command!))) "Shift offset heat sent")
+    (is (some? (capture-command-sync!)) "Shift offset heat sent")
 
     (lrf-align/save-offsets)
-    (is (some? (<! (capture-command!))) "Save offsets sent")
+    (is (some? (capture-command-sync!)) "Save offsets sent")
 
     (lrf-align/reset-offsets)
-    (is (some? (<! (capture-command!))) "Reset offsets sent")))
+    (is (some? (capture-command-sync!)) "Reset offsets sent")))
 
 ;; ============================================================================
 ;; Compass Commands (9 functions)
@@ -611,37 +616,37 @@
   (testing "All compass commands"
     ;; Basic control
     (compass/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (compass/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     ;; Settings
     (compass/set-declination 5.5)
-    (is (some? (<! (capture-command!))) "Set declination sent")
+    (is (some? (capture-command-sync!)) "Set declination sent")
 
     (compass/set-offset-angle-azimuth 2.0)
-    (is (some? (<! (capture-command!))) "Set offset azimuth sent")
+    (is (some? (capture-command-sync!)) "Set offset azimuth sent")
 
     (compass/set-offset-angle-elevation -1.5)
-    (is (some? (<! (capture-command!))) "Set offset elevation sent")
+    (is (some? (capture-command-sync!)) "Set offset elevation sent")
 
     ;; Calibration
     (compass/calibrate-long)
-    (is (some? (<! (capture-command!))) "Calibrate long sent")
+    (is (some? (capture-command-sync!)) "Calibrate long sent")
 
     (compass/calibrate-short)
-    (is (some? (<! (capture-command!))) "Calibrate short sent")
+    (is (some? (capture-command-sync!)) "Calibrate short sent")
 
     (compass/calibrate-next)
-    (is (some? (<! (capture-command!))) "Calibrate next sent")
+    (is (some? (capture-command-sync!)) "Calibrate next sent")
 
     (compass/calibrate-cancel)
-    (is (some? (<! (capture-command!))) "Calibrate cancel sent")
+    (is (some? (capture-command-sync!)) "Calibrate cancel sent")
 
     ;; Other
     (compass/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; Computer Vision Commands (8 functions)
@@ -649,32 +654,32 @@
 
 (deftest test-all-cv-commands
   (testing "All CV commands"
-    (cv/start-tracking 0.5 -0.3 (System/currentTimeMillis))
-    (is (some? (<! (capture-command!))) "Start tracking sent")
+    (cv/start-tracking (h/channel :heat) 0.5 -0.3 (System/currentTimeMillis))
+    (is (some? (capture-command-sync!)) "Start tracking sent")
 
     (cv/stop-tracking)
-    (is (some? (<! (capture-command!))) "Stop tracking sent")
+    (is (some? (capture-command-sync!)) "Stop tracking sent")
 
-    (cv/set-auto-focus :day true)
-    (is (some? (<! (capture-command!))) "Set auto focus sent")
+    (cv/set-auto-focus (h/channel :day) true)
+    (is (some? (capture-command-sync!)) "Set auto focus sent")
 
     (cv/enable-vampire-mode)
-    (is (some? (<! (capture-command!))) "Enable vampire mode sent")
+    (is (some? (capture-command-sync!)) "Enable vampire mode sent")
 
     (cv/disable-vampire-mode)
-    (is (some? (<! (capture-command!))) "Disable vampire mode sent")
+    (is (some? (capture-command-sync!)) "Disable vampire mode sent")
 
     (cv/enable-stabilization-mode)
-    (is (some? (<! (capture-command!))) "Enable stabilization sent")
+    (is (some? (capture-command-sync!)) "Enable stabilization sent")
 
     (cv/disable-stabilization-mode)
-    (is (some? (<! (capture-command!))) "Disable stabilization sent")
+    (is (some? (capture-command-sync!)) "Disable stabilization sent")
 
     (cv/start-video-dump)
-    (is (some? (<! (capture-command!))) "Start video dump sent")
+    (is (some? (capture-command-sync!)) "Start video dump sent")
 
     (cv/stop-video-dump)
-    (is (some? (<! (capture-command!))) "Stop video dump sent")))
+    (is (some? (capture-command-sync!)) "Stop video dump sent")))
 
 ;; ============================================================================
 ;; Glass Heater Commands (5 functions)
@@ -683,19 +688,19 @@
 (deftest test-all-glass-heater-commands
   (testing "All glass heater commands"
     (glass-heater/start)
-    (is (some? (<! (capture-command!))) "Start sent")
+    (is (some? (capture-command-sync!)) "Start sent")
 
     (glass-heater/stop)
-    (is (some? (<! (capture-command!))) "Stop sent")
+    (is (some? (capture-command-sync!)) "Stop sent")
 
     (glass-heater/on)
-    (is (some? (<! (capture-command!))) "On sent")
+    (is (some? (capture-command-sync!)) "On sent")
 
     (glass-heater/off)
-    (is (some? (<! (capture-command!))) "Off sent")
+    (is (some? (capture-command-sync!)) "Off sent")
 
     (glass-heater/get-meteo)
-    (is (some? (<! (capture-command!))) "Get meteo sent")))
+    (is (some? (capture-command-sync!)) "Get meteo sent")))
 
 ;; ============================================================================
 ;; Property-Based Tests for Commands
@@ -723,46 +728,46 @@
                        :values [[-90.0 -180.0 -433.0] [90.0 180.0 8848.0] [0.0 0.0 0.0]]}
 
           ;; Speeds
-                      {:fn (fn [s] (rotary/rotary-azimuth-rotate s :cw)) :values [0.0 1.0 0.5]}
-                      {:fn (fn [s] (rotary/rotary-elevation-rotate s :up)) :values [0.0 1.0 0.3]}]]
+                      {:fn (fn [s] (rotary/rotary-azimuth-rotate s (h/direction :cw))) :values [0.0 1.0 0.5]}
+                      {:fn (fn [s] (rotary/rotary-elevation-rotate s (h/direction :up))) :values [0.0 1.0 0.3]}]]
 
       (doseq [{:keys [fn values]} test-cases]
         (doseq [value values]
           (fn value)
-          (is (some? (<! (capture-command!)))
+          (is (some? (capture-command-sync!))
               (str "Command should handle value: " value)))))))
 
 (deftest test-property-all-enum-values
   (testing "Commands handle all enum values correctly"
     ;; Rotary directions
     (doseq [dir [:normal :cw :ccw :shortest]]
-      (rotary/rotary-azimuth-set-value 180.0 dir)
-      (is (some? (<! (capture-command!)))))
+      (rotary/rotary-azimuth-set-value 180.0 (h/direction dir))
+      (is (some? (capture-command-sync!))))
 
     ;; Rotary modes
     (doseq [mode [:initialization :speed :position :stabilization :targeting :video-tracker]]
-      (rotary/set-rotary-mode mode)
-      (is (some? (<! (capture-command!)))))
+      (rotary/set-rotary-mode (h/mode mode))
+      (is (some? (capture-command-sync!))))
 
     ;; Heat AGC modes
     (doseq [mode [:agc-1 :agc-2 :agc-3]]
-      (heat-camera/set-agc-mode mode)
-      (is (some? (<! (capture-command!)))))
+      (heat-camera/set-agc-mode (h/agc-mode mode))
+      (is (some? (capture-command-sync!))))
 
     ;; Heat filters
     (doseq [filter [:hot-white :hot-black :sepia :sepia-inverse]]
-      (heat-camera/set-filter filter)
-      (is (some? (<! (capture-command!)))))
+      (heat-camera/set-filter (h/heat-filter filter))
+      (is (some? (capture-command-sync!))))
 
     ;; System localizations
     (doseq [loc [:en :ua :ar :cs]]
-      (system/set-localization loc)
-      (is (some? (<! (capture-command!)))))
+      (system/set-localization (h/localization loc))
+      (is (some? (capture-command-sync!))))
 
     ;; CV channels
     (doseq [channel [:day :heat]]
-      (cv/set-auto-focus channel true)
-      (is (some? (<! (capture-command!)))))))
+      (cv/set-auto-focus (h/channel channel) true)
+      (is (some? (capture-command-sync!))))))
 
 ;; ============================================================================
 ;; Command Validation Tests
@@ -774,18 +779,18 @@
     (let [test-commands [#(cmd-core/send-cmd-ping)
                          #(rotary/rotary-set-platform-azimuth 180.0)
                          #(day-camera/zoom-in)
-                         #(heat-camera/set-agc-mode :mode-1)
+                         #(heat-camera/set-agc-mode (h/agc-mode :agc-1))
                          #(system/start-rec)
                          #(osd/enable-day-osd)
                          #(gps/start)
                          #(lrf/measure)
                          #(compass/calibrate-long)
-                         #(cv/start-tracking 0.0 0.0 (System/currentTimeMillis))
+                         #(cv/start-tracking (h/channel :day) 0.0 0.0 (System/currentTimeMillis))
                          #(glass-heater/on)]]
 
       (doseq [cmd-fn test-commands]
         (cmd-fn)
-        (let [captured (<! (capture-command!))]
+        (let [captured (capture-command-sync!)]
           (is (some? captured) "Command should be captured")
           (when captured
             (let [proto-cmd (decode-command captured)]

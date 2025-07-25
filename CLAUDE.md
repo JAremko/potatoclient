@@ -339,6 +339,14 @@ See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) for
 - Testing and debugging utilities
 - Protobuf implementation details and troubleshooting
 
+**Testing and Validation**
+See [docs/TESTING_AND_VALIDATION.md](docs/TESTING_AND_VALIDATION.md) for:
+- Comprehensive test suite documentation
+- Protobuf validation with buf.validate annotations
+- TypeScript reference implementation location
+- Test organization and running instructions
+- Debugging test failures and common issues
+
 ## Localization
 
 Translations are stored in separate EDN files under `resources/i18n/`:

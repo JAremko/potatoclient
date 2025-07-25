@@ -27,7 +27,7 @@
                         (.setY y))]
     (.setSet offsets set-offsets)
     (.setDay lrf-align-root offsets)
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
@@ -43,7 +43,7 @@
                           (.setY y))]
     (.setShift offsets shift-offsets)
     (.setDay lrf-align-root offsets)
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
@@ -63,7 +63,7 @@
                         (.setY y))]
     (.setSet offsets set-offsets)
     (.setHeat lrf-align-root offsets)
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
@@ -79,7 +79,7 @@
                           (.setY y))]
     (.setShift offsets shift-offsets)
     (.setHeat lrf-align-root offsets)
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
@@ -97,7 +97,7 @@
         save (JonSharedCmdLrfAlign$SaveOffsets/newBuilder)]
     (.setSave offsets save)
     (.setDay lrf-align-root offsets) ; Need to set a channel, using day
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)
 
@@ -111,6 +111,6 @@
         reset (JonSharedCmdLrfAlign$ResetOffsets/newBuilder)]
     (.setReset offsets reset)
     (.setDay lrf-align-root offsets) ; Need to set a channel, using day
-    (.setLrfAlignment root-msg lrf-align-root)
+    (.setLrfCalib root-msg lrf-align-root)
     (cmd-core/send-cmd-message root-msg))
   nil)

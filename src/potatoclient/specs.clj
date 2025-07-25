@@ -3,6 +3,7 @@
    This namespace contains all the common schemas used across multiple namespaces."
   (:require [clojure.core.async.impl.channels]
             [clojure.data.json]
+            [clojure.string]
             [malli.core :as m]
             [malli.registry :as mr]
             [malli.util :as mu])
@@ -387,8 +388,8 @@
   [:double {:min -433.0 :max 8848.86}])
 
 (def zoom-level
-  "Camera zoom level (1.0 to 100.0)"
-  [:double {:min 1.0 :max 100.0}])
+  "Camera zoom level normalized (0.0 to 1.0)"
+  [:double {:min 0.0 :max 1.0}])
 
 (def zoom-table-index
   "Zoom table index value"

@@ -1,7 +1,9 @@
 (ns potatoclient.core
   "Core application logic for PotatoClient.
   Handles application initialization and lifecycle management."
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.java.io]
+            [clojure.spec.alpha :as s]
+            [clojure.string]
             [com.fulcrologic.guardrails.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]

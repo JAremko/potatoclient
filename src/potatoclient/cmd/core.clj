@@ -3,7 +3,7 @@
    Implements the command pattern from the TypeScript web example."
   (:require [clojure.core.async :as async]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- >def | ? =>]]
+            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- ? =>]]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])
   (:import [cmd JonSharedCmd$Root
