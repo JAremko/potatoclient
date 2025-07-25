@@ -2,6 +2,7 @@
   "Event handling for video stream windows"
   (:require
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+    [potatoclient.cmd.cv :as cv]
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
     [potatoclient.specs]
@@ -153,11 +154,22 @@
   "Handle a navigation/mouse event."
   [msg]
   [map? => nil?]
-  (let [event (:event msg)]
-    (logging/log-stream-event (:streamId msg) :navigation
+  (let [event (:event msg)
+        stream-id (:streamId msg)]
+    (logging/log-stream-event stream-id :navigation
                               {:nav-type (:type event)
                                :message (format-navigation-event event)
                                :data event})
+
+    ;; Check for double-click (left button with clickCount > 1)
+    (when (and (= (:type event) :mouse-click)
+               (= (:button event) 1)  ; Left button
+               (> (:clickCount event) 1))  ; Double-click
+      (let [{:keys [ndcX ndcY frameTimestamp]} event]
+        (logging/log-info {:msg (str "Double-click detected at NDC (" ndcX ", " ndcY ") "
+                                     "with frame timestamp: " frameTimestamp)})
+        ;; Start CV tracking at the clicked position
+        (cv/start-tracking ndcX ndcY frameTimestamp)))
     nil))
 
 (>defn handle-window-event

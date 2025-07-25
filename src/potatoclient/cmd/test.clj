@@ -537,7 +537,7 @@
 
   ;; Tracking
   (println "Starting tracking at (0.5, 0.5)...")
-  (cv/start-tracking 0.5 0.5)
+  (cv/start-tracking 0.5 0.5 (System/currentTimeMillis))
 
   (Thread/sleep 100)
   (println "Setting auto-focus for day camera...")

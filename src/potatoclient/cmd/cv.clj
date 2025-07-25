@@ -17,13 +17,15 @@
 ;; ============================================================================
 
 (>defn start-tracking
-  "Start tracking at normalized device coordinates"
-  [x y]
-  [::specs/ndc-coordinate ::specs/ndc-coordinate => nil?]
+  "Start tracking at normalized device coordinates with frame time"
+  [x y frame-time]
+  [::specs/ndc-coordinate ::specs/ndc-coordinate pos-int? => nil?]
   (let [root-msg (cmd-core/create-root-message)
         tracking-msg (-> (JonSharedCmdCv$StartTrackNDC/newBuilder)
                          (.setX x)
-                         (.setY y))
+                         (.setY y)
+                         (.setFrameTime frame-time)
+                         (.build))
         cv-root (-> (JonSharedCmdCv$Root/newBuilder)
                     (.setStartTrackNdc tracking-msg))]
     (.setCv root-msg cv-root)

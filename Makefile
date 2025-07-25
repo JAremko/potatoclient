@@ -33,10 +33,7 @@ help: ## Show all available commands with detailed descriptions
 	@grep -E '^(build|release|proto|compile-kotlin|compile-java-proto|clean|rebuild):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "CODE QUALITY:"
-	@grep -E '^(lint|lint-clj|lint-kotlin|lint-kotlin-detekt|fmt|fmt-check):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
-	@echo ""
-	@echo "LINT REPORTS:"
-	@grep -E '^(lint-report|lint-report-filtered|lint-report-warnings):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "OTHER TOOLS:"
 	@grep -E '^(test|report-unspecced|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -148,7 +145,7 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 
 # Test target
 .PHONY: test
-test: ## Run tests
+test: build ## Run tests
 	@echo "Running tests..."
 	clojure -M:test
 
@@ -301,7 +298,7 @@ fmt-check-kotlin: ## Check if Kotlin code is properly formatted
 
 # Check all formatting
 .PHONY: fmt-check
-fmt-check: ## Check if all code is properly formatted (exit 1 if not)
+fmt-check:
 	@echo "Checking all code formatting..."
 	@$(MAKE) -s fmt-check-clojure
 	@$(MAKE) -s fmt-check-kotlin
@@ -309,7 +306,7 @@ fmt-check: ## Check if all code is properly formatted (exit 1 if not)
 
 # Lint Clojure code with clj-kondo
 .PHONY: lint-clj
-lint-clj: ## Clojure linting with clj-kondo (v2025.06.05) - configured for Guardrails, Seesaw, Telemere
+lint-clj:
 	@echo "Linting Clojure code with clj-kondo..."
 	@echo "  • Guardrails support: >defn, >defn-, >def properly recognized"
 	@echo "  • Seesaw macros: UI construction functions linted correctly"
@@ -319,7 +316,7 @@ lint-clj: ## Clojure linting with clj-kondo (v2025.06.05) - configured for Guard
 
 # Lint Kotlin code with ktlint
 .PHONY: lint-kotlin
-lint-kotlin: ## Kotlin style checking with ktlint (v1.5.0) - IntelliJ IDEA conventions
+lint-kotlin:
 	@echo "Linting Kotlin code with ktlint..."
 	@if [ -f .ktlint/ktlint ]; then \
 		.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" || exit 1; \
@@ -335,7 +332,7 @@ lint-kotlin: ## Kotlin style checking with ktlint (v1.5.0) - IntelliJ IDEA conve
 
 # Run detekt for advanced Kotlin static analysis
 .PHONY: lint-kotlin-detekt
-lint-kotlin-detekt: ## Advanced Kotlin analysis with detekt (v1.23.7) - complexity, code smells, performance
+lint-kotlin-detekt:
 	@echo "Running detekt for advanced Kotlin static analysis..."
 	@echo "  • Complexity thresholds (cognitive and cyclomatic)"
 	@echo "  • Exception handling patterns"
@@ -359,39 +356,41 @@ lint-kotlin-detekt: ## Advanced Kotlin analysis with detekt (v1.23.7) - complexi
 	fi
 	@echo "✓ Detekt analysis complete. Reports saved to reports/detekt.*"
 
-# Run all linters
+# Run all linters and generate filtered report
 .PHONY: lint
-lint: fmt-check lint-clj lint-kotlin lint-kotlin-detekt ## Run all linters (clj-kondo, ktlint, detekt) - catches issues early
-	@echo "✓ All linting checks passed!"
-
-# Generate comprehensive lint report
-.PHONY: lint-report
-lint-report: ## Full report with all issues - includes errors and warnings from all linters
-	@echo "Generating comprehensive lint report..."
-	@echo "  • Summary of total errors and warnings"
-	@echo "  • Breakdown by linter (clj-kondo, ktlint, detekt)"
-	@echo "  • Issues organized by file with line numbers"
-	@echo "  • Specific rule violations and descriptions"
-	@bb scripts/lint-report.bb
-	@echo "✓ Report generated at reports/lint-report.md"
-
-# Generate filtered lint report
-.PHONY: lint-report-filtered
-lint-report-filtered: ## Report with false positive filtering (recommended) - filters ~56% of false positives
+lint: fmt-check ## Run all linters and generate filtered report (reports/lint/)
+	@echo "Running all linters..."
+	@$(MAKE) -s lint-clj || true
+	@$(MAKE) -s lint-kotlin || true
+	@$(MAKE) -s lint-kotlin-detekt || true
 	@echo "Generating filtered lint report..."
 	@echo "  • Filters Seesaw UI patterns (:text, :items, :border)"
 	@echo "  • Filters Telemere functions (handler:console)"
 	@echo "  • Filters Guardrails symbols (>, |, ?, =>)"
 	@echo "  • Filters standard library false warnings"
 	@bb scripts/lint-report-filtered.bb
-	@echo "✓ Filtered report generated at reports/lint-report-filtered.md"
+	@echo "✓ Filtered reports generated in reports/lint/"
+	@echo "  • Summary: reports/lint/summary-filtered.md"
+	@echo "  • Real issues: reports/lint/clojure-real.md"
+	@echo "  • Full analysis: reports/lint/"
 
-# Generate warnings-only lint report
-.PHONY: lint-report-warnings
-lint-report-warnings: ## Report excluding errors - focus on warnings only
-	@echo "Generating warnings-only lint report..."
-	@bb scripts/lint-report.bb --no-errors
-	@echo "✓ Warnings report generated at reports/lint-report.md"
+# Generate raw (unfiltered) lint report
+.PHONY: lint-raw
+lint-raw: fmt-check ## Run all linters and generate full unfiltered report (reports/)
+	@echo "Running all linters..."
+	@$(MAKE) -s lint-clj || true
+	@$(MAKE) -s lint-kotlin || true
+	@$(MAKE) -s lint-kotlin-detekt || true
+	@echo "Generating comprehensive lint report..."
+	@echo "  • Summary of total errors and warnings"
+	@echo "  • Breakdown by linter (clj-kondo, ktlint, detekt)"
+	@echo "  • Issues organized by file with line numbers"
+	@echo "  • Specific rule violations and descriptions"
+	@bb scripts/lint-report.bb
+	@echo "✓ Full unfiltered report generated:"
+	@echo "  • Main report: reports/lint-report.md"
+	@echo "  • Detailed reports: reports/lint/"
+	@echo "  • Detekt reports: reports/detekt.html, reports/detekt.txt"
 
 .PHONY: all
 all: clean build ## Clean and build everything

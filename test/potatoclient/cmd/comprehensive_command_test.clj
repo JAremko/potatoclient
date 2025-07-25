@@ -1,7 +1,7 @@
 (ns potatoclient.cmd.comprehensive-command-test
   "Comprehensive tests for ALL 200+ command functions"
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
-            [clojure.core.async :as async :refer [<! >! go timeout alt!]]
+            [clojure.core.async :as async :refer [<! >! go go-loop timeout alt!]]
             [malli.core :as m]
             [malli.generator :as mg]
             [potatoclient.cmd.core :as cmd-core]
@@ -649,7 +649,7 @@
 
 (deftest test-all-cv-commands
   (testing "All CV commands"
-    (cv/start-tracking 0.5 -0.3)
+    (cv/start-tracking 0.5 -0.3 (System/currentTimeMillis))
     (is (some? (<! (capture-command!))) "Start tracking sent")
 
     (cv/stop-tracking)
@@ -772,15 +772,15 @@
   (testing "All commands produce valid protobuf structure"
     ;; Sample commands from each namespace
     (let [test-commands [#(cmd-core/send-cmd-ping)
-                         #(rotary/axis {:azimuth (rotary/azimuth 180.0)})
-                         #(day-camera/zoom {:mode :zoom-mode-in :speed 0.5})
-                         #(heat-camera/brightness 75)
+                         #(rotary/rotary-set-platform-azimuth 180.0)
+                         #(day-camera/zoom-in)
+                         #(heat-camera/set-agc-mode :mode-1)
                          #(system/start-rec)
                          #(osd/enable-day-osd)
                          #(gps/start)
                          #(lrf/measure)
                          #(compass/calibrate-long)
-                         #(cv/start-tracking 0.0 0.0)
+                         #(cv/start-tracking 0.0 0.0 (System/currentTimeMillis))
                          #(glass-heater/on)]]
 
       (doseq [cmd-fn test-commands]
@@ -813,7 +813,7 @@
         (swap! total-commands inc)
 
         ;; Rotary
-        (rotary/axis {:azimuth (rotary/azimuth (rand 360))})
+        (rotary/rotary-set-platform-azimuth (rand 360))
         (swap! total-commands inc)
 
         ;; Cameras

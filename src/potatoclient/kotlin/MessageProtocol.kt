@@ -124,6 +124,8 @@ class MessageProtocol(
         y: Int,
         videoComponent: Component,
         details: Map<String, Any>? = null,
+        frameTimestamp: Long? = null,
+        frameDuration: Long? = null,
     ) {
         try {
             // Get canvas dimensions
@@ -152,6 +154,8 @@ class MessageProtocol(
                     put(KEY_NDC_Y, ndcY)
                     put(KEY_CANVAS_WIDTH, canvasWidth)
                     put(KEY_CANVAS_HEIGHT, canvasHeight)
+                    frameTimestamp?.let { put("frameTimestamp", it) }
+                    frameDuration?.let { put("frameDuration", it) }
                     details?.let { putAll(it) }
                 }
 

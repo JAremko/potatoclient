@@ -3,12 +3,14 @@ package potatoclient.kotlin
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.awt.Component
 import java.net.URI
+import java.nio.ByteOrder
 import java.util.Scanner
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 import javax.swing.JFrame
 
 class VideoStreamManager(
@@ -26,6 +28,10 @@ class VideoStreamManager(
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
     private val shutdownLatch = CountDownLatch(1)
+
+    // Frame timing tracking
+    private val currentFrameTimestamp = AtomicLong(0)
+    private val currentFrameDuration = AtomicLong(0)
 
     // Executor services
     private val reconnectExecutor: ScheduledExecutorService =
@@ -69,8 +75,30 @@ class VideoStreamManager(
                 onBinaryMessage = { data ->
                     // Fast path - atomic check only
                     if (running.get()) {
-                        // Push to pipeline (it handles its own synchronization)
-                        gstreamerPipeline.pushVideoData(data)
+                        // Check if we have enough data for timestamp (8 bytes) and duration (8 bytes)
+                        if (data.remaining() >= 16) {
+                            // Extract timestamp and duration from the beginning of the message
+                            // Create a view with little-endian byte order for reading
+                            val timestampBuffer = data.duplicate()
+                            timestampBuffer.order(ByteOrder.LITTLE_ENDIAN)
+
+                            // Read 64-bit timestamp and duration
+                            val timestamp = timestampBuffer.getLong()
+                            val duration = timestampBuffer.getLong()
+
+                            // Store current frame timing
+                            currentFrameTimestamp.set(timestamp)
+                            currentFrameDuration.set(duration)
+
+                            // Skip the 16-byte prefix and create a slice with just the video data
+                            data.position(data.position() + 16)
+                            val videoData = data.slice()
+
+                            // Push only the video data to pipeline
+                            gstreamerPipeline.pushVideoData(videoData)
+                        } else {
+                            messageProtocol.sendLog("WARN", "Frame too short to contain timing info: ${data.remaining()} bytes")
+                        }
 
                         // Return buffer to pool if it's from the pool
                         // Only direct buffers from the pool need to be released
@@ -226,7 +254,18 @@ class VideoStreamManager(
         details: Map<String, Any>?,
     ) {
         frameManager.getVideoComponent()?.let { videoComponent ->
-            messageProtocol.sendNavigationEvent(eventName, x, y, videoComponent, details)
+            // Include current frame timing information
+            val frameTimestamp = currentFrameTimestamp.get()
+            val frameDuration = currentFrameDuration.get()
+            messageProtocol.sendNavigationEvent(
+                eventName,
+                x,
+                y,
+                videoComponent,
+                details,
+                frameTimestamp,
+                frameDuration,
+            )
         }
     }
 
