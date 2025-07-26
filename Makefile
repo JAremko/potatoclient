@@ -56,13 +56,14 @@ help: ## Show all available commands with detailed descriptions
 
 # Build proto files
 .PHONY: proto
-proto: ## Regenerate protobuf classes from protogen Docker image - always fresh
+proto: ## Regenerate protobuf classes from protogen repository - always fresh
 	@echo "Generating Java classes from proto files using Protogen Docker..."
 	@echo "  • Clones latest protogen repository with bundled proto definitions"
-	@echo "  • Builds Docker image (uses pre-built base if available)"
+	@echo "  • Imports pre-built base image from Git LFS (or builds from scratch)"
+	@echo "  • Builds Docker image with all proto files included"
 	@echo "  • Generates both standard and validated Java bindings"
 	@echo "  • Custom kebab-case conversion for Clojure idioms"
-	@echo "  • Ensures always-fresh proto definitions"
+	@echo "  • Cleans up Docker images after generation to save space"
 	./scripts/generate-protos-simple.sh
 
 # Compile Kotlin sources

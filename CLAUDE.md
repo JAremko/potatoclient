@@ -1223,29 +1223,32 @@ See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md#buil
 
 ### Protocol Buffer Generation
 
-PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-based tool for generating Java protobuf classes:
+PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-based tool for generating Java protobuf classes, following the same approach as jettison:
 
 **Key Features**:
 - Proto definitions are maintained in the protogen repository (not local)
 - Always generates from the latest proto definitions
 - Supports both standard and validated Java bindings
 - No local proto files to maintain or sync
+- Fully isolated from jettison - builds its own Docker images
 
 **Generation Process** (`make proto`):
-1. Clones the latest protogen repository
-2. Imports pre-built Docker base image (if available via Git LFS)
-3. Builds protogen Docker image with bundled proto definitions
-4. **Cleans existing proto directories** to prevent stale binding conflicts
-5. Generates Java classes with custom package structure:
+1. Clones the latest protogen repository to a temporary directory
+2. Attempts to import pre-built base image from Git LFS (60s timeout)
+3. If LFS unavailable, builds base image from scratch (takes longer but works)
+4. Builds protogen Docker image with bundled proto definitions
+5. **Cleans existing proto directories** to prevent stale binding conflicts
+6. Generates Java classes with custom package structure:
    - Command messages: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
    - Data types: `ser` package (e.g., `ser.JonSharedDataTypes`)
-6. Applies compatibility fixes for Java/Clojure integration
-7. Cleans up Docker images and temporary files
+7. Applies compatibility fixes for Java/Clojure integration
+8. **Cleans up both Docker images** to prevent accumulation
+9. Removes temporary directory
 
 **Requirements**:
-- Docker (user must be in docker group)
+- Docker (user must be in docker group - script provides setup instructions)
 - Internet connection (to clone protogen)
-- Git LFS (optional - speeds up builds)
+- Git LFS (optional - speeds up builds by using pre-built base image)
 
 **Note**: The validated Java bindings require the `protovalidate-java` library if you want to use them. Standard bindings work without additional dependencies.
 
