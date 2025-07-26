@@ -137,28 +137,62 @@ main() {
     print_info "Cloning protogen repository..."
     PROTOGEN_DIR="$MAIN_TEMP_DIR/protogen"
     
-    # Clone the repository (shallow clone for speed, skip LFS)
-    export GIT_LFS_SKIP_SMUDGE=1
-    if ! git clone --depth 1 "$PROTOGEN_REPO" "$PROTOGEN_DIR"; then
-        print_error "Failed to clone protogen repository"
-        exit 1
+    # Try to clone with LFS files first
+    print_info "Attempting to clone repository with LFS files..."
+    if git clone --depth 1 "$PROTOGEN_REPO" "$PROTOGEN_DIR" 2>&1 | tee /tmp/git_clone_output.txt; then
+        # Check if LFS download failed due to quota
+        if grep -q "This repository is over its data quota" /tmp/git_clone_output.txt || \
+           grep -q "LFS bandwidth" /tmp/git_clone_output.txt || \
+           grep -q "error downloading" /tmp/git_clone_output.txt; then
+            print_warning "LFS quota exceeded or download failed"
+            print_info "Recloning without LFS files and will build base image from scratch"
+            rm -rf "$PROTOGEN_DIR"
+            
+            # Clone again without LFS
+            export GIT_LFS_SKIP_SMUDGE=1
+            if ! git clone --depth 1 "$PROTOGEN_REPO" "$PROTOGEN_DIR"; then
+                print_error "Failed to clone protogen repository"
+                exit 1
+            fi
+            unset GIT_LFS_SKIP_SMUDGE
+        else
+            # Clone succeeded, try to ensure LFS files are pulled
+            if command -v git-lfs &> /dev/null; then
+                print_info "Ensuring LFS files are fully downloaded..."
+                cd "$PROTOGEN_DIR"
+                if git lfs pull 2>&1 | tee /tmp/lfs_pull_output.txt; then
+                    print_success "LFS files downloaded successfully"
+                else
+                    # Check if it's a quota issue
+                    if grep -q "This repository is over its data quota" /tmp/lfs_pull_output.txt || \
+                       grep -q "LFS bandwidth" /tmp/lfs_pull_output.txt; then
+                        print_warning "LFS quota exceeded during pull"
+                        print_info "Will build base image from scratch"
+                    else
+                        print_warning "Failed to download LFS files, will build base image from scratch"
+                        print_info "This will take longer but will still work"
+                    fi
+                fi
+                cd - >/dev/null
+            else
+                print_warning "Git LFS not found. Base image will be built from scratch."
+                print_info "To speed up future builds: sudo apt-get install git-lfs && git lfs install"
+            fi
+        fi
+    else
+        # Initial clone failed - try without LFS
+        print_warning "Initial clone failed, retrying without LFS files"
+        export GIT_LFS_SKIP_SMUDGE=1
+        if ! git clone --depth 1 "$PROTOGEN_REPO" "$PROTOGEN_DIR"; then
+            print_error "Failed to clone protogen repository even without LFS"
+            exit 1
+        fi
+        unset GIT_LFS_SKIP_SMUDGE
+        print_info "Repository cloned without LFS files - will build base image from scratch"
     fi
     
-    # Try to pull LFS files with a timeout
-    if command -v git-lfs &> /dev/null; then
-        print_info "Attempting to pull LFS files (this may take a while)..."
-        cd "$PROTOGEN_DIR"
-        if timeout 60 git lfs pull 2>&1; then
-            print_success "LFS files pulled successfully"
-        else
-            print_warning "LFS pull timed out or failed, will build base image from scratch"
-            print_info "This will take longer but will still work"
-        fi
-        cd - >/dev/null
-    else
-        print_warning "Git LFS not found. Base image will be built from scratch."
-        print_info "To speed up future builds: sudo apt-get install git-lfs && git lfs install"
-    fi
+    # Clean up temporary files
+    rm -f /tmp/git_clone_output.txt /tmp/lfs_pull_output.txt 2>/dev/null || true
     
     print_success "Protogen repository cloned"
     
