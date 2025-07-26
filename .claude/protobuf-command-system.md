@@ -298,6 +298,21 @@ The debug utilities use Google's `JsonFormat` (from protobuf-java-util) to conve
 
 ## Build System Integration
 
+### Proto Generation with Protogen
+
+PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-based tool for generating protobuf classes:
+
+**Generation Process** (`make proto`):
+1. Runs `scripts/generate-protos-simple.sh` (or `generate-protos-docker.sh` for fresh Docker build)
+2. Clones latest protogen repository (or uses existing image for simple script)
+3. Builds Docker image (imports pre-built base if available)
+4. **Cleans existing proto directories** (ser/, cmd/, jon/, com/, build/) to prevent stale bindings
+5. Generates both standard and validated Java bindings
+6. Applies compatibility fixes for Java/Clojure integration
+7. Cleans up Docker images and temporary directory
+
+**Proto definitions are NOT stored locally** - they are bundled in the protogen Docker image, ensuring consistency across all projects using the same protos.
+
 ### Dynamic Classpath Configuration
 
 The build system (`build.clj`) uses a dynamic basis function to handle compiled protobuf classes:
@@ -308,7 +323,7 @@ The build system (`build.clj`) uses a dynamic basis function to handle compiled 
 ### Important Build Sequence
 
 1. Clean previous artifacts
-2. Generate protobuf source files
+2. Generate protobuf Java files using protogen Docker (`make proto`)
 3. Compile Java protobuf classes to `target/classes`
 4. Compile Kotlin subprocesses (see [kotlin-subprocess.md](./kotlin-subprocess.md#build-integration))
 5. Run Clojure compilation (which needs the protobuf classes)
@@ -317,10 +332,11 @@ The build system (`build.clj`) uses a dynamic basis function to handle compiled 
 ### Common Build Issues
 
 - `ClassNotFoundException` for protobuf classes: Ensure `target/classes` is on classpath during Clojure compilation
-- Package name mismatches: Check that preprocessing script is converting `ser` → `data` correctly
+- Package name mismatches: Proto files use simple packages (`cmd`, `ser`) not namespaced ones
 - Missing dependencies: Ensure `protobuf-java-util` is included for JsonFormat support
 - Wrong class names: Remember `JonSharedDataTypes` not `JonGuiDataTypes`
 - Case-sensitive builder methods: Java protobuf builders use camelCase (e.g., `setUseRotaryAsCompass` not `SetUseRotaryAsCompass`)
+- Docker permissions: User must be in docker group for proto generation
 
 ## Troubleshooting
 

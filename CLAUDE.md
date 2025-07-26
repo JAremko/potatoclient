@@ -1221,3 +1221,31 @@ The CI pipeline automatically builds optimized release versions with:
 
 See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md#build-system-integration)
 
+### Protocol Buffer Generation
+
+PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-based tool for generating Java protobuf classes:
+
+**Key Features**:
+- Proto definitions are maintained in the protogen repository (not local)
+- Always generates from the latest proto definitions
+- Supports both standard and validated Java bindings
+- No local proto files to maintain or sync
+
+**Generation Process** (`make proto`):
+1. Clones the latest protogen repository
+2. Imports pre-built Docker base image (if available via Git LFS)
+3. Builds protogen Docker image with bundled proto definitions
+4. **Cleans existing proto directories** to prevent stale binding conflicts
+5. Generates Java classes with custom package structure:
+   - Command messages: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
+   - Data types: `ser` package (e.g., `ser.JonSharedDataTypes`)
+6. Applies compatibility fixes for Java/Clojure integration
+7. Cleans up Docker images and temporary files
+
+**Requirements**:
+- Docker (user must be in docker group)
+- Internet connection (to clone protogen)
+- Git LFS (optional - speeds up builds)
+
+**Note**: The validated Java bindings require the `protovalidate-java` library if you want to use them. Standard bindings work without additional dependencies.
+

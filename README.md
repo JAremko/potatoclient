@@ -114,7 +114,7 @@ PotatoClient includes a command system for sending control messages via Protobuf
 ```bash
 # Build tasks
 make clean        # Clean all artifacts
-make proto        # Generate protobuf classes
+make proto        # Generate protobuf classes (cleans old bindings first)
 make compile-kotlin # Compile Kotlin sources
 make test         # Run tests
 make release      # Build optimized release JAR

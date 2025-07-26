@@ -56,14 +56,14 @@ help: ## Show all available commands with detailed descriptions
 
 # Build proto files
 .PHONY: proto
-proto: ## Regenerate protobuf classes (if .proto files change) - custom kebab-case conversion
-	@echo "Generating Java classes from proto files..."
-	@echo "  • Direct protobuf implementation (no external wrapper libraries)"
+proto: ## Regenerate protobuf classes from protogen Docker image - always fresh
+	@echo "Generating Java classes from proto files using Protogen Docker..."
+	@echo "  • Clones latest protogen repository with bundled proto definitions"
+	@echo "  • Builds Docker image (uses pre-built base if available)"
+	@echo "  • Generates both standard and validated Java bindings"
 	@echo "  • Custom kebab-case conversion for Clojure idioms"
-	@echo "  • Protobuf 4.29.5 (bundled)"
-	./scripts/compile-protos.sh
-	@echo "Applying protobuf compatibility fixes..."
-	./scripts/fix-proto-compatibility.sh
+	@echo "  • Ensures always-fresh proto definitions"
+	./scripts/generate-protos-simple.sh
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin
@@ -103,6 +103,9 @@ clean-proto: ## Clean generated proto Java files
 	@echo "Cleaning generated proto files..."
 	rm -rf src/potatoclient/java/ser/
 	rm -rf src/potatoclient/java/cmd/
+	rm -rf src/potatoclient/java/jon/
+	rm -rf src/potatoclient/java/com/
+	rm -rf src/potatoclient/java/build/
 
 # Clean target
 .PHONY: clean

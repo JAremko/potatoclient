@@ -124,10 +124,11 @@ main() {
     print_success "Proto generation completed"
     
     # Copy generated files to PotatoClient structure
-    print_info "Copying generated files to PotatoClient directories..."
+    print_info "Cleaning old proto bindings and copying new generated files..."
     
-    # Clean existing Java proto files
-    rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd"
+    # Clean ALL existing Java proto files to prevent stale bindings
+    print_info "Cleaning Java proto directories..."
+    rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
     
     # Copy standard Java files
     if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
