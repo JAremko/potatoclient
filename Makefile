@@ -61,10 +61,10 @@ proto: ## Regenerate protobuf classes from protogen repository - always fresh
 	@echo "  • Clones latest protogen repository with bundled proto definitions"
 	@echo "  • Imports pre-built base image from Git LFS (or builds from scratch)"
 	@echo "  • Builds Docker image with all proto files included"
-	@echo "  • Generates both standard and validated Java bindings"
+	@echo "  • Generates Java bindings with buf.validate annotations preserved"
 	@echo "  • Custom kebab-case conversion for Clojure idioms"
 	@echo "  • Cleans up Docker images after generation to save space"
-	./scripts/generate-protos-simple.sh
+	./scripts/generate-protos.sh
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin

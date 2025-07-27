@@ -19,7 +19,6 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Output directories for Java
 OUTPUT_DIR="$ROOT_DIR/src/potatoclient/java"
-VALIDATED_OUTPUT_DIR="$ROOT_DIR/src/potatoclient/java-validated"
 
 print_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -215,36 +214,18 @@ main() {
     
     # Create subdirectories
     docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "
-        mkdir -p /workspace/output/{java,java-validated}
+        mkdir -p /workspace/output/java
     "
     
-    # Generate standard Java bindings
-    print_info "Generating standard Java bindings..."
+    # Generate Java bindings WITH buf.validate annotations
+    print_info "Generating Java bindings with buf.validate annotations..."
     docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
         set -e
-        mkdir -p /tmp/java_proto_clean
-        
-        # Copy proto files and remove validate annotations
-        for proto in /workspace/proto/*.proto; do
-            awk -f /usr/local/bin/proto_cleanup.awk "$proto" > "/tmp/java_proto_clean/$(basename "$proto")"
-        done
-        
-        # Generate all proto files together
-        protoc -I/tmp/java_proto_clean \
+        # Use proto files directly without removing annotations
+        # This preserves buf.validate annotations in the proto files
+        protoc -I/workspace/proto \
             --java_out=/workspace/output/java \
-            /tmp/java_proto_clean/*.proto
-    '
-    
-    # Generate validated Java bindings
-    print_info "Generating validated Java bindings..."
-    print_info "Note: Validated bindings use the same generation as standard"
-    print_info "Runtime validation will be implemented in Clojure for dev/test modes"
-    
-    # For now, copy standard bindings to validated directory
-    # This ensures the same classes are used, validation will be done at runtime
-    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
-        set -e
-        cp -r /workspace/output/java/* /workspace/output/java-validated/ 2>/dev/null || true
+            /workspace/proto/*.proto
     '
     
     if [ $? -ne 0 ]; then
@@ -260,27 +241,16 @@ main() {
     # Clean ALL existing Java proto files to prevent stale bindings
     print_info "Cleaning Java proto directories..."
     rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
-    rm -rf "$VALIDATED_OUTPUT_DIR/ser" "$VALIDATED_OUTPUT_DIR/cmd" "$VALIDATED_OUTPUT_DIR/jon" "$VALIDATED_OUTPUT_DIR/com" "$VALIDATED_OUTPUT_DIR/build" "$VALIDATED_OUTPUT_DIR/io" 2>/dev/null || true
     
-    # Copy standard Java files (without validation)
+    # Copy Java files with buf.validate annotations
     if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
         mkdir -p "$OUTPUT_DIR"
         cp -r "$TEMP_OUTPUT_DIR/java"/* "$OUTPUT_DIR/" 2>/dev/null || true
-        print_success "Copied standard Java files to $OUTPUT_DIR/"
-        print_info "Note: Using standard bindings without validation annotations"
+        print_success "Copied Java files to $OUTPUT_DIR/"
+        print_info "Note: Using protobuf bindings with buf.validate annotations preserved"
     else
         print_error "No Java files found in output directory"
         exit 1
-    fi
-    
-    # Copy validated Java files (with validation)
-    if [ -d "$TEMP_OUTPUT_DIR/java-validated" ]; then
-        mkdir -p "$VALIDATED_OUTPUT_DIR"
-        cp -r "$TEMP_OUTPUT_DIR/java-validated"/* "$VALIDATED_OUTPUT_DIR/" 2>/dev/null || true
-        print_success "Copied validated Java files to $VALIDATED_OUTPUT_DIR/"
-        print_info "Note: These bindings include buf.validate support for dev/test"
-    else
-        print_warning "No validated Java files found - this is expected if using standard generation"
     fi
     
     # Apply compatibility fixes
@@ -289,17 +259,16 @@ main() {
     # Set permissions on generated files to 777 so anyone can delete/modify them
     print_info "Setting file permissions on generated files..."
     chmod -R 777 "$OUTPUT_DIR" 2>/dev/null || true
-    [ -d "$VALIDATED_OUTPUT_DIR" ] && chmod -R 777 "$VALIDATED_OUTPUT_DIR" 2>/dev/null || true
     print_success "File permissions set to 777 for all generated files"
     
     # Summary
     print_info "============================================"
     print_success "Proto generation completed successfully!"
     print_info "Generated files have been copied to:"
-    echo "  - Standard Java: $OUTPUT_DIR/"
-    [ -d "$VALIDATED_OUTPUT_DIR" ] && echo "  - Validated Java: $VALIDATED_OUTPUT_DIR/"
+    echo "  - Java: $OUTPUT_DIR/"
     echo
-    print_info "Note: Standard bindings used in production, validated bindings for dev/test only"
+    print_info "Note: Protobuf bindings include buf.validate annotations"
+    print_info "Validation is conditional - runs in dev/test, skipped in release"
     
     print_info "Cleaning up temporary files and Docker images..."
 }
