@@ -268,7 +268,8 @@
     :stopped))
 
 (>defn cleanup-all-processes
-  "Clean up all processes - useful for shutdown hooks."
+  "Clean up all processes - useful for shutdown hooks.
+  Can be called with no args (uses state directly) or with a streams-map."
   ([]
    [=> nil?]
    ;; No-arg version that uses state directly

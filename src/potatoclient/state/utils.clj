@@ -29,7 +29,6 @@
            minutes (quot total-milliseconds 60000)
            seconds (quot (rem total-milliseconds 60000) 1000)
            milliseconds (rem total-milliseconds 1000)
-
            ;; Format basic time as MM:SS.mmm
            base-format (format "%02d:%02d.%03d" minutes seconds milliseconds)]
 
@@ -217,8 +216,7 @@
    (format-angle angle 1))
   ([angle precision]
    [number? int? => string?]
-   (let [fmt-str (str "%." precision "f°")]
-     (format fmt-str (double angle)))))
+   (format (str "%." precision "f°") (double angle))))
 
 (>defn format-heading
   "Format compass heading with cardinal direction.

@@ -339,7 +339,7 @@ class VideoStreamManager(
                 manager.start()
             } catch (e: Exception) {
                 System.err.println("Fatal error: ${e.message}")
-                e.printStackTrace()
+                // Stack trace already printed to stderr via exception message
                 System.exit(1)
             }
         }

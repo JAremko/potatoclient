@@ -82,8 +82,9 @@
       ;; According to Guardrails docs, output validation may happen on usage
       ;; Let's try to use the result in a numeric context
       (println "  Trying to add 1 to result:")
-      (+ 1 result) ;; Force usage to trigger validation
-      (println "  ✗ FAIL: Should have thrown an error!"))
+      (let [sum (+ 1 result)] ;; Force usage to trigger validation
+        (println "  Sum:" sum)
+        (println "  ✗ FAIL: Should have thrown an error!")))
     (catch Exception e
       (println "  ✓ PASS: Caught expected error")
       (println "  Error:" (.getMessage e))))

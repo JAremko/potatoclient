@@ -18,6 +18,9 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLEngine
 import javax.net.ssl.X509ExtendedTrustManager
+import java.io.IOException
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
 import javax.net.ssl.X509TrustManager
 
 /**
@@ -73,7 +76,10 @@ class WebSocketClientBuiltIn(
                 .sslContext(sslContext)
                 .connectTimeout(Duration.ofSeconds(10))
                 .build()
-        } catch (e: Exception) {
+        } catch (e: NoSuchAlgorithmException) {
+            System.err.println("Failed to create HttpClient with custom SSL context, using default: ${e.message}")
+            HttpClient.newHttpClient()
+        } catch (e: KeyManagementException) {
             System.err.println("Failed to create HttpClient with custom SSL context, using default: ${e.message}")
             HttpClient.newHttpClient()
         }
@@ -112,7 +118,9 @@ class WebSocketClientBuiltIn(
                     onConnect?.invoke()
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            handleConnectionError(e)
+        } catch (e: InterruptedException) {
             handleConnectionError(e)
         }
     }
@@ -287,7 +295,7 @@ class WebSocketClientBuiltIn(
 
                 webSocket.request(1)
                 completedFuture
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 System.err.println("Error processing binary message: ${e.message}")
                 onError?.invoke(e)
                 webSocket.request(1)
@@ -344,36 +352,48 @@ class WebSocketClientBuiltIn(
         override fun checkClientTrusted(
             chain: Array<X509Certificate>,
             authType: String,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun checkServerTrusted(
             chain: Array<X509Certificate>,
             authType: String,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun checkClientTrusted(
             chain: Array<X509Certificate>,
             authType: String,
             socket: Socket,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun checkServerTrusted(
             chain: Array<X509Certificate>,
             authType: String,
             socket: Socket,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun checkClientTrusted(
             chain: Array<X509Certificate>,
             authType: String,
             engine: SSLEngine,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun checkServerTrusted(
             chain: Array<X509Certificate>,
             authType: String,
             engine: SSLEngine,
-        ) {}
+        ) {
+            // Trust all certificates for local testing
+        }
 
         override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
     }

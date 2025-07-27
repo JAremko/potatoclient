@@ -7,6 +7,7 @@ import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.io.IOException
 import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -77,7 +78,7 @@ class FrameManager(
                 javaClass.getResource(iconResource)?.let { iconURL ->
                     iconImage = ImageIcon(iconURL).image
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 messageProtocol.sendLog("ERROR", "Failed to load window icon: ${e.message}")
             }
 

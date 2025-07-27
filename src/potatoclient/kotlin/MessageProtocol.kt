@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import java.awt.Component
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -52,7 +53,7 @@ class MessageProtocol(
                     put("timestamp", System.currentTimeMillis())
                 }
             sendMessage(resp)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             // Can't use sendException here as it might cause infinite recursion
             System.err.println("[MessageProtocol] Error sending response: ${e.javaClass.name}: ${e.message}")
         }
@@ -70,7 +71,7 @@ class MessageProtocol(
                     put("timestamp", System.currentTimeMillis())
                 }
             sendMessage(log)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             // Can't use sendException here as it might cause infinite recursion
             System.err.println("[MessageProtocol] Error sending log: ${e.javaClass.name}: ${e.message}")
         }
@@ -93,7 +94,7 @@ class MessageProtocol(
                     put("timestamp", System.currentTimeMillis())
                 }
             sendMessage(log)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             // Last resort - print to stderr
             System.err.println("[MessageProtocol] Error sending exception: ${e.javaClass.name}: ${e.message}")
         }
@@ -166,7 +167,7 @@ class MessageProtocol(
                 }
 
             sendMessage(nav)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             sendException("Navigation event error", e)
         }
     }
@@ -189,7 +190,7 @@ class MessageProtocol(
                 }
 
             sendMessage(window)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             sendException("Window event error", e)
         }
     }

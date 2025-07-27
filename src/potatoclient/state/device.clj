@@ -48,9 +48,8 @@
 ;; Actual space-time data for advanced calculations
 (defonce actual-space-time-state (atom nil))
 
-;; Note: meteo-internal is in the proto but not in the TypeScript implementation
-;; We'll add it for completeness
 ;; Internal meteorological data (temperature, humidity, pressure)
+;; Note: meteo-internal is in the proto but not in the TypeScript implementation
 (defonce meteo-internal-state (atom nil))
 
 ;; ============================================================================

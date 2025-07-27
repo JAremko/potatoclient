@@ -63,8 +63,10 @@ object GStreamerUtils {
                 val sysPathsField: Field = ClassLoader::class.java.getDeclaredField("sys_paths")
                 sysPathsField.isAccessible = true
                 sysPathsField.set(null, null)
-            } catch (e: Exception) {
-                callback.onLog("WARN", "Could not reset java.library.path cache: ${e.message}")
+            } catch (e: NoSuchFieldException) {
+                callback.onLog("WARN", "Could not find sys_paths field: ${e.message}")
+            } catch (e: IllegalAccessException) {
+                callback.onLog("WARN", "Could not access sys_paths field: ${e.message}")
             }
         }
 
@@ -79,7 +81,7 @@ object GStreamerUtils {
             env["GST_PLUGIN_PATH_1_0"] = pluginPath
             env["GST_PLUGIN_SYSTEM_PATH_1_0"] = pluginPath
             env["PATH"] = "$binPath${File.pathSeparator}${env.getOrDefault("PATH", "")}"
-        } catch (e: Exception) {
+        } catch (e: SecurityException) {
             callback.onLog("WARN", "Could not set environment variables: ${e.message}")
         }
 
