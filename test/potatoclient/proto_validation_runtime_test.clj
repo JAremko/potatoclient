@@ -11,7 +11,7 @@
       (testing "Validator can be created"
         (is (some? (.build (ValidatorFactory/newBuilder)))
             "Should be able to create a Validator instance"))
-      
+
       (testing "Proto validation is available"
         (is (resolve 'build.buf.protovalidate.Validator)
             "Validator class should be available")))))
@@ -35,24 +35,32 @@
             serialized (proto/serialize-cmd cmd)]
         (is (bytes? serialized)
             "Should serialize valid command")))
-    
+
     (testing "Command with constraint-violating values"
-      ;; Note: With standard bindings, these will still serialize
-      ;; because validation metadata isn't present
-      (let [cmd {:protocol-version 0  ; Would violate: >= 1
+      ;; With buf.validate-enabled bindings, validation is enforced
+      (let [cmd {:protocol-version 0  ; Violates: must be >= 1
                  :session-id 12345
                  :important false
                  :from-cv-subsystem false
                  :client-type "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
                  :ping {}}]
+        (is (thrown? Exception
+                     (proto/serialize-cmd cmd))
+            "Buf.validate rejects constraint-violating values")
+
+        ;; Check exception structure
         (try
-          (let [serialized (proto/serialize-cmd cmd)]
-            (is (bytes? serialized)
-                "Standard bindings allow constraint-violating values"))
+          (proto/serialize-cmd cmd)
+          (is false "Should have thrown an exception")
           (catch Exception e
-            ;; If validation is enforced, we'd get an exception here
-            (is (contains? (ex-data e) :violations)
-                "Validation error should include violations")))))))
+            ;; The :violations key is in the nested cause's data
+            (let [inner-cause (some-> e ex-data :cause)
+                  inner-data (when (instance? clojure.lang.ExceptionInfo inner-cause)
+                               (ex-data inner-cause))]
+              (is (contains? inner-data :violations)
+                  "Validation error should include violations in cause data")
+              (is (seq (:violations inner-data))
+                  "Should have at least one violation"))))))))
 
 (deftest test-validation-performance
   (testing "Validation has minimal performance impact"
@@ -63,7 +71,7 @@
                :client-type "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK"
                :ping {}}
           iterations 1000]
-      
+
       (testing "Serialization performance"
         (let [start (System/nanoTime)]
           (dotimes [_ iterations]
@@ -71,6 +79,6 @@
           (let [elapsed (/ (- (System/nanoTime) start) 1000000.0)]
             (is (< elapsed 100)  ; Should complete 1000 iterations in < 100ms
                 (str "1000 serializations took " elapsed "ms"))
-            (println "Serialization performance:" 
-                     (format "%.3f ms for %d iterations (%.3f μs/op)" 
+            (println "Serialization performance:"
+                     (format "%.3f ms for %d iterations (%.3f μs/op)"
                              elapsed iterations (/ (* elapsed 1000) iterations)))))))))

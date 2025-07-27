@@ -20,42 +20,42 @@ public final class JonSharedDataCompassCalibration {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint32 stage = 1;</code>
+     * <code>uint32 stage = 1 [(.buf.validate.field) = { ... }</code>
      * @return The stage.
      */
     int getStage();
 
     /**
-     * <code>uint32 final_stage = 2;</code>
+     * <code>uint32 final_stage = 2 [(.buf.validate.field) = { ... }</code>
      * @return The finalStage.
      */
     int getFinalStage();
 
     /**
-     * <code>double target_azimuth = 3;</code>
+     * <code>double target_azimuth = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetAzimuth.
      */
     double getTargetAzimuth();
 
     /**
-     * <code>double target_elevation = 4;</code>
+     * <code>double target_elevation = 4 [(.buf.validate.field) = { ... }</code>
      * @return The targetElevation.
      */
     double getTargetElevation();
 
     /**
-     * <code>double target_bank = 5;</code>
+     * <code>double target_bank = 5 [(.buf.validate.field) = { ... }</code>
      * @return The targetBank.
      */
     double getTargetBank();
 
     /**
-     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for status.
      */
     int getStatusValue();
     /**
-     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
      * @return The status.
      */
     ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus();
@@ -99,7 +99,7 @@ public final class JonSharedDataCompassCalibration {
     public static final int STAGE_FIELD_NUMBER = 1;
     private int stage_ = 0;
     /**
-     * <code>uint32 stage = 1;</code>
+     * <code>uint32 stage = 1 [(.buf.validate.field) = { ... }</code>
      * @return The stage.
      */
     @java.lang.Override
@@ -110,7 +110,7 @@ public final class JonSharedDataCompassCalibration {
     public static final int FINAL_STAGE_FIELD_NUMBER = 2;
     private int finalStage_ = 0;
     /**
-     * <code>uint32 final_stage = 2;</code>
+     * <code>uint32 final_stage = 2 [(.buf.validate.field) = { ... }</code>
      * @return The finalStage.
      */
     @java.lang.Override
@@ -121,7 +121,7 @@ public final class JonSharedDataCompassCalibration {
     public static final int TARGET_AZIMUTH_FIELD_NUMBER = 3;
     private double targetAzimuth_ = 0D;
     /**
-     * <code>double target_azimuth = 3;</code>
+     * <code>double target_azimuth = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetAzimuth.
      */
     @java.lang.Override
@@ -132,7 +132,7 @@ public final class JonSharedDataCompassCalibration {
     public static final int TARGET_ELEVATION_FIELD_NUMBER = 4;
     private double targetElevation_ = 0D;
     /**
-     * <code>double target_elevation = 4;</code>
+     * <code>double target_elevation = 4 [(.buf.validate.field) = { ... }</code>
      * @return The targetElevation.
      */
     @java.lang.Override
@@ -143,7 +143,7 @@ public final class JonSharedDataCompassCalibration {
     public static final int TARGET_BANK_FIELD_NUMBER = 5;
     private double targetBank_ = 0D;
     /**
-     * <code>double target_bank = 5;</code>
+     * <code>double target_bank = 5 [(.buf.validate.field) = { ... }</code>
      * @return The targetBank.
      */
     @java.lang.Override
@@ -154,14 +154,14 @@ public final class JonSharedDataCompassCalibration {
     public static final int STATUS_FIELD_NUMBER = 6;
     private int status_ = 0;
     /**
-     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for status.
      */
     @java.lang.Override public int getStatusValue() {
       return status_;
     }
     /**
-     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+     * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
      * @return The status.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus getStatus() {
@@ -616,7 +616,7 @@ public final class JonSharedDataCompassCalibration {
 
       private int stage_ ;
       /**
-       * <code>uint32 stage = 1;</code>
+       * <code>uint32 stage = 1 [(.buf.validate.field) = { ... }</code>
        * @return The stage.
        */
       @java.lang.Override
@@ -624,7 +624,7 @@ public final class JonSharedDataCompassCalibration {
         return stage_;
       }
       /**
-       * <code>uint32 stage = 1;</code>
+       * <code>uint32 stage = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The stage to set.
        * @return This builder for chaining.
        */
@@ -636,7 +636,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>uint32 stage = 1;</code>
+       * <code>uint32 stage = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearStage() {
@@ -648,7 +648,7 @@ public final class JonSharedDataCompassCalibration {
 
       private int finalStage_ ;
       /**
-       * <code>uint32 final_stage = 2;</code>
+       * <code>uint32 final_stage = 2 [(.buf.validate.field) = { ... }</code>
        * @return The finalStage.
        */
       @java.lang.Override
@@ -656,7 +656,7 @@ public final class JonSharedDataCompassCalibration {
         return finalStage_;
       }
       /**
-       * <code>uint32 final_stage = 2;</code>
+       * <code>uint32 final_stage = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The finalStage to set.
        * @return This builder for chaining.
        */
@@ -668,7 +668,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>uint32 final_stage = 2;</code>
+       * <code>uint32 final_stage = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearFinalStage() {
@@ -680,7 +680,7 @@ public final class JonSharedDataCompassCalibration {
 
       private double targetAzimuth_ ;
       /**
-       * <code>double target_azimuth = 3;</code>
+       * <code>double target_azimuth = 3 [(.buf.validate.field) = { ... }</code>
        * @return The targetAzimuth.
        */
       @java.lang.Override
@@ -688,7 +688,7 @@ public final class JonSharedDataCompassCalibration {
         return targetAzimuth_;
       }
       /**
-       * <code>double target_azimuth = 3;</code>
+       * <code>double target_azimuth = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The targetAzimuth to set.
        * @return This builder for chaining.
        */
@@ -700,7 +700,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>double target_azimuth = 3;</code>
+       * <code>double target_azimuth = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetAzimuth() {
@@ -712,7 +712,7 @@ public final class JonSharedDataCompassCalibration {
 
       private double targetElevation_ ;
       /**
-       * <code>double target_elevation = 4;</code>
+       * <code>double target_elevation = 4 [(.buf.validate.field) = { ... }</code>
        * @return The targetElevation.
        */
       @java.lang.Override
@@ -720,7 +720,7 @@ public final class JonSharedDataCompassCalibration {
         return targetElevation_;
       }
       /**
-       * <code>double target_elevation = 4;</code>
+       * <code>double target_elevation = 4 [(.buf.validate.field) = { ... }</code>
        * @param value The targetElevation to set.
        * @return This builder for chaining.
        */
@@ -732,7 +732,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>double target_elevation = 4;</code>
+       * <code>double target_elevation = 4 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetElevation() {
@@ -744,7 +744,7 @@ public final class JonSharedDataCompassCalibration {
 
       private double targetBank_ ;
       /**
-       * <code>double target_bank = 5;</code>
+       * <code>double target_bank = 5 [(.buf.validate.field) = { ... }</code>
        * @return The targetBank.
        */
       @java.lang.Override
@@ -752,7 +752,7 @@ public final class JonSharedDataCompassCalibration {
         return targetBank_;
       }
       /**
-       * <code>double target_bank = 5;</code>
+       * <code>double target_bank = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The targetBank to set.
        * @return This builder for chaining.
        */
@@ -764,7 +764,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>double target_bank = 5;</code>
+       * <code>double target_bank = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetBank() {
@@ -776,14 +776,14 @@ public final class JonSharedDataCompassCalibration {
 
       private int status_ = 0;
       /**
-       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for status.
        */
       @java.lang.Override public int getStatusValue() {
         return status_;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for status to set.
        * @return This builder for chaining.
        */
@@ -794,7 +794,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
        * @return The status.
        */
       @java.lang.Override
@@ -803,7 +803,7 @@ public final class JonSharedDataCompassCalibration {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataCompassCalibrateStatus.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The status to set.
        * @return This builder for chaining.
        */
@@ -817,7 +817,7 @@ public final class JonSharedDataCompassCalibration {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6;</code>
+       * <code>.ser.JonGuiDataCompassCalibrateStatus status = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearStatus() {
@@ -905,19 +905,23 @@ public final class JonSharedDataCompassCalibration {
   static {
     java.lang.String[] descriptorData = {
       "\n)jon_shared_data_compass_calibration.pr" +
-      "oto\022\003ser\032\033jon_shared_data_types.proto\"\300\001" +
-      "\n\034JonGuiDataCompassCalibration\022\r\n\005stage\030" +
-      "\001 \001(\r\022\023\n\013final_stage\030\002 \001(\r\022\026\n\016target_azi" +
-      "muth\030\003 \001(\001\022\030\n\020target_elevation\030\004 \001(\001\022\023\n\013" +
-      "target_bank\030\005 \001(\001\0225\n\006status\030\006 \001(\0162%.ser." +
-      "JonGuiDataCompassCalibrateStatusB[ZYgit-" +
-      "codecommit.eu-central-1.amazonaws.com/v1" +
-      "/repos/jettison/jonp/data/compass_calibr" +
-      "ationb\006proto3"
+      "oto\022\003ser\032\033buf/validate/validate.proto\032\033j" +
+      "on_shared_data_types.proto\"\251\002\n\034JonGuiDat" +
+      "aCompassCalibration\022\026\n\005stage\030\001 \001(\rB\007\272H\004*" +
+      "\002(\000\022\034\n\013final_stage\030\002 \001(\rB\007\272H\004*\002 \000\022/\n\016tar" +
+      "get_azimuth\030\003 \001(\001B\027\272H\024\022\022\021\000\000\000\000\000\200v@)\000\000\000\000\000\000" +
+      "\000\000\0221\n\020target_elevation\030\004 \001(\001B\027\272H\024\022\022\031\000\000\000\000" +
+      "\000\200V@)\000\000\000\000\000\200V\300\022,\n\013target_bank\030\005 \001(\001B\027\272H\024\022" +
+      "\022\021\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300\022A\n\006status\030\006 \001(\0162%.se" +
+      "r.JonGuiDataCompassCalibrateStatusB\n\272H\007\202" +
+      "\001\004\020\001 \000B[ZYgit-codecommit.eu-central-1.am" +
+      "azonaws.com/v1/repos/jettison/jonp/data/" +
+      "compass_calibrationb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataCompassCalibration_descriptor =
@@ -926,6 +930,12 @@ public final class JonSharedDataCompassCalibration {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataCompassCalibration_descriptor,
         new java.lang.String[] { "Stage", "FinalStage", "TargetAzimuth", "TargetElevation", "TargetBank", "Status", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

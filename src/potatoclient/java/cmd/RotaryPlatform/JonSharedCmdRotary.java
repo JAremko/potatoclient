@@ -6665,12 +6665,12 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode();
@@ -6714,14 +6714,14 @@ public final class JonSharedCmdRotary {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+     * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryMode getMode() {
@@ -7055,14 +7055,14 @@ public final class JonSharedCmdRotary {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -7073,7 +7073,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The mode.
        */
       @java.lang.Override
@@ -7082,7 +7082,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryMode.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
@@ -7096,7 +7096,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryMode mode = 1;</code>
+       * <code>.ser.JonGuiDataRotaryMode mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -7174,18 +7174,18 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -7229,7 +7229,7 @@ public final class JonSharedCmdRotary {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -7240,14 +7240,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -7606,7 +7606,7 @@ public final class JonSharedCmdRotary {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -7614,7 +7614,7 @@ public final class JonSharedCmdRotary {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -7626,7 +7626,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -7638,14 +7638,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -7656,7 +7656,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -7665,7 +7665,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -7679,7 +7679,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -7757,24 +7757,24 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     float getTargetValue();
 
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -7818,7 +7818,7 @@ public final class JonSharedCmdRotary {
     public static final int TARGET_VALUE_FIELD_NUMBER = 1;
     private float targetValue_ = 0F;
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     @java.lang.Override
@@ -7829,7 +7829,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 2;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -7840,14 +7840,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -8231,7 +8231,7 @@ public final class JonSharedCmdRotary {
 
       private float targetValue_ ;
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The targetValue.
        */
       @java.lang.Override
@@ -8239,7 +8239,7 @@ public final class JonSharedCmdRotary {
         return targetValue_;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The targetValue to set.
        * @return This builder for chaining.
        */
@@ -8251,7 +8251,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetValue() {
@@ -8263,7 +8263,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -8271,7 +8271,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -8283,7 +8283,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -8295,14 +8295,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -8313,7 +8313,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -8322,7 +8322,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -8336,7 +8336,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -8414,18 +8414,18 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float speed = 1;</code>
+     * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -8469,7 +8469,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 1;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 1;</code>
+     * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -8480,14 +8480,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -8846,7 +8846,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -8854,7 +8854,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -8866,7 +8866,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -8878,14 +8878,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -8896,7 +8896,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -8905,7 +8905,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -8919,7 +8919,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -8997,18 +8997,18 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float speed = 1;</code>
+     * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -9052,7 +9052,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 1;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 1;</code>
+     * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -9063,14 +9063,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -9429,7 +9429,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -9437,7 +9437,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -9449,7 +9449,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 1;</code>
+       * <code>float speed = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -9461,14 +9461,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -9479,7 +9479,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -9488,7 +9488,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -9502,7 +9502,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -9580,7 +9580,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -9623,7 +9623,7 @@ public final class JonSharedCmdRotary {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -9960,7 +9960,7 @@ public final class JonSharedCmdRotary {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -9968,7 +9968,7 @@ public final class JonSharedCmdRotary {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -9980,7 +9980,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -10058,13 +10058,13 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     float getTargetValue();
 
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
@@ -10107,7 +10107,7 @@ public final class JonSharedCmdRotary {
     public static final int TARGET_VALUE_FIELD_NUMBER = 1;
     private float targetValue_ = 0F;
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     @java.lang.Override
@@ -10118,7 +10118,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 2;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -10480,7 +10480,7 @@ public final class JonSharedCmdRotary {
 
       private float targetValue_ ;
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The targetValue.
        */
       @java.lang.Override
@@ -10488,7 +10488,7 @@ public final class JonSharedCmdRotary {
         return targetValue_;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The targetValue to set.
        * @return This builder for chaining.
        */
@@ -10500,7 +10500,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetValue() {
@@ -10512,7 +10512,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -10520,7 +10520,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -10532,7 +10532,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -10616,18 +10616,18 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -10682,7 +10682,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 2;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -10693,14 +10693,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -11116,7 +11116,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -11124,7 +11124,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -11136,7 +11136,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -11148,14 +11148,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -11166,7 +11166,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -11175,7 +11175,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -11189,7 +11189,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -11273,12 +11273,12 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -11333,14 +11333,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -11731,14 +11731,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -11749,7 +11749,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -11758,7 +11758,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -11772,7 +11772,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -11856,18 +11856,18 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -11922,7 +11922,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 2;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -11933,14 +11933,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 3;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -12356,7 +12356,7 @@ public final class JonSharedCmdRotary {
 
       private float speed_ ;
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -12364,7 +12364,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -12376,7 +12376,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -12388,14 +12388,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -12406,7 +12406,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -12415,7 +12415,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -12429,7 +12429,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 3;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -12513,12 +12513,12 @@ public final class JonSharedCmdRotary {
     float getValue();
 
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     int getDirectionValue();
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection();
@@ -12573,14 +12573,14 @@ public final class JonSharedCmdRotary {
     public static final int DIRECTION_FIELD_NUMBER = 2;
     private int direction_ = 0;
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for direction.
      */
     @java.lang.Override public int getDirectionValue() {
       return direction_;
     }
     /**
-     * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+     * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
      * @return The direction.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRotaryDirection getDirection() {
@@ -12971,14 +12971,14 @@ public final class JonSharedCmdRotary {
 
       private int direction_ = 0;
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for direction.
        */
       @java.lang.Override public int getDirectionValue() {
         return direction_;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for direction to set.
        * @return This builder for chaining.
        */
@@ -12989,7 +12989,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return The direction.
        */
       @java.lang.Override
@@ -12998,7 +12998,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRotaryDirection.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
@@ -13012,7 +13012,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotaryDirection direction = 2;</code>
+       * <code>.ser.JonGuiDataRotaryDirection direction = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
@@ -13090,7 +13090,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -13133,7 +13133,7 @@ public final class JonSharedCmdRotary {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -13470,7 +13470,7 @@ public final class JonSharedCmdRotary {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -13478,7 +13478,7 @@ public final class JonSharedCmdRotary {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -13490,7 +13490,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -13568,7 +13568,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -13611,7 +13611,7 @@ public final class JonSharedCmdRotary {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -13948,7 +13948,7 @@ public final class JonSharedCmdRotary {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -13956,7 +13956,7 @@ public final class JonSharedCmdRotary {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -13968,7 +13968,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -14046,7 +14046,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -14089,7 +14089,7 @@ public final class JonSharedCmdRotary {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -14426,7 +14426,7 @@ public final class JonSharedCmdRotary {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -14434,7 +14434,7 @@ public final class JonSharedCmdRotary {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -14446,7 +14446,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -21504,7 +21504,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     int getIndex();
@@ -21547,7 +21547,7 @@ public final class JonSharedCmdRotary {
     public static final int INDEX_FIELD_NUMBER = 1;
     private int index_ = 0;
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     @java.lang.Override
@@ -21882,7 +21882,7 @@ public final class JonSharedCmdRotary {
 
       private int index_ ;
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return The index.
        */
       @java.lang.Override
@@ -21890,7 +21890,7 @@ public final class JonSharedCmdRotary {
         return index_;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The index to set.
        * @return This builder for chaining.
        */
@@ -21902,7 +21902,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearIndex() {
@@ -21980,7 +21980,7 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     int getIndex();
@@ -22023,7 +22023,7 @@ public final class JonSharedCmdRotary {
     public static final int INDEX_FIELD_NUMBER = 1;
     private int index_ = 0;
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     @java.lang.Override
@@ -22358,7 +22358,7 @@ public final class JonSharedCmdRotary {
 
       private int index_ ;
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return The index.
        */
       @java.lang.Override
@@ -22366,7 +22366,7 @@ public final class JonSharedCmdRotary {
         return index_;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The index to set.
        * @return This builder for chaining.
        */
@@ -22378,7 +22378,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearIndex() {
@@ -22456,43 +22456,43 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     int getIndex();
 
     /**
-     * <code>int32 DayZoomTableValue = 2;</code>
+     * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
      * @return The dayZoomTableValue.
      */
     int getDayZoomTableValue();
 
     /**
-     * <code>int32 HeatZoomTableValue = 3;</code>
+     * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The heatZoomTableValue.
      */
     int getHeatZoomTableValue();
 
     /**
-     * <code>double azimuth = 4;</code>
+     * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     double getAzimuth();
 
     /**
-     * <code>double elevation = 5;</code>
+     * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     double getElevation();
 
     /**
-     * <code>double linger = 6;</code>
+     * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
      * @return The linger.
      */
     double getLinger();
 
     /**
-     * <code>double speed = 7;</code>
+     * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     double getSpeed();
@@ -22535,7 +22535,7 @@ public final class JonSharedCmdRotary {
     public static final int INDEX_FIELD_NUMBER = 1;
     private int index_ = 0;
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     @java.lang.Override
@@ -22546,7 +22546,7 @@ public final class JonSharedCmdRotary {
     public static final int DAYZOOMTABLEVALUE_FIELD_NUMBER = 2;
     private int dayZoomTableValue_ = 0;
     /**
-     * <code>int32 DayZoomTableValue = 2;</code>
+     * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
      * @return The dayZoomTableValue.
      */
     @java.lang.Override
@@ -22557,7 +22557,7 @@ public final class JonSharedCmdRotary {
     public static final int HEATZOOMTABLEVALUE_FIELD_NUMBER = 3;
     private int heatZoomTableValue_ = 0;
     /**
-     * <code>int32 HeatZoomTableValue = 3;</code>
+     * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The heatZoomTableValue.
      */
     @java.lang.Override
@@ -22568,7 +22568,7 @@ public final class JonSharedCmdRotary {
     public static final int AZIMUTH_FIELD_NUMBER = 4;
     private double azimuth_ = 0D;
     /**
-     * <code>double azimuth = 4;</code>
+     * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     @java.lang.Override
@@ -22579,7 +22579,7 @@ public final class JonSharedCmdRotary {
     public static final int ELEVATION_FIELD_NUMBER = 5;
     private double elevation_ = 0D;
     /**
-     * <code>double elevation = 5;</code>
+     * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     @java.lang.Override
@@ -22590,7 +22590,7 @@ public final class JonSharedCmdRotary {
     public static final int LINGER_FIELD_NUMBER = 6;
     private double linger_ = 0D;
     /**
-     * <code>double linger = 6;</code>
+     * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
      * @return The linger.
      */
     @java.lang.Override
@@ -22601,7 +22601,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 7;
     private double speed_ = 0D;
     /**
-     * <code>double speed = 7;</code>
+     * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -23082,7 +23082,7 @@ public final class JonSharedCmdRotary {
 
       private int index_ ;
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return The index.
        */
       @java.lang.Override
@@ -23090,7 +23090,7 @@ public final class JonSharedCmdRotary {
         return index_;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The index to set.
        * @return This builder for chaining.
        */
@@ -23102,7 +23102,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearIndex() {
@@ -23114,7 +23114,7 @@ public final class JonSharedCmdRotary {
 
       private int dayZoomTableValue_ ;
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @return The dayZoomTableValue.
        */
       @java.lang.Override
@@ -23122,7 +23122,7 @@ public final class JonSharedCmdRotary {
         return dayZoomTableValue_;
       }
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The dayZoomTableValue to set.
        * @return This builder for chaining.
        */
@@ -23134,7 +23134,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDayZoomTableValue() {
@@ -23146,7 +23146,7 @@ public final class JonSharedCmdRotary {
 
       private int heatZoomTableValue_ ;
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @return The heatZoomTableValue.
        */
       @java.lang.Override
@@ -23154,7 +23154,7 @@ public final class JonSharedCmdRotary {
         return heatZoomTableValue_;
       }
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The heatZoomTableValue to set.
        * @return This builder for chaining.
        */
@@ -23166,7 +23166,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearHeatZoomTableValue() {
@@ -23178,7 +23178,7 @@ public final class JonSharedCmdRotary {
 
       private double azimuth_ ;
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return The azimuth.
        */
       @java.lang.Override
@@ -23186,7 +23186,7 @@ public final class JonSharedCmdRotary {
         return azimuth_;
       }
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @param value The azimuth to set.
        * @return This builder for chaining.
        */
@@ -23198,7 +23198,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearAzimuth() {
@@ -23210,7 +23210,7 @@ public final class JonSharedCmdRotary {
 
       private double elevation_ ;
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return The elevation.
        */
       @java.lang.Override
@@ -23218,7 +23218,7 @@ public final class JonSharedCmdRotary {
         return elevation_;
       }
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The elevation to set.
        * @return This builder for chaining.
        */
@@ -23230,7 +23230,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearElevation() {
@@ -23242,7 +23242,7 @@ public final class JonSharedCmdRotary {
 
       private double linger_ ;
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @return The linger.
        */
       @java.lang.Override
@@ -23250,7 +23250,7 @@ public final class JonSharedCmdRotary {
         return linger_;
       }
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The linger to set.
        * @return This builder for chaining.
        */
@@ -23262,7 +23262,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLinger() {
@@ -23274,7 +23274,7 @@ public final class JonSharedCmdRotary {
 
       private double speed_ ;
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -23282,7 +23282,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -23294,7 +23294,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -23372,43 +23372,43 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     int getIndex();
 
     /**
-     * <code>int32 DayZoomTableValue = 2;</code>
+     * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
      * @return The dayZoomTableValue.
      */
     int getDayZoomTableValue();
 
     /**
-     * <code>int32 HeatZoomTableValue = 3;</code>
+     * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The heatZoomTableValue.
      */
     int getHeatZoomTableValue();
 
     /**
-     * <code>double azimuth = 4;</code>
+     * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     double getAzimuth();
 
     /**
-     * <code>double elevation = 5;</code>
+     * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     double getElevation();
 
     /**
-     * <code>double linger = 6;</code>
+     * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
      * @return The linger.
      */
     double getLinger();
 
     /**
-     * <code>double speed = 7;</code>
+     * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     double getSpeed();
@@ -23451,7 +23451,7 @@ public final class JonSharedCmdRotary {
     public static final int INDEX_FIELD_NUMBER = 1;
     private int index_ = 0;
     /**
-     * <code>int32 index = 1;</code>
+     * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
      * @return The index.
      */
     @java.lang.Override
@@ -23462,7 +23462,7 @@ public final class JonSharedCmdRotary {
     public static final int DAYZOOMTABLEVALUE_FIELD_NUMBER = 2;
     private int dayZoomTableValue_ = 0;
     /**
-     * <code>int32 DayZoomTableValue = 2;</code>
+     * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
      * @return The dayZoomTableValue.
      */
     @java.lang.Override
@@ -23473,7 +23473,7 @@ public final class JonSharedCmdRotary {
     public static final int HEATZOOMTABLEVALUE_FIELD_NUMBER = 3;
     private int heatZoomTableValue_ = 0;
     /**
-     * <code>int32 HeatZoomTableValue = 3;</code>
+     * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The heatZoomTableValue.
      */
     @java.lang.Override
@@ -23484,7 +23484,7 @@ public final class JonSharedCmdRotary {
     public static final int AZIMUTH_FIELD_NUMBER = 4;
     private double azimuth_ = 0D;
     /**
-     * <code>double azimuth = 4;</code>
+     * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     @java.lang.Override
@@ -23495,7 +23495,7 @@ public final class JonSharedCmdRotary {
     public static final int ELEVATION_FIELD_NUMBER = 5;
     private double elevation_ = 0D;
     /**
-     * <code>double elevation = 5;</code>
+     * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     @java.lang.Override
@@ -23506,7 +23506,7 @@ public final class JonSharedCmdRotary {
     public static final int LINGER_FIELD_NUMBER = 6;
     private double linger_ = 0D;
     /**
-     * <code>double linger = 6;</code>
+     * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
      * @return The linger.
      */
     @java.lang.Override
@@ -23517,7 +23517,7 @@ public final class JonSharedCmdRotary {
     public static final int SPEED_FIELD_NUMBER = 7;
     private double speed_ = 0D;
     /**
-     * <code>double speed = 7;</code>
+     * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -23998,7 +23998,7 @@ public final class JonSharedCmdRotary {
 
       private int index_ ;
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return The index.
        */
       @java.lang.Override
@@ -24006,7 +24006,7 @@ public final class JonSharedCmdRotary {
         return index_;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The index to set.
        * @return This builder for chaining.
        */
@@ -24018,7 +24018,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 index = 1;</code>
+       * <code>int32 index = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearIndex() {
@@ -24030,7 +24030,7 @@ public final class JonSharedCmdRotary {
 
       private int dayZoomTableValue_ ;
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @return The dayZoomTableValue.
        */
       @java.lang.Override
@@ -24038,7 +24038,7 @@ public final class JonSharedCmdRotary {
         return dayZoomTableValue_;
       }
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The dayZoomTableValue to set.
        * @return This builder for chaining.
        */
@@ -24050,7 +24050,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 DayZoomTableValue = 2;</code>
+       * <code>int32 DayZoomTableValue = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDayZoomTableValue() {
@@ -24062,7 +24062,7 @@ public final class JonSharedCmdRotary {
 
       private int heatZoomTableValue_ ;
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @return The heatZoomTableValue.
        */
       @java.lang.Override
@@ -24070,7 +24070,7 @@ public final class JonSharedCmdRotary {
         return heatZoomTableValue_;
       }
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The heatZoomTableValue to set.
        * @return This builder for chaining.
        */
@@ -24082,7 +24082,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>int32 HeatZoomTableValue = 3;</code>
+       * <code>int32 HeatZoomTableValue = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearHeatZoomTableValue() {
@@ -24094,7 +24094,7 @@ public final class JonSharedCmdRotary {
 
       private double azimuth_ ;
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return The azimuth.
        */
       @java.lang.Override
@@ -24102,7 +24102,7 @@ public final class JonSharedCmdRotary {
         return azimuth_;
       }
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @param value The azimuth to set.
        * @return This builder for chaining.
        */
@@ -24114,7 +24114,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double azimuth = 4;</code>
+       * <code>double azimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearAzimuth() {
@@ -24126,7 +24126,7 @@ public final class JonSharedCmdRotary {
 
       private double elevation_ ;
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return The elevation.
        */
       @java.lang.Override
@@ -24134,7 +24134,7 @@ public final class JonSharedCmdRotary {
         return elevation_;
       }
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The elevation to set.
        * @return This builder for chaining.
        */
@@ -24146,7 +24146,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double elevation = 5;</code>
+       * <code>double elevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearElevation() {
@@ -24158,7 +24158,7 @@ public final class JonSharedCmdRotary {
 
       private double linger_ ;
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @return The linger.
        */
       @java.lang.Override
@@ -24166,7 +24166,7 @@ public final class JonSharedCmdRotary {
         return linger_;
       }
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The linger to set.
        * @return This builder for chaining.
        */
@@ -24178,7 +24178,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double linger = 6;</code>
+       * <code>double linger = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLinger() {
@@ -24190,7 +24190,7 @@ public final class JonSharedCmdRotary {
 
       private double speed_ ;
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -24198,7 +24198,7 @@ public final class JonSharedCmdRotary {
         return speed_;
       }
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -24210,7 +24210,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>double speed = 7;</code>
+       * <code>double speed = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -26584,13 +26584,13 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     float getLatitude();
 
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     float getLongitude();
@@ -26639,7 +26639,7 @@ public final class JonSharedCmdRotary {
     public static final int LATITUDE_FIELD_NUMBER = 1;
     private float latitude_ = 0F;
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     @java.lang.Override
@@ -26650,7 +26650,7 @@ public final class JonSharedCmdRotary {
     public static final int LONGITUDE_FIELD_NUMBER = 2;
     private float longitude_ = 0F;
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     @java.lang.Override
@@ -27048,7 +27048,7 @@ public final class JonSharedCmdRotary {
 
       private float latitude_ ;
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return The latitude.
        */
       @java.lang.Override
@@ -27056,7 +27056,7 @@ public final class JonSharedCmdRotary {
         return latitude_;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The latitude to set.
        * @return This builder for chaining.
        */
@@ -27068,7 +27068,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLatitude() {
@@ -27080,7 +27080,7 @@ public final class JonSharedCmdRotary {
 
       private float longitude_ ;
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return The longitude.
        */
       @java.lang.Override
@@ -27088,7 +27088,7 @@ public final class JonSharedCmdRotary {
         return longitude_;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The longitude to set.
        * @return This builder for chaining.
        */
@@ -27100,7 +27100,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLongitude() {
@@ -27210,13 +27210,13 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     float getLatitude();
 
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     float getLongitude();
@@ -27265,7 +27265,7 @@ public final class JonSharedCmdRotary {
     public static final int LATITUDE_FIELD_NUMBER = 1;
     private float latitude_ = 0F;
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     @java.lang.Override
@@ -27276,7 +27276,7 @@ public final class JonSharedCmdRotary {
     public static final int LONGITUDE_FIELD_NUMBER = 2;
     private float longitude_ = 0F;
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     @java.lang.Override
@@ -27674,7 +27674,7 @@ public final class JonSharedCmdRotary {
 
       private float latitude_ ;
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return The latitude.
        */
       @java.lang.Override
@@ -27682,7 +27682,7 @@ public final class JonSharedCmdRotary {
         return latitude_;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The latitude to set.
        * @return This builder for chaining.
        */
@@ -27694,7 +27694,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLatitude() {
@@ -27706,7 +27706,7 @@ public final class JonSharedCmdRotary {
 
       private float longitude_ ;
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return The longitude.
        */
       @java.lang.Override
@@ -27714,7 +27714,7 @@ public final class JonSharedCmdRotary {
         return longitude_;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The longitude to set.
        * @return This builder for chaining.
        */
@@ -27726,7 +27726,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLongitude() {
@@ -27836,24 +27836,24 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
 
     /**
-     * <code>float x = 2;</code>
+     * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     float getX();
 
     /**
-     * <code>float y = 3;</code>
+     * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     float getY();
@@ -27897,14 +27897,14 @@ public final class JonSharedCmdRotary {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
@@ -27915,7 +27915,7 @@ public final class JonSharedCmdRotary {
     public static final int X_FIELD_NUMBER = 2;
     private float x_ = 0F;
     /**
-     * <code>float x = 2;</code>
+     * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     @java.lang.Override
@@ -27926,7 +27926,7 @@ public final class JonSharedCmdRotary {
     public static final int Y_FIELD_NUMBER = 3;
     private float y_ = 0F;
     /**
-     * <code>float y = 3;</code>
+     * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     @java.lang.Override
@@ -28310,14 +28310,14 @@ public final class JonSharedCmdRotary {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -28328,7 +28328,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The channel.
        */
       @java.lang.Override
@@ -28337,7 +28337,7 @@ public final class JonSharedCmdRotary {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
@@ -28351,7 +28351,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -28363,7 +28363,7 @@ public final class JonSharedCmdRotary {
 
       private float x_ ;
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @return The x.
        */
       @java.lang.Override
@@ -28371,7 +28371,7 @@ public final class JonSharedCmdRotary {
         return x_;
       }
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The x to set.
        * @return This builder for chaining.
        */
@@ -28383,7 +28383,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearX() {
@@ -28395,7 +28395,7 @@ public final class JonSharedCmdRotary {
 
       private float y_ ;
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @return The y.
        */
       @java.lang.Override
@@ -28403,7 +28403,7 @@ public final class JonSharedCmdRotary {
         return y_;
       }
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The y to set.
        * @return This builder for chaining.
        */
@@ -28415,7 +28415,7 @@ public final class JonSharedCmdRotary {
         return this;
       }
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearY() {
@@ -28693,116 +28693,135 @@ public final class JonSharedCmdRotary {
   static {
     java.lang.String[] descriptorData = {
       "\n\033jon_shared_cmd_rotary.proto\022\022cmd.Rotar" +
-      "yPlatform\032\033jon_shared_data_types.proto\"\362" +
-      "\n\n\004Root\022*\n\005start\030\001 \001(\0132\031.cmd.RotaryPlatf" +
-      "orm.StartH\000\022(\n\004stop\030\002 \001(\0132\030.cmd.RotaryPl" +
-      "atform.StopH\000\022(\n\004axis\030\003 \001(\0132\030.cmd.Rotary" +
-      "Platform.AxisH\000\022F\n\024set_platform_azimuth\030" +
-      "\004 \001(\0132&.cmd.RotaryPlatform.SetPlatformAz" +
-      "imuthH\000\022J\n\026set_platform_elevation\030\005 \001(\0132" +
-      "(.cmd.RotaryPlatform.SetPlatformElevatio" +
-      "nH\000\022@\n\021set_platform_bank\030\006 \001(\0132#.cmd.Rot" +
-      "aryPlatform.SetPlatformBankH\000\022(\n\004halt\030\007 " +
-      "\001(\0132\030.cmd.RotaryPlatform.HaltH\000\022N\n\031set_u" +
-      "se_rotary_as_compass\030\010 \001(\0132).cmd.RotaryP" +
-      "latform.setUseRotaryAsCompassH\000\0228\n\rrotat" +
-      "e_to_gps\030\t \001(\0132\037.cmd.RotaryPlatform.Rota" +
-      "teToGPSH\000\022:\n\016set_origin_gps\030\n \001(\0132 .cmd." +
-      "RotaryPlatform.SetOriginGPSH\000\022/\n\010set_mod" +
-      "e\030\013 \001(\0132\033.cmd.RotaryPlatform.SetModeH\000\0228" +
-      "\n\rrotate_to_ndc\030\014 \001(\0132\037.cmd.RotaryPlatfo" +
-      "rm.RotateToNDCH\000\0223\n\nscan_start\030\r \001(\0132\035.c" +
-      "md.RotaryPlatform.ScanStartH\000\0221\n\tscan_st" +
-      "op\030\016 \001(\0132\034.cmd.RotaryPlatform.ScanStopH\000" +
-      "\0223\n\nscan_pause\030\017 \001(\0132\035.cmd.RotaryPlatfor" +
-      "m.ScanPauseH\000\0227\n\014scan_unpause\030\020 \001(\0132\037.cm" +
-      "d.RotaryPlatform.ScanUnpauseH\000\0221\n\tget_me" +
-      "teo\030\021 \001(\0132\034.cmd.RotaryPlatform.GetMeteoH" +
-      "\000\0221\n\tscan_prev\030\022 \001(\0132\034.cmd.RotaryPlatfor" +
-      "m.ScanPrevH\000\0221\n\tscan_next\030\023 \001(\0132\034.cmd.Ro" +
-      "taryPlatform.ScanNextH\000\022I\n\026scan_refresh_" +
-      "node_list\030\024 \001(\0132\'.cmd.RotaryPlatform.Sca" +
-      "nRefreshNodeListH\000\022>\n\020scan_select_node\030\025" +
-      " \001(\0132\".cmd.RotaryPlatform.ScanSelectNode" +
-      "H\000\022>\n\020scan_delete_node\030\026 \001(\0132\".cmd.Rotar" +
-      "yPlatform.ScanDeleteNodeH\000\022>\n\020scan_updat" +
-      "e_node\030\027 \001(\0132\".cmd.RotaryPlatform.ScanUp" +
-      "dateNodeH\000\0228\n\rscan_add_node\030\030 \001(\0132\037.cmd." +
-      "RotaryPlatform.ScanAddNodeH\000B\005\n\003cmd\"f\n\004A" +
-      "xis\022,\n\007azimuth\030\001 \001(\0132\033.cmd.RotaryPlatfor" +
-      "m.Azimuth\0220\n\televation\030\002 \001(\0132\035.cmd.Rotar" +
-      "yPlatform.Elevation\"2\n\007SetMode\022\'\n\004mode\030\001" +
-      " \001(\0162\031.ser.JonGuiDataRotaryMode\"S\n\017SetAz" +
-      "imuthValue\022\r\n\005value\030\001 \001(\002\0221\n\tdirection\030\002" +
-      " \001(\0162\036.ser.JonGuiDataRotaryDirection\"i\n\017" +
-      "RotateAzimuthTo\022\024\n\014target_value\030\001 \001(\002\022\r\n" +
-      "\005speed\030\002 \001(\002\0221\n\tdirection\030\003 \001(\0162\036.ser.Jo" +
-      "nGuiDataRotaryDirection\"Q\n\rRotateAzimuth" +
-      "\022\r\n\005speed\030\001 \001(\002\0221\n\tdirection\030\002 \001(\0162\036.ser" +
-      ".JonGuiDataRotaryDirection\"S\n\017RotateElev" +
-      "ation\022\r\n\005speed\030\001 \001(\002\0221\n\tdirection\030\002 \001(\0162" +
-      "\036.ser.JonGuiDataRotaryDirection\"\"\n\021SetEl" +
-      "evationValue\022\r\n\005value\030\001 \001(\002\"8\n\021RotateEle" +
-      "vationTo\022\024\n\014target_value\030\001 \001(\002\022\r\n\005speed\030" +
-      "\002 \001(\002\"j\n\027RotateElevationRelative\022\r\n\005valu" +
-      "e\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0221\n\tdirection\030\003 \001(" +
-      "\0162\036.ser.JonGuiDataRotaryDirection\"^\n\032Rot" +
-      "ateElevationRelativeSet\022\r\n\005value\030\001 \001(\002\0221" +
-      "\n\tdirection\030\002 \001(\0162\036.ser.JonGuiDataRotary" +
-      "Direction\"h\n\025RotateAzimuthRelative\022\r\n\005va" +
-      "lue\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\0221\n\tdirection\030\003 " +
-      "\001(\0162\036.ser.JonGuiDataRotaryDirection\"\\\n\030R" +
-      "otateAzimuthRelativeSet\022\r\n\005value\030\001 \001(\002\0221" +
-      "\n\tdirection\030\002 \001(\0162\036.ser.JonGuiDataRotary" +
-      "Direction\"#\n\022SetPlatformAzimuth\022\r\n\005value" +
-      "\030\001 \001(\002\"%\n\024SetPlatformElevation\022\r\n\005value\030" +
-      "\001 \001(\002\" \n\017SetPlatformBank\022\r\n\005value\030\001 \001(\002\"" +
-      "\n\n\010GetMeteo\"\357\002\n\007Azimuth\0228\n\tset_value\030\001 \001" +
-      "(\0132#.cmd.RotaryPlatform.SetAzimuthValueH" +
-      "\000\0228\n\trotate_to\030\002 \001(\0132#.cmd.RotaryPlatfor" +
-      "m.RotateAzimuthToH\000\0223\n\006rotate\030\003 \001(\0132!.cm" +
-      "d.RotaryPlatform.RotateAzimuthH\000\022=\n\010rela" +
-      "tive\030\004 \001(\0132).cmd.RotaryPlatform.RotateAz" +
-      "imuthRelativeH\000\022D\n\014relative_set\030\005 \001(\0132,." +
-      "cmd.RotaryPlatform.RotateAzimuthRelative" +
-      "SetH\000\022/\n\004halt\030\006 \001(\0132\037.cmd.RotaryPlatform" +
-      ".HaltAzimuthH\000B\005\n\003cmd\"\007\n\005Start\"\006\n\004Stop\"\006" +
-      "\n\004Halt\"\013\n\tScanStart\"\n\n\010ScanStop\"\013\n\tScanP" +
-      "ause\"\r\n\013ScanUnpause\"\r\n\013HaltAzimuth\"\017\n\rHa" +
-      "ltElevation\"\n\n\010ScanPrev\"\n\n\010ScanNext\"\025\n\023S" +
-      "canRefreshNodeList\"\037\n\016ScanSelectNode\022\r\n\005" +
-      "index\030\001 \001(\005\"\037\n\016ScanDeleteNode\022\r\n\005index\030\001" +
-      " \001(\005\"\231\001\n\016ScanUpdateNode\022\r\n\005index\030\001 \001(\005\022\031" +
-      "\n\021DayZoomTableValue\030\002 \001(\005\022\032\n\022HeatZoomTab" +
-      "leValue\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televat" +
-      "ion\030\005 \001(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001" +
-      "\"\226\001\n\013ScanAddNode\022\r\n\005index\030\001 \001(\005\022\031\n\021DayZo" +
-      "omTableValue\030\002 \001(\005\022\032\n\022HeatZoomTableValue" +
-      "\030\003 \001(\005\022\017\n\007azimuth\030\004 \001(\001\022\021\n\televation\030\005 \001" +
-      "(\001\022\016\n\006linger\030\006 \001(\001\022\r\n\005speed\030\007 \001(\001\"\375\002\n\tEl" +
-      "evation\022:\n\tset_value\030\001 \001(\0132%.cmd.RotaryP" +
-      "latform.SetElevationValueH\000\022:\n\trotate_to" +
-      "\030\002 \001(\0132%.cmd.RotaryPlatform.RotateElevat" +
-      "ionToH\000\0225\n\006rotate\030\003 \001(\0132#.cmd.RotaryPlat" +
-      "form.RotateElevationH\000\022?\n\010relative\030\004 \001(\013" +
-      "2+.cmd.RotaryPlatform.RotateElevationRel" +
-      "ativeH\000\022F\n\014relative_set\030\005 \001(\0132..cmd.Rota" +
-      "ryPlatform.RotateElevationRelativeSetH\000\022" +
-      "1\n\004halt\030\006 \001(\0132!.cmd.RotaryPlatform.HaltE" +
-      "levationH\000B\005\n\003cmd\"%\n\025setUseRotaryAsCompa" +
-      "ss\022\014\n\004flag\030\001 \001(\010\"D\n\013RotateToGPS\022\020\n\010latit" +
-      "ude\030\001 \001(\002\022\021\n\tlongitude\030\002 \001(\002\022\020\n\010altitude" +
-      "\030\003 \001(\002\"E\n\014SetOriginGPS\022\020\n\010latitude\030\001 \001(\002" +
-      "\022\021\n\tlongitude\030\002 \001(\002\022\020\n\010altitude\030\003 \001(\002\"Q\n" +
-      "\013RotateToNDC\022,\n\007channel\030\001 \001(\0162\033.ser.JonG" +
-      "uiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003 \001(\002" +
-      "BMZKgit-codecommit.eu-central-1.amazonaw" +
-      "s.com/v1/repos/jettison/jonp/cmd/rotaryb" +
-      "\006proto3"
+      "yPlatform\032\033buf/validate/validate.proto\032\033" +
+      "jon_shared_data_types.proto\"\371\n\n\004Root\022*\n\005" +
+      "start\030\001 \001(\0132\031.cmd.RotaryPlatform.StartH\000" +
+      "\022(\n\004stop\030\002 \001(\0132\030.cmd.RotaryPlatform.Stop" +
+      "H\000\022(\n\004axis\030\003 \001(\0132\030.cmd.RotaryPlatform.Ax" +
+      "isH\000\022F\n\024set_platform_azimuth\030\004 \001(\0132&.cmd" +
+      ".RotaryPlatform.SetPlatformAzimuthH\000\022J\n\026" +
+      "set_platform_elevation\030\005 \001(\0132(.cmd.Rotar" +
+      "yPlatform.SetPlatformElevationH\000\022@\n\021set_" +
+      "platform_bank\030\006 \001(\0132#.cmd.RotaryPlatform" +
+      ".SetPlatformBankH\000\022(\n\004halt\030\007 \001(\0132\030.cmd.R" +
+      "otaryPlatform.HaltH\000\022N\n\031set_use_rotary_a" +
+      "s_compass\030\010 \001(\0132).cmd.RotaryPlatform.set" +
+      "UseRotaryAsCompassH\000\0228\n\rrotate_to_gps\030\t " +
+      "\001(\0132\037.cmd.RotaryPlatform.RotateToGPSH\000\022:" +
+      "\n\016set_origin_gps\030\n \001(\0132 .cmd.RotaryPlatf" +
+      "orm.SetOriginGPSH\000\022/\n\010set_mode\030\013 \001(\0132\033.c" +
+      "md.RotaryPlatform.SetModeH\000\0228\n\rrotate_to" +
+      "_ndc\030\014 \001(\0132\037.cmd.RotaryPlatform.RotateTo" +
+      "NDCH\000\0223\n\nscan_start\030\r \001(\0132\035.cmd.RotaryPl" +
+      "atform.ScanStartH\000\0221\n\tscan_stop\030\016 \001(\0132\034." +
+      "cmd.RotaryPlatform.ScanStopH\000\0223\n\nscan_pa" +
+      "use\030\017 \001(\0132\035.cmd.RotaryPlatform.ScanPause" +
+      "H\000\0227\n\014scan_unpause\030\020 \001(\0132\037.cmd.RotaryPla" +
+      "tform.ScanUnpauseH\000\0221\n\tget_meteo\030\021 \001(\0132\034" +
+      ".cmd.RotaryPlatform.GetMeteoH\000\0221\n\tscan_p" +
+      "rev\030\022 \001(\0132\034.cmd.RotaryPlatform.ScanPrevH" +
+      "\000\0221\n\tscan_next\030\023 \001(\0132\034.cmd.RotaryPlatfor" +
+      "m.ScanNextH\000\022I\n\026scan_refresh_node_list\030\024" +
+      " \001(\0132\'.cmd.RotaryPlatform.ScanRefreshNod" +
+      "eListH\000\022>\n\020scan_select_node\030\025 \001(\0132\".cmd." +
+      "RotaryPlatform.ScanSelectNodeH\000\022>\n\020scan_" +
+      "delete_node\030\026 \001(\0132\".cmd.RotaryPlatform.S" +
+      "canDeleteNodeH\000\022>\n\020scan_update_node\030\027 \001(" +
+      "\0132\".cmd.RotaryPlatform.ScanUpdateNodeH\000\022" +
+      "8\n\rscan_add_node\030\030 \001(\0132\037.cmd.RotaryPlatf" +
+      "orm.ScanAddNodeH\000B\014\n\003cmd\022\005\272H\002\010\001\"f\n\004Axis\022" +
+      ",\n\007azimuth\030\001 \001(\0132\033.cmd.RotaryPlatform.Az" +
+      "imuth\0220\n\televation\030\002 \001(\0132\035.cmd.RotaryPla" +
+      "tform.Elevation\">\n\007SetMode\0223\n\004mode\030\001 \001(\016" +
+      "2\031.ser.JonGuiDataRotaryModeB\n\272H\007\202\001\004\020\001 \000\"" +
+      "p\n\017SetAzimuthValue\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n" +
+      "\025\000\000\264C-\000\000\000\000\022=\n\tdirection\030\002 \001(\0162\036.ser.JonG" +
+      "uiDataRotaryDirectionB\n\272H\007\202\001\004\020\001 \000\"\227\001\n\017Ro" +
+      "tateAzimuthTo\022%\n\014target_value\030\001 \001(\002B\017\272H\014" +
+      "\n\n\025\000\000\264C-\000\000\000\000\022\036\n\005speed\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-" +
+      "\000\000\000\000\022=\n\tdirection\030\003 \001(\0162\036.ser.JonGuiData" +
+      "RotaryDirectionB\n\272H\007\202\001\004\020\001 \000\"n\n\rRotateAzi" +
+      "muth\022\036\n\005speed\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022=\n\t" +
+      "direction\030\002 \001(\0162\036.ser.JonGuiDataRotaryDi" +
+      "rectionB\n\272H\007\202\001\004\020\001 \000\"p\n\017RotateElevation\022\036" +
+      "\n\005speed\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022=\n\tdirect" +
+      "ion\030\002 \001(\0162\036.ser.JonGuiDataRotaryDirectio" +
+      "nB\n\272H\007\202\001\004\020\001 \000\"3\n\021SetElevationValue\022\036\n\005va" +
+      "lue\030\001 \001(\002B\017\272H\014\n\n\035\000\000\264B-\000\000\264\302\"Z\n\021RotateElev" +
+      "ationTo\022%\n\014target_value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\264" +
+      "B-\000\000\264\302\022\036\n\005speed\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\"\207" +
+      "\001\n\027RotateElevationRelative\022\r\n\005value\030\001 \001(" +
+      "\002\022\036\n\005speed\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022=\n\tdir" +
+      "ection\030\003 \001(\0162\036.ser.JonGuiDataRotaryDirec" +
+      "tionB\n\272H\007\202\001\004\020\001 \000\"j\n\032RotateElevationRelat" +
+      "iveSet\022\r\n\005value\030\001 \001(\002\022=\n\tdirection\030\002 \001(\016" +
+      "2\036.ser.JonGuiDataRotaryDirectionB\n\272H\007\202\001\004" +
+      "\020\001 \000\"\205\001\n\025RotateAzimuthRelative\022\r\n\005value\030" +
+      "\001 \001(\002\022\036\n\005speed\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022=\n" +
+      "\tdirection\030\003 \001(\0162\036.ser.JonGuiDataRotaryD" +
+      "irectionB\n\272H\007\202\001\004\020\001 \000\"h\n\030RotateAzimuthRel" +
+      "ativeSet\022\r\n\005value\030\001 \001(\002\022=\n\tdirection\030\002 \001" +
+      "(\0162\036.ser.JonGuiDataRotaryDirectionB\n\272H\007\202" +
+      "\001\004\020\001 \000\"4\n\022SetPlatformAzimuth\022\036\n\005value\030\001 " +
+      "\001(\002B\017\272H\014\n\n\025\000\000\264C%\000\000\264\303\"6\n\024SetPlatformEleva" +
+      "tion\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\264B-\000\000\264\302\"1\n\017" +
+      "SetPlatformBank\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n\025\000\000" +
+      "4C-\000\0004\303\"\n\n\010GetMeteo\"\366\002\n\007Azimuth\0228\n\tset_v" +
+      "alue\030\001 \001(\0132#.cmd.RotaryPlatform.SetAzimu" +
+      "thValueH\000\0228\n\trotate_to\030\002 \001(\0132#.cmd.Rotar" +
+      "yPlatform.RotateAzimuthToH\000\0223\n\006rotate\030\003 " +
+      "\001(\0132!.cmd.RotaryPlatform.RotateAzimuthH\000" +
+      "\022=\n\010relative\030\004 \001(\0132).cmd.RotaryPlatform." +
+      "RotateAzimuthRelativeH\000\022D\n\014relative_set\030" +
+      "\005 \001(\0132,.cmd.RotaryPlatform.RotateAzimuth" +
+      "RelativeSetH\000\022/\n\004halt\030\006 \001(\0132\037.cmd.Rotary" +
+      "Platform.HaltAzimuthH\000B\014\n\003cmd\022\005\272H\002\010\001\"\007\n\005" +
+      "Start\"\006\n\004Stop\"\006\n\004Halt\"\013\n\tScanStart\"\n\n\010Sc" +
+      "anStop\"\013\n\tScanPause\"\r\n\013ScanUnpause\"\r\n\013Ha" +
+      "ltAzimuth\"\017\n\rHaltElevation\"\n\n\010ScanPrev\"\n" +
+      "\n\010ScanNext\"\025\n\023ScanRefreshNodeList\"(\n\016Sca" +
+      "nSelectNode\022\026\n\005index\030\001 \001(\005B\007\272H\004\032\002(\000\"(\n\016S" +
+      "canDeleteNode\022\026\n\005index\030\001 \001(\005B\007\272H\004\032\002(\000\"\217\002" +
+      "\n\016ScanUpdateNode\022\026\n\005index\030\001 \001(\005B\007\272H\004\032\002(\000" +
+      "\022\"\n\021DayZoomTableValue\030\002 \001(\005B\007\272H\004\032\002(\000\022#\n\022" +
+      "HeatZoomTableValue\030\003 \001(\005B\007\272H\004\032\002(\000\022(\n\007azi" +
+      "muth\030\004 \001(\001B\027\272H\024\022\022\021\000\000\000\000\000\200v@)\000\000\000\000\000\000\000\000\022*\n\te" +
+      "levation\030\005 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000\000\200V\300\022" +
+      "\036\n\006linger\030\006 \001(\001B\016\272H\013\022\t)\000\000\000\000\000\000\000\000\022&\n\005speed" +
+      "\030\007 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?!\000\000\000\000\000\000\000\000\"\214\002\n\013Scan" +
+      "AddNode\022\026\n\005index\030\001 \001(\005B\007\272H\004\032\002(\000\022\"\n\021DayZo" +
+      "omTableValue\030\002 \001(\005B\007\272H\004\032\002(\000\022#\n\022HeatZoomT" +
+      "ableValue\030\003 \001(\005B\007\272H\004\032\002(\000\022(\n\007azimuth\030\004 \001(" +
+      "\001B\027\272H\024\022\022\021\000\000\000\000\000\200v@)\000\000\000\000\000\000\000\000\022*\n\televation\030" +
+      "\005 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000\000\200V\300\022\036\n\006linger" +
+      "\030\006 \001(\001B\016\272H\013\022\t)\000\000\000\000\000\000\000\000\022&\n\005speed\030\007 \001(\001B\027\272" +
+      "H\024\022\022\031\000\000\000\000\000\000\360?!\000\000\000\000\000\000\000\000\"\204\003\n\tElevation\022:\n\t" +
+      "set_value\030\001 \001(\0132%.cmd.RotaryPlatform.Set" +
+      "ElevationValueH\000\022:\n\trotate_to\030\002 \001(\0132%.cm" +
+      "d.RotaryPlatform.RotateElevationToH\000\0225\n\006" +
+      "rotate\030\003 \001(\0132#.cmd.RotaryPlatform.Rotate" +
+      "ElevationH\000\022?\n\010relative\030\004 \001(\0132+.cmd.Rota" +
+      "ryPlatform.RotateElevationRelativeH\000\022F\n\014" +
+      "relative_set\030\005 \001(\0132..cmd.RotaryPlatform." +
+      "RotateElevationRelativeSetH\000\0221\n\004halt\030\006 \001" +
+      "(\0132!.cmd.RotaryPlatform.HaltElevationH\000B" +
+      "\014\n\003cmd\022\005\272H\002\010\001\"%\n\025setUseRotaryAsCompass\022\014" +
+      "\n\004flag\030\001 \001(\010\"f\n\013RotateToGPS\022!\n\010latitude\030" +
+      "\001 \001(\002B\017\272H\014\n\n\035\000\000\264B-\000\000\264\302\022\"\n\tlongitude\030\002 \001(" +
+      "\002B\017\272H\014\n\n\025\000\0004C-\000\0004\303\022\020\n\010altitude\030\003 \001(\002\"g\n\014" +
+      "SetOriginGPS\022!\n\010latitude\030\001 \001(\002B\017\272H\014\n\n\035\000\000" +
+      "\264B-\000\000\264\302\022\"\n\tlongitude\030\002 \001(\002B\017\272H\014\n\n\025\000\0004C-\000" +
+      "\0004\303\022\020\n\010altitude\030\003 \001(\002\"\177\n\013RotateToNDC\0228\n\007" +
+      "channel\030\001 \001(\0162\033.ser.JonGuiDataVideoChann" +
+      "elB\n\272H\007\202\001\004\020\001 \000\022\032\n\001x\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000" +
+      "\200\277\022\032\n\001y\030\003 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\200\277BMZKgit-co" +
+      "decommit.eu-central-1.amazonaws.com/v1/r" +
+      "epos/jettison/jonp/cmd/rotaryb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_RotaryPlatform_Root_descriptor =
@@ -29039,6 +29058,13 @@ public final class JonSharedCmdRotary {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_RotaryPlatform_RotateToNDC_descriptor,
         new java.lang.String[] { "Channel", "X", "Y", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

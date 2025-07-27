@@ -217,16 +217,37 @@ main() {
         mkdir -p /workspace/output/java
     "
     
+    # Define the Java script inline to match protogen's approach
+    JAVA_SCRIPT='
+set -e
+# Create a temporary directory for proto files
+mkdir -p /tmp/java_proto_buf
+
+# Copy proto files to temporary directory
+cp -r /workspace/proto/* /tmp/java_proto_buf/
+
+# Copy buf validate proto definitions to the expected location
+mkdir -p /tmp/java_proto_buf/buf/validate
+cp /opt/protovalidate/proto/protovalidate/buf/validate/validate.proto /tmp/java_proto_buf/buf/validate/
+
+# First, ensure all proto files have proper imports
+cd /tmp/java_proto_buf
+for proto in *.proto; do
+    if [ -f "$proto" ]; then
+        /usr/local/bin/add-validate-import.sh "$proto"
+    fi
+done
+
+# Generate using standard protoc with the validate.proto available
+protoc -I/tmp/java_proto_buf \
+    --java_out=/workspace/output/java \
+    /tmp/java_proto_buf/*.proto
+'
+    
     # Generate Java bindings WITH buf.validate annotations
     print_info "Generating Java bindings with buf.validate annotations..."
-    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
-        set -e
-        # Use proto files directly without removing annotations
-        # This preserves buf.validate annotations in the proto files
-        protoc -I/workspace/proto \
-            --java_out=/workspace/output/java \
-            /workspace/proto/*.proto
-    '
+    # Use the Java generation script that handles buf.validate imports
+    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "$JAVA_SCRIPT"
     
     if [ $? -ne 0 ]; then
         print_error "Proto generation failed"

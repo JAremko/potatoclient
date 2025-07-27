@@ -5510,30 +5510,32 @@ public final class JonSharedCmdOsd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\030jon_shared_cmd_osd.proto\022\007cmd.OSD\"\353\003\n\004" +
-      "Root\0229\n\023show_default_screen\030\001 \001(\0132\032.cmd." +
-      "OSD.ShowDefaultScreenH\000\022@\n\027show_lrf_meas" +
-      "ure_screen\030\002 \001(\0132\035.cmd.OSD.ShowLRFMeasur" +
-      "eScreenH\000\022>\n\026show_lrf_result_screen\030\003 \001(" +
-      "\0132\034.cmd.OSD.ShowLRFResultScreenH\000\022S\n!sho" +
-      "w_lrf_result_simplified_screen\030\004 \001(\0132&.c" +
-      "md.OSD.ShowLRFResultSimplifiedScreenH\000\0221" +
-      "\n\017enable_heat_osd\030\005 \001(\0132\026.cmd.OSD.Enable" +
-      "HeatOSDH\000\0223\n\020disable_heat_osd\030\006 \001(\0132\027.cm" +
-      "d.OSD.DisableHeatOSDH\000\022/\n\016enable_day_osd" +
-      "\030\007 \001(\0132\025.cmd.OSD.EnableDayOSDH\000\0221\n\017disab" +
-      "le_day_osd\030\010 \001(\0132\026.cmd.OSD.DisableDayOSD" +
-      "H\000B\005\n\003cmd\"\023\n\021ShowDefaultScreen\"\026\n\024ShowLR" +
-      "FMeasureScreen\"\025\n\023ShowLRFResultScreen\"\037\n" +
-      "\035ShowLRFResultSimplifiedScreen\"\017\n\rEnable" +
-      "HeatOSD\"\020\n\016DisableHeatOSD\"\016\n\014EnableDayOS" +
-      "D\"\017\n\rDisableDayOSDBJZHgit-codecommit.eu-" +
-      "central-1.amazonaws.com/v1/repos/jettiso" +
-      "n/jonp/cmd/osdb\006proto3"
+      "\n\030jon_shared_cmd_osd.proto\022\007cmd.OSD\032\033buf" +
+      "/validate/validate.proto\"\362\003\n\004Root\0229\n\023sho" +
+      "w_default_screen\030\001 \001(\0132\032.cmd.OSD.ShowDef" +
+      "aultScreenH\000\022@\n\027show_lrf_measure_screen\030" +
+      "\002 \001(\0132\035.cmd.OSD.ShowLRFMeasureScreenH\000\022>" +
+      "\n\026show_lrf_result_screen\030\003 \001(\0132\034.cmd.OSD" +
+      ".ShowLRFResultScreenH\000\022S\n!show_lrf_resul" +
+      "t_simplified_screen\030\004 \001(\0132&.cmd.OSD.Show" +
+      "LRFResultSimplifiedScreenH\000\0221\n\017enable_he" +
+      "at_osd\030\005 \001(\0132\026.cmd.OSD.EnableHeatOSDH\000\0223" +
+      "\n\020disable_heat_osd\030\006 \001(\0132\027.cmd.OSD.Disab" +
+      "leHeatOSDH\000\022/\n\016enable_day_osd\030\007 \001(\0132\025.cm" +
+      "d.OSD.EnableDayOSDH\000\0221\n\017disable_day_osd\030" +
+      "\010 \001(\0132\026.cmd.OSD.DisableDayOSDH\000B\014\n\003cmd\022\005" +
+      "\272H\002\010\001\"\023\n\021ShowDefaultScreen\"\026\n\024ShowLRFMea" +
+      "sureScreen\"\025\n\023ShowLRFResultScreen\"\037\n\035Sho" +
+      "wLRFResultSimplifiedScreen\"\017\n\rEnableHeat" +
+      "OSD\"\020\n\016DisableHeatOSD\"\016\n\014EnableDayOSD\"\017\n" +
+      "\rDisableDayOSDBJZHgit-codecommit.eu-cent" +
+      "ral-1.amazonaws.com/v1/repos/jettison/jo" +
+      "np/cmd/osdb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_OSD_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -5589,6 +5591,12 @@ public final class JonSharedCmdOsd {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_OSD_DisableDayOSD_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

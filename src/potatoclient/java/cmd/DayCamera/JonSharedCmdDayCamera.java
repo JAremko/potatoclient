@@ -20,7 +20,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -63,7 +63,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -400,7 +400,7 @@ public final class JonSharedCmdDayCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -408,7 +408,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -420,7 +420,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -498,13 +498,13 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     float getTargetValue();
 
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     float getSpeed();
@@ -547,7 +547,7 @@ public final class JonSharedCmdDayCamera {
     public static final int TARGET_VALUE_FIELD_NUMBER = 1;
     private float targetValue_ = 0F;
     /**
-     * <code>float target_value = 1;</code>
+     * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The targetValue.
      */
     @java.lang.Override
@@ -558,7 +558,7 @@ public final class JonSharedCmdDayCamera {
     public static final int SPEED_FIELD_NUMBER = 2;
     private float speed_ = 0F;
     /**
-     * <code>float speed = 2;</code>
+     * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
      * @return The speed.
      */
     @java.lang.Override
@@ -920,7 +920,7 @@ public final class JonSharedCmdDayCamera {
 
       private float targetValue_ ;
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The targetValue.
        */
       @java.lang.Override
@@ -928,7 +928,7 @@ public final class JonSharedCmdDayCamera {
         return targetValue_;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The targetValue to set.
        * @return This builder for chaining.
        */
@@ -940,7 +940,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float target_value = 1;</code>
+       * <code>float target_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetValue() {
@@ -952,7 +952,7 @@ public final class JonSharedCmdDayCamera {
 
       private float speed_ ;
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return The speed.
        */
       @java.lang.Override
@@ -960,7 +960,7 @@ public final class JonSharedCmdDayCamera {
         return speed_;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The speed to set.
        * @return This builder for chaining.
        */
@@ -972,7 +972,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float speed = 2;</code>
+       * <code>float speed = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSpeed() {
@@ -1050,7 +1050,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float offset_value = 1;</code>
+     * <code>float offset_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The offsetValue.
      */
     float getOffsetValue();
@@ -1093,7 +1093,7 @@ public final class JonSharedCmdDayCamera {
     public static final int OFFSET_VALUE_FIELD_NUMBER = 1;
     private float offsetValue_ = 0F;
     /**
-     * <code>float offset_value = 1;</code>
+     * <code>float offset_value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The offsetValue.
      */
     @java.lang.Override
@@ -1430,7 +1430,7 @@ public final class JonSharedCmdDayCamera {
 
       private float offsetValue_ ;
       /**
-       * <code>float offset_value = 1;</code>
+       * <code>float offset_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The offsetValue.
        */
       @java.lang.Override
@@ -1438,7 +1438,7 @@ public final class JonSharedCmdDayCamera {
         return offsetValue_;
       }
       /**
-       * <code>float offset_value = 1;</code>
+       * <code>float offset_value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The offsetValue to set.
        * @return This builder for chaining.
        */
@@ -1450,7 +1450,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float offset_value = 1;</code>
+       * <code>float offset_value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearOffsetValue() {
@@ -1528,7 +1528,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -1571,7 +1571,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -1908,7 +1908,7 @@ public final class JonSharedCmdDayCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -1916,7 +1916,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -1928,7 +1928,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -2006,7 +2006,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -2049,7 +2049,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -2386,7 +2386,7 @@ public final class JonSharedCmdDayCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -2394,7 +2394,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -2406,7 +2406,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -8741,12 +8741,12 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     ser.JonSharedDataTypes.JonGuiDataFxModeDay getMode();
@@ -8790,14 +8790,14 @@ public final class JonSharedCmdDayCamera {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeDay getMode() {
@@ -9131,14 +9131,14 @@ public final class JonSharedCmdDayCamera {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -9149,7 +9149,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The mode.
        */
       @java.lang.Override
@@ -9158,7 +9158,7 @@ public final class JonSharedCmdDayCamera {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
@@ -9172,7 +9172,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeDay mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -9250,7 +9250,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -9293,7 +9293,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -9630,7 +9630,7 @@ public final class JonSharedCmdDayCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -9638,7 +9638,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -9650,7 +9650,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -14829,7 +14829,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -14872,7 +14872,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -15209,7 +15209,7 @@ public final class JonSharedCmdDayCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -15217,7 +15217,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -15229,7 +15229,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -16261,7 +16261,7 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     int getValue();
@@ -16304,7 +16304,7 @@ public final class JonSharedCmdDayCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -16639,7 +16639,7 @@ public final class JonSharedCmdDayCamera {
 
       private int value_ ;
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -16647,7 +16647,7 @@ public final class JonSharedCmdDayCamera {
         return value_;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -16659,7 +16659,7 @@ public final class JonSharedCmdDayCamera {
         return this;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -20465,69 +20465,75 @@ public final class JonSharedCmdDayCamera {
   static {
     java.lang.String[] descriptorData = {
       "\n\037jon_shared_cmd_day_camera.proto\022\rcmd.D" +
-      "ayCamera\032\033jon_shared_data_types.proto\"\031\n" +
-      "\010SetValue\022\r\n\005value\030\001 \001(\002\"+\n\004Move\022\024\n\014targ" +
-      "et_value\030\001 \001(\002\022\r\n\005speed\030\002 \001(\002\"\036\n\006Offset\022" +
-      "\024\n\014offset_value\030\001 \001(\002\"\036\n\rSetClaheLevel\022\r" +
-      "\n\005value\030\001 \001(\002\" \n\017ShiftClaheLevel\022\r\n\005valu" +
-      "e\030\001 \001(\002\"\325\006\n\004Root\022%\n\005focus\030\001 \001(\0132\024.cmd.Da" +
-      "yCamera.FocusH\000\022#\n\004zoom\030\002 \001(\0132\023.cmd.DayC" +
-      "amera.ZoomH\000\022*\n\010set_iris\030\003 \001(\0132\026.cmd.Day" +
-      "Camera.SetIrisH\000\022@\n\024set_infra_red_filter" +
-      "\030\004 \001(\0132 .cmd.DayCamera.SetInfraRedFilter" +
-      "H\000\022%\n\005start\030\005 \001(\0132\024.cmd.DayCamera.StartH" +
-      "\000\022#\n\004stop\030\006 \001(\0132\023.cmd.DayCamera.StopH\000\022%" +
-      "\n\005photo\030\007 \001(\0132\024.cmd.DayCamera.PhotoH\000\0223\n" +
-      "\rset_auto_iris\030\010 \001(\0132\032.cmd.DayCamera.Set" +
-      "AutoIrisH\000\022*\n\010halt_all\030\t \001(\0132\026.cmd.DayCa" +
-      "mera.HaltAllH\000\022/\n\013set_fx_mode\030\n \001(\0132\030.cm" +
-      "d.DayCamera.SetFxModeH\000\0221\n\014next_fx_mode\030" +
-      "\013 \001(\0132\031.cmd.DayCamera.NextFxModeH\000\0221\n\014pr" +
-      "ev_fx_mode\030\014 \001(\0132\031.cmd.DayCamera.PrevFxM" +
-      "odeH\000\022,\n\tget_meteo\030\r \001(\0132\027.cmd.DayCamera" +
-      ".GetMeteoH\000\0227\n\017refresh_fx_mode\030\016 \001(\0132\034.c" +
-      "md.DayCamera.RefreshFxModeH\000\022D\n\026set_digi" +
-      "tal_zoom_level\030\017 \001(\0132\".cmd.DayCamera.Set" +
-      "DigitalZoomLevelH\000\0227\n\017set_clahe_level\030\020 " +
-      "\001(\0132\034.cmd.DayCamera.SetClaheLevelH\000\022;\n\021s" +
-      "hift_clahe_level\030\021 \001(\0132\036.cmd.DayCamera.S" +
-      "hiftClaheLevelH\000B\005\n\003cmd\"\010\n\006GetPos\"\014\n\nNex" +
-      "tFxMode\"\014\n\nPrevFxMode\"\017\n\rRefreshFxMode\"\t" +
-      "\n\007HaltAll\"3\n\tSetFxMode\022&\n\004mode\030\001 \001(\0162\030.s" +
-      "er.JonGuiDataFxModeDay\"$\n\023SetDigitalZoom" +
-      "Level\022\r\n\005value\030\001 \001(\002\"\241\002\n\005Focus\022,\n\tset_va" +
-      "lue\030\001 \001(\0132\027.cmd.DayCamera.SetValueH\000\022#\n\004" +
-      "move\030\002 \001(\0132\023.cmd.DayCamera.MoveH\000\022#\n\004hal" +
-      "t\030\003 \001(\0132\023.cmd.DayCamera.HaltH\000\022\'\n\006offset" +
-      "\030\004 \001(\0132\025.cmd.DayCamera.OffsetH\000\0220\n\013reset" +
-      "_focus\030\005 \001(\0132\031.cmd.DayCamera.ResetFocusH" +
-      "\000\022>\n\023save_to_table_focus\030\006 \001(\0132\037.cmd.Day" +
-      "Camera.SaveToTableFocusH\000B\005\n\003cmd\"\325\003\n\004Zoo" +
-      "m\022,\n\tset_value\030\001 \001(\0132\027.cmd.DayCamera.Set" +
-      "ValueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.DayCamera.Mo" +
-      "veH\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCamera.HaltH" +
-      "\000\022@\n\024set_zoom_table_value\030\004 \001(\0132 .cmd.Da" +
-      "yCamera.SetZoomTableValueH\000\022>\n\023next_zoom" +
-      "_table_pos\030\005 \001(\0132\037.cmd.DayCamera.NextZoo" +
-      "mTablePosH\000\022>\n\023prev_zoom_table_pos\030\006 \001(\013" +
-      "2\037.cmd.DayCamera.PrevZoomTablePosH\000\022\'\n\006o" +
-      "ffset\030\007 \001(\0132\025.cmd.DayCamera.OffsetH\000\022.\n\n" +
-      "reset_zoom\030\010 \001(\0132\030.cmd.DayCamera.ResetZo" +
-      "omH\000\0223\n\rsave_to_table\030\t \001(\0132\032.cmd.DayCam" +
-      "era.SaveToTableH\000B\005\n\003cmd\"\022\n\020NextZoomTabl" +
-      "ePos\"\022\n\020PrevZoomTablePos\"\030\n\007SetIris\022\r\n\005v" +
-      "alue\030\001 \001(\002\"\"\n\021SetInfraRedFilter\022\r\n\005value" +
-      "\030\001 \001(\010\"\034\n\013SetAutoIris\022\r\n\005value\030\001 \001(\010\"\"\n\021" +
-      "SetZoomTableValue\022\r\n\005value\030\001 \001(\005\"\006\n\004Stop" +
-      "\"\007\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMeteo\"\013" +
-      "\n\tResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTable" +
-      "\"\022\n\020SaveToTableFocusBQZOgit-codecommit.e" +
-      "u-central-1.amazonaws.com/v1/repos/jetti" +
-      "son/jonp/cmd/day_camerab\006proto3"
+      "ayCamera\032\033buf/validate/validate.proto\032\033j" +
+      "on_shared_data_types.proto\"*\n\010SetValue\022\036" +
+      "\n\005value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\"M\n\004Move\022%" +
+      "\n\014target_value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022\036\n" +
+      "\005speed\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\"/\n\006Offset\022" +
+      "%\n\014offset_value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\200\277\"/" +
+      "\n\rSetClaheLevel\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n\035\000\000" +
+      "\200?-\000\000\000\000\"1\n\017ShiftClaheLevel\022\036\n\005value\030\001 \001(" +
+      "\002B\017\272H\014\n\n\035\000\000\200?-\000\000\200\277\"\334\006\n\004Root\022%\n\005focus\030\001 \001" +
+      "(\0132\024.cmd.DayCamera.FocusH\000\022#\n\004zoom\030\002 \001(\013" +
+      "2\023.cmd.DayCamera.ZoomH\000\022*\n\010set_iris\030\003 \001(" +
+      "\0132\026.cmd.DayCamera.SetIrisH\000\022@\n\024set_infra" +
+      "_red_filter\030\004 \001(\0132 .cmd.DayCamera.SetInf" +
+      "raRedFilterH\000\022%\n\005start\030\005 \001(\0132\024.cmd.DayCa" +
+      "mera.StartH\000\022#\n\004stop\030\006 \001(\0132\023.cmd.DayCame" +
+      "ra.StopH\000\022%\n\005photo\030\007 \001(\0132\024.cmd.DayCamera" +
+      ".PhotoH\000\0223\n\rset_auto_iris\030\010 \001(\0132\032.cmd.Da" +
+      "yCamera.SetAutoIrisH\000\022*\n\010halt_all\030\t \001(\0132" +
+      "\026.cmd.DayCamera.HaltAllH\000\022/\n\013set_fx_mode" +
+      "\030\n \001(\0132\030.cmd.DayCamera.SetFxModeH\000\0221\n\014ne" +
+      "xt_fx_mode\030\013 \001(\0132\031.cmd.DayCamera.NextFxM" +
+      "odeH\000\0221\n\014prev_fx_mode\030\014 \001(\0132\031.cmd.DayCam" +
+      "era.PrevFxModeH\000\022,\n\tget_meteo\030\r \001(\0132\027.cm" +
+      "d.DayCamera.GetMeteoH\000\0227\n\017refresh_fx_mod" +
+      "e\030\016 \001(\0132\034.cmd.DayCamera.RefreshFxModeH\000\022" +
+      "D\n\026set_digital_zoom_level\030\017 \001(\0132\".cmd.Da" +
+      "yCamera.SetDigitalZoomLevelH\000\0227\n\017set_cla" +
+      "he_level\030\020 \001(\0132\034.cmd.DayCamera.SetClaheL" +
+      "evelH\000\022;\n\021shift_clahe_level\030\021 \001(\0132\036.cmd." +
+      "DayCamera.ShiftClaheLevelH\000B\014\n\003cmd\022\005\272H\002\010" +
+      "\001\"\010\n\006GetPos\"\014\n\nNextFxMode\"\014\n\nPrevFxMode\"" +
+      "\017\n\rRefreshFxMode\"\t\n\007HaltAll\"?\n\tSetFxMode" +
+      "\0222\n\004mode\030\001 \001(\0162\030.ser.JonGuiDataFxModeDay" +
+      "B\n\272H\007\202\001\004\020\001 \000\"0\n\023SetDigitalZoomLevel\022\031\n\005v" +
+      "alue\030\001 \001(\002B\n\272H\007\n\005-\000\000\200?\"\250\002\n\005Focus\022,\n\tset_" +
+      "value\030\001 \001(\0132\027.cmd.DayCamera.SetValueH\000\022#" +
+      "\n\004move\030\002 \001(\0132\023.cmd.DayCamera.MoveH\000\022#\n\004h" +
+      "alt\030\003 \001(\0132\023.cmd.DayCamera.HaltH\000\022\'\n\006offs" +
+      "et\030\004 \001(\0132\025.cmd.DayCamera.OffsetH\000\0220\n\013res" +
+      "et_focus\030\005 \001(\0132\031.cmd.DayCamera.ResetFocu" +
+      "sH\000\022>\n\023save_to_table_focus\030\006 \001(\0132\037.cmd.D" +
+      "ayCamera.SaveToTableFocusH\000B\014\n\003cmd\022\005\272H\002\010" +
+      "\001\"\334\003\n\004Zoom\022,\n\tset_value\030\001 \001(\0132\027.cmd.DayC" +
+      "amera.SetValueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.Day" +
+      "Camera.MoveH\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCam" +
+      "era.HaltH\000\022@\n\024set_zoom_table_value\030\004 \001(\013" +
+      "2 .cmd.DayCamera.SetZoomTableValueH\000\022>\n\023" +
+      "next_zoom_table_pos\030\005 \001(\0132\037.cmd.DayCamer" +
+      "a.NextZoomTablePosH\000\022>\n\023prev_zoom_table_" +
+      "pos\030\006 \001(\0132\037.cmd.DayCamera.PrevZoomTableP" +
+      "osH\000\022\'\n\006offset\030\007 \001(\0132\025.cmd.DayCamera.Off" +
+      "setH\000\022.\n\nreset_zoom\030\010 \001(\0132\030.cmd.DayCamer" +
+      "a.ResetZoomH\000\0223\n\rsave_to_table\030\t \001(\0132\032.c" +
+      "md.DayCamera.SaveToTableH\000B\014\n\003cmd\022\005\272H\002\010\001" +
+      "\"\022\n\020NextZoomTablePos\"\022\n\020PrevZoomTablePos" +
+      "\")\n\007SetIris\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000" +
+      "\000\000\000\"\"\n\021SetInfraRedFilter\022\r\n\005value\030\001 \001(\010\"" +
+      "\034\n\013SetAutoIris\022\r\n\005value\030\001 \001(\010\"+\n\021SetZoom" +
+      "TableValue\022\026\n\005value\030\001 \001(\005B\007\272H\004\032\002(\000\"\006\n\004St" +
+      "op\"\007\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMeteo" +
+      "\"\013\n\tResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTab" +
+      "le\"\022\n\020SaveToTableFocusBQZOgit-codecommit" +
+      ".eu-central-1.amazonaws.com/v1/repos/jet" +
+      "tison/jonp/cmd/day_camerab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_DayCamera_SetValue_descriptor =
@@ -20710,6 +20716,13 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_DayCamera_SaveToTableFocus_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

@@ -9007,12 +9007,12 @@ public final class JonSharedCmdLrf {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     ser.JonSharedDataTypes.JonGuiDataLrfScanModes getMode();
@@ -9056,14 +9056,14 @@ public final class JonSharedCmdLrf {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+     * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataLrfScanModes getMode() {
@@ -9397,14 +9397,14 @@ public final class JonSharedCmdLrf {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -9415,7 +9415,7 @@ public final class JonSharedCmdLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The mode.
        */
       @java.lang.Override
@@ -9424,7 +9424,7 @@ public final class JonSharedCmdLrf {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataLrfScanModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
@@ -9438,7 +9438,7 @@ public final class JonSharedCmdLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrfScanModes mode = 1;</code>
+       * <code>.ser.JonGuiDataLrfScanModes mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -9997,39 +9997,41 @@ public final class JonSharedCmdLrf {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\030jon_shared_cmd_lrf.proto\022\007cmd.Lrf\032\033jon" +
-      "_shared_data_types.proto\"\312\005\n\004Root\022#\n\007mea" +
-      "sure\030\001 \001(\0132\020.cmd.Lrf.MeasureH\000\022\"\n\007scan_o" +
-      "n\030\002 \001(\0132\017.cmd.Lrf.ScanOnH\000\022$\n\010scan_off\030\003" +
-      " \001(\0132\020.cmd.Lrf.ScanOffH\000\022\037\n\005start\030\004 \001(\0132" +
-      "\016.cmd.Lrf.StartH\000\022\035\n\004stop\030\005 \001(\0132\r.cmd.Lr" +
-      "f.StopH\000\022=\n\025target_designator_off\030\006 \001(\0132" +
-      "\034.cmd.Lrf.TargetDesignatorOffH\000\022G\n\033targe" +
-      "t_designator_on_mode_a\030\007 \001(\0132 .cmd.Lrf.T" +
-      "argetDesignatorOnModeAH\000\022G\n\033target_desig" +
-      "nator_on_mode_b\030\010 \001(\0132 .cmd.Lrf.TargetDe" +
-      "signatorOnModeBH\000\0221\n\017enable_fog_mode\030\t \001" +
-      "(\0132\026.cmd.Lrf.EnableFogModeH\000\0223\n\020disable_" +
-      "fog_mode\030\n \001(\0132\027.cmd.Lrf.DisableFogModeH" +
-      "\000\022-\n\rset_scan_mode\030\013 \001(\0132\024.cmd.Lrf.SetSc" +
-      "anModeH\000\022*\n\013new_session\030\014 \001(\0132\023.cmd.Lrf." +
-      "NewSessionH\000\022&\n\tget_meteo\030\r \001(\0132\021.cmd.Lr" +
-      "f.GetMeteoH\000\022&\n\trefine_on\030\016 \001(\0132\021.cmd.Lr" +
-      "f.RefineOnH\000\022(\n\nrefine_off\030\017 \001(\0132\022.cmd.L" +
-      "rf.RefineOffH\000B\005\n\003cmd\"\n\n\010GetMeteo\"\007\n\005Sta" +
-      "rt\"\006\n\004Stop\"\t\n\007Measure\"\010\n\006ScanOn\"\t\n\007ScanO" +
-      "ff\"\013\n\tRefineOff\"\n\n\010RefineOn\"\025\n\023TargetDes" +
-      "ignatorOff\"\031\n\027TargetDesignatorOnModeA\"\031\n" +
-      "\027TargetDesignatorOnModeB\"\017\n\rEnableFogMod" +
-      "e\"\020\n\016DisableFogMode\"8\n\013SetScanMode\022)\n\004mo" +
-      "de\030\001 \001(\0162\033.ser.JonGuiDataLrfScanModes\"\014\n" +
-      "\nNewSessionBJZHgit-codecommit.eu-central" +
-      "-1.amazonaws.com/v1/repos/jettison/jonp/" +
-      "cmd/lrfb\006proto3"
+      "\n\030jon_shared_cmd_lrf.proto\022\007cmd.Lrf\032\033buf" +
+      "/validate/validate.proto\032\033jon_shared_dat" +
+      "a_types.proto\"\321\005\n\004Root\022#\n\007measure\030\001 \001(\0132" +
+      "\020.cmd.Lrf.MeasureH\000\022\"\n\007scan_on\030\002 \001(\0132\017.c" +
+      "md.Lrf.ScanOnH\000\022$\n\010scan_off\030\003 \001(\0132\020.cmd." +
+      "Lrf.ScanOffH\000\022\037\n\005start\030\004 \001(\0132\016.cmd.Lrf.S" +
+      "tartH\000\022\035\n\004stop\030\005 \001(\0132\r.cmd.Lrf.StopH\000\022=\n" +
+      "\025target_designator_off\030\006 \001(\0132\034.cmd.Lrf.T" +
+      "argetDesignatorOffH\000\022G\n\033target_designato" +
+      "r_on_mode_a\030\007 \001(\0132 .cmd.Lrf.TargetDesign" +
+      "atorOnModeAH\000\022G\n\033target_designator_on_mo" +
+      "de_b\030\010 \001(\0132 .cmd.Lrf.TargetDesignatorOnM" +
+      "odeBH\000\0221\n\017enable_fog_mode\030\t \001(\0132\026.cmd.Lr" +
+      "f.EnableFogModeH\000\0223\n\020disable_fog_mode\030\n " +
+      "\001(\0132\027.cmd.Lrf.DisableFogModeH\000\022-\n\rset_sc" +
+      "an_mode\030\013 \001(\0132\024.cmd.Lrf.SetScanModeH\000\022*\n" +
+      "\013new_session\030\014 \001(\0132\023.cmd.Lrf.NewSessionH" +
+      "\000\022&\n\tget_meteo\030\r \001(\0132\021.cmd.Lrf.GetMeteoH" +
+      "\000\022&\n\trefine_on\030\016 \001(\0132\021.cmd.Lrf.RefineOnH" +
+      "\000\022(\n\nrefine_off\030\017 \001(\0132\022.cmd.Lrf.RefineOf" +
+      "fH\000B\014\n\003cmd\022\005\272H\002\010\001\"\n\n\010GetMeteo\"\007\n\005Start\"\006" +
+      "\n\004Stop\"\t\n\007Measure\"\010\n\006ScanOn\"\t\n\007ScanOff\"\013" +
+      "\n\tRefineOff\"\n\n\010RefineOn\"\025\n\023TargetDesigna" +
+      "torOff\"\031\n\027TargetDesignatorOnModeA\"\031\n\027Tar" +
+      "getDesignatorOnModeB\"\017\n\rEnableFogMode\"\020\n" +
+      "\016DisableFogMode\"D\n\013SetScanMode\0225\n\004mode\030\001" +
+      " \001(\0162\033.ser.JonGuiDataLrfScanModesB\n\272H\007\202\001" +
+      "\004\020\001 \000\"\014\n\nNewSessionBJZHgit-codecommit.eu" +
+      "-central-1.amazonaws.com/v1/repos/jettis" +
+      "on/jonp/cmd/lrfb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_Lrf_Root_descriptor =
@@ -10128,6 +10130,13 @@ public final class JonSharedCmdLrf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Lrf_NewSession_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

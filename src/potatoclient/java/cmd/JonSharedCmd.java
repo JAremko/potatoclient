@@ -20,7 +20,7 @@ public final class JonSharedCmd {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint32 protocol_version = 1;</code>
+     * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
      * @return The protocolVersion.
      */
     int getProtocolVersion();
@@ -44,12 +44,12 @@ public final class JonSharedCmd {
     boolean getFromCvSubsystem();
 
     /**
-     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for clientType.
      */
     int getClientTypeValue();
     /**
-     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
      * @return The clientType.
      */
     ser.JonSharedDataTypes.JonGuiDataClientType getClientType();
@@ -388,7 +388,7 @@ public final class JonSharedCmd {
     public static final int PROTOCOL_VERSION_FIELD_NUMBER = 1;
     private int protocolVersion_ = 0;
     /**
-     * <code>uint32 protocol_version = 1;</code>
+     * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
      * @return The protocolVersion.
      */
     @java.lang.Override
@@ -432,14 +432,14 @@ public final class JonSharedCmd {
     public static final int CLIENT_TYPE_FIELD_NUMBER = 5;
     private int clientType_ = 0;
     /**
-     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for clientType.
      */
     @java.lang.Override public int getClientTypeValue() {
       return clientType_;
     }
     /**
-     * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+     * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
      * @return The clientType.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataClientType getClientType() {
@@ -1864,7 +1864,7 @@ public final class JonSharedCmd {
 
       private int protocolVersion_ ;
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @return The protocolVersion.
        */
       @java.lang.Override
@@ -1872,7 +1872,7 @@ public final class JonSharedCmd {
         return protocolVersion_;
       }
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The protocolVersion to set.
        * @return This builder for chaining.
        */
@@ -1884,7 +1884,7 @@ public final class JonSharedCmd {
         return this;
       }
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearProtocolVersion() {
@@ -1992,14 +1992,14 @@ public final class JonSharedCmd {
 
       private int clientType_ = 0;
       /**
-       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for clientType.
        */
       @java.lang.Override public int getClientTypeValue() {
         return clientType_;
       }
       /**
-       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for clientType to set.
        * @return This builder for chaining.
        */
@@ -2010,7 +2010,7 @@ public final class JonSharedCmd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
        * @return The clientType.
        */
       @java.lang.Override
@@ -2019,7 +2019,7 @@ public final class JonSharedCmd {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataClientType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The clientType to set.
        * @return This builder for chaining.
        */
@@ -2033,7 +2033,7 @@ public final class JonSharedCmd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataClientType client_type = 5;</code>
+       * <code>.ser.JonGuiDataClientType client_type = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearClientType() {
@@ -5456,41 +5456,44 @@ public final class JonSharedCmd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\024jon_shared_cmd.proto\022\003cmd\032\034jon_shared_" +
-      "cmd_compass.proto\032\030jon_shared_cmd_gps.pr" +
-      "oto\032\030jon_shared_cmd_lrf.proto\032\037jon_share" +
-      "d_cmd_day_camera.proto\032 jon_shared_cmd_h" +
-      "eat_camera.proto\032\033jon_shared_cmd_rotary." +
-      "proto\032\030jon_shared_cmd_osd.proto\032\036jon_sha" +
-      "red_cmd_lrf_align.proto\032\033jon_shared_cmd_" +
-      "system.proto\032\027jon_shared_cmd_cv.proto\032)j" +
-      "on_shared_cmd_day_cam_glass_heater.proto" +
-      "\032\031jon_shared_cmd_lira.proto\032\033jon_shared_" +
-      "data_types.proto\"\303\005\n\004Root\022\030\n\020protocol_ve" +
-      "rsion\030\001 \001(\r\022\022\n\nsession_id\030\002 \001(\r\022\021\n\timpor" +
-      "tant\030\003 \001(\010\022\031\n\021from_cv_subsystem\030\004 \001(\010\022.\n" +
-      "\013client_type\030\005 \001(\0162\031.ser.JonGuiDataClien" +
-      "tType\022)\n\nday_camera\030\024 \001(\0132\023.cmd.DayCamer" +
-      "a.RootH\000\022+\n\013heat_camera\030\025 \001(\0132\024.cmd.Heat" +
-      "Camera.RootH\000\022\034\n\003gps\030\026 \001(\0132\r.cmd.Gps.Roo" +
-      "tH\000\022$\n\007compass\030\027 \001(\0132\021.cmd.Compass.RootH" +
-      "\000\022\034\n\003lrf\030\030 \001(\0132\r.cmd.Lrf.RootH\000\022(\n\tlrf_c" +
-      "alib\030\031 \001(\0132\023.cmd.Lrf_calib.RootH\000\022*\n\006rot" +
-      "ary\030\032 \001(\0132\030.cmd.RotaryPlatform.RootH\000\022\034\n" +
-      "\003osd\030\033 \001(\0132\r.cmd.OSD.RootH\000\022\031\n\004ping\030\034 \001(" +
-      "\0132\t.cmd.PingH\000\022\031\n\004noop\030\035 \001(\0132\t.cmd.NoopH" +
-      "\000\022\035\n\006frozen\030\036 \001(\0132\013.cmd.FrozenH\000\022\"\n\006syst" +
-      "em\030\037 \001(\0132\020.cmd.System.RootH\000\022\032\n\002cv\030  \001(\013" +
-      "2\014.cmd.CV.RootH\000\022;\n\024day_cam_glass_heater" +
-      "\030! \001(\0132\033.cmd.DayCamGlassHeater.RootH\000\022\036\n" +
-      "\004lira\030\" \001(\0132\016.cmd.Lira.RootH\000B\t\n\007payload" +
-      "J\004\010\006\020\024\"\006\n\004Ping\"\006\n\004Noop\"\010\n\006FrozenBFZDgit-" +
-      "codecommit.eu-central-1.amazonaws.com/v1" +
-      "/repos/jettison/jonp/cmdb\006proto3"
+      "\n\024jon_shared_cmd.proto\022\003cmd\032\033buf/validat" +
+      "e/validate.proto\032\034jon_shared_cmd_compass" +
+      ".proto\032\030jon_shared_cmd_gps.proto\032\030jon_sh" +
+      "ared_cmd_lrf.proto\032\037jon_shared_cmd_day_c" +
+      "amera.proto\032 jon_shared_cmd_heat_camera." +
+      "proto\032\033jon_shared_cmd_rotary.proto\032\030jon_" +
+      "shared_cmd_osd.proto\032\036jon_shared_cmd_lrf" +
+      "_align.proto\032\033jon_shared_cmd_system.prot" +
+      "o\032\027jon_shared_cmd_cv.proto\032)jon_shared_c" +
+      "md_day_cam_glass_heater.proto\032\031jon_share" +
+      "d_cmd_lira.proto\032\033jon_shared_data_types." +
+      "proto\"\337\005\n\004Root\022!\n\020protocol_version\030\001 \001(\r" +
+      "B\007\272H\004*\002 \000\022\022\n\nsession_id\030\002 \001(\r\022\021\n\timporta" +
+      "nt\030\003 \001(\010\022\031\n\021from_cv_subsystem\030\004 \001(\010\022:\n\013c" +
+      "lient_type\030\005 \001(\0162\031.ser.JonGuiDataClientT" +
+      "ypeB\n\272H\007\202\001\004\020\001 \000\022)\n\nday_camera\030\024 \001(\0132\023.cm" +
+      "d.DayCamera.RootH\000\022+\n\013heat_camera\030\025 \001(\0132" +
+      "\024.cmd.HeatCamera.RootH\000\022\034\n\003gps\030\026 \001(\0132\r.c" +
+      "md.Gps.RootH\000\022$\n\007compass\030\027 \001(\0132\021.cmd.Com" +
+      "pass.RootH\000\022\034\n\003lrf\030\030 \001(\0132\r.cmd.Lrf.RootH" +
+      "\000\022(\n\tlrf_calib\030\031 \001(\0132\023.cmd.Lrf_calib.Roo" +
+      "tH\000\022*\n\006rotary\030\032 \001(\0132\030.cmd.RotaryPlatform" +
+      ".RootH\000\022\034\n\003osd\030\033 \001(\0132\r.cmd.OSD.RootH\000\022\031\n" +
+      "\004ping\030\034 \001(\0132\t.cmd.PingH\000\022\031\n\004noop\030\035 \001(\0132\t" +
+      ".cmd.NoopH\000\022\035\n\006frozen\030\036 \001(\0132\013.cmd.Frozen" +
+      "H\000\022\"\n\006system\030\037 \001(\0132\020.cmd.System.RootH\000\022\032" +
+      "\n\002cv\030  \001(\0132\014.cmd.CV.RootH\000\022;\n\024day_cam_gl" +
+      "ass_heater\030! \001(\0132\033.cmd.DayCamGlassHeater" +
+      ".RootH\000\022\036\n\004lira\030\" \001(\0132\016.cmd.Lira.RootH\000B" +
+      "\020\n\007payload\022\005\272H\002\010\001J\004\010\006\020\024\"\006\n\004Ping\"\006\n\004Noop\"" +
+      "\010\n\006FrozenBFZDgit-codecommit.eu-central-1" +
+      ".amazonaws.com/v1/repos/jettison/jonp/cm" +
+      "db\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           cmd.Compass.JonSharedCmdCompass.getDescriptor(),
           cmd.Gps.JonSharedCmdGps.getDescriptor(),
           cmd.Lrf.JonSharedCmdLrf.getDescriptor(),
@@ -5529,6 +5532,13 @@ public final class JonSharedCmd {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Frozen_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     cmd.Compass.JonSharedCmdCompass.getDescriptor();
     cmd.Gps.JonSharedCmdGps.getDescriptor();
     cmd.Lrf.JonSharedCmdLrf.getDescriptor();

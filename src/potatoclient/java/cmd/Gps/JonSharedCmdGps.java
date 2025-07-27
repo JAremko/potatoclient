@@ -3284,19 +3284,19 @@ public final class JonSharedCmdGps {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     float getLatitude();
 
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     float getLongitude();
 
     /**
-     * <code>float altitude = 3;</code>
+     * <code>float altitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The altitude.
      */
     float getAltitude();
@@ -3339,7 +3339,7 @@ public final class JonSharedCmdGps {
     public static final int LATITUDE_FIELD_NUMBER = 1;
     private float latitude_ = 0F;
     /**
-     * <code>float latitude = 1;</code>
+     * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
      * @return The latitude.
      */
     @java.lang.Override
@@ -3350,7 +3350,7 @@ public final class JonSharedCmdGps {
     public static final int LONGITUDE_FIELD_NUMBER = 2;
     private float longitude_ = 0F;
     /**
-     * <code>float longitude = 2;</code>
+     * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The longitude.
      */
     @java.lang.Override
@@ -3361,7 +3361,7 @@ public final class JonSharedCmdGps {
     public static final int ALTITUDE_FIELD_NUMBER = 3;
     private float altitude_ = 0F;
     /**
-     * <code>float altitude = 3;</code>
+     * <code>float altitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The altitude.
      */
     @java.lang.Override
@@ -3748,7 +3748,7 @@ public final class JonSharedCmdGps {
 
       private float latitude_ ;
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return The latitude.
        */
       @java.lang.Override
@@ -3756,7 +3756,7 @@ public final class JonSharedCmdGps {
         return latitude_;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The latitude to set.
        * @return This builder for chaining.
        */
@@ -3768,7 +3768,7 @@ public final class JonSharedCmdGps {
         return this;
       }
       /**
-       * <code>float latitude = 1;</code>
+       * <code>float latitude = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLatitude() {
@@ -3780,7 +3780,7 @@ public final class JonSharedCmdGps {
 
       private float longitude_ ;
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return The longitude.
        */
       @java.lang.Override
@@ -3788,7 +3788,7 @@ public final class JonSharedCmdGps {
         return longitude_;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The longitude to set.
        * @return This builder for chaining.
        */
@@ -3800,7 +3800,7 @@ public final class JonSharedCmdGps {
         return this;
       }
       /**
-       * <code>float longitude = 2;</code>
+       * <code>float longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLongitude() {
@@ -3812,7 +3812,7 @@ public final class JonSharedCmdGps {
 
       private float altitude_ ;
       /**
-       * <code>float altitude = 3;</code>
+       * <code>float altitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return The altitude.
        */
       @java.lang.Override
@@ -3820,7 +3820,7 @@ public final class JonSharedCmdGps {
         return altitude_;
       }
       /**
-       * <code>float altitude = 3;</code>
+       * <code>float altitude = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The altitude to set.
        * @return This builder for chaining.
        */
@@ -3832,7 +3832,7 @@ public final class JonSharedCmdGps {
         return this;
       }
       /**
-       * <code>float altitude = 3;</code>
+       * <code>float altitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearAltitude() {
@@ -3944,23 +3944,26 @@ public final class JonSharedCmdGps {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\030jon_shared_cmd_gps.proto\022\007cmd.Gps\"\362\001\n\004" +
-      "Root\022\037\n\005start\030\001 \001(\0132\016.cmd.Gps.StartH\000\022\035\n" +
-      "\004stop\030\002 \001(\0132\r.cmd.Gps.StopH\000\0229\n\023set_manu" +
-      "al_position\030\003 \001(\0132\032.cmd.Gps.SetManualPos" +
-      "itionH\000\022@\n\027set_use_manual_position\030\004 \001(\013" +
-      "2\035.cmd.Gps.SetUseManualPositionH\000\022&\n\tget" +
-      "_meteo\030\005 \001(\0132\021.cmd.Gps.GetMeteoH\000B\005\n\003cmd" +
-      "\"\007\n\005Start\"\006\n\004Stop\"\n\n\010GetMeteo\"$\n\024SetUseM" +
-      "anualPosition\022\014\n\004flag\030\001 \001(\010\"J\n\021SetManual" +
-      "Position\022\020\n\010latitude\030\001 \001(\002\022\021\n\tlongitude\030" +
-      "\002 \001(\002\022\020\n\010altitude\030\003 \001(\002BJZHgit-codecommi" +
-      "t.eu-central-1.amazonaws.com/v1/repos/je" +
-      "ttison/jonp/cmd/gpsb\006proto3"
+      "\n\030jon_shared_cmd_gps.proto\022\007cmd.Gps\032\033buf" +
+      "/validate/validate.proto\"\371\001\n\004Root\022\037\n\005sta" +
+      "rt\030\001 \001(\0132\016.cmd.Gps.StartH\000\022\035\n\004stop\030\002 \001(\013" +
+      "2\r.cmd.Gps.StopH\000\0229\n\023set_manual_position" +
+      "\030\003 \001(\0132\032.cmd.Gps.SetManualPositionH\000\022@\n\027" +
+      "set_use_manual_position\030\004 \001(\0132\035.cmd.Gps." +
+      "SetUseManualPositionH\000\022&\n\tget_meteo\030\005 \001(" +
+      "\0132\021.cmd.Gps.GetMeteoH\000B\014\n\003cmd\022\005\272H\002\010\001\"\007\n\005" +
+      "Start\"\006\n\004Stop\"\n\n\010GetMeteo\"$\n\024SetUseManua" +
+      "lPosition\022\014\n\004flag\030\001 \001(\010\"}\n\021SetManualPosi" +
+      "tion\022!\n\010latitude\030\001 \001(\002B\017\272H\014\n\n\035\000\000\264B-\000\000\264\302\022" +
+      "\"\n\tlongitude\030\002 \001(\002B\017\272H\014\n\n\025\000\0004C-\000\0004\303\022!\n\010a" +
+      "ltitude\030\003 \001(\002B\017\272H\014\n\n\035\000@\nF-\000\000\330\303BJZHgit-co" +
+      "decommit.eu-central-1.amazonaws.com/v1/r" +
+      "epos/jettison/jonp/cmd/gpsb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_Gps_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -3998,6 +4001,13 @@ public final class JonSharedCmdGps {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Gps_SetManualPosition_descriptor,
         new java.lang.String[] { "Latitude", "Longitude", "Altitude", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

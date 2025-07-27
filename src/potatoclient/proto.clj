@@ -12,9 +12,7 @@
   (:import (cmd JonSharedCmd$Root)
            (ser JonSharedData$JonGUIState)
            (build.buf.protovalidate Validator ValidatorFactory)
-           (build.buf.protovalidate ValidationResult)
            (build.buf.protovalidate.exceptions CompilationException)))
-
 
 ;; Buf.validate validator - only initialized in dev/test modes
 (def ^:private validator
@@ -39,19 +37,14 @@
           (let [violations (.getViolations result)]
             (throw (ex-info "Proto validation failed"
                             {:violations (map (fn [v]
-                                                {:field (.getFieldPath v)
-                                                 :constraint (.getConstraintId v)
-                                                 :message (.getMessage v)})
+                                                {:violation-info (.toString v)})
                                               violations)
                              :message-type (.. proto-msg getClass getSimpleName)})))))
-      (catch CompilationException e
+      (catch CompilationException _
         ;; Compilation errors mean the proto doesn't have validation metadata
         ;; This is expected for standard bindings, so we just log in dev
         (when (System/getProperty "potatoclient.proto.debug")
           (println "Debug: No validation metadata for" (.. proto-msg getClass getSimpleName)))
-        nil)
-      (catch Exception e
-        (println "Warning: Proto validation error:" (.getMessage e))
         nil)))
   proto-msg)
 
@@ -199,7 +192,6 @@
             :else
             (.setField builder field v)))))
     builder))
-
 
 ;; Serialization functions
 (>defn serialize-cmd

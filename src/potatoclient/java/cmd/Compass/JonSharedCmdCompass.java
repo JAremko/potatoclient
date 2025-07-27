@@ -6130,7 +6130,7 @@ public final class JonSharedCmdCompass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -6173,7 +6173,7 @@ public final class JonSharedCmdCompass {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -6510,7 +6510,7 @@ public final class JonSharedCmdCompass {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -6518,7 +6518,7 @@ public final class JonSharedCmdCompass {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -6530,7 +6530,7 @@ public final class JonSharedCmdCompass {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -6608,7 +6608,7 @@ public final class JonSharedCmdCompass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -6651,7 +6651,7 @@ public final class JonSharedCmdCompass {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -6988,7 +6988,7 @@ public final class JonSharedCmdCompass {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -6996,7 +6996,7 @@ public final class JonSharedCmdCompass {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -7008,7 +7008,7 @@ public final class JonSharedCmdCompass {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -7086,7 +7086,7 @@ public final class JonSharedCmdCompass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -7129,7 +7129,7 @@ public final class JonSharedCmdCompass {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -7466,7 +7466,7 @@ public final class JonSharedCmdCompass {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -7474,7 +7474,7 @@ public final class JonSharedCmdCompass {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -7486,7 +7486,7 @@ public final class JonSharedCmdCompass {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -8111,36 +8111,41 @@ public final class JonSharedCmdCompass {
   static {
     java.lang.String[] descriptorData = {
       "\n\034jon_shared_cmd_compass.proto\022\013cmd.Comp" +
-      "ass\"\230\005\n\004Root\022#\n\005start\030\001 \001(\0132\022.cmd.Compas" +
-      "s.StartH\000\022!\n\004stop\030\002 \001(\0132\021.cmd.Compass.St" +
-      "opH\000\022G\n\030set_magnetic_declination\030\003 \001(\0132#" +
-      ".cmd.Compass.SetMagneticDeclinationH\000\022F\n" +
-      "\030set_offset_angle_azimuth\030\004 \001(\0132\".cmd.Co" +
-      "mpass.SetOffsetAngleAzimuthH\000\022J\n\032set_off" +
-      "set_angle_elevation\030\005 \001(\0132$.cmd.Compass." +
-      "SetOffsetAngleElevationH\000\022D\n\027set_use_rot" +
-      "ary_position\030\006 \001(\0132!.cmd.Compass.SetUseR" +
-      "otaryPositionH\000\022?\n\024start_calibrate_long\030" +
-      "\007 \001(\0132\037.cmd.Compass.CalibrateStartLongH\000" +
-      "\022A\n\025start_calibrate_short\030\010 \001(\0132 .cmd.Co" +
-      "mpass.CalibrateStartShortH\000\0224\n\016calibrate" +
-      "_next\030\t \001(\0132\032.cmd.Compass.CalibrateNextH" +
-      "\000\0228\n\020calibrate_cencel\030\n \001(\0132\034.cmd.Compas" +
-      "s.CalibrateCencelH\000\022*\n\tget_meteo\030\013 \001(\0132\025" +
-      ".cmd.Compass.GetMeteoH\000B\005\n\003cmd\"\007\n\005Start\"" +
-      "\006\n\004Stop\"\006\n\004Next\"\024\n\022CalibrateStartLong\"\025\n" +
-      "\023CalibrateStartShort\"\017\n\rCalibrateNext\"\021\n" +
-      "\017CalibrateCencel\"\n\n\010GetMeteo\"\'\n\026SetMagne" +
-      "ticDeclination\022\r\n\005value\030\001 \001(\002\"&\n\025SetOffs" +
-      "etAngleAzimuth\022\r\n\005value\030\001 \001(\002\"(\n\027SetOffs" +
-      "etAngleElevation\022\r\n\005value\030\001 \001(\002\"$\n\024SetUs" +
-      "eRotaryPosition\022\014\n\004flag\030\001 \001(\010BNZLgit-cod" +
-      "ecommit.eu-central-1.amazonaws.com/v1/re" +
-      "pos/jettison/jonp/cmd/compassb\006proto3"
+      "ass\032\033buf/validate/validate.proto\"\237\005\n\004Roo" +
+      "t\022#\n\005start\030\001 \001(\0132\022.cmd.Compass.StartH\000\022!" +
+      "\n\004stop\030\002 \001(\0132\021.cmd.Compass.StopH\000\022G\n\030set" +
+      "_magnetic_declination\030\003 \001(\0132#.cmd.Compas" +
+      "s.SetMagneticDeclinationH\000\022F\n\030set_offset" +
+      "_angle_azimuth\030\004 \001(\0132\".cmd.Compass.SetOf" +
+      "fsetAngleAzimuthH\000\022J\n\032set_offset_angle_e" +
+      "levation\030\005 \001(\0132$.cmd.Compass.SetOffsetAn" +
+      "gleElevationH\000\022D\n\027set_use_rotary_positio" +
+      "n\030\006 \001(\0132!.cmd.Compass.SetUseRotaryPositi" +
+      "onH\000\022?\n\024start_calibrate_long\030\007 \001(\0132\037.cmd" +
+      ".Compass.CalibrateStartLongH\000\022A\n\025start_c" +
+      "alibrate_short\030\010 \001(\0132 .cmd.Compass.Calib" +
+      "rateStartShortH\000\0224\n\016calibrate_next\030\t \001(\013" +
+      "2\032.cmd.Compass.CalibrateNextH\000\0228\n\020calibr" +
+      "ate_cencel\030\n \001(\0132\034.cmd.Compass.Calibrate" +
+      "CencelH\000\022*\n\tget_meteo\030\013 \001(\0132\025.cmd.Compas" +
+      "s.GetMeteoH\000B\014\n\003cmd\022\005\272H\002\010\001\"\007\n\005Start\"\006\n\004S" +
+      "top\"\006\n\004Next\"\024\n\022CalibrateStartLong\"\025\n\023Cal" +
+      "ibrateStartShort\"\017\n\rCalibrateNext\"\021\n\017Cal" +
+      "ibrateCencel\"\n\n\010GetMeteo\"G\n\026SetMagneticD" +
+      "eclination\022-\n\005value\030\001 \001(\002B\036\272H\033\n\031\025\000\0004C-\000\000" +
+      "4\303M\000\000p\301M\000\000\000\000M\000\000pA\"F\n\025SetOffsetAngleAzimu" +
+      "th\022-\n\005value\030\001 \001(\002B\036\272H\033\n\031\025\000\0004C-\000\0004\303M\000\0004\302M" +
+      "\000\000\000\000M\000\0004B\"H\n\027SetOffsetAngleElevation\022-\n\005" +
+      "value\030\001 \001(\002B\036\272H\033\n\031\035\000\000\264B-\000\000\264\302M\000\000\360\301M\000\000\000\000M\000" +
+      "\000\360A\"$\n\024SetUseRotaryPosition\022\014\n\004flag\030\001 \001(" +
+      "\010BNZLgit-codecommit.eu-central-1.amazona" +
+      "ws.com/v1/repos/jettison/jonp/cmd/compas" +
+      "sb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_Compass_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -8220,6 +8225,13 @@ public final class JonSharedCmdCompass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Compass_SetUseRotaryPosition_descriptor,
         new java.lang.String[] { "Flag", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -20,203 +20,203 @@ public final class JonSharedData {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint32 protocol_version = 1;</code>
+     * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
      * @return The protocolVersion.
      */
     int getProtocolVersion();
 
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      * @return Whether the system field is set.
      */
     boolean hasSystem();
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      * @return The system.
      */
     ser.JonSharedDataSystem.JonGuiDataSystem getSystem();
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      * @return Whether the meteoInternal field is set.
      */
     boolean hasMeteoInternal();
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      * @return The meteoInternal.
      */
     ser.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal();
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      * @return Whether the lrf field is set.
      */
     boolean hasLrf();
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      * @return The lrf.
      */
     ser.JonSharedDataLrf.JonGuiDataLrf getLrf();
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      * @return Whether the time field is set.
      */
     boolean hasTime();
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      * @return The time.
      */
     ser.JonSharedDataTime.JonGuiDataTime getTime();
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      * @return Whether the gps field is set.
      */
     boolean hasGps();
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      * @return The gps.
      */
     ser.JonSharedDataGps.JonGuiDataGps getGps();
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      * @return Whether the compass field is set.
      */
     boolean hasCompass();
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      * @return The compass.
      */
     ser.JonSharedDataCompass.JonGuiDataCompass getCompass();
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      * @return Whether the rotary field is set.
      */
     boolean hasRotary();
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      * @return The rotary.
      */
     ser.JonSharedDataRotary.JonGuiDataRotary getRotary();
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return Whether the cameraDay field is set.
      */
     boolean hasCameraDay();
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return The cameraDay.
      */
     ser.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay();
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      * @return Whether the cameraHeat field is set.
      */
     boolean hasCameraHeat();
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      * @return The cameraHeat.
      */
     ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat();
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      * @return Whether the compassCalibration field is set.
      */
     boolean hasCompassCalibration();
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      * @return The compassCalibration.
      */
     ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration();
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      * @return Whether the recOsd field is set.
      */
     boolean hasRecOsd();
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      * @return The recOsd.
      */
     ser.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd();
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      * @return Whether the dayCamGlassHeater field is set.
      */
     boolean hasDayCamGlassHeater();
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      * @return The dayCamGlassHeater.
      */
     ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater();
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      * @return Whether the actualSpaceTime field is set.
      */
     boolean hasActualSpaceTime();
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      * @return The actualSpaceTime.
      */
     ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime();
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      */
     ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder();
   }
@@ -263,7 +263,7 @@ public final class JonSharedData {
     public static final int PROTOCOL_VERSION_FIELD_NUMBER = 1;
     private int protocolVersion_ = 0;
     /**
-     * <code>uint32 protocol_version = 1;</code>
+     * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
      * @return The protocolVersion.
      */
     @java.lang.Override
@@ -274,7 +274,7 @@ public final class JonSharedData {
     public static final int SYSTEM_FIELD_NUMBER = 2;
     private ser.JonSharedDataSystem.JonGuiDataSystem system_;
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      * @return Whether the system field is set.
      */
     @java.lang.Override
@@ -282,7 +282,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      * @return The system.
      */
     @java.lang.Override
@@ -290,7 +290,7 @@ public final class JonSharedData {
       return system_ == null ? ser.JonSharedDataSystem.JonGuiDataSystem.getDefaultInstance() : system_;
     }
     /**
-     * <code>.ser.JonGuiDataSystem system = 2;</code>
+     * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
@@ -300,7 +300,7 @@ public final class JonSharedData {
     public static final int METEO_INTERNAL_FIELD_NUMBER = 3;
     private ser.JonSharedDataTypes.JonGuiDataMeteo meteoInternal_;
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      * @return Whether the meteoInternal field is set.
      */
     @java.lang.Override
@@ -308,7 +308,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      * @return The meteoInternal.
      */
     @java.lang.Override
@@ -316,7 +316,7 @@ public final class JonSharedData {
       return meteoInternal_ == null ? ser.JonSharedDataTypes.JonGuiDataMeteo.getDefaultInstance() : meteoInternal_;
     }
     /**
-     * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+     * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
@@ -326,7 +326,7 @@ public final class JonSharedData {
     public static final int LRF_FIELD_NUMBER = 4;
     private ser.JonSharedDataLrf.JonGuiDataLrf lrf_;
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      * @return Whether the lrf field is set.
      */
     @java.lang.Override
@@ -334,7 +334,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      * @return The lrf.
      */
     @java.lang.Override
@@ -342,7 +342,7 @@ public final class JonSharedData {
       return lrf_ == null ? ser.JonSharedDataLrf.JonGuiDataLrf.getDefaultInstance() : lrf_;
     }
     /**
-     * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+     * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
@@ -352,7 +352,7 @@ public final class JonSharedData {
     public static final int TIME_FIELD_NUMBER = 5;
     private ser.JonSharedDataTime.JonGuiDataTime time_;
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      * @return Whether the time field is set.
      */
     @java.lang.Override
@@ -360,7 +360,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      * @return The time.
      */
     @java.lang.Override
@@ -368,7 +368,7 @@ public final class JonSharedData {
       return time_ == null ? ser.JonSharedDataTime.JonGuiDataTime.getDefaultInstance() : time_;
     }
     /**
-     * <code>.ser.JonGuiDataTime time = 5;</code>
+     * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
@@ -378,7 +378,7 @@ public final class JonSharedData {
     public static final int GPS_FIELD_NUMBER = 6;
     private ser.JonSharedDataGps.JonGuiDataGps gps_;
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      * @return Whether the gps field is set.
      */
     @java.lang.Override
@@ -386,7 +386,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      * @return The gps.
      */
     @java.lang.Override
@@ -394,7 +394,7 @@ public final class JonSharedData {
       return gps_ == null ? ser.JonSharedDataGps.JonGuiDataGps.getDefaultInstance() : gps_;
     }
     /**
-     * <code>.ser.JonGuiDataGps gps = 6;</code>
+     * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
@@ -404,7 +404,7 @@ public final class JonSharedData {
     public static final int COMPASS_FIELD_NUMBER = 7;
     private ser.JonSharedDataCompass.JonGuiDataCompass compass_;
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      * @return Whether the compass field is set.
      */
     @java.lang.Override
@@ -412,7 +412,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000020) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      * @return The compass.
      */
     @java.lang.Override
@@ -420,7 +420,7 @@ public final class JonSharedData {
       return compass_ == null ? ser.JonSharedDataCompass.JonGuiDataCompass.getDefaultInstance() : compass_;
     }
     /**
-     * <code>.ser.JonGuiDataCompass compass = 7;</code>
+     * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
@@ -430,7 +430,7 @@ public final class JonSharedData {
     public static final int ROTARY_FIELD_NUMBER = 8;
     private ser.JonSharedDataRotary.JonGuiDataRotary rotary_;
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      * @return Whether the rotary field is set.
      */
     @java.lang.Override
@@ -438,7 +438,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000040) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      * @return The rotary.
      */
     @java.lang.Override
@@ -446,7 +446,7 @@ public final class JonSharedData {
       return rotary_ == null ? ser.JonSharedDataRotary.JonGuiDataRotary.getDefaultInstance() : rotary_;
     }
     /**
-     * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+     * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
@@ -456,7 +456,7 @@ public final class JonSharedData {
     public static final int CAMERA_DAY_FIELD_NUMBER = 9;
     private ser.JonSharedDataCameraDay.JonGuiDataCameraDay cameraDay_;
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return Whether the cameraDay field is set.
      */
     @java.lang.Override
@@ -464,7 +464,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000080) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return The cameraDay.
      */
     @java.lang.Override
@@ -472,7 +472,7 @@ public final class JonSharedData {
       return cameraDay_ == null ? ser.JonSharedDataCameraDay.JonGuiDataCameraDay.getDefaultInstance() : cameraDay_;
     }
     /**
-     * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+     * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
@@ -482,7 +482,7 @@ public final class JonSharedData {
     public static final int CAMERA_HEAT_FIELD_NUMBER = 10;
     private ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat cameraHeat_;
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      * @return Whether the cameraHeat field is set.
      */
     @java.lang.Override
@@ -490,7 +490,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000100) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      * @return The cameraHeat.
      */
     @java.lang.Override
@@ -498,7 +498,7 @@ public final class JonSharedData {
       return cameraHeat_ == null ? ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.getDefaultInstance() : cameraHeat_;
     }
     /**
-     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+     * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
@@ -508,7 +508,7 @@ public final class JonSharedData {
     public static final int COMPASS_CALIBRATION_FIELD_NUMBER = 11;
     private ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration compassCalibration_;
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      * @return Whether the compassCalibration field is set.
      */
     @java.lang.Override
@@ -516,7 +516,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000200) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      * @return The compassCalibration.
      */
     @java.lang.Override
@@ -524,7 +524,7 @@ public final class JonSharedData {
       return compassCalibration_ == null ? ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.getDefaultInstance() : compassCalibration_;
     }
     /**
-     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+     * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
@@ -534,7 +534,7 @@ public final class JonSharedData {
     public static final int REC_OSD_FIELD_NUMBER = 12;
     private ser.JonSharedDataRecOsd.JonGuiDataRecOsd recOsd_;
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      * @return Whether the recOsd field is set.
      */
     @java.lang.Override
@@ -542,7 +542,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000400) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      * @return The recOsd.
      */
     @java.lang.Override
@@ -550,7 +550,7 @@ public final class JonSharedData {
       return recOsd_ == null ? ser.JonSharedDataRecOsd.JonGuiDataRecOsd.getDefaultInstance() : recOsd_;
     }
     /**
-     * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+     * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
@@ -560,7 +560,7 @@ public final class JonSharedData {
     public static final int DAY_CAM_GLASS_HEATER_FIELD_NUMBER = 13;
     private ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater dayCamGlassHeater_;
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      * @return Whether the dayCamGlassHeater field is set.
      */
     @java.lang.Override
@@ -568,7 +568,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00000800) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      * @return The dayCamGlassHeater.
      */
     @java.lang.Override
@@ -576,7 +576,7 @@ public final class JonSharedData {
       return dayCamGlassHeater_ == null ? ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.getDefaultInstance() : dayCamGlassHeater_;
     }
     /**
-     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+     * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
@@ -586,7 +586,7 @@ public final class JonSharedData {
     public static final int ACTUAL_SPACE_TIME_FIELD_NUMBER = 14;
     private ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime actualSpaceTime_;
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      * @return Whether the actualSpaceTime field is set.
      */
     @java.lang.Override
@@ -594,7 +594,7 @@ public final class JonSharedData {
       return ((bitField0_ & 0x00001000) != 0);
     }
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      * @return The actualSpaceTime.
      */
     @java.lang.Override
@@ -602,7 +602,7 @@ public final class JonSharedData {
       return actualSpaceTime_ == null ? ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.getDefaultInstance() : actualSpaceTime_;
     }
     /**
-     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+     * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
      */
     @java.lang.Override
     public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
@@ -1441,7 +1441,7 @@ public final class JonSharedData {
 
       private int protocolVersion_ ;
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @return The protocolVersion.
        */
       @java.lang.Override
@@ -1449,7 +1449,7 @@ public final class JonSharedData {
         return protocolVersion_;
       }
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The protocolVersion to set.
        * @return This builder for chaining.
        */
@@ -1461,7 +1461,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>uint32 protocol_version = 1;</code>
+       * <code>uint32 protocol_version = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearProtocolVersion() {
@@ -1475,14 +1475,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataSystem.JonGuiDataSystem, ser.JonSharedDataSystem.JonGuiDataSystem.Builder, ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder> systemBuilder_;
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        * @return Whether the system field is set.
        */
       public boolean hasSystem() {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        * @return The system.
        */
       public ser.JonSharedDataSystem.JonGuiDataSystem getSystem() {
@@ -1493,7 +1493,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setSystem(ser.JonSharedDataSystem.JonGuiDataSystem value) {
         if (systemBuilder_ == null) {
@@ -1509,7 +1509,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setSystem(
           ser.JonSharedDataSystem.JonGuiDataSystem.Builder builderForValue) {
@@ -1523,7 +1523,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeSystem(ser.JonSharedDataSystem.JonGuiDataSystem value) {
         if (systemBuilder_ == null) {
@@ -1544,7 +1544,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearSystem() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1557,7 +1557,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataSystem.JonGuiDataSystem.Builder getSystemBuilder() {
         bitField0_ |= 0x00000002;
@@ -1565,7 +1565,7 @@ public final class JonSharedData {
         return getSystemFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder getSystemOrBuilder() {
         if (systemBuilder_ != null) {
@@ -1576,7 +1576,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataSystem system = 2;</code>
+       * <code>.ser.JonGuiDataSystem system = 2 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataSystem.JonGuiDataSystem, ser.JonSharedDataSystem.JonGuiDataSystem.Builder, ser.JonSharedDataSystem.JonGuiDataSystemOrBuilder> 
@@ -1596,14 +1596,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataTypes.JonGuiDataMeteo, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder, ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> meteoInternalBuilder_;
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        * @return Whether the meteoInternal field is set.
        */
       public boolean hasMeteoInternal() {
         return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        * @return The meteoInternal.
        */
       public ser.JonSharedDataTypes.JonGuiDataMeteo getMeteoInternal() {
@@ -1614,7 +1614,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setMeteoInternal(ser.JonSharedDataTypes.JonGuiDataMeteo value) {
         if (meteoInternalBuilder_ == null) {
@@ -1630,7 +1630,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setMeteoInternal(
           ser.JonSharedDataTypes.JonGuiDataMeteo.Builder builderForValue) {
@@ -1644,7 +1644,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeMeteoInternal(ser.JonSharedDataTypes.JonGuiDataMeteo value) {
         if (meteoInternalBuilder_ == null) {
@@ -1665,7 +1665,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearMeteoInternal() {
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -1678,7 +1678,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataTypes.JonGuiDataMeteo.Builder getMeteoInternalBuilder() {
         bitField0_ |= 0x00000004;
@@ -1686,7 +1686,7 @@ public final class JonSharedData {
         return getMeteoInternalFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder getMeteoInternalOrBuilder() {
         if (meteoInternalBuilder_ != null) {
@@ -1697,7 +1697,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataMeteo meteo_internal = 3;</code>
+       * <code>.ser.JonGuiDataMeteo meteo_internal = 3 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataTypes.JonGuiDataMeteo, ser.JonSharedDataTypes.JonGuiDataMeteo.Builder, ser.JonSharedDataTypes.JonGuiDataMeteoOrBuilder> 
@@ -1717,14 +1717,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataLrf.JonGuiDataLrf, ser.JonSharedDataLrf.JonGuiDataLrf.Builder, ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder> lrfBuilder_;
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        * @return Whether the lrf field is set.
        */
       public boolean hasLrf() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        * @return The lrf.
        */
       public ser.JonSharedDataLrf.JonGuiDataLrf getLrf() {
@@ -1735,7 +1735,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setLrf(ser.JonSharedDataLrf.JonGuiDataLrf value) {
         if (lrfBuilder_ == null) {
@@ -1751,7 +1751,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setLrf(
           ser.JonSharedDataLrf.JonGuiDataLrf.Builder builderForValue) {
@@ -1765,7 +1765,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeLrf(ser.JonSharedDataLrf.JonGuiDataLrf value) {
         if (lrfBuilder_ == null) {
@@ -1786,7 +1786,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearLrf() {
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -1799,7 +1799,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataLrf.JonGuiDataLrf.Builder getLrfBuilder() {
         bitField0_ |= 0x00000008;
@@ -1807,7 +1807,7 @@ public final class JonSharedData {
         return getLrfFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder getLrfOrBuilder() {
         if (lrfBuilder_ != null) {
@@ -1818,7 +1818,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataLrf lrf = 4;</code>
+       * <code>.ser.JonGuiDataLrf lrf = 4 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataLrf.JonGuiDataLrf, ser.JonSharedDataLrf.JonGuiDataLrf.Builder, ser.JonSharedDataLrf.JonGuiDataLrfOrBuilder> 
@@ -1838,14 +1838,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataTime.JonGuiDataTime, ser.JonSharedDataTime.JonGuiDataTime.Builder, ser.JonSharedDataTime.JonGuiDataTimeOrBuilder> timeBuilder_;
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        * @return Whether the time field is set.
        */
       public boolean hasTime() {
         return ((bitField0_ & 0x00000010) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        * @return The time.
        */
       public ser.JonSharedDataTime.JonGuiDataTime getTime() {
@@ -1856,7 +1856,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setTime(ser.JonSharedDataTime.JonGuiDataTime value) {
         if (timeBuilder_ == null) {
@@ -1872,7 +1872,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setTime(
           ser.JonSharedDataTime.JonGuiDataTime.Builder builderForValue) {
@@ -1886,7 +1886,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeTime(ser.JonSharedDataTime.JonGuiDataTime value) {
         if (timeBuilder_ == null) {
@@ -1907,7 +1907,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearTime() {
         bitField0_ = (bitField0_ & ~0x00000010);
@@ -1920,7 +1920,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataTime.JonGuiDataTime.Builder getTimeBuilder() {
         bitField0_ |= 0x00000010;
@@ -1928,7 +1928,7 @@ public final class JonSharedData {
         return getTimeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataTime.JonGuiDataTimeOrBuilder getTimeOrBuilder() {
         if (timeBuilder_ != null) {
@@ -1939,7 +1939,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataTime time = 5;</code>
+       * <code>.ser.JonGuiDataTime time = 5 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataTime.JonGuiDataTime, ser.JonSharedDataTime.JonGuiDataTime.Builder, ser.JonSharedDataTime.JonGuiDataTimeOrBuilder> 
@@ -1959,14 +1959,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataGps.JonGuiDataGps, ser.JonSharedDataGps.JonGuiDataGps.Builder, ser.JonSharedDataGps.JonGuiDataGpsOrBuilder> gpsBuilder_;
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        * @return Whether the gps field is set.
        */
       public boolean hasGps() {
         return ((bitField0_ & 0x00000020) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        * @return The gps.
        */
       public ser.JonSharedDataGps.JonGuiDataGps getGps() {
@@ -1977,7 +1977,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setGps(ser.JonSharedDataGps.JonGuiDataGps value) {
         if (gpsBuilder_ == null) {
@@ -1993,7 +1993,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setGps(
           ser.JonSharedDataGps.JonGuiDataGps.Builder builderForValue) {
@@ -2007,7 +2007,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeGps(ser.JonSharedDataGps.JonGuiDataGps value) {
         if (gpsBuilder_ == null) {
@@ -2028,7 +2028,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearGps() {
         bitField0_ = (bitField0_ & ~0x00000020);
@@ -2041,7 +2041,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataGps.JonGuiDataGps.Builder getGpsBuilder() {
         bitField0_ |= 0x00000020;
@@ -2049,7 +2049,7 @@ public final class JonSharedData {
         return getGpsFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataGps.JonGuiDataGpsOrBuilder getGpsOrBuilder() {
         if (gpsBuilder_ != null) {
@@ -2060,7 +2060,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataGps gps = 6;</code>
+       * <code>.ser.JonGuiDataGps gps = 6 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataGps.JonGuiDataGps, ser.JonSharedDataGps.JonGuiDataGps.Builder, ser.JonSharedDataGps.JonGuiDataGpsOrBuilder> 
@@ -2080,14 +2080,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCompass.JonGuiDataCompass, ser.JonSharedDataCompass.JonGuiDataCompass.Builder, ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder> compassBuilder_;
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        * @return Whether the compass field is set.
        */
       public boolean hasCompass() {
         return ((bitField0_ & 0x00000040) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        * @return The compass.
        */
       public ser.JonSharedDataCompass.JonGuiDataCompass getCompass() {
@@ -2098,7 +2098,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCompass(ser.JonSharedDataCompass.JonGuiDataCompass value) {
         if (compassBuilder_ == null) {
@@ -2114,7 +2114,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCompass(
           ser.JonSharedDataCompass.JonGuiDataCompass.Builder builderForValue) {
@@ -2128,7 +2128,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeCompass(ser.JonSharedDataCompass.JonGuiDataCompass value) {
         if (compassBuilder_ == null) {
@@ -2149,7 +2149,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearCompass() {
         bitField0_ = (bitField0_ & ~0x00000040);
@@ -2162,7 +2162,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCompass.JonGuiDataCompass.Builder getCompassBuilder() {
         bitField0_ |= 0x00000040;
@@ -2170,7 +2170,7 @@ public final class JonSharedData {
         return getCompassFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder getCompassOrBuilder() {
         if (compassBuilder_ != null) {
@@ -2181,7 +2181,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompass compass = 7;</code>
+       * <code>.ser.JonGuiDataCompass compass = 7 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCompass.JonGuiDataCompass, ser.JonSharedDataCompass.JonGuiDataCompass.Builder, ser.JonSharedDataCompass.JonGuiDataCompassOrBuilder> 
@@ -2201,14 +2201,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataRotary.JonGuiDataRotary, ser.JonSharedDataRotary.JonGuiDataRotary.Builder, ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> rotaryBuilder_;
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        * @return Whether the rotary field is set.
        */
       public boolean hasRotary() {
         return ((bitField0_ & 0x00000080) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        * @return The rotary.
        */
       public ser.JonSharedDataRotary.JonGuiDataRotary getRotary() {
@@ -2219,7 +2219,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setRotary(ser.JonSharedDataRotary.JonGuiDataRotary value) {
         if (rotaryBuilder_ == null) {
@@ -2235,7 +2235,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setRotary(
           ser.JonSharedDataRotary.JonGuiDataRotary.Builder builderForValue) {
@@ -2249,7 +2249,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeRotary(ser.JonSharedDataRotary.JonGuiDataRotary value) {
         if (rotaryBuilder_ == null) {
@@ -2270,7 +2270,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearRotary() {
         bitField0_ = (bitField0_ & ~0x00000080);
@@ -2283,7 +2283,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataRotary.JonGuiDataRotary.Builder getRotaryBuilder() {
         bitField0_ |= 0x00000080;
@@ -2291,7 +2291,7 @@ public final class JonSharedData {
         return getRotaryFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder getRotaryOrBuilder() {
         if (rotaryBuilder_ != null) {
@@ -2302,7 +2302,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataRotary rotary = 8;</code>
+       * <code>.ser.JonGuiDataRotary rotary = 8 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataRotary.JonGuiDataRotary, ser.JonSharedDataRotary.JonGuiDataRotary.Builder, ser.JonSharedDataRotary.JonGuiDataRotaryOrBuilder> 
@@ -2322,14 +2322,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCameraDay.JonGuiDataCameraDay, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> cameraDayBuilder_;
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        * @return Whether the cameraDay field is set.
        */
       public boolean hasCameraDay() {
         return ((bitField0_ & 0x00000100) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        * @return The cameraDay.
        */
       public ser.JonSharedDataCameraDay.JonGuiDataCameraDay getCameraDay() {
@@ -2340,7 +2340,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCameraDay(ser.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
         if (cameraDayBuilder_ == null) {
@@ -2356,7 +2356,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCameraDay(
           ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder builderForValue) {
@@ -2370,7 +2370,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeCameraDay(ser.JonSharedDataCameraDay.JonGuiDataCameraDay value) {
         if (cameraDayBuilder_ == null) {
@@ -2391,7 +2391,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearCameraDay() {
         bitField0_ = (bitField0_ & ~0x00000100);
@@ -2404,7 +2404,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder getCameraDayBuilder() {
         bitField0_ |= 0x00000100;
@@ -2412,7 +2412,7 @@ public final class JonSharedData {
         return getCameraDayFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder getCameraDayOrBuilder() {
         if (cameraDayBuilder_ != null) {
@@ -2423,7 +2423,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraDay camera_day = 9;</code>
+       * <code>.ser.JonGuiDataCameraDay camera_day = 9 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCameraDay.JonGuiDataCameraDay, ser.JonSharedDataCameraDay.JonGuiDataCameraDay.Builder, ser.JonSharedDataCameraDay.JonGuiDataCameraDayOrBuilder> 
@@ -2443,14 +2443,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> cameraHeatBuilder_;
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        * @return Whether the cameraHeat field is set.
        */
       public boolean hasCameraHeat() {
         return ((bitField0_ & 0x00000200) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        * @return The cameraHeat.
        */
       public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat getCameraHeat() {
@@ -2461,7 +2461,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCameraHeat(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
         if (cameraHeatBuilder_ == null) {
@@ -2477,7 +2477,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCameraHeat(
           ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder builderForValue) {
@@ -2491,7 +2491,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeCameraHeat(ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat value) {
         if (cameraHeatBuilder_ == null) {
@@ -2512,7 +2512,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearCameraHeat() {
         bitField0_ = (bitField0_ & ~0x00000200);
@@ -2525,7 +2525,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder getCameraHeatBuilder() {
         bitField0_ |= 0x00000200;
@@ -2533,7 +2533,7 @@ public final class JonSharedData {
         return getCameraHeatFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder getCameraHeatOrBuilder() {
         if (cameraHeatBuilder_ != null) {
@@ -2544,7 +2544,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10;</code>
+       * <code>.ser.JonGuiDataCameraHeat camera_heat = 10 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeat.Builder, ser.JonSharedDataCameraHeat.JonGuiDataCameraHeatOrBuilder> 
@@ -2564,14 +2564,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> compassCalibrationBuilder_;
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        * @return Whether the compassCalibration field is set.
        */
       public boolean hasCompassCalibration() {
         return ((bitField0_ & 0x00000400) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        * @return The compassCalibration.
        */
       public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration getCompassCalibration() {
@@ -2582,7 +2582,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCompassCalibration(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
         if (compassCalibrationBuilder_ == null) {
@@ -2598,7 +2598,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setCompassCalibration(
           ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder builderForValue) {
@@ -2612,7 +2612,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeCompassCalibration(ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration value) {
         if (compassCalibrationBuilder_ == null) {
@@ -2633,7 +2633,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearCompassCalibration() {
         bitField0_ = (bitField0_ & ~0x00000400);
@@ -2646,7 +2646,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder getCompassCalibrationBuilder() {
         bitField0_ |= 0x00000400;
@@ -2654,7 +2654,7 @@ public final class JonSharedData {
         return getCompassCalibrationFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder getCompassCalibrationOrBuilder() {
         if (compassCalibrationBuilder_ != null) {
@@ -2665,7 +2665,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11;</code>
+       * <code>.ser.JonGuiDataCompassCalibration compass_calibration = 11 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibration.Builder, ser.JonSharedDataCompassCalibration.JonGuiDataCompassCalibrationOrBuilder> 
@@ -2685,14 +2685,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataRecOsd.JonGuiDataRecOsd, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> recOsdBuilder_;
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        * @return Whether the recOsd field is set.
        */
       public boolean hasRecOsd() {
         return ((bitField0_ & 0x00000800) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        * @return The recOsd.
        */
       public ser.JonSharedDataRecOsd.JonGuiDataRecOsd getRecOsd() {
@@ -2703,7 +2703,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setRecOsd(ser.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
         if (recOsdBuilder_ == null) {
@@ -2719,7 +2719,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setRecOsd(
           ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder builderForValue) {
@@ -2733,7 +2733,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeRecOsd(ser.JonSharedDataRecOsd.JonGuiDataRecOsd value) {
         if (recOsdBuilder_ == null) {
@@ -2754,7 +2754,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearRecOsd() {
         bitField0_ = (bitField0_ & ~0x00000800);
@@ -2767,7 +2767,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder getRecOsdBuilder() {
         bitField0_ |= 0x00000800;
@@ -2775,7 +2775,7 @@ public final class JonSharedData {
         return getRecOsdFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder getRecOsdOrBuilder() {
         if (recOsdBuilder_ != null) {
@@ -2786,7 +2786,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataRecOsd rec_osd = 12;</code>
+       * <code>.ser.JonGuiDataRecOsd rec_osd = 12 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataRecOsd.JonGuiDataRecOsd, ser.JonSharedDataRecOsd.JonGuiDataRecOsd.Builder, ser.JonSharedDataRecOsd.JonGuiDataRecOsdOrBuilder> 
@@ -2806,14 +2806,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> dayCamGlassHeaterBuilder_;
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        * @return Whether the dayCamGlassHeater field is set.
        */
       public boolean hasDayCamGlassHeater() {
         return ((bitField0_ & 0x00001000) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        * @return The dayCamGlassHeater.
        */
       public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater getDayCamGlassHeater() {
@@ -2824,7 +2824,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setDayCamGlassHeater(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
         if (dayCamGlassHeaterBuilder_ == null) {
@@ -2840,7 +2840,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setDayCamGlassHeater(
           ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder builderForValue) {
@@ -2854,7 +2854,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeDayCamGlassHeater(ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater value) {
         if (dayCamGlassHeaterBuilder_ == null) {
@@ -2875,7 +2875,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearDayCamGlassHeater() {
         bitField0_ = (bitField0_ & ~0x00001000);
@@ -2888,7 +2888,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder getDayCamGlassHeaterBuilder() {
         bitField0_ |= 0x00001000;
@@ -2896,7 +2896,7 @@ public final class JonSharedData {
         return getDayCamGlassHeaterFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder getDayCamGlassHeaterOrBuilder() {
         if (dayCamGlassHeaterBuilder_ != null) {
@@ -2907,7 +2907,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13;</code>
+       * <code>.ser.JonGuiDataDayCamGlassHeater day_cam_glass_heater = 13 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeater.Builder, ser.JonSharedDataDayCamGlassHeater.JonGuiDataDayCamGlassHeaterOrBuilder> 
@@ -2927,14 +2927,14 @@ public final class JonSharedData {
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> actualSpaceTimeBuilder_;
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        * @return Whether the actualSpaceTime field is set.
        */
       public boolean hasActualSpaceTime() {
         return ((bitField0_ & 0x00002000) != 0);
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        * @return The actualSpaceTime.
        */
       public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime getActualSpaceTime() {
@@ -2945,7 +2945,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setActualSpaceTime(ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
         if (actualSpaceTimeBuilder_ == null) {
@@ -2961,7 +2961,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public Builder setActualSpaceTime(
           ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder builderForValue) {
@@ -2975,7 +2975,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public Builder mergeActualSpaceTime(ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime value) {
         if (actualSpaceTimeBuilder_ == null) {
@@ -2996,7 +2996,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public Builder clearActualSpaceTime() {
         bitField0_ = (bitField0_ & ~0x00002000);
@@ -3009,7 +3009,7 @@ public final class JonSharedData {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder getActualSpaceTimeBuilder() {
         bitField0_ |= 0x00002000;
@@ -3017,7 +3017,7 @@ public final class JonSharedData {
         return getActualSpaceTimeFieldBuilder().getBuilder();
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       public ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder getActualSpaceTimeOrBuilder() {
         if (actualSpaceTimeBuilder_ != null) {
@@ -3028,7 +3028,7 @@ public final class JonSharedData {
         }
       }
       /**
-       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14;</code>
+       * <code>.ser.JonGuiDataActualSpaceTime actual_space_time = 14 [(.buf.validate.field) = { ... }</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTime.Builder, ser.JonSharedDataActualSpaceTime.JonGuiDataActualSpaceTimeOrBuilder> 
@@ -3121,40 +3121,44 @@ public final class JonSharedData {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\025jon_shared_data.proto\022\003ser\032\033jon_shared" +
-      "_data_types.proto\032\032jon_shared_data_time." +
-      "proto\032\034jon_shared_data_system.proto\032\031jon" +
-      "_shared_data_lrf.proto\032\031jon_shared_data_" +
-      "gps.proto\032\035jon_shared_data_compass.proto" +
-      "\032)jon_shared_data_compass_calibration.pr" +
-      "oto\032\034jon_shared_data_rotary.proto\032 jon_s" +
-      "hared_data_camera_day.proto\032!jon_shared_" +
-      "data_camera_heat.proto\032\035jon_shared_data_" +
-      "rec_osd.proto\032*jon_shared_data_day_cam_g" +
-      "lass_heater.proto\032\'jon_shared_data_actua" +
-      "l_space_time.proto\"\362\004\n\013JonGUIState\022\030\n\020pr" +
-      "otocol_version\030\001 \001(\r\022%\n\006system\030\002 \001(\0132\025.s" +
-      "er.JonGuiDataSystem\022,\n\016meteo_internal\030\003 " +
-      "\001(\0132\024.ser.JonGuiDataMeteo\022\037\n\003lrf\030\004 \001(\0132\022" +
-      ".ser.JonGuiDataLrf\022!\n\004time\030\005 \001(\0132\023.ser.J" +
-      "onGuiDataTime\022\037\n\003gps\030\006 \001(\0132\022.ser.JonGuiD" +
-      "ataGps\022\'\n\007compass\030\007 \001(\0132\026.ser.JonGuiData" +
-      "Compass\022%\n\006rotary\030\010 \001(\0132\025.ser.JonGuiData" +
-      "Rotary\022,\n\ncamera_day\030\t \001(\0132\030.ser.JonGuiD" +
-      "ataCameraDay\022.\n\013camera_heat\030\n \001(\0132\031.ser." +
-      "JonGuiDataCameraHeat\022>\n\023compass_calibrat" +
-      "ion\030\013 \001(\0132!.ser.JonGuiDataCompassCalibra" +
-      "tion\022&\n\007rec_osd\030\014 \001(\0132\025.ser.JonGuiDataRe" +
-      "cOsd\022>\n\024day_cam_glass_heater\030\r \001(\0132 .ser" +
-      ".JonGuiDataDayCamGlassHeater\0229\n\021actual_s" +
-      "pace_time\030\016 \001(\0132\036.ser.JonGuiDataActualSp" +
-      "aceTimeBGZEgit-codecommit.eu-central-1.a" +
-      "mazonaws.com/v1/repos/jettison/jonp/data" +
-      "b\006proto3"
+      "\n\025jon_shared_data.proto\022\003ser\032\033buf/valida" +
+      "te/validate.proto\032\033jon_shared_data_types" +
+      ".proto\032\032jon_shared_data_time.proto\032\034jon_" +
+      "shared_data_system.proto\032\031jon_shared_dat" +
+      "a_lrf.proto\032\031jon_shared_data_gps.proto\032\035" +
+      "jon_shared_data_compass.proto\032)jon_share" +
+      "d_data_compass_calibration.proto\032\034jon_sh" +
+      "ared_data_rotary.proto\032 jon_shared_data_" +
+      "camera_day.proto\032!jon_shared_data_camera" +
+      "_heat.proto\032\035jon_shared_data_rec_osd.pro" +
+      "to\032*jon_shared_data_day_cam_glass_heater" +
+      ".proto\032\'jon_shared_data_actual_space_tim" +
+      "e.proto\"\343\005\n\013JonGUIState\022!\n\020protocol_vers" +
+      "ion\030\001 \001(\rB\007\272H\004*\002 \000\022-\n\006system\030\002 \001(\0132\025.ser" +
+      ".JonGuiDataSystemB\006\272H\003\310\001\001\0224\n\016meteo_inter" +
+      "nal\030\003 \001(\0132\024.ser.JonGuiDataMeteoB\006\272H\003\310\001\001\022" +
+      "\'\n\003lrf\030\004 \001(\0132\022.ser.JonGuiDataLrfB\006\272H\003\310\001\001" +
+      "\022)\n\004time\030\005 \001(\0132\023.ser.JonGuiDataTimeB\006\272H\003" +
+      "\310\001\001\022\'\n\003gps\030\006 \001(\0132\022.ser.JonGuiDataGpsB\006\272H" +
+      "\003\310\001\001\022/\n\007compass\030\007 \001(\0132\026.ser.JonGuiDataCo" +
+      "mpassB\006\272H\003\310\001\001\022-\n\006rotary\030\010 \001(\0132\025.ser.JonG" +
+      "uiDataRotaryB\006\272H\003\310\001\001\0224\n\ncamera_day\030\t \001(\013" +
+      "2\030.ser.JonGuiDataCameraDayB\006\272H\003\310\001\001\0226\n\013ca" +
+      "mera_heat\030\n \001(\0132\031.ser.JonGuiDataCameraHe" +
+      "atB\006\272H\003\310\001\001\022F\n\023compass_calibration\030\013 \001(\0132" +
+      "!.ser.JonGuiDataCompassCalibrationB\006\272H\003\310" +
+      "\001\001\022.\n\007rec_osd\030\014 \001(\0132\025.ser.JonGuiDataRecO" +
+      "sdB\006\272H\003\310\001\001\022F\n\024day_cam_glass_heater\030\r \001(\013" +
+      "2 .ser.JonGuiDataDayCamGlassHeaterB\006\272H\003\310" +
+      "\001\001\022A\n\021actual_space_time\030\016 \001(\0132\036.ser.JonG" +
+      "uiDataActualSpaceTimeB\006\272H\003\310\001\001BGZEgit-cod" +
+      "ecommit.eu-central-1.amazonaws.com/v1/re" +
+      "pos/jettison/jonp/datab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
           ser.JonSharedDataTime.getDescriptor(),
           ser.JonSharedDataSystem.getDescriptor(),
@@ -3175,6 +3179,12 @@ public final class JonSharedData {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGUIState_descriptor,
         new java.lang.String[] { "ProtocolVersion", "System", "MeteoInternal", "Lrf", "Time", "Gps", "Compass", "Rotary", "CameraDay", "CameraHeat", "CompassCalibration", "RecOsd", "DayCamGlassHeater", "ActualSpaceTime", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
     ser.JonSharedDataTime.getDescriptor();
     ser.JonSharedDataSystem.getDescriptor();

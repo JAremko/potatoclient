@@ -20,12 +20,12 @@ public final class JonSharedDataRecOsd {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for screen.
      */
     int getScreenValue();
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
      * @return The screen.
      */
     ser.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen();
@@ -105,14 +105,14 @@ public final class JonSharedDataRecOsd {
     public static final int SCREEN_FIELD_NUMBER = 1;
     private int screen_ = 0;
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for screen.
      */
     @java.lang.Override public int getScreenValue() {
       return screen_;
     }
     /**
-     * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+     * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
      * @return The screen.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataRecOsdScreen getScreen() {
@@ -652,14 +652,14 @@ public final class JonSharedDataRecOsd {
 
       private int screen_ = 0;
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for screen.
        */
       @java.lang.Override public int getScreenValue() {
         return screen_;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for screen to set.
        * @return This builder for chaining.
        */
@@ -670,7 +670,7 @@ public final class JonSharedDataRecOsd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
        * @return The screen.
        */
       @java.lang.Override
@@ -679,7 +679,7 @@ public final class JonSharedDataRecOsd {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataRecOsdScreen.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The screen to set.
        * @return This builder for chaining.
        */
@@ -693,7 +693,7 @@ public final class JonSharedDataRecOsd {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataRecOsdScreen screen = 1;</code>
+       * <code>.ser.JonGuiDataRecOsdScreen screen = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearScreen() {
@@ -972,21 +972,23 @@ public final class JonSharedDataRecOsd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\035jon_shared_data_rec_osd.proto\022\003ser\032\033jo" +
-      "n_shared_data_types.proto\"\224\002\n\020JonGuiData" +
-      "RecOsd\022+\n\006screen\030\001 \001(\0162\033.ser.JonGuiDataR" +
-      "ecOsdScreen\022\030\n\020heat_osd_enabled\030\002 \001(\010\022\027\n" +
-      "\017day_osd_enabled\030\003 \001(\010\022(\n heat_crosshair" +
-      "_offset_horizontal\030\004 \001(\005\022&\n\036heat_crossha" +
-      "ir_offset_vertical\030\005 \001(\005\022\'\n\037day_crosshai" +
-      "r_offset_horizontal\030\006 \001(\005\022%\n\035day_crossha" +
-      "ir_offset_vertical\030\007 \001(\005BOZMgit-codecomm" +
-      "it.eu-central-1.amazonaws.com/v1/repos/j" +
-      "ettison/jonp/data/rec_osdb\006proto3"
+      "\n\035jon_shared_data_rec_osd.proto\022\003ser\032\033bu" +
+      "f/validate/validate.proto\032\033jon_shared_da" +
+      "ta_types.proto\"\240\002\n\020JonGuiDataRecOsd\0227\n\006s" +
+      "creen\030\001 \001(\0162\033.ser.JonGuiDataRecOsdScreen" +
+      "B\n\272H\007\202\001\004\020\001 \000\022\030\n\020heat_osd_enabled\030\002 \001(\010\022\027" +
+      "\n\017day_osd_enabled\030\003 \001(\010\022(\n heat_crosshai" +
+      "r_offset_horizontal\030\004 \001(\005\022&\n\036heat_crossh" +
+      "air_offset_vertical\030\005 \001(\005\022\'\n\037day_crossha" +
+      "ir_offset_horizontal\030\006 \001(\005\022%\n\035day_crossh" +
+      "air_offset_vertical\030\007 \001(\005BOZMgit-codecom" +
+      "mit.eu-central-1.amazonaws.com/v1/repos/" +
+      "jettison/jonp/data/rec_osdb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataRecOsd_descriptor =
@@ -995,6 +997,12 @@ public final class JonSharedDataRecOsd {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataRecOsd_descriptor,
         new java.lang.String[] { "Screen", "HeatOsdEnabled", "DayOsdEnabled", "HeatCrosshairOffsetHorizontal", "HeatCrosshairOffsetVertical", "DayCrosshairOffsetHorizontal", "DayCrosshairOffsetVertical", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

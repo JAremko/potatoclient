@@ -20,29 +20,29 @@ public final class JonSharedDataCameraHeat {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float zoom_pos = 1;</code>
+     * <code>float zoom_pos = 1 [(.buf.validate.field) = { ... }</code>
      * @return The zoomPos.
      */
     float getZoomPos();
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for agcMode.
      */
     int getAgcModeValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
      * @return The agcMode.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode();
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for filter.
      */
     int getFilterValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
      * @return The filter.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter();
@@ -54,19 +54,19 @@ public final class JonSharedDataCameraHeat {
     boolean getAutoFocus();
 
     /**
-     * <code>int32 zoom_table_pos = 5;</code>
+     * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePos.
      */
     int getZoomTablePos();
 
     /**
-     * <code>int32 zoom_table_pos_max = 6;</code>
+     * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePosMax.
      */
     int getZoomTablePosMax();
 
     /**
-     * <code>int32 dde_level = 7;</code>
+     * <code>int32 dde_level = 7 [(.buf.validate.field) = { ... }</code>
      * @return The ddeLevel.
      */
     int getDdeLevel();
@@ -78,24 +78,24 @@ public final class JonSharedDataCameraHeat {
     boolean getDdeEnabled();
 
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     int getFxModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
      * @return The fxMode.
      */
     ser.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode();
 
     /**
-     * <code>float digital_zoom_level = 10;</code>
+     * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
      * @return The digitalZoomLevel.
      */
     float getDigitalZoomLevel();
 
     /**
-     * <code>float clahe_level = 11;</code>
+     * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
      * @return The claheLevel.
      */
     float getClaheLevel();
@@ -141,7 +141,7 @@ public final class JonSharedDataCameraHeat {
     public static final int ZOOM_POS_FIELD_NUMBER = 1;
     private float zoomPos_ = 0F;
     /**
-     * <code>float zoom_pos = 1;</code>
+     * <code>float zoom_pos = 1 [(.buf.validate.field) = { ... }</code>
      * @return The zoomPos.
      */
     @java.lang.Override
@@ -152,14 +152,14 @@ public final class JonSharedDataCameraHeat {
     public static final int AGC_MODE_FIELD_NUMBER = 2;
     private int agcMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for agcMode.
      */
     @java.lang.Override public int getAgcModeValue() {
       return agcMode_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
      * @return The agcMode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getAgcMode() {
@@ -170,14 +170,14 @@ public final class JonSharedDataCameraHeat {
     public static final int FILTER_FIELD_NUMBER = 3;
     private int filter_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for filter.
      */
     @java.lang.Override public int getFilterValue() {
       return filter_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
      * @return The filter.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getFilter() {
@@ -199,7 +199,7 @@ public final class JonSharedDataCameraHeat {
     public static final int ZOOM_TABLE_POS_FIELD_NUMBER = 5;
     private int zoomTablePos_ = 0;
     /**
-     * <code>int32 zoom_table_pos = 5;</code>
+     * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePos.
      */
     @java.lang.Override
@@ -210,7 +210,7 @@ public final class JonSharedDataCameraHeat {
     public static final int ZOOM_TABLE_POS_MAX_FIELD_NUMBER = 6;
     private int zoomTablePosMax_ = 0;
     /**
-     * <code>int32 zoom_table_pos_max = 6;</code>
+     * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePosMax.
      */
     @java.lang.Override
@@ -221,7 +221,7 @@ public final class JonSharedDataCameraHeat {
     public static final int DDE_LEVEL_FIELD_NUMBER = 7;
     private int ddeLevel_ = 0;
     /**
-     * <code>int32 dde_level = 7;</code>
+     * <code>int32 dde_level = 7 [(.buf.validate.field) = { ... }</code>
      * @return The ddeLevel.
      */
     @java.lang.Override
@@ -243,14 +243,14 @@ public final class JonSharedDataCameraHeat {
     public static final int FX_MODE_FIELD_NUMBER = 9;
     private int fxMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     @java.lang.Override public int getFxModeValue() {
       return fxMode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+     * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
      * @return The fxMode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeHeat getFxMode() {
@@ -261,7 +261,7 @@ public final class JonSharedDataCameraHeat {
     public static final int DIGITAL_ZOOM_LEVEL_FIELD_NUMBER = 10;
     private float digitalZoomLevel_ = 0F;
     /**
-     * <code>float digital_zoom_level = 10;</code>
+     * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
      * @return The digitalZoomLevel.
      */
     @java.lang.Override
@@ -272,7 +272,7 @@ public final class JonSharedDataCameraHeat {
     public static final int CLAHE_LEVEL_FIELD_NUMBER = 11;
     private float claheLevel_ = 0F;
     /**
-     * <code>float clahe_level = 11;</code>
+     * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
      * @return The claheLevel.
      */
     @java.lang.Override
@@ -842,7 +842,7 @@ public final class JonSharedDataCameraHeat {
 
       private float zoomPos_ ;
       /**
-       * <code>float zoom_pos = 1;</code>
+       * <code>float zoom_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @return The zoomPos.
        */
       @java.lang.Override
@@ -850,7 +850,7 @@ public final class JonSharedDataCameraHeat {
         return zoomPos_;
       }
       /**
-       * <code>float zoom_pos = 1;</code>
+       * <code>float zoom_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomPos to set.
        * @return This builder for chaining.
        */
@@ -862,7 +862,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>float zoom_pos = 1;</code>
+       * <code>float zoom_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomPos() {
@@ -874,14 +874,14 @@ public final class JonSharedDataCameraHeat {
 
       private int agcMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for agcMode.
        */
       @java.lang.Override public int getAgcModeValue() {
         return agcMode_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for agcMode to set.
        * @return This builder for chaining.
        */
@@ -892,7 +892,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
        * @return The agcMode.
        */
       @java.lang.Override
@@ -901,7 +901,7 @@ public final class JonSharedDataCameraHeat {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The agcMode to set.
        * @return This builder for chaining.
        */
@@ -915,7 +915,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes agc_mode = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearAgcMode() {
@@ -927,14 +927,14 @@ public final class JonSharedDataCameraHeat {
 
       private int filter_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for filter.
        */
       @java.lang.Override public int getFilterValue() {
         return filter_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for filter to set.
        * @return This builder for chaining.
        */
@@ -945,7 +945,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
        * @return The filter.
        */
       @java.lang.Override
@@ -954,7 +954,7 @@ public final class JonSharedDataCameraHeat {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The filter to set.
        * @return This builder for chaining.
        */
@@ -968,7 +968,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters filter = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearFilter() {
@@ -1012,7 +1012,7 @@ public final class JonSharedDataCameraHeat {
 
       private int zoomTablePos_ ;
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @return The zoomTablePos.
        */
       @java.lang.Override
@@ -1020,7 +1020,7 @@ public final class JonSharedDataCameraHeat {
         return zoomTablePos_;
       }
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomTablePos to set.
        * @return This builder for chaining.
        */
@@ -1032,7 +1032,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomTablePos() {
@@ -1044,7 +1044,7 @@ public final class JonSharedDataCameraHeat {
 
       private int zoomTablePosMax_ ;
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @return The zoomTablePosMax.
        */
       @java.lang.Override
@@ -1052,7 +1052,7 @@ public final class JonSharedDataCameraHeat {
         return zoomTablePosMax_;
       }
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomTablePosMax to set.
        * @return This builder for chaining.
        */
@@ -1064,7 +1064,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomTablePosMax() {
@@ -1076,7 +1076,7 @@ public final class JonSharedDataCameraHeat {
 
       private int ddeLevel_ ;
       /**
-       * <code>int32 dde_level = 7;</code>
+       * <code>int32 dde_level = 7 [(.buf.validate.field) = { ... }</code>
        * @return The ddeLevel.
        */
       @java.lang.Override
@@ -1084,7 +1084,7 @@ public final class JonSharedDataCameraHeat {
         return ddeLevel_;
       }
       /**
-       * <code>int32 dde_level = 7;</code>
+       * <code>int32 dde_level = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The ddeLevel to set.
        * @return This builder for chaining.
        */
@@ -1096,7 +1096,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>int32 dde_level = 7;</code>
+       * <code>int32 dde_level = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDdeLevel() {
@@ -1140,14 +1140,14 @@ public final class JonSharedDataCameraHeat {
 
       private int fxMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for fxMode.
        */
       @java.lang.Override public int getFxModeValue() {
         return fxMode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for fxMode to set.
        * @return This builder for chaining.
        */
@@ -1158,7 +1158,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
        * @return The fxMode.
        */
       @java.lang.Override
@@ -1167,7 +1167,7 @@ public final class JonSharedDataCameraHeat {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
        * @param value The fxMode to set.
        * @return This builder for chaining.
        */
@@ -1181,7 +1181,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9;</code>
+       * <code>.ser.JonGuiDataFxModeHeat fx_mode = 9 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearFxMode() {
@@ -1193,7 +1193,7 @@ public final class JonSharedDataCameraHeat {
 
       private float digitalZoomLevel_ ;
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @return The digitalZoomLevel.
        */
       @java.lang.Override
@@ -1201,7 +1201,7 @@ public final class JonSharedDataCameraHeat {
         return digitalZoomLevel_;
       }
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @param value The digitalZoomLevel to set.
        * @return This builder for chaining.
        */
@@ -1213,7 +1213,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDigitalZoomLevel() {
@@ -1225,7 +1225,7 @@ public final class JonSharedDataCameraHeat {
 
       private float claheLevel_ ;
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @return The claheLevel.
        */
       @java.lang.Override
@@ -1233,7 +1233,7 @@ public final class JonSharedDataCameraHeat {
         return claheLevel_;
       }
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @param value The claheLevel to set.
        * @return This builder for chaining.
        */
@@ -1245,7 +1245,7 @@ public final class JonSharedDataCameraHeat {
         return this;
       }
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearClaheLevel() {
@@ -1333,23 +1333,27 @@ public final class JonSharedDataCameraHeat {
   static {
     java.lang.String[] descriptorData = {
       "\n!jon_shared_data_camera_heat.proto\022\003ser" +
-      "\032\033jon_shared_data_types.proto\"\350\002\n\024JonGui" +
-      "DataCameraHeat\022\020\n\010zoom_pos\030\001 \001(\002\0229\n\010agc_" +
-      "mode\030\002 \001(\0162\'.ser.JonGuiDataVideoChannelH" +
-      "eatAGCModes\0226\n\006filter\030\003 \001(\0162&.ser.JonGui" +
-      "DataVideoChannelHeatFilters\022\022\n\nauto_focu" +
-      "s\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n\022zoom_" +
-      "table_pos_max\030\006 \001(\005\022\021\n\tdde_level\030\007 \001(\005\022\023" +
-      "\n\013dde_enabled\030\010 \001(\010\022*\n\007fx_mode\030\t \001(\0162\031.s" +
-      "er.JonGuiDataFxModeHeat\022\032\n\022digital_zoom_" +
-      "level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BSZQgit-" +
-      "codecommit.eu-central-1.amazonaws.com/v1" +
-      "/repos/jettison/jonp/data/camera_heatb\006p" +
-      "roto3"
+      "\032\033buf/validate/validate.proto\032\033jon_share" +
+      "d_data_types.proto\"\326\003\n\024JonGuiDataCameraH" +
+      "eat\022!\n\010zoom_pos\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022E" +
+      "\n\010agc_mode\030\002 \001(\0162\'.ser.JonGuiDataVideoCh" +
+      "annelHeatAGCModesB\n\272H\007\202\001\004\020\001 \000\022B\n\006filter\030" +
+      "\003 \001(\0162&.ser.JonGuiDataVideoChannelHeatFi" +
+      "ltersB\n\272H\007\202\001\004\020\001 \000\022\022\n\nauto_focus\030\004 \001(\010\022\037\n" +
+      "\016zoom_table_pos\030\005 \001(\005B\007\272H\004\032\002(\000\022#\n\022zoom_t" +
+      "able_pos_max\030\006 \001(\005B\007\272H\004\032\002(\000\022\035\n\tdde_level" +
+      "\030\007 \001(\005B\n\272H\007\032\005\030\200\004(\000\022\023\n\013dde_enabled\030\010 \001(\010\022" +
+      "4\n\007fx_mode\030\t \001(\0162\031.ser.JonGuiDataFxModeH" +
+      "eatB\010\272H\005\202\001\002\020\001\022&\n\022digital_zoom_level\030\n \001(" +
+      "\002B\n\272H\007\n\005-\000\000\200?\022$\n\013clahe_level\030\013 \001(\002B\017\272H\014\n" +
+      "\n\035\000\000\200?-\000\000\000\000BSZQgit-codecommit.eu-central" +
+      "-1.amazonaws.com/v1/repos/jettison/jonp/" +
+      "data/camera_heatb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataCameraHeat_descriptor =
@@ -1358,6 +1362,12 @@ public final class JonSharedDataCameraHeat {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataCameraHeat_descriptor,
         new java.lang.String[] { "ZoomPos", "AgcMode", "Filter", "AutoFocus", "ZoomTablePos", "ZoomTablePosMax", "DdeLevel", "DdeEnabled", "FxMode", "DigitalZoomLevel", "ClaheLevel", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

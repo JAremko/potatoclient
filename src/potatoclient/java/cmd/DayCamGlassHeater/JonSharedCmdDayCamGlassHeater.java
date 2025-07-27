@@ -3636,22 +3636,23 @@ public final class JonSharedCmdDayCamGlassHeater {
   static {
     java.lang.String[] descriptorData = {
       "\n)jon_shared_cmd_day_cam_glass_heater.pr" +
-      "oto\022\025cmd.DayCamGlassHeater\"\205\002\n\004Root\022-\n\005s" +
-      "tart\030\001 \001(\0132\034.cmd.DayCamGlassHeater.Start" +
-      "H\000\022+\n\004stop\030\002 \001(\0132\033.cmd.DayCamGlassHeater" +
-      ".StopH\000\0220\n\007turn_on\030\003 \001(\0132\035.cmd.DayCamGla" +
-      "ssHeater.TurnOnH\000\0222\n\010turn_off\030\004 \001(\0132\036.cm" +
-      "d.DayCamGlassHeater.TurnOffH\000\0224\n\tget_met" +
-      "eo\030\005 \001(\0132\037.cmd.DayCamGlassHeater.GetMete" +
-      "oH\000B\005\n\003cmd\"\007\n\005Start\"\006\n\004Stop\"\010\n\006TurnOn\"\t\n" +
-      "\007TurnOff\"\n\n\010GetMeteoB[ZYgit-codecommit.e" +
-      "u-central-1.amazonaws.com/v1/repos/jetti" +
-      "son/jonp/cmd/day_cam_glass_heaterb\006proto" +
-      "3"
+      "oto\022\025cmd.DayCamGlassHeater\032\033buf/validate" +
+      "/validate.proto\"\214\002\n\004Root\022-\n\005start\030\001 \001(\0132" +
+      "\034.cmd.DayCamGlassHeater.StartH\000\022+\n\004stop\030" +
+      "\002 \001(\0132\033.cmd.DayCamGlassHeater.StopH\000\0220\n\007" +
+      "turn_on\030\003 \001(\0132\035.cmd.DayCamGlassHeater.Tu" +
+      "rnOnH\000\0222\n\010turn_off\030\004 \001(\0132\036.cmd.DayCamGla" +
+      "ssHeater.TurnOffH\000\0224\n\tget_meteo\030\005 \001(\0132\037." +
+      "cmd.DayCamGlassHeater.GetMeteoH\000B\014\n\003cmd\022" +
+      "\005\272H\002\010\001\"\007\n\005Start\"\006\n\004Stop\"\010\n\006TurnOn\"\t\n\007Tur" +
+      "nOff\"\n\n\010GetMeteoB[ZYgit-codecommit.eu-ce" +
+      "ntral-1.amazonaws.com/v1/repos/jettison/" +
+      "jonp/cmd/day_cam_glass_heaterb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_DayCamGlassHeater_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -3689,6 +3690,12 @@ public final class JonSharedCmdDayCamGlassHeater {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_DayCamGlassHeater_GetMeteo_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

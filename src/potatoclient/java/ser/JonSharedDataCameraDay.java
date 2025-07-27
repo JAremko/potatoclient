@@ -20,19 +20,19 @@ public final class JonSharedDataCameraDay {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float focus_pos = 1;</code>
+     * <code>float focus_pos = 1 [(.buf.validate.field) = { ... }</code>
      * @return The focusPos.
      */
     float getFocusPos();
 
     /**
-     * <code>float zoom_pos = 2;</code>
+     * <code>float zoom_pos = 2 [(.buf.validate.field) = { ... }</code>
      * @return The zoomPos.
      */
     float getZoomPos();
 
     /**
-     * <code>float iris_pos = 3;</code>
+     * <code>float iris_pos = 3 [(.buf.validate.field) = { ... }</code>
      * @return The irisPos.
      */
     float getIrisPos();
@@ -44,24 +44,24 @@ public final class JonSharedDataCameraDay {
     boolean getInfraredFilter();
 
     /**
-     * <code>int32 zoom_table_pos = 5;</code>
+     * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePos.
      */
     int getZoomTablePos();
 
     /**
-     * <code>int32 zoom_table_pos_max = 6;</code>
+     * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePosMax.
      */
     int getZoomTablePosMax();
 
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     int getFxModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
      * @return The fxMode.
      */
     ser.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode();
@@ -79,13 +79,13 @@ public final class JonSharedDataCameraDay {
     boolean getAutoIris();
 
     /**
-     * <code>float digital_zoom_level = 10;</code>
+     * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
      * @return The digitalZoomLevel.
      */
     float getDigitalZoomLevel();
 
     /**
-     * <code>float clahe_level = 11;</code>
+     * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
      * @return The claheLevel.
      */
     float getClaheLevel();
@@ -129,7 +129,7 @@ public final class JonSharedDataCameraDay {
     public static final int FOCUS_POS_FIELD_NUMBER = 1;
     private float focusPos_ = 0F;
     /**
-     * <code>float focus_pos = 1;</code>
+     * <code>float focus_pos = 1 [(.buf.validate.field) = { ... }</code>
      * @return The focusPos.
      */
     @java.lang.Override
@@ -140,7 +140,7 @@ public final class JonSharedDataCameraDay {
     public static final int ZOOM_POS_FIELD_NUMBER = 2;
     private float zoomPos_ = 0F;
     /**
-     * <code>float zoom_pos = 2;</code>
+     * <code>float zoom_pos = 2 [(.buf.validate.field) = { ... }</code>
      * @return The zoomPos.
      */
     @java.lang.Override
@@ -151,7 +151,7 @@ public final class JonSharedDataCameraDay {
     public static final int IRIS_POS_FIELD_NUMBER = 3;
     private float irisPos_ = 0F;
     /**
-     * <code>float iris_pos = 3;</code>
+     * <code>float iris_pos = 3 [(.buf.validate.field) = { ... }</code>
      * @return The irisPos.
      */
     @java.lang.Override
@@ -173,7 +173,7 @@ public final class JonSharedDataCameraDay {
     public static final int ZOOM_TABLE_POS_FIELD_NUMBER = 5;
     private int zoomTablePos_ = 0;
     /**
-     * <code>int32 zoom_table_pos = 5;</code>
+     * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePos.
      */
     @java.lang.Override
@@ -184,7 +184,7 @@ public final class JonSharedDataCameraDay {
     public static final int ZOOM_TABLE_POS_MAX_FIELD_NUMBER = 6;
     private int zoomTablePosMax_ = 0;
     /**
-     * <code>int32 zoom_table_pos_max = 6;</code>
+     * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
      * @return The zoomTablePosMax.
      */
     @java.lang.Override
@@ -195,14 +195,14 @@ public final class JonSharedDataCameraDay {
     public static final int FX_MODE_FIELD_NUMBER = 7;
     private int fxMode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for fxMode.
      */
     @java.lang.Override public int getFxModeValue() {
       return fxMode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+     * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
      * @return The fxMode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeDay getFxMode() {
@@ -235,7 +235,7 @@ public final class JonSharedDataCameraDay {
     public static final int DIGITAL_ZOOM_LEVEL_FIELD_NUMBER = 10;
     private float digitalZoomLevel_ = 0F;
     /**
-     * <code>float digital_zoom_level = 10;</code>
+     * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
      * @return The digitalZoomLevel.
      */
     @java.lang.Override
@@ -246,7 +246,7 @@ public final class JonSharedDataCameraDay {
     public static final int CLAHE_LEVEL_FIELD_NUMBER = 11;
     private float claheLevel_ = 0F;
     /**
-     * <code>float clahe_level = 11;</code>
+     * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
      * @return The claheLevel.
      */
     @java.lang.Override
@@ -823,7 +823,7 @@ public final class JonSharedDataCameraDay {
 
       private float focusPos_ ;
       /**
-       * <code>float focus_pos = 1;</code>
+       * <code>float focus_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @return The focusPos.
        */
       @java.lang.Override
@@ -831,7 +831,7 @@ public final class JonSharedDataCameraDay {
         return focusPos_;
       }
       /**
-       * <code>float focus_pos = 1;</code>
+       * <code>float focus_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The focusPos to set.
        * @return This builder for chaining.
        */
@@ -843,7 +843,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>float focus_pos = 1;</code>
+       * <code>float focus_pos = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearFocusPos() {
@@ -855,7 +855,7 @@ public final class JonSharedDataCameraDay {
 
       private float zoomPos_ ;
       /**
-       * <code>float zoom_pos = 2;</code>
+       * <code>float zoom_pos = 2 [(.buf.validate.field) = { ... }</code>
        * @return The zoomPos.
        */
       @java.lang.Override
@@ -863,7 +863,7 @@ public final class JonSharedDataCameraDay {
         return zoomPos_;
       }
       /**
-       * <code>float zoom_pos = 2;</code>
+       * <code>float zoom_pos = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomPos to set.
        * @return This builder for chaining.
        */
@@ -875,7 +875,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>float zoom_pos = 2;</code>
+       * <code>float zoom_pos = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomPos() {
@@ -887,7 +887,7 @@ public final class JonSharedDataCameraDay {
 
       private float irisPos_ ;
       /**
-       * <code>float iris_pos = 3;</code>
+       * <code>float iris_pos = 3 [(.buf.validate.field) = { ... }</code>
        * @return The irisPos.
        */
       @java.lang.Override
@@ -895,7 +895,7 @@ public final class JonSharedDataCameraDay {
         return irisPos_;
       }
       /**
-       * <code>float iris_pos = 3;</code>
+       * <code>float iris_pos = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The irisPos to set.
        * @return This builder for chaining.
        */
@@ -907,7 +907,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>float iris_pos = 3;</code>
+       * <code>float iris_pos = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearIrisPos() {
@@ -951,7 +951,7 @@ public final class JonSharedDataCameraDay {
 
       private int zoomTablePos_ ;
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @return The zoomTablePos.
        */
       @java.lang.Override
@@ -959,7 +959,7 @@ public final class JonSharedDataCameraDay {
         return zoomTablePos_;
       }
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomTablePos to set.
        * @return This builder for chaining.
        */
@@ -971,7 +971,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>int32 zoom_table_pos = 5;</code>
+       * <code>int32 zoom_table_pos = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomTablePos() {
@@ -983,7 +983,7 @@ public final class JonSharedDataCameraDay {
 
       private int zoomTablePosMax_ ;
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @return The zoomTablePosMax.
        */
       @java.lang.Override
@@ -991,7 +991,7 @@ public final class JonSharedDataCameraDay {
         return zoomTablePosMax_;
       }
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The zoomTablePosMax to set.
        * @return This builder for chaining.
        */
@@ -1003,7 +1003,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>int32 zoom_table_pos_max = 6;</code>
+       * <code>int32 zoom_table_pos_max = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearZoomTablePosMax() {
@@ -1015,14 +1015,14 @@ public final class JonSharedDataCameraDay {
 
       private int fxMode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for fxMode.
        */
       @java.lang.Override public int getFxModeValue() {
         return fxMode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for fxMode to set.
        * @return This builder for chaining.
        */
@@ -1033,7 +1033,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
        * @return The fxMode.
        */
       @java.lang.Override
@@ -1042,7 +1042,7 @@ public final class JonSharedDataCameraDay {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeDay.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The fxMode to set.
        * @return This builder for chaining.
        */
@@ -1056,7 +1056,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7;</code>
+       * <code>.ser.JonGuiDataFxModeDay fx_mode = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearFxMode() {
@@ -1132,7 +1132,7 @@ public final class JonSharedDataCameraDay {
 
       private float digitalZoomLevel_ ;
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @return The digitalZoomLevel.
        */
       @java.lang.Override
@@ -1140,7 +1140,7 @@ public final class JonSharedDataCameraDay {
         return digitalZoomLevel_;
       }
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @param value The digitalZoomLevel to set.
        * @return This builder for chaining.
        */
@@ -1152,7 +1152,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>float digital_zoom_level = 10;</code>
+       * <code>float digital_zoom_level = 10 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDigitalZoomLevel() {
@@ -1164,7 +1164,7 @@ public final class JonSharedDataCameraDay {
 
       private float claheLevel_ ;
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @return The claheLevel.
        */
       @java.lang.Override
@@ -1172,7 +1172,7 @@ public final class JonSharedDataCameraDay {
         return claheLevel_;
       }
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @param value The claheLevel to set.
        * @return This builder for chaining.
        */
@@ -1184,7 +1184,7 @@ public final class JonSharedDataCameraDay {
         return this;
       }
       /**
-       * <code>float clahe_level = 11;</code>
+       * <code>float clahe_level = 11 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearClaheLevel() {
@@ -1272,21 +1272,25 @@ public final class JonSharedDataCameraDay {
   static {
     java.lang.String[] descriptorData = {
       "\n jon_shared_data_camera_day.proto\022\003ser\032" +
-      "\033jon_shared_data_types.proto\"\234\002\n\023JonGuiD" +
-      "ataCameraDay\022\021\n\tfocus_pos\030\001 \001(\002\022\020\n\010zoom_" +
-      "pos\030\002 \001(\002\022\020\n\010iris_pos\030\003 \001(\002\022\027\n\017infrared_" +
-      "filter\030\004 \001(\010\022\026\n\016zoom_table_pos\030\005 \001(\005\022\032\n\022" +
-      "zoom_table_pos_max\030\006 \001(\005\022)\n\007fx_mode\030\007 \001(" +
-      "\0162\030.ser.JonGuiDataFxModeDay\022\022\n\nauto_focu" +
-      "s\030\010 \001(\010\022\021\n\tauto_iris\030\t \001(\010\022\032\n\022digital_zo" +
-      "om_level\030\n \001(\002\022\023\n\013clahe_level\030\013 \001(\002BRZPg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/data/camera_dayb" +
-      "\006proto3"
+      "\033buf/validate/validate.proto\032\033jon_shared" +
+      "_data_types.proto\"\210\003\n\023JonGuiDataCameraDa" +
+      "y\022\"\n\tfocus_pos\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022!\n" +
+      "\010zoom_pos\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022!\n\010iris" +
+      "_pos\030\003 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\000\000\022\027\n\017infrared_" +
+      "filter\030\004 \001(\010\022\037\n\016zoom_table_pos\030\005 \001(\005B\007\272H" +
+      "\004\032\002(\000\022#\n\022zoom_table_pos_max\030\006 \001(\005B\007\272H\004\032\002" +
+      "(\000\0223\n\007fx_mode\030\007 \001(\0162\030.ser.JonGuiDataFxMo" +
+      "deDayB\010\272H\005\202\001\002\020\001\022\022\n\nauto_focus\030\010 \001(\010\022\021\n\ta" +
+      "uto_iris\030\t \001(\010\022&\n\022digital_zoom_level\030\n \001" +
+      "(\002B\n\272H\007\n\005-\000\000\200?\022$\n\013clahe_level\030\013 \001(\002B\017\272H\014" +
+      "\n\n\035\000\000\200?-\000\000\000\000BRZPgit-codecommit.eu-centra" +
+      "l-1.amazonaws.com/v1/repos/jettison/jonp" +
+      "/data/camera_dayb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataCameraDay_descriptor =
@@ -1295,6 +1299,12 @@ public final class JonSharedDataCameraDay {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataCameraDay_descriptor,
         new java.lang.String[] { "FocusPos", "ZoomPos", "IrisPos", "InfraredFilter", "ZoomTablePos", "ZoomTablePosMax", "FxMode", "AutoFocus", "AutoIris", "DigitalZoomLevel", "ClaheLevel", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

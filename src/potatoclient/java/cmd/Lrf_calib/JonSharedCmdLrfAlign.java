@@ -2320,13 +2320,13 @@ public final class JonSharedCmdLrfAlign {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 x = 1;</code>
+     * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     int getX();
 
     /**
-     * <code>int32 y = 2;</code>
+     * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     int getY();
@@ -2369,7 +2369,7 @@ public final class JonSharedCmdLrfAlign {
     public static final int X_FIELD_NUMBER = 1;
     private int x_ = 0;
     /**
-     * <code>int32 x = 1;</code>
+     * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     @java.lang.Override
@@ -2380,7 +2380,7 @@ public final class JonSharedCmdLrfAlign {
     public static final int Y_FIELD_NUMBER = 2;
     private int y_ = 0;
     /**
-     * <code>int32 y = 2;</code>
+     * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     @java.lang.Override
@@ -2738,7 +2738,7 @@ public final class JonSharedCmdLrfAlign {
 
       private int x_ ;
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @return The x.
        */
       @java.lang.Override
@@ -2746,7 +2746,7 @@ public final class JonSharedCmdLrfAlign {
         return x_;
       }
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The x to set.
        * @return This builder for chaining.
        */
@@ -2758,7 +2758,7 @@ public final class JonSharedCmdLrfAlign {
         return this;
       }
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearX() {
@@ -2770,7 +2770,7 @@ public final class JonSharedCmdLrfAlign {
 
       private int y_ ;
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @return The y.
        */
       @java.lang.Override
@@ -2778,7 +2778,7 @@ public final class JonSharedCmdLrfAlign {
         return y_;
       }
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The y to set.
        * @return This builder for chaining.
        */
@@ -2790,7 +2790,7 @@ public final class JonSharedCmdLrfAlign {
         return this;
       }
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearY() {
@@ -2868,13 +2868,13 @@ public final class JonSharedCmdLrfAlign {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 x = 1;</code>
+     * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     int getX();
 
     /**
-     * <code>int32 y = 2;</code>
+     * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     int getY();
@@ -2917,7 +2917,7 @@ public final class JonSharedCmdLrfAlign {
     public static final int X_FIELD_NUMBER = 1;
     private int x_ = 0;
     /**
-     * <code>int32 x = 1;</code>
+     * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     @java.lang.Override
@@ -2928,7 +2928,7 @@ public final class JonSharedCmdLrfAlign {
     public static final int Y_FIELD_NUMBER = 2;
     private int y_ = 0;
     /**
-     * <code>int32 y = 2;</code>
+     * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     @java.lang.Override
@@ -3286,7 +3286,7 @@ public final class JonSharedCmdLrfAlign {
 
       private int x_ ;
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @return The x.
        */
       @java.lang.Override
@@ -3294,7 +3294,7 @@ public final class JonSharedCmdLrfAlign {
         return x_;
       }
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The x to set.
        * @return This builder for chaining.
        */
@@ -3306,7 +3306,7 @@ public final class JonSharedCmdLrfAlign {
         return this;
       }
       /**
-       * <code>int32 x = 1;</code>
+       * <code>int32 x = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearX() {
@@ -3318,7 +3318,7 @@ public final class JonSharedCmdLrfAlign {
 
       private int y_ ;
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @return The y.
        */
       @java.lang.Override
@@ -3326,7 +3326,7 @@ public final class JonSharedCmdLrfAlign {
         return y_;
       }
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The y to set.
        * @return This builder for chaining.
        */
@@ -3338,7 +3338,7 @@ public final class JonSharedCmdLrfAlign {
         return this;
       }
       /**
-       * <code>int32 y = 2;</code>
+       * <code>int32 y = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearY() {
@@ -4245,16 +4245,19 @@ public final class JonSharedCmdLrfAlign {
   static {
     java.lang.String[] descriptorData = {
       "\n\036jon_shared_cmd_lrf_align.proto\022\rcmd.Lr" +
-      "f_calib\"`\n\004Root\022%\n\003day\030\001 \001(\0132\026.cmd.Lrf_c" +
-      "alib.OffsetsH\000\022&\n\004heat\030\002 \001(\0132\026.cmd.Lrf_c" +
-      "alib.OffsetsH\000B\t\n\007channel\"\304\001\n\007Offsets\022(\n" +
-      "\003set\030\001 \001(\0132\031.cmd.Lrf_calib.SetOffsetsH\000\022" +
-      "*\n\004save\030\002 \001(\0132\032.cmd.Lrf_calib.SaveOffset" +
-      "sH\000\022,\n\005reset\030\003 \001(\0132\033.cmd.Lrf_calib.Reset" +
-      "OffsetsH\000\022.\n\005shift\030\004 \001(\0132\035.cmd.Lrf_calib" +
-      ".ShiftOffsetsByH\000B\005\n\003cmd\"\"\n\nSetOffsets\022\t" +
-      "\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\"&\n\016ShiftOffsetsBy\022\t" +
-      "\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\"\016\n\014ResetOffsets\"\r\n\013" +
+      "f_calib\032\033buf/validate/validate.proto\"`\n\004" +
+      "Root\022%\n\003day\030\001 \001(\0132\026.cmd.Lrf_calib.Offset" +
+      "sH\000\022&\n\004heat\030\002 \001(\0132\026.cmd.Lrf_calib.Offset" +
+      "sH\000B\t\n\007channel\"\313\001\n\007Offsets\022(\n\003set\030\001 \001(\0132" +
+      "\031.cmd.Lrf_calib.SetOffsetsH\000\022*\n\004save\030\002 \001" +
+      "(\0132\032.cmd.Lrf_calib.SaveOffsetsH\000\022,\n\005rese" +
+      "t\030\003 \001(\0132\033.cmd.Lrf_calib.ResetOffsetsH\000\022." +
+      "\n\005shift\030\004 \001(\0132\035.cmd.Lrf_calib.ShiftOffse" +
+      "tsByH\000B\014\n\003cmd\022\005\272H\002\010\001\"L\n\nSetOffsets\022\036\n\001x\030" +
+      "\001 \001(\005B\023\272H\020\032\016\030\200\017(\200\361\377\377\377\377\377\377\377\001\022\036\n\001y\030\002 \001(\005B\023\272" +
+      "H\020\032\016\030\270\010(\310\367\377\377\377\377\377\377\377\001\"P\n\016ShiftOffsetsBy\022\036\n\001" +
+      "x\030\001 \001(\005B\023\272H\020\032\016\030\200\017(\200\361\377\377\377\377\377\377\377\001\022\036\n\001y\030\002 \001(\005B" +
+      "\023\272H\020\032\016\030\270\010(\310\367\377\377\377\377\377\377\377\001\"\016\n\014ResetOffsets\"\r\n\013" +
       "SaveOffsetsBPZNgit-codecommit.eu-central" +
       "-1.amazonaws.com/v1/repos/jettison/jonp/" +
       "cmd/lrf_alignb\006proto3"
@@ -4262,6 +4265,7 @@ public final class JonSharedCmdLrfAlign {
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_Lrf_calib_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -4299,6 +4303,13 @@ public final class JonSharedCmdLrfAlign {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Lrf_calib_SaveOffsets_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

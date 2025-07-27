@@ -8164,12 +8164,12 @@ public final class JonSharedCmdSystem {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for loc.
      */
     int getLocValue();
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
      * @return The loc.
      */
     ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
@@ -8213,14 +8213,14 @@ public final class JonSharedCmdSystem {
     public static final int LOC_FIELD_NUMBER = 1;
     private int loc_ = 0;
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for loc.
      */
     @java.lang.Override public int getLocValue() {
       return loc_;
     }
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
      * @return The loc.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
@@ -8554,14 +8554,14 @@ public final class JonSharedCmdSystem {
 
       private int loc_ = 0;
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for loc.
        */
       @java.lang.Override public int getLocValue() {
         return loc_;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for loc to set.
        * @return This builder for chaining.
        */
@@ -8572,7 +8572,7 @@ public final class JonSharedCmdSystem {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
        * @return The loc.
        */
       @java.lang.Override
@@ -8581,7 +8581,7 @@ public final class JonSharedCmdSystem {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The loc to set.
        * @return This builder for chaining.
        */
@@ -8595,7 +8595,7 @@ public final class JonSharedCmdSystem {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 1;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLoc() {
@@ -8748,37 +8748,39 @@ public final class JonSharedCmdSystem {
   static {
     java.lang.String[] descriptorData = {
       "\n\033jon_shared_cmd_system.proto\022\ncmd.Syste" +
-      "m\032\033jon_shared_data_types.proto\"\243\005\n\004Root\022" +
-      ")\n\tstart_all\030\001 \001(\0132\024.cmd.System.StartALl" +
-      "H\000\022\'\n\010stop_all\030\002 \001(\0132\023.cmd.System.StopAL" +
-      "lH\000\022$\n\006reboot\030\003 \001(\0132\022.cmd.System.RebootH" +
-      "\000\022)\n\tpower_off\030\004 \001(\0132\024.cmd.System.PowerO" +
-      "ffH\000\0223\n\014localization\030\005 \001(\0132\033.cmd.System." +
-      "SetLocalizationH\000\0221\n\rreset_configs\030\006 \001(\013" +
-      "2\030.cmd.System.ResetConfigsH\000\022)\n\tstart_re" +
-      "c\030\007 \001(\0132\024.cmd.System.StartRecH\000\022\'\n\010stop_" +
-      "rec\030\010 \001(\0132\023.cmd.System.StopRecH\000\022:\n\022mark" +
-      "_rec_important\030\t \001(\0132\034.cmd.System.MarkRe" +
-      "cImportantH\000\022>\n\024unmark_rec_important\030\n \001" +
-      "(\0132\036.cmd.System.UnmarkRecImportantH\000\0225\n\017" +
-      "enter_transport\030\013 \001(\0132\032.cmd.System.Enter" +
-      "TransportH\000\022>\n\024geodesic_mode_enable\030\014 \001(" +
-      "\0132\036.cmd.System.EnableGeodesicModeH\000\022@\n\025g" +
-      "eodesic_mode_disable\030\r \001(\0132\037.cmd.System." +
-      "DisableGeodesicModeH\000B\005\n\003cmd\"\n\n\010StartALl" +
-      "\"\t\n\007StopALl\"\010\n\006Reboot\"\n\n\010PowerOff\"\016\n\014Res" +
-      "etConfigs\"\n\n\010StartRec\"\t\n\007StopRec\"\022\n\020Mark" +
-      "RecImportant\"\024\n\022UnmarkRecImportant\"\020\n\016En" +
-      "terTransport\"\024\n\022EnableGeodesicMode\"\025\n\023Di" +
-      "sableGeodesicMode\"B\n\017SetLocalization\022/\n\003" +
-      "loc\030\001 \001(\0162\".ser.JonGuiDataSystemLocaliza" +
-      "tionsBMZKgit-codecommit.eu-central-1.ama" +
-      "zonaws.com/v1/repos/jettison/jonp/cmd/sy" +
-      "stemb\006proto3"
+      "m\032\033buf/validate/validate.proto\032\033jon_shar" +
+      "ed_data_types.proto\"\252\005\n\004Root\022)\n\tstart_al" +
+      "l\030\001 \001(\0132\024.cmd.System.StartALlH\000\022\'\n\010stop_" +
+      "all\030\002 \001(\0132\023.cmd.System.StopALlH\000\022$\n\006rebo" +
+      "ot\030\003 \001(\0132\022.cmd.System.RebootH\000\022)\n\tpower_" +
+      "off\030\004 \001(\0132\024.cmd.System.PowerOffH\000\0223\n\014loc" +
+      "alization\030\005 \001(\0132\033.cmd.System.SetLocaliza" +
+      "tionH\000\0221\n\rreset_configs\030\006 \001(\0132\030.cmd.Syst" +
+      "em.ResetConfigsH\000\022)\n\tstart_rec\030\007 \001(\0132\024.c" +
+      "md.System.StartRecH\000\022\'\n\010stop_rec\030\010 \001(\0132\023" +
+      ".cmd.System.StopRecH\000\022:\n\022mark_rec_import" +
+      "ant\030\t \001(\0132\034.cmd.System.MarkRecImportantH" +
+      "\000\022>\n\024unmark_rec_important\030\n \001(\0132\036.cmd.Sy" +
+      "stem.UnmarkRecImportantH\000\0225\n\017enter_trans" +
+      "port\030\013 \001(\0132\032.cmd.System.EnterTransportH\000" +
+      "\022>\n\024geodesic_mode_enable\030\014 \001(\0132\036.cmd.Sys" +
+      "tem.EnableGeodesicModeH\000\022@\n\025geodesic_mod" +
+      "e_disable\030\r \001(\0132\037.cmd.System.DisableGeod" +
+      "esicModeH\000B\014\n\003cmd\022\005\272H\002\010\001\"\n\n\010StartALl\"\t\n\007" +
+      "StopALl\"\010\n\006Reboot\"\n\n\010PowerOff\"\016\n\014ResetCo" +
+      "nfigs\"\n\n\010StartRec\"\t\n\007StopRec\"\022\n\020MarkRecI" +
+      "mportant\"\024\n\022UnmarkRecImportant\"\020\n\016EnterT" +
+      "ransport\"\024\n\022EnableGeodesicMode\"\025\n\023Disabl" +
+      "eGeodesicMode\"N\n\017SetLocalization\022;\n\003loc\030" +
+      "\001 \001(\0162\".ser.JonGuiDataSystemLocalization" +
+      "sB\n\272H\007\202\001\004\020\001 \000BMZKgit-codecommit.eu-centr" +
+      "al-1.amazonaws.com/v1/repos/jettison/jon" +
+      "p/cmd/systemb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_System_Root_descriptor =
@@ -8865,6 +8867,13 @@ public final class JonSharedCmdSystem {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_System_SetLocalization_descriptor,
         new java.lang.String[] { "Loc", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

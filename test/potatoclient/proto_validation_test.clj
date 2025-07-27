@@ -9,7 +9,7 @@
     (testing "Valid commands should serialize successfully"
       (let [cmd (proto/cmd-ping 12345 :local)]
         (is (bytes? (proto/serialize-cmd cmd)))))
-    
+
     (testing "Invalid enum values should throw during parsing"
       (let [invalid-cmd {:protocol-version 1
                          :session-id 12345

@@ -20,7 +20,7 @@ public final class JonSharedDataDayCamGlassHeater {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>double temperature = 1;</code>
+     * <code>double temperature = 1 [(.buf.validate.field) = { ... }</code>
      * @return The temperature.
      */
     double getTemperature();
@@ -69,7 +69,7 @@ public final class JonSharedDataDayCamGlassHeater {
     public static final int TEMPERATURE_FIELD_NUMBER = 1;
     private double temperature_ = 0D;
     /**
-     * <code>double temperature = 1;</code>
+     * <code>double temperature = 1 [(.buf.validate.field) = { ... }</code>
      * @return The temperature.
      */
     @java.lang.Override
@@ -441,7 +441,7 @@ public final class JonSharedDataDayCamGlassHeater {
 
       private double temperature_ ;
       /**
-       * <code>double temperature = 1;</code>
+       * <code>double temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @return The temperature.
        */
       @java.lang.Override
@@ -449,7 +449,7 @@ public final class JonSharedDataDayCamGlassHeater {
         return temperature_;
       }
       /**
-       * <code>double temperature = 1;</code>
+       * <code>double temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The temperature to set.
        * @return This builder for chaining.
        */
@@ -461,7 +461,7 @@ public final class JonSharedDataDayCamGlassHeater {
         return this;
       }
       /**
-       * <code>double temperature = 1;</code>
+       * <code>double temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTemperature() {
@@ -581,15 +581,18 @@ public final class JonSharedDataDayCamGlassHeater {
   static {
     java.lang.String[] descriptorData = {
       "\n*jon_shared_data_day_cam_glass_heater.p" +
-      "roto\022\003ser\"B\n\033JonGuiDataDayCamGlassHeater" +
-      "\022\023\n\013temperature\030\001 \001(\001\022\016\n\006status\030\002 \001(\010B\\Z" +
-      "Zgit-codecommit.eu-central-1.amazonaws.c" +
-      "om/v1/repos/jettison/jonp/data/day_cam_g" +
-      "lass_heaterb\006proto3"
+      "roto\022\003ser\032\033buf/validate/validate.proto\"\177" +
+      "\n\033JonGuiDataDayCamGlassHeater\022P\n\013tempera" +
+      "ture\030\001 \001(\001B;\272H8\0226\031\303\365(\\\217\242\204@)fffff\022q\300I\000\000\000\000" +
+      "\000\0004\300I\000\000\000\000\000\000\000\000I\000\000\000\000\000\0009@I\000\000\000\000\000\000Y@\022\016\n\006statu" +
+      "s\030\002 \001(\010B\\ZZgit-codecommit.eu-central-1.a" +
+      "mazonaws.com/v1/repos/jettison/jonp/data" +
+      "/day_cam_glass_heaterb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -597,6 +600,12 @@ public final class JonSharedDataDayCamGlassHeater {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataDayCamGlassHeater_descriptor,
         new java.lang.String[] { "Temperature", "Status", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

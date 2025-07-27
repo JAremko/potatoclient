@@ -20,78 +20,78 @@ public final class JonSharedDataSystem {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float cpu_temperature = 1;</code>
+     * <code>float cpu_temperature = 1 [(.buf.validate.field) = { ... }</code>
      * @return The cpuTemperature.
      */
     float getCpuTemperature();
 
     /**
-     * <code>float gpu_temperature = 2;</code>
+     * <code>float gpu_temperature = 2 [(.buf.validate.field) = { ... }</code>
      * @return The gpuTemperature.
      */
     float getGpuTemperature();
 
     /**
-     * <code>float gpu_load = 3;</code>
+     * <code>float gpu_load = 3 [(.buf.validate.field) = { ... }</code>
      * @return The gpuLoad.
      */
     float getGpuLoad();
 
     /**
-     * <code>float cpu_load = 4;</code>
+     * <code>float cpu_load = 4 [(.buf.validate.field) = { ... }</code>
      * @return The cpuLoad.
      */
     float getCpuLoad();
 
     /**
-     * <code>float power_consumption = 5;</code>
+     * <code>float power_consumption = 5 [(.buf.validate.field) = { ... }</code>
      * @return The powerConsumption.
      */
     float getPowerConsumption();
 
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for loc.
      */
     int getLocValue();
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
      * @return The loc.
      */
     ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc();
 
     /**
-     * <code>int32 cur_video_rec_dir_year = 7;</code>
+     * <code>int32 cur_video_rec_dir_year = 7 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirYear.
      */
     int getCurVideoRecDirYear();
 
     /**
-     * <code>int32 cur_video_rec_dir_month = 8;</code>
+     * <code>int32 cur_video_rec_dir_month = 8 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirMonth.
      */
     int getCurVideoRecDirMonth();
 
     /**
-     * <code>int32 cur_video_rec_dir_day = 9;</code>
+     * <code>int32 cur_video_rec_dir_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirDay.
      */
     int getCurVideoRecDirDay();
 
     /**
-     * <code>int32 cur_video_rec_dir_hour = 10;</code>
+     * <code>int32 cur_video_rec_dir_hour = 10 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirHour.
      */
     int getCurVideoRecDirHour();
 
     /**
-     * <code>int32 cur_video_rec_dir_minute = 11;</code>
+     * <code>int32 cur_video_rec_dir_minute = 11 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirMinute.
      */
     int getCurVideoRecDirMinute();
 
     /**
-     * <code>int32 cur_video_rec_dir_second = 12;</code>
+     * <code>int32 cur_video_rec_dir_second = 12 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirSecond.
      */
     int getCurVideoRecDirSecond();
@@ -121,7 +121,7 @@ public final class JonSharedDataSystem {
     boolean getNoDiskSpace();
 
     /**
-     * <code>int32 disk_space = 17;</code>
+     * <code>int32 disk_space = 17 [(.buf.validate.field) = { ... }</code>
      * @return The diskSpace.
      */
     int getDiskSpace();
@@ -195,7 +195,7 @@ public final class JonSharedDataSystem {
     public static final int CPU_TEMPERATURE_FIELD_NUMBER = 1;
     private float cpuTemperature_ = 0F;
     /**
-     * <code>float cpu_temperature = 1;</code>
+     * <code>float cpu_temperature = 1 [(.buf.validate.field) = { ... }</code>
      * @return The cpuTemperature.
      */
     @java.lang.Override
@@ -206,7 +206,7 @@ public final class JonSharedDataSystem {
     public static final int GPU_TEMPERATURE_FIELD_NUMBER = 2;
     private float gpuTemperature_ = 0F;
     /**
-     * <code>float gpu_temperature = 2;</code>
+     * <code>float gpu_temperature = 2 [(.buf.validate.field) = { ... }</code>
      * @return The gpuTemperature.
      */
     @java.lang.Override
@@ -217,7 +217,7 @@ public final class JonSharedDataSystem {
     public static final int GPU_LOAD_FIELD_NUMBER = 3;
     private float gpuLoad_ = 0F;
     /**
-     * <code>float gpu_load = 3;</code>
+     * <code>float gpu_load = 3 [(.buf.validate.field) = { ... }</code>
      * @return The gpuLoad.
      */
     @java.lang.Override
@@ -228,7 +228,7 @@ public final class JonSharedDataSystem {
     public static final int CPU_LOAD_FIELD_NUMBER = 4;
     private float cpuLoad_ = 0F;
     /**
-     * <code>float cpu_load = 4;</code>
+     * <code>float cpu_load = 4 [(.buf.validate.field) = { ... }</code>
      * @return The cpuLoad.
      */
     @java.lang.Override
@@ -239,7 +239,7 @@ public final class JonSharedDataSystem {
     public static final int POWER_CONSUMPTION_FIELD_NUMBER = 5;
     private float powerConsumption_ = 0F;
     /**
-     * <code>float power_consumption = 5;</code>
+     * <code>float power_consumption = 5 [(.buf.validate.field) = { ... }</code>
      * @return The powerConsumption.
      */
     @java.lang.Override
@@ -250,14 +250,14 @@ public final class JonSharedDataSystem {
     public static final int LOC_FIELD_NUMBER = 6;
     private int loc_ = 0;
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for loc.
      */
     @java.lang.Override public int getLocValue() {
       return loc_;
     }
     /**
-     * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+     * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
      * @return The loc.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataSystemLocalizations getLoc() {
@@ -268,7 +268,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_YEAR_FIELD_NUMBER = 7;
     private int curVideoRecDirYear_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_year = 7;</code>
+     * <code>int32 cur_video_rec_dir_year = 7 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirYear.
      */
     @java.lang.Override
@@ -279,7 +279,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_MONTH_FIELD_NUMBER = 8;
     private int curVideoRecDirMonth_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_month = 8;</code>
+     * <code>int32 cur_video_rec_dir_month = 8 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirMonth.
      */
     @java.lang.Override
@@ -290,7 +290,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_DAY_FIELD_NUMBER = 9;
     private int curVideoRecDirDay_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_day = 9;</code>
+     * <code>int32 cur_video_rec_dir_day = 9 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirDay.
      */
     @java.lang.Override
@@ -301,7 +301,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_HOUR_FIELD_NUMBER = 10;
     private int curVideoRecDirHour_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_hour = 10;</code>
+     * <code>int32 cur_video_rec_dir_hour = 10 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirHour.
      */
     @java.lang.Override
@@ -312,7 +312,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_MINUTE_FIELD_NUMBER = 11;
     private int curVideoRecDirMinute_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_minute = 11;</code>
+     * <code>int32 cur_video_rec_dir_minute = 11 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirMinute.
      */
     @java.lang.Override
@@ -323,7 +323,7 @@ public final class JonSharedDataSystem {
     public static final int CUR_VIDEO_REC_DIR_SECOND_FIELD_NUMBER = 12;
     private int curVideoRecDirSecond_ = 0;
     /**
-     * <code>int32 cur_video_rec_dir_second = 12;</code>
+     * <code>int32 cur_video_rec_dir_second = 12 [(.buf.validate.field) = { ... }</code>
      * @return The curVideoRecDirSecond.
      */
     @java.lang.Override
@@ -378,7 +378,7 @@ public final class JonSharedDataSystem {
     public static final int DISK_SPACE_FIELD_NUMBER = 17;
     private int diskSpace_ = 0;
     /**
-     * <code>int32 disk_space = 17;</code>
+     * <code>int32 disk_space = 17 [(.buf.validate.field) = { ... }</code>
      * @return The diskSpace.
      */
     @java.lang.Override
@@ -1269,7 +1269,7 @@ public final class JonSharedDataSystem {
 
       private float cpuTemperature_ ;
       /**
-       * <code>float cpu_temperature = 1;</code>
+       * <code>float cpu_temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @return The cpuTemperature.
        */
       @java.lang.Override
@@ -1277,7 +1277,7 @@ public final class JonSharedDataSystem {
         return cpuTemperature_;
       }
       /**
-       * <code>float cpu_temperature = 1;</code>
+       * <code>float cpu_temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The cpuTemperature to set.
        * @return This builder for chaining.
        */
@@ -1289,7 +1289,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>float cpu_temperature = 1;</code>
+       * <code>float cpu_temperature = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCpuTemperature() {
@@ -1301,7 +1301,7 @@ public final class JonSharedDataSystem {
 
       private float gpuTemperature_ ;
       /**
-       * <code>float gpu_temperature = 2;</code>
+       * <code>float gpu_temperature = 2 [(.buf.validate.field) = { ... }</code>
        * @return The gpuTemperature.
        */
       @java.lang.Override
@@ -1309,7 +1309,7 @@ public final class JonSharedDataSystem {
         return gpuTemperature_;
       }
       /**
-       * <code>float gpu_temperature = 2;</code>
+       * <code>float gpu_temperature = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The gpuTemperature to set.
        * @return This builder for chaining.
        */
@@ -1321,7 +1321,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>float gpu_temperature = 2;</code>
+       * <code>float gpu_temperature = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearGpuTemperature() {
@@ -1333,7 +1333,7 @@ public final class JonSharedDataSystem {
 
       private float gpuLoad_ ;
       /**
-       * <code>float gpu_load = 3;</code>
+       * <code>float gpu_load = 3 [(.buf.validate.field) = { ... }</code>
        * @return The gpuLoad.
        */
       @java.lang.Override
@@ -1341,7 +1341,7 @@ public final class JonSharedDataSystem {
         return gpuLoad_;
       }
       /**
-       * <code>float gpu_load = 3;</code>
+       * <code>float gpu_load = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The gpuLoad to set.
        * @return This builder for chaining.
        */
@@ -1353,7 +1353,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>float gpu_load = 3;</code>
+       * <code>float gpu_load = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearGpuLoad() {
@@ -1365,7 +1365,7 @@ public final class JonSharedDataSystem {
 
       private float cpuLoad_ ;
       /**
-       * <code>float cpu_load = 4;</code>
+       * <code>float cpu_load = 4 [(.buf.validate.field) = { ... }</code>
        * @return The cpuLoad.
        */
       @java.lang.Override
@@ -1373,7 +1373,7 @@ public final class JonSharedDataSystem {
         return cpuLoad_;
       }
       /**
-       * <code>float cpu_load = 4;</code>
+       * <code>float cpu_load = 4 [(.buf.validate.field) = { ... }</code>
        * @param value The cpuLoad to set.
        * @return This builder for chaining.
        */
@@ -1385,7 +1385,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>float cpu_load = 4;</code>
+       * <code>float cpu_load = 4 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCpuLoad() {
@@ -1397,7 +1397,7 @@ public final class JonSharedDataSystem {
 
       private float powerConsumption_ ;
       /**
-       * <code>float power_consumption = 5;</code>
+       * <code>float power_consumption = 5 [(.buf.validate.field) = { ... }</code>
        * @return The powerConsumption.
        */
       @java.lang.Override
@@ -1405,7 +1405,7 @@ public final class JonSharedDataSystem {
         return powerConsumption_;
       }
       /**
-       * <code>float power_consumption = 5;</code>
+       * <code>float power_consumption = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The powerConsumption to set.
        * @return This builder for chaining.
        */
@@ -1417,7 +1417,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>float power_consumption = 5;</code>
+       * <code>float power_consumption = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearPowerConsumption() {
@@ -1429,14 +1429,14 @@ public final class JonSharedDataSystem {
 
       private int loc_ = 0;
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for loc.
        */
       @java.lang.Override public int getLocValue() {
         return loc_;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for loc to set.
        * @return This builder for chaining.
        */
@@ -1447,7 +1447,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
        * @return The loc.
        */
       @java.lang.Override
@@ -1456,7 +1456,7 @@ public final class JonSharedDataSystem {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataSystemLocalizations.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The loc to set.
        * @return This builder for chaining.
        */
@@ -1470,7 +1470,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataSystemLocalizations loc = 6;</code>
+       * <code>.ser.JonGuiDataSystemLocalizations loc = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearLoc() {
@@ -1482,7 +1482,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirYear_ ;
       /**
-       * <code>int32 cur_video_rec_dir_year = 7;</code>
+       * <code>int32 cur_video_rec_dir_year = 7 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirYear.
        */
       @java.lang.Override
@@ -1490,7 +1490,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirYear_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_year = 7;</code>
+       * <code>int32 cur_video_rec_dir_year = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirYear to set.
        * @return This builder for chaining.
        */
@@ -1502,7 +1502,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_year = 7;</code>
+       * <code>int32 cur_video_rec_dir_year = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirYear() {
@@ -1514,7 +1514,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirMonth_ ;
       /**
-       * <code>int32 cur_video_rec_dir_month = 8;</code>
+       * <code>int32 cur_video_rec_dir_month = 8 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirMonth.
        */
       @java.lang.Override
@@ -1522,7 +1522,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirMonth_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_month = 8;</code>
+       * <code>int32 cur_video_rec_dir_month = 8 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirMonth to set.
        * @return This builder for chaining.
        */
@@ -1534,7 +1534,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_month = 8;</code>
+       * <code>int32 cur_video_rec_dir_month = 8 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirMonth() {
@@ -1546,7 +1546,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirDay_ ;
       /**
-       * <code>int32 cur_video_rec_dir_day = 9;</code>
+       * <code>int32 cur_video_rec_dir_day = 9 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirDay.
        */
       @java.lang.Override
@@ -1554,7 +1554,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirDay_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_day = 9;</code>
+       * <code>int32 cur_video_rec_dir_day = 9 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirDay to set.
        * @return This builder for chaining.
        */
@@ -1566,7 +1566,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_day = 9;</code>
+       * <code>int32 cur_video_rec_dir_day = 9 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirDay() {
@@ -1578,7 +1578,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirHour_ ;
       /**
-       * <code>int32 cur_video_rec_dir_hour = 10;</code>
+       * <code>int32 cur_video_rec_dir_hour = 10 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirHour.
        */
       @java.lang.Override
@@ -1586,7 +1586,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirHour_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_hour = 10;</code>
+       * <code>int32 cur_video_rec_dir_hour = 10 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirHour to set.
        * @return This builder for chaining.
        */
@@ -1598,7 +1598,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_hour = 10;</code>
+       * <code>int32 cur_video_rec_dir_hour = 10 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirHour() {
@@ -1610,7 +1610,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirMinute_ ;
       /**
-       * <code>int32 cur_video_rec_dir_minute = 11;</code>
+       * <code>int32 cur_video_rec_dir_minute = 11 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirMinute.
        */
       @java.lang.Override
@@ -1618,7 +1618,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirMinute_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_minute = 11;</code>
+       * <code>int32 cur_video_rec_dir_minute = 11 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirMinute to set.
        * @return This builder for chaining.
        */
@@ -1630,7 +1630,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_minute = 11;</code>
+       * <code>int32 cur_video_rec_dir_minute = 11 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirMinute() {
@@ -1642,7 +1642,7 @@ public final class JonSharedDataSystem {
 
       private int curVideoRecDirSecond_ ;
       /**
-       * <code>int32 cur_video_rec_dir_second = 12;</code>
+       * <code>int32 cur_video_rec_dir_second = 12 [(.buf.validate.field) = { ... }</code>
        * @return The curVideoRecDirSecond.
        */
       @java.lang.Override
@@ -1650,7 +1650,7 @@ public final class JonSharedDataSystem {
         return curVideoRecDirSecond_;
       }
       /**
-       * <code>int32 cur_video_rec_dir_second = 12;</code>
+       * <code>int32 cur_video_rec_dir_second = 12 [(.buf.validate.field) = { ... }</code>
        * @param value The curVideoRecDirSecond to set.
        * @return This builder for chaining.
        */
@@ -1662,7 +1662,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 cur_video_rec_dir_second = 12;</code>
+       * <code>int32 cur_video_rec_dir_second = 12 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearCurVideoRecDirSecond() {
@@ -1802,7 +1802,7 @@ public final class JonSharedDataSystem {
 
       private int diskSpace_ ;
       /**
-       * <code>int32 disk_space = 17;</code>
+       * <code>int32 disk_space = 17 [(.buf.validate.field) = { ... }</code>
        * @return The diskSpace.
        */
       @java.lang.Override
@@ -1810,7 +1810,7 @@ public final class JonSharedDataSystem {
         return diskSpace_;
       }
       /**
-       * <code>int32 disk_space = 17;</code>
+       * <code>int32 disk_space = 17 [(.buf.validate.field) = { ... }</code>
        * @param value The diskSpace to set.
        * @return This builder for chaining.
        */
@@ -1822,7 +1822,7 @@ public final class JonSharedDataSystem {
         return this;
       }
       /**
-       * <code>int32 disk_space = 17;</code>
+       * <code>int32 disk_space = 17 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDiskSpace() {
@@ -2069,30 +2069,37 @@ public final class JonSharedDataSystem {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\034jon_shared_data_system.proto\022\003ser\032\033jon" +
-      "_shared_data_types.proto\"\336\004\n\020JonGuiDataS" +
-      "ystem\022\027\n\017cpu_temperature\030\001 \001(\002\022\027\n\017gpu_te" +
-      "mperature\030\002 \001(\002\022\020\n\010gpu_load\030\003 \001(\002\022\020\n\010cpu" +
-      "_load\030\004 \001(\002\022\031\n\021power_consumption\030\005 \001(\002\022/" +
-      "\n\003loc\030\006 \001(\0162\".ser.JonGuiDataSystemLocali" +
-      "zations\022\036\n\026cur_video_rec_dir_year\030\007 \001(\005\022" +
-      "\037\n\027cur_video_rec_dir_month\030\010 \001(\005\022\035\n\025cur_" +
-      "video_rec_dir_day\030\t \001(\005\022\036\n\026cur_video_rec" +
-      "_dir_hour\030\n \001(\005\022 \n\030cur_video_rec_dir_min" +
-      "ute\030\013 \001(\005\022 \n\030cur_video_rec_dir_second\030\014 " +
-      "\001(\005\022\023\n\013rec_enabled\030\r \001(\010\022\035\n\025important_re" +
-      "c_enabled\030\016 \001(\010\022\026\n\016low_disk_space\030\017 \001(\010\022" +
-      "\025\n\rno_disk_space\030\020 \001(\010\022\022\n\ndisk_space\030\021 \001" +
-      "(\005\022\020\n\010tracking\030\022 \001(\010\022\024\n\014vampire_mode\030\023 \001" +
-      "(\010\022\032\n\022stabilization_mode\030\024 \001(\010\022\025\n\rgeodes" +
-      "ic_mode\030\025 \001(\010\022\022\n\ncv_dumping\030\026 \001(\010BNZLgit" +
-      "-codecommit.eu-central-1.amazonaws.com/v" +
-      "1/repos/jettison/jonp/data/systemb\006proto" +
-      "3"
+      "\n\034jon_shared_data_system.proto\022\003ser\032\033buf" +
+      "/validate/validate.proto\032\033jon_shared_dat" +
+      "a_types.proto\"\320\006\n\020JonGuiDataSystem\0227\n\017cp" +
+      "u_temperature\030\001 \001(\002B\036\272H\033\n\031\035\000\000\026C-3\223\210\303M\000\000\314" +
+      "AM\000\000pBM\000\000\241B\0227\n\017gpu_temperature\030\002 \001(\002B\036\272H" +
+      "\033\n\031\035\000\000\026C-3\223\210\303M\000\000\360AM\000\000\214BM\000\000\253B\0220\n\010gpu_load" +
+      "\030\003 \001(\002B\036\272H\033\n\031\035\000\000\310B-\000\000\000\000M\000\000\000\000M\000\000HBM\000\000\310B\0225" +
+      "\n\010cpu_load\030\004 \001(\002B#\272H \n\036\035\000\000\310B-\000\000\000\000M\000\000\000\000M\000" +
+      "\000\310AM\000\000\226BM\000\000\310B\0229\n\021power_consumption\030\005 \001(\002" +
+      "B\036\272H\033\n\031\035\000\000zD-\000\000\000\000M\000\000\240@M\000\000HBM\000\000HC\022;\n\003loc\030" +
+      "\006 \001(\0162\".ser.JonGuiDataSystemLocalization" +
+      "sB\n\272H\007\202\001\004\020\001 \000\022\'\n\026cur_video_rec_dir_year\030" +
+      "\007 \001(\005B\007\272H\004\032\002(\000\022(\n\027cur_video_rec_dir_mont" +
+      "h\030\010 \001(\005B\007\272H\004\032\002(\000\022&\n\025cur_video_rec_dir_da" +
+      "y\030\t \001(\005B\007\272H\004\032\002(\000\022\'\n\026cur_video_rec_dir_ho" +
+      "ur\030\n \001(\005B\007\272H\004\032\002(\000\022)\n\030cur_video_rec_dir_m" +
+      "inute\030\013 \001(\005B\007\272H\004\032\002(\000\022)\n\030cur_video_rec_di" +
+      "r_second\030\014 \001(\005B\007\272H\004\032\002(\000\022\023\n\013rec_enabled\030\r" +
+      " \001(\010\022\035\n\025important_rec_enabled\030\016 \001(\010\022\026\n\016l" +
+      "ow_disk_space\030\017 \001(\010\022\025\n\rno_disk_space\030\020 \001" +
+      "(\010\022\035\n\ndisk_space\030\021 \001(\005B\t\272H\006\032\004\030d(\000\022\020\n\010tra" +
+      "cking\030\022 \001(\010\022\024\n\014vampire_mode\030\023 \001(\010\022\032\n\022sta" +
+      "bilization_mode\030\024 \001(\010\022\025\n\rgeodesic_mode\030\025" +
+      " \001(\010\022\022\n\ncv_dumping\030\026 \001(\010BNZLgit-codecomm" +
+      "it.eu-central-1.amazonaws.com/v1/repos/j" +
+      "ettison/jonp/data/systemb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataSystem_descriptor =
@@ -2101,6 +2108,12 @@ public final class JonSharedDataSystem {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataSystem_descriptor,
         new java.lang.String[] { "CpuTemperature", "GpuTemperature", "GpuLoad", "CpuLoad", "PowerConsumption", "Loc", "CurVideoRecDirYear", "CurVideoRecDirMonth", "CurVideoRecDirDay", "CurVideoRecDirHour", "CurVideoRecDirMinute", "CurVideoRecDirSecond", "RecEnabled", "ImportantRecEnabled", "LowDiskSpace", "NoDiskSpace", "DiskSpace", "Tracking", "VampireMode", "StabilizationMode", "GeodesicMode", "CvDumping", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

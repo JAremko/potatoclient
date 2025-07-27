@@ -7414,12 +7414,12 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     int getModeValue();
     /**
-     * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     ser.JonSharedDataTypes.JonGuiDataFxModeHeat getMode();
@@ -7463,14 +7463,14 @@ public final class JonSharedCmdHeatCamera {
     public static final int MODE_FIELD_NUMBER = 1;
     private int mode_ = 0;
     /**
-     * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for mode.
      */
     @java.lang.Override public int getModeValue() {
       return mode_;
     }
     /**
-     * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+     * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
      * @return The mode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataFxModeHeat getMode() {
@@ -7804,14 +7804,14 @@ public final class JonSharedCmdHeatCamera {
 
       private int mode_ = 0;
       /**
-       * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for mode.
        */
       @java.lang.Override public int getModeValue() {
         return mode_;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for mode to set.
        * @return This builder for chaining.
        */
@@ -7822,7 +7822,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return The mode.
        */
       @java.lang.Override
@@ -7831,7 +7831,7 @@ public final class JonSharedCmdHeatCamera {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataFxModeHeat.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The mode to set.
        * @return This builder for chaining.
        */
@@ -7845,7 +7845,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataFxModeHeat mode = 1;</code>
+       * <code>.ser.JonGuiDataFxModeHeat mode = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMode() {
@@ -7923,7 +7923,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -7966,7 +7966,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -8303,7 +8303,7 @@ public final class JonSharedCmdHeatCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -8311,7 +8311,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -8323,7 +8323,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -8401,7 +8401,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -8444,7 +8444,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -8781,7 +8781,7 @@ public final class JonSharedCmdHeatCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -8789,7 +8789,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -8801,7 +8801,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -10864,7 +10864,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -10907,7 +10907,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -11244,7 +11244,7 @@ public final class JonSharedCmdHeatCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -11252,7 +11252,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -11264,7 +11264,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -11342,7 +11342,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     int getValue();
@@ -11385,7 +11385,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -11720,7 +11720,7 @@ public final class JonSharedCmdHeatCamera {
 
       private int value_ ;
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -11728,7 +11728,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -11740,7 +11740,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -11818,7 +11818,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     float getValue();
@@ -11861,7 +11861,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private float value_ = 0F;
     /**
-     * <code>float value = 1;</code>
+     * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -12198,7 +12198,7 @@ public final class JonSharedCmdHeatCamera {
 
       private float value_ ;
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -12206,7 +12206,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -12218,7 +12218,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>float value = 1;</code>
+       * <code>float value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -12296,7 +12296,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     int getValue();
@@ -12339,7 +12339,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -12674,7 +12674,7 @@ public final class JonSharedCmdHeatCamera {
 
       private int value_ ;
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -12682,7 +12682,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -12694,7 +12694,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -18686,7 +18686,7 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     int getValue();
@@ -18729,7 +18729,7 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>int32 value = 1;</code>
+     * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override
@@ -19064,7 +19064,7 @@ public final class JonSharedCmdHeatCamera {
 
       private int value_ ;
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -19072,7 +19072,7 @@ public final class JonSharedCmdHeatCamera {
         return value_;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -19084,7 +19084,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>int32 value = 1;</code>
+       * <code>int32 value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -19162,12 +19162,12 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for value.
      */
     int getValueValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getValue();
@@ -19211,14 +19211,14 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for value.
      */
     @java.lang.Override public int getValueValue() {
       return value_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes getValue() {
@@ -19552,14 +19552,14 @@ public final class JonSharedCmdHeatCamera {
 
       private int value_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for value.
        */
       @java.lang.Override public int getValueValue() {
         return value_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for value to set.
        * @return This builder for chaining.
        */
@@ -19570,7 +19570,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -19579,7 +19579,7 @@ public final class JonSharedCmdHeatCamera {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatAGCModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -19593,7 +19593,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatAGCModes value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -19671,12 +19671,12 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for value.
      */
     int getValueValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getValue();
@@ -19720,14 +19720,14 @@ public final class JonSharedCmdHeatCamera {
     public static final int VALUE_FIELD_NUMBER = 1;
     private int value_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for value.
      */
     @java.lang.Override public int getValueValue() {
       return value_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
      * @return The value.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters getValue() {
@@ -20061,14 +20061,14 @@ public final class JonSharedCmdHeatCamera {
 
       private int value_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for value.
        */
       @java.lang.Override public int getValueValue() {
         return value_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for value to set.
        * @return This builder for chaining.
        */
@@ -20079,7 +20079,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
        * @return The value.
        */
       @java.lang.Override
@@ -20088,7 +20088,7 @@ public final class JonSharedCmdHeatCamera {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannelHeatFilters.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -20102,7 +20102,7 @@ public final class JonSharedCmdHeatCamera {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannelHeatFilters value = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -23626,77 +23626,83 @@ public final class JonSharedCmdHeatCamera {
   static {
     java.lang.String[] descriptorData = {
       "\n jon_shared_cmd_heat_camera.proto\022\016cmd." +
-      "HeatCamera\032\033jon_shared_data_types.proto\"" +
-      "\242\014\n\004Root\022$\n\004zoom\030\001 \001(\0132\024.cmd.HeatCamera." +
-      "ZoomH\000\022)\n\007set_agc\030\002 \001(\0132\026.cmd.HeatCamera" +
-      ".SetAGCH\000\0220\n\nset_filter\030\003 \001(\0132\032.cmd.Heat" +
-      "Camera.SetFiltersH\000\022&\n\005start\030\004 \001(\0132\025.cmd" +
-      ".HeatCamera.StartH\000\022$\n\004stop\030\005 \001(\0132\024.cmd." +
-      "HeatCamera.StopH\000\022&\n\005photo\030\006 \001(\0132\025.cmd.H" +
-      "eatCamera.PhotoH\000\022)\n\007zoom_in\030\n \001(\0132\026.cmd" +
-      ".HeatCamera.ZoomInH\000\022+\n\010zoom_out\030\013 \001(\0132\027" +
-      ".cmd.HeatCamera.ZoomOutH\000\022-\n\tzoom_stop\030\014" +
-      " \001(\0132\030.cmd.HeatCamera.ZoomStopH\000\022+\n\010focu" +
-      "s_in\030\r \001(\0132\027.cmd.HeatCamera.FocusInH\000\022-\n" +
-      "\tfocus_out\030\016 \001(\0132\030.cmd.HeatCamera.FocusO" +
-      "utH\000\022/\n\nfocus_stop\030\017 \001(\0132\031.cmd.HeatCamer" +
-      "a.FocusStopH\000\022.\n\tcalibrate\030\020 \001(\0132\031.cmd.H" +
-      "eatCamera.CalibrateH\000\0224\n\rset_dde_level\030\021" +
-      " \001(\0132\033.cmd.HeatCamera.SetDDELevelH\000\022/\n\ne" +
-      "nable_dde\030\022 \001(\0132\031.cmd.HeatCamera.EnableD" +
-      "DEH\000\0221\n\013disable_dde\030\023 \001(\0132\032.cmd.HeatCame" +
-      "ra.DisableDDEH\000\0226\n\016set_auto_focus\030\024 \001(\0132" +
-      "\034.cmd.HeatCamera.SetAutoFocusH\000\0228\n\017focus" +
-      "_step_plus\030\025 \001(\0132\035.cmd.HeatCamera.FocusS" +
-      "tepPlusH\000\022:\n\020focus_step_minus\030\026 \001(\0132\036.cm" +
-      "d.HeatCamera.FocusStepMinusH\000\0220\n\013set_fx_" +
-      "mode\030\027 \001(\0132\031.cmd.HeatCamera.SetFxModeH\000\022" +
-      "2\n\014next_fx_mode\030\030 \001(\0132\032.cmd.HeatCamera.N" +
-      "extFxModeH\000\0222\n\014prev_fx_mode\030\031 \001(\0132\032.cmd." +
-      "HeatCamera.PrevFxModeH\000\022-\n\tget_meteo\030\032 \001" +
-      "(\0132\030.cmd.HeatCamera.GetMeteoH\000\022-\n\tshift_" +
-      "dde\030\033 \001(\0132\030.cmd.HeatCamera.ShiftDDEH\000\0228\n" +
-      "\017refresh_fx_mode\030\034 \001(\0132\035.cmd.HeatCamera." +
-      "RefreshFxModeH\000\022/\n\nreset_zoom\030\035 \001(\0132\031.cm" +
-      "d.HeatCamera.ResetZoomH\000\0224\n\rsave_to_tabl" +
-      "e\030\036 \001(\0132\033.cmd.HeatCamera.SaveToTableH\000\0226" +
-      "\n\016set_calib_mode\030\037 \001(\0132\034.cmd.HeatCamera." +
-      "SetCalibModeH\000\022E\n\026set_digital_zoom_level" +
-      "\030  \001(\0132#.cmd.HeatCamera.SetDigitalZoomLe" +
-      "velH\000\0228\n\017set_clahe_level\030! \001(\0132\035.cmd.Hea" +
-      "tCamera.SetClaheLevelH\000\022<\n\021shift_clahe_l" +
-      "evel\030\" \001(\0132\037.cmd.HeatCamera.ShiftClaheLe" +
-      "velH\000B\005\n\003cmd\"4\n\tSetFxMode\022\'\n\004mode\030\001 \001(\0162" +
-      "\031.ser.JonGuiDataFxModeHeat\"\036\n\rSetClaheLe" +
-      "vel\022\r\n\005value\030\001 \001(\002\" \n\017ShiftClaheLevel\022\r\n" +
-      "\005value\030\001 \001(\002\"\014\n\nNextFxMode\"\014\n\nPrevFxMode" +
-      "\"\017\n\rRefreshFxMode\"\013\n\tEnableDDE\"\014\n\nDisabl" +
-      "eDDE\"\031\n\010SetValue\022\r\n\005value\030\001 \001(\002\"\034\n\013SetDD" +
-      "ELevel\022\r\n\005value\030\001 \001(\005\"$\n\023SetDigitalZoomL" +
-      "evel\022\r\n\005value\030\001 \001(\002\"\031\n\010ShiftDDE\022\r\n\005value" +
-      "\030\001 \001(\005\"\010\n\006ZoomIn\"\t\n\007ZoomOut\"\n\n\010ZoomStop\"" +
-      "\t\n\007FocusIn\"\n\n\010FocusOut\"\013\n\tFocusStop\"\017\n\rF" +
-      "ocusStepPlus\"\020\n\016FocusStepMinus\"\013\n\tCalibr" +
-      "ate\"\322\001\n\004Zoom\022A\n\024set_zoom_table_value\030\001 \001" +
-      "(\0132!.cmd.HeatCamera.SetZoomTableValueH\000\022" +
-      "?\n\023next_zoom_table_pos\030\002 \001(\0132 .cmd.HeatC" +
-      "amera.NextZoomTablePosH\000\022?\n\023prev_zoom_ta" +
-      "ble_pos\030\003 \001(\0132 .cmd.HeatCamera.PrevZoomT" +
-      "ablePosH\000B\005\n\003cmd\"\022\n\020NextZoomTablePos\"\022\n\020" +
-      "PrevZoomTablePos\"\016\n\014SetCalibMode\"\"\n\021SetZ" +
-      "oomTableValue\022\r\n\005value\030\001 \001(\005\"@\n\006SetAGC\0226" +
-      "\n\005value\030\001 \001(\0162\'.ser.JonGuiDataVideoChann" +
-      "elHeatAGCModes\"C\n\nSetFilters\0225\n\005value\030\001 " +
-      "\001(\0162&.ser.JonGuiDataVideoChannelHeatFilt" +
-      "ers\"\007\n\005Start\"\006\n\004Stop\"\006\n\004Halt\"\007\n\005Photo\"\n\n" +
-      "\010GetMeteo\"\035\n\014SetAutoFocus\022\r\n\005value\030\001 \001(\010" +
-      "\"\013\n\tResetZoom\"\r\n\013SaveToTableBRZPgit-code" +
-      "commit.eu-central-1.amazonaws.com/v1/rep" +
-      "os/jettison/jonp/cmd/heat_camerab\006proto3"
+      "HeatCamera\032\033buf/validate/validate.proto\032" +
+      "\033jon_shared_data_types.proto\"\251\014\n\004Root\022$\n" +
+      "\004zoom\030\001 \001(\0132\024.cmd.HeatCamera.ZoomH\000\022)\n\007s" +
+      "et_agc\030\002 \001(\0132\026.cmd.HeatCamera.SetAGCH\000\0220" +
+      "\n\nset_filter\030\003 \001(\0132\032.cmd.HeatCamera.SetF" +
+      "iltersH\000\022&\n\005start\030\004 \001(\0132\025.cmd.HeatCamera" +
+      ".StartH\000\022$\n\004stop\030\005 \001(\0132\024.cmd.HeatCamera." +
+      "StopH\000\022&\n\005photo\030\006 \001(\0132\025.cmd.HeatCamera.P" +
+      "hotoH\000\022)\n\007zoom_in\030\n \001(\0132\026.cmd.HeatCamera" +
+      ".ZoomInH\000\022+\n\010zoom_out\030\013 \001(\0132\027.cmd.HeatCa" +
+      "mera.ZoomOutH\000\022-\n\tzoom_stop\030\014 \001(\0132\030.cmd." +
+      "HeatCamera.ZoomStopH\000\022+\n\010focus_in\030\r \001(\0132" +
+      "\027.cmd.HeatCamera.FocusInH\000\022-\n\tfocus_out\030" +
+      "\016 \001(\0132\030.cmd.HeatCamera.FocusOutH\000\022/\n\nfoc" +
+      "us_stop\030\017 \001(\0132\031.cmd.HeatCamera.FocusStop" +
+      "H\000\022.\n\tcalibrate\030\020 \001(\0132\031.cmd.HeatCamera.C" +
+      "alibrateH\000\0224\n\rset_dde_level\030\021 \001(\0132\033.cmd." +
+      "HeatCamera.SetDDELevelH\000\022/\n\nenable_dde\030\022" +
+      " \001(\0132\031.cmd.HeatCamera.EnableDDEH\000\0221\n\013dis" +
+      "able_dde\030\023 \001(\0132\032.cmd.HeatCamera.DisableD" +
+      "DEH\000\0226\n\016set_auto_focus\030\024 \001(\0132\034.cmd.HeatC" +
+      "amera.SetAutoFocusH\000\0228\n\017focus_step_plus\030" +
+      "\025 \001(\0132\035.cmd.HeatCamera.FocusStepPlusH\000\022:" +
+      "\n\020focus_step_minus\030\026 \001(\0132\036.cmd.HeatCamer" +
+      "a.FocusStepMinusH\000\0220\n\013set_fx_mode\030\027 \001(\0132" +
+      "\031.cmd.HeatCamera.SetFxModeH\000\0222\n\014next_fx_" +
+      "mode\030\030 \001(\0132\032.cmd.HeatCamera.NextFxModeH\000" +
+      "\0222\n\014prev_fx_mode\030\031 \001(\0132\032.cmd.HeatCamera." +
+      "PrevFxModeH\000\022-\n\tget_meteo\030\032 \001(\0132\030.cmd.He" +
+      "atCamera.GetMeteoH\000\022-\n\tshift_dde\030\033 \001(\0132\030" +
+      ".cmd.HeatCamera.ShiftDDEH\000\0228\n\017refresh_fx" +
+      "_mode\030\034 \001(\0132\035.cmd.HeatCamera.RefreshFxMo" +
+      "deH\000\022/\n\nreset_zoom\030\035 \001(\0132\031.cmd.HeatCamer" +
+      "a.ResetZoomH\000\0224\n\rsave_to_table\030\036 \001(\0132\033.c" +
+      "md.HeatCamera.SaveToTableH\000\0226\n\016set_calib" +
+      "_mode\030\037 \001(\0132\034.cmd.HeatCamera.SetCalibMod" +
+      "eH\000\022E\n\026set_digital_zoom_level\030  \001(\0132#.cm" +
+      "d.HeatCamera.SetDigitalZoomLevelH\000\0228\n\017se" +
+      "t_clahe_level\030! \001(\0132\035.cmd.HeatCamera.Set" +
+      "ClaheLevelH\000\022<\n\021shift_clahe_level\030\" \001(\0132" +
+      "\037.cmd.HeatCamera.ShiftClaheLevelH\000B\014\n\003cm" +
+      "d\022\005\272H\002\010\001\"@\n\tSetFxMode\0223\n\004mode\030\001 \001(\0162\031.se" +
+      "r.JonGuiDataFxModeHeatB\n\272H\007\202\001\004\020\001 \000\"/\n\rSe" +
+      "tClaheLevel\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000" +
+      "\000\000\000\"1\n\017ShiftClaheLevel\022\036\n\005value\030\001 \001(\002B\017\272" +
+      "H\014\n\n\035\000\000\200?-\000\000\200\277\"\014\n\nNextFxMode\"\014\n\nPrevFxMo" +
+      "de\"\017\n\rRefreshFxMode\"\013\n\tEnableDDE\"\014\n\nDisa" +
+      "bleDDE\"*\n\010SetValue\022\036\n\005value\030\001 \001(\002B\017\272H\014\n\n" +
+      "\035\000\000\200?-\000\000\000\000\"\'\n\013SetDDELevel\022\030\n\005value\030\001 \001(\005" +
+      "B\t\272H\006\032\004\030d(\000\"0\n\023SetDigitalZoomLevel\022\031\n\005va" +
+      "lue\030\001 \001(\002B\n\272H\007\n\005-\000\000\200?\"-\n\010ShiftDDE\022!\n\005val" +
+      "ue\030\001 \001(\005B\022\272H\017\032\r\030d(\234\377\377\377\377\377\377\377\377\001\"\010\n\006ZoomIn\"\t" +
+      "\n\007ZoomOut\"\n\n\010ZoomStop\"\t\n\007FocusIn\"\n\n\010Focu" +
+      "sOut\"\013\n\tFocusStop\"\017\n\rFocusStepPlus\"\020\n\016Fo" +
+      "cusStepMinus\"\013\n\tCalibrate\"\331\001\n\004Zoom\022A\n\024se" +
+      "t_zoom_table_value\030\001 \001(\0132!.cmd.HeatCamer" +
+      "a.SetZoomTableValueH\000\022?\n\023next_zoom_table" +
+      "_pos\030\002 \001(\0132 .cmd.HeatCamera.NextZoomTabl" +
+      "ePosH\000\022?\n\023prev_zoom_table_pos\030\003 \001(\0132 .cm" +
+      "d.HeatCamera.PrevZoomTablePosH\000B\014\n\003cmd\022\005" +
+      "\272H\002\010\001\"\022\n\020NextZoomTablePos\"\022\n\020PrevZoomTab" +
+      "lePos\"\016\n\014SetCalibMode\"+\n\021SetZoomTableVal" +
+      "ue\022\026\n\005value\030\001 \001(\005B\007\272H\004\032\002(\000\"L\n\006SetAGC\022B\n\005" +
+      "value\030\001 \001(\0162\'.ser.JonGuiDataVideoChannel" +
+      "HeatAGCModesB\n\272H\007\202\001\004\020\001 \000\"O\n\nSetFilters\022A" +
+      "\n\005value\030\001 \001(\0162&.ser.JonGuiDataVideoChann" +
+      "elHeatFiltersB\n\272H\007\202\001\004\020\001 \000\"\007\n\005Start\"\006\n\004St" +
+      "op\"\006\n\004Halt\"\007\n\005Photo\"\n\n\010GetMeteo\"\035\n\014SetAu" +
+      "toFocus\022\r\n\005value\030\001 \001(\010\"\013\n\tResetZoom\"\r\n\013S" +
+      "aveToTableBRZPgit-codecommit.eu-central-" +
+      "1.amazonaws.com/v1/repos/jettison/jonp/c" +
+      "md/heat_camerab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_HeatCamera_Root_descriptor =
@@ -23921,6 +23927,13 @@ public final class JonSharedCmdHeatCamera {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_HeatCamera_SaveToTable_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

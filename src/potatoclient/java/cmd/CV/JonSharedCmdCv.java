@@ -4890,12 +4890,12 @@ public final class JonSharedCmdCv {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
@@ -4945,14 +4945,14 @@ public final class JonSharedCmdCv {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
@@ -5321,14 +5321,14 @@ public final class JonSharedCmdCv {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -5339,7 +5339,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The channel.
        */
       @java.lang.Override
@@ -5348,7 +5348,7 @@ public final class JonSharedCmdCv {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
@@ -5362,7 +5362,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -5472,24 +5472,24 @@ public final class JonSharedCmdCv {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     int getChannelValue();
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel();
 
     /**
-     * <code>float x = 2;</code>
+     * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     float getX();
 
     /**
-     * <code>float y = 3;</code>
+     * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     float getY();
@@ -5539,14 +5539,14 @@ public final class JonSharedCmdCv {
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private int channel_ = 0;
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for channel.
      */
     @java.lang.Override public int getChannelValue() {
       return channel_;
     }
     /**
-     * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+     * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
      * @return The channel.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataVideoChannel getChannel() {
@@ -5557,7 +5557,7 @@ public final class JonSharedCmdCv {
     public static final int X_FIELD_NUMBER = 2;
     private float x_ = 0F;
     /**
-     * <code>float x = 2;</code>
+     * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
      * @return The x.
      */
     @java.lang.Override
@@ -5568,7 +5568,7 @@ public final class JonSharedCmdCv {
     public static final int Y_FIELD_NUMBER = 3;
     private float y_ = 0F;
     /**
-     * <code>float y = 3;</code>
+     * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
      * @return The y.
      */
     @java.lang.Override
@@ -5987,14 +5987,14 @@ public final class JonSharedCmdCv {
 
       private int channel_ = 0;
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for channel.
        */
       @java.lang.Override public int getChannelValue() {
         return channel_;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for channel to set.
        * @return This builder for chaining.
        */
@@ -6005,7 +6005,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return The channel.
        */
       @java.lang.Override
@@ -6014,7 +6014,7 @@ public final class JonSharedCmdCv {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataVideoChannel.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The channel to set.
        * @return This builder for chaining.
        */
@@ -6028,7 +6028,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataVideoChannel channel = 1;</code>
+       * <code>.ser.JonGuiDataVideoChannel channel = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearChannel() {
@@ -6040,7 +6040,7 @@ public final class JonSharedCmdCv {
 
       private float x_ ;
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @return The x.
        */
       @java.lang.Override
@@ -6048,7 +6048,7 @@ public final class JonSharedCmdCv {
         return x_;
       }
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The x to set.
        * @return This builder for chaining.
        */
@@ -6060,7 +6060,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>float x = 2;</code>
+       * <code>float x = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearX() {
@@ -6072,7 +6072,7 @@ public final class JonSharedCmdCv {
 
       private float y_ ;
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @return The y.
        */
       @java.lang.Override
@@ -6080,7 +6080,7 @@ public final class JonSharedCmdCv {
         return y_;
       }
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The y to set.
        * @return This builder for chaining.
        */
@@ -6092,7 +6092,7 @@ public final class JonSharedCmdCv {
         return this;
       }
       /**
-       * <code>float y = 3;</code>
+       * <code>float y = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearY() {
@@ -6653,34 +6653,38 @@ public final class JonSharedCmdCv {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\027jon_shared_cmd_cv.proto\022\006cmd.CV\032\033jon_s" +
-      "hared_data_types.proto\"\354\003\n\004Root\022.\n\016set_a" +
-      "uto_focus\030\001 \001(\0132\024.cmd.CV.SetAutoFocusH\000\022" +
-      "0\n\017start_track_ndc\030\002 \001(\0132\025.cmd.CV.StartT" +
-      "rackNDCH\000\022\'\n\nstop_track\030\003 \001(\0132\021.cmd.CV.S" +
-      "topTrackH\000\0228\n\023vampire_mode_enable\030\004 \001(\0132" +
-      "\031.cmd.CV.VampireModeEnableH\000\022:\n\024vampire_" +
-      "mode_disable\030\005 \001(\0132\032.cmd.CV.VampireModeD" +
-      "isableH\000\022D\n\031stabilization_mode_enable\030\006 " +
-      "\001(\0132\037.cmd.CV.StabilizationModeEnableH\000\022F" +
-      "\n\032stabilization_mode_disable\030\007 \001(\0132 .cmd" +
-      ".CV.StabilizationModeDisableH\000\022\'\n\ndump_s" +
-      "tart\030\010 \001(\0132\021.cmd.CV.DumpStartH\000\022%\n\tdump_" +
-      "stop\030\t \001(\0132\020.cmd.CV.DumpStopH\000B\005\n\003cmd\"\023\n" +
-      "\021VampireModeEnable\"\013\n\tDumpStart\"\n\n\010DumpS" +
-      "top\"\024\n\022VampireModeDisable\"\031\n\027Stabilizati" +
-      "onModeEnable\"\032\n\030StabilizationModeDisable" +
-      "\"K\n\014SetAutoFocus\022,\n\007channel\030\001 \001(\0162\033.ser." +
-      "JonGuiDataVideoChannel\022\r\n\005value\030\002 \001(\010\"g\n" +
-      "\rStartTrackNDC\022,\n\007channel\030\001 \001(\0162\033.ser.Jo" +
-      "nGuiDataVideoChannel\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003 \001" +
-      "(\002\022\022\n\nframe_time\030\004 \001(\004\"\013\n\tStopTrackBIZGg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/cmd/cvb\006proto3"
+      "\n\027jon_shared_cmd_cv.proto\022\006cmd.CV\032\033buf/v" +
+      "alidate/validate.proto\032\033jon_shared_data_" +
+      "types.proto\"\363\003\n\004Root\022.\n\016set_auto_focus\030\001" +
+      " \001(\0132\024.cmd.CV.SetAutoFocusH\000\0220\n\017start_tr" +
+      "ack_ndc\030\002 \001(\0132\025.cmd.CV.StartTrackNDCH\000\022\'" +
+      "\n\nstop_track\030\003 \001(\0132\021.cmd.CV.StopTrackH\000\022" +
+      "8\n\023vampire_mode_enable\030\004 \001(\0132\031.cmd.CV.Va" +
+      "mpireModeEnableH\000\022:\n\024vampire_mode_disabl" +
+      "e\030\005 \001(\0132\032.cmd.CV.VampireModeDisableH\000\022D\n" +
+      "\031stabilization_mode_enable\030\006 \001(\0132\037.cmd.C" +
+      "V.StabilizationModeEnableH\000\022F\n\032stabiliza" +
+      "tion_mode_disable\030\007 \001(\0132 .cmd.CV.Stabili" +
+      "zationModeDisableH\000\022\'\n\ndump_start\030\010 \001(\0132" +
+      "\021.cmd.CV.DumpStartH\000\022%\n\tdump_stop\030\t \001(\0132" +
+      "\020.cmd.CV.DumpStopH\000B\014\n\003cmd\022\005\272H\002\010\001\"\023\n\021Vam" +
+      "pireModeEnable\"\013\n\tDumpStart\"\n\n\010DumpStop\"" +
+      "\024\n\022VampireModeDisable\"\031\n\027StabilizationMo" +
+      "deEnable\"\032\n\030StabilizationModeDisable\"W\n\014" +
+      "SetAutoFocus\0228\n\007channel\030\001 \001(\0162\033.ser.JonG" +
+      "uiDataVideoChannelB\n\272H\007\202\001\004\020\001 \000\022\r\n\005value\030" +
+      "\002 \001(\010\"\225\001\n\rStartTrackNDC\0228\n\007channel\030\001 \001(\016" +
+      "2\033.ser.JonGuiDataVideoChannelB\n\272H\007\202\001\004\020\001 " +
+      "\000\022\032\n\001x\030\002 \001(\002B\017\272H\014\n\n\035\000\000\200?-\000\000\200\277\022\032\n\001y\030\003 \001(\002" +
+      "B\017\272H\014\n\n\035\000\000\200?-\000\000\200\277\022\022\n\nframe_time\030\004 \001(\004\"\013\n" +
+      "\tStopTrackBIZGgit-codecommit.eu-central-" +
+      "1.amazonaws.com/v1/repos/jettison/jonp/c" +
+      "md/cvb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_cmd_CV_Root_descriptor =
@@ -6743,6 +6747,13 @@ public final class JonSharedCmdCv {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_CV_StopTrack_descriptor,
         new java.lang.String[] { });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

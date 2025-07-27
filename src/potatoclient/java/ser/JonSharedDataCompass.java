@@ -20,37 +20,37 @@ public final class JonSharedDataCompass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>double azimuth = 1;</code>
+     * <code>double azimuth = 1 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     double getAzimuth();
 
     /**
-     * <code>double elevation = 2;</code>
+     * <code>double elevation = 2 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     double getElevation();
 
     /**
-     * <code>double bank = 3;</code>
+     * <code>double bank = 3 [(.buf.validate.field) = { ... }</code>
      * @return The bank.
      */
     double getBank();
 
     /**
-     * <code>double offsetAzimuth = 4;</code>
+     * <code>double offsetAzimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The offsetAzimuth.
      */
     double getOffsetAzimuth();
 
     /**
-     * <code>double offsetElevation = 5;</code>
+     * <code>double offsetElevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The offsetElevation.
      */
     double getOffsetElevation();
 
     /**
-     * <code>double magneticDeclination = 6;</code>
+     * <code>double magneticDeclination = 6 [(.buf.validate.field) = { ... }</code>
      * @return The magneticDeclination.
      */
     double getMagneticDeclination();
@@ -99,7 +99,7 @@ public final class JonSharedDataCompass {
     public static final int AZIMUTH_FIELD_NUMBER = 1;
     private double azimuth_ = 0D;
     /**
-     * <code>double azimuth = 1;</code>
+     * <code>double azimuth = 1 [(.buf.validate.field) = { ... }</code>
      * @return The azimuth.
      */
     @java.lang.Override
@@ -110,7 +110,7 @@ public final class JonSharedDataCompass {
     public static final int ELEVATION_FIELD_NUMBER = 2;
     private double elevation_ = 0D;
     /**
-     * <code>double elevation = 2;</code>
+     * <code>double elevation = 2 [(.buf.validate.field) = { ... }</code>
      * @return The elevation.
      */
     @java.lang.Override
@@ -121,7 +121,7 @@ public final class JonSharedDataCompass {
     public static final int BANK_FIELD_NUMBER = 3;
     private double bank_ = 0D;
     /**
-     * <code>double bank = 3;</code>
+     * <code>double bank = 3 [(.buf.validate.field) = { ... }</code>
      * @return The bank.
      */
     @java.lang.Override
@@ -132,7 +132,7 @@ public final class JonSharedDataCompass {
     public static final int OFFSETAZIMUTH_FIELD_NUMBER = 4;
     private double offsetAzimuth_ = 0D;
     /**
-     * <code>double offsetAzimuth = 4;</code>
+     * <code>double offsetAzimuth = 4 [(.buf.validate.field) = { ... }</code>
      * @return The offsetAzimuth.
      */
     @java.lang.Override
@@ -143,7 +143,7 @@ public final class JonSharedDataCompass {
     public static final int OFFSETELEVATION_FIELD_NUMBER = 5;
     private double offsetElevation_ = 0D;
     /**
-     * <code>double offsetElevation = 5;</code>
+     * <code>double offsetElevation = 5 [(.buf.validate.field) = { ... }</code>
      * @return The offsetElevation.
      */
     @java.lang.Override
@@ -154,7 +154,7 @@ public final class JonSharedDataCompass {
     public static final int MAGNETICDECLINATION_FIELD_NUMBER = 6;
     private double magneticDeclination_ = 0D;
     /**
-     * <code>double magneticDeclination = 6;</code>
+     * <code>double magneticDeclination = 6 [(.buf.validate.field) = { ... }</code>
      * @return The magneticDeclination.
      */
     @java.lang.Override
@@ -651,7 +651,7 @@ public final class JonSharedDataCompass {
 
       private double azimuth_ ;
       /**
-       * <code>double azimuth = 1;</code>
+       * <code>double azimuth = 1 [(.buf.validate.field) = { ... }</code>
        * @return The azimuth.
        */
       @java.lang.Override
@@ -659,7 +659,7 @@ public final class JonSharedDataCompass {
         return azimuth_;
       }
       /**
-       * <code>double azimuth = 1;</code>
+       * <code>double azimuth = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The azimuth to set.
        * @return This builder for chaining.
        */
@@ -671,7 +671,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double azimuth = 1;</code>
+       * <code>double azimuth = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearAzimuth() {
@@ -683,7 +683,7 @@ public final class JonSharedDataCompass {
 
       private double elevation_ ;
       /**
-       * <code>double elevation = 2;</code>
+       * <code>double elevation = 2 [(.buf.validate.field) = { ... }</code>
        * @return The elevation.
        */
       @java.lang.Override
@@ -691,7 +691,7 @@ public final class JonSharedDataCompass {
         return elevation_;
       }
       /**
-       * <code>double elevation = 2;</code>
+       * <code>double elevation = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The elevation to set.
        * @return This builder for chaining.
        */
@@ -703,7 +703,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double elevation = 2;</code>
+       * <code>double elevation = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearElevation() {
@@ -715,7 +715,7 @@ public final class JonSharedDataCompass {
 
       private double bank_ ;
       /**
-       * <code>double bank = 3;</code>
+       * <code>double bank = 3 [(.buf.validate.field) = { ... }</code>
        * @return The bank.
        */
       @java.lang.Override
@@ -723,7 +723,7 @@ public final class JonSharedDataCompass {
         return bank_;
       }
       /**
-       * <code>double bank = 3;</code>
+       * <code>double bank = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The bank to set.
        * @return This builder for chaining.
        */
@@ -735,7 +735,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double bank = 3;</code>
+       * <code>double bank = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearBank() {
@@ -747,7 +747,7 @@ public final class JonSharedDataCompass {
 
       private double offsetAzimuth_ ;
       /**
-       * <code>double offsetAzimuth = 4;</code>
+       * <code>double offsetAzimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return The offsetAzimuth.
        */
       @java.lang.Override
@@ -755,7 +755,7 @@ public final class JonSharedDataCompass {
         return offsetAzimuth_;
       }
       /**
-       * <code>double offsetAzimuth = 4;</code>
+       * <code>double offsetAzimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @param value The offsetAzimuth to set.
        * @return This builder for chaining.
        */
@@ -767,7 +767,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double offsetAzimuth = 4;</code>
+       * <code>double offsetAzimuth = 4 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearOffsetAzimuth() {
@@ -779,7 +779,7 @@ public final class JonSharedDataCompass {
 
       private double offsetElevation_ ;
       /**
-       * <code>double offsetElevation = 5;</code>
+       * <code>double offsetElevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return The offsetElevation.
        */
       @java.lang.Override
@@ -787,7 +787,7 @@ public final class JonSharedDataCompass {
         return offsetElevation_;
       }
       /**
-       * <code>double offsetElevation = 5;</code>
+       * <code>double offsetElevation = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The offsetElevation to set.
        * @return This builder for chaining.
        */
@@ -799,7 +799,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double offsetElevation = 5;</code>
+       * <code>double offsetElevation = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearOffsetElevation() {
@@ -811,7 +811,7 @@ public final class JonSharedDataCompass {
 
       private double magneticDeclination_ ;
       /**
-       * <code>double magneticDeclination = 6;</code>
+       * <code>double magneticDeclination = 6 [(.buf.validate.field) = { ... }</code>
        * @return The magneticDeclination.
        */
       @java.lang.Override
@@ -819,7 +819,7 @@ public final class JonSharedDataCompass {
         return magneticDeclination_;
       }
       /**
-       * <code>double magneticDeclination = 6;</code>
+       * <code>double magneticDeclination = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The magneticDeclination to set.
        * @return This builder for chaining.
        */
@@ -831,7 +831,7 @@ public final class JonSharedDataCompass {
         return this;
       }
       /**
-       * <code>double magneticDeclination = 6;</code>
+       * <code>double magneticDeclination = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMagneticDeclination() {
@@ -950,18 +950,28 @@ public final class JonSharedDataCompass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\035jon_shared_data_compass.proto\022\003ser\"\247\001\n" +
-      "\021JonGuiDataCompass\022\017\n\007azimuth\030\001 \001(\001\022\021\n\te" +
-      "levation\030\002 \001(\001\022\014\n\004bank\030\003 \001(\001\022\025\n\roffsetAz" +
-      "imuth\030\004 \001(\001\022\027\n\017offsetElevation\030\005 \001(\001\022\033\n\023" +
-      "magneticDeclination\030\006 \001(\001\022\023\n\013calibrating" +
-      "\030\007 \001(\010BOZMgit-codecommit.eu-central-1.am" +
-      "azonaws.com/v1/repos/jettison/jonp/data/" +
-      "compassb\006proto3"
+      "\n\035jon_shared_data_compass.proto\022\003ser\032\033bu" +
+      "f/validate/validate.proto\"\350\003\n\021JonGuiData" +
+      "Compass\022L\n\007azimuth\030\001 \001(\001B;\272H8\0226\021\000\000\000\000\000\200v@" +
+      ")\000\000\000\000\000\000\000\000I\000\000\000\000\000\000\000\000I\000\000\000\000\000\240V@I\000\000\000\000\000\200f@I\000\000\000" +
+      "\000\000\340p@\022E\n\televation\030\002 \001(\001B2\272H/\022-\031\000\000\000\000\000\200V@" +
+      ")\000\000\000\000\000\200V\300I\000\000\000\000\000\200F\300I\000\000\000\000\000\000\000\000I\000\000\000\000\000\200F@\022@\n\004" +
+      "bank\030\003 \001(\001B2\272H/\022-\021\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300I\000\000\000\000" +
+      "\000\200V\300I\000\000\000\000\000\000\000\000I\000\000\000\000\000\200V@\022I\n\roffsetAzimuth\030" +
+      "\004 \001(\001B2\272H/\022-\021\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300I\000\000\000\000\000\200F\300I" +
+      "\000\000\000\000\000\000\000\000I\000\000\000\000\000\200F@\022K\n\017offsetElevation\030\005 \001" +
+      "(\001B2\272H/\022-\031\000\000\000\000\000\200V@)\000\000\000\000\000\200V\300I\000\000\000\000\000\000>\300I\000\000\000" +
+      "\000\000\000\000\000I\000\000\000\000\000\000>@\022O\n\023magneticDeclination\030\006 " +
+      "\001(\001B2\272H/\022-\021\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300I\000\000\000\000\000\000.\300I\000\000" +
+      "\000\000\000\000\000\000I\000\000\000\000\000\000.@\022\023\n\013calibrating\030\007 \001(\010BOZM" +
+      "git-codecommit.eu-central-1.amazonaws.co" +
+      "m/v1/repos/jettison/jonp/data/compassb\006p" +
+      "roto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_ser_JonGuiDataCompass_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -969,6 +979,12 @@ public final class JonSharedDataCompass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataCompass_descriptor,
         new java.lang.String[] { "Azimuth", "Elevation", "Bank", "OffsetAzimuth", "OffsetElevation", "MagneticDeclination", "Calibrating", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

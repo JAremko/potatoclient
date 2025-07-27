@@ -32,7 +32,7 @@ public final class JonSharedDataLrf {
     boolean getIsMeasuring();
 
     /**
-     * <code>int32 measure_id = 3;</code>
+     * <code>int32 measure_id = 3 [(.buf.validate.field) = { ... }</code>
      * @return The measureId.
      */
     int getMeasureId();
@@ -53,12 +53,12 @@ public final class JonSharedDataLrf {
     ser.JonSharedDataLrf.JonGuiDataTargetOrBuilder getTargetOrBuilder();
 
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for pointerMode.
      */
     int getPointerModeValue();
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
      * @return The pointerMode.
      */
     ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode();
@@ -137,7 +137,7 @@ public final class JonSharedDataLrf {
     public static final int MEASURE_ID_FIELD_NUMBER = 3;
     private int measureId_ = 0;
     /**
-     * <code>int32 measure_id = 3;</code>
+     * <code>int32 measure_id = 3 [(.buf.validate.field) = { ... }</code>
      * @return The measureId.
      */
     @java.lang.Override
@@ -174,14 +174,14 @@ public final class JonSharedDataLrf {
     public static final int POINTER_MODE_FIELD_NUMBER = 5;
     private int pointerMode_ = 0;
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for pointerMode.
      */
     @java.lang.Override public int getPointerModeValue() {
       return pointerMode_;
     }
     /**
-     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+     * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
      * @return The pointerMode.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes getPointerMode() {
@@ -765,7 +765,7 @@ public final class JonSharedDataLrf {
 
       private int measureId_ ;
       /**
-       * <code>int32 measure_id = 3;</code>
+       * <code>int32 measure_id = 3 [(.buf.validate.field) = { ... }</code>
        * @return The measureId.
        */
       @java.lang.Override
@@ -773,7 +773,7 @@ public final class JonSharedDataLrf {
         return measureId_;
       }
       /**
-       * <code>int32 measure_id = 3;</code>
+       * <code>int32 measure_id = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The measureId to set.
        * @return This builder for chaining.
        */
@@ -785,7 +785,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>int32 measure_id = 3;</code>
+       * <code>int32 measure_id = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearMeasureId() {
@@ -918,14 +918,14 @@ public final class JonSharedDataLrf {
 
       private int pointerMode_ = 0;
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for pointerMode.
        */
       @java.lang.Override public int getPointerModeValue() {
         return pointerMode_;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for pointerMode to set.
        * @return This builder for chaining.
        */
@@ -936,7 +936,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
        * @return The pointerMode.
        */
       @java.lang.Override
@@ -945,7 +945,7 @@ public final class JonSharedDataLrf {
         return result == null ? ser.JonSharedDataTypes.JonGuiDatatLrfLaserPointerModes.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The pointerMode to set.
        * @return This builder for chaining.
        */
@@ -959,7 +959,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5;</code>
+       * <code>.ser.JonGuiDatatLrfLaserPointerModes pointer_mode = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearPointerMode() {
@@ -1101,19 +1101,19 @@ public final class JonSharedDataLrf {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     long getTimestamp();
 
     /**
-     * <code>double target_longitude = 2;</code>
+     * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The targetLongitude.
      */
     double getTargetLongitude();
 
     /**
-     * <code>double target_latitude = 3;</code>
+     * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetLatitude.
      */
     double getTargetLatitude();
@@ -1125,13 +1125,13 @@ public final class JonSharedDataLrf {
     double getTargetAltitude();
 
     /**
-     * <code>double observer_longitude = 5;</code>
+     * <code>double observer_longitude = 5 [(.buf.validate.field) = { ... }</code>
      * @return The observerLongitude.
      */
     double getObserverLongitude();
 
     /**
-     * <code>double observer_latitude = 6;</code>
+     * <code>double observer_latitude = 6 [(.buf.validate.field) = { ... }</code>
      * @return The observerLatitude.
      */
     double getObserverLatitude();
@@ -1143,54 +1143,54 @@ public final class JonSharedDataLrf {
     double getObserverAltitude();
 
     /**
-     * <code>double observer_azimuth = 8;</code>
+     * <code>double observer_azimuth = 8 [(.buf.validate.field) = { ... }</code>
      * @return The observerAzimuth.
      */
     double getObserverAzimuth();
 
     /**
-     * <code>double observer_elevation = 9;</code>
+     * <code>double observer_elevation = 9 [(.buf.validate.field) = { ... }</code>
      * @return The observerElevation.
      */
     double getObserverElevation();
 
     /**
-     * <code>double observer_bank = 10;</code>
+     * <code>double observer_bank = 10 [(.buf.validate.field) = { ... }</code>
      * @return The observerBank.
      */
     double getObserverBank();
 
     /**
-     * <code>double distance_2d = 11;</code>
+     * <code>double distance_2d = 11 [(.buf.validate.field) = { ... }</code>
      * @return The distance2d.
      */
     double getDistance2D();
 
     /**
-     * <code>double distance_3b = 12;</code>
+     * <code>double distance_3b = 12 [(.buf.validate.field) = { ... }</code>
      * @return The distance3b.
      */
     double getDistance3B();
 
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for observerFixType.
      */
     int getObserverFixTypeValue();
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
      * @return The observerFixType.
      */
     ser.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType();
 
     /**
-     * <code>int32 session_id = 14;</code>
+     * <code>int32 session_id = 14 [(.buf.validate.field) = { ... }</code>
      * @return The sessionId.
      */
     int getSessionId();
 
     /**
-     * <code>int32 target_id = 15;</code>
+     * <code>int32 target_id = 15 [(.buf.validate.field) = { ... }</code>
      * @return The targetId.
      */
     int getTargetId();
@@ -1284,7 +1284,7 @@ public final class JonSharedDataLrf {
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
     private long timestamp_ = 0L;
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     @java.lang.Override
@@ -1295,7 +1295,7 @@ public final class JonSharedDataLrf {
     public static final int TARGET_LONGITUDE_FIELD_NUMBER = 2;
     private double targetLongitude_ = 0D;
     /**
-     * <code>double target_longitude = 2;</code>
+     * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The targetLongitude.
      */
     @java.lang.Override
@@ -1306,7 +1306,7 @@ public final class JonSharedDataLrf {
     public static final int TARGET_LATITUDE_FIELD_NUMBER = 3;
     private double targetLatitude_ = 0D;
     /**
-     * <code>double target_latitude = 3;</code>
+     * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetLatitude.
      */
     @java.lang.Override
@@ -1328,7 +1328,7 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_LONGITUDE_FIELD_NUMBER = 5;
     private double observerLongitude_ = 0D;
     /**
-     * <code>double observer_longitude = 5;</code>
+     * <code>double observer_longitude = 5 [(.buf.validate.field) = { ... }</code>
      * @return The observerLongitude.
      */
     @java.lang.Override
@@ -1339,7 +1339,7 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_LATITUDE_FIELD_NUMBER = 6;
     private double observerLatitude_ = 0D;
     /**
-     * <code>double observer_latitude = 6;</code>
+     * <code>double observer_latitude = 6 [(.buf.validate.field) = { ... }</code>
      * @return The observerLatitude.
      */
     @java.lang.Override
@@ -1361,7 +1361,7 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_AZIMUTH_FIELD_NUMBER = 8;
     private double observerAzimuth_ = 0D;
     /**
-     * <code>double observer_azimuth = 8;</code>
+     * <code>double observer_azimuth = 8 [(.buf.validate.field) = { ... }</code>
      * @return The observerAzimuth.
      */
     @java.lang.Override
@@ -1372,7 +1372,7 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_ELEVATION_FIELD_NUMBER = 9;
     private double observerElevation_ = 0D;
     /**
-     * <code>double observer_elevation = 9;</code>
+     * <code>double observer_elevation = 9 [(.buf.validate.field) = { ... }</code>
      * @return The observerElevation.
      */
     @java.lang.Override
@@ -1383,7 +1383,7 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_BANK_FIELD_NUMBER = 10;
     private double observerBank_ = 0D;
     /**
-     * <code>double observer_bank = 10;</code>
+     * <code>double observer_bank = 10 [(.buf.validate.field) = { ... }</code>
      * @return The observerBank.
      */
     @java.lang.Override
@@ -1394,7 +1394,7 @@ public final class JonSharedDataLrf {
     public static final int DISTANCE_2D_FIELD_NUMBER = 11;
     private double distance2D_ = 0D;
     /**
-     * <code>double distance_2d = 11;</code>
+     * <code>double distance_2d = 11 [(.buf.validate.field) = { ... }</code>
      * @return The distance2d.
      */
     @java.lang.Override
@@ -1405,7 +1405,7 @@ public final class JonSharedDataLrf {
     public static final int DISTANCE_3B_FIELD_NUMBER = 12;
     private double distance3B_ = 0D;
     /**
-     * <code>double distance_3b = 12;</code>
+     * <code>double distance_3b = 12 [(.buf.validate.field) = { ... }</code>
      * @return The distance3b.
      */
     @java.lang.Override
@@ -1416,14 +1416,14 @@ public final class JonSharedDataLrf {
     public static final int OBSERVER_FIX_TYPE_FIELD_NUMBER = 13;
     private int observerFixType_ = 0;
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
      * @return The enum numeric value on the wire for observerFixType.
      */
     @java.lang.Override public int getObserverFixTypeValue() {
       return observerFixType_;
     }
     /**
-     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+     * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
      * @return The observerFixType.
      */
     @java.lang.Override public ser.JonSharedDataTypes.JonGuiDataGpsFixType getObserverFixType() {
@@ -1434,7 +1434,7 @@ public final class JonSharedDataLrf {
     public static final int SESSION_ID_FIELD_NUMBER = 14;
     private int sessionId_ = 0;
     /**
-     * <code>int32 session_id = 14;</code>
+     * <code>int32 session_id = 14 [(.buf.validate.field) = { ... }</code>
      * @return The sessionId.
      */
     @java.lang.Override
@@ -1445,7 +1445,7 @@ public final class JonSharedDataLrf {
     public static final int TARGET_ID_FIELD_NUMBER = 15;
     private int targetId_ = 0;
     /**
-     * <code>int32 target_id = 15;</code>
+     * <code>int32 target_id = 15 [(.buf.validate.field) = { ... }</code>
      * @return The targetId.
      */
     @java.lang.Override
@@ -2369,7 +2369,7 @@ public final class JonSharedDataLrf {
 
       private long timestamp_ ;
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return The timestamp.
        */
       @java.lang.Override
@@ -2377,7 +2377,7 @@ public final class JonSharedDataLrf {
         return timestamp_;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The timestamp to set.
        * @return This builder for chaining.
        */
@@ -2389,7 +2389,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTimestamp() {
@@ -2401,7 +2401,7 @@ public final class JonSharedDataLrf {
 
       private double targetLongitude_ ;
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return The targetLongitude.
        */
       @java.lang.Override
@@ -2409,7 +2409,7 @@ public final class JonSharedDataLrf {
         return targetLongitude_;
       }
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The targetLongitude to set.
        * @return This builder for chaining.
        */
@@ -2421,7 +2421,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetLongitude() {
@@ -2433,7 +2433,7 @@ public final class JonSharedDataLrf {
 
       private double targetLatitude_ ;
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return The targetLatitude.
        */
       @java.lang.Override
@@ -2441,7 +2441,7 @@ public final class JonSharedDataLrf {
         return targetLatitude_;
       }
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The targetLatitude to set.
        * @return This builder for chaining.
        */
@@ -2453,7 +2453,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetLatitude() {
@@ -2497,7 +2497,7 @@ public final class JonSharedDataLrf {
 
       private double observerLongitude_ ;
       /**
-       * <code>double observer_longitude = 5;</code>
+       * <code>double observer_longitude = 5 [(.buf.validate.field) = { ... }</code>
        * @return The observerLongitude.
        */
       @java.lang.Override
@@ -2505,7 +2505,7 @@ public final class JonSharedDataLrf {
         return observerLongitude_;
       }
       /**
-       * <code>double observer_longitude = 5;</code>
+       * <code>double observer_longitude = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The observerLongitude to set.
        * @return This builder for chaining.
        */
@@ -2517,7 +2517,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double observer_longitude = 5;</code>
+       * <code>double observer_longitude = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverLongitude() {
@@ -2529,7 +2529,7 @@ public final class JonSharedDataLrf {
 
       private double observerLatitude_ ;
       /**
-       * <code>double observer_latitude = 6;</code>
+       * <code>double observer_latitude = 6 [(.buf.validate.field) = { ... }</code>
        * @return The observerLatitude.
        */
       @java.lang.Override
@@ -2537,7 +2537,7 @@ public final class JonSharedDataLrf {
         return observerLatitude_;
       }
       /**
-       * <code>double observer_latitude = 6;</code>
+       * <code>double observer_latitude = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The observerLatitude to set.
        * @return This builder for chaining.
        */
@@ -2549,7 +2549,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double observer_latitude = 6;</code>
+       * <code>double observer_latitude = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverLatitude() {
@@ -2593,7 +2593,7 @@ public final class JonSharedDataLrf {
 
       private double observerAzimuth_ ;
       /**
-       * <code>double observer_azimuth = 8;</code>
+       * <code>double observer_azimuth = 8 [(.buf.validate.field) = { ... }</code>
        * @return The observerAzimuth.
        */
       @java.lang.Override
@@ -2601,7 +2601,7 @@ public final class JonSharedDataLrf {
         return observerAzimuth_;
       }
       /**
-       * <code>double observer_azimuth = 8;</code>
+       * <code>double observer_azimuth = 8 [(.buf.validate.field) = { ... }</code>
        * @param value The observerAzimuth to set.
        * @return This builder for chaining.
        */
@@ -2613,7 +2613,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double observer_azimuth = 8;</code>
+       * <code>double observer_azimuth = 8 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverAzimuth() {
@@ -2625,7 +2625,7 @@ public final class JonSharedDataLrf {
 
       private double observerElevation_ ;
       /**
-       * <code>double observer_elevation = 9;</code>
+       * <code>double observer_elevation = 9 [(.buf.validate.field) = { ... }</code>
        * @return The observerElevation.
        */
       @java.lang.Override
@@ -2633,7 +2633,7 @@ public final class JonSharedDataLrf {
         return observerElevation_;
       }
       /**
-       * <code>double observer_elevation = 9;</code>
+       * <code>double observer_elevation = 9 [(.buf.validate.field) = { ... }</code>
        * @param value The observerElevation to set.
        * @return This builder for chaining.
        */
@@ -2645,7 +2645,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double observer_elevation = 9;</code>
+       * <code>double observer_elevation = 9 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverElevation() {
@@ -2657,7 +2657,7 @@ public final class JonSharedDataLrf {
 
       private double observerBank_ ;
       /**
-       * <code>double observer_bank = 10;</code>
+       * <code>double observer_bank = 10 [(.buf.validate.field) = { ... }</code>
        * @return The observerBank.
        */
       @java.lang.Override
@@ -2665,7 +2665,7 @@ public final class JonSharedDataLrf {
         return observerBank_;
       }
       /**
-       * <code>double observer_bank = 10;</code>
+       * <code>double observer_bank = 10 [(.buf.validate.field) = { ... }</code>
        * @param value The observerBank to set.
        * @return This builder for chaining.
        */
@@ -2677,7 +2677,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double observer_bank = 10;</code>
+       * <code>double observer_bank = 10 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverBank() {
@@ -2689,7 +2689,7 @@ public final class JonSharedDataLrf {
 
       private double distance2D_ ;
       /**
-       * <code>double distance_2d = 11;</code>
+       * <code>double distance_2d = 11 [(.buf.validate.field) = { ... }</code>
        * @return The distance2d.
        */
       @java.lang.Override
@@ -2697,7 +2697,7 @@ public final class JonSharedDataLrf {
         return distance2D_;
       }
       /**
-       * <code>double distance_2d = 11;</code>
+       * <code>double distance_2d = 11 [(.buf.validate.field) = { ... }</code>
        * @param value The distance2d to set.
        * @return This builder for chaining.
        */
@@ -2709,7 +2709,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double distance_2d = 11;</code>
+       * <code>double distance_2d = 11 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDistance2D() {
@@ -2721,7 +2721,7 @@ public final class JonSharedDataLrf {
 
       private double distance3B_ ;
       /**
-       * <code>double distance_3b = 12;</code>
+       * <code>double distance_3b = 12 [(.buf.validate.field) = { ... }</code>
        * @return The distance3b.
        */
       @java.lang.Override
@@ -2729,7 +2729,7 @@ public final class JonSharedDataLrf {
         return distance3B_;
       }
       /**
-       * <code>double distance_3b = 12;</code>
+       * <code>double distance_3b = 12 [(.buf.validate.field) = { ... }</code>
        * @param value The distance3b to set.
        * @return This builder for chaining.
        */
@@ -2741,7 +2741,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>double distance_3b = 12;</code>
+       * <code>double distance_3b = 12 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDistance3B() {
@@ -2753,14 +2753,14 @@ public final class JonSharedDataLrf {
 
       private int observerFixType_ = 0;
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
        * @return The enum numeric value on the wire for observerFixType.
        */
       @java.lang.Override public int getObserverFixTypeValue() {
         return observerFixType_;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
        * @param value The enum numeric value on the wire for observerFixType to set.
        * @return This builder for chaining.
        */
@@ -2771,7 +2771,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
        * @return The observerFixType.
        */
       @java.lang.Override
@@ -2780,7 +2780,7 @@ public final class JonSharedDataLrf {
         return result == null ? ser.JonSharedDataTypes.JonGuiDataGpsFixType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
        * @param value The observerFixType to set.
        * @return This builder for chaining.
        */
@@ -2794,7 +2794,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13;</code>
+       * <code>.ser.JonGuiDataGpsFixType observer_fix_type = 13 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearObserverFixType() {
@@ -2806,7 +2806,7 @@ public final class JonSharedDataLrf {
 
       private int sessionId_ ;
       /**
-       * <code>int32 session_id = 14;</code>
+       * <code>int32 session_id = 14 [(.buf.validate.field) = { ... }</code>
        * @return The sessionId.
        */
       @java.lang.Override
@@ -2814,7 +2814,7 @@ public final class JonSharedDataLrf {
         return sessionId_;
       }
       /**
-       * <code>int32 session_id = 14;</code>
+       * <code>int32 session_id = 14 [(.buf.validate.field) = { ... }</code>
        * @param value The sessionId to set.
        * @return This builder for chaining.
        */
@@ -2826,7 +2826,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>int32 session_id = 14;</code>
+       * <code>int32 session_id = 14 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearSessionId() {
@@ -2838,7 +2838,7 @@ public final class JonSharedDataLrf {
 
       private int targetId_ ;
       /**
-       * <code>int32 target_id = 15;</code>
+       * <code>int32 target_id = 15 [(.buf.validate.field) = { ... }</code>
        * @return The targetId.
        */
       @java.lang.Override
@@ -2846,7 +2846,7 @@ public final class JonSharedDataLrf {
         return targetId_;
       }
       /**
-       * <code>int32 target_id = 15;</code>
+       * <code>int32 target_id = 15 [(.buf.validate.field) = { ... }</code>
        * @param value The targetId to set.
        * @return This builder for chaining.
        */
@@ -2858,7 +2858,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>int32 target_id = 15;</code>
+       * <code>int32 target_id = 15 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetId() {
@@ -3229,19 +3229,19 @@ public final class JonSharedDataLrf {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>uint32 red = 1;</code>
+     * <code>uint32 red = 1 [(.buf.validate.field) = { ... }</code>
      * @return The red.
      */
     int getRed();
 
     /**
-     * <code>uint32 green = 2;</code>
+     * <code>uint32 green = 2 [(.buf.validate.field) = { ... }</code>
      * @return The green.
      */
     int getGreen();
 
     /**
-     * <code>uint32 blue = 3;</code>
+     * <code>uint32 blue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The blue.
      */
     int getBlue();
@@ -3284,7 +3284,7 @@ public final class JonSharedDataLrf {
     public static final int RED_FIELD_NUMBER = 1;
     private int red_ = 0;
     /**
-     * <code>uint32 red = 1;</code>
+     * <code>uint32 red = 1 [(.buf.validate.field) = { ... }</code>
      * @return The red.
      */
     @java.lang.Override
@@ -3295,7 +3295,7 @@ public final class JonSharedDataLrf {
     public static final int GREEN_FIELD_NUMBER = 2;
     private int green_ = 0;
     /**
-     * <code>uint32 green = 2;</code>
+     * <code>uint32 green = 2 [(.buf.validate.field) = { ... }</code>
      * @return The green.
      */
     @java.lang.Override
@@ -3306,7 +3306,7 @@ public final class JonSharedDataLrf {
     public static final int BLUE_FIELD_NUMBER = 3;
     private int blue_ = 0;
     /**
-     * <code>uint32 blue = 3;</code>
+     * <code>uint32 blue = 3 [(.buf.validate.field) = { ... }</code>
      * @return The blue.
      */
     @java.lang.Override
@@ -3687,7 +3687,7 @@ public final class JonSharedDataLrf {
 
       private int red_ ;
       /**
-       * <code>uint32 red = 1;</code>
+       * <code>uint32 red = 1 [(.buf.validate.field) = { ... }</code>
        * @return The red.
        */
       @java.lang.Override
@@ -3695,7 +3695,7 @@ public final class JonSharedDataLrf {
         return red_;
       }
       /**
-       * <code>uint32 red = 1;</code>
+       * <code>uint32 red = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The red to set.
        * @return This builder for chaining.
        */
@@ -3707,7 +3707,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>uint32 red = 1;</code>
+       * <code>uint32 red = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearRed() {
@@ -3719,7 +3719,7 @@ public final class JonSharedDataLrf {
 
       private int green_ ;
       /**
-       * <code>uint32 green = 2;</code>
+       * <code>uint32 green = 2 [(.buf.validate.field) = { ... }</code>
        * @return The green.
        */
       @java.lang.Override
@@ -3727,7 +3727,7 @@ public final class JonSharedDataLrf {
         return green_;
       }
       /**
-       * <code>uint32 green = 2;</code>
+       * <code>uint32 green = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The green to set.
        * @return This builder for chaining.
        */
@@ -3739,7 +3739,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>uint32 green = 2;</code>
+       * <code>uint32 green = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearGreen() {
@@ -3751,7 +3751,7 @@ public final class JonSharedDataLrf {
 
       private int blue_ ;
       /**
-       * <code>uint32 blue = 3;</code>
+       * <code>uint32 blue = 3 [(.buf.validate.field) = { ... }</code>
        * @return The blue.
        */
       @java.lang.Override
@@ -3759,7 +3759,7 @@ public final class JonSharedDataLrf {
         return blue_;
       }
       /**
-       * <code>uint32 blue = 3;</code>
+       * <code>uint32 blue = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The blue to set.
        * @return This builder for chaining.
        */
@@ -3771,7 +3771,7 @@ public final class JonSharedDataLrf {
         return this;
       }
       /**
-       * <code>uint32 blue = 3;</code>
+       * <code>uint32 blue = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearBlue() {
@@ -3868,35 +3868,44 @@ public final class JonSharedDataLrf {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\031jon_shared_data_lrf.proto\022\003ser\032\033jon_sh" +
-      "ared_data_types.proto\"\336\001\n\rJonGuiDataLrf\022" +
-      "\023\n\013is_scanning\030\001 \001(\010\022\024\n\014is_measuring\030\002 \001" +
-      "(\010\022\022\n\nmeasure_id\030\003 \001(\005\022%\n\006target\030\004 \001(\0132\025" +
-      ".ser.JonGuiDataTarget\022:\n\014pointer_mode\030\005 " +
-      "\001(\0162$.ser.JonGuiDatatLrfLaserPointerMode" +
-      "s\022\026\n\016fogModeEnabled\030\006 \001(\010\022\023\n\013is_refining" +
-      "\030\007 \001(\010\"\232\004\n\020JonGuiDataTarget\022\021\n\ttimestamp" +
-      "\030\001 \001(\003\022\030\n\020target_longitude\030\002 \001(\001\022\027\n\017targ" +
-      "et_latitude\030\003 \001(\001\022\027\n\017target_altitude\030\004 \001" +
-      "(\001\022\032\n\022observer_longitude\030\005 \001(\001\022\031\n\021observ" +
-      "er_latitude\030\006 \001(\001\022\031\n\021observer_altitude\030\007" +
-      " \001(\001\022\030\n\020observer_azimuth\030\010 \001(\001\022\032\n\022observ" +
-      "er_elevation\030\t \001(\001\022\025\n\robserver_bank\030\n \001(" +
-      "\001\022\023\n\013distance_2d\030\013 \001(\001\022\023\n\013distance_3b\030\014 " +
-      "\001(\001\0224\n\021observer_fix_type\030\r \001(\0162\031.ser.Jon" +
-      "GuiDataGpsFixType\022\022\n\nsession_id\030\016 \001(\005\022\021\n" +
-      "\ttarget_id\030\017 \001(\005\022#\n\014target_color\030\020 \001(\0132\r" +
-      ".ser.RgbColor\022\014\n\004type\030\021 \001(\r\022\022\n\nuuid_part" +
-      "1\030\022 \001(\005\022\022\n\nuuid_part2\030\023 \001(\005\022\022\n\nuuid_part" +
-      "3\030\024 \001(\005\022\022\n\nuuid_part4\030\025 \001(\005\"4\n\010RgbColor\022" +
-      "\013\n\003red\030\001 \001(\r\022\r\n\005green\030\002 \001(\r\022\014\n\004blue\030\003 \001(" +
-      "\rBKZIgit-codecommit.eu-central-1.amazona" +
-      "ws.com/v1/repos/jettison/jonp/data/lrfb\006" +
-      "proto3"
+      "\n\031jon_shared_data_lrf.proto\022\003ser\032\033buf/va" +
+      "lidate/validate.proto\032\033jon_shared_data_t" +
+      "ypes.proto\"\361\001\n\rJonGuiDataLrf\022\023\n\013is_scann" +
+      "ing\030\001 \001(\010\022\024\n\014is_measuring\030\002 \001(\010\022\033\n\nmeasu" +
+      "re_id\030\003 \001(\005B\007\272H\004\032\002(\000\022%\n\006target\030\004 \001(\0132\025.s" +
+      "er.JonGuiDataTarget\022D\n\014pointer_mode\030\005 \001(" +
+      "\0162$.ser.JonGuiDatatLrfLaserPointerModesB" +
+      "\010\272H\005\202\001\002\020\001\022\026\n\016fogModeEnabled\030\006 \001(\010\022\023\n\013is_" +
+      "refining\030\007 \001(\010\"\242\006\n\020JonGuiDataTarget\022\032\n\tt" +
+      "imestamp\030\001 \001(\003B\007\272H\004\"\002(\000\0221\n\020target_longit" +
+      "ude\030\002 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300\0220\n\017ta" +
+      "rget_latitude\030\003 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000" +
+      "\000\200V\300\022\027\n\017target_altitude\030\004 \001(\001\0223\n\022observe" +
+      "r_longitude\030\005 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200f@)\000\000\000\000\000\200" +
+      "f\300\0222\n\021observer_latitude\030\006 \001(\001B\027\272H\024\022\022\031\000\000\000" +
+      "\000\000\200V@)\000\000\000\000\000\200V\300\022\031\n\021observer_altitude\030\007 \001(" +
+      "\001\0221\n\020observer_azimuth\030\010 \001(\001B\027\272H\024\022\022\021\000\000\000\000\000" +
+      "\200v@)\000\000\000\000\000\000\000\000\0223\n\022observer_elevation\030\t \001(\001" +
+      "B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000\000\200V\300\022.\n\robserver_ba" +
+      "nk\030\n \001(\001B\027\272H\024\022\022\021\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300\022,\n\013dis" +
+      "tance_2d\030\013 \001(\001B\027\272H\024\022\022\031\000\000\000\000\200\204\036A)\000\000\000\000\000\000\000\000\022" +
+      ",\n\013distance_3b\030\014 \001(\001B\027\272H\024\022\022\031\000\000\000\000\200\204\036A)\000\000\000" +
+      "\000\000\000\000\000\022@\n\021observer_fix_type\030\r \001(\0162\031.ser.J" +
+      "onGuiDataGpsFixTypeB\n\272H\007\202\001\004\020\001 \000\022\033\n\nsessi" +
+      "on_id\030\016 \001(\005B\007\272H\004\032\002(\000\022\032\n\ttarget_id\030\017 \001(\005B" +
+      "\007\272H\004\032\002(\000\022#\n\014target_color\030\020 \001(\0132\r.ser.Rgb" +
+      "Color\022\014\n\004type\030\021 \001(\r\022\022\n\nuuid_part1\030\022 \001(\005\022" +
+      "\022\n\nuuid_part2\030\023 \001(\005\022\022\n\nuuid_part3\030\024 \001(\005\022" +
+      "\022\n\nuuid_part4\030\025 \001(\005\"X\n\010RgbColor\022\027\n\003red\030\001" +
+      " \001(\rB\n\272H\007*\005\030\377\001(\000\022\031\n\005green\030\002 \001(\rB\n\272H\007*\005\030\377" +
+      "\001(\000\022\030\n\004blue\030\003 \001(\rB\n\272H\007*\005\030\377\001(\000BKZIgit-cod" +
+      "ecommit.eu-central-1.amazonaws.com/v1/re" +
+      "pos/jettison/jonp/data/lrfb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
           ser.JonSharedDataTypes.getDescriptor(),
         });
     internal_static_ser_JonGuiDataLrf_descriptor =
@@ -3917,6 +3926,12 @@ public final class JonSharedDataLrf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_RgbColor_descriptor,
         new java.lang.String[] { "Red", "Green", "Blue", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
     ser.JonSharedDataTypes.getDescriptor();
   }
 

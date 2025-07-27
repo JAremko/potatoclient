@@ -1336,19 +1336,19 @@ public final class JonSharedCmdLira {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     long getTimestamp();
 
     /**
-     * <code>double target_longitude = 2;</code>
+     * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The targetLongitude.
      */
     double getTargetLongitude();
 
     /**
-     * <code>double target_latitude = 3;</code>
+     * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetLatitude.
      */
     double getTargetLatitude();
@@ -1360,19 +1360,19 @@ public final class JonSharedCmdLira {
     double getTargetAltitude();
 
     /**
-     * <code>double target_azimuth = 5;</code>
+     * <code>double target_azimuth = 5 [(.buf.validate.field) = { ... }</code>
      * @return The targetAzimuth.
      */
     double getTargetAzimuth();
 
     /**
-     * <code>double target_elevation = 6;</code>
+     * <code>double target_elevation = 6 [(.buf.validate.field) = { ... }</code>
      * @return The targetElevation.
      */
     double getTargetElevation();
 
     /**
-     * <code>double distance = 7;</code>
+     * <code>double distance = 7 [(.buf.validate.field) = { ... }</code>
      * @return The distance.
      */
     double getDistance();
@@ -1443,7 +1443,7 @@ public final class JonSharedCmdLira {
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
     private long timestamp_ = 0L;
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     @java.lang.Override
@@ -1454,7 +1454,7 @@ public final class JonSharedCmdLira {
     public static final int TARGET_LONGITUDE_FIELD_NUMBER = 2;
     private double targetLongitude_ = 0D;
     /**
-     * <code>double target_longitude = 2;</code>
+     * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
      * @return The targetLongitude.
      */
     @java.lang.Override
@@ -1465,7 +1465,7 @@ public final class JonSharedCmdLira {
     public static final int TARGET_LATITUDE_FIELD_NUMBER = 3;
     private double targetLatitude_ = 0D;
     /**
-     * <code>double target_latitude = 3;</code>
+     * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
      * @return The targetLatitude.
      */
     @java.lang.Override
@@ -1487,7 +1487,7 @@ public final class JonSharedCmdLira {
     public static final int TARGET_AZIMUTH_FIELD_NUMBER = 5;
     private double targetAzimuth_ = 0D;
     /**
-     * <code>double target_azimuth = 5;</code>
+     * <code>double target_azimuth = 5 [(.buf.validate.field) = { ... }</code>
      * @return The targetAzimuth.
      */
     @java.lang.Override
@@ -1498,7 +1498,7 @@ public final class JonSharedCmdLira {
     public static final int TARGET_ELEVATION_FIELD_NUMBER = 6;
     private double targetElevation_ = 0D;
     /**
-     * <code>double target_elevation = 6;</code>
+     * <code>double target_elevation = 6 [(.buf.validate.field) = { ... }</code>
      * @return The targetElevation.
      */
     @java.lang.Override
@@ -1509,7 +1509,7 @@ public final class JonSharedCmdLira {
     public static final int DISTANCE_FIELD_NUMBER = 7;
     private double distance_ = 0D;
     /**
-     * <code>double distance = 7;</code>
+     * <code>double distance = 7 [(.buf.validate.field) = { ... }</code>
      * @return The distance.
      */
     @java.lang.Override
@@ -2135,7 +2135,7 @@ public final class JonSharedCmdLira {
 
       private long timestamp_ ;
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return The timestamp.
        */
       @java.lang.Override
@@ -2143,7 +2143,7 @@ public final class JonSharedCmdLira {
         return timestamp_;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The timestamp to set.
        * @return This builder for chaining.
        */
@@ -2155,7 +2155,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTimestamp() {
@@ -2167,7 +2167,7 @@ public final class JonSharedCmdLira {
 
       private double targetLongitude_ ;
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return The targetLongitude.
        */
       @java.lang.Override
@@ -2175,7 +2175,7 @@ public final class JonSharedCmdLira {
         return targetLongitude_;
       }
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The targetLongitude to set.
        * @return This builder for chaining.
        */
@@ -2187,7 +2187,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>double target_longitude = 2;</code>
+       * <code>double target_longitude = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetLongitude() {
@@ -2199,7 +2199,7 @@ public final class JonSharedCmdLira {
 
       private double targetLatitude_ ;
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return The targetLatitude.
        */
       @java.lang.Override
@@ -2207,7 +2207,7 @@ public final class JonSharedCmdLira {
         return targetLatitude_;
       }
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @param value The targetLatitude to set.
        * @return This builder for chaining.
        */
@@ -2219,7 +2219,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>double target_latitude = 3;</code>
+       * <code>double target_latitude = 3 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetLatitude() {
@@ -2263,7 +2263,7 @@ public final class JonSharedCmdLira {
 
       private double targetAzimuth_ ;
       /**
-       * <code>double target_azimuth = 5;</code>
+       * <code>double target_azimuth = 5 [(.buf.validate.field) = { ... }</code>
        * @return The targetAzimuth.
        */
       @java.lang.Override
@@ -2271,7 +2271,7 @@ public final class JonSharedCmdLira {
         return targetAzimuth_;
       }
       /**
-       * <code>double target_azimuth = 5;</code>
+       * <code>double target_azimuth = 5 [(.buf.validate.field) = { ... }</code>
        * @param value The targetAzimuth to set.
        * @return This builder for chaining.
        */
@@ -2283,7 +2283,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>double target_azimuth = 5;</code>
+       * <code>double target_azimuth = 5 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetAzimuth() {
@@ -2295,7 +2295,7 @@ public final class JonSharedCmdLira {
 
       private double targetElevation_ ;
       /**
-       * <code>double target_elevation = 6;</code>
+       * <code>double target_elevation = 6 [(.buf.validate.field) = { ... }</code>
        * @return The targetElevation.
        */
       @java.lang.Override
@@ -2303,7 +2303,7 @@ public final class JonSharedCmdLira {
         return targetElevation_;
       }
       /**
-       * <code>double target_elevation = 6;</code>
+       * <code>double target_elevation = 6 [(.buf.validate.field) = { ... }</code>
        * @param value The targetElevation to set.
        * @return This builder for chaining.
        */
@@ -2315,7 +2315,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>double target_elevation = 6;</code>
+       * <code>double target_elevation = 6 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTargetElevation() {
@@ -2327,7 +2327,7 @@ public final class JonSharedCmdLira {
 
       private double distance_ ;
       /**
-       * <code>double distance = 7;</code>
+       * <code>double distance = 7 [(.buf.validate.field) = { ... }</code>
        * @return The distance.
        */
       @java.lang.Override
@@ -2335,7 +2335,7 @@ public final class JonSharedCmdLira {
         return distance_;
       }
       /**
-       * <code>double distance = 7;</code>
+       * <code>double distance = 7 [(.buf.validate.field) = { ... }</code>
        * @param value The distance to set.
        * @return This builder for chaining.
        */
@@ -2347,7 +2347,7 @@ public final class JonSharedCmdLira {
         return this;
       }
       /**
-       * <code>double distance = 7;</code>
+       * <code>double distance = 7 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearDistance() {
@@ -2584,23 +2584,29 @@ public final class JonSharedCmdLira {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\031jon_shared_cmd_lira.proto\022\010cmd.Lira\"?\n" +
-      "\004Root\0220\n\rrefine_target\030\001 \001(\0132\027.cmd.Lira." +
-      "Refine_targetH\000B\005\n\003cmd\"?\n\rRefine_target\022" +
-      ".\n\006target\030\001 \001(\0132\036.cmd.Lira.JonGuiDataLir" +
-      "aTarget\"\211\002\n\024JonGuiDataLiraTarget\022\021\n\ttime" +
-      "stamp\030\001 \001(\003\022\030\n\020target_longitude\030\002 \001(\001\022\027\n" +
-      "\017target_latitude\030\003 \001(\001\022\027\n\017target_altitud" +
-      "e\030\004 \001(\001\022\026\n\016target_azimuth\030\005 \001(\001\022\030\n\020targe" +
-      "t_elevation\030\006 \001(\001\022\020\n\010distance\030\007 \001(\001\022\022\n\nu" +
-      "uid_part1\030\010 \001(\005\022\022\n\nuuid_part2\030\t \001(\005\022\022\n\nu" +
-      "uid_part3\030\n \001(\005\022\022\n\nuuid_part4\030\013 \001(\005BKZIg" +
-      "it-codecommit.eu-central-1.amazonaws.com" +
-      "/v1/repos/jettison/jonp/cmd/lirab\006proto3"
+      "\n\031jon_shared_cmd_lira.proto\022\010cmd.Lira\032\033b" +
+      "uf/validate/validate.proto\"F\n\004Root\0220\n\rre" +
+      "fine_target\030\001 \001(\0132\027.cmd.Lira.Refine_targ" +
+      "etH\000B\014\n\003cmd\022\005\272H\002\010\001\"?\n\rRefine_target\022.\n\006t" +
+      "arget\030\001 \001(\0132\036.cmd.Lira.JonGuiDataLiraTar" +
+      "get\"\206\003\n\024JonGuiDataLiraTarget\022\032\n\ttimestam" +
+      "p\030\001 \001(\003B\007\272H\004\"\002(\000\0221\n\020target_longitude\030\002 \001" +
+      "(\001B\027\272H\024\022\022\031\000\000\000\000\000\200f@)\000\000\000\000\000\200f\300\0220\n\017target_la" +
+      "titude\030\003 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000\000\200V\300\022\027\n" +
+      "\017target_altitude\030\004 \001(\001\022/\n\016target_azimuth" +
+      "\030\005 \001(\001B\027\272H\024\022\022\021\000\000\000\000\000\200v@)\000\000\000\000\000\000\000\000\0221\n\020targe" +
+      "t_elevation\030\006 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\200V@)\000\000\000\000\000\200" +
+      "V\300\022 \n\010distance\030\007 \001(\001B\016\272H\013\022\t)\000\000\000\000\000\000\000\000\022\022\n\n" +
+      "uuid_part1\030\010 \001(\005\022\022\n\nuuid_part2\030\t \001(\005\022\022\n\n" +
+      "uuid_part3\030\n \001(\005\022\022\n\nuuid_part4\030\013 \001(\005BKZI" +
+      "git-codecommit.eu-central-1.amazonaws.co" +
+      "m/v1/repos/jettison/jonp/cmd/lirab\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_cmd_Lira_Root_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -2620,6 +2626,13 @@ public final class JonSharedCmdLira {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_cmd_Lira_JonGuiDataLiraTarget_descriptor,
         new java.lang.String[] { "Timestamp", "TargetLongitude", "TargetLatitude", "TargetAltitude", "TargetAzimuth", "TargetElevation", "Distance", "UuidPart1", "UuidPart2", "UuidPart3", "UuidPart4", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    registry.add(build.buf.validate.ValidateProto.oneof);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -20,13 +20,13 @@ public final class JonSharedDataTime {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     long getTimestamp();
 
     /**
-     * <code>int64 manual_timestamp = 2;</code>
+     * <code>int64 manual_timestamp = 2 [(.buf.validate.field) = { ... }</code>
      * @return The manualTimestamp.
      */
     long getManualTimestamp();
@@ -81,7 +81,7 @@ public final class JonSharedDataTime {
     public static final int TIMESTAMP_FIELD_NUMBER = 1;
     private long timestamp_ = 0L;
     /**
-     * <code>int64 timestamp = 1;</code>
+     * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
      * @return The timestamp.
      */
     @java.lang.Override
@@ -92,7 +92,7 @@ public final class JonSharedDataTime {
     public static final int MANUAL_TIMESTAMP_FIELD_NUMBER = 2;
     private long manualTimestamp_ = 0L;
     /**
-     * <code>int64 manual_timestamp = 2;</code>
+     * <code>int64 manual_timestamp = 2 [(.buf.validate.field) = { ... }</code>
      * @return The manualTimestamp.
      */
     @java.lang.Override
@@ -521,7 +521,7 @@ public final class JonSharedDataTime {
 
       private long timestamp_ ;
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return The timestamp.
        */
       @java.lang.Override
@@ -529,7 +529,7 @@ public final class JonSharedDataTime {
         return timestamp_;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @param value The timestamp to set.
        * @return This builder for chaining.
        */
@@ -541,7 +541,7 @@ public final class JonSharedDataTime {
         return this;
       }
       /**
-       * <code>int64 timestamp = 1;</code>
+       * <code>int64 timestamp = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearTimestamp() {
@@ -553,7 +553,7 @@ public final class JonSharedDataTime {
 
       private long manualTimestamp_ ;
       /**
-       * <code>int64 manual_timestamp = 2;</code>
+       * <code>int64 manual_timestamp = 2 [(.buf.validate.field) = { ... }</code>
        * @return The manualTimestamp.
        */
       @java.lang.Override
@@ -561,7 +561,7 @@ public final class JonSharedDataTime {
         return manualTimestamp_;
       }
       /**
-       * <code>int64 manual_timestamp = 2;</code>
+       * <code>int64 manual_timestamp = 2 [(.buf.validate.field) = { ... }</code>
        * @param value The manualTimestamp to set.
        * @return This builder for chaining.
        */
@@ -573,7 +573,7 @@ public final class JonSharedDataTime {
         return this;
       }
       /**
-       * <code>int64 manual_timestamp = 2;</code>
+       * <code>int64 manual_timestamp = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
       public Builder clearManualTimestamp() {
@@ -724,16 +724,18 @@ public final class JonSharedDataTime {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\032jon_shared_data_time.proto\022\003ser\"g\n\016Jon" +
-      "GuiDataTime\022\021\n\ttimestamp\030\001 \001(\003\022\030\n\020manual" +
-      "_timestamp\030\002 \001(\003\022\017\n\007zone_id\030\003 \001(\005\022\027\n\017use" +
-      "_manual_time\030\004 \001(\010BLZJgit-codecommit.eu-" +
-      "central-1.amazonaws.com/v1/repos/jettiso" +
-      "n/jonp/data/timeb\006proto3"
+      "\n\032jon_shared_data_time.proto\022\003ser\032\033buf/v" +
+      "alidate/validate.proto\"y\n\016JonGuiDataTime" +
+      "\022\032\n\ttimestamp\030\001 \001(\003B\007\272H\004\"\002(\000\022!\n\020manual_t" +
+      "imestamp\030\002 \001(\003B\007\272H\004\"\002(\000\022\017\n\007zone_id\030\003 \001(\005" +
+      "\022\027\n\017use_manual_time\030\004 \001(\010BLZJgit-codecom" +
+      "mit.eu-central-1.amazonaws.com/v1/repos/" +
+      "jettison/jonp/data/timeb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          build.buf.validate.ValidateProto.getDescriptor(),
         });
     internal_static_ser_JonGuiDataTime_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -741,6 +743,12 @@ public final class JonSharedDataTime {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ser_JonGuiDataTime_descriptor,
         new java.lang.String[] { "Timestamp", "ManualTimestamp", "ZoneId", "UseManualTime", });
+    com.google.protobuf.ExtensionRegistry registry =
+        com.google.protobuf.ExtensionRegistry.newInstance();
+    registry.add(build.buf.validate.ValidateProto.field);
+    com.google.protobuf.Descriptors.FileDescriptor
+        .internalUpdateFileDescriptor(descriptor, registry);
+    build.buf.validate.ValidateProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
