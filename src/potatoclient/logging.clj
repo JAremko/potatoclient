@@ -72,7 +72,7 @@
   [=> fn?]
   (let [log-file (get-log-file-path)]
     (tel/handler:file
-      {:output-fn tel/format-signal-fn
+      {:output-fn (tel/format-signal-fn)
        :path (.getAbsolutePath log-file)})))
 
 (>defn- cleanup-old-logs!
@@ -120,7 +120,7 @@
       (tel/add-handler!
         :console
         (tel/handler:console
-          {:output-fn tel/format-signal-fn})
+          {:output-fn (tel/format-signal-fn)})
         {:async {:mode :dropping, :buffer-size 1024}
          :min-level :warn})
 
@@ -135,7 +135,7 @@
       (tel/add-handler!
         :console
         (tel/handler:console
-          {:output-fn tel/format-signal-fn})
+          {:output-fn (tel/format-signal-fn)})
         {:async {:mode :dropping, :buffer-size 1024}})
 
       (tel/add-handler!
