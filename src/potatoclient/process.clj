@@ -285,4 +285,5 @@
            {:id ::stream-shutdown
             :data {:stream-id stream-id}
             :msg "Stream stopped by main app shutdown"}))
-       (stop-stream stream-data)))))
+       (stop-stream stream-data)))
+   nil))

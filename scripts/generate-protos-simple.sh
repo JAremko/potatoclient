@@ -96,10 +96,9 @@ cleanup_docker() {
         print_success "Removed Docker image: $DOCKER_IMAGE"
     fi
     
-    # Remove the base Docker image
+    # Keep the base Docker image for reuse - it doesn't affect our protos
     if docker image inspect "$DOCKER_BASE_IMAGE" &>/dev/null; then
-        docker rmi -f "$DOCKER_BASE_IMAGE" >/dev/null 2>&1 || true
-        print_success "Removed Docker image: $DOCKER_BASE_IMAGE"
+        print_info "Keeping base image for faster future builds: $DOCKER_BASE_IMAGE"
     fi
     
     # Prune any dangling images
@@ -183,6 +182,11 @@ main() {
         print_info "No pre-built base image found, will build from scratch"
     fi
     
+    # Check if base image already exists
+    if docker image inspect "$DOCKER_BASE_IMAGE" &>/dev/null; then
+        print_success "Base image already exists, skipping base build"
+    fi
+    
     # Build Docker image
     print_info "Building Docker image..."
     cd "$PROTOGEN_DIR"
@@ -209,13 +213,13 @@ main() {
     print_info "Using temporary output directory: $TEMP_OUTPUT_DIR"
     
     # Create subdirectories
-    docker run --rm -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "
+    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "
         mkdir -p /workspace/output/{java,java-validated}
     "
     
     # Generate standard Java bindings
     print_info "Generating standard Java bindings..."
-    docker run --rm -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
+    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
         set -e
         mkdir -p /tmp/java_proto_clean
         
@@ -232,20 +236,16 @@ main() {
     
     # Generate validated Java bindings
     print_info "Generating validated Java bindings..."
-    docker run --rm -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
+    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
         set -e
         mkdir -p /tmp/java_proto_val
         
-        # Copy proto files and add validate import
+        # Copy proto files WITHOUT adding validate import
         for proto in /workspace/proto/*.proto; do
             cp "$proto" "/tmp/java_proto_val/$(basename "$proto")"
-            /usr/local/bin/add-validate-import.sh "/tmp/java_proto_val/$(basename "$proto")"
         done
         
-        # Copy validate.proto from protovalidate
-        cp -r /opt/protovalidate/proto/protovalidate/buf /tmp/java_proto_val/
-        
-        # Generate all proto files together with validation
+        # Generate all proto files together with PGV validation only
         protoc -I/tmp/java_proto_val \
             --java_out=/workspace/output/java-validated \
             --validate_out="lang=java:/workspace/output/java-validated" \
@@ -266,11 +266,15 @@ main() {
     print_info "Cleaning Java proto directories..."
     rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
     
-    # Copy standard Java files
+    # Copy standard Java files (without validation)
     if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
         mkdir -p "$OUTPUT_DIR"
         cp -r "$TEMP_OUTPUT_DIR/java"/* "$OUTPUT_DIR/" 2>/dev/null || true
         print_success "Copied standard Java files to $OUTPUT_DIR/"
+        print_info "Note: Using standard bindings without validation annotations"
+    else
+        print_error "No Java files found in output directory"
+        exit 1
     fi
     
     # Apply compatibility fixes
@@ -287,9 +291,8 @@ main() {
     print_info "Generated files have been copied to:"
     echo "  - Standard Java: $OUTPUT_DIR/"
     echo
-    print_info "Validated Java bindings are available in: $TEMP_OUTPUT_DIR/java-validated/"
-    print_info "To use validation, add to deps.edn:"
-    echo '  build.buf/protovalidate/protovalidate-java {:mvn/version "0.3.0"}'
+    print_info "Note: Using standard protobuf bindings without validation"
+    print_info "Runtime validation will be implemented in Clojure code"
     
     print_info "Cleaning up temporary files and Docker images..."
 }

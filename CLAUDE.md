@@ -1242,7 +1242,7 @@ PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-bas
    - Command messages: `cmd` package (e.g., `cmd.JonSharedCmd$Root`)
    - Data types: `ser` package (e.g., `ser.JonSharedDataTypes`)
 7. Applies compatibility fixes for Java/Clojure integration
-8. **Cleans up both Docker images** to prevent accumulation
+8. **Cleans up the main Docker image** (keeps base image for faster rebuilds)
 9. Removes temporary directory
 
 **Requirements**:

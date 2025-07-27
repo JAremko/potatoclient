@@ -21,14 +21,16 @@
         ;; Add specific JNA version to avoid version range warning
         net.java.dev.jna/jna {:mvn/version "5.13.0"}
         ;; Protocol Buffer dependencies
-        com.google.protobuf/protobuf-java {:mvn/version "4.29.5"}
-        com.google.protobuf/protobuf-java-util {:mvn/version "4.29.5"}
+        com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
+        com.google.protobuf/protobuf-java-util {:mvn/version "4.31.1"}
         ;; DarkLaf for theming support
         com.github.weisj/darklaf-core {:mvn/version "3.0.2"}
         ;; Function specs
         com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         ;; Telemere for logging
-        com.taoensso/telemere {:mvn/version "1.0.0-RC1"}}
+        com.taoensso/telemere {:mvn/version "1.0.0-RC1"}
+        ;; Buf validate - needed for generated Java code compilation
+        build.buf/protovalidate {:mvn/version "0.13.0"}}
 
  :aliases {:dev {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}

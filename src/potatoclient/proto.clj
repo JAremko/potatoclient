@@ -7,9 +7,11 @@
             [clojure.string :as str]
             [com.fulcrologic.guardrails.core :refer [>defn >defn- ?]]
             [malli.core :as m]
+            [potatoclient.runtime :as runtime]
             [potatoclient.specs :as specs])
   (:import (cmd JonSharedCmd$Root)
            (ser JonSharedData$JonGUIState)))
+
 
 ;; Client type constants for better readability
 (def client-types
@@ -156,6 +158,7 @@
             (.setField builder field v)))))
     builder))
 
+
 ;; Serialization functions
 (>defn serialize-cmd
   "Serialize a Clojure command map to protobuf bytes.
@@ -192,7 +195,9 @@
         (:ping cmd-map) (.setPing builder (cmd.JonSharedCmd$Ping/newBuilder))
         (:noop cmd-map) (.setNoop builder (cmd.JonSharedCmd$Noop/newBuilder))
         (:frozen cmd-map) (.setFrozen builder (cmd.JonSharedCmd$Frozen/newBuilder)))
-      (.toByteArray (.build builder)))
+      ;; Build the message
+      (let [proto-msg (.build builder)]
+        (.toByteArray proto-msg)))
     (catch Exception e
       (throw (ex-info "Failed to serialize command"
                       {:error (.getMessage e)
