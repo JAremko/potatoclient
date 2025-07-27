@@ -113,3 +113,6 @@ $RECYCLE.BIN/
 /.ktlint/ktlint
 /.detekt/
 /reports/
+
+# Validated protobuf bindings (dev/test only)
+/src/potatoclient/java-validated/

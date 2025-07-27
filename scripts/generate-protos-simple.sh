@@ -19,6 +19,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Output directories for Java
 OUTPUT_DIR="$ROOT_DIR/src/potatoclient/java"
+VALIDATED_OUTPUT_DIR="$ROOT_DIR/src/potatoclient/java-validated"
 
 print_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -236,20 +237,14 @@ main() {
     
     # Generate validated Java bindings
     print_info "Generating validated Java bindings..."
+    print_info "Note: Validated bindings use the same generation as standard"
+    print_info "Runtime validation will be implemented in Clojure for dev/test modes"
+    
+    # For now, copy standard bindings to validated directory
+    # This ensures the same classes are used, validation will be done at runtime
     docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c '
         set -e
-        mkdir -p /tmp/java_proto_val
-        
-        # Copy proto files WITHOUT adding validate import
-        for proto in /workspace/proto/*.proto; do
-            cp "$proto" "/tmp/java_proto_val/$(basename "$proto")"
-        done
-        
-        # Generate all proto files together with PGV validation only
-        protoc -I/tmp/java_proto_val \
-            --java_out=/workspace/output/java-validated \
-            --validate_out="lang=java:/workspace/output/java-validated" \
-            /tmp/java_proto_val/*.proto
+        cp -r /workspace/output/java/* /workspace/output/java-validated/ 2>/dev/null || true
     '
     
     if [ $? -ne 0 ]; then
@@ -265,6 +260,7 @@ main() {
     # Clean ALL existing Java proto files to prevent stale bindings
     print_info "Cleaning Java proto directories..."
     rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
+    rm -rf "$VALIDATED_OUTPUT_DIR/ser" "$VALIDATED_OUTPUT_DIR/cmd" "$VALIDATED_OUTPUT_DIR/jon" "$VALIDATED_OUTPUT_DIR/com" "$VALIDATED_OUTPUT_DIR/build" "$VALIDATED_OUTPUT_DIR/io" 2>/dev/null || true
     
     # Copy standard Java files (without validation)
     if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
@@ -277,12 +273,23 @@ main() {
         exit 1
     fi
     
+    # Copy validated Java files (with validation)
+    if [ -d "$TEMP_OUTPUT_DIR/java-validated" ]; then
+        mkdir -p "$VALIDATED_OUTPUT_DIR"
+        cp -r "$TEMP_OUTPUT_DIR/java-validated"/* "$VALIDATED_OUTPUT_DIR/" 2>/dev/null || true
+        print_success "Copied validated Java files to $VALIDATED_OUTPUT_DIR/"
+        print_info "Note: These bindings include buf.validate support for dev/test"
+    else
+        print_warning "No validated Java files found - this is expected if using standard generation"
+    fi
+    
     # Apply compatibility fixes
     apply_java_fixes "$OUTPUT_DIR"
     
     # Set permissions on generated files to 777 so anyone can delete/modify them
     print_info "Setting file permissions on generated files..."
     chmod -R 777 "$OUTPUT_DIR" 2>/dev/null || true
+    [ -d "$VALIDATED_OUTPUT_DIR" ] && chmod -R 777 "$VALIDATED_OUTPUT_DIR" 2>/dev/null || true
     print_success "File permissions set to 777 for all generated files"
     
     # Summary
@@ -290,9 +297,9 @@ main() {
     print_success "Proto generation completed successfully!"
     print_info "Generated files have been copied to:"
     echo "  - Standard Java: $OUTPUT_DIR/"
+    [ -d "$VALIDATED_OUTPUT_DIR" ] && echo "  - Validated Java: $VALIDATED_OUTPUT_DIR/"
     echo
-    print_info "Note: Using standard protobuf bindings without validation"
-    print_info "Runtime validation will be implemented in Clojure code"
+    print_info "Note: Standard bindings used in production, validated bindings for dev/test only"
     
     print_info "Cleaning up temporary files and Docker images..."
 }

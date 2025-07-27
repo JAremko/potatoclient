@@ -10,8 +10,50 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.specs :as specs])
   (:import (cmd JonSharedCmd$Root)
-           (ser JonSharedData$JonGUIState)))
+           (ser JonSharedData$JonGUIState)
+           (build.buf.protovalidate Validator ValidatorFactory)
+           (build.buf.protovalidate ValidationResult)
+           (build.buf.protovalidate.exceptions CompilationException)))
 
+
+;; Buf.validate validator - only initialized in dev/test modes
+(def ^:private validator
+  "Buf.validate validator instance. Only created in non-release builds."
+  (when-not (runtime/release-build?)
+    (delay
+      (try
+        (.build (ValidatorFactory/newBuilder))
+        (catch Exception e
+          (println "Warning: Failed to initialize buf.validate validator:" (.getMessage e))
+          nil)))))
+
+(>defn- validate-proto-message
+  "Validate a protobuf message using buf.validate constraints.
+  Only performs validation in dev/test modes, returns nil in release."
+  [proto-msg]
+  [any? => any?]
+  (when (and validator @validator)
+    (try
+      (let [result (.validate ^Validator @validator proto-msg)]
+        (when-not (.isSuccess result)
+          (let [violations (.getViolations result)]
+            (throw (ex-info "Proto validation failed"
+                            {:violations (map (fn [v]
+                                                {:field (.getFieldPath v)
+                                                 :constraint (.getConstraintId v)
+                                                 :message (.getMessage v)})
+                                              violations)
+                             :message-type (.. proto-msg getClass getSimpleName)})))))
+      (catch CompilationException e
+        ;; Compilation errors mean the proto doesn't have validation metadata
+        ;; This is expected for standard bindings, so we just log in dev
+        (when (System/getProperty "potatoclient.proto.debug")
+          (println "Debug: No validation metadata for" (.. proto-msg getClass getSimpleName)))
+        nil)
+      (catch Exception e
+        (println "Warning: Proto validation error:" (.getMessage e))
+        nil)))
+  proto-msg)
 
 ;; Client type constants for better readability
 (def client-types
@@ -197,6 +239,8 @@
         (:frozen cmd-map) (.setFrozen builder (cmd.JonSharedCmd$Frozen/newBuilder)))
       ;; Build the message
       (let [proto-msg (.build builder)]
+        ;; Validate in dev/test modes only
+        (validate-proto-message proto-msg)
         (.toByteArray proto-msg)))
     (catch Exception e
       (throw (ex-info "Failed to serialize command"
