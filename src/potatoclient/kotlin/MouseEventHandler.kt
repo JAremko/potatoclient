@@ -83,7 +83,13 @@ class MouseEventHandler(
                             KEY_BUTTON to e.button,
                             KEY_MODIFIERS to e.modifiersEx,
                         )
-                    sendFilteredEvent(EventFilter.EventType.MOUSE_PRESS, "mouse-press", e.x, e.y, details)
+                    sendFilteredEvent(
+                        EventFilter.EventType.MOUSE_PRESS,
+                        "mouse-press",
+                        e.x,
+                        e.y,
+                        details,
+                    )
                 }
 
                 override fun mouseReleased(e: MouseEvent) {
@@ -94,7 +100,13 @@ class MouseEventHandler(
                                 KEY_BUTTON to e.button,
                                 KEY_MODIFIERS to e.modifiersEx,
                             )
-                        sendFilteredEvent(EventFilter.EventType.MOUSE_DRAG_END, "mouse-drag-end", e.x, e.y, details)
+                        sendFilteredEvent(
+                            EventFilter.EventType.MOUSE_DRAG_END,
+                            "mouse-drag-end",
+                            e.x,
+                            e.y,
+                            details,
+                        )
 
                         // Clear drag origin
                         dragOrigin = null
@@ -109,15 +121,33 @@ class MouseEventHandler(
                             KEY_BUTTON to e.button,
                             KEY_MODIFIERS to e.modifiersEx,
                         )
-                    sendFilteredEvent(EventFilter.EventType.MOUSE_RELEASE, "mouse-release", e.x, e.y, details2)
+                    sendFilteredEvent(
+                        EventFilter.EventType.MOUSE_RELEASE,
+                        "mouse-release",
+                        e.x,
+                        e.y,
+                        details2,
+                    )
                 }
 
                 override fun mouseEntered(e: MouseEvent) {
-                    sendFilteredEvent(EventFilter.EventType.MOUSE_ENTER, "mouse-enter", e.x, e.y, null)
+                    sendFilteredEvent(
+                        EventFilter.EventType.MOUSE_ENTER,
+                        "mouse-enter",
+                        e.x,
+                        e.y,
+                        null,
+                    )
                 }
 
                 override fun mouseExited(e: MouseEvent) {
-                    sendFilteredEvent(EventFilter.EventType.MOUSE_EXIT, "mouse-exit", e.x, e.y, null)
+                    sendFilteredEvent(
+                        EventFilter.EventType.MOUSE_EXIT,
+                        "mouse-exit",
+                        e.x,
+                        e.y,
+                        null,
+                    )
                 }
             },
         )
@@ -132,7 +162,13 @@ class MouseEventHandler(
                     if (now - lastTime >= Constants.MOUSE_EVENT_THROTTLE_MS) {
                         if (lastMoveTime.compareAndSet(lastTime, now)) {
                             val details = mapOf(KEY_MODIFIERS to e.modifiersEx)
-                            sendFilteredEvent(EventFilter.EventType.MOUSE_MOVE, "mouse-move", e.x, e.y, details)
+                            sendFilteredEvent(
+                                EventFilter.EventType.MOUSE_MOVE,
+                                "mouse-move",
+                                e.x,
+                                e.y,
+                                details,
+                            )
 
                             // Cancel any pending task
                             pendingMouseMoveTask?.cancel(false)
@@ -146,7 +182,13 @@ class MouseEventHandler(
                             eventThrottleExecutor.schedule({
                                 lastMouseMoveEvent?.let { evt ->
                                     val details = mapOf(KEY_MODIFIERS to evt.modifiersEx)
-                                    sendFilteredEvent(EventFilter.EventType.MOUSE_MOVE, "mouse-move", evt.x, evt.y, details)
+                                    sendFilteredEvent(
+                                        EventFilter.EventType.MOUSE_MOVE,
+                                        "mouse-move",
+                                        evt.x,
+                                        evt.y,
+                                        details,
+                                    )
                                     lastMoveTime.set(System.currentTimeMillis())
                                 }
                             }, delay, TimeUnit.MILLISECONDS)
@@ -163,7 +205,13 @@ class MouseEventHandler(
                                 KEY_BUTTON to getButtonFromModifiers(e.modifiersEx),
                                 KEY_MODIFIERS to e.modifiersEx,
                             )
-                        sendFilteredEvent(EventFilter.EventType.MOUSE_DRAG_START, "mouse-drag-start", e.x, e.y, details)
+                        sendFilteredEvent(
+                            EventFilter.EventType.MOUSE_DRAG_START,
+                            "mouse-drag-start",
+                            e.x,
+                            e.y,
+                            details,
+                        )
                     }
 
                     lastMouseDragEvent = e
@@ -193,7 +241,12 @@ class MouseEventHandler(
                 }
 
                 private fun getButtonFromModifiers(modifiers: Int): Int =
-                    when (modifiers and (MouseEvent.BUTTON1_DOWN_MASK or MouseEvent.BUTTON2_DOWN_MASK or MouseEvent.BUTTON3_DOWN_MASK)) {
+                    when (
+                        modifiers and (
+                            MouseEvent.BUTTON1_DOWN_MASK or
+                                MouseEvent.BUTTON2_DOWN_MASK or MouseEvent.BUTTON3_DOWN_MASK
+                        )
+                    ) {
                         MouseEvent.BUTTON1_DOWN_MASK -> 1
                         MouseEvent.BUTTON2_DOWN_MASK -> 2
                         MouseEvent.BUTTON3_DOWN_MASK -> 3
@@ -210,7 +263,13 @@ class MouseEventHandler(
                     KEY_SCROLL_TYPE to if (e.scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) "unit" else "block",
                     KEY_MODIFIERS to e.modifiersEx,
                 )
-            sendFilteredEvent(EventFilter.EventType.MOUSE_WHEEL, "mouse-wheel", e.x, e.y, details)
+            sendFilteredEvent(
+                EventFilter.EventType.MOUSE_WHEEL,
+                "mouse-wheel",
+                e.x,
+                e.y,
+                details,
+            )
         }
     }
 
@@ -235,7 +294,13 @@ class MouseEventHandler(
                     KEY_CLICK_COUNT to 2,
                     KEY_MODIFIERS to modifiers,
                 )
-            sendFilteredEvent(EventFilter.EventType.MOUSE_DOUBLE_CLICK, "mouse-double-click", x, y, details)
+            sendFilteredEvent(
+                EventFilter.EventType.MOUSE_DOUBLE_CLICK,
+                "mouse-double-click",
+                x,
+                y,
+                details,
+            )
 
             // Clear last click
             lastClick.set(null)
@@ -255,7 +320,13 @@ class MouseEventHandler(
                                 KEY_CLICK_COUNT to 1,
                                 KEY_MODIFIERS to modifiers,
                             )
-                        sendFilteredEvent(EventFilter.EventType.MOUSE_CLICK, "mouse-click", x, y, details)
+                        sendFilteredEvent(
+                            EventFilter.EventType.MOUSE_CLICK,
+                            "mouse-click",
+                            x,
+                            y,
+                            details,
+                        )
                     }
                 }, Constants.DOUBLE_CLICK_WINDOW_MS.toLong(), TimeUnit.MILLISECONDS)
         }
@@ -323,7 +394,13 @@ class MouseEventHandler(
             }
         }
 
-        sendFilteredEvent(EventFilter.EventType.MOUSE_DRAG, "mouse-drag", e.x, e.y, dragEventDetails)
+        sendFilteredEvent(
+            EventFilter.EventType.MOUSE_DRAG,
+            "mouse-drag",
+            e.x,
+            e.y,
+            dragEventDetails,
+        )
     }
 
     private fun sendFilteredEvent(

@@ -143,7 +143,7 @@ class WebSocketClientBuiltIn(
                 if (shouldReconnect.get() && !isConnecting.get()) {
                     performConnect()
                 }
-            } catch (e: InterruptedException) {
+            } catch (_: InterruptedException) {
                 Thread.currentThread().interrupt()
             }
         }.start()

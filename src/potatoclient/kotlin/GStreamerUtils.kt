@@ -40,7 +40,8 @@ object GStreamerUtils {
         if (gstreamerRoot == null) {
             callback.onLog(
                 "ERROR",
-                "GStreamer installation not found on Windows. Please install GStreamer from https://gstreamer.freedesktop.org/download/",
+                "GStreamer installation not found on Windows. " +
+                    "Please install GStreamer from https://gstreamer.freedesktop.org/download/",
             )
             return
         }

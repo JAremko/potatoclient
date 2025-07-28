@@ -165,7 +165,11 @@ class GStreamerPipeline(
             // H264 parser
             val h264parse = ElementFactory.make("h264parse", "h264parse")
             if (h264parse == null) {
-                callback.onLog("ERROR", "Failed to create h264parse element - check if gstreamer1.0-plugins-bad is installed")
+                callback.onLog(
+                    "ERROR",
+                    "Failed to create h264parse element " +
+                        "- check if gstreamer1.0-plugins-bad is installed",
+                )
                 return
             }
             h264parse.set("config-interval", 1)
@@ -214,7 +218,10 @@ class GStreamerPipeline(
             if (decoder == null) {
                 callback.onLog(
                     "ERROR",
-                    "Failed to create any H264 decoder. Please ensure GStreamer is properly installed with at least one of: gstreamer1.0-libav (for avdec_h264), gstreamer1.0-plugins-bad (for hardware decoders), or gstreamer1.0-plugins-good (for decodebin)",
+                    "Failed to create any H264 decoder. Please ensure GStreamer is properly" +
+                        " installed with at least one of: gstreamer1.0-libav (for avdec_h264), " +
+                        "gstreamer1.0-plugins-bad (for hardware decoders)," +
+                        " or gstreamer1.0-plugins-good (for decodebin)",
                 )
                 return
             }
@@ -222,7 +229,11 @@ class GStreamerPipeline(
             // Queue for buffering with optimized settings
             val queue = ElementFactory.make("queue", "queue")
             if (queue == null) {
-                callback.onLog("ERROR", "Failed to create queue element - check GStreamer installation")
+                callback.onLog(
+                    "ERROR",
+                    "Failed to create queue element " +
+                        "- check GStreamer installation",
+                )
                 return
             }
             queue.apply {
@@ -319,7 +330,7 @@ class GStreamerPipeline(
             )
 
             // Store video component for later overlay setup
-            if (videoComponent != null && videosink != null) {
+            if (videosink != null) {
                 pendingVideoComponent = videoComponent
                 callback.onLog("DEBUG", "Deferring video overlay setup until first frame")
             }
@@ -392,12 +403,12 @@ class GStreamerPipeline(
             // Get native window handle
             val windowHandle =
                 when {
-                    Platform.isLinux() -> Native.getComponentID(pendingVideoComponent).toLong()
+                    Platform.isLinux() -> Native.getComponentID(pendingVideoComponent)
                     Platform.isWindows() -> {
                         val p = Native.getComponentPointer(pendingVideoComponent)
                         Pointer.nativeValue(p)
                     }
-                    Platform.isMac() -> Native.getComponentID(pendingVideoComponent).toLong()
+                    Platform.isMac() -> Native.getComponentID(pendingVideoComponent)
                     else -> 0L
                 }
 

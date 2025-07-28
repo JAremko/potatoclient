@@ -1,5 +1,6 @@
 package potatoclient.kotlin
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.awt.Component
 import java.net.URI
@@ -12,11 +13,12 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import javax.swing.JFrame
+import kotlin.system.exitProcess
 
 class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
-    private val domain: String,
+    domain: String,
 ) : MouseEventHandler.EventCallback,
     WindowEventHandler.EventCallback,
     GStreamerPipeline.EventCallback,
@@ -148,7 +150,7 @@ class VideoStreamManager(
             // Wait for shutdown
             try {
                 shutdownLatch.await()
-            } catch (e: InterruptedException) {
+            } catch (_: InterruptedException) {
                 Thread.currentThread().interrupt()
             }
         } catch (e: Exception) {
@@ -163,8 +165,8 @@ class VideoStreamManager(
             try {
                 val line = scanner.nextLine()
                 if (!line.isNullOrBlank()) {
-                    val command = mapper.readValue(line, Map::class.java)
-                    handleCommand(command as Map<String, Any>)
+                    val command = mapper.readValue(line, object : TypeReference<Map<String, Any>>() {})
+                    handleCommand(command)
                 }
             } catch (e: Exception) {
                 if (running.get()) {
@@ -232,7 +234,7 @@ class VideoStreamManager(
                 if (!eventThrottleExecutor.awaitTermination(Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                     eventThrottleExecutor.shutdownNow()
                 }
-            } catch (e: InterruptedException) {
+            } catch (_: InterruptedException) {
                 reconnectExecutor.shutdownNow()
                 eventThrottleExecutor.shutdownNow()
                 Thread.currentThread().interrupt()
@@ -327,7 +329,7 @@ class VideoStreamManager(
         fun main(args: Array<String>) {
             if (args.size < 3) {
                 System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain>")
-                System.exit(1)
+                exitProcess(1)
             }
 
             val streamId = args[0]
@@ -340,7 +342,7 @@ class VideoStreamManager(
             } catch (e: Exception) {
                 System.err.println("Fatal error: ${e.message}")
                 // Stack trace already printed to stderr via exception message
-                System.exit(1)
+                exitProcess(1)
             }
         }
     }
