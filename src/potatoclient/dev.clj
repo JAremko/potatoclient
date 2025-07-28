@@ -1,9 +1,9 @@
 (ns potatoclient.dev
   "Development utilities and settings.
-  
+
   This namespace is automatically loaded when running in development mode
   to enable various debugging and development features."
-  (:require [com.fulcrologic.guardrails.core :refer [>defn]]
+  (:require [com.fulcrologic.guardrails.core :refer [>defn =>]]
             [potatoclient.logging :as logging]))
 
 (>defn enable-verbose-logging!
@@ -24,7 +24,7 @@
 
 (>defn enable-all-dev-settings!
   "Enable all development-specific settings.
-  Note: Instrumentation and reflection warnings are now enabled 
+  Note: Instrumentation and reflection warnings are now enabled
   for all non-release builds in main.clj"
   []
   [=> nil?]

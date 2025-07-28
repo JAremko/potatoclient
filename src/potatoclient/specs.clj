@@ -9,10 +9,14 @@
             [malli.util :as mu])
   (:import (clojure.core.async.impl.channels ManyToManyChannel)
            (clojure.lang Atom)
+           (cmd JonSharedCmd$Root$Builder)
+           (cmd.RotaryPlatform JonSharedCmdRotary$Axis$Builder JonSharedCmdRotary$Azimuth$Builder JonSharedCmdRotary$Elevation$Builder)
+           (com.google.protobuf Message Message$Builder)
            (java.awt Color Rectangle)
            (java.io BufferedReader BufferedWriter File)
            (javax.swing AbstractButton Action Icon JFrame JMenu JMenuBar JPanel JScrollPane JTextField JToggleButton)
-           (javax.swing.table DefaultTableCellRenderer)))
+           (javax.swing.table DefaultTableCellRenderer)
+           (ser JonSharedDataTypes$JonGuiDataFxModeDay JonSharedDataTypes$JonGuiDataFxModeHeat JonSharedDataTypes$JonGuiDataRotaryDirection JonSharedDataTypes$JonGuiDataRotaryMode JonSharedDataTypes$JonGuiDataVideoChannel JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters)))
 
 ;; -----------------------------------------------------------------------------
 ;; Core Domain Schemas
@@ -494,12 +498,12 @@
 (def protobuf-message
   "Google Protobuf Message instance"
   [:fn {:error/message "must be a protobuf message"}
-   #(instance? com.google.protobuf.Message %)])
+   #(instance? Message %)])
 
 (def protobuf-builder
   "Google Protobuf Message Builder instance"
   [:fn {:error/message "must be a protobuf message builder"}
-   #(instance? com.google.protobuf.Message$Builder %)])
+   #(instance? Message$Builder %)])
 
 ;; -----------------------------------------------------------------------------
 ;; Command Enum Types
@@ -508,17 +512,17 @@
 (def rotary-direction
   "Rotary platform direction enum"
   [:fn {:error/message "must be a JonGuiDataRotaryDirection enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataRotaryDirection %)])
+   #(instance? JonSharedDataTypes$JonGuiDataRotaryDirection %)])
 
 (def rotary-mode
   "Rotary platform mode enum"
   [:fn {:error/message "must be a JonGuiDataRotaryMode enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataRotaryMode %)])
+   #(instance? JonSharedDataTypes$JonGuiDataRotaryMode %)])
 
 (def video-channel
   "Video channel enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannel enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannel %)])
+   #(instance? JonSharedDataTypes$JonGuiDataVideoChannel %)])
 
 ;; TODO: These enums don't exist in the current protobuf definitions
 ;; (def day-camera-palette
@@ -579,22 +583,22 @@
 (def day-fx-mode
   "Day camera FX mode enum"
   [:fn {:error/message "must be a JonGuiDataFxModeDay enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeDay %)])
+   #(instance? JonSharedDataTypes$JonGuiDataFxModeDay %)])
 
 (def heat-agc-mode
   "Heat camera AGC mode enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannelHeatAGCModes enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes %)])
+   #(instance? JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes %)])
 
 (def heat-filter
   "Heat camera filter enum"
   [:fn {:error/message "must be a JonGuiDataVideoChannelHeatFilters enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters %)])
+   #(instance? JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters %)])
 
 (def heat-fx-mode
   "Heat camera FX mode enum"
   [:fn {:error/message "must be a JonGuiDataFxModeHeat enum"}
-   #(instance? ser.JonSharedDataTypes$JonGuiDataFxModeHeat %)])
+   #(instance? JonSharedDataTypes$JonGuiDataFxModeHeat %)])
 
 ;; -----------------------------------------------------------------------------
 ;; Command Structures
@@ -603,18 +607,18 @@
 (def cmd-root-builder
   "JonSharedCmd Root builder"
   [:fn {:error/message "must be a JonSharedCmd$Root$Builder"}
-   #(instance? cmd.JonSharedCmd$Root$Builder %)])
+   #(instance? JonSharedCmd$Root$Builder %)])
 
 (def rotary-axis-builder
   "JonSharedCmdRotary Axis builder"
   [:fn {:error/message "must be a JonSharedCmdRotary$Axis$Builder"}
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Axis$Builder %)])
+   #(instance? JonSharedCmdRotary$Axis$Builder %)])
 
 (def rotary-axis-command-map
   "Map for rotary axis commands"
   [:map
-   [:azimuth {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth$Builder %)]]
-   [:elevation {:optional true} [:fn #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation$Builder %)]]])
+   [:azimuth {:optional true} [:fn #(instance? JonSharedCmdRotary$Azimuth$Builder %)]]
+   [:elevation {:optional true} [:fn #(instance? JonSharedCmdRotary$Elevation$Builder %)]]])
 
 (def command
   "Command structure - only validates payload is non-empty map"
@@ -634,7 +638,7 @@
 (def core-async-channel
   "core.async channel"
   [:fn {:error/message "must be a core.async channel"}
-   #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)])
+   #(instance? ManyToManyChannel %)])
 
 ;; -----------------------------------------------------------------------------
 ;; Registry Setup

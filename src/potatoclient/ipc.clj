@@ -77,7 +77,7 @@
   "Initialize a newly started stream."
   [stream]
   [:potatoclient.specs/stream-process-map => boolean?]
-  (Thread/sleep stream-init-delay-ms)
+  (Thread/sleep ^long stream-init-delay-ms)
   (process/send-command stream {:action "show"}))
 
 (>defn start-stream

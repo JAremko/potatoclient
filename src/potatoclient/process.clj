@@ -1,6 +1,6 @@
 (ns potatoclient.process
   "Process lifecycle management for video stream subprocesses.
-  
+
   Handles spawning, communication, and cleanup of Java subprocesses
   that manage the actual video streams via WebSocket and GStreamer."
   (:require [clojure.core.async :as async :refer [>!! go-loop]]
@@ -251,7 +251,7 @@
 
     ;; Try graceful shutdown first
     (send-command stream {:action "shutdown"})
-    (Thread/sleep shutdown-grace-period-ms)
+    (Thread/sleep ^long shutdown-grace-period-ms)
 
     ;; Force kill if still alive
     (let [^Process process (:process stream)]

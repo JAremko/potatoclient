@@ -189,7 +189,7 @@
 
 (>defn- create-menu-bar
   "Create the application menu bar."
-  [reload-fn parent]
+  [_reload-fn _parent]
   [ifn? [:fn {:error/message "must be a JFrame"}
          #(instance? JFrame %)] => any?]
   (let [heat-button (doto (create-stream-toggle-button :heat)
@@ -198,9 +198,9 @@
                      (seesaw/config! :text ""))]
     (seesaw/menubar
       :items [;; Left side - menus
-              (create-theme-menu reload-fn)
-              (create-language-menu reload-fn)
-              (create-help-menu parent)
+              (create-theme-menu _reload-fn)
+              (create-language-menu _reload-fn)
+              (create-help-menu _parent)
              ;; Use horizontal glue to push buttons to the right
               (Box/createHorizontalGlue)
              ;; Right side - stream buttons

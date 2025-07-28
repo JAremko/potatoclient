@@ -1,9 +1,9 @@
 (ns potatoclient.guardrails-test
   "Test namespace to verify Guardrails spec validation.
-  
+
   This namespace contains functions with intentional spec violations
   to test that Guardrails properly throws errors in development builds."
-  (:require [com.fulcrologic.guardrails.core :refer [>defn >defn-]]))
+  (:require [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]))
 
 ;; Test function with correct spec and usage - should NOT throw
 (>defn add-numbers

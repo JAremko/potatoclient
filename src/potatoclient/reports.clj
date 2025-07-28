@@ -1,12 +1,12 @@
 (ns potatoclient.reports
   "Generate markdown reports for development and documentation.
-   
+
    This namespace provides utilities to generate reports about the codebase,
    including unspecced functions, code coverage, and other metrics."
   (:require [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.core :refer [>defn >defn- ?]]
+            [com.fulcrologic.guardrails.core :refer [>defn >defn- ? =>]]
             [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
   (:import (java.io File)

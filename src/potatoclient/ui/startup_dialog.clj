@@ -99,7 +99,7 @@
 
 (>defn- create-menu-bar
   "Create menu bar for startup dialog."
-  [dialog callback]
+  [_dialog _callback]
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
    ifn? => any?]
@@ -107,13 +107,13 @@
     :items [(seesaw/menu
               :text (i18n/tr :menu-view-theme)
               :icon (theme/key->icon :actions-group-theme)
-              :items (map #(create-theme-action % dialog callback)
+              :items (map #(create-theme-action % _dialog _callback)
                           (theme/get-available-themes)))
             (seesaw/menu
               :text (i18n/tr :menu-view-language)
               :icon (theme/key->icon :icon-languages)
-              :items [(create-language-action :english "English" dialog callback)
-                      (create-language-action :ukrainian "Українська" dialog callback)])]))
+              :items [(create-language-action :english "English" _dialog _callback)
+                      (create-language-action :ukrainian "Українська" _dialog _callback)])]))
 
 (>defn- create-content-panel
   "Create the main content panel for the startup dialog."

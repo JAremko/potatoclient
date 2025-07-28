@@ -1,16 +1,17 @@
 (ns potatoclient.proto
   "Protocol buffer serialization for communication with the server.
-  
+
   Provides functions to serialize commands and deserialize state messages
   using the pronto library for Clojure protobuf support."
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.core :refer [>defn >defn- ?]]
+            [com.fulcrologic.guardrails.core :refer [>defn >defn- ? =>]]
             [malli.core :as m]
             [potatoclient.runtime :as runtime]
             [potatoclient.specs :as specs])
-  (:import (cmd JonSharedCmd$Root)
-           (ser JonSharedData$JonGUIState)
+  (:import (cmd JonSharedCmd$Frozen JonSharedCmd$Noop JonSharedCmd$Ping JonSharedCmd$Root)
+           (com.google.protobuf Descriptors$FieldDescriptor$JavaType Message)
+           (ser JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType)
            (build.buf.protovalidate Validator ValidatorFactory)
            (build.buf.protovalidate.exceptions CompilationException)))
 
@@ -39,12 +40,12 @@
                             {:violations (map (fn [v]
                                                 {:violation-info (.toString v)})
                                               violations)
-                             :message-type (.. proto-msg getClass getSimpleName)})))))
+                             :message-type (.getSimpleName (.getClass ^Object proto-msg))})))))
       (catch CompilationException _
         ;; Compilation errors mean the proto doesn't have validation metadata
         ;; This is expected for standard bindings, so we just log in dev
         (when (System/getProperty "potatoclient.proto.debug")
-          (println "Debug: No validation metadata for" (.. proto-msg getClass getSimpleName)))
+          (println "Debug: No validation metadata for" (.getSimpleName (.getClass ^Object proto-msg))))
         nil)))
   proto-msg)
 
@@ -120,7 +121,7 @@
           (cond
            ;; Skip unset fields - for message types, check hasField instead
             (and (not (.isRepeated field))
-                 (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+                 (= (.getJavaType field) Descriptors$FieldDescriptor$JavaType/MESSAGE)
                  (not (.hasField proto-msg field)))
             acc
 
@@ -134,18 +135,18 @@
             (.isRepeated field)
             (if (seq value)
               (assoc acc (keyword kebab-name)
-                     (mapv #(if (instance? com.google.protobuf.Message %)
+                     (mapv #(if (instance? Message %)
                               (proto-map->clj-map %)
                               %)
                            value))
               acc)
 
            ;; Handle message types
-            (instance? com.google.protobuf.Message value)
+            (instance? Message value)
             (assoc acc (keyword kebab-name) (proto-map->clj-map value))
 
            ;; Handle enum types
-            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
+            (= (.getJavaType field) Descriptors$FieldDescriptor$JavaType/ENUM)
             (assoc acc (keyword kebab-name) (.getName value))
 
            ;; Handle primitive types
@@ -168,21 +169,21 @@
             ;; Handle repeated fields
             (.isRepeated field)
             (doseq [item v]
-              (if (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+              (if (= (.getJavaType field) Descriptors$FieldDescriptor$JavaType/MESSAGE)
                 (let [item-builder (.newBuilderForField builder field)]
                   (clj-map->proto-builder item-builder item)
                   (.addRepeatedField builder field (.build item-builder)))
                 (.addRepeatedField builder field item)))
 
             ;; Handle message types
-            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/MESSAGE)
+            (= (.getJavaType field) Descriptors$FieldDescriptor$JavaType/MESSAGE)
             (let [nested-builder (.newBuilderForField builder field)]
               (when (seq v) ; Only process if v has content
                 (clj-map->proto-builder nested-builder v))
               (.setField builder field (.build nested-builder)))
 
             ;; Handle enum types
-            (= (.getJavaType field) com.google.protobuf.Descriptors$FieldDescriptor$JavaType/ENUM)
+            (= (.getJavaType field) Descriptors$FieldDescriptor$JavaType/ENUM)
             (let [enum-type (.getEnumType field)
                   enum-value (.findValueByName enum-type v)]
               (when enum-value
@@ -196,15 +197,15 @@
 ;; Serialization functions
 (>defn serialize-cmd
   "Serialize a Clojure command map to protobuf bytes.
-  
+
   The command should have the structure:
   {:protocol-version 1
-   :session-id 12345  
+   :session-id 12345
    :important true
    :from-cv-subsystem false
    :client-type \"JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK\"
    :ping {}}
-   
+
   Returns the serialized bytes or throws an exception with details."
   [cmd-map]
   [map? => bytes?]
@@ -222,13 +223,13 @@
       ;; Set client type enum
       (when-let [ct (:client-type cmd-map)]
         (if (string? ct)
-          (.setClientType builder (ser.JonSharedDataTypes$JonGuiDataClientType/valueOf ct))
+          (.setClientType builder (Enum/valueOf JonSharedDataTypes$JonGuiDataClientType ct))
           (.setClientType builder ct)))
       ;; Set payload using specific setter based on type
       (cond
-        (:ping cmd-map) (.setPing builder (cmd.JonSharedCmd$Ping/newBuilder))
-        (:noop cmd-map) (.setNoop builder (cmd.JonSharedCmd$Noop/newBuilder))
-        (:frozen cmd-map) (.setFrozen builder (cmd.JonSharedCmd$Frozen/newBuilder)))
+        (:ping cmd-map) (.setPing builder (JonSharedCmd$Ping/newBuilder))
+        (:noop cmd-map) (.setNoop builder (JonSharedCmd$Noop/newBuilder))
+        (:frozen cmd-map) (.setFrozen builder (JonSharedCmd$Frozen/newBuilder)))
       ;; Build the message
       (let [proto-msg (.build builder)]
         ;; Validate in dev/test modes only
@@ -242,13 +243,13 @@
 
 (>defn deserialize-state
   "Deserialize protobuf bytes to a Clojure state map.
-  
+
   Returns a map with kebab-case keys representing the current state.
   Throws an exception if deserialization fails."
   [proto-bytes]
   [bytes? => map?]
   (try
-    (let [proto-msg (JonSharedData$JonGUIState/parseFrom proto-bytes)]
+    (let [proto-msg (JonSharedData$JonGUIState/parseFrom ^bytes proto-bytes)]
       (proto-map->clj-map proto-msg))
     (catch Exception e
       (throw (ex-info "Failed to deserialize state"

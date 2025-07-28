@@ -1,19 +1,20 @@
 (ns potatoclient.state.dispatch
   "Singleton state dispatch system for handling device state updates.
-  
+
   This namespace provides a centralized dispatch system for JonGUIState messages
   received from the server. It implements change detection and efficient state
   distribution using core.async channels.
-  
+
   Based on the TypeScript deviceStateDispatch.ts implementation."
-  (:require [clojure.core.async :as async :refer [chan put! close!]]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- ? =>]]
+  (:require [clojure.core.async :refer [chan close! put!]]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
             [potatoclient.proto :as proto]
             [potatoclient.state.device :as device-state]
             [potatoclient.state.schemas :as schemas])
-  (:import [ser JonSharedData$JonGUIState]))
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)
+           (ser JonSharedData$JonGUIState)))
 
 ;; ============================================================================
 ;; Singleton State
@@ -44,11 +45,11 @@
 ;; Validation Control
 ;; ============================================================================
 
-;; Enable/disable state validation. Set to true in dev mode.
-(defonce validate-state? (atom false))
+(defonce ^{:doc "Enable/disable state validation. Set to true in dev mode."}
+  validate-state? (atom false))
 
-;; Debug mode for logging all state changes
-(defonce debug-mode? (atom false))
+(defonce ^{:doc "Debug mode for logging all state changes."}
+  debug-mode? (atom false))
 
 ;; ============================================================================
 ;; Change Detection
@@ -219,7 +220,7 @@
   (handle-state-message [_ binary-data]
     (try
       ;; Parse protobuf message directly
-      (let [proto-msg (JonSharedData$JonGUIState/parseFrom binary-data)]
+      (let [proto-msg (JonSharedData$JonGUIState/parseFrom ^bytes binary-data)]
         ;; Update using protobuf objects for comparison
         (update-all-subsystems! proto-msg)
         ;; Convert to EDN for channel subscribers
@@ -266,7 +267,7 @@
   "Get the channel that receives decoded state maps"
   []
   [=> [:fn {:error/message "must be a core.async channel"}
-       #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+       #(instance? ManyToManyChannel %)]]
   @state-channel)
 
 (>defn dispose!

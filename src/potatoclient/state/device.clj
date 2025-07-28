@@ -1,10 +1,10 @@
 (ns potatoclient.state.device
   "Reactive atoms for device state management.
-  
+
   This namespace provides centralized state atoms for all device subsystems,
   mirroring the signal-based approach from the TypeScript implementation.
   Each atom holds the deserialized EDN data for its respective subsystem."
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [malli.core :as m]
             [potatoclient.state.schemas :as schemas]))
 

@@ -1,9 +1,9 @@
 (ns potatoclient.state.utils
   "Utility functions for state management.
-  
+
   Port of TypeScript utility functions from deviceStateDispatch.ts
   for formatting timestamps, durations, and working with 64-bit values."
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn =>]]))
 
 ;; ============================================================================
 ;; Timestamp Formatting
@@ -11,11 +11,11 @@
 
 (>defn format-timestamp
   "Format a nanosecond timestamp to a human-readable format.
-  
+
   Args:
     timestamp - The timestamp in nanoseconds (long)
     include-nanos? - Whether to include nanoseconds in output (default false)
-    
+
   Returns:
     Formatted timestamp string as MM:SS.mmm or MM:SS.mmmnnnnn"
   ([timestamp]
@@ -43,10 +43,10 @@
 
 (>defn format-duration
   "Format a duration from nanoseconds to human-readable format.
-  
+
   Args:
     duration - Duration in nanoseconds (long)
-    
+
   Returns:
     Formatted duration string (e.g., '33.3ms', '1.2s', '500ns')"
   [duration]
@@ -78,24 +78,24 @@
 
 (>defn get-time-difference-ms
   "Calculate time difference between two timestamps in milliseconds.
-  
+
   Args:
     timestamp1 - First timestamp in nanoseconds
     timestamp2 - Second timestamp in nanoseconds
-    
+
   Returns:
     Absolute time difference in milliseconds"
   [timestamp1 timestamp2]
   [int? int? => int?]
   (try
-    (let [diff-ns (Math/abs (- timestamp2 timestamp1))]
+    (let [diff-ns (Math/abs ^long (- timestamp2 timestamp1))]
       (quot diff-ns 1000000))
     (catch Exception _
       0)))
 
 (>defn within-safe-range?
   "Check if a timestamp is within the safe integer range.
-  
+
   In Clojure/Java, we have 64-bit longs so this is less of a concern
   than in JavaScript, but we maintain the function for compatibility."
   [timestamp]
@@ -112,11 +112,11 @@
 
 (>defn create-frame-data
   "Create a frame data map with timestamp and duration.
-  
+
   Args:
     timestamp - Frame timestamp in nanoseconds
     duration - Frame duration in nanoseconds
-    
+
   Returns:
     Map with :timestamp and :duration keys"
   [timestamp duration]
@@ -128,10 +128,10 @@
 
 (>defn frame-fps
   "Calculate frames per second from frame duration.
-  
+
   Args:
     duration - Frame duration in nanoseconds
-    
+
   Returns:
     FPS as a double, or 0.0 if invalid"
   [duration]
@@ -142,10 +142,10 @@
 
 (>defn format-fps
   "Format FPS value for display.
-  
+
   Args:
     fps - Frames per second
-    
+
   Returns:
     Formatted string like '30.0 fps' or '29.97 fps'"
   [fps]
@@ -160,38 +160,38 @@
 
 (>defn format-latitude
   "Format latitude for display with hemisphere indicator.
-  
+
   Args:
     lat - Latitude in decimal degrees (-90 to 90)
-    
+
   Returns:
     Formatted string like '45.123° N' or '33.456° S'"
   [lat]
   [number? => string?]
-  (let [abs-lat (Math/abs lat)
+  (let [abs-lat (Math/abs ^double lat)
         hemisphere (if (>= lat 0) "N" "S")]
     (format "%.6f° %s" abs-lat hemisphere)))
 
 (>defn format-longitude
   "Format longitude for display with hemisphere indicator.
-  
+
   Args:
     lon - Longitude in decimal degrees (-180 to 180)
-    
+
   Returns:
     Formatted string like '123.456° E' or '45.678° W'"
   [lon]
   [number? => string?]
-  (let [abs-lon (Math/abs lon)
+  (let [abs-lon (Math/abs ^double lon)
         hemisphere (if (>= lon 0) "E" "W")]
     (format "%.6f° %s" abs-lon hemisphere)))
 
 (>defn format-altitude
   "Format altitude for display with units.
-  
+
   Args:
     alt - Altitude in meters
-    
+
   Returns:
     Formatted string like '1234.5 m'"
   [alt]
@@ -204,11 +204,11 @@
 
 (>defn format-angle
   "Format angle in degrees with optional precision.
-  
+
   Args:
     angle - Angle in degrees
     precision - Decimal places (default 1)
-    
+
   Returns:
     Formatted string like '45.5°'"
   ([angle]
@@ -220,10 +220,10 @@
 
 (>defn format-heading
   "Format compass heading with cardinal direction.
-  
+
   Args:
     heading - Heading in degrees (0-360)
-    
+
   Returns:
     Formatted string like '045° (NE)'"
   [heading]
@@ -255,10 +255,10 @@
 
 (>defn format-distance
   "Format distance with appropriate units.
-  
+
   Args:
     distance-dm - Distance in decimeters
-    
+
   Returns:
     Formatted string with automatic unit selection"
   [distance-dm]
@@ -277,10 +277,10 @@
 
 (>defn format-temperature
   "Format temperature with unit.
-  
+
   Args:
     temp - Temperature in Celsius
-    
+
   Returns:
     Formatted string like '23.5°C'"
   [temp]
@@ -293,10 +293,10 @@
 
 (>defn format-percentage
   "Format percentage value.
-  
+
   Args:
     value - Percentage value (0-100)
-    
+
   Returns:
     Formatted string like '75%'"
   [value]

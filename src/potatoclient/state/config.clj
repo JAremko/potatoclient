@@ -25,7 +25,7 @@
                     :ukrainian ["uk" "UA"]}
         [lang country] (get locale-map locale ["en" "US"])]
     (Locale/setDefault
-      (Locale. ^String lang ^String country))))
+      (Locale/of ^String lang ^String country))))
 
 (>defn get-domain
   "Get the current domain configuration from persistent config."
