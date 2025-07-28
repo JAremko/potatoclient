@@ -1,16 +1,16 @@
 (ns potatoclient.cmd.cv
   "Computer Vision command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.CV
-            JonSharedCmdCv$Root
-            JonSharedCmdCv$StartTrackNDC JonSharedCmdCv$StopTrack
-            JonSharedCmdCv$SetAutoFocus
-            JonSharedCmdCv$VampireModeEnable JonSharedCmdCv$VampireModeDisable
-            JonSharedCmdCv$StabilizationModeEnable JonSharedCmdCv$StabilizationModeDisable
-            JonSharedCmdCv$DumpStart JonSharedCmdCv$DumpStop]
-           [ser JonSharedDataTypes$JonGuiDataVideoChannel]))
+  (:import (cmd.CV
+             JonSharedCmdCv$DumpStart
+             JonSharedCmdCv$DumpStop JonSharedCmdCv$Root
+             JonSharedCmdCv$SetAutoFocus
+             JonSharedCmdCv$StabilizationModeDisable JonSharedCmdCv$StabilizationModeEnable
+             JonSharedCmdCv$StartTrackNDC JonSharedCmdCv$StopTrack
+             JonSharedCmdCv$VampireModeDisable JonSharedCmdCv$VampireModeEnable)
+           (ser JonSharedDataTypes$JonGuiDataVideoChannel)))
 
 ;; ============================================================================
 ;; Tracking Commands

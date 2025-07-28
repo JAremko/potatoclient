@@ -1,17 +1,17 @@
 (ns potatoclient.cmd.system
   "System-level command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.System
-            JonSharedCmdSystem$Root
-            JonSharedCmdSystem$Reboot JonSharedCmdSystem$PowerOff
-            JonSharedCmdSystem$ResetConfigs JonSharedCmdSystem$StartALl
-            JonSharedCmdSystem$StopALl JonSharedCmdSystem$StartRec
-            JonSharedCmdSystem$StopRec JonSharedCmdSystem$MarkRecImportant
-            JonSharedCmdSystem$UnmarkRecImportant JonSharedCmdSystem$EnterTransport
-            JonSharedCmdSystem$EnableGeodesicMode JonSharedCmdSystem$DisableGeodesicMode
-            JonSharedCmdSystem$SetLocalization]
-           [ser JonSharedDataTypes$JonGuiDataSystemLocalizations]))
+  (:import (cmd.System
+             JonSharedCmdSystem$DisableGeodesicMode
+             JonSharedCmdSystem$EnableGeodesicMode JonSharedCmdSystem$EnterTransport
+             JonSharedCmdSystem$MarkRecImportant JonSharedCmdSystem$PowerOff
+             JonSharedCmdSystem$Reboot JonSharedCmdSystem$ResetConfigs
+             JonSharedCmdSystem$Root JonSharedCmdSystem$SetLocalization
+             JonSharedCmdSystem$StartALl JonSharedCmdSystem$StartRec
+             JonSharedCmdSystem$StopALl JonSharedCmdSystem$StopRec
+             JonSharedCmdSystem$UnmarkRecImportant)
+           (ser JonSharedDataTypes$JonGuiDataSystemLocalizations)))
 
 ;; ============================================================================
 ;; System Control Commands

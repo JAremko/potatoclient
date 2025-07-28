@@ -1,10 +1,13 @@
 package potatoclient.kotlin
 
+import java.io.IOException
 import java.net.Socket
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
 import java.nio.ByteBuffer
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.time.Duration
@@ -18,9 +21,6 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLEngine
 import javax.net.ssl.X509ExtendedTrustManager
-import java.io.IOException
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
 import javax.net.ssl.X509TrustManager
 
 /**

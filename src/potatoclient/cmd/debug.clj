@@ -1,11 +1,12 @@
 (ns potatoclient.cmd.debug
   "Debug utilities for inspecting protobuf command messages"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.cmd.day-camera :as cmd-camera]
             [potatoclient.cmd.rotary :as cmd-rotary])
-  (:import [com.google.protobuf.util JsonFormat]
-           [cmd JonSharedCmd$Root]))
+  (:import (cmd JonSharedCmd$Root)
+           (com.google.protobuf.util JsonFormat)
+           (java.util Base64)))
 
 ;; ============================================================================
 ;; Protobuf to JSON Conversion
@@ -16,7 +17,7 @@
   [proto-msg]
   [:potatoclient.specs/protobuf-message => string?]
   (-> (JsonFormat/printer)
-      (.includingDefaultValueFields)
+      (.includingDefaultValueFields true)
       (.print proto-msg)))
 
 (>defn proto-to-json-pretty
@@ -24,7 +25,7 @@
   [proto-msg]
   [:potatoclient.specs/protobuf-message => string?]
   (-> (JsonFormat/printer)
-      (.includingDefaultValueFields)
+      (.includingDefaultValueFields true)
       (.print proto-msg)))
 
 (>defn decode-command-bytes
@@ -32,7 +33,7 @@
   [cmd-bytes]
   [bytes? => string?]
   (try
-    (let [root-msg (JonSharedCmd$Root/parseFrom cmd-bytes)]
+    (let [root-msg (JonSharedCmd$Root/parseFrom ^"[B" cmd-bytes)]
       (proto-to-json root-msg))
     (catch Exception e
       (str "Error decoding: " (.getMessage e)))))
@@ -58,7 +59,7 @@
     ;; Now inspect what was captured
     (doseq [root-msg @commands]
       (let [cmd-bytes (cmd-core/encode-cmd-message root-msg)
-            base64 (.encodeToString (java.util.Base64/getEncoder) cmd-bytes)
+            base64 (.encodeToString (Base64/getEncoder) cmd-bytes)
             json (proto-to-json (.build root-msg))]
         (println "Base64 payload:" base64)
         (println "Size:" (count cmd-bytes) "bytes")
@@ -164,7 +165,7 @@
   [base64-str]
   [string? => nil?]
   (try
-    (let [cmd-bytes (.decode (java.util.Base64/getDecoder) base64-str)
+    (let [cmd-bytes (.decode (Base64/getDecoder) ^String base64-str)
           json-str (decode-command-bytes cmd-bytes)]
       (println "Decoded command structure:")
       (println json-str))

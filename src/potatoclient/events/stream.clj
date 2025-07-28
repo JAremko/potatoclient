@@ -6,7 +6,8 @@
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
     [potatoclient.specs]
-    [potatoclient.state :as state]))
+    [potatoclient.state :as state])
+  (:import (ser JonSharedDataTypes$JonGuiDataVideoChannel)))
 
 (def mouse-button-names
   "Mapping of mouse button numbers to human-readable names"
@@ -168,10 +169,10 @@
       (let [{:keys [ndcX ndcY frameTimestamp]} event
             ;; Determine channel based on stream ID
             channel (case stream-id
-                      :heat ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-                      :day ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY
+                      :heat JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+                      :day JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY
                       ;; Default to HEAT if unknown
-                      ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT)]
+                      JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT)]
         (logging/log-info {:msg (str "Double-click detected at NDC (" ndcX ", " ndcY ") "
                                      "with frame timestamp: " frameTimestamp
                                      " on " (name stream-id) " channel")})

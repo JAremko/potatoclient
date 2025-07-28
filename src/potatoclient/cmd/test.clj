@@ -1,6 +1,6 @@
 (ns potatoclient.cmd.test
   "Test namespace for demonstrating the command system"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.compass :as compass]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.cmd.cv :as cv]
@@ -13,8 +13,8 @@
             [potatoclient.cmd.osd :as osd]
             [potatoclient.cmd.rotary :as rotary]
             [potatoclient.cmd.system :as system])
-  (:import [ser
-            JonSharedDataTypes$JonGuiDataRotaryDirection]))
+  (:import (ser
+             JonSharedDataTypes$JonGuiDataRotaryDirection JonSharedDataTypes$JonGuiDataVideoChannel)))
 
 (>defn test-basic-commands
   "Test basic command sending"
@@ -537,7 +537,7 @@
 
   ;; Tracking
   (println "Starting tracking at (0.5, 0.5)...")
-  (cv/start-tracking ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY 0.5 0.5 (System/currentTimeMillis))
+  (cv/start-tracking JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY 0.5 0.5 (System/currentTimeMillis))
 
   (Thread/sleep 100)
   (println "Setting auto-focus for day camera...")

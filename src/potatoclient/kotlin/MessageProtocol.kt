@@ -2,9 +2,9 @@ package potatoclient.kotlin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.awt.Component
+import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 
 /**

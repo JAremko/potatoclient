@@ -3,14 +3,15 @@
    Implements the command pattern from the TypeScript web example."
   (:require [clojure.core.async :as async]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn >defn- ? =>]]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])
-  (:import [cmd JonSharedCmd$Root
-            JonSharedCmd$Ping JonSharedCmd$Frozen JonSharedCmd$Noop]
-           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis]
-           [ser JonSharedDataTypes$JonGuiDataClientType]
-           [com.google.protobuf.util JsonFormat]))
+  (:import (cmd JonSharedCmd$Frozen
+                JonSharedCmd$Noop JonSharedCmd$Ping JonSharedCmd$Root)
+           (cmd.RotaryPlatform JonSharedCmdRotary$Axis JonSharedCmdRotary$Root)
+           (com.google.protobuf.util JsonFormat)
+           (java.util Base64)
+           (ser JonSharedDataTypes$JonGuiDataClientType)))
 
 ;; ============================================================================
 ;; Configuration
@@ -145,7 +146,7 @@
 
       (let [root-msg (create-root-message)
             rotary-root (-> (JonSharedCmdRotary$Root/newBuilder)
-                            (.setAxis axis-msg))]
+                            (.setAxis ^JonSharedCmdRotary$Axis (.build axis-msg)))]
         (.setRotary root-msg rotary-root)
         (send-cmd-message root-msg))))
   nil)
@@ -159,9 +160,9 @@
   [proto-bytes]
   [bytes? => (? string?)]
   (try
-    (let [root-msg (JonSharedCmd$Root/parseFrom proto-bytes)]
+    (let [root-msg (JonSharedCmd$Root/parseFrom ^"[B" proto-bytes)]
       (-> (JsonFormat/printer)
-          (.includingDefaultValueFields)
+          (.includingDefaultValueFields true)
           (.print root-msg)))
     (catch Exception e
       (logging/log-error {:id ::decode-proto-failed
@@ -176,7 +177,7 @@
   "Format a command for JSON output"
   [{:keys [pld should-buffer]}]
   [:potatoclient.specs/command-payload-map => string?]
-  (let [base64-payload (.encodeToString (java.util.Base64/getEncoder) pld)]
+  (let [base64-payload (.encodeToString (Base64/getEncoder) pld)]
     (str/join "\n"
               ["{"
                (str "  \"payload\": \"" base64-payload "\",")

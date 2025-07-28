@@ -1,12 +1,12 @@
 (ns potatoclient.cmd.glass-heater
   "Glass heater command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.DayCamGlassHeater
-            JonSharedCmdDayCamGlassHeater$Root
-            JonSharedCmdDayCamGlassHeater$Start JonSharedCmdDayCamGlassHeater$Stop
-            JonSharedCmdDayCamGlassHeater$TurnOn JonSharedCmdDayCamGlassHeater$TurnOff
-            JonSharedCmdDayCamGlassHeater$GetMeteo]))
+  (:import (cmd.DayCamGlassHeater
+             JonSharedCmdDayCamGlassHeater$GetMeteo
+             JonSharedCmdDayCamGlassHeater$Root JonSharedCmdDayCamGlassHeater$Start
+             JonSharedCmdDayCamGlassHeater$Stop JonSharedCmdDayCamGlassHeater$TurnOff
+             JonSharedCmdDayCamGlassHeater$TurnOn)))
 
 ;; ============================================================================
 ;; Glass Heater Control Commands

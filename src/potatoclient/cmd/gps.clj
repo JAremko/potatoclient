@@ -1,13 +1,13 @@
 (ns potatoclient.cmd.gps
   "GPS command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.Gps
-            JonSharedCmdGps$Root
-            JonSharedCmdGps$Start JonSharedCmdGps$Stop
-            JonSharedCmdGps$GetMeteo JonSharedCmdGps$SetManualPosition
-            JonSharedCmdGps$SetUseManualPosition]))
+  (:import (cmd.Gps
+             JonSharedCmdGps$GetMeteo
+             JonSharedCmdGps$Root JonSharedCmdGps$SetManualPosition
+             JonSharedCmdGps$SetUseManualPosition JonSharedCmdGps$Start
+             JonSharedCmdGps$Stop)))
 
 ;; ============================================================================
 ;; Basic GPS Commands

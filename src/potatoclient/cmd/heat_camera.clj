@@ -1,30 +1,30 @@
 (ns potatoclient.cmd.heat-camera
   "Heat camera command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.HeatCamera
-            JonSharedCmdHeatCamera$Root
-            JonSharedCmdHeatCamera$Start JonSharedCmdHeatCamera$Stop
-            JonSharedCmdHeatCamera$Photo JonSharedCmdHeatCamera$Calibrate
-            JonSharedCmdHeatCamera$SetAGC JonSharedCmdHeatCamera$SetFilters
-            JonSharedCmdHeatCamera$SetAutoFocus JonSharedCmdHeatCamera$GetMeteo
-            JonSharedCmdHeatCamera$Zoom JonSharedCmdHeatCamera$SetZoomTableValue
-            JonSharedCmdHeatCamera$NextZoomTablePos JonSharedCmdHeatCamera$PrevZoomTablePos
-            JonSharedCmdHeatCamera$SetDigitalZoomLevel
-            JonSharedCmdHeatCamera$ZoomIn JonSharedCmdHeatCamera$ZoomOut JonSharedCmdHeatCamera$ZoomStop
-            JonSharedCmdHeatCamera$FocusIn JonSharedCmdHeatCamera$FocusOut JonSharedCmdHeatCamera$FocusStop
-            JonSharedCmdHeatCamera$FocusStepPlus JonSharedCmdHeatCamera$FocusStepMinus
-            JonSharedCmdHeatCamera$EnableDDE JonSharedCmdHeatCamera$DisableDDE
-            JonSharedCmdHeatCamera$SetDDELevel JonSharedCmdHeatCamera$ShiftDDE
-            JonSharedCmdHeatCamera$SetFxMode JonSharedCmdHeatCamera$NextFxMode JonSharedCmdHeatCamera$PrevFxMode
-            JonSharedCmdHeatCamera$SetClaheLevel JonSharedCmdHeatCamera$ShiftClaheLevel
-            JonSharedCmdHeatCamera$ResetZoom JonSharedCmdHeatCamera$SaveToTable
-            JonSharedCmdHeatCamera$SetCalibMode]
-           [ser
-            JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes
-            JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters
-            JonSharedDataTypes$JonGuiDataFxModeHeat]))
+  (:import (cmd.HeatCamera
+             JonSharedCmdHeatCamera$Calibrate
+             JonSharedCmdHeatCamera$DisableDDE JonSharedCmdHeatCamera$EnableDDE
+             JonSharedCmdHeatCamera$FocusIn JonSharedCmdHeatCamera$FocusOut
+             JonSharedCmdHeatCamera$FocusStepMinus JonSharedCmdHeatCamera$FocusStepPlus
+             JonSharedCmdHeatCamera$FocusStop JonSharedCmdHeatCamera$GetMeteo
+             JonSharedCmdHeatCamera$NextFxMode JonSharedCmdHeatCamera$NextZoomTablePos
+             JonSharedCmdHeatCamera$Photo JonSharedCmdHeatCamera$PrevFxMode
+             JonSharedCmdHeatCamera$PrevZoomTablePos
+             JonSharedCmdHeatCamera$ResetZoom JonSharedCmdHeatCamera$Root JonSharedCmdHeatCamera$SaveToTable
+             JonSharedCmdHeatCamera$SetAGC JonSharedCmdHeatCamera$SetAutoFocus JonSharedCmdHeatCamera$SetCalibMode
+             JonSharedCmdHeatCamera$SetClaheLevel JonSharedCmdHeatCamera$SetDDELevel
+             JonSharedCmdHeatCamera$SetDigitalZoomLevel JonSharedCmdHeatCamera$SetFilters
+             JonSharedCmdHeatCamera$SetFxMode JonSharedCmdHeatCamera$SetZoomTableValue
+             JonSharedCmdHeatCamera$ShiftClaheLevel JonSharedCmdHeatCamera$ShiftDDE JonSharedCmdHeatCamera$Start
+             JonSharedCmdHeatCamera$Stop JonSharedCmdHeatCamera$Zoom
+             JonSharedCmdHeatCamera$ZoomIn JonSharedCmdHeatCamera$ZoomOut
+             JonSharedCmdHeatCamera$ZoomStop)
+           (ser
+             JonSharedDataTypes$JonGuiDataFxModeHeat
+             JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes
+             JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters)))
 
 ;; ============================================================================
 ;; Basic Commands

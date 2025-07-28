@@ -1,13 +1,13 @@
 (ns potatoclient.cmd.osd
   "OSD (On-Screen Display) command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.OSD
-            JonSharedCmdOsd$Root
-            JonSharedCmdOsd$ShowDefaultScreen JonSharedCmdOsd$ShowLRFMeasureScreen
-            JonSharedCmdOsd$ShowLRFResultScreen JonSharedCmdOsd$ShowLRFResultSimplifiedScreen
-            JonSharedCmdOsd$EnableHeatOSD JonSharedCmdOsd$DisableHeatOSD
-            JonSharedCmdOsd$EnableDayOSD JonSharedCmdOsd$DisableDayOSD]))
+  (:import (cmd.OSD
+             JonSharedCmdOsd$DisableDayOSD
+             JonSharedCmdOsd$DisableHeatOSD JonSharedCmdOsd$EnableDayOSD
+             JonSharedCmdOsd$EnableHeatOSD JonSharedCmdOsd$Root
+             JonSharedCmdOsd$ShowDefaultScreen JonSharedCmdOsd$ShowLRFMeasureScreen
+             JonSharedCmdOsd$ShowLRFResultScreen JonSharedCmdOsd$ShowLRFResultSimplifiedScreen)))
 
 ;; ============================================================================
 ;; Screen Display Commands

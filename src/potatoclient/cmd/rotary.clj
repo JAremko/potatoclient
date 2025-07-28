@@ -1,29 +1,29 @@
 (ns potatoclient.cmd.rotary
   "Rotary platform command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.RotaryPlatform
-            JonSharedCmdRotary$Root
-            JonSharedCmdRotary$Start JonSharedCmdRotary$Stop JonSharedCmdRotary$Halt
-            JonSharedCmdRotary$SetPlatformAzimuth JonSharedCmdRotary$SetPlatformElevation
-            JonSharedCmdRotary$SetPlatformBank
-            JonSharedCmdRotary$Azimuth
-            JonSharedCmdRotary$Elevation
-            JonSharedCmdRotary$HaltAzimuth JonSharedCmdRotary$HaltElevation
-            JonSharedCmdRotary$SetAzimuthValue JonSharedCmdRotary$SetElevationValue
-            JonSharedCmdRotary$RotateAzimuthTo JonSharedCmdRotary$RotateElevationTo
-            JonSharedCmdRotary$RotateAzimuth JonSharedCmdRotary$RotateElevation
-            JonSharedCmdRotary$RotateAzimuthRelative JonSharedCmdRotary$RotateElevationRelative
-            JonSharedCmdRotary$RotateAzimuthRelativeSet JonSharedCmdRotary$RotateElevationRelativeSet
-            JonSharedCmdRotary$setUseRotaryAsCompass JonSharedCmdRotary$GetMeteo
-            JonSharedCmdRotary$RotateToGPS JonSharedCmdRotary$SetOriginGPS
-            JonSharedCmdRotary$SetMode JonSharedCmdRotary$RotateToNDC
-            JonSharedCmdRotary$ScanStart JonSharedCmdRotary$ScanStop
-            JonSharedCmdRotary$ScanPause JonSharedCmdRotary$ScanUnpause
-            JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanNext]
-           [ser
-            JonSharedDataTypes$JonGuiDataRotaryDirection
-            JonSharedDataTypes$JonGuiDataRotaryMode]))
+  (:import (cmd.RotaryPlatform
+             JonSharedCmdRotary$Azimuth
+             JonSharedCmdRotary$Elevation JonSharedCmdRotary$GetMeteo JonSharedCmdRotary$Halt
+             JonSharedCmdRotary$HaltAzimuth JonSharedCmdRotary$HaltElevation
+             JonSharedCmdRotary$Root
+             JonSharedCmdRotary$RotateAzimuth
+             JonSharedCmdRotary$RotateAzimuthRelative
+             JonSharedCmdRotary$RotateAzimuthRelativeSet JonSharedCmdRotary$RotateAzimuthTo
+             JonSharedCmdRotary$RotateElevation JonSharedCmdRotary$RotateElevationRelative
+             JonSharedCmdRotary$RotateElevationRelativeSet JonSharedCmdRotary$RotateElevationTo
+             JonSharedCmdRotary$RotateToGPS JonSharedCmdRotary$RotateToNDC
+             JonSharedCmdRotary$ScanNext JonSharedCmdRotary$ScanPause
+             JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanStart
+             JonSharedCmdRotary$ScanStop JonSharedCmdRotary$ScanUnpause
+             JonSharedCmdRotary$SetAzimuthValue JonSharedCmdRotary$SetElevationValue
+             JonSharedCmdRotary$SetMode JonSharedCmdRotary$SetOriginGPS
+             JonSharedCmdRotary$SetPlatformAzimuth JonSharedCmdRotary$SetPlatformBank
+             JonSharedCmdRotary$SetPlatformElevation JonSharedCmdRotary$Start
+             JonSharedCmdRotary$Stop JonSharedCmdRotary$setUseRotaryAsCompass)
+           (ser
+             JonSharedDataTypes$JonGuiDataRotaryDirection
+             JonSharedDataTypes$JonGuiDataRotaryMode)))
 
 ;; ============================================================================
 ;; Basic Commands

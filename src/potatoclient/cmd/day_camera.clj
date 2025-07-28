@@ -1,26 +1,26 @@
 (ns potatoclient.cmd.day-camera
   "Day camera command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn ? =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.DayCamera
-            JonSharedCmdDayCamera$Root
-            JonSharedCmdDayCamera$Start JonSharedCmdDayCamera$Stop
-            JonSharedCmdDayCamera$Photo JonSharedCmdDayCamera$Halt
-            JonSharedCmdDayCamera$SetInfraRedFilter JonSharedCmdDayCamera$SetIris
-            JonSharedCmdDayCamera$SetAutoIris JonSharedCmdDayCamera$GetMeteo
-            JonSharedCmdDayCamera$Focus JonSharedCmdDayCamera$Zoom
-            JonSharedCmdDayCamera$SetValue JonSharedCmdDayCamera$Move
-            JonSharedCmdDayCamera$Offset JonSharedCmdDayCamera$HaltAll
-            JonSharedCmdDayCamera$ResetFocus JonSharedCmdDayCamera$SaveToTableFocus
-            JonSharedCmdDayCamera$ResetZoom JonSharedCmdDayCamera$SaveToTable
-            JonSharedCmdDayCamera$SetZoomTableValue
-            JonSharedCmdDayCamera$NextZoomTablePos JonSharedCmdDayCamera$PrevZoomTablePos
-            JonSharedCmdDayCamera$SetDigitalZoomLevel
-            JonSharedCmdDayCamera$SetFxMode JonSharedCmdDayCamera$NextFxMode JonSharedCmdDayCamera$PrevFxMode
-            JonSharedCmdDayCamera$SetClaheLevel JonSharedCmdDayCamera$ShiftClaheLevel]
-           [ser
-            JonSharedDataTypes$JonGuiDataFxModeDay]))
+  (:import (cmd.DayCamera
+             JonSharedCmdDayCamera$Focus
+             JonSharedCmdDayCamera$GetMeteo JonSharedCmdDayCamera$Halt
+             JonSharedCmdDayCamera$HaltAll JonSharedCmdDayCamera$Move
+             JonSharedCmdDayCamera$NextFxMode JonSharedCmdDayCamera$NextZoomTablePos
+             JonSharedCmdDayCamera$Offset JonSharedCmdDayCamera$Photo
+             JonSharedCmdDayCamera$PrevFxMode JonSharedCmdDayCamera$PrevZoomTablePos
+             JonSharedCmdDayCamera$ResetFocus JonSharedCmdDayCamera$ResetZoom
+             JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$SaveToTable
+             JonSharedCmdDayCamera$SaveToTableFocus JonSharedCmdDayCamera$SetAutoIris
+             JonSharedCmdDayCamera$SetClaheLevel JonSharedCmdDayCamera$SetDigitalZoomLevel
+             JonSharedCmdDayCamera$SetFxMode
+             JonSharedCmdDayCamera$SetInfraRedFilter JonSharedCmdDayCamera$SetIris
+             JonSharedCmdDayCamera$SetValue
+             JonSharedCmdDayCamera$SetZoomTableValue JonSharedCmdDayCamera$ShiftClaheLevel JonSharedCmdDayCamera$Start
+             JonSharedCmdDayCamera$Stop JonSharedCmdDayCamera$Zoom)
+           (ser
+             JonSharedDataTypes$JonGuiDataFxModeDay)))
 
 ;; ============================================================================
 ;; Basic Commands

@@ -1,16 +1,16 @@
 (ns potatoclient.cmd.lrf
   "LRF (Laser Range Finder) command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core])
-  (:import [cmd.Lrf
-            JonSharedCmdLrf$Root
-            JonSharedCmdLrf$Start JonSharedCmdLrf$Stop
-            JonSharedCmdLrf$Measure JonSharedCmdLrf$GetMeteo
-            JonSharedCmdLrf$ScanOn JonSharedCmdLrf$ScanOff
-            JonSharedCmdLrf$RefineOn JonSharedCmdLrf$RefineOff
-            JonSharedCmdLrf$TargetDesignatorOff JonSharedCmdLrf$TargetDesignatorOnModeA
-            JonSharedCmdLrf$TargetDesignatorOnModeB JonSharedCmdLrf$EnableFogMode
-            JonSharedCmdLrf$DisableFogMode JonSharedCmdLrf$NewSession]))
+  (:import (cmd.Lrf
+             JonSharedCmdLrf$DisableFogMode
+             JonSharedCmdLrf$EnableFogMode JonSharedCmdLrf$GetMeteo
+             JonSharedCmdLrf$Measure JonSharedCmdLrf$NewSession
+             JonSharedCmdLrf$RefineOff JonSharedCmdLrf$RefineOn
+             JonSharedCmdLrf$Root JonSharedCmdLrf$ScanOff
+             JonSharedCmdLrf$ScanOn JonSharedCmdLrf$Start
+             JonSharedCmdLrf$Stop JonSharedCmdLrf$TargetDesignatorOff
+             JonSharedCmdLrf$TargetDesignatorOnModeA JonSharedCmdLrf$TargetDesignatorOnModeB)))
 
 ;; ============================================================================
 ;; Basic LRF Control Commands

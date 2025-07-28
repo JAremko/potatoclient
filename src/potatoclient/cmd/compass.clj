@@ -1,16 +1,16 @@
 (ns potatoclient.cmd.compass
   "Compass command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.Compass
-            JonSharedCmdCompass$Root
-            JonSharedCmdCompass$Start JonSharedCmdCompass$Stop
-            JonSharedCmdCompass$SetMagneticDeclination
-            JonSharedCmdCompass$SetOffsetAngleAzimuth JonSharedCmdCompass$SetOffsetAngleElevation
-            JonSharedCmdCompass$CalibrateStartLong JonSharedCmdCompass$CalibrateStartShort
-            JonSharedCmdCompass$CalibrateNext JonSharedCmdCompass$CalibrateCencel
-            JonSharedCmdCompass$GetMeteo]))
+  (:import (cmd.Compass
+             JonSharedCmdCompass$CalibrateCencel
+             JonSharedCmdCompass$CalibrateNext JonSharedCmdCompass$CalibrateStartLong
+             JonSharedCmdCompass$CalibrateStartShort
+             JonSharedCmdCompass$GetMeteo JonSharedCmdCompass$Root
+             JonSharedCmdCompass$SetMagneticDeclination JonSharedCmdCompass$SetOffsetAngleAzimuth
+             JonSharedCmdCompass$SetOffsetAngleElevation JonSharedCmdCompass$Start
+             JonSharedCmdCompass$Stop)))
 
 ;; ============================================================================
 ;; Basic Compass Control Commands

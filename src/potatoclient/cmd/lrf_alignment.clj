@@ -1,15 +1,15 @@
 (ns potatoclient.cmd.lrf-alignment
   "LRF alignment command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :as gr :refer [>defn =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
             [potatoclient.cmd.core :as cmd-core]
             [potatoclient.specs :as specs])
-  (:import [cmd.Lrf_calib
-            JonSharedCmdLrfAlign$Root
-            JonSharedCmdLrfAlign$Offsets
-            JonSharedCmdLrfAlign$SetOffsets
-            JonSharedCmdLrfAlign$ShiftOffsetsBy
-            JonSharedCmdLrfAlign$SaveOffsets
-            JonSharedCmdLrfAlign$ResetOffsets]))
+  (:import (cmd.Lrf_calib
+             JonSharedCmdLrfAlign$Offsets
+             JonSharedCmdLrfAlign$ResetOffsets
+             JonSharedCmdLrfAlign$Root
+             JonSharedCmdLrfAlign$SaveOffsets
+             JonSharedCmdLrfAlign$SetOffsets
+             JonSharedCmdLrfAlign$ShiftOffsetsBy)))
 
 ;; ============================================================================
 ;; Day Camera Offset Commands
