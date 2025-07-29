@@ -67,7 +67,10 @@
   (let [cmd (last @test-commands)]
     (when cmd
       ;; Convert JonSharedCmd$Root to the expected format
-      {:pld (.toByteArray cmd)})))
+      ;; Determine if command should be buffered based on type
+      (let [should-buffer (not (.hasPing cmd))]
+        {:pld (.toByteArray cmd)
+         :should-buffer should-buffer}))))
 
 (defn decode-command
   "Decode a captured command to protobuf"

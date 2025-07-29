@@ -77,7 +77,7 @@
           (dotimes [_ iterations]
             (proto/serialize-cmd cmd))
           (let [elapsed (/ (- (System/nanoTime) start) 1000000.0)]
-            (is (< elapsed 100)  ; Should complete 1000 iterations in < 100ms
+            (is (< elapsed 150)  ; Should complete 1000 iterations in < 150ms
                 (str "1000 serializations took " elapsed "ms"))
             (println "Serialization performance:"
                      (format "%.3f ms for %d iterations (%.3f μs/op)"

@@ -57,7 +57,9 @@
 (defn capture-command-sync! []
   "Get the last captured command"
   (Thread/sleep 10) ;; Small delay to ensure command is processed
-  (last @test-commands))
+  (when-let [cmd (last @test-commands)]
+    ;; Return in the expected format with :pld key
+    {:pld (.toByteArray cmd)}))
 
 (defn decode-command [{:keys [pld]}]
   (when pld
