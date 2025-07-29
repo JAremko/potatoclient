@@ -12,9 +12,10 @@
             [potatoclient.logging :as logging]
             [potatoclient.proto :as proto]
             [potatoclient.state.device :as device-state]
+            [potatoclient.state.edn :as edn]
+            [potatoclient.state.proto-bridge :as bridge]
             [potatoclient.state.schemas :as schemas])
-  (:import (clojure.core.async.impl.channels ManyToManyChannel)
-           (ser JonSharedData$JonGUIState)))
+  (:import (clojure.core.async.impl.channels ManyToManyChannel)))
 
 ;; ============================================================================
 ;; Singleton State
@@ -25,10 +26,10 @@
 ;; Channel for raw binary state messages
 (defonce ^:private state-channel (atom (chan 100)))
 
-;; Shadow state - mutable protobuf builder for type-safe comparison
-;; This maintains the last known state in protobuf form
-(defonce ^:private shadow-state-builder
-  (atom (JonSharedData$JonGUIState/newBuilder)))
+;; Shadow state - EDN map for efficient comparison
+;; This maintains the last known state in EDN form
+(defonce ^:private shadow-state
+  (atom {}))
 
 ;; ============================================================================
 ;; Protocol Definition
@@ -55,14 +56,11 @@
 ;; Change Detection
 ;; ============================================================================
 
-(>defn- protobuf-changed?
-  "Check if protobuf message has changed using Java equals().
-  Protobuf messages implement deep equality comparison."
-  [old-proto new-proto]
+(>defn- subsystem-changed?
+  "Check if a subsystem has changed using EDN equality."
+  [old-data new-data]
   [(? any?) (? any?) => boolean?]
-  (if (and old-proto new-proto)
-    (not (.equals old-proto new-proto))
-    (not= (nil? old-proto) (nil? new-proto))))
+  (not= old-data new-data))
 
 (>defn- get-schema-for-subsystem
   "Get the Malli schema for a given subsystem"
@@ -100,69 +98,34 @@
       data)
     data))
 
-(>defn- convert-proto-to-edn
-  "Convert protobuf message to EDN if not nil"
-  [proto-msg]
-  [(? any?) => (? any?)]
-  (when proto-msg
-    (proto/proto-map->clj-map proto-msg)))
+;; No longer needed - we work with EDN directly
 
 (>defn- get-shadow-subsystem
-  "Get the current subsystem value from shadow state builder"
-  [builder subsystem-key]
-  [any? keyword? => (? any?)]
-  (case subsystem-key
-    :system (when (.hasSystem builder) (.getSystem builder))
-    :lrf (when (.hasLrf builder) (.getLrf builder))
-    :time (when (.hasTime builder) (.getTime builder))
-    :gps (when (.hasGps builder) (.getGps builder))
-    :compass (when (.hasCompass builder) (.getCompass builder))
-    :rotary (when (.hasRotary builder) (.getRotary builder))
-    :camera-day (when (.hasCameraDay builder) (.getCameraDay builder))
-    :camera-heat (when (.hasCameraHeat builder) (.getCameraHeat builder))
-    :compass-calibration (when (.hasCompassCalibration builder) (.getCompassCalibration builder))
-    :rec-osd (when (.hasRecOsd builder) (.getRecOsd builder))
-    :day-cam-glass-heater (when (.hasDayCamGlassHeater builder) (.getDayCamGlassHeater builder))
-    :actual-space-time (when (.hasActualSpaceTime builder) (.getActualSpaceTime builder))
-    :meteo-internal (when (.hasMeteoInternal builder) (.getMeteoInternal builder))
-    nil))
+  "Get the current subsystem value from shadow state"
+  [shadow-state subsystem-key]
+  [map? keyword? => (? any?)]
+  (get shadow-state subsystem-key))
 
 (>defn- update-shadow-subsystem!
-  "Update a subsystem in the shadow state builder"
-  [builder subsystem-key proto-msg]
+  "Update a subsystem in the shadow state"
+  [shadow-atom subsystem-key subsystem-data]
   [any? keyword? (? any?) => nil?]
-  (when proto-msg
-    (case subsystem-key
-      :system (.setSystem builder proto-msg)
-      :lrf (.setLrf builder proto-msg)
-      :time (.setTime builder proto-msg)
-      :gps (.setGps builder proto-msg)
-      :compass (.setCompass builder proto-msg)
-      :rotary (.setRotary builder proto-msg)
-      :camera-day (.setCameraDay builder proto-msg)
-      :camera-heat (.setCameraHeat builder proto-msg)
-      :compass-calibration (.setCompassCalibration builder proto-msg)
-      :rec-osd (.setRecOsd builder proto-msg)
-      :day-cam-glass-heater (.setDayCamGlassHeater builder proto-msg)
-      :actual-space-time (.setActualSpaceTime builder proto-msg)
-      :meteo-internal (.setMeteoInternal builder proto-msg)))
+  (if subsystem-data
+    (swap! shadow-atom assoc subsystem-key subsystem-data)
+    (swap! shadow-atom dissoc subsystem-key))
   nil)
 
 (>defn- compare-and-update-with-shadow!
-  "Compare protobuf objects using shadow state builder, update atom only if changed.
-  Uses the type-safe builder pattern for maintaining shadow state.
-  Only converts to EDN when actually updating the atom.
+  "Compare EDN data using shadow state, update atom only if changed.
   Returns true if state was updated."
-  [state-atom proto-msg subsystem-key]
+  [state-atom subsystem-data subsystem-key]
   [any? (? any?) keyword? => boolean?]
-  (let [builder @shadow-state-builder
-        shadow-proto (get-shadow-subsystem builder subsystem-key)]
-    (if (protobuf-changed? shadow-proto proto-msg)
-      (let [edn-value (convert-proto-to-edn proto-msg)
-            validated-value (validate-subsystem-data subsystem-key edn-value)]
-        ;; Update shadow state builder (type-safe)
-        (update-shadow-subsystem! builder subsystem-key proto-msg)
-        ;; Update atom with EDN value
+  (let [shadow-data (get-shadow-subsystem @shadow-state subsystem-key)]
+    (if (subsystem-changed? shadow-data subsystem-data)
+      (let [validated-value (validate-subsystem-data subsystem-key subsystem-data)]
+        ;; Update shadow state with EDN data
+        (update-shadow-subsystem! shadow-state subsystem-key subsystem-data)
+        ;; Update atom with validated EDN value
         (reset! state-atom validated-value)
         (when @debug-mode?
           (logging/log-debug {:msg (str "State updated: " (name subsystem-key))
@@ -176,38 +139,28 @@
 ;; ============================================================================
 
 (>defn- update-all-subsystems!
-  "Update all subsystem atoms with protobuf message data.
-  The proto-msg should be a JonGUIState protobuf message object."
-  [proto-msg]
-  [any? => nil?]
-  ;; Use protobuf getter methods to access subsystem messages
-  (when (.hasSystem proto-msg)
-    (compare-and-update-with-shadow! device-state/system-state (.getSystem proto-msg) :system))
-  (when (.hasLrf proto-msg)
-    (compare-and-update-with-shadow! device-state/lrf-state (.getLrf proto-msg) :lrf))
-  (when (.hasTime proto-msg)
-    (compare-and-update-with-shadow! device-state/time-state (.getTime proto-msg) :time))
-  (when (.hasGps proto-msg)
-    (compare-and-update-with-shadow! device-state/gps-state (.getGps proto-msg) :gps))
-  (when (.hasCompass proto-msg)
-    (compare-and-update-with-shadow! device-state/compass-state (.getCompass proto-msg) :compass))
-  (when (.hasRotary proto-msg)
-    (compare-and-update-with-shadow! device-state/rotary-state (.getRotary proto-msg) :rotary))
-  (when (.hasCameraDay proto-msg)
-    (compare-and-update-with-shadow! device-state/camera-day-state (.getCameraDay proto-msg) :camera-day))
-  (when (.hasCameraHeat proto-msg)
-    (compare-and-update-with-shadow! device-state/camera-heat-state (.getCameraHeat proto-msg) :camera-heat))
-  (when (.hasCompassCalibration proto-msg)
-    (compare-and-update-with-shadow! device-state/compass-calibration-state (.getCompassCalibration proto-msg) :compass-calibration))
-  (when (.hasRecOsd proto-msg)
-    (compare-and-update-with-shadow! device-state/rec-osd-state (.getRecOsd proto-msg) :rec-osd))
-  (when (.hasDayCamGlassHeater proto-msg)
-    (compare-and-update-with-shadow! device-state/day-cam-glass-heater-state (.getDayCamGlassHeater proto-msg) :day-cam-glass-heater))
-  (when (.hasActualSpaceTime proto-msg)
-    (compare-and-update-with-shadow! device-state/actual-space-time-state (.getActualSpaceTime proto-msg) :actual-space-time))
-  ;; Note: meteo-internal might need special handling if it exists
-  (when (try (.hasMeteoInternal proto-msg) (catch Exception _ false))
-    (compare-and-update-with-shadow! device-state/meteo-internal-state (.getMeteoInternal proto-msg) :meteo-internal))
+  "Update all subsystem atoms with EDN state data."
+  [state-map]
+  [map? => nil?]
+  ;; Update each subsystem present in the state map
+  (doseq [subsystem-key bridge/subsystem-keys]
+    (when (contains? state-map subsystem-key)
+      (let [subsystem-data (get state-map subsystem-key)
+            state-atom (case subsystem-key
+                         :system device-state/system-state
+                         :lrf device-state/lrf-state
+                         :time device-state/time-state
+                         :gps device-state/gps-state
+                         :compass device-state/compass-state
+                         :rotary device-state/rotary-state
+                         :camera-day device-state/camera-day-state
+                         :camera-heat device-state/camera-heat-state
+                         :compass-calibration device-state/compass-calibration-state
+                         :rec-osd device-state/rec-osd-state
+                         :day-cam-glass-heater device-state/day-cam-glass-heater-state
+                         :actual-space-time device-state/actual-space-time-state
+                         :meteo-internal device-state/meteo-internal-state)]
+        (compare-and-update-with-shadow! state-atom subsystem-data subsystem-key))))
   nil)
 
 ;; ============================================================================
@@ -219,23 +172,22 @@
 
   (handle-state-message [_ binary-data]
     (try
-      ;; Parse protobuf message directly
-      (let [proto-msg (JonSharedData$JonGUIState/parseFrom ^bytes binary-data)]
-        ;; Update using protobuf objects for comparison
-        (update-all-subsystems! proto-msg)
-        ;; Convert to EDN for channel subscribers
-        (let [state-map (proto/proto-map->clj-map proto-msg)]
-          (put! @state-channel state-map)))
+      ;; Convert binary to EDN state using proto-bridge
+      (when-let [state-map (bridge/binary->edn-state binary-data)]
+        ;; Update all subsystems with EDN data
+        (update-all-subsystems! state-map)
+        ;; Send to channel subscribers
+        (put! @state-channel state-map))
       (catch Exception e
-        (logging/log-error {:msg "Failed to deserialize state message"
+        (logging/log-error {:msg "Failed to process state message"
                             :error (.getMessage e)
                             :bytes-length (count binary-data)}))))
 
   (dispose [_]
     (reset! running? false)
     (close! @state-channel)
-    ;; Reset the builder to a fresh instance
-    (reset! shadow-state-builder (JonSharedData$JonGUIState/newBuilder))
+    ;; Reset the shadow state to empty map
+    (reset! shadow-state {})
     (reset! instance nil)
     ;; Create a new channel for next use
     (reset! state-channel (chan 100))))
