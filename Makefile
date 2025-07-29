@@ -121,6 +121,7 @@ clean: clean-proto clean-cache ## Clean all build artifacts
 nrepl: proto compile-kotlin compile-java-proto ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
 	@echo "  ✓ Full Guardrails validation"
+	@echo "  ✓ EDN state validation enabled"
 	@echo "  ✓ All logging levels enabled"
 	@echo "  ✓ Connect your editor to port 7888"
 	@echo ""
@@ -240,6 +241,7 @@ rebuild: clean build ## Clean and rebuild the project
 dev: clean-cache proto compile-kotlin compile-java-proto ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings (takes 30-40s to start)
 	@echo "Running development version with:"
 	@echo "  ✓ Full Guardrails validation catches bugs immediately"
+	@echo "  ✓ EDN state validation enabled (protobuf constraint checking)"
 	@echo "  ✓ Reflection warnings for performance issues"
 	@echo "  ✓ All log levels (DEBUG, INFO, WARN, ERROR) to console and ./logs/"
 	@echo "  ✓ GStreamer debug output (GST_DEBUG=3)"

@@ -42,7 +42,8 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.main.report=stderr"
-                            "-Dguardrails.enabled=true"]}
+                            "-Dguardrails.enabled=true"
+                            "-Dpotatoclient.validation.enabled=true"]}
 
            :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
@@ -52,7 +53,8 @@
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                               "--enable-native-access=ALL-UNNAMED"
                               "-Djdk.attach.allowAttachSelf"
-                              "-Dguardrails.enabled=true"]
+                              "-Dguardrails.enabled=true"
+                              "-Dpotatoclient.validation.enabled=true"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
            :run {:extra-paths ["target/classes"]
@@ -85,7 +87,8 @@
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                                        :git/tag "v0.1.6-alpha"
                                                        :git/sha "4ad62f4"}}
-                 :jvm-opts ["-Dguardrails.enabled=true"]
+                 :jvm-opts ["-Dguardrails.enabled=true"
+                            "-Dpotatoclient.validation.enabled=true"]
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
 
