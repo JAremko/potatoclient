@@ -90,11 +90,16 @@
 (defn release [_]
   "Build a release version with instrumentation disabled and full optimizations."
   (clean nil)
-  ;; Generate proto files first
-  (println "Generating proto files...")
-  (let [result (shell/sh "make" "proto")]
-    (when (not= 0 (:exit result))
-      (throw (ex-info "Proto generation failed" {:output (:out result) :error (:err result)}))))
+  ;; Generate proto files first (skip if they already exist)
+  (let [proto-dir (io/file "src/potatoclient/java/cmd")
+        proto-exists? (.exists proto-dir)]
+    (if proto-exists?
+      (println "Proto files already exist, skipping generation...")
+      (do
+        (println "Generating proto files...")
+        (let [result (shell/sh "make" "proto")]
+          (when (not= 0 (:exit result))
+            (throw (ex-info "Proto generation failed" {:output (:out result) :error (:err result)})))))))
   ;; Set environment variable for release build
   (System/setProperty "POTATOCLIENT_RELEASE" "true")
   (b/copy-dir {:src-dirs ["src" "resources"]

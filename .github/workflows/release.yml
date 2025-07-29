@@ -30,13 +30,13 @@ jobs:
         
         # Verify proto files were generated
         echo "Generated proto files:"
-        find src/java -name "*.java" | head -20
+        find src/potatoclient/java -name "*.java" | head -20
     
     - name: Upload proto files
       uses: actions/upload-artifact@v4
       with:
         name: proto-files
-        path: src/java/
+        path: src/potatoclient/java/
         retention-days: 1
 
   build-appimage:
@@ -85,7 +85,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: proto-files
-        path: src/java/
+        path: src/potatoclient/java/
     
     - name: Install system dependencies
       run: |
@@ -423,7 +423,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: proto-files
-        path: src/java/
+        path: src/potatoclient/java/
     
     - name: Build uberjar
       run: |
@@ -626,7 +626,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: proto-files
-        path: src/java/
+        path: src/potatoclient/java/
     
     - name: Install GStreamer
       run: |
