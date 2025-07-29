@@ -15,12 +15,9 @@
   (let [base-basis (b/create-basis {:project "deps.edn"})
         class-dir-file (io/file class-dir)
         class-dir-exists? (.exists class-dir-file)]
-    (println (str "get-basis: class-dir exists? " class-dir-exists? " at " (.getAbsolutePath class-dir-file)))
     (if class-dir-exists?
       (let [abs-path (.getAbsolutePath class-dir-file)
             updated-basis (update base-basis :classpath-roots conj abs-path)]
-        (println (str "get-basis: added " abs-path " to classpath"))
-        (println (str "get-basis: classpath-roots now: " (:classpath-roots updated-basis)))
         updated-basis)
       base-basis)))
 

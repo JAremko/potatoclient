@@ -33,15 +33,17 @@
 (defn create-mock-websocket-manager []
   (proxy [potatoclient.java.websocket.WebSocketManager] ["test-domain" nil nil]
     (sendCommand [command]
-      (swap! test-commands conj command))
+      (swap! test-commands conj command)
+      true)  ; WebSocket sendCommand returns boolean
     (start [] nil)
-    (stop [] nil)))
+    (stop [] nil)
+    (isConnected [] true)))
 
 (defn command-capture-fixture
   "Install mock WebSocket manager"
   [f]
-  ;; Store original websocket manager atom
-  (let [ws-manager-atom (deref #'cmd-core/websocket-manager)
+  ;; Access the private atom
+  (let [ws-manager-atom @#'cmd-core/websocket-manager
         original-manager @ws-manager-atom]
     ;; Reset captured commands
     (reset! test-commands [])

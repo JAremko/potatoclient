@@ -1,0 +1,42 @@
+// JaCoCo configuration for Kotlin/Java test coverage
+// This is used by the build system to generate coverage reports
+
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = true
+    }
+    
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/instrumentation/**',
+                '**/proto/**',
+                '**/*$*',
+                '**/BuildConfig.*',
+                '**/Manifest*.*'
+            ])
+        }))
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.0 // Start with 0%, increase as we add tests
+            }
+        }
+    }
+}

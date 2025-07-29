@@ -97,8 +97,28 @@
                                                                      :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}}
                   :jvm-opts ["-Dguardrails.enabled=true"]
                   :main-opts ["-m" "cognitect.test-runner"]
-                  :exec-fn cognitect.test-runner.api/test
-}
+                  :exec-fn cognitect.test-runner.api/test}
+
+           :test-coverage {:extra-paths ["test" "target/classes" "target/test-classes"]
+                          :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
+                                                                             :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}
+                                       cloverage/cloverage {:mvn/version "1.2.4"}}
+                          :jvm-opts ["-Dguardrails.enabled=true"]
+                          :main-opts ["-m" "cloverage.coverage"
+                                      "-p" "src"
+                                      "-s" "test"
+                                      "--ns-exclude-regex" ".*instrumentation.*"
+                                      "--codecov"
+                                      "--junit"
+                                      "--text"
+                                      "--html"
+                                      "--output" "target/coverage"]}
+
+           :test-kotlin {:extra-paths ["test" "target/classes" "target/test-classes"]
+                        :extra-deps {org.jacoco/org.jacoco.core {:mvn/version "0.8.13"}
+                                     org.jacoco/org.jacoco.report {:mvn/version "0.8.13"}}
+                        :jvm-opts ["-javaagent:target/jacocoagent.jar=destfile=target/jacoco.exec"
+                                   "-Dguardrails.enabled=true"]}
 
            :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
                     :main-opts ["-m" "cljfmt.main"]}

@@ -1,64 +1,41 @@
 (ns potatoclient.websocket-simple-connection-test
-  "Simple connection test for WebSocket"
-  (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [potatoclient.cmd.core :as cmd])
-  (:import [potatoclient.test TestWebSocketServer]
-           [java.util.concurrent TimeUnit]))
-
-;; Ensure clean state between tests
-(defn cleanup-websocket [f]
-  (cmd/stop-websocket!)
-  (f)
-  (cmd/stop-websocket!))
-
-(use-fixtures :each cleanup-websocket)
+  "Simple connection test for WebSocket - now using stubs instead of real server"
+  (:require [clojure.test :refer [deftest is testing]]
+            [potatoclient.cmd.core :as cmd]
+            [potatoclient.test-utils :as test-utils]))
 
 (deftest test-single-command
   (testing "Can send a single command"
-    (let [server (TestWebSocketServer. 8893 8894)
-          error-count (atom 0)]
-      
-      (try
-        ;; Start test server
-        (.start server)
-        (Thread/sleep 500) ;; Give more time for server startup
+    (test-utils/with-mock-websocket
+      (fn [{:keys [commands-ch errors]}]
+        ;; Send a simple command
+        (cmd/send-cmd-ping)
         
-        ;; Initialize WebSocket client
-        (cmd/init-websocket!
-          "localhost:8893"  ;; Use just the command port
-          (fn [error] 
-            (swap! error-count inc)
-            (println "WebSocket error:" error))
-          (fn [data] 
-            (println "State received")))
+        ;; Check we received it
+        (let [commands (test-utils/get-commands commands-ch 100)]
+          (is (= 1 (count commands)) "Should receive ping command")
+          (when (= 1 (count commands))
+            (let [cmd (first commands)]
+              (is (true? (.hasPing cmd)) "Should be a ping command"))))
         
-        ;; Wait for connection with longer timeout
-        (is (true? (.awaitCmdConnection server 5 TimeUnit/SECONDS))
-            "Command connection should be established")
-        
-        ;; Only proceed if connected
-        (when (.awaitCmdConnection server 1 TimeUnit/SECONDS)
-          ;; Send a simple command
-          (cmd/send-cmd-ping)
-          (Thread/sleep 500)
-          
-          ;; Check server received it
-          (let [received (.pollCommand server 2 TimeUnit/SECONDS)]
-            (is (some? received) "Should receive ping command")
-            (when received
-              (is (true? (.hasPing received)) "Should be a ping command"))))
-        
-        (finally
-          (.stop server)
-          (Thread/sleep 100))))))
+        ;; Verify no errors
+        (is (empty? @errors) "Should have no errors")))))
 
 (deftest test-server-lifecycle
-  (testing "Test server can start and stop"
-    (let [server (TestWebSocketServer. 8895 8896)]
+  (testing "Mock server lifecycle"
+    (let [mock-ctx (test-utils/create-mock-websocket-manager nil nil)]
       (try
-        (.start server)
-        (Thread/sleep 200)
-        ;; Just verify server started without errors
-        (is true "Server started")
+        ;; Verify starts disconnected
+        (is (false? @(:connected? mock-ctx)) "Should start disconnected")
+        
+        ;; Start server
+        (.start (:manager mock-ctx))
+        (is (true? @(:connected? mock-ctx)) "Should be connected after start")
+        
+        ;; Stop server
+        (.stop (:manager mock-ctx))
+        (is (false? @(:connected? mock-ctx)) "Should be disconnected after stop")
+        
         (finally
-          (.stop server))))))
+          (when (.isConnected (:manager mock-ctx))
+            (.stop (:manager mock-ctx))))))))

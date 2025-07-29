@@ -141,7 +141,7 @@
 ;; ============================================================================
 
 (>defn send-rotary-axis-command
-  "Send a rotary platform axis command with azimuth and/or elevation"
+  "Send a rotary platform axis command with azimuth and/or elevation message objects"
   [{:keys [azimuth elevation]}]
   [:potatoclient.specs/rotary-axis-command-map => nil?]
   (when-not (is-read-only-mode?)

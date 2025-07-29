@@ -149,12 +149,57 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 
 # Test target
 .PHONY: test
-test: build ## Run tests
-	@echo "Compiling test Java files..."
-	@mkdir -p target/test-classes
-	@javac -cp "$$(clojure -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true
-	@echo "Running tests..."
-	clojure -M:test
+test: build ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
+	@echo "Setting up test logging..."
+	@TEST_RUN_DIR=$$(./scripts/setup-test-logs.sh) && \
+	echo "Test output will be saved to: $$TEST_RUN_DIR" && \
+	echo "Compiling test Java files..." && \
+	mkdir -p target/test-classes && \
+	javac -cp "$$(clojure -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true && \
+	echo "Running tests..." && \
+	clojure -M:test 2>&1 | tee "$$TEST_RUN_DIR/test-full.log" && \
+	EXIT_CODE=$$? && \
+	echo "" && \
+	echo "Generating test summary..." && \
+	./scripts/compact-test-logs.sh "$$TEST_RUN_DIR/test-full.log" && \
+	cd logs/test-runs && ln -sf "$$(basename $$TEST_RUN_DIR)" latest && cd - >/dev/null && \
+	exit $$EXIT_CODE
+
+# View latest test results
+.PHONY: test-summary
+test-summary: ## View summary of the latest test run
+	@if [ -L "logs/test-runs/latest" ] && [ -f "logs/test-runs/latest/test-full-summary.txt" ]; then \
+		cat "logs/test-runs/latest/test-full-summary.txt"; \
+		echo ""; \
+		echo "Full log: logs/test-runs/latest/test-full.log"; \
+		echo "Failures: logs/test-runs/latest/test-full-failures.txt"; \
+	else \
+		echo "No test results found. Run 'make test' first."; \
+	fi
+
+# Test with code coverage
+.PHONY: test-coverage
+test-coverage: build ## Run tests with comprehensive code coverage analysis for Clojure, Java, and Kotlin
+	@echo "Running tests with code coverage..."
+	@echo "  • Clojure coverage via Cloverage"
+	@echo "  • Java/Kotlin coverage via JaCoCo"
+	@echo "  • Generates HTML reports and lists uncovered functions"
+	@echo ""
+	./scripts/generate-coverage-report.sh
+
+# Quick coverage for Clojure only
+.PHONY: coverage-clojure
+coverage-clojure: build ## Run Clojure tests with Cloverage (faster than full coverage)
+	@echo "Running Clojure tests with coverage..."
+	clojure -M:test-coverage
+
+# Coverage report analysis
+.PHONY: coverage-analyze
+coverage-analyze: ## Analyze existing coverage reports and list uncovered functions
+	@echo "Analyzing coverage reports..."
+	./scripts/analyze-uncovered-code.sh
+	@echo ""
+	@echo "Uncovered functions report: target/coverage-reports/uncovered-functions.txt"
 
 # Report unspecced functions
 .PHONY: report-unspecced
