@@ -7,8 +7,10 @@
 
 (deftest test-double-click-triggers-cv-tracking
   (testing "Double-click with frame timing triggers CV tracking"
-    ;; Initialize command system
-    (cmd-core/init!)
+    ;; Initialize mock websocket for testing
+    (cmd-core/init-websocket! "test-domain" 
+                              (fn [msg] (println "Error:" msg))
+                              (fn [data] nil))
 
     ;; Simulate a double-click navigation event with frame timing
     (let [event {:type :mouse-click

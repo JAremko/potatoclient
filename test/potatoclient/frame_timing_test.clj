@@ -8,8 +8,10 @@
 
 (deftest test-cv-start-tracking-with-frame-time
   (testing "CV start-tracking requires frame time"
-    ;; Initialize command system
-    (cmd-core/init!)
+    ;; Initialize mock websocket for testing
+    (cmd-core/init-websocket! "test-domain" 
+                              (fn [msg] (println "Error:" msg))
+                              (fn [data] nil))
 
     ;; Test that start-tracking accepts channel and frame time parameters without throwing
     (let [channel ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT]

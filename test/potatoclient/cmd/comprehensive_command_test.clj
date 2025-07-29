@@ -27,27 +27,35 @@
 ;; Test Setup
 ;; ============================================================================
 
-(def test-command-channel (atom nil))
+(def test-commands (atom []))
+
+;; Mock WebSocketManager that captures commands
+(defn create-mock-websocket-manager []
+  (proxy [potatoclient.java.websocket.WebSocketManager] ["test-domain" nil nil]
+    (sendCommand [command]
+      (swap! test-commands conj command))
+    (start [] nil)
+    (stop [] nil)))
 
 (defn command-capture-fixture [f]
-  (let [original-channel cmd-core/command-channel]
-    (reset! test-command-channel (async/chan 1000))
-    (alter-var-root #'cmd-core/command-channel (constantly @test-command-channel))
+  ;; Store original websocket manager atom
+  (let [ws-manager-atom (deref #'cmd-core/websocket-manager)
+        original-manager @ws-manager-atom]
+    ;; Reset captured commands
+    (reset! test-commands [])
+    ;; Install mock manager
+    (reset! ws-manager-atom (create-mock-websocket-manager))
+    ;; Run test
     (f)
-    (alter-var-root #'cmd-core/command-channel (constantly original-channel))
-    (async/close! @test-command-channel)))
+    ;; Restore original manager
+    (reset! ws-manager-atom original-manager)))
 
 (use-fixtures :each command-capture-fixture)
 
-(defn capture-command! []
-  (go
-    (alt!
-      @test-command-channel ([cmd] cmd)
-      (timeout 1000) nil)))
-
 (defn capture-command-sync! []
-  "Synchronous version for tests - blocks until command received or timeout"
-  (<!! (capture-command!)))
+  "Get the last captured command"
+  (Thread/sleep 10) ;; Small delay to ensure command is processed
+  (last @test-commands))
 
 (defn decode-command [{:keys [pld]}]
   (when pld
@@ -833,18 +841,12 @@
           (system/unmark-rec-important))
         (swap! total-commands inc))
 
-      ;; Capture all commands
-      (let [captured-count (atom 0)]
-        (go-loop []
-          (when-let [cmd (alt!
-                           @test-command-channel ([c] c)
-                           (timeout 100) nil)]
-            (swap! captured-count inc)
-            (recur)))
-
-        (Thread/sleep 200)
-
-        (is (= @total-commands @captured-count)
+      ;; Wait for commands to be captured
+      (Thread/sleep 200)
+      
+      ;; Check captured commands count
+      (let [captured-count (count @test-commands)]
+        (is (= @total-commands captured-count)
             "All commands should be captured")
 
         (let [duration (- (System/currentTimeMillis) start-time)]

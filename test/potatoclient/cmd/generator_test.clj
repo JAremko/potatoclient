@@ -25,25 +25,32 @@
 ;; Test Fixtures
 ;; ============================================================================
 
-(def test-command-channel
-  "Test channel for capturing commands"
-  (atom nil))
+(def test-commands 
+  "Captured test commands"
+  (atom []))
+
+;; Mock WebSocketManager that captures commands
+(defn create-mock-websocket-manager []
+  (proxy [potatoclient.java.websocket.WebSocketManager] ["test-domain" nil nil]
+    (sendCommand [command]
+      (swap! test-commands conj command))
+    (start [] nil)
+    (stop [] nil)))
 
 (defn command-capture-fixture
-  "Replace the command channel with a test channel"
+  "Install mock WebSocket manager"
   [f]
-  ;; Save original channel
-  (let [original-channel cmd-core/command-channel]
-    ;; Create test channel
-    (reset! test-command-channel (async/chan 100))
-    ;; Replace the channel
-    (alter-var-root #'cmd-core/command-channel (constantly @test-command-channel))
+  ;; Store original websocket manager atom
+  (let [ws-manager-atom (deref #'cmd-core/websocket-manager)
+        original-manager @ws-manager-atom]
+    ;; Reset captured commands
+    (reset! test-commands [])
+    ;; Install mock manager
+    (reset! ws-manager-atom (create-mock-websocket-manager))
     ;; Run test
     (f)
-    ;; Restore original channel
-    (alter-var-root #'cmd-core/command-channel (constantly original-channel))
-    ;; Close test channel
-    (async/close! @test-command-channel)))
+    ;; Restore original manager
+    (reset! ws-manager-atom original-manager)))
 
 (use-fixtures :each command-capture-fixture)
 
@@ -51,18 +58,14 @@
 ;; Test Utilities
 ;; ============================================================================
 
-(defn capture-command!
-  "Capture the next command from the test channel"
-  []
-  (go
-    (alt!
-      @test-command-channel ([cmd] cmd)
-      (timeout 1000) nil)))
-
 (defn capture-command-sync!
-  "Synchronous version for tests - blocks until command received or timeout"
+  "Get the last captured command"
   []
-  (<!! (capture-command!)))
+  (Thread/sleep 10) ;; Small delay to ensure command is processed
+  (let [cmd (last @test-commands)]
+    (when cmd
+      ;; Convert JonSharedCmd$Root to the expected format
+      {:pld (.toByteArray cmd)})))
 
 (defn decode-command
   "Decode a captured command to protobuf"
@@ -402,21 +405,13 @@
           2 (day-camera/zoom-in)
           3 (heat-camera/set-agc-mode (h/agc-mode :agc-1))))
 
-      ;; Capture all commands
-      (let [captured-count (atom 0)]
-        (go-loop []
-          (when-let [cmd (alt!
-                           @test-command-channel ([c] c)
-                           (timeout 100) nil)]
-            (swap! captured-count inc)
-            (recur)))
+      ;; Wait for commands to be captured
+      (Thread/sleep 200)
 
-        ;; Wait a bit
-        (Thread/sleep 200)
-
-        (let [end-time (System/currentTimeMillis)
-              duration (- end-time start-time)]
-          (is (= num-commands @captured-count)
-              "All commands should be captured")
-          (is (< duration 1000)
-              (str "Should send " num-commands " commands in under 1 second")))))))
+      (let [end-time (System/currentTimeMillis)
+            duration (- end-time start-time)
+            captured-count (count @test-commands)]
+        (is (= num-commands captured-count)
+            "All commands should be captured")
+        (is (< duration 1000)
+            (str "Should send " num-commands " commands in under 1 second"))))))

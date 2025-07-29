@@ -15,8 +15,9 @@
       ;; Add ping
       (.setPing root-msg (cmd.JonSharedCmd$Ping/newBuilder))
 
-      ;; Convert to bytes
-      (let [proto-bytes (cmd-core/encode-cmd-message root-msg)]
+      ;; Build the message
+      (let [built-msg (.build root-msg)
+            proto-bytes (.toByteArray built-msg)]
         (is (bytes? proto-bytes) "Should encode to bytes")
         (is (pos? (count proto-bytes)) "Should have content")
 

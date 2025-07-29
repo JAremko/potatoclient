@@ -605,7 +605,9 @@
   (println "=========================================")
 
   ;; Initialize the command system
-  (cmd-core/init!)
+  (cmd-core/init-websocket! "test-domain" 
+                            (fn [msg] (println "Error:" msg))
+                            (fn [data] nil))
 
   ;; Give the reader thread time to start
   (Thread/sleep 500)

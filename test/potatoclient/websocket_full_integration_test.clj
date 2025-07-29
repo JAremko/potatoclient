@@ -111,7 +111,7 @@
         (Thread/sleep 200)
         
         ;; Add watcher to capture state updates
-        (add-watch state/gui-state watcher-key
+        (add-watch state/app-state watcher-key
                    (fn [_ _ old-state new-state]
                      (when (not= old-state new-state)
                        (swap! state-updates conj new-state)
@@ -169,7 +169,7 @@
                 (is (= -30.0 (:elevation-angle rotary)) "Elevation should be -30.0")))))
         
         (finally
-          (remove-watch state/gui-state watcher-key)
+          (remove-watch state/app-state watcher-key)
           (cmd/stop-websocket!)
           (.stop server))))))
 
@@ -311,7 +311,7 @@
         (Thread/sleep 200)
         
         ;; Add detailed watcher
-        (add-watch state/gui-state watcher-key
+        (add-watch state/app-state watcher-key
                    (fn [key ref old-state new-state]
                      (swap! watcher-calls conj
                             {:key key
@@ -364,7 +364,7 @@
               (is (map? (:new first-call)) "New state should be a map"))))
         
         (finally
-          (remove-watch state/gui-state watcher-key)
+          (remove-watch state/app-state watcher-key)
           (cmd/stop-websocket!)
           (.stop server))))))
 

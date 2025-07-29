@@ -1,6 +1,6 @@
 (ns potatoclient.cmd.rotary
   "Rotary platform command functions for PotatoClient"
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn | ?]]
             [potatoclient.cmd.core :as cmd-core])
   (:import (cmd.RotaryPlatform
              JonSharedCmdRotary$Azimuth
@@ -384,8 +384,7 @@
 (>defn set-rotary-mode
   "Set rotary mode"
   [mode]
-  [[:fn {:error/message "must be a JonGuiDataRotaryMode"}
-    #(instance? JonSharedDataTypes$JonGuiDataRotaryMode %)] => nil?]
+  [:potatoclient.specs/rotary-mode => nil?]
   (let [root-msg (cmd-core/create-root-message)
         set-mode (-> (JonSharedCmdRotary$SetMode/newBuilder)
                      (.setMode mode))
@@ -487,7 +486,7 @@
 (>defn string->rotary-mode
   "Convert string to rotary mode enum"
   [value]
-  [string? => #(instance? JonSharedDataTypes$JonGuiDataRotaryMode %)]
+  [string? => (? :potatoclient.specs/rotary-mode)]
   (case value
     "init" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
     "speed" JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED

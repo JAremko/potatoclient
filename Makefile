@@ -150,6 +150,9 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 # Test target
 .PHONY: test
 test: build ## Run tests
+	@echo "Compiling test Java files..."
+	@mkdir -p target/test-classes
+	@javac -cp "$$(clojure -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true
 	@echo "Running tests..."
 	clojure -M:test
 

@@ -58,9 +58,10 @@
 
     ;; Now inspect what was captured
     (doseq [root-msg @commands]
-      (let [cmd-bytes (cmd-core/encode-cmd-message root-msg)
+      (let [built-msg (.build root-msg)
+            cmd-bytes (.toByteArray built-msg)
             base64 (.encodeToString (Base64/getEncoder) cmd-bytes)
-            json (proto-to-json (.build root-msg))]
+            json (proto-to-json built-msg)]
         (println "Base64 payload:" base64)
         (println "Size:" (count cmd-bytes) "bytes")
         (println "JSON structure:")

@@ -43,7 +43,7 @@
         (fn [data] (swap! state-count inc)))
       
       ;; Send a ping command
-      (cmd/send-ping)
+      (cmd/send-cmd-ping)
       
       ;; Give it a moment
       (Thread/sleep 100)
@@ -64,9 +64,9 @@
       (fn [data] (dispatch/handle-binary-state data)))
     
     ;; Send various commands
-    (is (nil? (cmd/send-ping)))
-    (is (nil? (cmd/send-frozen)))
-    (is (nil? (cmd/send-noop)))
+    (is (nil? (cmd/send-cmd-ping)))
+    (is (nil? (cmd/send-cmd-frozen)))
+    (is (nil? (cmd/send-cmd-noop)))
     
     ;; Clean up
     (cmd/stop-websocket!)))

@@ -106,7 +106,7 @@
   (str/replace s #"-" "_"))
 
 ;; Protobuf message conversion functions
-(>defn- proto-map->clj-map
+(>defn proto-map->clj-map
   "Convert a protobuf message to a Clojure map with kebab-case keys.
   Recursively processes nested messages."
   [proto-msg]
