@@ -30,7 +30,9 @@
         ;; Telemere for logging
         com.taoensso/telemere {:mvn/version "1.0.0-RC1"}
         ;; Buf validate - needed for generated Java code compilation
-        build.buf/protovalidate {:mvn/version "0.13.0"}}
+        build.buf/protovalidate {:mvn/version "0.13.0"}
+        ;; Java WebSocket client library
+        org.java-websocket/Java-WebSocket {:mvn/version "1.5.7"}}
 
  :aliases {:dev {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                  :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}

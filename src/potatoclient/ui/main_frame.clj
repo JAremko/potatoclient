@@ -14,6 +14,7 @@
             [potatoclient.theme :as theme]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.cmd.core :as cmd]
             [seesaw.action :as action]
             [seesaw.core :as seesaw])
   (:import (javax.swing Box JFrame JPanel)))
@@ -230,6 +231,7 @@
                                            :locale (state/get-locale)
                                            :url-history (config/get-url-history)}]
                        (config/save-config! current-config))
+                     (cmd/stop-websocket!)
                      (process/cleanup-all-processes)
                      (logging/shutdown!)
                      (catch Exception e

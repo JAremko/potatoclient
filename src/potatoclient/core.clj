@@ -5,11 +5,13 @@
             [clojure.spec.alpha :as s]
             [clojure.string]
             [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
+            [potatoclient.cmd.core :as cmd]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.runtime :as runtime]
+            [potatoclient.state.dispatch :as dispatch]
             [potatoclient.theme :as theme]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.startup-dialog :as startup-dialog]
@@ -41,6 +43,7 @@
     (Thread.
       (fn []
         (try
+          (cmd/stop-websocket!)
           (process/cleanup-all-processes)
           (logging/shutdown!)
           (catch Exception _
@@ -81,9 +84,18 @@
                 ;; User clicked Connect, proceed with main frame
                 (let [params {:version (get-version)
                               :build-type (get-build-type)}
-                      frame (main-frame/create-main-frame params)]
+                      frame (main-frame/create-main-frame params)
+                      domain (config/get-domain)]
                   (seesaw/show! frame)
-                  (log-startup!))
+                  (log-startup!)
+                  ;; Initialize WebSocket connections
+                  (cmd/init-websocket! 
+                    domain
+                    (fn [error-msg] 
+                      (logging/log-error (str "WebSocket error: " error-msg)))
+                    (fn [binary-data]
+                      (dispatch/handle-binary-state binary-data)))
+                  (logging/log-info (str "WebSocket connections started to " domain)))
 
                 :cancel
                 ;; User clicked Cancel, exit application

@@ -1,16 +1,13 @@
 (ns potatoclient.cmd.core
   "Core command sending infrastructure for PotatoClient.
    Implements the command pattern from the TypeScript web example."
-  (:require [clojure.core.async :as async]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])
   (:import (cmd JonSharedCmd$Frozen
                 JonSharedCmd$Noop JonSharedCmd$Ping JonSharedCmd$Root)
            (cmd.RotaryPlatform JonSharedCmdRotary$Axis JonSharedCmdRotary$Root)
-           (com.google.protobuf.util JsonFormat)
-           (java.util Base64)
            (ser JonSharedDataTypes$JonGuiDataClientType)))
 
 ;; ============================================================================
@@ -21,12 +18,40 @@
   "Protocol version for command communication"
   1)
 
-(def command-channel
-  "Channel for outgoing commands with buffer of 100"
-  (async/chan 100))
+;; WebSocket manager reference
+(defonce ^:private websocket-manager (atom nil))
 
 ;; Read-only mode atom
 (def ^:private read-only-mode? (atom false))
+
+;; ============================================================================
+;; WebSocket Management
+;; ============================================================================
+
+(>defn init-websocket!
+  "Initialize WebSocket manager - called from core.clj"
+  [domain error-callback state-callback]
+  [string? ifn? ifn? => nil?]
+  (when-let [old-manager @websocket-manager]
+    (.stop old-manager))
+  (let [manager (potatoclient.java.websocket.WebSocketManager. 
+                  domain 
+                  (reify java.util.function.Consumer
+                    (accept [_ msg] (error-callback msg)))
+                  (reify java.util.function.Consumer
+                    (accept [_ data] (state-callback data))))]
+    (.start manager)
+    (reset! websocket-manager manager))
+  nil)
+
+(>defn stop-websocket!
+  "Stop WebSocket connections"
+  []
+  [=> nil?]
+  (when-let [manager @websocket-manager]
+    (.stop manager)
+    (reset! websocket-manager nil))
+  nil)
 
 ;; ============================================================================
 ;; Helper Functions
@@ -64,38 +89,20 @@
   (JonSharedCmdRotary$Axis/newBuilder))
 
 ;; ============================================================================
-;; Message Encoding
-;; ============================================================================
-
-(>defn encode-cmd-message
-  "Encode a Root command message to bytes"
-  [root-msg]
-  [:potatoclient.specs/cmd-root-builder => bytes?]
-  (.toByteArray (.build root-msg)))
-
-;; ============================================================================
 ;; Command Sending
 ;; ============================================================================
 
-(>defn- should-buffer?
-  "Determine if a command should be buffered"
-  [root-msg]
-  [:potatoclient.specs/cmd-root-builder => boolean?]
-  (not (.hasPing root-msg)))
-
 (>defn send-cmd-message
-  "Send a command message through the command channel"
+  "Send a command message through WebSocket"
   [root-msg]
   [:potatoclient.specs/cmd-root-builder => nil?]
   ;; In readonly mode, only allow ping and frozen messages
   (when (or (not (is-read-only-mode?))
             (.hasPing root-msg)
             (.hasFrozen root-msg))
-    (let [encoded-message (encode-cmd-message root-msg)
-          should-buffer (should-buffer? root-msg)]
-      (async/put! command-channel
-                  {:pld encoded-message
-                   :should-buffer should-buffer})))
+    (when-let [manager @websocket-manager]
+      (let [command (.build root-msg)]
+        (.sendCommand manager command))))
   nil)
 
 ;; ============================================================================
@@ -151,68 +158,8 @@
         (send-cmd-message root-msg))))
   nil)
 
-;; ============================================================================
-;; Debug Utilities (Development Mode Only)
-;; ============================================================================
-
-(>defn- decode-proto-to-json
-  "Decode protobuf bytes to JSON string for debugging"
-  [proto-bytes]
-  [bytes? => (? string?)]
-  (try
-    (let [root-msg (JonSharedCmd$Root/parseFrom ^"[B" proto-bytes)]
-      (-> (JsonFormat/printer)
-          (.includingDefaultValueFields true)
-          (.print root-msg)))
-    (catch Exception e
-      (logging/log-error {:id ::decode-proto-failed
-                          :error (.getMessage e)})
-      nil)))
-
-;; ============================================================================
-;; Command Channel Reader
-;; ============================================================================
-
-(>defn- format-command-as-json
-  "Format a command for JSON output"
-  [{:keys [pld should-buffer]}]
-  [:potatoclient.specs/command-payload-map => string?]
-  (let [base64-payload (.encodeToString (Base64/getEncoder) pld)]
-    (str/join "\n"
-              ["{"
-               (str "  \"payload\": \"" base64-payload "\",")
-               (str "  \"shouldBuffer\": " should-buffer ",")
-               (str "  \"size\": " (count pld))
-               "}"])))
-
-(>defn start-command-reader!
-  "Start a go-loop that reads from the command channel and prints as JSON"
-  []
-  [=> :potatoclient.specs/core-async-channel]
-  (async/go-loop []
-    (when-let [cmd (async/<! command-channel)]
-      ;; In development mode, decode and log the protobuf structure
-      (when-not runtime/release-build?
-        (when-let [proto-json (decode-proto-to-json (:pld cmd))]
-          (logging/log-info {:id ::command-proto-structure
-                             :type "command"
-                             :json proto-json
-                             :size (count (:pld cmd))})))
-
-      ;; Always output the transport format (for future websocket)
-      (println "Command sent:")
-      (println (format-command-as-json cmd))
-      (println "---")
-      (recur))))
 
 ;; ============================================================================
 ;; Initialization
 ;; ============================================================================
 
-(>defn init!
-  "Initialize the command system"
-  []
-  [=> nil?]
-  (println "Command system initialized")
-  (start-command-reader!)
-  nil)

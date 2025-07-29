@@ -929,3 +929,118 @@ For lighter-weight unit tests, create a mock that doesn't require actual network
       (start [_] nil)
       (stop [_] (reset! connected? false)))))
 ```
+
+## Performance Considerations
+
+### Message Processing
+- **State polling**: 50ms timeout prevents busy-waiting while maintaining responsiveness
+- **Queue sizes**: 1000 messages each provides adequate buffering for typical usage
+- **Thread pooling**: Dedicated daemon threads for scheduling prevent resource leaks
+
+### Memory Management
+- **Queue bounds**: Both queues are bounded to prevent memory exhaustion
+- **State queue overflow**: Oldest messages dropped when full (FIFO eviction)
+- **Command queue overflow**: New messages rejected when full (backpressure)
+
+### Network Efficiency
+- **Binary protocol**: Protobuf encoding minimizes bandwidth usage
+- **Ping interval**: 300ms keeps connection alive without excessive overhead
+- **Reconnection**: 300ms interval provides quick recovery without flooding
+
+## Error Handling
+
+### Connection Errors
+- **Network failures**: Logged via error callback, automatic reconnection
+- **SSL/TLS errors**: Handled by Java WebSocket library, logged
+- **DNS resolution**: Failures trigger reconnection cycle
+
+### Protocol Errors
+- **Invalid protobuf**: Logged and dropped, processing continues
+- **Validation failures**: Commands rejected in development builds
+- **Queue overflow**: Appropriate action taken (drop/reject)
+
+### Application Errors
+- **State processing errors**: Logged, delayed retry
+- **Command sending errors**: Message requeued if possible
+- **Shutdown errors**: Resources cleaned up best-effort
+
+## Configuration
+
+### WebSocket Settings
+```clojure
+;; In potatoclient.websocket namespace
+(def ^:private config
+  {:ping-interval-ms 300
+   :reconnect-interval-ms 300
+   :queue-capacity 1000
+   :state-poll-timeout-ms 50})
+```
+
+### Custom Headers
+The command WebSocket includes a custom header for client identification:
+```java
+wsClient.addHeader("X-Jon-Client-Type", "local-network");
+```
+
+### TLS/SSL Configuration
+Both clients use `wss://` protocol for encrypted connections. Certificate validation follows Java defaults.
+
+## Deployment Considerations
+
+### Production Setup
+1. **Domain configuration**: Ensure `domain` parameter matches server configuration
+2. **Certificate validation**: Java truststore must include server certificates
+3. **Firewall rules**: WebSocket ports must be accessible (typically 443 for wss)
+4. **Load balancing**: Ensure sticky sessions if using multiple servers
+
+### Monitoring
+- **Connection status**: Via `connected?` API
+- **Queue sizes**: Via `command-queue-size` and `state-queue-size` APIs
+- **Error rates**: Through logging system
+- **Message throughput**: Can be added via metrics in processors
+
+### Debugging
+1. **Enable debug logging**: Set appropriate log levels
+2. **Monitor queues**: Check for consistent growth indicating processing issues
+3. **Network tracing**: Use Wireshark or similar for protocol-level debugging
+4. **Java debugging**: Standard JVM debugging tools work with WebSocket classes
+
+## Future Enhancements
+
+### Potential Improvements
+1. **Metrics collection**: Add detailed metrics for monitoring
+2. **Circuit breaker**: Implement circuit breaker pattern for connection failures
+3. **Message compression**: Add compression for large state updates
+4. **Connection pooling**: Support multiple concurrent connections
+5. **Rate limiting**: Add client-side rate limiting for commands
+
+### API Extensions
+```clojure
+;; Possible future API additions
+(defn get-connection-stats []
+  {:uptime-ms (- (System/currentTimeMillis) start-time)
+   :messages-sent total-sent
+   :messages-received total-received
+   :reconnection-count reconnect-count})
+
+(defn set-queue-capacity [queue-type capacity]
+  ;; Dynamic queue capacity adjustment
+  )
+
+(defn add-connection-listener [event-type handler-fn]
+  ;; Event-based connection monitoring
+  )
+```
+
+## Summary
+
+The WebSocket implementation provides a robust, production-ready solution for bidirectional communication between PotatoClient and the server. Key features include:
+
+- **Reliable delivery**: Automatic reconnection and message queuing
+- **Clean architecture**: Separation between Java WebSocket handling and Clojure business logic
+- **Development support**: Optional validation and comprehensive error logging
+- **Performance**: Efficient polling, bounded queues, and proper thread management
+- **Integration**: Seamless integration with existing command and state systems
+
+The implementation follows established patterns in the codebase while introducing minimal complexity, making it maintainable and extensible for future requirements.
+```
