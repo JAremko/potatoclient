@@ -191,7 +191,8 @@ test-coverage: build ## Run tests with comprehensive code coverage analysis for 
 .PHONY: coverage-clojure
 coverage-clojure: build ## Run Clojure tests with Cloverage (faster than full coverage)
 	@echo "Running Clojure tests with coverage..."
-	clojure -M:test-coverage
+	@echo "Note: This will show coverage for Clojure code only (not Java/Kotlin)"
+	./scripts/run-clojure-coverage.sh
 
 # Coverage report analysis
 .PHONY: coverage-analyze
@@ -213,6 +214,10 @@ report-unspecced: proto compile-kotlin compile-java-proto ## Check which functio
 	clojure -M:run --report-unspecced
 	@echo ""
 	@echo "Report saved to ./reports/unspecced-functions.md"
+
+# Simple coverage target (alias for coverage-clojure)
+.PHONY: coverage
+coverage: coverage-clojure ## Generate code coverage report (alias for coverage-clojure)
 
 # Check dependencies
 .PHONY: check-deps
