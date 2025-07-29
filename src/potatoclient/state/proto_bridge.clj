@@ -6,7 +6,8 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
             [potatoclient.proto :as proto]
-            [potatoclient.state.edn :as edn])
+            [potatoclient.state.edn :as edn]
+            [potatoclient.state.edn-validation :as validation])
   (:import (ser JonSharedData$JonGUIState)))
 
 ;; ============================================================================
@@ -15,13 +16,17 @@
 
 (>defn binary->edn-state
   "Convert binary protobuf message to EDN state map.
-  Returns nil if parsing fails."
+  Validates the resulting EDN data if validation is enabled.
+  Returns nil if parsing or validation fails."
   [binary-data]
   [bytes? => (? map?)]
   (try
     (when (pos? (count binary-data))
-      (let [proto-msg (JonSharedData$JonGUIState/parseFrom ^bytes binary-data)]
-        (proto/proto-map->clj-map proto-msg)))
+      (let [proto-msg (JonSharedData$JonGUIState/parseFrom ^bytes binary-data)
+            edn-data (proto/proto-map->clj-map proto-msg)]
+        (if (validation/validation-enabled?)
+          (validation/validate-edn-state edn-data)
+          edn-data)))
     (catch Exception e
       (logging/log-error {:msg "Failed to parse protobuf binary data"
                           :error (.getMessage e)
@@ -47,46 +52,56 @@
 
 (>defn proto-msg->edn-state
   "Convert a protobuf JonGUIState object to EDN state map.
-  This is used when we already have the parsed protobuf object."
+  This is used when we already have the parsed protobuf object.
+  Validates the resulting EDN data if validation is enabled."
   [proto-msg]
   [[:fn {:error/message "must be a JonGUIState protobuf"}
     #(instance? JonSharedData$JonGUIState %)] => map?]
-  (proto/proto-map->clj-map proto-msg))
+  (let [edn-data (proto/proto-map->clj-map proto-msg)]
+    (if (validation/validation-enabled?)
+      (or (validation/validate-edn-state edn-data)
+          edn-data)  ; Return original data even if validation fails (just logs error)
+      edn-data)))
 
 (>defn extract-subsystem-edn
-  "Extract a specific subsystem from a protobuf message as EDN"
+  "Extract a specific subsystem from a protobuf message as EDN.
+  Validates the subsystem data if validation is enabled."
   [proto-msg subsystem-k]
   [[:fn {:error/message "must be a JonGUIState protobuf"}
     #(instance? JonSharedData$JonGUIState %)] 
    edn/subsystem-key => (? map?)]
-  (case subsystem-k
-    :system (when (.hasSystem proto-msg)
-              (proto/proto-map->clj-map (.getSystem proto-msg)))
-    :lrf (when (.hasLrf proto-msg)
-           (proto/proto-map->clj-map (.getLrf proto-msg)))
-    :time (when (.hasTime proto-msg)
-            (proto/proto-map->clj-map (.getTime proto-msg)))
-    :gps (when (.hasGps proto-msg)
-           (proto/proto-map->clj-map (.getGps proto-msg)))
-    :compass (when (.hasCompass proto-msg)
-               (proto/proto-map->clj-map (.getCompass proto-msg)))
-    :rotary (when (.hasRotary proto-msg)
-              (proto/proto-map->clj-map (.getRotary proto-msg)))
-    :camera-day (when (.hasCameraDay proto-msg)
-                  (proto/proto-map->clj-map (.getCameraDay proto-msg)))
-    :camera-heat (when (.hasCameraHeat proto-msg)
-                   (proto/proto-map->clj-map (.getCameraHeat proto-msg)))
-    :compass-calibration (when (.hasCompassCalibration proto-msg)
-                           (proto/proto-map->clj-map (.getCompassCalibration proto-msg)))
-    :rec-osd (when (.hasRecOsd proto-msg)
-               (proto/proto-map->clj-map (.getRecOsd proto-msg)))
-    :day-cam-glass-heater (when (.hasDayCamGlassHeater proto-msg)
-                            (proto/proto-map->clj-map (.getDayCamGlassHeater proto-msg)))
-    :actual-space-time (when (.hasActualSpaceTime proto-msg)
-                         (proto/proto-map->clj-map (.getActualSpaceTime proto-msg)))
-    :meteo-internal (when (try (.hasMeteoInternal proto-msg) (catch Exception _ false))
-                      (proto/proto-map->clj-map (.getMeteoInternal proto-msg)))
-    nil))
+  (let [subsystem-data
+        (case subsystem-k
+          :system (when (.hasSystem proto-msg)
+                    (proto/proto-map->clj-map (.getSystem proto-msg)))
+          :lrf (when (.hasLrf proto-msg)
+                 (proto/proto-map->clj-map (.getLrf proto-msg)))
+          :time (when (.hasTime proto-msg)
+                  (proto/proto-map->clj-map (.getTime proto-msg)))
+          :gps (when (.hasGps proto-msg)
+                 (proto/proto-map->clj-map (.getGps proto-msg)))
+          :compass (when (.hasCompass proto-msg)
+                     (proto/proto-map->clj-map (.getCompass proto-msg)))
+          :rotary (when (.hasRotary proto-msg)
+                    (proto/proto-map->clj-map (.getRotary proto-msg)))
+          :camera-day (when (.hasCameraDay proto-msg)
+                        (proto/proto-map->clj-map (.getCameraDay proto-msg)))
+          :camera-heat (when (.hasCameraHeat proto-msg)
+                         (proto/proto-map->clj-map (.getCameraHeat proto-msg)))
+          :compass-calibration (when (.hasCompassCalibration proto-msg)
+                                 (proto/proto-map->clj-map (.getCompassCalibration proto-msg)))
+          :rec-osd (when (.hasRecOsd proto-msg)
+                     (proto/proto-map->clj-map (.getRecOsd proto-msg)))
+          :day-cam-glass-heater (when (.hasDayCamGlassHeater proto-msg)
+                                  (proto/proto-map->clj-map (.getDayCamGlassHeater proto-msg)))
+          :actual-space-time (when (.hasActualSpaceTime proto-msg)
+                               (proto/proto-map->clj-map (.getActualSpaceTime proto-msg)))
+          :meteo-internal (when (try (.hasMeteoInternal proto-msg) (catch Exception _ false))
+                            (proto/proto-map->clj-map (.getMeteoInternal proto-msg)))
+          nil)]
+    (if (and subsystem-data (validation/validation-enabled?))
+      (validation/validate-subsystem subsystem-k subsystem-data)
+      subsystem-data)))
 
 (>defn has-subsystem?
   "Check if a protobuf message has a specific subsystem"
@@ -157,13 +172,18 @@
    :meteo-internal])
 
 (>defn extract-all-subsystems
-  "Extract all subsystems from a protobuf message to EDN"
+  "Extract all subsystems from a protobuf message to EDN.
+  Validates the complete state if validation is enabled."
   [proto-msg]
   [[:fn {:error/message "must be a JonGUIState protobuf"}
     #(instance? JonSharedData$JonGUIState %)] => map?]
-  (reduce (fn [acc subsystem-key]
-            (if-let [subsystem-data (extract-subsystem-edn proto-msg subsystem-key)]
-              (assoc acc subsystem-key subsystem-data)
-              acc))
-          {:protocol-version (.getProtocolVersion proto-msg)}
-          subsystem-keys))
+  (let [state (reduce (fn [acc subsystem-key]
+                        (if-let [subsystem-data (extract-subsystem-edn proto-msg subsystem-key)]
+                          (assoc acc subsystem-key subsystem-data)
+                          acc))
+                      {:protocol-version (.getProtocolVersion proto-msg)}
+                      subsystem-keys)]
+    (if (validation/validation-enabled?)
+      (or (validation/validate-edn-state state)
+          state)  ; Return original state even if validation fails (just logs error)
+      state)))
