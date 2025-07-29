@@ -47,6 +47,41 @@ The command system tests ensure that all 200+ command functions correctly genera
 - **`frame_timing_test.clj`** - Unit tests for CV tracking with frame timing
 - **`frame_timing_integration_test.clj`** - Integration tests for double-click events with frame timing
 
+### WebSocket Test Infrastructure
+
+The test suite uses a sophisticated stubbing approach for WebSocket communication:
+
+**`test/potatoclient/test_utils.clj`** provides:
+- Mock WebSocket managers that capture commands
+- State simulation capabilities
+- Async command verification
+- Connection lifecycle management
+
+Example usage:
+```clojure
+(ns potatoclient.my-test
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
+            [potatoclient.test-utils :as test-utils]))
+
+(use-fixtures :each test-utils/websocket-fixture)
+
+(deftest test-websocket-commands
+  (testing "Commands are captured correctly"
+    ;; Send a command
+    (some-command-function)
+    ;; Verify it was captured
+    (let [commands (test-utils/get-captured-commands)]
+      (is (= 1 (count commands)))
+      (is (= expected-proto-type (type (first commands)))))))
+```
+
+Benefits over real WebSocket servers:
+- No port conflicts or "address already in use" errors
+- Instant test execution (no server startup/shutdown delays)
+- Deterministic behavior (no network timing issues)
+- Better test isolation
+- Easier debugging with captured command history
+
 ## Command System Tests
 
 ### Comprehensive Command Test
@@ -205,7 +240,28 @@ make dev  # Runs with full validation
 ```bash
 make report-test       # HTML test report
 make report-unspecced  # Find functions without specs
+make test-summary      # View latest test run summary
+make coverage          # Generate code coverage report
 ```
+
+### Test Infrastructure Features
+
+#### Automated Test Logging
+- All test runs automatically logged to `logs/test-runs/YYYYMMDD_HHMMSS/`
+- Includes full output, compact summary, and extracted failures
+- Logs analyzed by `scripts/compact-test-logs.sh`
+
+#### WebSocket Stubbing
+- Tests use mock WebSocket managers instead of real servers
+- No port conflicts or network delays
+- Deterministic command capture and verification
+- See `test/potatoclient/test_utils.clj` for infrastructure
+
+#### Coverage Analysis
+- Uses jacoco for JVM bytecode coverage
+- HTML reports show line-by-line coverage
+- Identifies untested code paths
+- Run `make coverage` then view `target/coverage/index.html`
 
 ## Debugging Test Failures
 

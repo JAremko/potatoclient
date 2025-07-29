@@ -116,16 +116,28 @@ PotatoClient includes a command system for sending control messages via Protobuf
 make clean        # Clean all artifacts
 make proto        # Generate protobuf classes (cleans old bindings first)
 make compile-kotlin # Compile Kotlin sources
-make test         # Run tests
-make release      # Build optimized release JAR
+make build        # Build JAR with all dependencies
 
-# Platform packages
+# Testing
+make test         # Run tests with automatic logging
+make test-summary # View latest test results
+make coverage     # Generate test coverage report
+make lint         # Run all linters with filtered reports
+
+# Release builds
+make release      # Build optimized release JAR
 make build-windows  # .exe installer
 make build-macos    # .dmg bundle
 make build-linux    # AppImage
 ```
 
-### Testing
+### Testing Infrastructure
+
+- **Automated Test Logging**: All test runs saved to `logs/test-runs/` with timestamps
+- **Coverage Reports**: HTML/XML coverage reports via jacoco (`make coverage`)
+- **WebSocket Stubbing**: Fast, deterministic tests without real servers
+- **Property-Based Testing**: Comprehensive validation with Malli generators
+- **Test Analysis**: Automatic log compaction and failure extraction
 
 The project includes a comprehensive test suite with protobuf validation:
 

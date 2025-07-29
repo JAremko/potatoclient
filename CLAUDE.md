@@ -199,6 +199,80 @@ This guide covers:
 - Periodic build verification to ensure code hasn't been broken
 - Best practices for maintaining code quality
 
+## Testing Infrastructure
+
+### Test Execution and Logging
+
+The test suite now includes comprehensive logging and analysis capabilities:
+
+**Key Commands**:
+- `make test` - Run all tests with automatic logging to timestamped directories
+- `make test-summary` - View the latest test run summary
+- `make coverage` - Generate test coverage report with jacoco
+- `make report-unspecced` - Find functions without Malli specs
+
+**Test Logging System**:
+- All test runs are automatically logged to `logs/test-runs/YYYYMMDD_HHMMSS/`
+- Each run generates:
+  - `test-full.log` - Complete test output
+  - `test-full-summary.txt` - Compact analysis of results
+  - `test-full-failures.txt` - Extracted failures for quick review
+- Logs are automatically compacted and analyzed by `scripts/compact-test-logs.sh`
+
+**Coverage Reports**:
+- Coverage analysis uses jacoco via the `cloverage` tool
+- Reports generated in `target/coverage/` include:
+  - HTML reports for browser viewing
+  - XML reports for CI integration
+  - Console summary of coverage percentages
+- Run `make coverage` then open `target/coverage/index.html`
+
+### WebSocket Test Infrastructure
+
+Tests now use a sophisticated stubbing approach instead of real WebSocket servers:
+
+**Stubbing Benefits**:
+- No port conflicts or network delays
+- Deterministic test behavior
+- Faster test execution (no server startup/shutdown)
+- Better isolation between tests
+
+**Key Components**:
+- `test/potatoclient/test_utils.clj` - Core stubbing infrastructure
+- Mock WebSocket managers with command capture
+- State simulation capabilities
+- Async command verification
+
+**Example Usage**:
+```clojure
+(use-fixtures :each h/websocket-fixture)
+
+(deftest test-command-sending
+  (h/send-test-command! (cmd/ping))
+  (is (= 1 (count (h/get-captured-commands))))
+  (is (= :ping (h/get-command-type (first (h/get-captured-commands))))))
+```
+
+### Test Organization
+
+**Unit Tests**:
+- Command generation and validation
+- State management and transformations
+- Protobuf serialization/deserialization
+- Malli schema validation
+
+**Integration Tests**:
+- WebSocket communication (stubbed)
+- Event system integration
+- Frame timing with CV events
+- Command dispatch and handling
+
+**Property-Based Tests**:
+- Generator-based testing with Malli
+- Comprehensive command coverage
+- State schema validation
+- Edge case discovery
+
 ## Architecture
 
 ### Key Components
