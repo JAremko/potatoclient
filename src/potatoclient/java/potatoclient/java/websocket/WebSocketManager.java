@@ -10,6 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import javax.net.ssl.*;
+import java.security.cert.X509Certificate;
+import java.security.SecureRandom;
 
 /**
  * Unified WebSocket manager for command and state channels.
@@ -29,6 +32,8 @@ public class WebSocketManager {
     private static final long PING_INTERVAL_MS = 300;
     private static final long RECONNECT_INTERVAL_MS = 300;
     
+    private SSLSocketFactory sslSocketFactory;
+    
     public WebSocketManager(String domain, Consumer<String> errorCallback, Consumer<byte[]> stateCallback) {
         this.domain = domain;
         this.errorCallback = errorCallback;
@@ -39,6 +44,15 @@ public class WebSocketManager {
             t.setDaemon(true);
             return t;
         });
+        
+        // Initialize SSL socket factory that ignores certificates
+        try {
+            this.sslSocketFactory = createTrustAllSSLSocketFactory();
+        } catch (Exception e) {
+            errorCallback.accept("Failed to create SSL socket factory: " + e.getMessage());
+            // Fall back to default SSL factory
+            this.sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        }
     }
     
     /**
@@ -97,6 +111,34 @@ public class WebSocketManager {
      */
     public int getCommandQueueSize() {
         return commandClient != null ? commandClient.getQueueSize() : 0;
+    }
+    
+    /**
+     * Create SSL socket factory that trusts all certificates
+     */
+    private SSLSocketFactory createTrustAllSSLSocketFactory() throws Exception {
+        // Create a trust manager that accepts all certificates
+        TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+                
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                    // Trust all certificates
+                }
+                
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    // Trust all certificates
+                }
+            }
+        };
+        
+        // Create SSL context with trust-all manager
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustAllCerts, new SecureRandom());
+        
+        return sslContext.getSocketFactory();
     }
     
     /**
@@ -216,6 +258,11 @@ public class WebSocketManager {
                     // Command channel doesn't receive binary messages
                 }
             };
+            
+            // Set SSL socket factory for wss:// connections
+            if (uri.getScheme().equals("wss")) {
+                wsClient.setSocketFactory(sslSocketFactory);
+            }
             
             wsClient.addHeader("X-Jon-Client-Type", "local-network");
         }
@@ -392,6 +439,11 @@ public class WebSocketManager {
                     }
                 }
             };
+            
+            // Set SSL socket factory for wss:// connections
+            if (uri.getScheme().equals("wss")) {
+                wsClient.setSocketFactory(sslSocketFactory);
+            }
             
             wsClient.addHeader("X-Jon-Client-Type", "local-network");
         }
