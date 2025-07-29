@@ -66,6 +66,11 @@ public class WebSocketManager {
                 stateClient.stop();
             }
             scheduler.shutdown();
+            try {
+                scheduler.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                scheduler.shutdownNow();
+            }
         }
     }
     
@@ -94,49 +99,89 @@ public class WebSocketManager {
         return commandClient != null ? commandClient.getQueueSize() : 0;
     }
     
+    /**
+     * Helper to create WebSocket URI
+     */
+    private URI createWebSocketURI(String path) {
+        // Parse domain which might include port (e.g., "localhost:8080")
+        String host = domain;
+        String port = "";
+        int colonIndex = domain.lastIndexOf(':');
+        if (colonIndex > 0 && colonIndex < domain.length() - 1) {
+            // Check if it's a port (not part of IPv6 address)
+            String portPart = domain.substring(colonIndex + 1);
+            try {
+                Integer.parseInt(portPart);
+                host = domain.substring(0, colonIndex);
+                port = ":" + portPart;
+            } catch (NumberFormatException e) {
+                // Not a port, use whole domain
+            }
+        }
+        
+        // Use ws:// for localhost/127.0.0.1, wss:// for others
+        String protocol = (host.equals("localhost") || host.equals("127.0.0.1")) ? "ws://" : "wss://";
+        return URI.create(protocol + host + port + path);
+    }
+    
     // Inner class for command WebSocket
     private class CommandClient {
-        private WebSocketClient wsClient;
+        private volatile WebSocketClient wsClient;
         private final BlockingQueue<JonSharedCmd.Root> commandQueue;
         private final AtomicBoolean isConnected;
         private ScheduledFuture<?> pingTask;
         private ScheduledFuture<?> reconnectTask;
         
         CommandClient() {
-            this.commandQueue = new LinkedBlockingQueue<>(1000);
+            this.commandQueue = new LinkedBlockingQueue<>(100);
             this.isConnected = new AtomicBoolean(false);
         }
         
         void start() {
             startReconnectTask();
-            connect();
         }
         
         void stop() {
             stopReconnectTask();
             stopPingTask();
+            isConnected.set(false);
             if (wsClient != null) {
-                wsClient.close();
+                try {
+                    wsClient.closeBlocking();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 wsClient = null;
             }
             commandQueue.clear();
         }
         
-        private void connect() {
-            if (!isConnected.get() && isRunning.get()) {
+        private synchronized void connect() {
+            if (!isRunning.get()) {
+                return;
+            }
+            
+            // Always create a new client for connection/reconnection
+            if (wsClient != null) {
                 try {
-                    if (wsClient == null) {
-                        createWebSocketClient();
-                    }
-                    wsClient.connect();
+                    wsClient.closeBlocking();
                 } catch (Exception e) {
-                    errorCallback.accept("Command connection failed: " + e.getMessage());
+                    // Ignore errors when closing old client
                 }
+                wsClient = null;
+            }
+            
+            try {
+                createWebSocketClient();
+                wsClient.connect();
+            } catch (Exception e) {
+                errorCallback.accept("Command connection failed: " + e.getMessage());
+                wsClient = null;  // Clear reference on failure
             }
         }
         
         private void createWebSocketClient() {
-            URI uri = URI.create("wss://" + domain + "/ws/ws_cmd");
+            URI uri = createWebSocketURI("/ws/ws_cmd");
             
             this.wsClient = new WebSocketClient(uri) {
                 @Override
@@ -150,6 +195,10 @@ public class WebSocketManager {
                 public void onClose(int code, String reason, boolean remote) {
                     isConnected.set(false);
                     stopPingTask();
+                    // Schedule reconnection if still running
+                    if (isRunning.get()) {
+                        scheduler.schedule(() -> connect(), RECONNECT_INTERVAL_MS, TimeUnit.MILLISECONDS);
+                    }
                 }
                 
                 @Override
@@ -191,11 +240,11 @@ public class WebSocketManager {
             stopReconnectTask();
             reconnectTask = scheduler.scheduleWithFixedDelay(
                 () -> {
-                    if (!isConnected.get() && !commandQueue.isEmpty()) {
+                    if (!isConnected.get() && isRunning.get()) {
                         connect();
                     }
                 },
-                0,
+                RECONNECT_INTERVAL_MS,
                 RECONNECT_INTERVAL_MS,
                 TimeUnit.MILLISECONDS
             );
@@ -226,27 +275,19 @@ public class WebSocketManager {
         }
         
         private void sendPing() {
-            JonSharedCmd.Root ping = JonSharedCmd.Root.newBuilder()
-                .setProtocolVersion(1)
-                .setPing(JonSharedCmd.Ping.newBuilder().build())
-                .build();
-            
             if (isConnected.get()) {
-                try {
-                    wsClient.send(ping.toByteArray());
-                } catch (Exception e) {
-                    errorCallback.accept("Failed to send ping: " + e.getMessage());
-                }
+                JonSharedCmd.Root ping = JonSharedCmd.Root.newBuilder()
+                    .setProtocolVersion(3)
+                    .setPing(JonSharedCmd.Ping.newBuilder().build())
+                    .build();
+                send(ping);
             }
         }
         
         boolean send(JonSharedCmd.Root command) {
             boolean queued = commandQueue.offer(command);
-            if (!queued) {
-                errorCallback.accept("Command queue full, dropping message");
-            }
             
-            if (isConnected.get()) {
+            if (queued && isConnected.get()) {
                 drainQueue();
             }
             
@@ -264,7 +305,7 @@ public class WebSocketManager {
     
     // Inner class for state WebSocket
     private class StateClient {
-        private WebSocketClient wsClient;
+        private volatile WebSocketClient wsClient;
         private final AtomicBoolean isConnected;
         private ScheduledFuture<?> reconnectTask;
         
@@ -274,32 +315,47 @@ public class WebSocketManager {
         
         void start() {
             startReconnectTask();
-            connect();
         }
         
         void stop() {
             stopReconnectTask();
+            isConnected.set(false);
             if (wsClient != null) {
-                wsClient.close();
+                try {
+                    wsClient.closeBlocking();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 wsClient = null;
             }
         }
         
-        private void connect() {
-            if (!isConnected.get() && isRunning.get()) {
+        private synchronized void connect() {
+            if (!isRunning.get()) {
+                return;
+            }
+            
+            // Always create a new client for connection/reconnection
+            if (wsClient != null) {
                 try {
-                    if (wsClient == null) {
-                        createWebSocketClient();
-                    }
-                    wsClient.connect();
+                    wsClient.closeBlocking();
                 } catch (Exception e) {
-                    errorCallback.accept("State connection failed: " + e.getMessage());
+                    // Ignore errors when closing old client
                 }
+                wsClient = null;
+            }
+            
+            try {
+                createWebSocketClient();
+                wsClient.connect();
+            } catch (Exception e) {
+                errorCallback.accept("State connection failed: " + e.getMessage());
+                wsClient = null;  // Clear reference on failure
             }
         }
         
         private void createWebSocketClient() {
-            URI uri = URI.create("wss://" + domain + "/ws/ws_state");
+            URI uri = createWebSocketURI("/ws/ws_state");
             
             this.wsClient = new WebSocketClient(uri) {
                 @Override
@@ -310,6 +366,10 @@ public class WebSocketManager {
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     isConnected.set(false);
+                    // Schedule reconnection if still running
+                    if (isRunning.get()) {
+                        scheduler.schedule(() -> connect(), RECONNECT_INTERVAL_MS, TimeUnit.MILLISECONDS);
+                    }
                 }
                 
                 @Override
@@ -332,6 +392,8 @@ public class WebSocketManager {
                     }
                 }
             };
+            
+            wsClient.addHeader("X-Jon-Client-Type", "local-network");
         }
         
         private void startReconnectTask() {
@@ -342,7 +404,7 @@ public class WebSocketManager {
                         connect();
                     }
                 },
-                0,
+                RECONNECT_INTERVAL_MS,
                 RECONNECT_INTERVAL_MS,
                 TimeUnit.MILLISECONDS
             );
@@ -356,7 +418,7 @@ public class WebSocketManager {
         }
         
         boolean isConnected() {
-            return wsClient != null && wsClient.isOpen();
+            return isConnected.get() && wsClient != null && wsClient.isOpen();
         }
     }
 }

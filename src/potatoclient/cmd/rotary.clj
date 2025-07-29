@@ -384,7 +384,8 @@
 (>defn set-rotary-mode
   "Set rotary mode"
   [mode]
-  [#(instance? JonSharedDataTypes$JonGuiDataRotaryMode %) => nil?]
+  [[:fn {:error/message "must be a JonGuiDataRotaryMode"}
+    #(instance? JonSharedDataTypes$JonGuiDataRotaryMode %)] => nil?]
   (let [root-msg (cmd-core/create-root-message)
         set-mode (-> (JonSharedCmdRotary$SetMode/newBuilder)
                      (.setMode mode))
