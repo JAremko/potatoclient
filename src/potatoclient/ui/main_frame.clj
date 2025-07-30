@@ -14,9 +14,12 @@
             [potatoclient.theme :as theme]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.utils :as ui-utils]
+            [potatoclient.transit.app-db :as app-db]
             [potatoclient.cmd.core :as cmd]
             [seesaw.action :as action]
-            [seesaw.core :as seesaw])
+            [seesaw.core :as seesaw]
+            [seesaw.bind :as bind])
   (:import (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
@@ -162,30 +165,24 @@
                              :tooltip "Day Camera (1920x1080)"
                              :label-key :stream-day}}
         {:keys [endpoint tooltip label-key]} (get stream-config stream-key)
-        is-connected (atom (some? (state/get-stream stream-key)))
         toggle-action (action/action
                         :name (i18n/tr label-key)
                         :icon (theme/key->icon stream-key)
-                        :selected? @is-connected
                         :tip tooltip
-                        :handler (fn [_]
-                                   (let [current-state @is-connected]
-                                     (if current-state
-                                       (ipc/stop-stream stream-key)
-                                       (ipc/start-stream stream-key endpoint)))))
+                        :handler (fn [e]
+                                   (if (seesaw/config (seesaw/to-widget e) :selected?)
+                                     (ipc/start-stream stream-key endpoint)
+                                     (ipc/stop-stream stream-key))))
         button (seesaw/toggle :action toggle-action)]
 
-    ;; Update button state when stream state changes
-    (add-watch state/app-state
-               (keyword (str "stream-button-" (name stream-key)))
-               (fn [_ _ old-state new-state]
-                 (let [old-stream (get old-state stream-key)
-                       new-stream (get new-state stream-key)
-                       connected? (some? new-stream)]
-                   (when (not= (some? old-stream) connected?)
-                     (reset! is-connected connected?)
-                     (seesaw/invoke-later
-                       (seesaw/config! button :selected? connected?))))))
+    ;; Bind button state to app-db using seesaw.bind
+    (bind/bind app-db/app-db
+               (bind/transform (fn [db]
+                                (let [process-key (case stream-key
+                                                   :heat :heat-video
+                                                   :day :day-video)]
+                                  (= :running (get-in db [:app-state :processes process-key :status])))))
+               (bind/property button :selected?))
     button))
 
 (>defn- create-menu-bar

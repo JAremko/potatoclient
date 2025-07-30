@@ -8,8 +8,11 @@
             [potatoclient.ipc :as ipc]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
+            [potatoclient.transit.app-db :as app-db]
+            [potatoclient.ui.utils :as ui-utils]
             [seesaw.core :as seesaw]
-            [seesaw.mig :as mig])
+            [seesaw.mig :as mig]
+            [seesaw.bind :as bind])
   (:import (javax.swing JPanel)))
 
 ;; UI styling constants
@@ -34,24 +37,30 @@
                                  :text ""
                                  :font status-font)]
 
-    ;; Update status when stream state changes
-    (add-watch state/app-state
-               (keyword (str "control-panel-" (name stream-key)))
-               (fn [_ _ _ new-state]
-                 (let [stream (get new-state stream-key)]
-                   (seesaw/invoke-later
-                     (if stream
-                       (do
-                         (seesaw/config! status-label
-                                         :text (i18n/tr :status-connected)
-                                         :foreground (java.awt.Color/GREEN))
-                         (seesaw/config! info-label
-                                         :text (str "PID: " (:pid stream))))
-                       (do
-                         (seesaw/config! status-label
-                                         :text (i18n/tr :status-disconnected)
-                                         :foreground (java.awt.Color/RED))
-                         (seesaw/config! info-label :text "")))))))
+    ;; Bind status labels to app-db
+    (bind/bind app-db/app-db
+               (bind/transform (fn [db]
+                                (let [process-key (case stream-key
+                                                   :heat :heat-video
+                                                   :day :day-video)
+                                      process (get-in db [:app-state :processes process-key])
+                                      running? (= :running (:status process))]
+                                  {:connected? running?
+                                   :pid (:pid process)})))
+               (bind/tee
+                (bind/bind (bind/transform :connected?)
+                          (bind/b-do [connected?]
+                            (seesaw/config! status-label
+                                          :text (if connected?
+                                                  (i18n/tr :status-connected)
+                                                  (i18n/tr :status-disconnected))
+                                          :foreground (if connected?
+                                                        (java.awt.Color/GREEN)
+                                                        (java.awt.Color/RED)))))
+                (bind/bind (bind/transform #(if (:connected? %)
+                                             (str "PID: " (:pid %))
+                                             ""))
+                          (bind/property info-label :text))))
 
     (mig/mig-panel
       :constraints ["wrap 2, insets 5"
@@ -69,23 +78,15 @@
        #(instance? JPanel %)]]
   (let [domain-label (seesaw/label :id :domain-info
                                    :text ""
-                                   :font label-font)
-        update-domain! (fn []
-                         (let [domain (state/get-domain)]
-                           (seesaw/config! domain-label
-                                           :text (if domain
-                                                   (str (i18n/tr :server-domain) ": " domain)
-                                                   (i18n/tr :no-server-configured)))))]
+                                   :font label-font)]
 
-    ;; Initial update
-    (update-domain!)
-
-    ;; Watch for domain changes
-    (add-watch state/app-state
-               :control-panel-domain
-               (fn [_ _ old-state new-state]
-                 (when (not= (:domain old-state) (:domain new-state))
-                   (seesaw/invoke-later (update-domain!)))))
+    ;; Bind domain label to connection URL
+    (bind/bind app-db/app-db
+               (bind/transform #(or (get-in % [:app-state :connection :url]) ""))
+               (bind/transform #(if (empty? %)
+                                 (i18n/tr :no-server-configured)
+                                 (str (i18n/tr :server-domain) ": " %)))
+               (bind/property domain-label :text))
 
     (seesaw/border-panel
       :border (i18n/tr :connection-info)
@@ -103,11 +104,6 @@
                                   :text (i18n/tr :stream-day)
                                   :icon (theme/key->icon :day))
 
-        ;; Helper to update toggle state
-        update-toggle! (fn [toggle stream-key]
-                         (let [connected? (some? (state/get-stream stream-key))]
-                           (seesaw/config! toggle :selected? connected?)))
-
         ;; Wire up actions
         setup-toggle! (fn [toggle stream-key endpoint]
                         (seesaw/listen toggle :action
@@ -115,20 +111,18 @@
                                          (if (seesaw/config toggle :selected?)
                                            (ipc/start-stream stream-key endpoint)
                                            (ipc/stop-stream stream-key))))
-                        ;; Watch for external state changes
-                        (add-watch state/app-state
-                                   (keyword (str "toggle-" (name stream-key)))
-                                   (fn [_ _ _ _]
-                                     (seesaw/invoke-later
-                                       (update-toggle! toggle stream-key)))))]
+                        ;; Bind toggle state to app-db
+                        (bind/bind app-db/app-db
+                                   (bind/transform (fn [db]
+                                                    (let [process-key (case stream-key
+                                                                       :heat :heat-video
+                                                                       :day :day-video)]
+                                                      (= :running (get-in db [:app-state :processes process-key :status])))))
+                                   (bind/property toggle :selected?)))]
 
     ;; Set up toggles
     (setup-toggle! heat-toggle :heat "/ws/ws_rec_video_heat")
     (setup-toggle! day-toggle :day "/ws/ws_rec_video_day")
-
-    ;; Initial state
-    (update-toggle! heat-toggle :heat)
-    (update-toggle! day-toggle :day)
 
     (seesaw/border-panel
       :border (i18n/tr :stream-controls)

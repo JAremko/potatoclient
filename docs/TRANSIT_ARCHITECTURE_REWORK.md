@@ -756,6 +756,22 @@ All protobuf handling is completely isolated in the Kotlin subprocesses:
   (update state :counter inc))
 ```
 
+## Implementation Approach
+
+**No backward compatibility or migration layers** - Clean rewrite approach:
+
+1. **Phase 1**: Implement Transit core and app-db ✅
+2. **Phase 2**: Rewrite state management to use app-db directly ✅  
+3. **Phase 3**: Create Kotlin subprocesses with full functionality
+4. **Phase 4**: Replace WebSocket code to use Transit subprocesses
+5. **Phase 5**: Remove all protobuf dependencies from Clojure
+
+### Key Decision: Clean Break
+- No migration layers or compatibility shims
+- Direct rewrite of state management
+- All old state atoms removed
+- Clear separation between old and new code
+
 ## Conclusion
 
 This architecture provides a robust, high-performance solution that completely isolates protobuf handling while adding intelligent features like debouncing, rate limiting, and comprehensive validation. The bidirectional communication pattern matches our proven video stream architecture, ensuring consistency across the application.

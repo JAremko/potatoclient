@@ -57,6 +57,17 @@ This document tracks the implementation progress of the Transit Architecture Rew
   - Emergency stop functionality
   - Subprocess restart capability
 
+### State Management Rewrite
+- [x] **Clean rewrite of state.clj**
+  - Direct use of app-db (no migration layers)
+  - All functions using Transit app-db accessors
+  - Removed old atom-based state subdirectory
+  - Stream process management integrated
+  - Configuration management integrated
+  - Device state access integrated
+  - UI state management integrated
+  - Process management for all subprocesses
+
 ### Testing
 - [x] **Comprehensive test suite** (`test/potatoclient/transit_test.clj`)
   - Transit encoding/decoding tests
@@ -104,14 +115,7 @@ This document tracks the implementation progress of the Transit Architecture Rew
   - Remove direct protobuf usage from Clojure code
   - Update `potatoclient.services.stream` to use Transit subprocesses
   - Migrate command sending to use Transit messages
-  - Update UI bindings to use app-db atom
-
-- [ ] **Update existing atoms to use app-db**
-  - Migrate `*heat-process` atom → app-db processes
-  - Migrate `*day-process` atom → app-db processes
-  - Migrate `*state` atom → app-db server-state
-  - Migrate `*config` atom → app-db app-state
-  - Update all atom watchers and bindings
+  - Update UI bindings to use new state.clj functions
 
 - [ ] **Build system updates**
   - Ensure Kotlin subprocesses compile with protobuf classes
