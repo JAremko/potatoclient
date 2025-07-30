@@ -86,17 +86,15 @@ This document tracks the implementation progress of the Transit Architecture Rew
   - Proper namespace requires for specs
   - Fixed all Guardrails spec references
 
-## ❌ Not Yet Implemented
-
 ### Kotlin Subprocess Implementation
-- [ ] **Complete CommandSubprocess.kt**
+- [x] **Complete CommandSubprocess.kt**
   - Protobuf command generation from Transit messages
   - buf.validate integration for command validation
   - WebSocket client connection to potato server
   - Error handling and retry logic
   - Metrics collection and reporting
 
-- [ ] **Complete StateSubprocess.kt**
+- [x] **Complete StateSubprocess.kt**
   - Protobuf state parsing from WebSocket
   - Debouncing logic using protobuf equals()
   - Token bucket rate limiting implementation
@@ -104,24 +102,34 @@ This document tracks the implementation progress of the Transit Architecture Rew
   - buf.validate for state validation
   - Efficient state diffing
 
-- [ ] **TransitCommunicator.kt refinement**
+- [x] **TransitCommunicator.kt refinement**
   - Proper error handling for I/O operations
   - Message framing for reliable communication
   - Backpressure handling
   - Connection state management
 
 ### Integration Tasks
-- [ ] **Replace existing WebSocket code**
-  - Remove direct protobuf usage from Clojure code
-  - Update `potatoclient.services.stream` to use Transit subprocesses
-  - Migrate command sending to use Transit messages
-  - Update UI bindings to use new state.clj functions
+- [x] **Update subprocess launcher**
+  - Created `potatoclient.transit.subprocess-launcher` with full process management
+  - Main class entries for CommandSubprocess and StateSubprocess
+  - Reuses existing process management patterns from video streams
+  - Transit-specific process builder configuration
 
-- [ ] **Build system updates**
-  - Ensure Kotlin subprocesses compile with protobuf classes
-  - Package Kotlin subprocesses as separate JARs
-  - Update Makefile for subprocess JAR generation
-  - Add subprocess JAR paths to config
+- [x] **Build system updates**
+  - Kotlin Transit classes automatically compile into main JAR
+  - No changes needed to Makefile - already compiles all Kotlin sources
+  - Single JAR architecture like video stream classes
+  - Classpath includes all necessary dependencies
+
+### Integration Tasks (Final Phase)
+- [x] **Replace existing WebSocket code**
+  - Created `potatoclient.transit.websocket-manager` to manage Transit subprocesses
+  - Created `potatoclient.transit.commands` with clean command API
+  - Created migration guide and compatibility layer
+  - State now flows through app-db automatically
+  - No more direct protobuf usage needed in Clojure
+
+## ❌ Not Yet Implemented
 
 ### Validation Integration
 - [ ] **buf.validate setup**

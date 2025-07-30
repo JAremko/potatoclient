@@ -797,5 +797,32 @@
      ;; Channel Types
      ::core-async-channel core-async-channel}))
 
+;; -----------------------------------------------------------------------------
+;; Transit Subprocess Schemas
+;; -----------------------------------------------------------------------------
+
+(def transit-subprocess
+  "Transit subprocess map for command and state subprocesses"
+  [:map
+   [:subprocess-type [:enum :command :state]]
+   [:process [:fn {:error/message "must be a Process instance"}
+              #(instance? java.lang.Process %)]]
+   [:input-stream [:fn {:error/message "must be an InputStream"}
+                   #(instance? java.io.InputStream %)]]
+   [:output-stream [:fn {:error/message "must be an OutputStream"}
+                    #(instance? java.io.OutputStream %)]]
+   [:error-stream [:fn {:error/message "must be an InputStream"}
+                   #(instance? java.io.InputStream %)]]
+   [:output-chan [:fn {:error/message "must be a core.async channel"}
+                  #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+   [:write-fn fn?]
+   [:state [:fn {:error/message "must be an atom"}
+            #(instance? clojure.lang.Atom %)]]])
+
+;; Update registry with transit schemas
+(def updated-registry
+  (assoc registry
+         :potatoclient.specs.transit/subprocess transit-subprocess))
+
 ;; Set as default registry for this namespace
-(mr/set-default-registry! registry)
+(mr/set-default-registry! updated-registry)

@@ -762,7 +762,7 @@ All protobuf handling is completely isolated in the Kotlin subprocesses:
 
 1. **Phase 1**: Implement Transit core and app-db ✅
 2. **Phase 2**: Rewrite state management to use app-db directly ✅  
-3. **Phase 3**: Create Kotlin subprocesses with full functionality
+3. **Phase 3**: Create Kotlin subprocesses with full functionality ✅
 4. **Phase 4**: Replace WebSocket code to use Transit subprocesses
 5. **Phase 5**: Remove all protobuf dependencies from Clojure
 
@@ -771,6 +771,25 @@ All protobuf handling is completely isolated in the Kotlin subprocesses:
 - Direct rewrite of state management
 - All old state atoms removed
 - Clear separation between old and new code
+
+### Packaging Strategy
+
+**Single JAR Architecture**: Following the proven pattern of the video stream subprocesses:
+- All Kotlin Transit classes compile into the main application JAR
+- Subprocesses launched using the same classpath with different main classes
+- No separate JAR files or complex deployment
+- Reuses existing `potatoclient.process` infrastructure
+- Simplifies distribution and AppImage packaging
+
+This matches how `VideoStreamManager` currently works:
+```clojure
+;; Existing video stream launch
+[java-exe "-cp" classpath "potatoclient.kotlin.VideoStreamManager" ...]
+
+;; New Transit subprocess launch
+[java-exe "-cp" classpath "potatoclient.kotlin.transit.CommandSubprocess" ...]
+[java-exe "-cp" classpath "potatoclient.kotlin.transit.StateSubprocess" ...]
+```
 
 ## Conclusion
 

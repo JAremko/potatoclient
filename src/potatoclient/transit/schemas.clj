@@ -265,6 +265,24 @@
   [any? => boolean?]
   (m/validate command-message-schema msg))
 
+;; Subprocess schema
+(def subprocess-schema
+  [:map
+   [:subprocess-type [:enum :command :state]]
+   [:process [:fn {:error/message "must be a Process instance"}
+              #(instance? java.lang.Process %)]]
+   [:input-stream [:fn {:error/message "must be an InputStream"}
+                   #(instance? java.io.InputStream %)]]
+   [:output-stream [:fn {:error/message "must be an OutputStream"}
+                    #(instance? java.io.OutputStream %)]]
+   [:error-stream [:fn {:error/message "must be an InputStream"}
+                   #(instance? java.io.InputStream %)]]
+   [:output-chan [:fn {:error/message "must be a core.async channel"}
+                  #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+   [:write-fn fn?]
+   [:state [:fn {:error/message "must be an atom"}
+            #(instance? clojure.lang.Atom %)]]])
+
 ;; Schema registry for dynamic lookups
 (def schema-registry
   {:app-db app-db-schema
@@ -282,7 +300,8 @@
    :ui ui-schema
    :processes processes-schema
    :validation validation-schema
-   :rate-limits rate-limits-schema})
+   :rate-limits rate-limits-schema
+   :subprocess subprocess-schema})
 
 (>defn get-schema
   "Get a schema by key"

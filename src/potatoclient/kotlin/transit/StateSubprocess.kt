@@ -2,6 +2,7 @@ package potatoclient.transit
 
 import cmd.*
 import ser.*
+import ser.JonSharedData.JonGUIState
 import build.buf.protovalidate.Validator
 import build.buf.protovalidate.ValidationResult
 import com.google.protobuf.Message
@@ -286,7 +287,7 @@ class ProtobufToTransitConverter {
         )
     }
     
-    private fun convertSystem(system: JonGUIState.System?): Map<String, Any> {
+    private fun convertSystem(system: JonSharedDataSystem.JonGuiDataSystem?): Map<String, Any> {
         return if (system != null) {
             mapOf(
                 "battery-level" to system.batteryLevel,
@@ -298,7 +299,7 @@ class ProtobufToTransitConverter {
         }
     }
     
-    private fun convertGps(gps: JonSharedDataGps?): Map<String, Any> {
+    private fun convertGps(gps: JonSharedDataGps.JonGuiDataGps?): Map<String, Any> {
         return if (gps != null) {
             mapOf(
                 "latitude" to gps.latitude,
@@ -314,7 +315,7 @@ class ProtobufToTransitConverter {
         }
     }
     
-    private fun convertCompass(compass: JonSharedDataCompass?): Map<String, Any> {
+    private fun convertCompass(compass: JonSharedDataCompass.JonGuiDataCompass?): Map<String, Any> {
         return if (compass != null) {
             mapOf(
                 "heading" to compass.heading,
@@ -328,7 +329,7 @@ class ProtobufToTransitConverter {
         }
     }
     
-    private fun convertLrf(lrf: JonSharedDataLrf?): Map<String, Any> {
+    private fun convertLrf(lrf: JonSharedDataLrf.JonGuiDataLrf?): Map<String, Any> {
         return if (lrf != null) {
             mapOf(
                 "distance" to lrf.distance,
@@ -340,7 +341,7 @@ class ProtobufToTransitConverter {
         }
     }
     
-    private fun convertRotary(rotary: JonSharedDataRotary?): Map<String, Any> {
+    private fun convertRotary(rotary: JonSharedDataRotary.JonGuiDataRotary?): Map<String, Any> {
         return if (rotary != null) {
             mapOf(
                 "azimuth" to rotary.azimuth,
