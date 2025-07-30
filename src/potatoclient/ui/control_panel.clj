@@ -40,27 +40,27 @@
     ;; Bind status labels to app-db
     (bind/bind app-db/app-db
                (bind/transform (fn [db]
-                                (let [process-key (case stream-key
-                                                   :heat :heat-video
-                                                   :day :day-video)
-                                      process (get-in db [:app-state :processes process-key])
-                                      running? (= :running (:status process))]
-                                  {:connected? running?
-                                   :pid (:pid process)})))
+                                 (let [process-key (case stream-key
+                                                     :heat :heat-video
+                                                     :day :day-video)
+                                       process (get-in db [:app-state :processes process-key])
+                                       running? (= :running (:status process))]
+                                   {:connected? running?
+                                    :pid (:pid process)})))
                (bind/tee
-                (bind/bind (bind/transform :connected?)
-                          (bind/b-do [connected?]
-                            (seesaw/config! status-label
-                                          :text (if connected?
-                                                  (i18n/tr :status-connected)
-                                                  (i18n/tr :status-disconnected))
-                                          :foreground (if connected?
-                                                        (java.awt.Color/GREEN)
-                                                        (java.awt.Color/RED)))))
-                (bind/bind (bind/transform #(if (:connected? %)
-                                             (str "PID: " (:pid %))
-                                             ""))
-                          (bind/property info-label :text))))
+                 (bind/bind (bind/transform :connected?)
+                            (bind/b-do [connected?]
+                                       (seesaw/config! status-label
+                                                       :text (if connected?
+                                                               (i18n/tr :status-connected)
+                                                               (i18n/tr :status-disconnected))
+                                                       :foreground (if connected?
+                                                                     (java.awt.Color/GREEN)
+                                                                     (java.awt.Color/RED)))))
+                 (bind/bind (bind/transform #(if (:connected? %)
+                                               (str "PID: " (:pid %))
+                                               ""))
+                            (bind/property info-label :text))))
 
     (mig/mig-panel
       :constraints ["wrap 2, insets 5"
@@ -84,8 +84,8 @@
     (bind/bind app-db/app-db
                (bind/transform #(or (get-in % [:app-state :connection :url]) ""))
                (bind/transform #(if (empty? %)
-                                 (i18n/tr :no-server-configured)
-                                 (str (i18n/tr :server-domain) ": " %)))
+                                  (i18n/tr :no-server-configured)
+                                  (str (i18n/tr :server-domain) ": " %)))
                (bind/property domain-label :text))
 
     (seesaw/border-panel
@@ -114,10 +114,10 @@
                         ;; Bind toggle state to app-db
                         (bind/bind app-db/app-db
                                    (bind/transform (fn [db]
-                                                    (let [process-key (case stream-key
-                                                                       :heat :heat-video
-                                                                       :day :day-video)]
-                                                      (= :running (get-in db [:app-state :processes process-key :status])))))
+                                                     (let [process-key (case stream-key
+                                                                         :heat :heat-video
+                                                                         :day :day-video)]
+                                                       (= :running (get-in db [:app-state :processes process-key :status])))))
                                    (bind/property toggle :selected?)))]
 
     ;; Set up toggles

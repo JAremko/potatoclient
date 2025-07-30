@@ -1,23 +1,24 @@
 package potatoclient.transit
 
-import com.cognitect.transit.*
-import java.io.*
-import java.util.*
-import java.util.concurrent.ConcurrentLinkedQueue
+import com.cognitect.transit.TransitFactory
+import com.cognitect.transit.Reader
+import com.cognitect.transit.Writer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
-import java.util.concurrent.atomic.AtomicBoolean
+import java.io.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 // Message framing constants
-private const val MAX_MESSAGE_SIZE = 10 * 1024 * 1024  // 10MB max message size
-private const val FRAME_HEADER_SIZE = 4  // 4 bytes for message length
+private const val MAX_MESSAGE_SIZE = 10 * 1024 * 1024 // 10MB max message size
+private const val FRAME_HEADER_SIZE = 4 // 4 bytes for message length
 
 // Backpressure configuration
-private const val HIGH_WATER_MARK = 1000  // Start applying backpressure
-private const val LOW_WATER_MARK = 100    // Resume normal operation
+private const val HIGH_WATER_MARK = 1000 // Start applying backpressure
+private const val LOW_WATER_MARK = 100 // Resume normal operation
 
 /**
  * Handles bidirectional Transit communication with the Clojure main process
@@ -25,40 +26,39 @@ private const val LOW_WATER_MARK = 100    // Resume normal operation
  */
 class TransitCommunicator(
     private val inputStream: InputStream = System.`in`,
-    private val outputStream: OutputStream = System.out
+    private val outputStream: OutputStream = System.out,
 ) {
-    
-    private val writer: Writer<Any>
-    private val reader: Reader
+    private lateinit var writer: Writer<Any>
+    private lateinit var reader: Reader
     private val messageQueue = Channel<Map<*, *>>(Channel.UNLIMITED)
     private val isRunning = AtomicBoolean(true)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    
+
     // Backpressure state
     private val backpressureActive = AtomicBoolean(false)
-    
+
     init {
         // Create framed streams for reliable message boundaries
         val framedOutput = FramedOutputStream(outputStream)
         val framedInput = FramedInputStream(inputStream)
-        
+
         // Create Transit writer with MessagePack format
-        writer = TransitFactory.writer(TransitFactory.Format.MSGPACK, framedOutput) as Writer<Any>
-        
+        writer = createWriter(framedOutput)
+
         // Create Transit reader with MessagePack format
         reader = TransitFactory.reader(TransitFactory.Format.MSGPACK, framedInput)
-        
+
         // Start reader coroutine
         scope.launch {
             startReading()
         }
-        
+
         // Start backpressure monitor
         scope.launch {
             monitorBackpressure()
         }
     }
-    
+
     /**
      * Send a message to the Clojure process with backpressure awareness
      */
@@ -67,7 +67,7 @@ class TransitCommunicator(
         if (backpressureActive.get()) {
             delay(10) // Small delay when under pressure
         }
-        
+
         withContext(Dispatchers.IO) {
             synchronized(writer) {
                 try {
@@ -80,25 +80,22 @@ class TransitCommunicator(
             }
         }
     }
-    
+
     /**
      * Read a message from the Clojure process
      */
-    suspend fun readMessage(): Map<*, *>? {
-        return if (isRunning.get()) {
+    suspend fun readMessage(): Map<*, *>? =
+        if (isRunning.get()) {
             messageQueue.receive()
         } else {
             null
         }
-    }
-    
+
     /**
      * Check if a message is available
      */
-    fun hasMessage(): Boolean {
-        return !messageQueue.tryReceive().isFailure
-    }
-    
+    fun hasMessage(): Boolean = !messageQueue.tryReceive().isFailure
+
     /**
      * Monitor queue size and apply backpressure
      */
@@ -106,7 +103,7 @@ class TransitCommunicator(
         while (isRunning.get()) {
             // Since Channel doesn't expose size, use a simple counter approach
             val queueSize = if (backpressureActive.get()) HIGH_WATER_MARK else 0
-            
+
             when {
                 queueSize > HIGH_WATER_MARK && !backpressureActive.get() -> {
                     backpressureActive.set(true)
@@ -117,11 +114,11 @@ class TransitCommunicator(
                     System.err.println("Backpressure deactivated - queue size normal")
                 }
             }
-            
+
             delay(100) // Check every 100ms
         }
     }
-    
+
     /**
      * Start reading messages from input stream
      */
@@ -129,7 +126,7 @@ class TransitCommunicator(
         withContext(Dispatchers.IO) {
             while (isRunning.get() && isActive) {
                 try {
-                    val message = reader.read()
+                    val message = reader.read<Any>()
                     if (message is Map<*, *>) {
                         // Non-blocking send to avoid blocking the reader
                         val sent = messageQueue.trySend(message).isSuccess
@@ -153,35 +150,34 @@ class TransitCommunicator(
             }
         }
     }
-    
+
     /**
      * Create a standard message envelope
      */
     fun createMessage(
         msgType: String,
-        payload: Map<String, Any>
-    ): Map<String, Any> {
-        return mapOf(
+        payload: Map<String, Any>,
+    ): Map<String, Any> =
+        mapOf(
             "msg-type" to msgType,
             "msg-id" to UUID.randomUUID().toString(),
             "timestamp" to System.currentTimeMillis(),
-            "payload" to payload
+            "payload" to payload,
         )
-    }
-    
+
     /**
      * Close the communicator
      */
     fun close() {
         isRunning.set(false)
         scope.cancel()
-        
+
         try {
             messageQueue.close()
         } catch (e: Exception) {
             // Ignore channel close errors
         }
-        
+
         try {
             inputStream.close()
             outputStream.close()
@@ -189,22 +185,41 @@ class TransitCommunicator(
             // Ignore stream close errors
         }
     }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        private fun createWriter(out: OutputStream): Writer<Any> {
+            // Use null map for custom handlers to help type inference
+            val writer = TransitFactory.writer<Any>(
+                TransitFactory.Format.MSGPACK, 
+                out,
+                null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?
+            )
+            return writer
+        }
+    }
 }
 
 /**
  * Output stream that frames messages with a length prefix
  */
-class FramedOutputStream(private val wrapped: OutputStream) : OutputStream() {
+class FramedOutputStream(
+    private val wrapped: OutputStream,
+) : OutputStream() {
     private val buffer = ByteArrayOutputStream()
-    
+
     override fun write(b: Int) {
         buffer.write(b)
     }
-    
-    override fun write(b: ByteArray, off: Int, len: Int) {
+
+    override fun write(
+        b: ByteArray,
+        off: Int,
+        len: Int,
+    ) {
         buffer.write(b, off, len)
     }
-    
+
     override fun flush() {
         val data = buffer.toByteArray()
         if (data.isNotEmpty()) {
@@ -212,17 +227,17 @@ class FramedOutputStream(private val wrapped: OutputStream) : OutputStream() {
             val lengthBuffer = ByteBuffer.allocate(4)
             lengthBuffer.order(ByteOrder.BIG_ENDIAN)
             lengthBuffer.putInt(data.size)
-            
+
             // Write frame
             wrapped.write(lengthBuffer.array())
             wrapped.write(data)
             wrapped.flush()
-            
+
             // Clear buffer for next message
             buffer.reset()
         }
     }
-    
+
     override fun close() {
         flush()
         wrapped.close()
@@ -232,25 +247,31 @@ class FramedOutputStream(private val wrapped: OutputStream) : OutputStream() {
 /**
  * Input stream that reads framed messages with length prefix
  */
-class FramedInputStream(private val wrapped: InputStream) : InputStream() {
+class FramedInputStream(
+    private val wrapped: InputStream,
+) : InputStream() {
     private var currentFrame: ByteArrayInputStream? = null
-    
+
     override fun read(): Int {
         ensureFrame()
         return currentFrame?.read() ?: -1
     }
-    
-    override fun read(b: ByteArray, off: Int, len: Int): Int {
+
+    override fun read(
+        b: ByteArray,
+        off: Int,
+        len: Int,
+    ): Int {
         ensureFrame()
         return currentFrame?.read(b, off, len) ?: -1
     }
-    
+
     private fun ensureFrame() {
         if (currentFrame == null || currentFrame!!.available() == 0) {
             readNextFrame()
         }
     }
-    
+
     private fun readNextFrame() {
         // Read length prefix
         val lengthBytes = ByteArray(4)
@@ -263,14 +284,14 @@ class FramedInputStream(private val wrapped: InputStream) : InputStream() {
             }
             bytesRead += n
         }
-        
+
         val length = ByteBuffer.wrap(lengthBytes).order(ByteOrder.BIG_ENDIAN).int
-        
+
         // Validate frame size
         if (length <= 0 || length > MAX_MESSAGE_SIZE) {
             throw IOException("Invalid frame size: $length")
         }
-        
+
         // Read frame data
         val frameData = ByteArray(length)
         bytesRead = 0
@@ -281,10 +302,10 @@ class FramedInputStream(private val wrapped: InputStream) : InputStream() {
             }
             bytesRead += n
         }
-        
+
         currentFrame = ByteArrayInputStream(frameData)
     }
-    
+
     override fun close() {
         wrapped.close()
     }

@@ -111,6 +111,9 @@
   [keyword? => (? map?)]
   (get-in @app-db [:server-state subsystem]))
 
+;; Alias for tests
+(def get-subsystem get-subsystem-state)
+
 ;; Connection state
 (>defn connected?
   "Check if connected to server"
@@ -229,6 +232,25 @@
   [locale]
   [::specs/locale => map?]
   (swap! app-db assoc-in [:app-state :ui :locale] locale))
+
+;; Domain and connection helpers for tests
+(>defn set-domain!
+  "Set the server domain"
+  [domain]
+  [string? => map?]
+  (swap! app-db assoc-in [:app-state :connection :url] domain))
+
+(>defn get-domain
+  "Get the server domain"
+  []
+  [=> (? string?)]
+  (get-in @app-db [:app-state :connection :url]))
+
+(>defn set-connected!
+  "Set connection status"
+  [connected?]
+  [boolean? => map?]
+  (swap! app-db assoc-in [:app-state :connection :connected?] connected?))
 
 ;; Read-only mode
 (>defn set-read-only-mode!

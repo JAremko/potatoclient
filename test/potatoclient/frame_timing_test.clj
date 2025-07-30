@@ -9,7 +9,7 @@
 (deftest test-cv-start-tracking-with-frame-time
   (testing "CV start-tracking requires frame time"
     ;; Initialize mock websocket for testing
-    (cmd-core/init-websocket! "test-domain" 
+    (cmd-core/init-websocket! "test-domain"
                               (fn [msg] (println "Error:" msg))
                               (fn [data] nil))
 

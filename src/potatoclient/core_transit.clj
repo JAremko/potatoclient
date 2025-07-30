@@ -81,24 +81,24 @@
   [=> nil?]
   ;; Monitor connection status
   (add-watch app-db/app-db ::connection-monitor
-    (fn [_ _ old-state new-state]
-      (let [old-conn (get-in old-state [:app-state :connection :connected?])
-            new-conn (get-in new-state [:app-state :connection :connected?])]
-        (when (not= old-conn new-conn)
-          (if new-conn
-            (logging/log-info "WebSocket connected to server")
-            (logging/log-warn "WebSocket disconnected from server"))))))
-  
+             (fn [_ _ old-state new-state]
+               (let [old-conn (get-in old-state [:app-state :connection :connected?])
+                     new-conn (get-in new-state [:app-state :connection :connected?])]
+                 (when (not= old-conn new-conn)
+                   (if new-conn
+                     (logging/log-info "WebSocket connected to server")
+                     (logging/log-warn "WebSocket disconnected from server"))))))
+
   ;; Monitor critical system state
   (add-watch app-db/app-db ::battery-monitor
-    (fn [_ _ old-state new-state]
-      (let [old-battery (get-in old-state [:server-state :system :battery-level])
-            new-battery (get-in new-state [:server-state :system :battery-level])]
-        (when (and new-battery 
-                   (not= old-battery new-battery)
-                   (< new-battery 20))
-          (logging/log-warn "Low battery warning" {:level new-battery})))))
-  
+             (fn [_ _ old-state new-state]
+               (let [old-battery (get-in old-state [:server-state :system :battery-level])
+                     new-battery (get-in new-state [:server-state :system :battery-level])]
+                 (when (and new-battery
+                            (not= old-battery new-battery)
+                            (< new-battery 20))
+                   (logging/log-warn "Low battery warning" {:level new-battery})))))
+
   nil)
 
 (>defn -main
@@ -120,16 +120,16 @@
                       domain (config/get-domain)]
                   (seesaw/show! frame)
                   (log-startup!)
-                  
+
                   ;; NEW: Initialize Transit WebSocket system
                   ;; No callbacks needed - state flows through app-db
                   (ws-manager/init! domain)
                   (setup-state-monitoring!)
-                  
+
                   ;; Set initial UI state from config
                   (app-db/set-theme! (or (config/get-theme) :sol-dark))
                   (app-db/set-locale! (or (config/get-locale) :english))
-                  
+
                   (logging/log-info (str "Transit WebSocket system initialized for " domain)))
 
                 :cancel
@@ -152,14 +152,14 @@
   (commands/ping)
   (commands/set-recording true)
   (commands/rotary-goto {:azimuth 45.0 :elevation 30.0})
-  
+
   ;; Access state from app-db
   (app-db/get-subsystem :gps)
   (app-db/get-server-state)
-  
+
   ;; Monitor specific subsystems
   (add-watch app-db/app-db ::gps-watcher
-    (fn [_ _ old new]
-      (when (not= (get-in old [:server-state :gps])
-                  (get-in new [:server-state :gps]))
-        (println "GPS updated:" (get-in new [:server-state :gps]))))))
+             (fn [_ _ old new]
+               (when (not= (get-in old [:server-state :gps])
+                           (get-in new [:server-state :gps]))
+                 (println "GPS updated:" (get-in new [:server-state :gps]))))))

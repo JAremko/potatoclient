@@ -10,24 +10,24 @@
   (testing "WebSocket manager can be created and stopped"
     (let [errors (atom [])
           states (atom [])
-          manager (WebSocketManager. 
+          manager (WebSocketManager.
                     "example.com"
                     (reify java.util.function.Consumer
                       (accept [_ msg] (swap! errors conj msg)))
                     (reify java.util.function.Consumer
                       (accept [_ data] (swap! states conj data))))]
-      
+
       ;; Start the manager
       (.start manager)
       (is (instance? WebSocketManager manager))
-      
+
       ;; Check initial state
       (is (false? (.isConnected manager)))
       (is (= 0 (.getCommandQueueSize manager)))
-      
+
       ;; Stop the manager
       (.stop manager)
-      
+
       ;; Manager should handle stop gracefully
       (is (false? (.isConnected manager))))))
 
@@ -35,22 +35,22 @@
   (testing "cmd/core WebSocket integration"
     (let [error-count (atom 0)
           state-count (atom 0)]
-      
+
       ;; Initialize WebSocket through cmd/core
       (cmd/init-websocket!
         "localhost:8080"
         (fn [error] (swap! error-count inc))
         (fn [data] (swap! state-count inc)))
-      
+
       ;; Send a ping command
       (cmd/send-cmd-ping)
-      
+
       ;; Give it a moment
       (Thread/sleep 100)
-      
+
       ;; Clean up
       (cmd/stop-websocket!)
-      
+
       ;; Basic check - should not crash
       (is (>= @error-count 0))
       (is (>= @state-count 0)))))
@@ -62,7 +62,7 @@
       "test.local"
       (fn [error] (logging/log-error error))
       (fn [data] (dispatch/handle-binary-state data)))
-    
+
     ;; Send various commands
     ;; Note: With Guardrails enabled in test mode, these return true (validation result)
     ;; In production they return nil as expected
@@ -73,6 +73,6 @@
       (is (or (nil? ping-result) (true? ping-result)) "ping command should succeed")
       (is (or (nil? frozen-result) (true? frozen-result)) "frozen command should succeed")
       (is (or (nil? noop-result) (true? noop-result)) "noop command should succeed"))
-    
+
     ;; Clean up
     (cmd/stop-websocket!)))

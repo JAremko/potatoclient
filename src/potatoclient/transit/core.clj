@@ -11,21 +11,21 @@
 ;; Custom write handlers for domain types
 (def write-handlers
   {Keyword (transit/write-handler
-            "keyword"
-            (fn [^Keyword k] (subs (str k) 1))  ; Remove leading colon
-            (fn [^Keyword k] (subs (str k) 1)))})
+             "keyword"
+             (fn [^Keyword k] (subs (str k) 1))  ; Remove leading colon
+             (fn [^Keyword k] (subs (str k) 1)))})
 
 ;; Custom read handlers for domain types  
 (def read-handlers
   {"keyword" (transit/read-handler
-              (fn [s] (keyword s)))})
+               (fn [s] (keyword s)))})
 
 ;; Writer creation with Guardrails
 (>defn make-writer
   "Create a Transit MessagePack writer with custom handlers"
   [out]
   [[:fn {:error/message "must be an OutputStream"}
-    #(instance? OutputStream %)] 
+    #(instance? OutputStream %)]
    => [:fn {:error/message "must be a Transit Writer"}
        #(instance? Writer %)]]
   (transit/writer out :msgpack {:handlers write-handlers}))
@@ -35,7 +35,7 @@
   "Create a Transit MessagePack reader with custom handlers"
   [in]
   [[:fn {:error/message "must be an InputStream"}
-    #(instance? InputStream %)] 
+    #(instance? InputStream %)]
    => [:fn {:error/message "must be a Transit Reader"}
        #(instance? Reader %)]]
   (transit/reader in :msgpack {:handlers read-handlers}))
@@ -45,7 +45,7 @@
   "Write a message to Transit writer and flush the stream"
   [writer msg out-stream]
   [[:fn {:error/message "must be a Transit Writer"}
-    #(instance? Writer %)] 
+    #(instance? Writer %)]
    any?
    [:fn {:error/message "must be an OutputStream"}
     #(instance? OutputStream %)]
@@ -59,12 +59,12 @@
   "Read a single message from Transit reader"
   [reader]
   [[:fn {:error/message "must be a Transit Reader"}
-    #(instance? Reader %)] 
+    #(instance? Reader %)]
    => any?]
   (transit/read reader))
 
 ;; Message envelope validation
-(>defn- validate-message-envelope
+(>defn validate-message-envelope
   "Validate message has required envelope fields"
   [msg]
   [map? => boolean?]
@@ -143,7 +143,7 @@
 (>defn- log-transit-error
   "Log Transit communication errors"
   [context error data]
-  [string? 
+  [string?
    [:fn {:error/message "must be a Throwable"}
     #(instance? Throwable %)]
    any? => nil?]

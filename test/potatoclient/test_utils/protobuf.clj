@@ -1,19 +1,19 @@
 (ns potatoclient.test-utils.protobuf
   "Utilities for creating protobuf test messages"
-  (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Frozen 
+  (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Frozen
             JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Stop
-            JonSharedCmdRotary$AngleTo JonSharedCmdRotary$Axis 
+            JonSharedCmdRotary$AngleTo JonSharedCmdRotary$Axis
             JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Elevation]
            [cmd.DayCamera JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$ZoomTo
             JonSharedCmdDayCamera$Focus JonSharedCmdDayCamera$Iris]
-           [ser JonSharedData$JonGUIState 
+           [ser JonSharedData$JonGUIState
             JonSharedDataSystem$JonGuiDataSystem
-            JonSharedDataTime$JonGuiDataTime 
+            JonSharedDataTime$JonGuiDataTime
             JonSharedDataRotary$JonGuiDataRotary
-            JonSharedDataDayCamera$JonGuiDataDayCamera 
+            JonSharedDataDayCamera$JonGuiDataDayCamera
             JonSharedDataHeatCamera$JonGuiDataHeatCamera]
-           [ser JonSharedDataTypes$JonGuiDataRotaryMode 
+           [ser JonSharedDataTypes$JonGuiDataRotaryMode
             JonSharedDataTypes$JonGuiDataRotaryDirection
             JonSharedDataTypes$JonGuiDataVideoChannel]))
 
@@ -172,7 +172,7 @@
   [command expected-type & {:as field-checks}]
   (assert (command-has-type? command expected-type)
           (str "Expected command type " expected-type))
-  
+
   (when (and (= expected-type :rotary) (:angle-to field-checks))
     (let [{:keys [azimuth elevation]} (:angle-to field-checks)
           angle-to (.getAngleTo (.getRotary command))]

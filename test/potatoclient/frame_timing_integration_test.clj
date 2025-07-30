@@ -8,7 +8,7 @@
 (deftest test-double-click-triggers-cv-tracking
   (testing "Double-click with frame timing triggers CV tracking"
     ;; Initialize mock websocket for testing
-    (cmd-core/init-websocket! "test-domain" 
+    (cmd-core/init-websocket! "test-domain"
                               (fn [msg] (println "Error:" msg))
                               (fn [data] nil))
 

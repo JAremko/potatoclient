@@ -847,7 +847,7 @@
 
       ;; Wait for commands to be captured
       (Thread/sleep 200)
-      
+
       ;; Check captured commands count
       (let [captured-count (count @test-commands)]
         (is (= @total-commands captured-count)

@@ -6,7 +6,8 @@
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
     [potatoclient.specs]
-    [potatoclient.state :as state])
+    [potatoclient.state :as state]
+    [potatoclient.transit.app-db :as app-db])
   (:import (ser JonSharedDataTypes$JonGuiDataVideoChannel)))
 
 (def mouse-button-names
@@ -133,7 +134,7 @@
         (process/send-command stream {:action "shutdown"})
         (Thread/sleep 100)
         (process/stop-stream stream)
-        (state/clear-stream! stream-key)
+        (app-db/set-process-state! stream-key nil :stopped)
         (catch Exception e
           (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))}))))
     nil))

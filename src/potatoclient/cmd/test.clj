@@ -605,7 +605,7 @@
   (println "=========================================")
 
   ;; Initialize the command system
-  (cmd-core/init-websocket! "test-domain" 
+  (cmd-core/init-websocket! "test-domain"
                             (fn [msg] (println "Error:" msg))
                             (fn [data] nil))
 

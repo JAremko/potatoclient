@@ -160,10 +160,10 @@
                   :camera-heat (assoc state :camera-heat (create-test-camera-heat-state))
                   :lrf (assoc state :lrf (create-test-lrf-state))
                   state)
-                
+
                 (map? spec)
                 (merge state spec)
-                
+
                 :else state))
             base-state
             subsystem-specs)))
@@ -209,10 +209,10 @@
 (defn subsystems-present
   "Return set of subsystem keys present in state"
   [state]
-  (set (filter #(contains? state %) 
-               [:system :lrf :time :gps :compass :rotary 
-                :camera-day :camera-heat :compass-calibration 
-                :rec-osd :day-cam-glass-heater :actual-space-time 
+  (set (filter #(contains? state %)
+               [:system :lrf :time :gps :compass :rotary
+                :camera-day :camera-heat :compass-calibration
+                :rec-osd :day-cam-glass-heater :actual-space-time
                 :meteo-internal])))
 
 ;; ============================================================================
@@ -263,7 +263,7 @@
   "Assert that a state is valid, throw with details if not"
   [state]
   (when-not (valid-state? state)
-    (throw (ex-info "Invalid state" 
+    (throw (ex-info "Invalid state"
                     {:state state
                      :errors (validation-errors state)}))))
 
@@ -271,7 +271,7 @@
   "Assert that a subsystem is present in state"
   [state subsystem-key]
   (when-not (subsystem-present? state subsystem-key)
-    (throw (ex-info "Subsystem not present" 
+    (throw (ex-info "Subsystem not present"
                     {:subsystem subsystem-key
                      :present-subsystems (subsystems-present state)}))))
 
@@ -279,6 +279,6 @@
   "Assert that a subsystem is valid"
   [subsystem-key data]
   (when-not (valid-subsystem? subsystem-key data)
-    (throw (ex-info "Invalid subsystem data" 
+    (throw (ex-info "Invalid subsystem data"
                     {:subsystem subsystem-key
                      :data data}))))

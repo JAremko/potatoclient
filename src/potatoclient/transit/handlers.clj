@@ -41,12 +41,12 @@
       (handler msg)
       (catch Exception e
         (log/log-error {:msg "Error in message handler"
-                     :msg-type (:msg-type msg)
-                     :error e})
+                        :msg-type (:msg-type msg)
+                        :error e})
         nil))
     (do
       (log/log-warn {:msg "No handler for message type"
-                  :msg-type (:msg-type msg)})
+                     :msg-type (:msg-type msg)})
       nil)))
 
 ;; State update handler
@@ -57,7 +57,7 @@
   (when (schemas/validate-state-message msg)
     ;; Update server state
     (app-db/update-server-state! payload)
-    
+
     ;; Update rate metrics (tracking rate from Kotlin subprocess)
     (let [last-update (app-db/get-rate-limits)
           current-time timestamp
@@ -66,7 +66,7 @@
                  (/ 1000.0 time-diff)  ; Convert to Hz
                  0.0)]
       (app-db/update-rate-metrics! rate false))
-    
+
     (log/log-debug {:msg "State updated"
                     :subsystems (keys payload)
                     :timestamp timestamp}))
@@ -81,9 +81,9 @@
     (let [{:keys [source subsystem errors]} payload]
       (app-db/add-validation-error! source subsystem errors)
       (log/log-warn {:msg "Validation error received"
-                  :source source
-                  :subsystem subsystem
-                  :error-count (count errors)})))
+                     :source source
+                     :subsystem subsystem
+                     :error-count (count errors)})))
   nil)
 
 ;; Response handler
@@ -110,7 +110,7 @@
 (>defn start-message-processor!
   "Start async message processor for a subprocess"
   [subprocess]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    => nil?]
   (go-loop []
@@ -123,9 +123,9 @@
 (>defn send-command!
   "Send a command to the command subprocess"
   [cmd-subprocess command-data & {:keys [wait-response? timeout-ms]
-                                   :or {wait-response? false
-                                        timeout-ms 5000}}]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+                                  :or {wait-response? false
+                                       timeout-ms 5000}}]
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    map?
    [:* any?]
@@ -145,7 +145,7 @@
 (>defn set-state-rate-limit!
   "Set the rate limit for state updates"
   [state-subprocess max-hz]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    [:int {:min 1 :max 120}]
    => boolean?]
@@ -157,7 +157,7 @@
 (>defn enable-subprocess-validation!
   "Enable/disable validation in subprocess"
   [subprocess enabled?]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    boolean?
    => boolean?]
@@ -170,7 +170,7 @@
 (>defn get-subprocess-logs!
   "Get recent logs from a subprocess"
   [subprocess lines]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    [:int {:min 1 :max 10000}]
    => any?]
@@ -226,14 +226,14 @@
 (>defn- handle-subprocess-error
   "Handle subprocess communication errors"
   [subprocess error]
-  [[:fn {:error/message "must be a TransitSubprocess"} 
+  [[:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    [:fn {:error/message "must be a Throwable"}
     #(instance? Throwable %)]
    => nil?]
   (log/log-error {:msg "Subprocess error"
-               :subprocess (:name subprocess)
-               :error error})
+                  :subprocess (:name subprocess)
+                  :error error})
   ;; Update process state to error
   (app-db/set-process-state! (keyword (:name subprocess)) nil :error)
   nil)
@@ -246,12 +246,12 @@
   (try
     (let [new-subprocess (subprocess/launch-transit-subprocess subprocess-type ws-url)]
       (start-message-processor! new-subprocess)
-      (app-db/set-process-state! subprocess-type 
+      (app-db/set-process-state! subprocess-type
                                  (.pid ^Process (:process new-subprocess))
                                  :running)
       true)
     (catch Exception e
       (log/log-error {:msg "Failed to reconnect subprocess"
-                   :type subprocess-type
-                   :error e})
+                      :type subprocess-type
+                      :error e})
       false)))

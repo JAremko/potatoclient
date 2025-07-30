@@ -10,14 +10,14 @@
       (fn [{:keys [commands-ch errors]}]
         ;; Send a simple command
         (cmd/send-cmd-ping)
-        
+
         ;; Check we received it
         (let [commands (test-utils/get-commands commands-ch 100)]
           (is (= 1 (count commands)) "Should receive ping command")
           (when (= 1 (count commands))
             (let [cmd (first commands)]
               (is (true? (.hasPing cmd)) "Should be a ping command"))))
-        
+
         ;; Verify no errors
         (is (empty? @errors) "Should have no errors")))))
 
@@ -27,15 +27,15 @@
       (try
         ;; Verify starts disconnected
         (is (false? @(:connected? mock-ctx)) "Should start disconnected")
-        
+
         ;; Start server
         (.start (:manager mock-ctx))
         (is (true? @(:connected? mock-ctx)) "Should be connected after start")
-        
+
         ;; Stop server
         (.stop (:manager mock-ctx))
         (is (false? @(:connected? mock-ctx)) "Should be disconnected after stop")
-        
+
         (finally
           (when (.isConnected (:manager mock-ctx))
             (.stop (:manager mock-ctx))))))))

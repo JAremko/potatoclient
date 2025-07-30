@@ -14,10 +14,10 @@
                      :payload {:hello "world"}}
           out (ByteArrayOutputStream.)
           writer (transit-core/make-writer out)]
-      
+
       ;; Write message
       (transit-core/write-message! writer test-data out)
-      
+
       ;; Read it back
       (let [in (ByteArrayInputStream. (.toByteArray out))
             reader (transit-core/make-reader in)
@@ -35,13 +35,13 @@
 (deftest test-keyword-preservation
   (testing "Keywords are preserved through Transit"
     (let [data {:type :test
-                 :nested {:key :value
-                          :another :keyword}}
+                :nested {:key :value
+                         :another :keyword}}
           out (ByteArrayOutputStream.)
           writer (transit-core/make-writer out)]
-      
+
       (transit-core/write-message! writer data out)
-      
+
       (let [in (ByteArrayInputStream. (.toByteArray out))
             reader (transit-core/make-reader in)
             result (transit-core/read-message reader)]

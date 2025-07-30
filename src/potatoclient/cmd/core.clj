@@ -34,8 +34,8 @@
   [string? ifn? ifn? => nil?]
   (when-let [old-manager @websocket-manager]
     (.stop old-manager))
-  (let [manager (potatoclient.java.websocket.WebSocketManager. 
-                  domain 
+  (let [manager (potatoclient.java.websocket.WebSocketManager.
+                  domain
                   (reify java.util.function.Consumer
                     (accept [_ msg] (error-callback msg)))
                   (reify java.util.function.Consumer
@@ -157,7 +157,6 @@
         (.setRotary root-msg rotary-root)
         (send-cmd-message root-msg))))
   nil)
-
 
 ;; ============================================================================
 ;; Initialization

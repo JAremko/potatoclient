@@ -22,7 +22,7 @@
   (try
     ;; Initialize handlers
     (handlers/init-handlers!)
-    
+
     ;; Launch subprocesses
     (let [launch-results (control/launch-all-subprocesses! ws-url)]
       (if (and (:state-proc launch-results)
@@ -31,23 +31,23 @@
           ;; Start message processors
           (when-let [state-proc (control/get-subprocess :state-proc)]
             (handlers/start-message-processor! state-proc))
-          
+
           ;; Store system state
           (reset! system {:ws-url ws-url
                           :initialized true
                           :start-time (System/currentTimeMillis)})
-          
+
           (log/log-info {:msg "Transit system initialized"
-                      :url ws-url
-                      :processes launch-results})
+                         :url ws-url
+                         :processes launch-results})
           true)
         (do
           (log/log-error {:msg "Failed to launch subprocesses"
-                       :results launch-results})
+                          :results launch-results})
           false)))
     (catch Exception e
       (log/log-error {:msg "Failed to initialize Transit system"
-                   :error e})
+                      :error e})
       false)))
 
 ;; Shutdown the system
@@ -56,16 +56,16 @@
   []
   [=> nil?]
   (log/log-info {:msg "Shutting down Transit system"})
-  
+
   ;; Shutdown all subprocesses
   (control/shutdown-all-subprocesses!)
-  
+
   ;; Clear system state
   (reset! system nil)
-  
+
   ;; Reset app-db
   (app-db/reset-to-initial-state!)
-  
+
   nil)
 
 ;; Send a command
@@ -80,7 +80,7 @@
       true)
     (do
       (log/log-warn {:msg "Command subprocess not available"
-                  :action action})
+                     :action action})
       false)))
 
 ;; System health check

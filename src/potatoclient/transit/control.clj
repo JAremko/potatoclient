@@ -15,8 +15,8 @@
 (>defn register-subprocess!
   "Register a subprocess for management"
   [key subprocess]
-  [keyword? 
-   [:fn {:error/message "must be a TransitSubprocess"} 
+  [keyword?
+   [:fn {:error/message "must be a TransitSubprocess"}
     #(instance? potatoclient.transit.subprocess.TransitSubprocess %)]
    => nil?]
   (swap! subprocesses assoc key subprocess)
@@ -60,13 +60,13 @@
     (let [msg-id (str (java.util.UUID/randomUUID))
           msg (transit/create-message :control (assoc data :action action))
           response-chan (chan 1)]
-      
+
       ;; Register response handler
       (swap! subprocess/pending-responses assoc msg-id response-chan)
-      
+
       ;; Send message
       (subprocess/send-to-subprocess! subprocess msg)
-      
+
       ;; Wait for response with timeout
       (let [result (async/alt!!
                      response-chan ([v] v)
@@ -88,8 +88,8 @@
 (>defn get-subprocess-logs
   "Get recent logs from subprocess"
   [process-key lines]
-  [[:enum :state-proc :cmd-proc :heat-video :day-video] 
-   [:int {:min 1 :max 10000}] 
+  [[:enum :state-proc :cmd-proc :heat-video :day-video]
+   [:int {:min 1 :max 10000}]
    => any?]
   (send-query-message! process-key :get-logs {:lines lines}))
 
@@ -141,18 +141,18 @@
     (when-let [old-subprocess (get-subprocess process-key)]
       (subprocess/shutdown-transit-subprocess! old-subprocess)
       (unregister-subprocess! process-key))
-    
+
     ;; Launch new subprocess
     (let [new-subprocess (subprocess/launch-transit-subprocess process-key ws-url)]
       (register-subprocess! process-key new-subprocess)
-      (app-db/set-process-state! process-key 
+      (app-db/set-process-state! process-key
                                  (.pid ^Process (:process new-subprocess))
                                  :running)
       true)
     (catch Exception e
       (log/log-error {:msg "Failed to restart subprocess"
-                   :process process-key
-                   :error e})
+                      :process process-key
+                      :error e})
       false)))
 
 ;; Graceful shutdown all
@@ -166,8 +166,8 @@
       (app-db/set-process-state! key nil :stopped)
       (catch Exception e
         (log/log-error {:msg "Error shutting down subprocess"
-                     :process key
-                     :error e}))))
+                        :process key
+                        :error e}))))
   (reset! subprocesses {})
   nil)
 
@@ -207,8 +207,8 @@
       true
       (catch Exception e
         (log/log-error {:msg "Failed to emergency stop subprocess"
-                     :process process-key
-                     :error e})
+                        :process process-key
+                        :error e})
         false))
     false))
 
@@ -220,7 +220,7 @@
   (let [state-result (try
                        (let [subprocess (subprocess/launch-transit-subprocess :state-proc ws-url)]
                          (register-subprocess! :state-proc subprocess)
-                         (app-db/set-process-state! :state-proc 
+                         (app-db/set-process-state! :state-proc
                                                     (.pid ^Process (:process subprocess))
                                                     :running)
                          true)
@@ -230,7 +230,7 @@
         cmd-result (try
                      (let [subprocess (subprocess/launch-transit-subprocess :cmd-proc ws-url)]
                        (register-subprocess! :cmd-proc subprocess)
-                       (app-db/set-process-state! :cmd-proc 
+                       (app-db/set-process-state! :cmd-proc
                                                   (.pid ^Process (:process subprocess))
                                                   :running)
                        true)

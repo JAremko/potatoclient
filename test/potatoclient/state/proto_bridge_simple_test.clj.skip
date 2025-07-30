@@ -15,7 +15,7 @@
           edn-state (bridge/proto-msg->edn-state proto-msg)]
       (is (map? edn-state))
       (is (= 1 (:protocol-version edn-state)))))
-  
+
   (testing "Binary to EDN for empty state"
     ;; Create empty state binary
     (let [builder (JonSharedData$JonGUIState/newBuilder)
@@ -25,11 +25,11 @@
       (is (zero? (count binary)))
       ;; So binary->edn-state should return nil for empty binary
       (is (nil? (bridge/binary->edn-state binary)))))
-  
+
   (testing "Empty binary returns nil"
     (is (nil? (bridge/binary->edn-state (byte-array 0))))
     (is (nil? (bridge/binary->edn-state (byte-array [])))))
-  
+
   (testing "Invalid binary returns nil"
     (is (nil? (bridge/binary->edn-state (byte-array [1 2 3]))))))
 
@@ -44,7 +44,7 @@
           system-data (bridge/extract-subsystem-edn proto-msg :system)]
       (is (map? system-data))
       (is (= 45.0 (:cpu-temperature system-data)))))
-  
+
   (testing "Extract non-existent subsystem returns nil"
     (let [builder (JonSharedData$JonGUIState/newBuilder)
           proto-msg (.build builder)]
@@ -76,6 +76,6 @@
           parsed (bridge/parse-gui-state binary)]
       (is (instance? JonSharedData$JonGUIState parsed))
       (is (= 42 (.getProtocolVersion parsed)))))
-  
+
   (testing "Parse invalid binary returns nil"
     (is (nil? (bridge/parse-gui-state (byte-array [1 2 3]))))))

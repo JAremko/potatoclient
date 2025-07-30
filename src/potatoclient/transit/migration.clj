@@ -12,7 +12,7 @@
   "Get video stream state (adapter for old code)"
   [stream-type]
   [[:enum :heat :day] => (? map?)]
-  (get-in @app-db/app-db [:app-state :processes 
+  (get-in @app-db/app-db [:app-state :processes
                           (keyword (str (name stream-type) "-video"))]))
 
 ;; Old: (get @app-config :theme)
@@ -58,7 +58,7 @@
             (transit/rotary-goto! az el))
     :stop (transit/send-command! :rotary-stop {})
     :velocity (let [[az-vel el-vel] args]
-                (transit/send-command! :rotary-set-velocity 
+                (transit/send-command! :rotary-set-velocity
                                        {:azimuth-velocity az-vel
                                         :elevation-velocity el-vel}))
     false))
@@ -78,10 +78,10 @@
   [old-watchers]
   [map? => nil?]
   (doseq [[key watch-fn] old-watchers]
-    (app-db/add-watch-handler key 
+    (app-db/add-watch-handler key
                               (fn [k ref old-state new-state]
                                 ;; Adapt watcher to new structure
-                                (watch-fn k ref 
+                                (watch-fn k ref
                                           (:server-state old-state)
                                           (:server-state new-state)))))
   nil)

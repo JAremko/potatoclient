@@ -17,8 +17,8 @@
   [error-callback state-callback]
   (let [commands-ch (async/chan 100)
         connected? (atom false)
-        manager (proxy [potatoclient.java.websocket.WebSocketManager] 
-                  ["mock-domain" nil nil]
+        manager (proxy [potatoclient.java.websocket.WebSocketManager]
+                       ["mock-domain" nil nil]
                   (start []
                     (reset! connected? true))
                   (stop []
@@ -31,8 +31,8 @@
                   (isConnected []
                     @connected?))
         send-state-fn (fn [^JonSharedData$JonGUIState state]
-                       (when (and @connected? state-callback)
-                         (state-callback (.toByteArray state))))]
+                        (when (and @connected? state-callback)
+                          (state-callback (.toByteArray state))))]
     {:manager manager
      :commands-ch commands-ch
      :send-state-fn send-state-fn
@@ -70,7 +70,7 @@
   [any? pos-int? => vector?]
   (let [commands (atom [])]
     (loop []
-      (let [[cmd ch] (async/alts!! [commands-ch 
+      (let [[cmd ch] (async/alts!! [commands-ch
                                     (async/timeout timeout-ms)])]
         (when (and cmd (= ch commands-ch))
           (swap! commands conj cmd)
@@ -86,7 +86,7 @@
     (loop []
       (let [remaining (- deadline (System/currentTimeMillis))]
         (if (pos? remaining)
-          (let [[cmd ch] (async/alts!! [commands-ch 
+          (let [[cmd ch] (async/alts!! [commands-ch
                                         (async/timeout remaining)])]
             (cond
               (nil? cmd) nil  ; Channel closed or timeout

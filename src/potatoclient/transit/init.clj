@@ -19,10 +19,10 @@
   [domain]
   [string? => nil?]
   (logging/log-info "Initializing Transit communication system" {:domain domain})
-  
+
   ;; Initialize WebSocket connections through Transit subprocesses
   (ws-manager/init! domain)
-  
+
   ;; Set up any initial state watchers if needed
   (add-watch app-db/app-db ::connection-monitor
              (fn [_ _ old-state new-state]
@@ -32,7 +32,7 @@
                    (if new-conn
                      (logging/log-info "WebSocket connected")
                      (logging/log-warn "WebSocket disconnected"))))))
-  
+
   ;; Log successful initialization
   (logging/log-info "Transit system initialized successfully")
   nil)
@@ -44,13 +44,13 @@
   []
   [=> nil?]
   (logging/log-info "Shutting down Transit communication system")
-  
+
   ;; Remove watchers
   (remove-watch app-db/app-db ::connection-monitor)
-  
+
   ;; Stop WebSocket connections
   (ws-manager/stop!)
-  
+
   (logging/log-info "Transit system shutdown complete")
   nil)
 
@@ -60,18 +60,18 @@
 
 (comment
   ;; This shows how to update the -main function in core.clj:
-  
+
   ;; OLD CODE:
-  #_(cmd/init-websocket! 
+  #_(cmd/init-websocket!
       domain
-      (fn [error-msg] 
+      (fn [error-msg]
         (logging/log-error (str "WebSocket error: " error-msg)))
       (fn [binary-data]
         (dispatch/handle-binary-state binary-data)))
-  
+
   ;; NEW CODE:
   (initialize-transit-system! domain)
-  
+
   ;; The error handling and state updates are now automatic through app-db
   ;; No need for explicit callbacks
   )
@@ -82,7 +82,7 @@
 
 (comment
   ;; This shows how to update the shutdown hook:
-  
+
   ;; OLD CODE:
   #_(>defn- setup-shutdown-hook!
       []
@@ -97,7 +97,7 @@
               (logging/shutdown!)
               (catch Exception _
                 nil))))))
-  
+
   ;; NEW CODE:
   (>defn- setup-shutdown-hook!
     []
@@ -111,5 +111,4 @@
             (process/cleanup-all-processes)
             (logging/shutdown!)
             (catch Exception _
-              nil))))))
-  )
+              nil)))))))

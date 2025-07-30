@@ -36,7 +36,7 @@
         (when (not= 0 (:exit setup-result))
           (throw (ex-info "Failed to set up Kotlin" {:output (:out setup-result) :error (:err setup-result)})))))
     
-    ;; Get all Kotlin source files
+    ;; Get all Kotlin source files (including transit subdir)
     (let [kotlin-files (filter #(.endsWith (.getName %) ".kt")
                                (file-seq (io/file "src/potatoclient/kotlin")))
           kotlin-paths (map #(.getPath %) kotlin-files)]

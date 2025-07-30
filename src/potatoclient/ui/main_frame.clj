@@ -178,10 +178,10 @@
     ;; Bind button state to app-db using seesaw.bind
     (bind/bind app-db/app-db
                (bind/transform (fn [db]
-                                (let [process-key (case stream-key
-                                                   :heat :heat-video
-                                                   :day :day-video)]
-                                  (= :running (get-in db [:app-state :processes process-key :status])))))
+                                 (let [process-key (case stream-key
+                                                     :heat :heat-video
+                                                     :day :day-video)]
+                                   (= :running (get-in db [:app-state :processes process-key :status])))))
                (bind/property button :selected?))
     button))
 

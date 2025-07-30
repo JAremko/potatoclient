@@ -25,7 +25,7 @@
 ;; Test Fixtures
 ;; ============================================================================
 
-(def test-commands 
+(def test-commands
   "Captured test commands"
   (atom []))
 

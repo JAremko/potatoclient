@@ -89,9 +89,9 @@
                   (seesaw/show! frame)
                   (log-startup!)
                   ;; Initialize WebSocket connections
-                  (cmd/init-websocket! 
+                  (cmd/init-websocket!
                     domain
-                    (fn [error-msg] 
+                    (fn [error-msg]
                       (logging/log-error (str "WebSocket error: " error-msg)))
                     (fn [binary-data]
                       (dispatch/handle-binary-state binary-data)))

@@ -30,7 +30,7 @@
   "Create channels for subprocess communication"
   []
   [=> [:map
-       [:in [:fn {:error/message "must be a channel"} 
+       [:in [:fn {:error/message "must be a channel"}
              #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
        [:out [:fn {:error/message "must be a channel"}
               #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
@@ -65,7 +65,7 @@
   "Launch a Kotlin subprocess for Transit communication"
   [subprocess-type ws-url]
   [[:enum :state-proc :cmd-proc] ::specs/url => [:fn {:error/message "must be a TransitSubprocess"}
-                                                  #(instance? TransitSubprocess %)]]
+                                                 #(instance? TransitSubprocess %)]]
   (let [kotlin-class (case subprocess-type
                        :state-proc "potatoclient.transit.StateSubprocess"
                        :cmd-proc "potatoclient.transit.CommandSubprocess")
@@ -73,16 +73,16 @@
         channels (create-subprocess-channels)
         pb (create-process-builder kotlin-class [ws-url])
         process (.start pb)]
-    
+
     (log/log-info {:msg "Launching Transit subprocess"
-                :type subprocess-type
-                :class kotlin-class
-                :url ws-url})
-    
+                   :type subprocess-type
+                   :class kotlin-class
+                   :url ws-url})
+
     ;; Start I/O handlers
     (start-subprocess-io-handlers! process channels process-name)
-    
-    (->TransitSubprocess process process-name 
+
+    (->TransitSubprocess process process-name
                          (:in channels) (:out channels) (:control channels))))
 
 ;; Shutdown subprocess
@@ -93,18 +93,18 @@
    [:map [:in any?] [:out any?] [:control any?]]
    string? => nil?]
   (log/log-info {:msg "Shutting down subprocess" :process process-name})
-  
+
   ;; Close channels
   (close! (:in channels))
   (close! (:out channels))
   (close! (:control channels))
-  
+
   ;; Terminate process
   (when (.isAlive process)
     (.destroy process)
     (when-not (.waitFor process 5 TimeUnit/SECONDS)
       (.destroyForcibly process)))
-  
+
   nil)
 
 ;; Start I/O handlers
@@ -114,7 +114,7 @@
   [[:fn {:error/message "must be a Process"} #(instance? Process %)]
    [:map [:in any?] [:out any?] [:control any?]]
    string? => nil?]
-  
+
   ;; Handle stdout (subprocess -> main)
   (go-loop []
     (let [reader (transit/make-reader (.getInputStream process))]
@@ -126,11 +126,11 @@
             (catch Exception e
               (when (.isAlive process)
                 (log/log-error {:msg "Error reading from subprocess"
-                             :process process-name
-                             :error e}))))
+                                :process process-name
+                                :error e}))))
           (recur))))
     (log/log-info {:msg "Subprocess stdout handler stopped" :process process-name}))
-  
+
   ;; Handle stdin (main -> subprocess)
   (go-loop []
     (let [out-stream (.getOutputStream process)
@@ -141,11 +141,11 @@
             (transit/write-message! writer msg out-stream)
             (catch Exception e
               (log/log-error {:msg "Error writing to subprocess"
-                           :process process-name
-                           :error e})))
+                              :process process-name
+                              :error e})))
           (recur))))
     (log/log-info {:msg "Subprocess stdin handler stopped" :process process-name}))
-  
+
   ;; Handle control messages
   (go-loop []
     (when-let [ctrl-msg (<! (:control channels))]
@@ -153,7 +153,7 @@
         :shutdown (shutdown-subprocess! process channels process-name)
         (log/log-warn {:msg "Unknown control action" :action (:action ctrl-msg)}))
       (recur)))
-  
+
   nil)
 
 ;; Send message to subprocess

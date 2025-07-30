@@ -108,9 +108,9 @@
       (when-let [msg (try
                        (read-fn)
                        (catch Exception e
-                         (logging/log-error {:msg "Error reading Transit message" 
-                                            :error e
-                                            :subprocess subprocess-type})
+                         (logging/log-error {:msg "Error reading Transit message"
+                                             :error e
+                                             :subprocess subprocess-type})
                          nil))]
         (>!! output-chan msg)
         (recur)))))
@@ -140,18 +140,19 @@
         error-stream (.getErrorStream process)
         output-chan (async/chan channel-buffer-size)
         write-fn (create-transit-writer output-stream)]
-    
+
     ;; Start reader thread
     (create-transit-reader input-stream output-chan subprocess-type)
-    
+
     ;; Start error stream reader
     (go-loop []
       (let [error-reader (io/reader error-stream)]
         (when-let [line (.readLine error-reader)]
-          (logging/log-error "Subprocess stderr" {:subprocess subprocess-type
-                                                   :message line})
+          (logging/log-error {:msg "Subprocess stderr"
+                              :subprocess subprocess-type
+                              :message line})
           (recur))))
-    
+
     {:subprocess-type subprocess-type
      :process process
      :input-stream input-stream
@@ -167,9 +168,8 @@
   [string? => :potatoclient.specs.transit/subprocess]
   (let [subprocess (create-subprocess :command ws-url)]
     ;; Update app-db
-    (app-db/update-process-state! :cmd-proc {:pid (.pid ^Process (:process subprocess))
-                                              :status :running})
-    (logging/log-info "Started command subprocess" {:url ws-url})
+    (app-db/set-process-state! :cmd-proc (.pid ^Process (:process subprocess)) :running)
+    (logging/log-info {:msg "Started command subprocess" :url ws-url})
     subprocess))
 
 (>defn start-state-subprocess
@@ -178,9 +178,8 @@
   [string? => :potatoclient.specs.transit/subprocess]
   (let [subprocess (create-subprocess :state ws-url)]
     ;; Update app-db
-    (app-db/update-process-state! :state-proc {:pid (.pid ^Process (:process subprocess))
-                                                :status :running})
-    (logging/log-info "Started state subprocess" {:url ws-url})
+    (app-db/set-process-state! :state-proc (.pid ^Process (:process subprocess)) :running)
+    (logging/log-info {:msg "Started state subprocess" :url ws-url})
     subprocess))
 
 (>defn send-message!
@@ -209,34 +208,35 @@
                                  :msg-id (str (java.util.UUID/randomUUID))
                                  :timestamp (System/currentTimeMillis)
                                  :payload {:action "shutdown"}})
-      
+
       ;; Give it time to shutdown gracefully
       (Thread/sleep shutdown-grace-period-ms)
-      
+
       ;; Force destroy if still alive
       (when (.isAlive process)
         (.destroyForcibly process))
-      
+
       ;; Close streams
       (.close ^InputStream (:input-stream subprocess))
       (.close ^OutputStream (:output-stream subprocess))
       (.close ^InputStream (:error-stream subprocess))
-      
+
       ;; Close channel
       (async/close! (:output-chan subprocess))
-      
+
       ;; Update app-db
-      (app-db/update-process-state! (case subprocess-type
-                                      :command :cmd-proc
-                                      :state :state-proc)
-                                    {:status :stopped})
-      
-      (logging/log-info "Stopped subprocess" {:type subprocess-type})
+      (app-db/set-process-state! (case subprocess-type
+                                   :command :cmd-proc
+                                   :state :state-proc)
+                                 nil :stopped)
+
+      (logging/log-info {:msg "Stopped subprocess" :type subprocess-type})
       nil
-      
+
       (catch Exception e
-        (logging/log-error "Error stopping subprocess" {:error e
-                                                         :type subprocess-type})
+        (logging/log-error {:msg "Error stopping subprocess"
+                            :error e
+                            :type subprocess-type})
         nil))))
 
 (>defn subprocess-alive?

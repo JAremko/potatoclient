@@ -8,7 +8,7 @@
       binary (.toByteArray proto-msg)]
   (println "Empty proto binary length:" (count binary))
   (println "Binary bytes:" (vec binary))
-  
+
   ;; Try to parse it back
   (try
     (let [parsed (JonSharedData$JonGUIState/parseFrom binary)

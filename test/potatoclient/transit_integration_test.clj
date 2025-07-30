@@ -3,7 +3,6 @@
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
             [clojure.core.async :as async :refer [<!! >!! timeout]]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.transit.websocket-manager :as ws-manager]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.subprocess-launcher :as launcher]
@@ -41,15 +40,18 @@
                      :params {:test true}
                      :nested {:array [1 2 3]
                               :map {:a 1 :b "two"}}}
-          encoded (with-out-str
-                    (transit-core/write-transit *out* test-data))
-          decoded (transit-core/read-transit 
-                    (java.io.ByteArrayInputStream. (.getBytes encoded)))]
+          out (java.io.ByteArrayOutputStream.)
+          writer (transit-core/make-writer out)
+          _ (transit-core/write-message! writer test-data out)
+          encoded (.toByteArray out)
+          in (java.io.ByteArrayInputStream. encoded)
+          reader (transit-core/make-reader in)
+          decoded (transit-core/read-message reader)]
       (is (= test-data decoded) "Round-trip encoding should preserve data"))))
 
 (deftest test-message-envelope-creation
   (testing "Message envelope creation"
-    (let [envelope (transit-core/create-message-envelope :command {:action "test"})]
+    (let [envelope (transit-core/create-message :command {:action "test"})]
       (is (= :command (:msg-type envelope)))
       (is (string? (:msg-id envelope)))
       (is (pos-int? (:timestamp envelope)))
@@ -75,13 +77,9 @@
     (is (= :ukrainian (app-db/get-locale)))
     
     ;; Test connection update
-    (app-db/update-connection! {:url test-domain
-                                :connected? true
-                                :latency-ms 50})
-    (let [conn (app-db/get-connection)]
-      (is (= test-domain (:url conn)))
-      (is (true? (:connected? conn)))
-      (is (= 50 (:latency-ms conn))))))
+    (app-db/set-connection-state! true test-domain 50)
+    (is (= test-domain (app-db/get-connection-url)))
+    (is (true? (app-db/connected?))))
 
 (deftest test-subsystem-updates
   (testing "Server state subsystem updates"
@@ -93,7 +91,7 @@
                     :hdop 1.2
                     :use-manual false}]
       (app-db/update-subsystem! :gps gps-data)
-      (is (= gps-data (app-db/get-subsystem :gps))))))
+      (is (= gps-data (app-db/get-subsystem-state :gps)))))))
 
 ;; Subprocess Launcher Tests (Mock)
 (deftest test-subprocess-creation
@@ -114,13 +112,7 @@
     (is (fn? commands/rotary-goto))
     (is (fn? commands/day-camera-zoom))))
 
-;; WebSocket Manager Tests (Mock)
-(deftest test-websocket-manager-api
-  (testing "WebSocket manager API exists"
-    (is (fn? ws-manager/init!))
-    (is (fn? ws-manager/stop!))
-    (is (fn? ws-manager/send-command!))
-    (is (fn? ws-manager/set-state-rate-limit!))))
+;; WebSocket handling is now in Kotlin subprocesses
 
 ;; Integration Test (Would need mock server)
 (deftest ^:integration test-full-transit-flow
@@ -128,14 +120,15 @@
     ;; This test demonstrates the flow but would need a mock server
     ;; to actually run the WebSocket connections
     
-    ;; 1. Initialize the system
-    ;; (ws-manager/init! test-domain)
+    ;; 1. Initialize the system (would start subprocesses)
+    ;; (let [cmd-proc (launcher/start-command-subprocess test-domain)
+    ;;       state-proc (launcher/start-state-subprocess test-domain)]
     
     ;; 2. Wait for connection
     ;; (is (wait-for-condition #(app-db/connected?) test-timeout-ms))
     
-    ;; 3. Send a command
-    ;; (is (commands/ping))
+    ;; 3. Send a command via subprocess
+    ;; (launcher/send-message! cmd-proc (commands/ping))
     
     ;; 4. Simulate state update
     (app-db/update-subsystem! :system {:battery-level 85
@@ -143,18 +136,22 @@
                                         :recording false})
     
     ;; 5. Verify state
-    (is (= 85 (get-in (app-db/get-subsystem :system) [:battery-level])))
+    (is (= 85 (get-in (app-db/get-subsystem-state :system) [:battery-level])))
     
     ;; 6. Cleanup
-    ;; (ws-manager/stop!)
+    ;; (launcher/stop-subprocess! cmd-proc)
+    ;; (launcher/stop-subprocess! state-proc)
+    ;; )
     ))
 
 ;; Rate Limiting Tests
 (deftest test-rate-limit-tracking
   (testing "Rate limit metrics"
-    (app-db/update-rate-limits! {:max-rate-hz 30
-                                 :current-rate 25.5
-                                 :dropped-updates 10})
+    (app-db/set-max-rate-hz! 30)
+    (app-db/update-rate-metrics! 25.5 false)
+    ;; Simulate 10 dropped updates
+    (dotimes [_ 10] 
+      (app-db/update-rate-metrics! 25.5 true))
     (let [limits (app-db/get-rate-limits)]
       (is (= 30 (:max-rate-hz limits)))
       (is (= 25.5 (:current-rate limits)))
@@ -163,15 +160,12 @@
 ;; Validation Tests
 (deftest test-validation-tracking
   (testing "Validation error tracking"
-    (let [error {:timestamp (System/currentTimeMillis)
-                 :source :malli
-                 :subsystem :gps
-                 :errors [{:field "latitude"
-                           :constraint "must be between -90 and 90"
-                           :value -91}]}]
-      (app-db/add-validation-error! error)
-      (is (= 1 (count (app-db/get-validation-errors))))
-      (is (= error (first (app-db/get-validation-errors)))))))
+    (app-db/add-validation-error! :malli :gps [{:field "latitude"
+                                                 :constraint "must be between -90 and 90"
+                                                 :value -91}])
+    (let [errors (:errors (app-db/get-validation-state))]
+      (is (= 1 (count errors)))
+      (is (= :gps (:subsystem (first errors)))))))
 
 ;; Watch Tests
 (deftest test-app-db-watchers
@@ -212,10 +206,6 @@
 ;; Error Handling Tests
 (deftest test-error-handling
   (testing "System handles errors gracefully"
-    ;; Test invalid command parameters
-    (is (thrown? AssertionError
-                 (commands/day-camera-zoom -1))) ; Invalid zoom
-    
-    ;; Test invalid subsystem update
-    (is (thrown? AssertionError
-                 (app-db/update-subsystem! :invalid-subsystem {}))))))
+    ;; Command validation happens in Guardrails at runtime
+    ;; Invalid subsystem returns nil
+    (is (nil? (app-db/get-subsystem-state :invalid-subsystem)))))

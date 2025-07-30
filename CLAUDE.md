@@ -1,8 +1,20 @@
 # Developer Guide
 
-PotatoClient is a high-performance multi-process live video streaming client with dual H.264 WebSocket streams. Main process (Clojure) handles UI, subprocesses (Kotlin) handle video streams with zero-allocation streaming and hardware acceleration.
+PotatoClient is a high-performance multi-process live video streaming client with dual H.264 WebSocket streams. The architecture uses Transit-based IPC to completely isolate protobuf handling in Kotlin subprocesses, while the main Clojure process handles UI and coordination.
 
-**For detailed Kotlin subprocess architecture and implementation details, see:** [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
+## Architecture Overview
+
+- **Main Process (Clojure)**: UI, state management, subprocess coordination
+- **Command Subprocess (Kotlin)**: Receives Transit commands, converts to protobuf, sends via WebSocket
+- **State Subprocess (Kotlin)**: Receives protobuf state from WebSocket, converts to Transit, sends to main process
+- **Video Subprocesses (Kotlin)**: Handle H.264 video streams with hardware acceleration
+
+**Key architectural principle**: Protobuf is completely isolated in Kotlin subprocesses. The Clojure process never touches protobuf directly, using Transit/MessagePack for all IPC communication.
+
+**Documentation:**
+- **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
+- **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
+- **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
 
 ## Important: Function Validation with Guardrails
 
@@ -275,14 +287,24 @@ Tests now use a sophisticated stubbing approach instead of real WebSocket server
 
 ## Architecture
 
-### Key Components
+### Transit-Based IPC Architecture
+
+The system uses Transit/MessagePack for all inter-process communication:
+
+**Transit Namespaces**
+- `potatoclient.transit.core` - Transit reader/writer creation and message envelope handling
+- `potatoclient.transit.app-db` - Single source of truth atom following re-frame pattern
+- `potatoclient.transit.commands` - Command API that creates Transit messages
+- `potatoclient.transit.subprocess-launcher` - Process lifecycle management for Transit subprocesses
+- `potatoclient.transit.handlers` - Message handlers for incoming Transit messages
+
+**Key Components**
 
 **Clojure (Main Process)**
 - `potatoclient.main` - Entry point with dev mode support
 - `potatoclient.core` - Application initialization, menu creation
-- `potatoclient.state` - Centralized state management with specs
+- `potatoclient.state` - Centralized state management with Transit app-db
 - `potatoclient.process` - Subprocess lifecycle with type hints
-- `potatoclient.proto` - Direct Protobuf serialization (custom implementation)
 - `potatoclient.ipc` - Message routing and dispatch
 - `potatoclient.config` - Platform-specific configuration
 - `potatoclient.i18n` - Localization (English, Ukrainian)
@@ -291,15 +313,34 @@ Tests now use a sophisticated stubbing approach instead of real WebSocket server
 - `potatoclient.specs` - Centralized Malli schemas
 - `potatoclient.instrumentation` - Function schemas (dev only)
 - `potatoclient.logging` - Telemere-based logging configuration
-- `potatoclient.cmd.core` - Command system infrastructure
-- `potatoclient.cmd.rotary` - Rotary platform commands
-- `potatoclient.cmd.day-camera` - Day camera commands
 
-**Kotlin (Stream Processes)**
-- High-performance video streaming with hardware acceleration
-- Zero-allocation design with lock-free buffer pools
-- WebSocket and GStreamer pipeline integration
+**Kotlin (Subprocess Components)**
+- `CommandSubprocess` - Receives Transit commands, converts to protobuf, sends via WebSocket
+- `StateSubprocess` - Receives protobuf state, converts to Transit maps, implements debouncing and rate limiting
+- `TransitCommunicator` - Handles Transit message framing and serialization over stdin/stdout
+- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
+- `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
+- Video streaming subprocesses with hardware acceleration
 - For detailed implementation, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
+
+### Transit Message Flow
+
+1. **Commands (Clojure → Server)**:
+   ```
+   Clojure UI → Transit command → CommandSubprocess → Protobuf → WebSocket → Server
+   ```
+
+2. **State Updates (Server → Clojure)**:
+   ```
+   Server → WebSocket → Protobuf → StateSubprocess → Transit map → Clojure app-db
+   ```
+
+3. **Key Features**:
+   - Complete protobuf isolation in Kotlin
+   - Debouncing to prevent duplicate state updates
+   - Token bucket rate limiting (configurable via Transit messages)
+   - Automatic reconnection with exponential backoff
+   - Clean subprocess lifecycle management
 
 ## UI Utilities
 

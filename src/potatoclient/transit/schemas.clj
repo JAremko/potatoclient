@@ -231,7 +231,7 @@
   [:and
    message-envelope-schema
    [:map [:msg-type [:= :control]]
-         [:payload [:map [:action keyword?]]]]])
+    [:payload [:map [:action keyword?]]]]])
 
 (def response-message-schema
   [:and
@@ -242,9 +242,9 @@
   [:and
    message-envelope-schema
    [:map [:msg-type [:= :validation-error]]
-         [:payload [:map
-                    [:source [:enum :buf-validate :malli]]
-                    [:errors [:sequential any?]]]]]])
+    [:payload [:map
+               [:source [:enum :buf-validate :malli]]
+               [:errors [:sequential any?]]]]]])
 
 ;; Message validation helpers
 (>defn validate-message

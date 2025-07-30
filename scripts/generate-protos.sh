@@ -105,10 +105,50 @@ cleanup_docker() {
     docker image prune -f >/dev/null 2>&1 || true
 }
 
+# Function to cleanup temporary directory - ALWAYS runs even if disk is full
+cleanup_temp_dir() {
+    if [ -n "${MAIN_TEMP_DIR:-}" ] && [ -d "${MAIN_TEMP_DIR}" ]; then
+        print_info "Cleaning up temporary directory: $MAIN_TEMP_DIR"
+        # Use -f to force removal even if disk is full
+        rm -rf "$MAIN_TEMP_DIR" 2>/dev/null || {
+            print_warning "Failed to remove temp dir with rm -rf, trying alternative methods..."
+            # Try to remove files first to free space
+            find "$MAIN_TEMP_DIR" -type f -delete 2>/dev/null || true
+            # Then remove directories
+            find "$MAIN_TEMP_DIR" -type d -empty -delete 2>/dev/null || true
+            # Final attempt
+            rmdir "$MAIN_TEMP_DIR" 2>/dev/null || true
+        }
+        if [ -d "${MAIN_TEMP_DIR}" ]; then
+            print_error "Could not fully remove temp directory: $MAIN_TEMP_DIR"
+            print_error "Please manually remove it to free disk space"
+        else
+            print_success "Temporary directory cleaned up"
+        fi
+    fi
+}
+
 # Main execution
 main() {
     print_info "PotatoClient Proto Generation using Protogen"
     print_info "============================================"
+    
+    # Clean up any leftover protogen temp directories first
+    print_info "Checking for leftover temporary directories..."
+    leftover_dirs=$(find /tmp -maxdepth 1 -type d -name "protogen.*" 2>/dev/null || true)
+    if [ -n "$leftover_dirs" ]; then
+        print_warning "Found leftover protogen directories, cleaning up..."
+        echo "$leftover_dirs" | while read -r dir; do
+            if [ -d "$dir" ]; then
+                rm -rf "$dir" 2>/dev/null || true
+                if [ -d "$dir" ]; then
+                    print_warning "Could not remove: $dir"
+                else
+                    print_info "Removed: $dir"
+                fi
+            fi
+        done
+    fi
     
     # Check Docker permissions
     print_info "Checking Docker permissions..."
@@ -128,7 +168,7 @@ main() {
     
     # Create main temporary directory
     MAIN_TEMP_DIR=$(mktemp -d -t protogen.XXXXXX)
-    trap "rm -rf $MAIN_TEMP_DIR; cleanup_docker" EXIT
+    trap "cleanup_temp_dir; cleanup_docker" EXIT
     
     print_info "Using temporary directory: $MAIN_TEMP_DIR"
     
@@ -208,7 +248,8 @@ main() {
     
     # Create output directory
     TEMP_OUTPUT_DIR=$(mktemp -d -t protogen-output.XXXXXX)
-    trap "rm -rf $TEMP_OUTPUT_DIR" EXIT
+    # Setup trap for temp output directory with inline function
+    trap 'if [ -n "${TEMP_OUTPUT_DIR:-}" ] && [ -d "${TEMP_OUTPUT_DIR}" ]; then rm -rf "$TEMP_OUTPUT_DIR" 2>/dev/null || true; fi' EXIT
     
     print_info "Using temporary output directory: $TEMP_OUTPUT_DIR"
     

@@ -29,7 +29,7 @@
                         :geodesic-mode false
                         :cv-dumping false}]
       (is (= valid-system (validation/validate-subsystem :system valid-system)))))
-  
+
   (testing "Invalid temperature below absolute zero fails"
     (let [invalid-system {:cpu-temperature -300.0  ; Below absolute zero
                           :gpu-temperature 60.0
@@ -54,17 +54,17 @@
                           :geodesic-mode false
                           :cv-dumping false}]
       (is (nil? (validation/validate-subsystem :system invalid-system)))))
-  
+
   (testing "Invalid temperature above max fails"
     (let [invalid-system (assoc (first (:valid-system (meta #'test-system-validation)))
                                 :gpu-temperature 200.0)]  ; Above 150 max
       (is (nil? (validation/validate-subsystem :system invalid-system)))))
-  
+
   (testing "Invalid disk space percentage fails"
     (let [invalid-system (assoc (first (:valid-system (meta #'test-system-validation)))
                                 :disk-space 150)]  ; Above 100%
       (is (nil? (validation/validate-subsystem :system invalid-system)))))
-  
+
   (testing "Invalid enum value fails"
     (let [invalid-system (assoc (first (:valid-system (meta #'test-system-validation)))
                                 :loc "INVALID_LOCALIZATION")]
@@ -81,7 +81,7 @@
                      :fix-type "JON_GUI_DATA_GPS_FIX_TYPE_3D"
                      :use-manual false}]
       (is (= valid-gps (validation/validate-subsystem :gps valid-gps)))))
-  
+
   (testing "Invalid longitude fails"
     (let [invalid-gps {:longitude 200.0  ; > 180
                        :latitude 50.4501
@@ -92,7 +92,7 @@
                        :fix-type "JON_GUI_DATA_GPS_FIX_TYPE_3D"
                        :use-manual false}]
       (is (nil? (validation/validate-subsystem :gps invalid-gps)))))
-  
+
   (testing "Invalid latitude fails"
     (let [invalid-gps {:longitude 30.5234
                        :latitude -100.0  ; < -90
@@ -103,7 +103,7 @@
                        :fix-type "JON_GUI_DATA_GPS_FIX_TYPE_3D"
                        :use-manual false}]
       (is (nil? (validation/validate-subsystem :gps invalid-gps)))))
-  
+
   (testing "Invalid altitude below Dead Sea fails"
     (let [invalid-gps {:longitude 30.5234
                        :latitude 50.4501
@@ -114,7 +114,7 @@
                        :fix-type "JON_GUI_DATA_GPS_FIX_TYPE_3D"
                        :use-manual false}]
       (is (nil? (validation/validate-subsystem :gps invalid-gps)))))
-  
+
   (testing "Invalid altitude above Everest fails"
     (let [invalid-gps {:longitude 30.5234
                        :latitude 50.4501
@@ -136,7 +136,7 @@
                          :magnetic-declination 10.0
                          :calibrating false}]
       (is (= valid-compass (validation/validate-subsystem :compass valid-compass)))))
-  
+
   (testing "Invalid azimuth >= 360 fails"
     (let [invalid-compass {:azimuth 360.0  ; Should be < 360
                            :elevation 45.0
@@ -146,7 +146,7 @@
                            :magnetic-declination 10.0
                            :calibrating false}]
       (is (nil? (validation/validate-subsystem :compass invalid-compass)))))
-  
+
   (testing "Invalid elevation > 90 fails"
     (let [invalid-compass {:azimuth 180.0
                            :elevation 95.0  ; > 90
@@ -171,7 +171,7 @@
                         :digital-zoom-level 2.5
                         :clahe-level 0.6}]
       (is (= valid-camera (validation/validate-subsystem :camera-day valid-camera)))))
-  
+
   (testing "Invalid position > 1.0 fails"
     (let [invalid-camera {:focus-pos 1.5  ; > 1.0
                           :zoom-pos 0.75
@@ -185,7 +185,7 @@
                           :digital-zoom-level 2.5
                           :clahe-level 0.6}]
       (is (nil? (validation/validate-subsystem :camera-day invalid-camera)))))
-  
+
   (testing "Invalid digital zoom < 1.0 fails"
     (let [invalid-camera {:focus-pos 0.5
                           :zoom-pos 0.75
@@ -230,7 +230,7 @@
                               :zone-id 0
                               :use-manual-time false}}]
       (is (= valid-state (validation/validate-edn-state valid-state)))))
-  
+
   (testing "Invalid protocol version fails"
     (let [invalid-state {:protocol-version 0  ; Must be positive
                          :system {:cpu-temperature 45.5
@@ -256,7 +256,7 @@
                                   :geodesic-mode false
                                   :cv-dumping false}}]
       (is (nil? (validation/validate-edn-state invalid-state)))))
-  
+
   (testing "Unknown subsystem key fails with closed map"
     (let [invalid-state {:protocol-version 1
                          :unknown-subsystem {}}]  ; Not allowed
@@ -265,7 +265,7 @@
 (deftest test-validation-enabled
   (testing "Validation is disabled by default"
     (is (not (validation/validation-enabled?))))
-  
+
   (testing "Validation can be enabled via system property"
     (System/setProperty "potatoclient.validation.enabled" "true")
     (is (validation/validation-enabled?))
