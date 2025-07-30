@@ -193,6 +193,39 @@
   (swap! app-db assoc-in [:app-state :processes process-key]
          {:pid pid :status status}))
 
+(>defn set-stream-process!
+  "Store full stream process map for video streams"
+  [stream-key process-map]
+  [[:enum :heat :day] map? => map?]
+  (let [process-key (case stream-key
+                      :heat :heat-video
+                      :day :day-video)]
+    (swap! app-db assoc-in [:app-state :stream-processes process-key] process-map)))
+
+(>defn get-stream-process
+  "Get full stream process map"
+  [stream-key]
+  [[:enum :heat :day] => (? map?)]
+  (let [process-key (case stream-key
+                      :heat :heat-video
+                      :day :day-video)]
+    (get-in @app-db [:app-state :stream-processes process-key])))
+
+(>defn remove-stream-process!
+  "Remove stream process map"
+  [stream-key]
+  [[:enum :heat :day] => map?]
+  (let [process-key (case stream-key
+                      :heat :heat-video
+                      :day :day-video)]
+    (swap! app-db update-in [:app-state :stream-processes] dissoc process-key)))
+
+(>defn get-all-stream-processes
+  "Get all active stream processes"
+  []
+  [=> [:map-of keyword? map?]]
+  (get-in @app-db [:app-state :stream-processes] {}))
+
 (>defn add-validation-error!
   "Add a validation error"
   [source subsystem errors]
@@ -299,4 +332,29 @@
   [key]
   [keyword? => nil?]
   (remove-watch app-db key)
+  nil)
+
+;; Message handlers for subprocess launcher
+(>defn handle-command-response
+  "Handle response messages from command subprocess"
+  [msg]
+  [map? => nil?]
+  (log/log-debug
+    {:id ::command-response
+     :data {:msg-type (:msg-type msg)
+            :payload (:payload msg)}
+     :msg "Received command response from subprocess"})
+  ;; TODO: Implement actual command response handling
+  nil)
+
+(>defn handle-state-update
+  "Handle state update messages from state subprocess"
+  [msg]
+  [map? => nil?]
+  (log/log-debug
+    {:id ::state-update
+     :data {:msg-type (:msg-type msg)
+            :payload (:payload msg)}
+     :msg "Received state update from subprocess"})
+  ;; TODO: Implement actual state update handling
   nil)

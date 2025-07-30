@@ -100,7 +100,7 @@ class WebSocketClientBuiltIn(
 
     private fun performConnect() {
         try {
-            println("Connecting to WebSocket: $serverUri")
+            potatoclient.transit.logInfo("Connecting to WebSocket: $serverUri")
 
             val builder = httpClient.newWebSocketBuilder()
 
@@ -196,7 +196,7 @@ class WebSocketClientBuiltIn(
                 // Trim buffer back to default size if it's grown too large
                 if (messageBuffer.position() == 0) {
                     messageBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE)
-                    println("Trimmed WebSocket message buffer back to $BUFFER_SIZE bytes")
+                    potatoclient.transit.logInfo("Trimmed WebSocket message buffer back to $BUFFER_SIZE bytes")
                 }
             }
         }
@@ -210,7 +210,7 @@ class WebSocketClientBuiltIn(
         val messages = messagesReceived.get()
         val bytes = bytesReceived.get()
 
-        println("WebSocket Stats: messages=$messages, bytes=$bytes, $poolStats")
+        potatoclient.transit.logDebug("WebSocket Stats: messages=$messages, bytes=$bytes, $poolStats")
     }
 
     fun isOpen(): Boolean {
@@ -223,7 +223,7 @@ class WebSocketClientBuiltIn(
         private val completedFuture = CompletableFuture.completedFuture<Void>(null)
 
         override fun onOpen(webSocket: WebSocket) {
-            println("WebSocket opened")
+            potatoclient.transit.logInfo("WebSocket opened")
             webSocket.request(1)
         }
 
@@ -309,7 +309,7 @@ class WebSocketClientBuiltIn(
             last: Boolean,
         ): CompletionStage<*> {
             // We don't expect text messages for video streaming
-            println("Unexpected text message received: $data")
+            potatoclient.transit.logWarn("Unexpected text message received: $data")
             webSocket.request(1)
             return CompletableFuture.completedFuture(null)
         }
@@ -333,7 +333,7 @@ class WebSocketClientBuiltIn(
             statusCode: Int,
             reason: String,
         ): CompletionStage<*> {
-            println("WebSocket closed: $statusCode - $reason")
+            potatoclient.transit.logInfo("WebSocket closed: $statusCode - $reason")
             webSocketRef.set(null)
 
             onClose?.invoke(statusCode, reason)

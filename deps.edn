@@ -3,7 +3,6 @@
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
         seesaw/seesaw {:mvn/version "1.5.0"}
         org.clojure/data.json {:mvn/version "2.4.0"}
-        org.clojure/core.async {:mvn/version "1.6.681"}
         ;; Localization
         tongue/tongue {:mvn/version "0.4.4"}
         ;; Malli for data and function schema validation
@@ -47,7 +46,8 @@
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.main.report=stderr"
                             "-Dguardrails.enabled=true"
-                            "-Dpotatoclient.validation.enabled=true"]}
+                            "-Dpotatoclient.validation.enabled=true"
+                            "-Dawt.useSystemAAFontSettings=on"]}
 
            :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
@@ -58,7 +58,8 @@
                               "--enable-native-access=ALL-UNNAMED"
                               "-Djdk.attach.allowAttachSelf"
                               "-Dguardrails.enabled=true"
-                              "-Dpotatoclient.validation.enabled=true"]
+                              "-Dpotatoclient.validation.enabled=true"
+                              "-Dawt.useSystemAAFontSettings=on"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
            :run {:extra-paths ["target/classes"]
@@ -67,7 +68,8 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.compile.warn-on-reflection=true"
-                            "-Dguardrails.enabled=true"]
+                            "-Dguardrails.enabled=true"
+                            "-Dawt.useSystemAAFontSettings=on"]
                  :main-opts ["-m" "potatoclient.main"]}
 
            :uberjar {:extra-paths ["target/classes"]
@@ -101,7 +103,9 @@
 
            :test {:extra-paths ["test" "target/classes" "target/test-classes"]
                   :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
-                                                                     :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}}
+                                                                     :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}
+                               junit/junit {:mvn/version "4.13.2"}
+                               org.jetbrains.kotlin/kotlin-test-junit {:mvn/version "2.0.0"}}
                   :jvm-opts ["-Dguardrails.enabled=true"]
                   :main-opts ["-m" "cognitect.test-runner"]
                   :exec-fn cognitect.test-runner.api/test}

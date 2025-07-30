@@ -37,14 +37,14 @@
   [locale]
   [[:enum "en" "uk"] => map?]
   {:action "set-localization"
-                             :params {:locale locale}})
+   :params {:locale locale}})
 
 (>defn set-recording
   "Enable/disable recording"
   [enabled?]
   [boolean? => map?]
   {:action "set-recording"
-                             :params {:enabled enabled?}})
+   :params {:enabled enabled?}})
 
 ;; ============================================================================
 ;; GPS Commands
@@ -60,10 +60,10 @@
     [:altitude {:optional true} [:double {:min -1000.0 :max 10000.0}]]]
    => map?]
   {:action "set-gps-manual"
-                             :params {:use-manual use-manual
-                                      :latitude latitude
-                                      :longitude longitude
-                                      :altitude altitude}})
+   :params {:use-manual use-manual
+            :latitude latitude
+            :longitude longitude
+            :altitude altitude}})
 
 ;; ============================================================================
 ;; Compass Commands
@@ -74,7 +74,7 @@
   [unit]
   [[:enum "degrees" "mils"] => map?]
   {:action "set-compass-unit"
-                             :params {:unit unit}})
+   :params {:unit unit}})
 
 ;; ============================================================================
 ;; LRF (Laser Range Finder) Commands
@@ -110,8 +110,8 @@
     [:elevation [:double {:min -30.0 :max 90.0}]]]
    => map?]
   {:action "rotary-goto"
-                             :params {:azimuth azimuth
-                                      :elevation elevation}})
+   :params {:azimuth azimuth
+            :elevation elevation}})
 
 (>defn rotary-stop
   "Stop rotary platform movement"
@@ -127,8 +127,8 @@
     [:elevation-velocity [:double {:min -90.0 :max 90.0}]]]
    => map?]
   {:action "rotary-set-velocity"
-                             :params {:azimuth-velocity azimuth-velocity
-                                      :elevation-velocity elevation-velocity}})
+   :params {:azimuth-velocity azimuth-velocity
+            :elevation-velocity elevation-velocity}})
 
 ;; ============================================================================
 ;; Day Camera Commands
@@ -139,7 +139,7 @@
   [zoom]
   [[:double {:min 1.0 :max 50.0}] => map?]
   {:action "day-camera-zoom"
-                             :params {:zoom zoom}})
+   :params {:zoom zoom}})
 
 (>defn day-camera-focus
   "Set day camera focus mode"
@@ -149,8 +149,8 @@
     [:distance {:optional true} [:double {:min 0.0}]]]
    => map?]
   {:action "day-camera-focus"
-                             :params {:mode mode
-                                      :distance distance}})
+   :params {:mode mode
+            :distance distance}})
 
 (>defn day-camera-photo
   "Take a photo with day camera"
@@ -167,7 +167,7 @@
   [zoom]
   [[:double {:min 1.0 :max 8.0}] => map?]
   {:action "heat-camera-zoom"
-                             :params {:zoom zoom}})
+   :params {:zoom zoom}})
 
 (>defn heat-camera-calibrate
   "Trigger heat camera calibration (NUC)"
@@ -180,7 +180,7 @@
   [palette]
   [[:enum "white-hot" "black-hot" "rainbow" "ironbow" "lava" "arctic"] => map?]
   {:action "heat-camera-palette"
-                             :params {:palette palette}})
+   :params {:palette palette}})
 
 (>defn heat-camera-photo
   "Take a photo with heat camera"

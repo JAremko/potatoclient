@@ -1,12 +1,21 @@
 package potatoclient.transit
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import ser.JonSharedData
-import ser.JonSharedDataTypes
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
 import java.nio.ByteBuffer
+import java.security.cert.X509Certificate
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -14,6 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 /**
  * Simplified State subprocess without protovalidate
@@ -81,7 +93,7 @@ class StateSubprocess(
             lastSentProto.set(protoState)
             lastSentHash.set(protoState.hashCode())
         } catch (e: Exception) {
-            println("Error processing state: ${e.message}")
+            logError("Error processing state: ${e.message}", e)
             transitComm.sendMessage(
                 transitComm.createMessage(
                     "error",
@@ -117,26 +129,38 @@ class StateSubprocess(
 
         when (payload["action"]) {
             "shutdown" -> {
+                logInfo("Shutdown requested")
+                // Send shutdown confirmation
+                runBlocking {
+                    transitComm.sendMessage(
+                        mapOf(
+                            "msg-type" to "response",
+                            "msg-id" to (msg["msg-id"] as? String ?: ""),
+                            "timestamp" to System.currentTimeMillis(),
+                            "payload" to mapOf("status" to "stopped"),
+                        ),
+                    )
+                }
                 wsClient.close()
                 transitComm.close()
             }
             "set-rate-limit" -> {
                 val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
                 rateLimiter.set(RateLimiter(rateHz))
-                println("Rate limit set to $rateHz Hz")
+                logInfo("Rate limit set to $rateHz Hz")
             }
             "get-stats" -> {
+                val stats =
+                    mapOf(
+                        "received" to totalReceived.get(),
+                        "sent" to totalSent.get(),
+                        "duplicates-skipped" to duplicatesSkipped.get(),
+                        "ws-connected" to wsClient.isConnected(),
+                        "rate-limit-hz" to rateLimiter.get().rateHz,
+                    )
+                logInfo("Stats requested: $stats")
                 transitComm.sendMessage(
-                    transitComm.createMessage(
-                        "stats",
-                        mapOf(
-                            "received" to totalReceived.get(),
-                            "sent" to totalSent.get(),
-                            "duplicates-skipped" to duplicatesSkipped.get(),
-                            "ws-connected" to wsClient.isConnected(),
-                            "rate-limit-hz" to rateLimiter.get().rateHz,
-                        ),
-                    ),
+                    transitComm.createMessage("stats", stats),
                 )
             }
         }
@@ -190,6 +214,26 @@ class RateLimiter(
 }
 
 /**
+ * Trust manager that accepts all certificates (for internal use)
+ */
+private val trustAllCerts =
+    arrayOf<TrustManager>(
+        object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+
+            override fun checkClientTrusted(
+                certs: Array<X509Certificate>,
+                authType: String,
+            ) {}
+
+            override fun checkServerTrusted(
+                certs: Array<X509Certificate>,
+                authType: String,
+            ) {}
+        },
+    )
+
+/**
  * WebSocket client for receiving protobuf state
  */
 class StateWebSocketClient(
@@ -198,23 +242,35 @@ class StateWebSocketClient(
     private var webSocket: WebSocket? = null
     private val connected = AtomicBoolean(false)
     private val isRunning = AtomicBoolean(true)
+
+    // Create SSL context that trusts all certificates
+    private val sslContext =
+        SSLContext.getInstance("TLS").apply {
+            init(null, trustAllCerts, java.security.SecureRandom())
+        }
+
     private val httpClient =
         HttpClient
             .newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
+            .sslContext(sslContext)
             .build()
 
     suspend fun connect(onMessage: suspend (ByteArray) -> Unit) =
         coroutineScope {
             while (isRunning.get() && isActive) {
                 try {
-                    println("Connecting to WebSocket: $url")
+                    logInfo("[StateWebSocket] Attempting to connect to: $url")
 
                     val listener = StateWebSocketListener(onMessage)
+                    val uri = URI.create(url)
+                    val origin = "https://${uri.host}"
+                    logInfo("[StateWebSocket] Setting Origin header: $origin")
                     val future =
                         httpClient
                             .newWebSocketBuilder()
-                            .buildAsync(URI.create(url), listener)
+                            .header("Origin", origin)
+                            .buildAsync(uri, listener)
                             .await()
 
                     webSocket = future
@@ -224,7 +280,13 @@ class StateWebSocketClient(
                     listener.awaitDisconnection()
                     connected.set(false)
                 } catch (e: Exception) {
-                    println("WebSocket error: ${e.message}")
+                    logError("[StateWebSocket] Failed to connect: ${e.message}", e)
+                    if (e is java.util.concurrent.ExecutionException && e.cause != null) {
+                        logError("[StateWebSocket] Cause: ${e.cause?.message}")
+                        if (e.cause is java.net.http.WebSocketHandshakeException) {
+                            logError("[StateWebSocket] This is a handshake exception - check Origin header and nginx config")
+                        }
+                    }
                     delay(5000) // Wait before reconnect
                 }
             }
@@ -246,7 +308,7 @@ class StateWebSocketListener(
     private val disconnected = CompletableDeferred<Unit>()
 
     override fun onOpen(webSocket: WebSocket) {
-        println("WebSocket connected")
+        logInfo("[StateWebSocket] Successfully connected")
         webSocket.request(1)
     }
 
@@ -258,7 +320,7 @@ class StateWebSocketListener(
         // Copy data to buffer
         val remaining = data.remaining()
         if (bufferPos + remaining > messageBuffer.size) {
-            println("Message too large, resetting buffer")
+            logWarn("Message too large, resetting buffer")
             bufferPos = 0
             webSocket.request(1)
             return null
@@ -286,7 +348,7 @@ class StateWebSocketListener(
         statusCode: Int,
         reason: String,
     ): CompletionStage<*>? {
-        println("WebSocket closed: $statusCode $reason")
+        logInfo("[StateWebSocket] Connection closed: $statusCode $reason")
         disconnected.complete(Unit)
         return null
     }
@@ -295,7 +357,7 @@ class StateWebSocketListener(
         webSocket: WebSocket,
         error: Throwable,
     ) {
-        println("WebSocket error: ${error.message}")
+        logError("[StateWebSocket] Connection error: ${error.message}", error)
         disconnected.complete(Unit)
     }
 
@@ -310,16 +372,43 @@ private suspend fun <T> CompletableFuture<T>.await(): T =
 
 // Main entry point
 fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        println("Usage: StateSubprocess <websocket-url>")
+    // Install stdout interceptor EARLY before any code runs
+    StdoutInterceptor.installEarly()
+
+    // Initialize logging for this subprocess
+    LoggingUtils.initializeLogging("state-subprocess")
+
+    // Install shutdown hook for clean exit
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            logInfo("Shutdown hook triggered for state subprocess")
+        },
+    )
+
+    try {
+        if (args.isEmpty()) {
+            logError("Usage: StateSubprocess <websocket-url>")
+            System.exit(1)
+        }
+
+        val wsUrl = args[0]
+
+        val transitComm = TransitCommunicator(System.`in`, StdoutInterceptor.getOriginalStdout())
+        val subprocess = StateSubprocess(wsUrl, transitComm)
+        val messageProtocol = TransitMessageProtocol("state", transitComm)
+
+        // Set the message protocol for the interceptor
+        StdoutInterceptor.setMessageProtocol(messageProtocol)
+
+        logInfo("Starting state subprocess with URL: $wsUrl")
+
+        runBlocking {
+            subprocess.run()
+        }
+    } catch (e: Exception) {
+        logError("Fatal error in state subprocess", e)
         System.exit(1)
-    }
-
-    val wsUrl = args[0]
-    val transitComm = TransitCommunicator(System.`in`, System.out)
-    val subprocess = StateSubprocess(wsUrl, transitComm)
-
-    runBlocking {
-        subprocess.run()
+    } finally {
+        LoggingUtils.close()
     }
 }

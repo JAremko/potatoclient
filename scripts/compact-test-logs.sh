@@ -115,7 +115,7 @@ echo ""
 echo -e "${YELLOW}Top 5 Failing Tests:${NC}"
 grep -E "^(FAIL|ERROR) in" "$LOG_FILE" | sed 's/ (.*//' | sort | uniq -c | sort -nr | head -5 | while read count type test; do
     echo -e "  ${RED}$count${NC} $type $test"
-done
+done || true
 
 # Create a one-line summary for CI/CD
 ONELINE_SUMMARY="${LOG_FILE%.log}-oneline.txt"

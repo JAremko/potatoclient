@@ -9,16 +9,16 @@ class SimpleCommandBuilder {
     fun buildPing(): JonSharedCmd.Root {
         // Build a simple ping command
         val pingCmd = JonSharedCmd.Ping.newBuilder().build()
-        
-        return JonSharedCmd.Root.newBuilder()
+
+        return JonSharedCmd.Root
+            .newBuilder()
             .setPing(pingCmd)
             .build()
     }
-    
-    fun buildCommand(action: String): JonSharedCmd.Root {
-        return when (action) {
+
+    fun buildCommand(action: String): JonSharedCmd.Root =
+        when (action) {
             "ping" -> buildPing()
             else -> buildPing() // Default to ping for now
         }
-    }
 }

@@ -109,7 +109,7 @@
   (testing "Binary data handling"
     (let [binary-data (byte-array [1 2 3 4 5 -128 127 0])
           test-map {:binary binary-data
-                     :type "bytes"}
+                    :type "bytes"}
           out (ByteArrayOutputStream.)
           writer (transit-core/make-writer out)
           _ (transit-core/write-message! writer test-map out)
@@ -127,7 +127,7 @@
                  (let [in (ByteArrayInputStream. (byte-array 0))
                        reader (transit-core/make-reader in)]
                    (transit-core/read-message reader))))
-    
+
     ;; Test reading corrupted data - Transit msgpack may parse it in unexpected ways
     (let [in (ByteArrayInputStream. (.getBytes "not transit data"))
           reader (transit-core/make-reader in)]
@@ -135,7 +135,7 @@
         (let [result (transit-core/read-message reader)]
           ;; Transit msgpack may parse plain text in various ways
           ;; The important thing is it doesn't crash
-          (is (some? result) 
+          (is (some? result)
               (str "Non-transit data parsed as: " (pr-str result) " (type: " (type result) ")")))
         (catch Exception e
           ;; This is also acceptable
@@ -144,7 +144,7 @@
 (deftest test-concurrent-writes
   (testing "Concurrent write safety"
     (let [out (ByteArrayOutputStream.)
-          data-items (map #(hash-map :id % :data (str "item-" %)) 
+          data-items (map #(hash-map :id % :data (str "item-" %))
                           (range 100))]
       ;; Write concurrently
       (let [futures (doall
@@ -153,7 +153,7 @@
                            data-items))]
         ;; Wait for all writes
         (doseq [f futures] @f))
-      
+
       ;; Verify we can read something (exact count may vary due to interleaving)
       (let [in (ByteArrayInputStream. (.toByteArray out))]
         (is (pos? (count (.toByteArray out))))))))

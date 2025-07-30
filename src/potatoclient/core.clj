@@ -5,14 +5,14 @@
             [clojure.spec.alpha :as s]
             [clojure.string]
             [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
-            [potatoclient.cmd.core :as cmd]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.runtime :as runtime]
-            [potatoclient.state.dispatch :as dispatch]
             [potatoclient.theme :as theme]
+            [potatoclient.transit.app-db :as app-db]
+            [potatoclient.transit.subprocess-launcher :as launcher]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.startup-dialog :as startup-dialog]
             [seesaw.core :as seesaw])
@@ -43,11 +43,17 @@
     (Thread.
       (fn []
         (try
-          (cmd/stop-websocket!)
+          (logging/log-info {:msg "Shutting down PotatoClient..."})
+          ;; Stop Transit subprocesses first
+          (launcher/stop-all-subprocesses)
+          ;; Stop video stream processes
           (process/cleanup-all-processes)
+          ;; Give processes time to terminate
+          (Thread/sleep 100)
+          ;; Shutdown logging
           (logging/shutdown!)
-          (catch Exception _
-            nil))))))
+          (catch Exception e
+            (println "Error during shutdown:" (.getMessage e))))))))
 
 (>defn- initialize-application!
   "Initialize all application subsystems."
@@ -69,6 +75,31 @@
                   (get-version)
                   (get-build-type))}))
 
+(>defn- setup-state-monitoring!
+  "Set up monitoring for state changes through app-db"
+  []
+  [=> nil?]
+  ;; Monitor connection status
+  (add-watch app-db/app-db ::connection-monitor
+             (fn [_ _ old-state new-state]
+               (let [old-conn (get-in old-state [:app-state :connection :connected?])
+                     new-conn (get-in new-state [:app-state :connection :connected?])]
+                 (when (not= old-conn new-conn)
+                   (if new-conn
+                     (logging/log-info {:msg "WebSocket connected to server"})
+                     (logging/log-warn {:msg "WebSocket disconnected from server"}))))))
+
+  ;; Monitor critical system state
+  (add-watch app-db/app-db ::battery-monitor
+             (fn [_ _ old-state new-state]
+               (let [old-battery (get-in old-state [:server-state :system :battery-level])
+                     new-battery (get-in new-state [:server-state :system :battery-level])]
+                 (when (and new-battery
+                            (not= old-battery new-battery)
+                            (< new-battery 20))
+                   (logging/log-warn {:msg "Low battery warning" :level new-battery})))))
+  nil)
+
 (>defn -main
   "Application entry point."
   [& _]
@@ -88,14 +119,22 @@
                       domain (config/get-domain)]
                   (seesaw/show! frame)
                   (log-startup!)
-                  ;; Initialize WebSocket connections
-                  (cmd/init-websocket!
-                    domain
-                    (fn [error-msg]
-                      (logging/log-error (str "WebSocket error: " error-msg)))
-                    (fn [binary-data]
-                      (dispatch/handle-binary-state binary-data)))
-                  (logging/log-info (str "WebSocket connections started to " domain)))
+                  ;; Initialize Transit subprocess system
+                  (let [ws-url (str "wss://" domain "/ws/ws_cmd")
+                        state-url (str "wss://" domain "/ws/ws_state")]
+                    ;; Start command subprocess
+                    (launcher/start-command-subprocess ws-url domain)
+                    ;; Start state subprocess  
+                    (launcher/start-state-subprocess state-url domain)
+                    ;; Set up state monitoring
+                    (setup-state-monitoring!)
+                    ;; Set initial UI state from config
+                    (when-let [saved-theme (:theme (config/load-config))]
+                      (app-db/set-theme! saved-theme))
+                    (when-let [saved-locale (:locale (config/load-config))]
+                      (app-db/set-locale! saved-locale))
+                    (logging/log-info {:msg "Transit subprocess system initialized"
+                                       :domain domain})))
 
                 :cancel
                 ;; User clicked Cancel, exit application

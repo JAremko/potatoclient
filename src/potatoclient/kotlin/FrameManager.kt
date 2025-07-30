@@ -1,6 +1,7 @@
 package potatoclient.kotlin
 
 import com.sun.jna.Platform
+import potatoclient.transit.TransitMessageProtocol
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Component
@@ -19,7 +20,7 @@ class FrameManager(
     private val streamId: String,
     private val domain: String,
     private val listener: FrameEventListener?,
-    private val messageProtocol: MessageProtocol,
+    private val messageProtocol: TransitMessageProtocol,
 ) {
     @Volatile private var frame: JFrame? = null
 
@@ -79,7 +80,7 @@ class FrameManager(
                     iconImage = ImageIcon(iconURL).image
                 }
             } catch (e: IOException) {
-                messageProtocol.sendLog("ERROR", "Failed to load window icon: ${e.message}")
+                messageProtocol.sendError("Failed to load window icon: ${e.message}")
             }
 
             // Add window close listener

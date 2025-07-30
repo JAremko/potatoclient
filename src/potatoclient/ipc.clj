@@ -3,59 +3,140 @@
   
   Manages communication between the main process and video stream subprocesses,
   including message routing and stream lifecycle management."
-  (:require [clojure.core.async :refer [<! go-loop]]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.events.stream :as stream-events]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
-            [potatoclient.state :as state])
-  (:import (clojure.core.async.impl.channels ManyToManyChannel)))
+            [potatoclient.state :as state]
+            [potatoclient.transit.app-db :as app-db])
+  (:import (potatoclient.transit MessageType MessageKeys)))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
 
-;; Message type dispatch table
-(def ^:private message-handlers
-  {:response stream-events/handle-response-event
-   :log (fn [_ msg] (logging/log-event ::stream-log
-                                       {:stream (:streamId msg)
-                                        :level (:level msg)
-                                        :message (:message msg)}))
-   :navigation (fn [_ msg] (stream-events/handle-navigation-event msg))
-   :window (fn [_ msg] (stream-events/handle-window-event msg))})
+;; Multimethod for message handling based on message type
+(defmulti handle-message
+  "Handle messages from subprocesses based on their type."
+  (fn [msg-type stream-key payload] msg-type))
+
+;; Default handler for unknown message types
+(defmethod handle-message :default
+  [msg-type stream-key payload]
+  (logging/log-warn
+    {:id ::unknown-message-type
+     :data {:stream stream-key
+            :msg-type msg-type}
+     :msg (str "Unknown message type: " msg-type)}))
+
+;; Response messages
+(defmethod handle-message :response
+  [_ stream-key payload]
+  (stream-events/handle-response-event stream-key payload))
+
+;; Log messages
+(defmethod handle-message :log
+  [_ stream-key payload]
+  (logging/log-event ::stream-log
+                     {:stream (or (get payload MessageKeys/STREAM_ID)
+                                  (get payload MessageKeys/PROCESS)
+                                  stream-key)
+                      :level (get payload MessageKeys/LEVEL)
+                      :message (get payload MessageKeys/MESSAGE)}))
+
+;; Error messages
+(defmethod handle-message :error
+  [_ stream-key payload]
+  (logging/log-error
+    {:id ::stream-error
+     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
+            :context (get payload MessageKeys/CONTEXT)
+            :error (get payload MessageKeys/ERROR)
+            :stackTrace (get payload MessageKeys/STACK_TRACE)}
+     :msg (str "Error from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/CONTEXT))}))
+
+;; Metric messages
+(defmethod handle-message :metric
+  [_ stream-key payload]
+  (logging/log-debug
+    {:id ::stream-metric
+     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
+            :name (get payload MessageKeys/NAME)
+            :value (get payload MessageKeys/VALUE)}
+     :msg (str "Metric from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/NAME) " = " (get payload MessageKeys/VALUE))}))
+
+;; Status messages
+(defmethod handle-message :status
+  [_ stream-key payload]
+  (logging/log-info
+    {:id ::stream-status
+     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
+            :status (get payload MessageKeys/STATUS)}
+     :msg (str "Status from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/STATUS))}))
+
+;; Event messages (contains sub-types)
+(defmethod handle-message :event
+  [_ stream-key payload]
+  (case (keyword (get payload MessageKeys/TYPE))
+    :navigation (stream-events/handle-navigation-event payload)
+    :window (stream-events/handle-window-event payload)
+    :frame (logging/log-debug
+             {:id ::frame-event
+              :data {:stream stream-key
+                     :payload payload}
+              :msg "Frame event received"})
+    :error (logging/log-error
+             {:id ::video-stream-error
+              :data {:stream stream-key
+                     :payload payload}
+              :msg "Video stream error event"})
+    ;; Log unknown event types
+    (logging/log-warn
+      {:id ::unknown-event-type
+       :data {:stream stream-key
+              :event-type (get payload MessageKeys/TYPE)}
+       :msg (str "Unknown event type: " (get payload MessageKeys/TYPE))})))
 
 ;; No need to define specs here as they're available in potatoclient.specs
 
-(>defn- dispatch-message
-  "Dispatch a message to the appropriate handler."
+(>defn dispatch-message
+  "Dispatch a message to the appropriate handler using multimethod.
+  This is called directly from the subprocess reader thread."
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
-  (if-let [handler (get message-handlers (keyword (:type msg)))]
+  ;; Extract message type and payload from Transit message structure
+  (let [msg-type (get msg MessageKeys/MSG_TYPE)
+        payload (get msg MessageKeys/PAYLOAD)]
+    ;; Log error if message type is missing
+    (when-not msg-type
+      (logging/log-error
+        {:id ::missing-msg-type
+         :data {:stream stream-key
+                :msg msg}
+         :msg "Message missing required msg-type field"}))
+    ;; Log response dispatching for debugging
+    (when (= msg-type "response")
+      (logging/log-info
+        {:id ::dispatch-response
+         :data {:stream-key stream-key
+                :action (get payload "action")
+                :payload payload}
+         :msg (str "DISPATCH: Handling response for " stream-key 
+                  " with action: " (get payload "action"))}))
     (try
-      (handler stream-key msg)
+      (handle-message (keyword msg-type) stream-key payload)
+      true
       (catch Exception e
         (logging/log-error
           {:id ::message-handler-error
            :data {:stream stream-key
-                  :msg-type (:type msg)
+                  :msg-type msg-type
                   :error (.getMessage e)}
-           :msg (str "Error handling " (:type msg) " message")})))
-    (logging/log-warn
-      {:id ::unknown-message-type
-       :data {:stream stream-key
-              :msg-type (:type msg)}
-       :msg (str "Unknown message type: " (:type msg))})))
+           :msg (str "Error handling " msg-type " message")})
+        false))))
 
-(>defn- process-stream-messages
-  "Process messages from a stream's output channel."
-  [stream-key stream]
-  [:potatoclient.specs/stream-key :potatoclient.specs/stream-process-map => [:fn {:error/message "must be a core.async channel"}
-                                                                             #(instance? ManyToManyChannel %)]]
-  (go-loop []
-    (when-let [msg (<! (:output-chan stream))]
-      (dispatch-message stream-key msg)
-      (recur))))
+;; Message handler is now set directly in process.clj
+;; No more go-loops or channels needed here!)
 
 (>defn- build-stream-url
   "Build the WebSocket URL for a stream."
@@ -91,9 +172,16 @@
     (try
       (let [url (build-stream-url endpoint)
             domain (config/get-domain)
-            stream (process/start-stream-process (name stream-key) url domain)]
-        (state/set-stream! stream-key stream)
-        (process-stream-messages stream-key stream)
+            ;; Pass our dispatch function to the process so it can call us directly
+            stream (process/start-stream-process (name stream-key) url domain
+                                                 (fn [msg] (dispatch-message stream-key msg)))]
+        ;; Store the full stream process map in app-db
+        (app-db/set-stream-process! stream-key stream)
+        (state/set-stream! stream-key (.pid ^Process (:process stream)) :running)
+        (logging/log-info
+          {:id ::starting-message-processor
+           :data {:stream-key stream-key}
+           :msg (str "Message handler registered for " stream-key)})
         (initialize-stream stream)
         (logging/log-info
           {:id ::stream-started
@@ -116,9 +204,11 @@
   [:potatoclient.specs/stream-key => :potatoclient.specs/future-instance]
   (future
     (try
-      (when-let [stream (state/get-stream stream-key)]
+      ;; Get the actual stream process map from app-db
+      (when-let [stream (app-db/get-stream-process stream-key)]
         (process/stop-stream stream)
         (state/clear-stream! stream-key)
+        (app-db/remove-stream-process! stream-key)
         (logging/log-info
           {:id ::stream-stopped
            :data {:stream stream-key

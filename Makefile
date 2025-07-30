@@ -78,10 +78,22 @@ compile-java-proto: ## Compile Java protobuf source files
 	@echo "Compiling Java protobuf sources..."
 	clojure -T:build compile-java-proto
 
+# Compile Java enum sources
+.PHONY: compile-java-enums
+compile-java-enums: ## Compile Java enum source files
+	@echo "Compiling Java enum sources..."
+	clojure -T:build compile-java-enums
+
 # Build target
 .PHONY: build
-build: proto compile-kotlin compile-java-proto ## Build the project (creates JAR file)
+build: ensure-compiled ## Build the project (creates JAR file)
 	@echo "Building project..."
+	clojure -T:build uber
+
+# Build with forced proto regeneration
+.PHONY: build-clean
+build-clean: proto compile-java-proto compile-java-enums compile-kotlin ## Build with forced proto regeneration
+	@echo "Building project with clean proto..."
 	clojure -T:build uber
 
 # Release build target
@@ -118,7 +130,7 @@ clean: clean-proto clean-cache ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: proto compile-kotlin compile-java-proto ## REPL on port 7888 for interactive development (same validation features as make dev)
+nrepl: proto compile-java-proto compile-java-enums compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ EDN state validation enabled"
@@ -150,7 +162,7 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 
 # Test target
 .PHONY: test
-test: build ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
+test: ensure-compiled ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
 	@echo "Setting up test logging..."
 	@TEST_RUN_DIR=$$(./scripts/setup-test-logs.sh) && \
 	echo "Test output will be saved to: $$TEST_RUN_DIR" && \
@@ -158,8 +170,8 @@ test: build ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
 	mkdir -p target/test-classes && \
 	javac -cp "$$(clojure -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true && \
 	echo "Running tests..." && \
-	clojure -M:test 2>&1 | tee "$$TEST_RUN_DIR/test-full.log" && \
-	EXIT_CODE=$$? && \
+	clojure -M:test 2>&1 | tee "$$TEST_RUN_DIR/test-full.log"; \
+	EXIT_CODE=$$?; \
 	echo "" && \
 	echo "Generating test summary..." && \
 	./scripts/compact-test-logs.sh "$$TEST_RUN_DIR/test-full.log" && \
@@ -205,7 +217,7 @@ coverage-analyze: ## Analyze existing coverage reports and list uncovered functi
 
 # Report unspecced functions
 .PHONY: report-unspecced
-report-unspecced: proto compile-kotlin compile-java-proto ## Check which functions need Guardrails specs - mandatory for all functions
+report-unspecced: proto compile-java-proto compile-java-enums compile-kotlin ## Check which functions need Guardrails specs - mandatory for all functions
 	@echo "Generating unspecced functions report..."
 	@echo "  • Lists all functions that lack Malli instrumentation"
 	@echo "  • Groups them by namespace"
@@ -236,9 +248,26 @@ rebuild: clean build ## Clean and rebuild the project
 # PRIMARY DEVELOPMENT COMMANDS
 ###############################################################################
 
+# Ensure everything is compiled without unnecessary cleaning
+.PHONY: ensure-compiled
+ensure-compiled: clean-app ## Compile only if sources changed (smart compilation)
+	@if [ ! -d "src/potatoclient/java/cmd" ] || [ ! -d "src/potatoclient/java/ser" ]; then \
+		echo "Proto files missing, generating..."; \
+		$(MAKE) proto; \
+	fi
+	@if [ ! -d "target/classes/ser" ] || [ ! -d "target/classes/cmd" ]; then \
+		echo "Proto classes missing, compiling..."; \
+		$(MAKE) compile-java-proto; \
+	fi
+	@echo "Compiling Java enum classes..."
+	@$(MAKE) compile-java-enums
+	@echo "Recompiling Kotlin classes to ensure fresh code..."
+	@$(MAKE) compile-kotlin
+	@echo "All required files are compiled."
+
 # Development target - runs with all validation, logging, and debugging features
 .PHONY: dev
-dev: clean-cache proto compile-kotlin compile-java-proto ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings (takes 30-40s to start)
+dev: ensure-compiled ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings (takes 30-40s to start)
 	@echo "Running development version with:"
 	@echo "  ✓ Full Guardrails validation catches bugs immediately"
 	@echo "  ✓ EDN state validation enabled (protobuf constraint checking)"
@@ -251,6 +280,12 @@ dev: clean-cache proto compile-kotlin compile-java-proto ## PRIMARY DEVELOPMENT 
 	@echo "⚠️  Takes 30-40 seconds to start - set appropriate timeouts in your tools!"
 	@echo ""
 	GST_DEBUG=3 clojure -M:run
+
+# Development with clean rebuild
+.PHONY: dev-clean
+dev-clean: clean-cache proto compile-java-proto compile-java-enums compile-kotlin ## Development with forced clean rebuild (regenerates everything)
+	@echo "Running development version with clean rebuild..."
+	@$(MAKE) dev
 
 # Run the JAR file in production-like mode
 .PHONY: run
@@ -271,6 +306,22 @@ clean-cache: ## Clean Clojure compilation cache to ensure fresh code runs
 	@rm -rf .cpcache/
 	@rm -rf target/classes/
 	@find . -name "*.class" -type f -delete 2>/dev/null || true
+
+# Clean only Clojure classes (preserves proto and kotlin)
+.PHONY: clean-clojure
+clean-clojure: ## Clean only Clojure compiled classes
+	@echo "Cleaning Clojure classes..."
+	@rm -rf .cpcache/
+	@rm -rf target/classes/potatoclient/
+	@find src/potatoclient -name "*.class" -type f -delete 2>/dev/null || true
+
+# Clean Clojure and Kotlin classes (preserves proto)
+.PHONY: clean-app
+clean-app: ## Clean Clojure and Kotlin compiled classes (preserves proto)
+	@echo "Cleaning Clojure and Kotlin classes..."
+	@rm -rf .cpcache/
+	@rm -rf target/classes/potatoclient/
+	@find src/potatoclient -name "*.class" -type f -delete 2>/dev/null || true
 
 # Build for macOS development (unsigned, uses system Java)
 .PHONY: build-macos-dev

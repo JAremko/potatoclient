@@ -2,6 +2,8 @@
 
 This document contains detailed information about PotatoClient's Protobuf implementation and command system architecture.
 
+**IMPORTANT**: As of the Transit architecture migration, Protobuf handling is completely isolated in Kotlin subprocesses. The Clojure main process uses Transit/MessagePack for all IPC and never touches Protobuf directly. This document describes how Protobuf is used within the Kotlin subprocesses only.
+
 ## Table of Contents
 
 - [Protobuf Implementation Details](#protobuf-implementation-details)
@@ -40,17 +42,19 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 - Command types are in the `cmd` package and sub-packages
 - The preprocessing script maintains these package names during proto compilation
 
-**Serialization** (Clojure map → Protobuf bytes):
-```clojure
-;; Example: Serialize a command
-(proto/encode-command {:action :connect :url "wss://example.com"})
+**Note**: In the Transit architecture, Clojure never directly serializes/deserializes Protobuf. This is handled exclusively in Kotlin subprocesses:
+
+**Kotlin Command Building** (Transit map → Protobuf):
+```kotlin
+// In CommandSubprocess.kt
+val command = SimpleCommandBuilder.buildCommand(transitMap)
+val bytes = command.toByteArray()
 ```
 
-**Deserialization** (Protobuf bytes → Clojure map):
-```clojure
-;; Example: Deserialize GUI state
-(proto/decode-gui-state proto-bytes)
-;; Returns: {:connected true :stream-type :heat ...}
+**Kotlin State Conversion** (Protobuf → Transit map):
+```kotlin
+// In StateSubprocess.kt
+val transitMap = SimpleStateConverter.convertToTransit(guiState)
 ```
 
 **Protobuf to JSON Debugging**:
@@ -63,30 +67,39 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 
 **Case Conversion**:
 - Protobuf fields use `camelCase` (Java convention)
-- Clojure maps use `:kebab-case` keywords
-- Automatic bidirectional conversion handled by `proto.clj`
+- Transit maps use string keys (e.g., "action", "url")
+- Kotlin handles the conversion between Transit and Protobuf
 
 **Adding New Message Types**:
 1. Define in `.proto` files using camelCase
 2. Run `make proto` to regenerate Java classes
-3. Check generated package structure in `src/potatoclient/java/`
-4. Use existing `encode-*` / `decode-*` patterns in `proto.clj`
-5. Keys automatically converted to kebab-case in Clojure
+3. Update `SimpleCommandBuilder.kt` to handle new command types
+4. Update `SimpleStateConverter.kt` to handle new state fields
+5. Add corresponding Transit command functions in `commands.clj`
 
 ## Command System Architecture
 
-PotatoClient includes a command system based on the TypeScript web frontend architecture, enabling control message sending via Protobuf. The implementation is modeled after the example frontend documented in `examples/web/COMMAND_STATE_ARCHITECTURE_REPORT.md`.
+### Transit-Based Architecture
 
-### Architecture Overview
+The command system uses Transit/MessagePack for IPC between Clojure and Kotlin:
 
-The command system uses:
-- **Core.async channels** for message routing (similar to BroadcastChannels in TypeScript)
-- **Protobuf encoding** for wire format compatibility
-- **JSON output** with Base64-encoded payloads
-- **Read-only mode** for restricted operation
-- **Development mode debugging** with automatic protobuf to JSON decoding
+**Command Flow**:
+1. Clojure creates command maps using `potatoclient.transit.commands`
+2. Transit serializes the command and sends it to CommandSubprocess (Kotlin)
+3. CommandSubprocess converts Transit → Protobuf using `SimpleCommandBuilder`
+4. Protobuf command is sent via WebSocket to the server
 
-The Clojure implementation follows the same patterns as the TypeScript version in the example web frontend, providing equivalent functionality for command creation, encoding, and dispatching.
+**State Flow**:
+1. Server sends Protobuf state via WebSocket to StateSubprocess (Kotlin)
+2. StateSubprocess converts Protobuf → Transit using `SimpleStateConverter`
+3. Transit state is sent to Clojure and stored in app-db atom
+4. UI components react to state changes via re-frame-style subscriptions
+
+**Key Points**:
+- Clojure process never touches Protobuf directly
+- All Protobuf handling is isolated in Kotlin subprocesses
+- Transit provides clean data interchange format
+- Debouncing and rate limiting happen in StateSubprocess
 
 ## Package Structure
 
@@ -220,14 +233,14 @@ The Clojure implementation follows the same patterns as the TypeScript version i
 (camera/set-shutter-speed 60.0)
 ```
 
-## Command Flow
+## Command Flow (Transit Architecture)
 
-1. UI/API calls command function
-2. Function creates Protobuf message via Java builders
-3. Message encoded to bytes
-4. Command posted to core.async channel with metadata
-5. Reader loop outputs JSON with Base64 payload
-6. (Future: WebSocket/WebTransport sends to server)
+1. UI/API calls Transit command function (e.g., `commands/ping`)
+2. Function returns a Transit-compatible map (e.g., `{:action "ping"}`)
+3. Transit serializes the map to MessagePack format
+4. CommandSubprocess (Kotlin) receives Transit message via stdin
+5. Kotlin converts Transit map to Protobuf using SimpleCommandBuilder
+6. Protobuf bytes sent via WebSocket to server
 
 ## JSON Output Format
 

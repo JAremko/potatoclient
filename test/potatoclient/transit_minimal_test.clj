@@ -72,8 +72,8 @@
                 :satellites 8
                 :hdop 1.2
                 :mode "3d-fix"}
-               (select-keys (app-db/get-subsystem :gps) 
-                           [:latitude :longitude :altitude :satellites :hdop :mode])))))))
+               (select-keys (app-db/get-subsystem :gps)
+                            [:latitude :longitude :altitude :satellites :hdop :mode])))))))
 
 (deftest test-command-creation
   (testing "Command API creates correct structures"
@@ -93,9 +93,9 @@
         (is (= 30.0 (get-in cmd [:params :elevation]))))
 
       (let [cmd (commands/set-gps-manual {:use-manual true
-                                           :latitude 40.7128
-                                           :longitude -74.0060
-                                           :altitude 100.0})]
+                                          :latitude 40.7128
+                                          :longitude -74.0060
+                                          :altitude 100.0})]
         (is (= "set-gps-manual" (:action cmd)))
         (is (= true (get-in cmd [:params :use-manual])))
         (is (= 40.7128 (get-in cmd [:params :latitude])))
@@ -104,20 +104,20 @@
 
 ;; These are private functions, so commenting out these tests
 #_(deftest test-process-environment
-  (testing "Process environment construction"
-    (let [env (launcher/build-process-environment {:test "value"})]
-      (is (map? env))
-      (is (contains? env "JAVA_HOME"))
-      (is (contains? env "PATH"))
-      (is (= "value" (get env "test"))))))
+    (testing "Process environment construction"
+      (let [env (launcher/build-process-environment {:test "value"})]
+        (is (map? env))
+        (is (contains? env "JAVA_HOME"))
+        (is (contains? env "PATH"))
+        (is (= "value" (get env "test"))))))
 
 ;; Private function test
 #_(deftest test-java-executable-detection
-  (testing "Java executable detection"
-    (let [java-exe (launcher/get-java-executable)]
-      (is (string? java-exe))
-      (is (or (.endsWith java-exe "java")
-              (.endsWith java-exe "java.exe"))))))
+    (testing "Java executable detection"
+      (let [java-exe (launcher/get-java-executable)]
+        (is (string? java-exe))
+        (is (or (.endsWith java-exe "java")
+                (.endsWith java-exe "java.exe"))))))
 
 (deftest test-transit-roundtrip-with-nested-data
   (testing "Complex nested data structures"

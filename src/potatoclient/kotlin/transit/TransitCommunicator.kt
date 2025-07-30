@@ -1,15 +1,26 @@
 package potatoclient.transit
 
-import com.cognitect.transit.TransitFactory
 import com.cognitect.transit.Reader
+import com.cognitect.transit.TransitFactory
 import com.cognitect.transit.Writer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
-import java.io.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.EOFException
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 
 // Message framing constants
@@ -186,17 +197,20 @@ class TransitCommunicator(
         }
     }
 
-    companion object {
-        @Suppress("UNCHECKED_CAST")
-        private fun createWriter(out: OutputStream): Writer<Any> {
-            // Use null map for custom handlers to help type inference
-            val writer = TransitFactory.writer<Any>(
-                TransitFactory.Format.MSGPACK, 
+    @Suppress("UNCHECKED_CAST")
+    private fun createWriter(out: OutputStream): Writer<Any> {
+        // Use null map for custom handlers to help type inference
+        val writer =
+            TransitFactory.writer<Any>(
+                TransitFactory.Format.MSGPACK,
                 out,
-                null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?
+                null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?,
             )
-            return writer
-        }
+        return writer
+    }
+
+    companion object {
+        // Removed - we now use StdoutInterceptor.getOriginalStdout() instead
     }
 }
 

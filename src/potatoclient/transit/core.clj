@@ -2,7 +2,6 @@
   "Transit MessagePack communication infrastructure with Guardrails specs"
   (:require [cognitect.transit :as transit]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
-            [potatoclient.specs :as specs]
             [potatoclient.logging :as log])
   (:import [java.io OutputStream InputStream ByteArrayOutputStream ByteArrayInputStream]
            [cognitect.transit Writer Reader]

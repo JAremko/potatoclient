@@ -1,0 +1,169 @@
+(ns ^:skip potatoclient.transit.unified-transit-test
+  "Test the unified Transit implementation across all subprocess types.
+  SKIP: V2 implementations not yet created."
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
+            [clojure.core.async :as async :refer [<! >! go timeout alts!]]
+            [potatoclient.transit.subprocess-launcher-v2 :as launcher])
+  (:import (potatoclient.transit MessageType MessageKeys CommandActions)))
+
+(defn- wait-for-message
+  "Wait for a specific message type from a subprocess."
+  [subprocess msg-type-key timeout-ms]
+  (let [output-chan (:output-chan subprocess)
+        expected-type (.getKey (MessageType/valueOf (name msg-type-key)))]
+    (go
+      (let [timeout-chan (timeout timeout-ms)]
+        (loop []
+          (let [[msg ch] (alts! [output-chan timeout-chan])]
+            (cond
+              (= ch timeout-chan) nil
+              (= (get msg MessageKeys/MSG_TYPE) expected-type) msg
+              :else (recur))))))))
+
+(deftest test-java-enum-usage
+  (testing "Java enums are accessible from Clojure"
+    (is (= "command" (.getKey MessageType/COMMAND)))
+    (is (= "response" (.getKey MessageType/RESPONSE)))
+    (is (= "msg-type" MessageKeys/MSG_TYPE))
+    (is (= "payload" MessageKeys/PAYLOAD))
+    (is (= "shutdown" CommandActions/SHUTDOWN))))
+
+(deftest test-command-subprocess-v2
+  (testing "Command subprocess V2 with unified Transit"
+    (let [subprocess (launcher/start-command-subprocess "wss://test.local/ws/ws_cmd")]
+      (try
+        ;; Wait for startup
+        (Thread/sleep 100)
+        
+        ;; Send ping command
+        (is (launcher/send-command subprocess CommandActions/PING {}))
+        
+        ;; Wait for response
+        (let [response (<! (wait-for-message subprocess :RESPONSE 1000))]
+          (is (not (nil? response)))
+          (when response
+            (is (= (.getKey MessageType/RESPONSE) 
+                   (get response MessageKeys/MSG_TYPE)))
+            (is (contains? response MessageKeys/PAYLOAD))))
+        
+        ;; Send status command
+        (is (launcher/send-command subprocess CommandActions/STATUS {}))
+        
+        ;; Wait for response
+        (let [response (<! (wait-for-message subprocess :RESPONSE 1000))]
+          (is (not (nil? response)))
+          (when response
+            (let [payload (get response MessageKeys/PAYLOAD)]
+              (is (contains? payload MessageKeys/PROCESS))
+              (is (= "command" (get payload MessageKeys/PROCESS))))))
+        
+        finally
+        (launcher/stop-subprocess :cmd-proc)))))
+
+(deftest test-state-subprocess-v2
+  (testing "State subprocess V2 with unified Transit"
+    (let [subprocess (launcher/start-state-subprocess "wss://test.local/ws/ws_state")]
+      (try
+        ;; Wait for startup
+        (Thread/sleep 100)
+        
+        ;; Send get-stats command
+        (is (launcher/send-command subprocess "get-stats" {}))
+        
+        ;; Wait for response
+        (let [response (<! (wait-for-message subprocess :RESPONSE 1000))]
+          (is (not (nil? response)))
+          (when response
+            (let [payload (get response MessageKeys/PAYLOAD)]
+              (is (contains? payload "received"))
+              (is (contains? payload "sent"))
+              (is (contains? payload MessageKeys/PROCESS))
+              (is (= "state" (get payload MessageKeys/PROCESS))))))
+        
+        ;; Send set-rate-limit command
+        (is (launcher/send-command subprocess CommandActions/SET_RATE_LIMIT {"rate" 60}))
+        
+        ;; Wait for response
+        (let [response (<! (wait-for-message subprocess :RESPONSE 1000))]
+          (is (not (nil? response)))
+          (when response
+            (let [payload (get response MessageKeys/PAYLOAD)]
+              (is (= 60 (get payload "rate"))))))
+        
+        finally
+        (launcher/stop-subprocess :state-proc)))))
+
+(deftest test-video-subprocess-v2
+  (testing "Video subprocess V2 with unified Transit"
+    (let [subprocess (launcher/start-video-subprocess 
+                      "test" 
+                      "wss://test.local/ws/ws_rec_video_test" 
+                      "test.local")]
+      (try
+        ;; Wait for startup
+        (Thread/sleep 100)
+        
+        ;; Send status command
+        (is (launcher/send-command subprocess CommandActions/STATUS {}))
+        
+        ;; Wait for response
+        (let [response (<! (wait-for-message subprocess :RESPONSE 1000))]
+          (is (not (nil? response)))
+          (when response
+            (let [payload (get response MessageKeys/PAYLOAD)]
+              (is (contains? payload MessageKeys/STREAM_ID))
+              (is (= "test" (get payload MessageKeys/STREAM_ID)))
+              (is (contains? payload MessageKeys/PROCESS)))))
+        
+        ;; Send show command
+        (is (launcher/send-command subprocess CommandActions/SHOW {}))
+        
+        ;; The subprocess might send various event messages
+        ;; Just verify we can receive them
+        (Thread/sleep 100)
+        
+        finally
+        (launcher/stop-subprocess :video-test)))))
+
+(deftest test-message-flow
+  (testing "Consistent message structure across all subprocess types"
+    (let [cmd-proc (launcher/start-command-subprocess "wss://test.local/ws/ws_cmd")
+          state-proc (launcher/start-state-subprocess "wss://test.local/ws/ws_state")]
+      (try
+        (Thread/sleep 100)
+        
+        ;; Send commands to both
+        (launcher/send-command cmd-proc CommandActions/STATUS {})
+        (launcher/send-command state-proc "get-stats" {})
+        
+        ;; Collect responses
+        (let [cmd-response (<! (wait-for-message cmd-proc :RESPONSE 1000))
+              state-response (<! (wait-for-message state-proc :RESPONSE 1000))]
+          
+          ;; Both should have the same message structure
+          (doseq [response [cmd-response state-response]]
+            (when response
+              (is (contains? response MessageKeys/MSG_TYPE))
+              (is (contains? response MessageKeys/MSG_ID))
+              (is (contains? response MessageKeys/TIMESTAMP))
+              (is (contains? response MessageKeys/PAYLOAD)))))
+        
+        finally
+        (launcher/stop-subprocess :cmd-proc)
+        (launcher/stop-subprocess :state-proc)))))
+
+(deftest test-cleanup
+  (testing "All subprocesses cleanup properly"
+    ;; Start multiple subprocesses
+    (launcher/start-command-subprocess "wss://test.local/ws/ws_cmd")
+    (launcher/start-state-subprocess "wss://test.local/ws/ws_state")
+    (launcher/start-video-subprocess "test1" "wss://test.local/ws/ws_video1" "test.local")
+    (launcher/start-video-subprocess "test2" "wss://test.local/ws/ws_video2" "test.local")
+    
+    (Thread/sleep 100)
+    
+    ;; Clean them all up
+    (launcher/cleanup-all-subprocesses)
+    
+    ;; Verify they're all gone
+    (is (empty? @launcher/subprocesses))))

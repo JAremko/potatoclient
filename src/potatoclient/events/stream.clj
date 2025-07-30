@@ -2,13 +2,11 @@
   "Event handling for video stream windows"
   (:require
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
-    [potatoclient.cmd.cv :as cv]
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
     [potatoclient.specs]
     [potatoclient.state :as state]
-    [potatoclient.transit.app-db :as app-db])
-  (:import (ser JonSharedDataTypes$JonGuiDataVideoChannel)))
+    [potatoclient.transit.app-db :as app-db]))
 
 (def mouse-button-names
   "Mapping of mouse button numbers to human-readable names"
@@ -127,28 +125,52 @@
   [:potatoclient.specs/stream-key => nil?]
   (logging/log-stream-event stream-key :window-closed
                             {:message "Stream window closed by X button"})
-  (when-let [stream (state/get-stream stream-key)]
-    (future
-      (try
-              ;; Send shutdown command and stop the stream
-        (process/send-command stream {:action "shutdown"})
-        (Thread/sleep 100)
-        (process/stop-stream stream)
-        (app-db/set-process-state! stream-key nil :stopped)
-        (catch Exception e
-          (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))}))))
-    nil))
+  (logging/log-info {:msg (str "Attempting to get stream process for " stream-key)})
+  
+  ;; Get the full stream process map from app-db instead of the simplified state
+  (if-let [stream (app-db/get-stream-process stream-key)]
+    (do
+      (logging/log-info {:msg (str "Found stream process for " stream-key ", sending shutdown command")})
+      (future
+        (try
+          ;; Send shutdown command and stop the stream
+          (logging/log-info {:msg (str "Sending shutdown command to " stream-key)})
+          (let [cmd-result (process/send-command stream {:action "shutdown"})]
+            (logging/log-info {:msg (str "Shutdown command result for " stream-key ": " cmd-result)}))
+          (Thread/sleep 100)
+          
+          (logging/log-info {:msg (str "Stopping stream process for " stream-key)})
+          (let [stop-result (process/stop-stream stream)]
+            (logging/log-info {:msg (str "Stop stream result for " stream-key ": " stop-result)}))
+          
+          (logging/log-info {:msg (str "Clearing stream state for " stream-key)})
+          (state/clear-stream! stream-key)
+          (app-db/remove-stream-process! stream-key)
+          (logging/log-info {:msg (str "Successfully terminated " stream-key " stream via X button")})
+          (catch Exception e
+            (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))})))))
+    ;; Check if stream was already stopped
+    (if-let [state-info (state/get-stream stream-key)]
+      (logging/log-info {:msg (str "Stream " stream-key " already being stopped, state: " state-info)})
+      (logging/log-info {:msg (str "Stream " stream-key " already stopped/removed")})))
+  nil)
 
 (>defn handle-response-event
   "Handle a response event from a stream."
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => nil?]
   (logging/log-stream-event stream-key :response
-                            {:status (:status msg)
+                            {:action (get msg "action")
                              :data msg})
+  
+  ;; DEBUG: Log the actual message structure
+  (logging/log-debug {:msg (str "Response event - stream-key: " stream-key 
+                                ", action: " (get msg "action")
+                                ", full msg: " (pr-str msg))})
 
   ;; Handle specific response types
-  (when (= (:status msg) "window-closed")
+  (when (= (get msg "action") "window-closed")
+    (logging/log-info {:msg (str "Window close detected for " (name stream-key))})
     (handle-window-closed stream-key))
   nil)
 
@@ -158,27 +180,23 @@
   [map? => nil?]
   (let [event (:event msg)
         stream-id (:streamId msg)]
-    (logging/log-stream-event stream-id :navigation
-                              {:nav-type (:type event)
-                               :message (format-navigation-event event)
-                               :data event})
-
-    ;; Check for double-click (left button with clickCount > 1)
-    (when (and (= (:type event) :mouse-click)
-               (= (:button event) 1)  ; Left button
-               (> (:clickCount event) 1))  ; Double-click
-      (let [{:keys [ndcX ndcY frameTimestamp]} event
-            ;; Determine channel based on stream ID
-            channel (case stream-id
-                      :heat JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-                      :day JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY
-                      ;; Default to HEAT if unknown
-                      JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT)]
-        (logging/log-info {:msg (str "Double-click detected at NDC (" ndcX ", " ndcY ") "
-                                     "with frame timestamp: " frameTimestamp
-                                     " on " (name stream-id) " channel")})
-        ;; Start CV tracking at the clicked position with the appropriate channel
-        (cv/start-tracking channel ndcX ndcY frameTimestamp)))
+    (when event
+      (logging/log-stream-event stream-id :navigation
+                                {:nav-type (:type event)
+                                 :message (format-navigation-event event)
+                                 :data event})
+      
+      ;; Check for double-click (left button with clickCount > 1)
+      (when (and (= (:type event) :mouse-click)
+                 (= (:button event) 1)  ; Left button
+                 (> (:clickCount event) 1))  ; Double-click
+        (let [{:keys [ndcX ndcY frameTimestamp]} event]
+          (logging/log-info {:msg (str "Double-click detected at NDC (" ndcX ", " ndcY ") "
+                                       "with frame timestamp: " frameTimestamp
+                                       " on " (name stream-id) " channel")})
+          ;; TODO: Implement CV tracking in Transit architecture
+          ;; In the new architecture, we would send a CV tracking command via Transit
+          (logging/log-warn {:msg "CV tracking not yet implemented in Transit architecture"}))))
     nil))
 
 (>defn handle-window-event

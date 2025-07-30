@@ -98,60 +98,77 @@
             (catch Exception e
               (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e))))))))))
 
+;; Track if logging has been initialized
+(def ^:private initialized? (atom false))
+
 (>defn init!
   "Initialize the logging system"
   []
   [=> nil?]
-  ;; Clean up old logs first (keep newest 50)
-  (cleanup-old-logs! 50)
+  ;; Prevent double initialization
+  (when (compare-and-set! initialized? false true)
+    ;; Clean up old logs first (keep newest 50)
+    (cleanup-old-logs! 50)
 
-  ;; Remove default console handler
-  (tel/remove-handler! :default)
+    ;; Remove ALL handlers first to ensure clean state
+    ;; Telemere adds a default console handler automatically which causes duplication
+    (tel/remove-handler! :default/console)  ; Remove the auto-added default console handler
+    (tel/remove-handler! :default)
+    (tel/remove-handler! :console) 
+    (tel/remove-handler! :file)
 
-  ;; Set minimum level based on build type
-  (if (runtime/release-build?)
-    (tel/set-min-level! :warn) ; Only warnings and errors in production
-    (tel/set-min-level! :trace)) ; All levels in development
+    ;; Set minimum level based on build type
+    (if (runtime/release-build?)
+      (tel/set-min-level! :warn) ; Only warnings and errors in production
+      (tel/set-min-level! :trace)) ; All levels in development
 
-  ;; Configure handlers based on build type
-  (if (runtime/release-build?)
-    ;; Production: critical events to both console and file
-    (do
-      (tel/add-handler!
-        :console
-        (tel/handler:console
-          {:output-fn (tel/format-signal-fn)})
-        {:async {:mode :dropping, :buffer-size 1024}
-         :min-level :warn})
+    ;; Configure handlers based on build type
+    (if (runtime/release-build?)
+      ;; Production: critical events to both console and file
+      (do
+        (tel/add-handler!
+          :console
+          (tel/handler:console
+            {:output-fn (tel/format-signal-fn)})
+          {:async {:mode :dropping, :buffer-size 1024}
+           :min-level :warn})
 
-      ;; Also log to file in production for critical events
-      (tel/add-handler!
-        :file
-        (create-file-handler)
-        {:async {:mode :dropping, :buffer-size 1024}
-         :min-level :warn}))
-    ;; Development: console + file logging
-    (do
-      (tel/add-handler!
-        :console
-        (tel/handler:console
-          {:output-fn (tel/format-signal-fn)})
-        {:async {:mode :dropping, :buffer-size 1024}})
+        ;; Also log to file in production for critical events
+        (tel/add-handler!
+          :file
+          (create-file-handler)
+          {:async {:mode :dropping, :buffer-size 1024}
+           :min-level :warn}))
+      ;; Development: console + file logging
+      (do
+        (tel/add-handler!
+          :console
+          (tel/handler:console
+            {:output-fn (tel/format-signal-fn)})
+          {:async {:mode :dropping, :buffer-size 1024}})
 
-      (tel/add-handler!
-        :file
-        (create-file-handler)
-        {:async {:mode :dropping, :buffer-size 2048}})))
+        (tel/add-handler!
+          :file
+          (create-file-handler)
+          {:async {:mode :dropping, :buffer-size 2048}})))
 
-  ;; Filter out noisy Java packages
-  (tel/set-ns-filter! {:disallow ["com.sun.*" "java.awt.*" "javax.swing.*"]})
+    ;; Filter out noisy Java packages
+    (tel/set-ns-filter! {:disallow ["com.sun.*" "java.awt.*" "javax.swing.*"]})
 
-  ;; Log startup
-  (tel/log!
-    {:level :info
-     :id ::startup
-     :data {:build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")}}
-    "PotatoClient logging initialized")
+    ;; Log startup
+    (tel/log!
+      {:level :info
+       :id ::startup
+       :data {:build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")}}
+      "PotatoClient logging initialized")
+    
+    ;; Log where init was called from for debugging double-init
+    (let [stack-trace (Thread/currentThread)
+          stack (.getStackTrace stack-trace)]
+      (tel/log! {:level :debug
+                 :id ::init-stack
+                 :data {:caller (take 10 (map str stack))}}
+                "Logging init called from")))
 
   ;; Ensure we return nil
   nil)
@@ -161,7 +178,8 @@
   []
   [=> nil?]
   (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
-  (tel/stop-handlers!))
+  (tel/stop-handlers!)
+  nil)
 
 ;; Convenience logging macros that match our previous API
 (defmacro log-info

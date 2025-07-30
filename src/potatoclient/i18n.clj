@@ -78,4 +78,5 @@
   (when (empty? @translations-atom)
     (load-translations!))
   ;; Set initial locale
-  (state/set-locale! (state/get-locale)))
+  (state/set-locale! (state/get-locale))
+  nil)

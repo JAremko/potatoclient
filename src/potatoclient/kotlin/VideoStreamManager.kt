@@ -1,11 +1,12 @@
 package potatoclient.kotlin
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.runBlocking
+import potatoclient.transit.MessageKeys
+import potatoclient.transit.TransitCommunicator
+import potatoclient.transit.TransitMessageProtocol
 import java.awt.Component
 import java.net.URI
 import java.nio.ByteOrder
-import java.util.Scanner
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -23,13 +24,13 @@ class VideoStreamManager(
     WindowEventHandler.EventCallback,
     GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener {
-    // Core components
-    private val scanner = Scanner(System.`in`)
-    private val mapper = ObjectMapper() // For command parsing
+    // Core components - use original stdout for Transit
+    private val transitReader = TransitCommunicator(System.`in`, potatoclient.transit.StdoutInterceptor.getOriginalStdout())
 
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
     private val shutdownLatch = CountDownLatch(1)
+    private val closeEventSent = AtomicBoolean(false)
 
     // Frame timing tracking
     private val currentFrameTimestamp = AtomicLong(0)
@@ -49,7 +50,13 @@ class VideoStreamManager(
 
     // Module instances
     private val eventFilter = EventFilter()
-    private val messageProtocol = MessageProtocol(streamId)
+    private val messageProtocol = TransitMessageProtocol(streamId, transitReader)
+
+    init {
+        // Set the message protocol for the interceptor (already installed in main)
+        potatoclient.transit.StdoutInterceptor.setMessageProtocol(messageProtocol)
+    }
+
     private val frameManager = FrameManager(streamId, domain, this, messageProtocol)
     private var mouseEventHandler: MouseEventHandler? = null
     private var windowEventHandler: WindowEventHandler? = null
@@ -99,7 +106,7 @@ class VideoStreamManager(
                             // Push only the video data to pipeline
                             gstreamerPipeline.pushVideoData(videoData)
                         } else {
-                            messageProtocol.sendLog("WARN", "Frame too short to contain timing info: ${data.remaining()} bytes")
+                            messageProtocol.sendWarn("Frame too short to contain timing info: ${data.remaining()} bytes")
                         }
 
                         // Return buffer to pool if it's from the pool
@@ -110,10 +117,10 @@ class VideoStreamManager(
                     }
                 },
                 onConnect = {
-                    messageProtocol.sendLog("INFO", "WebSocket connected to $streamUrl")
+                    messageProtocol.sendInfo("WebSocket connected to $streamUrl")
                 },
                 onClose = { code, reason ->
-                    messageProtocol.sendLog("INFO", "WebSocket closed: $reason (code: $code)")
+                    messageProtocol.sendInfo("WebSocket closed: $reason (code: $code)")
                 },
                 onError = { error ->
                     messageProtocol.sendException("WebSocket error", error as Exception)
@@ -125,8 +132,8 @@ class VideoStreamManager(
 
     fun start() {
         try {
-            messageProtocol.sendLog("INFO", "Starting video stream manager for $streamId")
-            messageProtocol.sendResponse("starting", streamId)
+            messageProtocol.sendInfo("Starting video stream manager for $streamId")
+            messageProtocol.sendResponse("starting", mapOf(MessageKeys.STREAM_ID to streamId))
 
             // Create and show frame
             frameManager.createFrame()
@@ -161,12 +168,15 @@ class VideoStreamManager(
     }
 
     private fun readCommands() {
-        while (running.get() && scanner.hasNextLine()) {
+        while (running.get()) {
             try {
-                val line = scanner.nextLine()
-                if (!line.isNullOrBlank()) {
-                    val command = mapper.readValue(line, object : TypeReference<Map<String, Any>>() {})
-                    handleCommand(command)
+                val message =
+                    runBlocking {
+                        transitReader.readMessage()
+                    }
+                if (message != null && message["msg-type"] == "command") {
+                    val payload = message["payload"] as? Map<*, *>
+                    handleCommand(payload ?: emptyMap<String, Any>())
                 }
             } catch (e: Exception) {
                 if (running.get()) {
@@ -176,31 +186,39 @@ class VideoStreamManager(
         }
     }
 
-    private fun handleCommand(command: Map<String, Any>) {
-        val cmd = command["command"] as? String ?: return
+    private fun handleCommand(command: Map<*, *>) {
+        val cmd = command["action"] as? String ?: return
 
         when (cmd) {
-            "stop" -> {
-                messageProtocol.sendLog("INFO", "Received stop command")
+            "stop", "shutdown" -> {
+                messageProtocol.sendInfo("Received stop command")
                 stop()
             }
             "pause" -> {
                 // Could implement pause/resume for video
-                messageProtocol.sendLog("INFO", "Pause not implemented")
+                messageProtocol.sendInfo("Pause not implemented")
             }
             "resume" -> {
                 // Could implement pause/resume for video
-                messageProtocol.sendLog("INFO", "Resume not implemented")
+                messageProtocol.sendInfo("Resume not implemented")
+            }
+            "show" -> {
+                messageProtocol.sendInfo("Show command received")
+                frameManager.showFrame()
+            }
+            "hide" -> {
+                messageProtocol.sendInfo("Hide command received")
+                frameManager.hideFrame()
             }
             else -> {
-                messageProtocol.sendLog("WARN", "Unknown command: $cmd")
+                messageProtocol.sendWarn("Unknown command: $cmd")
             }
         }
     }
 
     private fun stop() {
         if (running.compareAndSet(true, false)) {
-            messageProtocol.sendLog("INFO", "Stopping video stream manager")
+            messageProtocol.sendInfo("Stopping video stream manager")
             shutdownLatch.countDown()
         }
     }
@@ -241,7 +259,7 @@ class VideoStreamManager(
             }
 
             // Send final response
-            messageProtocol.sendResponse("stopped", streamId)
+            messageProtocol.sendResponse("stopped", mapOf(MessageKeys.STREAM_ID to streamId))
         } catch (e: Exception) {
             messageProtocol.sendException("Cleanup error", e)
         }
@@ -259,14 +277,23 @@ class VideoStreamManager(
             // Include current frame timing information
             val frameTimestamp = currentFrameTimestamp.get()
             val frameDuration = currentFrameDuration.get()
+
+            // Calculate NDC coordinates
+            val canvasWidth = videoComponent.width
+            val canvasHeight = videoComponent.height
+            val ndcX = if (canvasWidth > 0) (2.0 * x / canvasWidth - 1.0) else 0.0
+            val ndcY = if (canvasHeight > 0) (1.0 - 2.0 * y / canvasHeight) else 0.0
+
             messageProtocol.sendNavigationEvent(
-                eventName,
                 x,
                 y,
-                videoComponent,
-                details,
                 frameTimestamp,
                 frameDuration,
+                canvasWidth,
+                canvasHeight,
+                eventName,
+                ndcX,
+                ndcY,
             )
         }
     }
@@ -277,7 +304,13 @@ class VideoStreamManager(
         eventName: String,
         details: Map<String, Any>?,
     ) {
-        messageProtocol.sendWindowEvent(eventName, details)
+        val windowState = details?.get("windowState") as? Int
+        val x = details?.get("x") as? Int
+        val y = details?.get("y") as? Int
+        val width = details?.get("width") as? Int
+        val height = details?.get("height") as? Int
+
+        messageProtocol.sendWindowEvent(eventName, windowState, x, y, width, height)
     }
 
     // GStreamerPipeline.EventCallback implementation
@@ -291,7 +324,7 @@ class VideoStreamManager(
     }
 
     override fun onPipelineError(message: String) {
-        messageProtocol.sendLog("ERROR", "Pipeline error: $message")
+        messageProtocol.sendError("Pipeline error: $message")
         // Could trigger reconnection or other error handling
     }
 
@@ -313,20 +346,41 @@ class VideoStreamManager(
             windowEventHandler = WindowEventHandler(frame, this, eventFilter, eventThrottleExecutor)
             windowEventHandler?.attachListeners()
 
-            messageProtocol.sendLog("INFO", "Frame created and event handlers attached")
+            messageProtocol.sendInfo("Frame created and event handlers attached")
         } catch (e: Exception) {
             messageProtocol.sendException("Frame setup error", e)
         }
     }
 
     override fun onFrameClosing() {
-        messageProtocol.sendLog("INFO", "Frame closing requested")
-        stop()
+        // Only send the close event once to avoid multiple messages
+        if (closeEventSent.compareAndSet(false, true)) {
+            messageProtocol.sendInfo("Frame closing requested - notifying main process")
+            // Send a window-closed event to the main process
+            messageProtocol.sendResponse(
+                "window-closed",
+                mapOf(
+                    MessageKeys.STREAM_ID to streamId,
+                    "reason" to "user-closed",
+                ),
+            )
+            // Also log what we're sending for debugging
+            messageProtocol.sendInfo("Sent window-closed response for stream: $streamId")
+            // Don't stop immediately - let the main process handle shutdown
+        } else {
+            messageProtocol.sendDebug("Frame closing already handled, ignoring duplicate event")
+        }
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            // Install stdout interceptor EARLY before any code runs
+            potatoclient.transit.StdoutInterceptor.installEarly()
+            
+            // Give the parent process time to set up Transit reader
+            Thread.sleep(100)
+
             if (args.size < 3) {
                 System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain>")
                 exitProcess(1)
@@ -336,13 +390,26 @@ class VideoStreamManager(
             val streamUrl = args[1]
             val domain = args[2]
 
+            // Initialize logging for this subprocess
+            potatoclient.transit.LoggingUtils.initializeLogging("video-stream-$streamId")
+
+            // Install shutdown hook for clean exit
+            Runtime.getRuntime().addShutdownHook(
+                Thread {
+                    potatoclient.transit.logInfo("Shutdown hook triggered for video stream $streamId")
+                },
+            )
+
             try {
+                potatoclient.transit.logInfo("Starting video stream manager for $streamId with URL: $streamUrl")
                 val manager = VideoStreamManager(streamId, streamUrl, domain)
                 manager.start()
             } catch (e: Exception) {
                 System.err.println("Fatal error: ${e.message}")
-                // Stack trace already printed to stderr via exception message
+                potatoclient.transit.logError("Fatal error in video stream", e)
                 exitProcess(1)
+            } finally {
+                potatoclient.transit.LoggingUtils.close()
             }
         }
     }

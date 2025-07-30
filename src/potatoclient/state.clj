@@ -30,6 +30,12 @@
                       :day :day-video)]
     (app-db/set-process-state! process-key pid status)))
 
+(>defn clear-stream!
+  "Clear stream process for given key."
+  [stream-key]
+  [::specs/stream-key => map?]
+  (set-stream! stream-key nil :stopped))
+
 (>defn stream-running?
   "Check if a stream is running."
   [stream-key]
@@ -212,13 +218,13 @@
 ;; State Observation
 ;; ============================================================================
 
-(>defn add-watch
+(>defn add-state-watch
   "Add a watch handler to app-db."
   [key handler-fn]
   [keyword? fn? => nil?]
   (app-db/add-watch-handler key handler-fn))
 
-(>defn remove-watch
+(>defn remove-state-watch
   "Remove a watch handler from app-db."
   [key]
   [keyword? => nil?]
@@ -283,5 +289,3 @@
   []
   [=> map?]
   (app-db/reset-to-initial-state!))
-
-(log/log-info {:msg "State management initialized with Transit app-db"})

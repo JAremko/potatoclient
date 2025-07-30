@@ -39,13 +39,18 @@
     ;; Get all Kotlin source files (including transit subdir)
     (let [kotlin-files (filter #(.endsWith (.getName %) ".kt")
                                (file-seq (io/file "src/potatoclient/kotlin")))
-          kotlin-paths (map #(.getPath %) kotlin-files)]
+          kotlin-paths (map #(.getPath %) kotlin-files)
+          ;; Add protobuf classes to classpath - include both compiled classes and source dirs
+          java-src-path "src/potatoclient/java"
+          ;; Need to include src directory for Transit Java enums
+          src-path "src"
+          classpath-with-proto (str class-dir ":" java-src-path ":" src-path ":" (str/join ":" (:classpath-roots (get-basis))))]
       (when (seq kotlin-paths)
         (println (str "Compiling " (count kotlin-paths) " Kotlin files..."))
         (let [result (apply shell/sh 
                            kotlinc
                            "-d" class-dir
-                           "-cp" (str/join ":" (:classpath-roots (get-basis)))
+                           "-cp" classpath-with-proto
                            "-jvm-target" "17"
                            kotlin-paths)]
           (when (not= 0 (:exit result))
@@ -54,16 +59,57 @@
 
 (defn compile-java-proto [_]
   (println "Compiling Java protobuf classes...")
-  (b/javac {:src-dirs ["src/potatoclient/java"]
+  ;; Only compile the generated protobuf files, not old WebSocketManager
+  (b/javac {:src-dirs ["src/potatoclient/java/cmd" "src/potatoclient/java/ser"]
             :class-dir class-dir
             :basis (get-basis)
             :javac-opts ["--release" "17"]})
   (println "Java protobuf compilation successful"))
 
+(defn compile-java-enums [_]
+  (println "Compiling Java enum classes...")
+  ;; Compile the Transit Java enums
+  (b/javac {:src-dirs ["src/potatoclient/transit"]
+            :class-dir class-dir
+            :basis (get-basis)
+            :javac-opts ["--release" "17"]})
+  (println "Java enum compilation successful"))
+
 (defn compile-all [_]
-  ;; Compile Kotlin first as Java may depend on Kotlin classes
-  (compile-kotlin nil)
-  (compile-java-proto nil))
+  ;; Compile Java protobuf first as Kotlin Transit classes depend on protobuf
+  (compile-java-proto nil)
+  ;; Compile Java enums that both Clojure and Kotlin use
+  (compile-java-enums nil)
+  (compile-kotlin nil))
+
+(defn compile-kotlin-tests [_]
+  (println "Compiling Kotlin test files...")
+  (let [kotlin-dir "tools/kotlin-2.2.0"
+        kotlinc (str kotlin-dir "/bin/kotlinc")
+        kotlinc-exists? (.exists (io/file kotlinc))]
+    (if kotlinc-exists?
+      (let [kotlin-test-files (filter #(.endsWith (.getName %) ".kt")
+                                     (file-seq (io/file "test/kotlin")))
+            kotlin-test-paths (map #(.getPath %) kotlin-test-files)
+            test-class-dir "target/test-classes"
+            ;; Include main classes, protobuf, JUnit and Kotlin test dependencies
+            classpath-with-deps (str class-dir ":" 
+                                   test-class-dir ":"
+                                   "src/potatoclient/java" ":"
+                                   (str/join ":" (:classpath-roots (get-basis))))]
+        (when (seq kotlin-test-paths)
+          (println (str "Compiling " (count kotlin-test-paths) " Kotlin test files..."))
+          (io/make-parents (io/file test-class-dir "dummy.txt"))
+          (let [result (apply shell/sh 
+                             kotlinc
+                             "-d" test-class-dir
+                             "-cp" classpath-with-deps
+                             "-jvm-target" "17"
+                             kotlin-test-paths)]
+            (when (not= 0 (:exit result))
+              (throw (ex-info "Kotlin test compilation failed" {:output (:out result) :error (:err result)})))
+            (println "Kotlin test compilation successful"))))
+      (println "WARNING: Kotlin compiler not found. Skipping Kotlin test compilation."))))
 
 (defn compile-clj [_]
   (b/compile-clj {:basis (get-basis)
@@ -76,8 +122,8 @@
   (clean nil)
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
-  (compile-kotlin nil)
-  (compile-java-proto nil)
+  ;; Use compile-all to ensure correct order
+  (compile-all nil)
   (compile-clj nil)
   (b/uber {:class-dir class-dir
            :uber-file uber-file

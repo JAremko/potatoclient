@@ -16,7 +16,8 @@
             [potatoclient.ui.log-viewer :as log-viewer]
             [potatoclient.ui.utils :as ui-utils]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.cmd.core :as cmd]
+            [potatoclient.transit.commands :as commands]
+            [potatoclient.transit.subprocess-launcher :as launcher]
             [seesaw.action :as action]
             [seesaw.core :as seesaw]
             [seesaw.bind :as bind])
@@ -222,18 +223,31 @@
                  :window-closing
                  (fn [_]
                    (logging/log-info {:msg "Shutting down PotatoClient..."})
-                   (try
-                     ;; Save current config state
-                     (let [current-config {:theme (theme/get-current-theme)
-                                           :locale (state/get-locale)
-                                           :url-history (config/get-url-history)}]
-                       (config/save-config! current-config))
-                     (cmd/stop-websocket!)
-                     (process/cleanup-all-processes)
-                     (logging/shutdown!)
-                     (catch Exception e
-                       (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))})))
-                   (System/exit 0)))
+                   ;; Run cleanup in a separate thread with timeout
+                   (future
+                     (try
+                       ;; Save current config state
+                       (let [current-config {:theme (theme/get-current-theme)
+                                             :locale (state/get-locale)
+                                             :url-history (config/get-url-history)}]
+                         (config/save-config! current-config))
+                       ;; Stop video stream processes
+                       (let [stream-processes (app-db/get-all-stream-processes)]
+                         (when (seq stream-processes)
+                           (process/cleanup-all-processes stream-processes)))
+                       ;; Stop Transit subprocesses
+                       (launcher/stop-all-subprocesses)
+                       (logging/shutdown!)
+                       (catch Exception e
+                         (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))}))
+                       (finally
+                         ;; Force exit after cleanup attempt
+                         (System/exit 0))))
+                   ;; Also schedule a forced exit after 3 seconds if cleanup hangs
+                   (future
+                     (Thread/sleep 3000)
+                     (println "Force exiting due to shutdown timeout...")
+                     (System/exit 1))))
   nil)
 
 (>defn create-main-frame

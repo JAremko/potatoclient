@@ -1,14 +1,12 @@
 (ns potatoclient.specs
   "Shared Malli schemas for the PotatoClient application.
    This namespace contains all the common schemas used across multiple namespaces."
-  (:require [clojure.core.async.impl.channels]
-            [clojure.data.json]
+  (:require [clojure.data.json]
             [clojure.string]
             [malli.core :as m]
             [malli.registry :as mr]
             [malli.util :as mu])
-  (:import (clojure.core.async.impl.channels ManyToManyChannel)
-           (clojure.lang Atom)
+  (:import (clojure.lang Atom)
            (cmd JonSharedCmd$Root$Builder)
            (cmd.RotaryPlatform JonSharedCmdRotary$Axis$Builder JonSharedCmdRotary$Azimuth$Builder JonSharedCmdRotary$Elevation$Builder)
            (com.google.protobuf Message Message$Builder)
@@ -50,8 +48,8 @@
   [:enum :en :uk])
 
 (def stream-key
-  "Stream identifier"
-  [:enum :heat :day])
+  "Stream identifier - accepts both short and long forms"
+  [:enum :heat :day :heat-video :day-video])
 
 (def url
   "WebSocket URL"
@@ -99,11 +97,11 @@
   "Complete stream process structure"
   [:map
    [:process process]
-   [:writer [:fn #(instance? BufferedWriter %)]]
-   [:stdout-reader [:fn #(instance? BufferedReader %)]]
+   [:writer fn?]  ;; Transit writer function
+   [:input-stream [:fn #(instance? java.io.InputStream %)]]
+   [:output-stream [:fn #(instance? java.io.OutputStream %)]]
    [:stderr-reader [:fn #(instance? BufferedReader %)]]
-   [:output-chan [:fn {:error/message "must be a core.async channel"}
-                  #(instance? ManyToManyChannel %)]]
+   [:message-handler fn?]
    [:stream-id string?]
    [:state [:fn {:error/message "must be an atom containing process state"}
             #(and (instance? Atom %)
@@ -640,15 +638,6 @@
    [:should-buffer boolean?]])
 
 ;; -----------------------------------------------------------------------------
-;; Channel Types
-;; -----------------------------------------------------------------------------
-
-(def core-async-channel
-  "core.async channel"
-  [:fn {:error/message "must be a core.async channel"}
-   #(instance? ManyToManyChannel %)])
-
-;; -----------------------------------------------------------------------------
 ;; Registry Setup
 ;; -----------------------------------------------------------------------------
 
@@ -795,7 +784,7 @@
      ::command-payload-map command-payload-map
 
      ;; Channel Types
-     ::core-async-channel core-async-channel}))
+}))
 
 ;; -----------------------------------------------------------------------------
 ;; Transit Subprocess Schemas
@@ -807,22 +796,24 @@
    [:subprocess-type [:enum :command :state]]
    [:process [:fn {:error/message "must be a Process instance"}
               #(instance? java.lang.Process %)]]
+   [:url {:optional true} string?]
    [:input-stream [:fn {:error/message "must be an InputStream"}
                    #(instance? java.io.InputStream %)]]
    [:output-stream [:fn {:error/message "must be an OutputStream"}
                     #(instance? java.io.OutputStream %)]]
    [:error-stream [:fn {:error/message "must be an InputStream"}
                    #(instance? java.io.InputStream %)]]
-   [:output-chan [:fn {:error/message "must be a core.async channel"}
-                  #(instance? clojure.core.async.impl.channels.ManyToManyChannel %)]]
+   [:message-handler {:optional true} fn?]
    [:write-fn fn?]
    [:state [:fn {:error/message "must be an atom"}
-            #(instance? clojure.lang.Atom %)]]])
+            #(instance? clojure.lang.Atom %)]]
+   [:shutting-down? {:optional true} [:fn {:error/message "must be an atom"}
+                                      #(instance? clojure.lang.Atom %)]]])
 
 ;; Update registry with transit schemas
 (def updated-registry
   (assoc registry
-         :potatoclient.specs.transit/subprocess transit-subprocess))
+         :potatoclient.specs/transit-subprocess transit-subprocess))
 
 ;; Set as default registry for this namespace
 (mr/set-default-registry! updated-registry)

@@ -39,6 +39,38 @@
         (println "Error: Could not find report generation function")
         (System/exit 1)))))
 
+(>defn- install-shutdown-hook!
+  "Install JVM shutdown hook for clean termination"
+  []
+  [=> nil?]
+  (.addShutdownHook (Runtime/getRuntime)
+                    (Thread. (fn []
+                               (try
+                                 (println "Shutdown hook triggered - cleaning up...")
+                                 ;; First stop logging to prevent new log messages during shutdown
+                                 (require 'potatoclient.logging)
+                                 (let [shutdown-logging (resolve 'potatoclient.logging/shutdown!)]
+                                   (when shutdown-logging (shutdown-logging)))
+                                 
+                                 ;; Then clean up subprocesses
+                                 (require 'potatoclient.process)
+                                 (require 'potatoclient.transit.subprocess-launcher)
+                                 (require 'potatoclient.transit.app-db)
+                                 (let [get-all-stream-processes (resolve 'potatoclient.transit.app-db/get-all-stream-processes)
+                                       cleanup-processes (resolve 'potatoclient.process/cleanup-all-processes)
+                                       cleanup-subprocesses (resolve 'potatoclient.transit.subprocess-launcher/stop-all-subprocesses)]
+                                   ;; Clean up video streams
+                                   (when (and get-all-stream-processes cleanup-processes)
+                                     (let [stream-processes (get-all-stream-processes)]
+                                       (when (seq stream-processes)
+                                         (cleanup-processes stream-processes))))
+                                   ;; Clean up transit subprocesses
+                                   (when cleanup-subprocesses (cleanup-subprocesses))
+                                   ;; Wait a bit for subprocesses to terminate
+                                   (Thread/sleep 500))
+                                 (catch Exception e
+                                   (println "Error in shutdown hook:" (.getMessage e))))))))
+
 (>defn -main
   "Application entry point. Delegates to core namespace for actual initialization."
   [& args]
@@ -49,6 +81,8 @@
 
   (enable-guardrails!)
   (enable-dev-mode!)
+  (install-shutdown-hook!)
+
   (try
     (logging/init!)
     ;; Check for special flags

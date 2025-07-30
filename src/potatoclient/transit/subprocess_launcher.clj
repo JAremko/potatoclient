@@ -3,22 +3,23 @@
   
   Extends the existing process management infrastructure to support
   Transit-based communication with protobuf isolation in Kotlin subprocesses."
-  (:require [clojure.core.async :as async :refer [>!! <!! go-loop]]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
             [potatoclient.transit.core :as transit-core]
+            [potatoclient.transit.framed-io :as framed-io]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.transit.handlers :as handlers])
-  (:import (clojure.core.async.impl.channels ManyToManyChannel)
-           (java.io InputStream OutputStream)
+            [potatoclient.specs :as specs])
+  (:import (java.io InputStream OutputStream)
            (java.lang Process ProcessBuilder)
            (java.util List Map)))
 
 ;; Configuration
 (def ^:private shutdown-grace-period-ms 100)
-(def ^:private channel-buffer-size 1000)
+
+;; Global subprocess tracking
+(defonce ^:private subprocess-registry (atom {}))
 
 (>defn- get-java-executable
   "Find the Java executable, checking java.home first."
@@ -50,22 +51,30 @@
 (>defn- build-process-environment
   "Build environment variables for the subprocess."
   [app-env]
-  [(? [:map [:appdir string?]]) => [:map-of string? string?]]
-  (let [base-env {"GST_DEBUG" "2"
-                  "GST_DEBUG_NO_COLOR" "1"}]
-    (if app-env
-      (merge base-env
-             {"APPDIR" (:appdir app-env)
-              "LD_LIBRARY_PATH" (:lib-path app-env)
-              "GST_PLUGIN_PATH" (:plugin-path app-env)
-              "GST_PLUGIN_SCANNER" (:scanner-path app-env)})
-      base-env)))
+  [(? [:map
+       [:appdir string?]
+       [:lib-path string?]
+       [:plugin-path string?]
+       [:scanner-path string?]]) => [:map-of string? string?]]
+  (if app-env
+    {"APPDIR" (:appdir app-env)
+     "GST_PLUGIN_PATH" (:plugin-path app-env)
+     "GST_PLUGIN_PATH_1_0" (:plugin-path app-env)
+     "GST_PLUGIN_SYSTEM_PATH_1_0" (:plugin-path app-env)
+     "GST_PLUGIN_SCANNER_1_0" (:scanner-path app-env)
+     "LD_LIBRARY_PATH" (str (:lib-path app-env) ":" (System/getenv "LD_LIBRARY_PATH"))}
+    {}))
 
 (>defn- build-jvm-args
-  "Build JVM arguments including AppImage-specific paths."
+  "Build JVM arguments for the subprocess."
   [app-env]
-  [(? [:map [:appdir string?]]) => [:sequential string?]]
-  (let [base-args ["-Xms256m" "-Xmx512m" "-XX:+UseG1GC"]
+  [(? [:map
+       [:appdir string?]
+       [:lib-path string?]
+       [:plugin-path string?]
+       [:scanner-path string?]]) => [:sequential string?]]
+  (let [base-args ["--enable-native-access=ALL-UNNAMED"
+                   "-Djna.nosys=false"]
         lib-path (or (:lib-path app-env) "/usr/lib")
         plugin-path (or (:plugin-path app-env) "/usr/lib/gstreamer-1.0")]
     (concat base-args
@@ -77,9 +86,9 @@
               [(str "-DAPPDIR=" (:appdir app-env))]))))
 
 (>defn- create-process-builder
-  "Create a configured ProcessBuilder for Transit subprocess."
-  [subprocess-type ws-url]
-  [[:enum :command :state] string? => [:fn #(instance? ProcessBuilder %)]]
+  "Create a configured ProcessBuilder for the video stream subprocess."
+  [subprocess-type url domain]
+  [keyword? string? string? => [:fn #(instance? ProcessBuilder %)]]
   (let [java-exe (get-java-executable)
         classpath (System/getProperty "java.class.path")
         app-env (get-appimage-environment)
@@ -89,168 +98,234 @@
                      :state "potatoclient.kotlin.transit.StateSubprocess")
         cmd (vec (concat [java-exe "-cp" classpath]
                          jvm-args
-                         [main-class ws-url]))]
+                         [main-class url domain]))]
     (doto (ProcessBuilder. ^List cmd)
       (-> .environment (.putAll ^Map (build-process-environment app-env))))))
 
-(>defn- create-transit-reader
-  "Create a Transit reader thread that processes messages from subprocess."
-  [^InputStream input-stream output-chan subprocess-type]
+(>defn- create-reader-thread
+  "Create a reader thread that reads Transit messages and calls the handler.
+  Returns a function that can be called to start the thread."
+  [^InputStream input-stream subprocess-type message-handler]
   [[:fn #(instance? InputStream %)]
-   [:fn {:error/message "must be a core.async channel"}
-    #(instance? ManyToManyChannel %)]
-   [:enum :command :state]
-   => [:fn {:error/message "must be a core.async channel"}
-       #(instance? ManyToManyChannel %)]]
-  (let [reader (transit-core/make-reader input-stream)
-        read-fn (fn [] (transit-core/read-message reader))]
-    (go-loop []
-      (when-let [msg (try
-                       (read-fn)
-                       (catch Exception e
-                         (logging/log-error {:msg "Error reading Transit message"
-                                             :error e
-                                             :subprocess subprocess-type})
-                         nil))]
-        (>!! output-chan msg)
-        (recur)))))
-
-(>defn- create-transit-writer
-  "Create a function to write Transit messages to subprocess."
-  [^OutputStream output-stream]
-  [[:fn #(instance? OutputStream %)]
+   keyword?
+   fn?
    => fn?]
-  (let [writer (transit-core/make-writer output-stream)]
-    (fn [message]
-      (try
-        (transit-core/write-message! writer message output-stream)
-        true
-        (catch Exception e
-          (logging/log-error {:msg "Error writing Transit message" :error e})
-          false)))))
+  (fn []
+    (Thread.
+      (fn []
+        (try
+          (let [framed-input (framed-io/make-framed-input-stream input-stream)
+                reader (transit-core/make-reader framed-input)
+                read-fn (fn [] (transit-core/read-message reader))]
+            (loop []
+              (when-let [msg (try
+                               (read-fn)
+                               (catch Exception e
+                                 (when-not (.contains (.getMessage e) "Stream closed")
+                                   (logging/log-error
+                                     {:id ::transit-read-error
+                                      :data {:subprocess subprocess-type
+                                             :error (.getMessage e)}
+                                      :msg (str "Error reading Transit message from " (name subprocess-type))}))
+                                 nil))]
+                (when (map? msg)
+                  ;; Call the message handler directly
+                  (message-handler msg))
+                (recur))))
+          (catch Exception e
+            (logging/log-error
+              {:id ::reader-thread-error
+               :data {:subprocess subprocess-type
+                      :error (.getMessage e)}
+               :msg "Error in reader thread"})))))))
 
 (>defn- create-subprocess
-  "Create and start a Transit subprocess."
-  [subprocess-type ws-url]
-  [[:enum :command :state] string? => :potatoclient.specs.transit/subprocess]
-  (let [^ProcessBuilder pb (create-process-builder subprocess-type ws-url)
+  "Create the subprocess and I/O resources."
+  [subprocess-type url domain message-handler]
+  [keyword? string? string? fn? => ::specs/transit-subprocess]
+  (let [^ProcessBuilder pb (create-process-builder subprocess-type url domain)
         ^Process process (.start pb)
         input-stream (.getInputStream process)
         output-stream (.getOutputStream process)
         error-stream (.getErrorStream process)
-        output-chan (async/chan channel-buffer-size)
-        write-fn (create-transit-writer output-stream)]
-
-    ;; Start reader thread
-    (create-transit-reader input-stream output-chan subprocess-type)
-
-    ;; Start error stream reader
-    (go-loop []
-      (let [error-reader (io/reader error-stream)]
-        (when-let [line (.readLine error-reader)]
-          (logging/log-error {:msg "Subprocess stderr"
-                              :subprocess subprocess-type
-                              :message line})
-          (recur))))
-
-    {:subprocess-type subprocess-type
-     :process process
+        framed-output (framed-io/make-framed-output-stream output-stream)
+        writer (transit-core/make-writer framed-output)
+        write-fn (fn [msg]
+                   (transit-core/write-message! writer msg framed-output))
+        state (atom :starting)]
+    {:process process
+     :subprocess-type subprocess-type
+     :url url
      :input-stream input-stream
      :output-stream output-stream
      :error-stream error-stream
-     :output-chan output-chan
      :write-fn write-fn
-     :state (atom :starting)}))
+     :message-handler message-handler
+     :state state}))
+
+(>defn- monitor-error-stream
+  "Monitor subprocess error stream and log output."
+  [subprocess-type ^InputStream error-stream]
+  [keyword? [:fn #(instance? InputStream %)] => fn?]
+  (fn []
+    (Thread.
+      (fn []
+        (try
+          (with-open [reader (io/reader error-stream)]
+            (loop []
+              (when-let [line (.readLine ^java.io.BufferedReader reader)]
+                (logging/log-error
+                  {:id ::subprocess-stderr
+                   :data {:subprocess subprocess-type
+                          :line line}
+                   :msg (str (name subprocess-type) " subprocess stderr: " line)})
+                (recur))))
+          (catch Exception e
+            (when-not (.contains (.getMessage e) "Stream closed")
+              (logging/log-error
+                {:id ::stderr-monitor-error
+                 :data {:subprocess subprocess-type
+                        :error (.getMessage e)}
+                 :msg "Error monitoring stderr"}))))))))
+
+(>defn start-subprocess
+  "Start a Transit subprocess with a message handler.
+  The handler will be called directly from the reader thread."
+  [subprocess-type url domain message-handler]
+  [keyword? string? string? fn? => ::specs/transit-subprocess]
+  (let [subprocess (create-subprocess subprocess-type url domain message-handler)
+        reader-thread ((create-reader-thread (:input-stream subprocess) 
+                                             subprocess-type 
+                                             message-handler))
+        error-thread ((monitor-error-stream subprocess-type 
+                                            (:error-stream subprocess)))]
+    ;; Start threads
+    (.start reader-thread)
+    (.start error-thread)
+    
+    ;; Update state
+    (reset! (:state subprocess) :running)
+    
+    ;; Register subprocess
+    (swap! subprocess-registry assoc subprocess-type subprocess)
+    
+    (logging/log-info
+      {:id ::subprocess-started
+       :data {:subprocess-type subprocess-type
+              :url url}
+       :msg (str "Started " (name subprocess-type) " subprocess")})
+    
+    subprocess))
+
+(>defn send-message
+  "Send a Transit message to a subprocess."
+  [subprocess-type message]
+  [keyword? map? => boolean?]
+  (if-let [subprocess (get @subprocess-registry subprocess-type)]
+    (let [current-state @(:state subprocess)]
+      (if (= current-state :running)
+        (try
+          ((:write-fn subprocess) message)
+          (logging/log-debug
+            {:id ::message-sent
+             :data {:subprocess subprocess-type
+                    :msg-type (:msg-type message)}
+             :msg (str "Sent " (:msg-type message) " to " (name subprocess-type))})
+          true
+          (catch Exception e
+            (logging/log-error
+              {:id ::send-error
+               :data {:subprocess subprocess-type
+                      :error (.getMessage e)}
+               :msg "Failed to send message"})
+            false))
+        (do
+          (logging/log-warn
+            {:id ::subprocess-not-running
+             :data {:subprocess subprocess-type
+                    :state current-state}
+             :msg (str "Cannot send to " (name subprocess-type) " in state " current-state)})
+          false)))
+    (do
+      (logging/log-error
+        {:id ::subprocess-not-found
+         :data {:subprocess subprocess-type}
+         :msg (str "Subprocess " (name subprocess-type) " not found")})
+      false)))
+
+(>defn- close-resource
+  "Safely close a resource, ignoring exceptions."
+  [resource close-fn]
+  [any? fn? => nil?]
+  (try
+    (when resource
+      (close-fn resource))
+    (catch Exception _))
+  nil)
+
+(>defn stop-subprocess
+  "Stop a subprocess gracefully."
+  [subprocess-type]
+  [keyword? => nil?]
+  (when-let [subprocess (get @subprocess-registry subprocess-type)]
+    (logging/log-info
+      {:id ::stopping-subprocess
+       :data {:subprocess-type subprocess-type}
+       :msg (str "Stopping " (name subprocess-type) " subprocess")})
+    
+    ;; Update state
+    (reset! (:state subprocess) :stopping)
+    
+    ;; Send shutdown message if possible
+    (send-message subprocess-type
+                  {:msg-type "command"
+                   :msg-id (str (java.util.UUID/randomUUID))
+                   :timestamp (System/currentTimeMillis)
+                   :payload {:action "shutdown"}})
+    
+    ;; Wait briefly for graceful shutdown
+    (Thread/sleep shutdown-grace-period-ms)
+    
+    ;; Force kill if still alive
+    (let [^Process process (:process subprocess)]
+      (when (.isAlive process)
+        (.destroyForcibly process)))
+    
+    ;; Close resources
+    (close-resource (:input-stream subprocess) #(.close ^InputStream %))
+    (close-resource (:output-stream subprocess) #(.close ^OutputStream %))
+    (close-resource (:error-stream subprocess) #(.close ^InputStream %))
+    
+    ;; Update state and remove from registry
+    (reset! (:state subprocess) :stopped)
+    (swap! subprocess-registry dissoc subprocess-type)
+    
+    (logging/log-info
+      {:id ::subprocess-stopped
+       :data {:subprocess-type subprocess-type}
+       :msg (str "Stopped " (name subprocess-type) " subprocess")}))
+  nil)
 
 (>defn start-command-subprocess
-  "Start the command subprocess that sends commands to WebSocket."
-  [ws-url]
-  [string? => :potatoclient.specs.transit/subprocess]
-  (let [subprocess (create-subprocess :command ws-url)]
-    ;; Update app-db
-    (app-db/set-process-state! :cmd-proc (.pid ^Process (:process subprocess)) :running)
-    (logging/log-info {:msg "Started command subprocess" :url ws-url})
-    subprocess))
+  "Start the command subprocess that converts Transit commands to protobuf."
+  [url domain]
+  [string? string? => ::specs/transit-subprocess]
+  (let [handler (fn [msg]
+                  (app-db/handle-command-response msg))]
+    (start-subprocess :command url domain handler)))
 
 (>defn start-state-subprocess
-  "Start the state subprocess that receives state from WebSocket."
-  [ws-url]
-  [string? => :potatoclient.specs.transit/subprocess]
-  (let [subprocess (create-subprocess :state ws-url)]
-    ;; Update app-db
-    (app-db/set-process-state! :state-proc (.pid ^Process (:process subprocess)) :running)
-    (logging/log-info {:msg "Started state subprocess" :url ws-url})
-    subprocess))
+  "Start the state subprocess that converts protobuf state to Transit."
+  [url domain]
+  [string? string? => ::specs/transit-subprocess]
+  (let [handler (fn [msg]
+                  (app-db/handle-state-update msg))]
+    (start-subprocess :state url domain handler)))
 
-(>defn send-message!
-  "Send a message to a subprocess."
-  [subprocess message]
-  [:potatoclient.specs.transit/subprocess map? => boolean?]
-  ((:write-fn subprocess) message))
-
-(>defn read-message
-  "Read a message from subprocess output channel."
-  [subprocess timeout-ms]
-  [:potatoclient.specs.transit/subprocess pos-int? => (? map?)]
-  (async/alt!!
-    (:output-chan subprocess) ([msg] msg)
-    (async/timeout timeout-ms) nil))
-
-(>defn stop-subprocess!
-  "Stop a subprocess gracefully."
-  [subprocess]
-  [:potatoclient.specs.transit/subprocess => nil?]
-  (let [process ^Process (:process subprocess)
-        subprocess-type (:subprocess-type subprocess)]
-    (try
-      ;; Send shutdown command
-      (send-message! subprocess {:msg-type "control"
-                                 :msg-id (str (java.util.UUID/randomUUID))
-                                 :timestamp (System/currentTimeMillis)
-                                 :payload {:action "shutdown"}})
-
-      ;; Give it time to shutdown gracefully
-      (Thread/sleep shutdown-grace-period-ms)
-
-      ;; Force destroy if still alive
-      (when (.isAlive process)
-        (.destroyForcibly process))
-
-      ;; Close streams
-      (.close ^InputStream (:input-stream subprocess))
-      (.close ^OutputStream (:output-stream subprocess))
-      (.close ^InputStream (:error-stream subprocess))
-
-      ;; Close channel
-      (async/close! (:output-chan subprocess))
-
-      ;; Update app-db
-      (app-db/set-process-state! (case subprocess-type
-                                   :command :cmd-proc
-                                   :state :state-proc)
-                                 nil :stopped)
-
-      (logging/log-info {:msg "Stopped subprocess" :type subprocess-type})
-      nil
-
-      (catch Exception e
-        (logging/log-error {:msg "Error stopping subprocess"
-                            :error e
-                            :type subprocess-type})
-        nil))))
-
-(>defn subprocess-alive?
-  "Check if a subprocess is still running."
-  [subprocess]
-  [:potatoclient.specs.transit/subprocess => boolean?]
-  (.isAlive ^Process (:process subprocess)))
-
-(>defn restart-subprocess!
-  "Restart a subprocess."
-  [subprocess ws-url]
-  [:potatoclient.specs.transit/subprocess string? => :potatoclient.specs.transit/subprocess]
-  (let [subprocess-type (:subprocess-type subprocess)]
-    (stop-subprocess! subprocess)
-    (case subprocess-type
-      :command (start-command-subprocess ws-url)
-      :state (start-state-subprocess ws-url))))
+(>defn stop-all-subprocesses
+  "Stop all running subprocesses."
+  []
+  [=> nil?]
+  (doseq [subprocess-type (keys @subprocess-registry)]
+    (stop-subprocess subprocess-type))
+  nil)

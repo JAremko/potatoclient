@@ -317,10 +317,13 @@ The system uses Transit/MessagePack for all inter-process communication:
 **Kotlin (Subprocess Components)**
 - `CommandSubprocess` - Receives Transit commands, converts to protobuf, sends via WebSocket
 - `StateSubprocess` - Receives protobuf state, converts to Transit maps, implements debouncing and rate limiting
+- `VideoStreamManager` - Video streaming with Transit-based communication
 - `TransitCommunicator` - Handles Transit message framing and serialization over stdin/stdout
+- `TransitMessageProtocol` - Unified message protocol for subprocess communication
+- `VideoStreamTransitAdapter` - Adapter for video streams to use Transit protocol
+- `LoggingUtils` - Individual log files per subprocess in development mode
 - `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
 - `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
-- Video streaming subprocesses with hardware acceleration
 - For detailed implementation, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
 
 ### Transit Message Flow
@@ -335,12 +338,25 @@ The system uses Transit/MessagePack for all inter-process communication:
    Server → WebSocket → Protobuf → StateSubprocess → Transit map → Clojure app-db
    ```
 
-3. **Key Features**:
+3. **Video Streams (Server → UI)**:
+   ```
+   Server → WebSocket → H.264 → VideoStreamManager → Transit events → Clojure UI
+   ```
+
+4. **Subprocess Communication**:
+   ```
+   All subprocesses → TransitMessageProtocol → Transit messages → Main process
+   ```
+
+5. **Key Features**:
    - Complete protobuf isolation in Kotlin
+   - Unified Transit protocol for all IPC
+   - Individual subprocess logging in development
    - Debouncing to prevent duplicate state updates
    - Token bucket rate limiting (configurable via Transit messages)
    - Automatic reconnection with exponential backoff
    - Clean subprocess lifecycle management
+   - SSL certificate validation disabled for internal use
 
 ## UI Utilities
 
@@ -441,9 +457,15 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
   - Release: Shows platform-specific user directory (see Logging System)
 
 **Add Event Type**
-1. Define in `potatoclient.events.stream`
+1. Define in `potatoclient.kotlin.EventTypes` - Application event constants
 2. Handle in Kotlin subprocess (see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md#event-system-integration))
-3. Add to `ipc/message-handlers` dispatch table
+3. Add handler in `potatoclient.events.stream` for processing
+
+**Event Types** (defined in `EventTypes.kt`):
+- `EVENT_NAVIGATION` - Mouse interactions (move, click, drag, wheel)
+- `EVENT_WINDOW` - Window state changes (resize, focus, minimize)
+- `EVENT_FRAME` - Frame timing and rendering events
+- `EVENT_ERROR` - Video stream errors
 
 **Protobuf and Command System**
 See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) for:
@@ -520,8 +542,22 @@ PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-perf
 (logging/log-stream-event :day :error {:message "Timeout"})
 ```
 
+### Subprocess Logging
+- **Development Mode**: Each subprocess creates individual log files in `./logs/{subprocess-name}-{timestamp}.log`
+- **Release Mode**: No file logging for subprocesses
+- **Log Rotation**: Keeps last 10 log files per subprocess type
+- **Integration**: All subprocess logs are also sent to main process via Transit
+
 ### Kotlin/Java Integration
-Kotlin subprocesses integrate with the main Clojure logging system via IPC. For details on Kotlin logging integration, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md#logging-integration).
+Kotlin subprocesses integrate with the main Clojure logging system via Transit IPC. Messages types include:
+- `log` - Log messages with level, message, and process info
+- `error` - Exceptions with stack traces
+- `metric` - Performance metrics
+- `status` - Process lifecycle status
+- `event` - Application events (navigation, window, frame)
+- `response` - Responses to commands
+
+For details on Kotlin logging integration, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md#logging-integration).
 
 ## Configuration
 
