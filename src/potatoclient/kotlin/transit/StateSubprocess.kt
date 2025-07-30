@@ -1,3 +1,4 @@
+@file:JvmName("StateSubprocessKt")
 package potatoclient.transit
 
 import kotlinx.coroutines.CompletableDeferred

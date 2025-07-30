@@ -94,8 +94,8 @@
         app-env (get-appimage-environment)
         jvm-args (build-jvm-args app-env)
         main-class (case subprocess-type
-                     :command "potatoclient.kotlin.transit.CommandSubprocess"
-                     :state "potatoclient.kotlin.transit.StateSubprocess")
+                     :command "potatoclient.transit.CommandSubprocessKt"
+                     :state "potatoclient.transit.StateSubprocessKt")
         cmd (vec (concat [java-exe "-cp" classpath]
                          jvm-args
                          [main-class url domain]))]
