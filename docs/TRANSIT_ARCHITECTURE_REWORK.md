@@ -43,9 +43,9 @@ This document describes a comprehensive rework of PotatoClient's command and sta
 │                          │                                       │      │
 │                          │  • WebSocket Client (State Stream)   │      │
 │                          │  • Protobuf → Transit Converter      │      │
-│                          │  • Debouncing (proto.equals())       │      │
-│                          │  • Rate Limiting (configurable)      │      │
-│                          │  • buf.validate Validation           │      │
+│                          │  • Debouncing (proto.equals())       │  ◄── Rate limiting happens HERE
+│                          │  • Rate Limiting (configurable)      │  ◄── NOT in Clojure!
+│                          │  • buf.validate Validation           │  ◄── Runs in ALL modes except release
 │                          │  • Reconnection Logic                │      │
 │                          └──────────────────────────────────────┘      │
 │                                           │                             │
@@ -64,7 +64,7 @@ This document describes a comprehensive rework of PotatoClient's command and sta
 │                          │                                       │      │
 │                          │  • Transit → Protobuf Builder        │      │
 │                          │  • WebSocket Client (Cmd Stream)     │      │
-│                          │  • buf.validate Validation           │      │
+│                          │  • buf.validate Validation           │  ◄── Runs in ALL modes except release
 │                          │  • Command Acknowledgments           │      │
 │                          │  • Reconnection Logic                │      │
 │                          └──────────────────────────────────────┘      │
@@ -115,8 +115,8 @@ This document describes a comprehensive rework of PotatoClient's command and sta
                                               :status :running}
                                  :day-video {:pid 12348
                                              :status :running}}}
-         :validation {:enabled? true  ;; false only in release mode
-                      :errors []      ;; validation errors from both sides
+         :validation {:enabled? true  ;; false only in release mode (both Malli and buf.validate)
+                      :errors []      ;; validation errors from both Kotlin and Clojure
                       :stats {:total-validations 0
                               :failed-validations 0}}
          :rate-limits {:max-rate-hz 30     ;; max 30 updates per second
@@ -221,18 +221,31 @@ This document describes a comprehensive rework of PotatoClient's command and sta
  :payload {:status :ok
            :data [...logs...]}}
 
-;; Validation error messages
+;; Validation error messages (protobuf details translated to simple data)
 {:msg-type :validation-error
  :msg-id (uuid)
  :timestamp 1706234567895
  :payload {:source :buf-validate  ;; or :malli
-           :subsystem :gps
+           :subsystem :gps        ;; Kotlin translates proto field to keyword
            :errors [{:field "latitude"
                      :constraint "gte: -90.0, lte: 90.0"
-                     :value -91.5}]}}
+                     :value -91.5}]}}  ;; No protobuf types exposed
 ```
 
 ## Debouncing and Rate Limiting Implementation
+
+**IMPORTANT**: Rate limiting and debouncing are implemented ONLY in the Kotlin state subprocess, NOT in the Clojure main process. This design prevents overwhelming the main application with state updates while ensuring commands are sent immediately without delay.
+
+### Where Rate Limiting Happens:
+- **State Subprocess (Kotlin)**: Implements both debouncing and rate limiting before sending state updates to Clojure
+- **Command Subprocess (Kotlin)**: NO rate limiting - commands are sent immediately
+- **Clojure Main Process**: Only receives already rate-limited state updates, no additional limiting needed
+
+### Why Rate Limit in Kotlin?
+1. **CPU Efficiency**: Prevents unnecessary protobuf parsing and Transit encoding for duplicate states
+2. **Memory Efficiency**: Reduces IPC message traffic between processes
+3. **Simplicity**: Clojure receives clean, rate-limited updates without additional complexity
+4. **Performance**: Leverages protobuf's native equals() method for efficient comparison
 
 ### Kotlin State Subprocess with Smart Debouncing
 
@@ -265,8 +278,8 @@ class StateSubprocess(
                 .collect { protoBytes ->
                     val stateProto = JonGUIState.parseFrom(protoBytes)
                     
-                    // Validate if enabled
-                    if (validationEnabled) {
+                    // Validate in all modes except release
+                    if (!isReleaseBuild()) {
                         validateAndReport(stateProto)
                     }
                     
@@ -395,8 +408,8 @@ class CommandSubprocess(
                     try {
                         val protoCmd = cmdBuilder.buildCommand(payload)
                         
-                        // Validate if enabled
-                        if (validationEnabled) {
+                        // Validate in all modes except release
+                        if (!isReleaseBuild()) {
                             val result = validator.validate(protoCmd)
                             if (!result.isSuccess) {
                                 sendValidationError(result, payload)
@@ -481,7 +494,7 @@ class CommandSubprocess(
      [:current-rate :double]
      [:dropped-updates :int]]]])
 
-;; Validation enabled in all modes except release
+;; Validation enabled in all modes except release (same as Kotlin)
 (def validation-enabled?
   (not (runtime/release-build?)))
 
@@ -492,6 +505,7 @@ class CommandSubprocess(
   [fn? [:* any?] => [:fn {:error/fn #(m/validate app-db-schema %)}
                      #(m/validate app-db-schema %)]]
   (let [new-state (apply swap! app-db update-fn args)]
+    ;; Malli validation runs in all modes except release
     (when validation-enabled?
       (when-not (m/validate app-db-schema new-state)
         (log/error "Invalid app-db state after update"
@@ -656,15 +670,31 @@ class ReconnectingWebSocketClient(
       (is (not (.tryAcquire limiter))))))
 ```
 
+## Complete Protobuf Isolation
+
+**CRITICAL**: The Clojure main process has ZERO knowledge of protobuf specifics:
+- No protobuf classes in classpath
+- No protobuf dependencies
+- No protobuf field names or types
+- Only sees clean Transit/EDN data structures
+
+All protobuf handling is completely isolated in the Kotlin subprocesses:
+- State subprocess: Converts protobuf state → Transit maps
+- Command subprocess: Converts Transit maps → protobuf commands
+- Validation errors: Translated to simple Transit messages
+
 ## Benefits Summary
 
 1. **Simplicity**: One atom, one truth - following proven re-frame pattern
-2. **Smart Updates**: Debouncing via protobuf equals() prevents redundant updates
-3. **Flexible Rate Control**: Client-controlled update rates for optimal performance
-4. **Comprehensive Validation**: buf.validate on Kotlin side, Malli on Clojure side
-5. **Bidirectional Control**: Full subprocess management like video streams
-6. **Zero Overhead Commands**: Commands sent immediately without rate limiting
-7. **Built-in Reconnection**: Robust WebSocket handling with exponential backoff
+2. **Complete Isolation**: Clojure never touches protobuf classes
+3. **Smart Updates**: Debouncing via protobuf equals() prevents redundant updates
+4. **Flexible Rate Control**: Client-controlled update rates for optimal performance
+5. **Comprehensive Validation**: 
+   - Kotlin: buf.validate for protobuf structures (all modes except release)
+   - Clojure: Malli for app-db and Transit messages (all modes except release)
+6. **Bidirectional Control**: Full subprocess management like video streams
+7. **Zero Overhead Commands**: Commands sent immediately without rate limiting
+8. **Built-in Reconnection**: Robust WebSocket handling with exponential backoff
 
 ## Implementation Timeline
 
@@ -699,9 +729,16 @@ class ReconnectingWebSocketClient(
 
 ### Validation Strategy
 
-1. **Development/Test/REPL**: Both buf.validate (Kotlin) and Malli (Clojure) active
-2. **Release Only**: All validation disabled for performance
-3. **Comprehensive Coverage**: Validate at boundaries and state transitions
+1. **Kotlin Subprocesses (State & Command)**: 
+   - buf.validate runs in ALL modes except release
+   - Validates both incoming state from server and outgoing commands
+   - Sends validation errors to Clojure via Transit messages
+   
+2. **Clojure Main Process**:
+   - Malli validation runs in ALL modes except release
+   - Validates app-db structure and Transit message envelopes
+   
+3. **Release Mode**: All validation disabled for performance
 4. **Error Reporting**: All validation errors flow through Transit messages
 
 ### Example Function Pattern

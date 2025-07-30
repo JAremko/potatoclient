@@ -53,6 +53,10 @@
   "Stream identifier"
   [:enum :heat :day])
 
+(def url
+  "WebSocket URL"
+  [:and string? [:re #"^wss?://.*"]])
+
 ;; -----------------------------------------------------------------------------
 ;; Configuration Schemas
 ;; -----------------------------------------------------------------------------
@@ -161,6 +165,10 @@
 (def client-type
   "Client type values"
   [:enum :java :rust :go :clojure])
+
+(def url
+  "WebSocket URL"
+  [:and string? [:re #"^wss?://.*"]])
 
 (def payload-type
   "Command payload types"
@@ -655,6 +663,7 @@
      ::locale locale
      ::locale-code locale-code
      ::stream-key stream-key
+     ::url url
 
     ;; Configuration
      ::config-key config-key
