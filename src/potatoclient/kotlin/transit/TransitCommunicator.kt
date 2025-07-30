@@ -11,6 +11,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+// Message framing constants
+private const val MAX_MESSAGE_SIZE = 10 * 1024 * 1024  // 10MB max message size
+private const val FRAME_HEADER_SIZE = 4  // 4 bytes for message length
+
+// Backpressure configuration
+private const val HIGH_WATER_MARK = 1000  // Start applying backpressure
+private const val LOW_WATER_MARK = 100    // Resume normal operation
+
 /**
  * Handles bidirectional Transit communication with the Clojure main process
  * with proper message framing and backpressure handling
@@ -19,18 +27,9 @@ class TransitCommunicator(
     private val inputStream: InputStream = System.`in`,
     private val outputStream: OutputStream = System.out
 ) {
-    companion object {
-        // Message framing constants
-        private const val MAX_MESSAGE_SIZE = 10 * 1024 * 1024  // 10MB max message size
-        private const val FRAME_HEADER_SIZE = 4  // 4 bytes for message length
-        
-        // Backpressure configuration
-        private const val HIGH_WATER_MARK = 1000  // Start applying backpressure
-        private const val LOW_WATER_MARK = 100    // Resume normal operation
-    }
     
     private val writer: Writer<Any>
-    private val reader: Reader<Any>
+    private val reader: Reader
     private val messageQueue = Channel<Map<*, *>>(Channel.UNLIMITED)
     private val isRunning = AtomicBoolean(true)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -44,7 +43,7 @@ class TransitCommunicator(
         val framedInput = FramedInputStream(inputStream)
         
         // Create Transit writer with MessagePack format
-        writer = TransitFactory.writer(TransitFactory.Format.MSGPACK, framedOutput)
+        writer = TransitFactory.writer(TransitFactory.Format.MSGPACK, framedOutput) as Writer<Any>
         
         // Create Transit reader with MessagePack format
         reader = TransitFactory.reader(TransitFactory.Format.MSGPACK, framedInput)
@@ -97,7 +96,7 @@ class TransitCommunicator(
      * Check if a message is available
      */
     fun hasMessage(): Boolean {
-        return !messageQueue.isEmpty
+        return !messageQueue.tryReceive().isFailure
     }
     
     /**
@@ -105,9 +104,8 @@ class TransitCommunicator(
      */
     private suspend fun monitorBackpressure() {
         while (isRunning.get()) {
-            val queueSize = messageQueue.isEmpty.let { 
-                if (it) 0 else HIGH_WATER_MARK // Approximate since we can't get exact size
-            }
+            // Since Channel doesn't expose size, use a simple counter approach
+            val queueSize = if (backpressureActive.get()) HIGH_WATER_MARK else 0
             
             when {
                 queueSize > HIGH_WATER_MARK && !backpressureActive.get() -> {
@@ -269,7 +267,7 @@ class FramedInputStream(private val wrapped: InputStream) : InputStream() {
         val length = ByteBuffer.wrap(lengthBytes).order(ByteOrder.BIG_ENDIAN).int
         
         // Validate frame size
-        if (length <= 0 || length > TransitCommunicator.MAX_MESSAGE_SIZE) {
+        if (length <= 0 || length > MAX_MESSAGE_SIZE) {
             throw IOException("Invalid frame size: $length")
         }
         

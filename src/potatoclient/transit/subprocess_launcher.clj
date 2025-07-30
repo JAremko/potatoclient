@@ -102,28 +102,32 @@
    [:enum :command :state]
    => [:fn {:error/message "must be a core.async channel"}
        #(instance? ManyToManyChannel %)]]
-  (go-loop []
-    (when-let [msg (try
-                     (transit-core/read-transit input-stream)
-                     (catch Exception e
-                       (logging/log-error "Error reading Transit message" {:error e
-                                                                            :subprocess subprocess-type})
-                       nil))]
-      (>!! output-chan msg)
-      (recur))))
+  (let [reader (transit-core/make-reader input-stream)
+        read-fn (fn [] (transit-core/read-message reader))]
+    (go-loop []
+      (when-let [msg (try
+                       (read-fn)
+                       (catch Exception e
+                         (logging/log-error {:msg "Error reading Transit message" 
+                                            :error e
+                                            :subprocess subprocess-type})
+                         nil))]
+        (>!! output-chan msg)
+        (recur)))))
 
 (>defn- create-transit-writer
   "Create a function to write Transit messages to subprocess."
   [^OutputStream output-stream]
   [[:fn #(instance? OutputStream %)]
    => fn?]
-  (fn [message]
-    (try
-      (transit-core/write-transit output-stream message)
-      true
-      (catch Exception e
-        (logging/log-error "Error writing Transit message" {:error e})
-        false))))
+  (let [writer (transit-core/make-writer output-stream)]
+    (fn [message]
+      (try
+        (transit-core/write-message! writer message output-stream)
+        true
+        (catch Exception e
+          (logging/log-error {:msg "Error writing Transit message" :error e})
+          false)))))
 
 (>defn- create-subprocess
   "Create and start a Transit subprocess."
