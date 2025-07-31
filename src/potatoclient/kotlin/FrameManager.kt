@@ -1,7 +1,7 @@
 package potatoclient.kotlin
 
 import com.sun.jna.Platform
-import potatoclient.transit.TransitMessageProtocol
+import potatoclient.kotlin.transit.TransitMessageProtocol
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Component

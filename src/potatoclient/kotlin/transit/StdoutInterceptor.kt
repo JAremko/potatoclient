@@ -1,4 +1,4 @@
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import java.io.OutputStream
 import java.io.PrintStream
@@ -7,35 +7,33 @@ import java.io.PrintStream
  * Intercepts stdout and redirects it through Transit messaging
  * This prevents any accidental println or System.out.print from interfering with Transit protocol
  */
-class StdoutInterceptor {
-    companion object {
-        // Store original stdout before any modifications
-        private val originalStdout: PrintStream = System.out
+object StdoutInterceptor {
+    // Store original stdout before any modifications
+    private val originalStdout: PrintStream = System.out
 
-        /**
-         * Install the stdout interceptor BEFORE Transit is initialized
-         * The messageProtocol will be set later when it's available
-         */
-        fun installEarly() {
-            val interceptor = InterceptingPrintStream()
-            System.setOut(interceptor)
-        }
-
-        /**
-         * Set the message protocol for the interceptor
-         */
-        fun setMessageProtocol(messageProtocol: TransitMessageProtocol) {
-            val out = System.out
-            if (out is InterceptingPrintStream) {
-                out.setMessageProtocol(messageProtocol)
-            }
-        }
-
-        /**
-         * Get the original stdout (for Transit communication only)
-         */
-        fun getOriginalStdout(): OutputStream = originalStdout
+    /**
+     * Install the stdout interceptor BEFORE Transit is initialized
+     * The messageProtocol will be set later when it's available
+     */
+    fun installEarly() {
+        val interceptor = InterceptingPrintStream()
+        System.setOut(interceptor)
     }
+
+    /**
+     * Set the message protocol for the interceptor
+     */
+    fun setMessageProtocol(messageProtocol: TransitMessageProtocol) {
+        val out = System.out
+        if (out is InterceptingPrintStream) {
+            out.setMessageProtocol(messageProtocol)
+        }
+    }
+
+    /**
+     * Get the original stdout (for Transit communication only)
+     */
+    fun getOriginalStdout(): OutputStream = originalStdout
 }
 
 /**

@@ -1,8 +1,7 @@
 (ns potatoclient.transit-simple-test
   "Simple test for Transit core functionality"
   (:require [clojure.test :refer [deftest testing is]]
-            [potatoclient.transit.core :as transit-core]
-)
+            [potatoclient.transit.core :as transit-core])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (deftest test-transit-basic-operations

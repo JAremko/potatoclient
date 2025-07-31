@@ -1,7 +1,6 @@
 (ns potatoclient.transit.java-enum-test
   "Test that Java enums work correctly in both Clojure and message handling."
-  (:require [clojure.test :refer [deftest testing is]]
-            [potatoclient.ipc :as ipc])
+  (:require [clojure.test :refer [deftest testing is]])
   (:import (potatoclient.transit MessageType MessageKeys CommandActions)))
 
 (deftest test-java-enum-constants

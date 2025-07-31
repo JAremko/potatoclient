@@ -11,6 +11,7 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
+            [potatoclient.theme :as theme]
             [seesaw.clipboard :as clipboard]
             [seesaw.core :as seesaw]
             [seesaw.table :as table])

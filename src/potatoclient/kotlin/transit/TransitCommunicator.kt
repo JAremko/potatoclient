@@ -1,4 +1,4 @@
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import com.cognitect.transit.Reader
 import com.cognitect.transit.TransitFactory

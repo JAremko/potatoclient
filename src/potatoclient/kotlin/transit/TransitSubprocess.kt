@@ -1,4 +1,4 @@
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

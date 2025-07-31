@@ -3,8 +3,7 @@
   (:require [clojure.test :refer [deftest testing is]]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.commands :as commands]
-            [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.subprocess-launcher :as launcher])
+            [potatoclient.transit.core :as transit-core])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (deftest test-transit-core-basics

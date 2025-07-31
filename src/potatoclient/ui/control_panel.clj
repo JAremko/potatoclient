@@ -9,6 +9,7 @@
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
             [seesaw.bind :as bind]
+            [seesaw.border :as border]
             [seesaw.core :as seesaw]
             [seesaw.mig :as mig])
   (:import (javax.swing JPanel)))
@@ -30,7 +31,7 @@
                                  :text "")]
 
     ;; Bind status labels to app-db
-    (bind/bind app-db/app-db
+    (bind/bind potatoclient.transit.app-db/app-db
                (bind/transform (fn [db]
                                  (let [process-key (case stream-key
                                                      :heat :heat-video
@@ -71,7 +72,7 @@
                                    :text "")]
 
     ;; Bind domain label to connection URL
-    (bind/bind app-db/app-db
+    (bind/bind potatoclient.transit.app-db/app-db
                (bind/transform #(or (get-in % [:app-state :connection :url]) ""))
                (bind/transform #(if (empty? %)
                                   (i18n/tr :no-server-configured)
@@ -102,7 +103,7 @@
                                            (ipc/start-stream stream-key endpoint)
                                            (ipc/stop-stream stream-key))))
                         ;; Bind toggle state to app-db
-                        (bind/bind app-db/app-db
+                        (bind/bind potatoclient.transit.app-db/app-db
                                    (bind/transform (fn [db]
                                                      (let [process-key (case stream-key
                                                                          :heat :heat-video
@@ -128,7 +129,6 @@
        #(instance? JPanel %)]]
   (let [stats-label (seesaw/text :id :stats-info
                                  :text (i18n/tr :no-statistics)
-                                 :font status-font
                                  :multi-line? true
                                  :editable? false
                                  :background nil)]
@@ -149,7 +149,6 @@
   [=> [:fn {:error/message "must be a Swing panel"}
        #(instance? JPanel %)]]
   (let [header (seesaw/label :text (i18n/tr :control-panel-title)
-                             :font header-font
                              :halign :center)
         connection-panel (create-connection-info-panel)
         controls-panel (create-stream-controls-panel)
@@ -158,7 +157,7 @@
         stats-panel (create-statistics-panel)]
 
     (seesaw/border-panel
-      :border panel-border-width ; Creates empty border with specified width
+      :border 10 ; Creates empty border with specified width
       :north header
       :center (mig/mig-panel
                 :constraints ["wrap 1, fill, insets 10"

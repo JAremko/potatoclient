@@ -21,7 +21,7 @@
             [seesaw.action :as action]
             [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
-  (:import (javax.swing JFrame JPanel)))
+  (:import (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
 (def version
@@ -177,7 +177,7 @@
         button (seesaw/toggle :action toggle-action)]
 
     ;; Bind button state to app-db using seesaw.bind
-    (bind/bind app-db/app-db
+    (bind/bind potatoclient.transit.app-db/app-db
                (bind/transform (fn [db]
                                  (let [process-key (case stream-key
                                                      :heat :heat-video

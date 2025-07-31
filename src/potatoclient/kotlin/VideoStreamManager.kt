@@ -2,8 +2,8 @@ package potatoclient.kotlin
 
 import kotlinx.coroutines.runBlocking
 import potatoclient.transit.MessageKeys
-import potatoclient.transit.TransitCommunicator
-import potatoclient.transit.TransitMessageProtocol
+import potatoclient.kotlin.transit.TransitCommunicator
+import potatoclient.kotlin.transit.TransitMessageProtocol
 import java.awt.Component
 import java.net.URI
 import java.nio.ByteOrder
@@ -25,7 +25,7 @@ class VideoStreamManager(
     GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener {
     // Core components - use original stdout for Transit
-    private val transitReader = TransitCommunicator(System.`in`, potatoclient.transit.StdoutInterceptor.getOriginalStdout())
+    private val transitReader = TransitCommunicator(System.`in`, potatoclient.kotlin.transit.StdoutInterceptor.getOriginalStdout())
 
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
@@ -54,7 +54,7 @@ class VideoStreamManager(
 
     init {
         // Set the message protocol for the interceptor (already installed in main)
-        potatoclient.transit.StdoutInterceptor.setMessageProtocol(messageProtocol)
+        potatoclient.kotlin.transit.StdoutInterceptor.setMessageProtocol(messageProtocol)
     }
 
     private val frameManager = FrameManager(streamId, domain, this, messageProtocol)
@@ -362,7 +362,7 @@ class VideoStreamManager(
         @JvmStatic
         fun main(args: Array<String>) {
             // Install stdout interceptor EARLY before any code runs
-            potatoclient.transit.StdoutInterceptor.installEarly()
+            potatoclient.kotlin.transit.StdoutInterceptor.installEarly()
 
             // Give the parent process time to set up Transit reader
             Thread.sleep(100)
@@ -377,12 +377,12 @@ class VideoStreamManager(
             val domain = args[2]
 
             // Initialize logging for this subprocess
-            potatoclient.transit.LoggingUtils.initializeLogging("video-stream-$streamId")
+            potatoclient.kotlin.transit.LoggingUtils.initializeLogging("video-stream-$streamId")
 
             // Install shutdown hook for clean exit
             Runtime.getRuntime().addShutdownHook(
                 Thread {
-                    potatoclient.transit.logInfo("Shutdown hook triggered for video stream $streamId")
+                    potatoclient.kotlin.transit.logInfo("Shutdown hook triggered for video stream $streamId")
                 },
             )
 
@@ -391,10 +391,10 @@ class VideoStreamManager(
                 manager.start()
             } catch (e: Exception) {
                 System.err.println("Fatal error: ${e.message}")
-                potatoclient.transit.logError("Fatal error in video stream", e)
+                potatoclient.kotlin.transit.logError("Fatal error in video stream", e)
                 exitProcess(1)
             } finally {
-                potatoclient.transit.LoggingUtils.close()
+                potatoclient.kotlin.transit.LoggingUtils.close()
             }
         }
     }

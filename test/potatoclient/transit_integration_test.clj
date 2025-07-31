@@ -4,8 +4,7 @@
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.subprocess-launcher :as launcher]
-))
+            [potatoclient.transit.subprocess-launcher :as launcher]))
 
 ;; Test configuration
 (def ^{:doc "Test domain for integration tests"}

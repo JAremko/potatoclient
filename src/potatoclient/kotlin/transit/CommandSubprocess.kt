@@ -1,6 +1,6 @@
 @file:JvmName("CommandSubprocessKt")
 
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope

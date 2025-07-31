@@ -1,4 +1,4 @@
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import java.io.File
 import java.io.FileWriter

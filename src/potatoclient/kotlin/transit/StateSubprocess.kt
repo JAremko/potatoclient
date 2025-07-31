@@ -1,6 +1,6 @@
 @file:JvmName("StateSubprocessKt")
 
-package potatoclient.transit
+package potatoclient.kotlin.transit
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
