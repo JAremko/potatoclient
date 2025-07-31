@@ -196,13 +196,9 @@ class TransitMessageProtocol(
                         MessageKeys.PROCESS to processType,
                     ) + details,
                 )
-            // Log the full message for debugging
-            logInfo("SENDING RESPONSE: action='$action', process='$processType', details=$details")
-            logInfo("Full response message: $responseMsg")
-            
+
             kotlinx.coroutines.GlobalScope.launch {
                 transitComm.sendMessage(responseMsg)
-                logInfo("Response message sent successfully: $action")
             }
         } catch (e: Exception) {
             logError("Failed to send response $action: ${e.message}")

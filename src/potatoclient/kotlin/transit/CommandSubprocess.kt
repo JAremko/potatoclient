@@ -1,4 +1,5 @@
 @file:JvmName("CommandSubprocessKt")
+
 package potatoclient.transit
 
 import kotlinx.coroutines.Dispatchers
@@ -65,17 +66,13 @@ class CommandSubprocess(
 
         try {
             val action = payload["action"] as? String ?: "ping"
-            messageProtocol.sendMetric("commands_received", totalReceived.get())
-            messageProtocol.sendDebug("Processing command: $action")
             val rootCmd = cmdBuilder.buildCommand(action)
 
             wsClient.send(rootCmd.toByteArray())
             totalSent.incrementAndGet()
-            messageProtocol.sendMetric("commands_sent", totalSent.get())
-            messageProtocol.sendDebug("Command sent successfully: $action")
 
-            // Send success response
-            transitComm.sendMessage(
+            // Send success response using direct write (critical path)
+            transitComm.sendMessageDirect(
                 mapOf(
                     "msg-type" to "response",
                     "msg-id" to msgId,
@@ -92,7 +89,6 @@ class CommandSubprocess(
         val payload = msg["payload"] as? Map<*, *> ?: return
         when (payload["action"]) {
             "shutdown" -> {
-                messageProtocol.sendInfo("Shutdown requested")
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
@@ -114,7 +110,6 @@ class CommandSubprocess(
                         "sent" to totalSent.get(),
                         "ws-connected" to wsClient.isConnected(),
                     )
-                messageProtocol.sendInfo("Stats requested: $stats")
                 transitComm.sendMessage(
                     transitComm.createMessage("stats", stats),
                 )
@@ -187,10 +182,8 @@ class CommandWebSocketClient(
     suspend fun connect(): Unit =
         coroutineScope {
             try {
-                messageProtocol.sendInfo("Attempting to connect to: $url")
                 val uri = URI.create(url)
                 val origin = "https://${uri.host}"
-                messageProtocol.sendInfo("Setting Origin header: $origin")
                 val future =
                     httpClient
                         .newWebSocketBuilder()
@@ -200,7 +193,6 @@ class CommandWebSocketClient(
                             object : WebSocket.Listener {
                                 override fun onOpen(webSocket: WebSocket) {
                                     connected.set(true)
-                                    messageProtocol.sendInfo("Successfully connected to $url")
                                     webSocket.request(1)
                                 }
 
@@ -219,7 +211,6 @@ class CommandWebSocketClient(
                                     reason: String,
                                 ): CompletionStage<*>? {
                                     connected.set(false)
-                                    messageProtocol.sendInfo("Connection closed: $statusCode $reason")
                                     return null
                                 }
 
@@ -234,13 +225,8 @@ class CommandWebSocketClient(
                         ).await()
 
                 webSocket = future
-                messageProtocol.sendInfo("WebSocket connection established")
             } catch (e: Exception) {
                 messageProtocol.sendException("Failed to connect", e)
-                messageProtocol.sendError("Connection failed with details: ${e.message}")
-                if (e is java.util.concurrent.ExecutionException && e.cause != null) {
-                    messageProtocol.sendError("Cause: ${e.cause?.message}")
-                }
                 throw e
             }
         }
@@ -291,7 +277,6 @@ fun main(args: Array<String>) {
         StdoutInterceptor.setMessageProtocol(messageProtocol)
 
         runBlocking {
-            messageProtocol.sendInfo("Starting command subprocess with URL: $wsUrl")
             messageProtocol.sendStatus("starting")
 
             val subprocess = CommandSubprocess(wsUrl, transitComm)

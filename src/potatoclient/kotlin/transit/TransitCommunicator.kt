@@ -93,6 +93,21 @@ class TransitCommunicator(
     }
 
     /**
+     * Send a message directly without coroutine overhead (for critical paths)
+     */
+    fun sendMessageDirect(message: Map<String, Any>) {
+        synchronized(writer) {
+            try {
+                writer.write(message)
+                // Framed output stream handles flushing after frame is written
+            } catch (e: IOException) {
+                System.err.println("Error sending Transit message: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    /**
      * Read a message from the Clojure process
      */
     suspend fun readMessage(): Map<*, *>? =

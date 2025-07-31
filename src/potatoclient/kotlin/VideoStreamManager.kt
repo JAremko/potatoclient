@@ -86,41 +86,39 @@ class VideoStreamManager(
                     if (running.get()) {
                         // Check if we have enough data for timestamp (8 bytes) and duration (8 bytes)
                         if (data.remaining() >= 16) {
-                            // Extract timestamp and duration from the beginning of the message
-                            // Create a view with little-endian byte order for reading
-                            val timestampBuffer = data.duplicate()
-                            timestampBuffer.order(ByteOrder.LITTLE_ENDIAN)
+                            // Save original position
+                            val originalPos = data.position()
 
-                            // Read 64-bit timestamp and duration
-                            val timestamp = timestampBuffer.getLong()
-                            val duration = timestampBuffer.getLong()
+                            // Set order and read directly from buffer (no duplicate)
+                            data.order(ByteOrder.LITTLE_ENDIAN)
+                            val timestamp = data.getLong()
+                            val duration = data.getLong()
 
                             // Store current frame timing
                             currentFrameTimestamp.set(timestamp)
                             currentFrameDuration.set(duration)
 
-                            // Skip the 16-byte prefix and create a slice with just the video data
-                            data.position(data.position() + 16)
+                            // Create a slice with just the video data (no copy)
                             val videoData = data.slice()
+
+                            // Restore position for buffer pool
+                            data.position(originalPos)
 
                             // Push only the video data to pipeline
                             gstreamerPipeline.pushVideoData(videoData)
                         } else {
-                            messageProtocol.sendWarn("Frame too short to contain timing info: ${data.remaining()} bytes")
+                            // Skip malformed frames silently
                         }
 
-                        // Return buffer to pool if it's from the pool
-                        // Only direct buffers from the pool need to be released
-                        if (data.isDirect && data.capacity() <= Constants.MAX_BUFFER_SIZE) {
-                            webSocketClient.getBufferPool().release(data)
-                        }
+                        // Always release buffers back to pool - WebSocket only gives us pooled buffers
+                        webSocketClient.getBufferPool().release(data)
                     }
                 },
                 onConnect = {
-                    messageProtocol.sendInfo("WebSocket connected to $streamUrl")
+                    // Connection established
                 },
                 onClose = { code, reason ->
-                    messageProtocol.sendInfo("WebSocket closed: $reason (code: $code)")
+                    // Connection closed
                 },
                 onError = { error ->
                     messageProtocol.sendException("WebSocket error", error as Exception)
@@ -132,7 +130,6 @@ class VideoStreamManager(
 
     fun start() {
         try {
-            messageProtocol.sendInfo("Starting video stream manager for $streamId")
             messageProtocol.sendResponse("starting", mapOf(MessageKeys.STREAM_ID to streamId))
 
             // Create and show frame
@@ -191,34 +188,28 @@ class VideoStreamManager(
 
         when (cmd) {
             "stop", "shutdown" -> {
-                messageProtocol.sendInfo("Received stop command")
                 stop()
             }
             "pause" -> {
                 // Could implement pause/resume for video
-                messageProtocol.sendInfo("Pause not implemented")
             }
             "resume" -> {
                 // Could implement pause/resume for video
-                messageProtocol.sendInfo("Resume not implemented")
             }
             "show" -> {
-                messageProtocol.sendInfo("Show command received")
                 frameManager.showFrame()
             }
             "hide" -> {
-                messageProtocol.sendInfo("Hide command received")
                 frameManager.hideFrame()
             }
             else -> {
-                messageProtocol.sendWarn("Unknown command: $cmd")
+                // Ignore unknown commands
             }
         }
     }
 
     private fun stop() {
         if (running.compareAndSet(true, false)) {
-            messageProtocol.sendInfo("Stopping video stream manager")
             shutdownLatch.countDown()
         }
     }
@@ -345,8 +336,6 @@ class VideoStreamManager(
 
             windowEventHandler = WindowEventHandler(frame, this, eventFilter, eventThrottleExecutor)
             windowEventHandler?.attachListeners()
-
-            messageProtocol.sendInfo("Frame created and event handlers attached")
         } catch (e: Exception) {
             messageProtocol.sendException("Frame setup error", e)
         }
@@ -355,7 +344,6 @@ class VideoStreamManager(
     override fun onFrameClosing() {
         // Only send the close event once to avoid multiple messages
         if (closeEventSent.compareAndSet(false, true)) {
-            messageProtocol.sendInfo("Frame closing requested - notifying main process")
             // Send a window-closed event to the main process
             messageProtocol.sendResponse(
                 "window-closed",
@@ -364,11 +352,9 @@ class VideoStreamManager(
                     "reason" to "user-closed",
                 ),
             )
-            // Also log what we're sending for debugging
-            messageProtocol.sendInfo("Sent window-closed response for stream: $streamId")
             // Don't stop immediately - let the main process handle shutdown
         } else {
-            messageProtocol.sendDebug("Frame closing already handled, ignoring duplicate event")
+            // Frame closing already handled, ignore duplicate event
         }
     }
 
@@ -377,7 +363,7 @@ class VideoStreamManager(
         fun main(args: Array<String>) {
             // Install stdout interceptor EARLY before any code runs
             potatoclient.transit.StdoutInterceptor.installEarly()
-            
+
             // Give the parent process time to set up Transit reader
             Thread.sleep(100)
 
@@ -401,7 +387,6 @@ class VideoStreamManager(
             )
 
             try {
-                potatoclient.transit.logInfo("Starting video stream manager for $streamId with URL: $streamUrl")
                 val manager = VideoStreamManager(streamId, streamUrl, domain)
                 manager.start()
             } catch (e: Exception) {

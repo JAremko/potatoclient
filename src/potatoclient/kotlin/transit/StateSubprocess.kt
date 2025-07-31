@@ -1,4 +1,5 @@
 @file:JvmName("StateSubprocessKt")
+
 package potatoclient.transit
 
 import kotlinx.coroutines.CompletableDeferred
@@ -38,17 +39,12 @@ class StateSubprocess(
     private val wsClient = StateWebSocketClient(wsUrl)
     private val stateConverter = SimpleStateConverter()
 
-    // Debouncing
-    private val lastSentProto = AtomicReference<JonSharedData.JonGUIState?>(null)
-    private val lastSentHash = AtomicInteger(0)
-
     // Rate limiting
     private val rateLimiter = AtomicReference(RateLimiter(30)) // 30Hz default
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
     private val totalSent = AtomicInteger(0)
-    private val duplicatesSkipped = AtomicInteger(0)
 
     suspend fun run() =
         coroutineScope {
@@ -73,56 +69,23 @@ class StateSubprocess(
     private suspend fun handleProtobufState(protoBytes: ByteArray) {
         totalReceived.incrementAndGet()
 
+        // Rate limit check
+        if (!rateLimiter.get().tryAcquire()) return
+
         try {
+            // Parse and convert
             val protoState = JonSharedData.JonGUIState.parseFrom(protoBytes)
-
-            // Debouncing check
-            if (!shouldSendUpdate(protoState)) {
-                duplicatesSkipped.incrementAndGet()
-                return
-            }
-
-            // Convert to Transit
             val transitState = stateConverter.convert(protoState)
 
-            // Send to Clojure
-            transitComm.sendMessage(
+            // Send to Clojure using direct write (critical path)
+            transitComm.sendMessageDirect(
                 transitComm.createMessage("state", transitState as Map<String, Any>),
             )
 
             totalSent.incrementAndGet()
-            lastSentProto.set(protoState)
-            lastSentHash.set(protoState.hashCode())
         } catch (e: Exception) {
-            logError("Error processing state: ${e.message}", e)
-            transitComm.sendMessage(
-                transitComm.createMessage(
-                    "error",
-                    mapOf(
-                        "source" to "state-parsing",
-                        "error" to (e.message ?: "Unknown error"),
-                    ) as Map<String, Any>,
-                ),
-            )
+            // Silently ignore parse errors - they're rare and not critical
         }
-    }
-
-    private fun shouldSendUpdate(newProto: JonSharedData.JonGUIState): Boolean {
-        val lastProto = lastSentProto.get()
-
-        // Always send first update
-        if (lastProto == null) return true
-
-        // Skip identical updates (using equals)
-        if (newProto == lastProto) return false
-
-        // Hash collision check
-        if (newProto.hashCode() == lastSentHash.get()) {
-            if (newProto.equals(lastProto)) return false
-        }
-
-        // Rate limiting
-        return rateLimiter.get().tryAcquire()
     }
 
     private suspend fun handleControl(msg: Map<*, *>) {
@@ -130,7 +93,6 @@ class StateSubprocess(
 
         when (payload["action"]) {
             "shutdown" -> {
-                logInfo("Shutdown requested")
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
@@ -148,18 +110,15 @@ class StateSubprocess(
             "set-rate-limit" -> {
                 val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
                 rateLimiter.set(RateLimiter(rateHz))
-                logInfo("Rate limit set to $rateHz Hz")
             }
             "get-stats" -> {
                 val stats =
                     mapOf(
                         "received" to totalReceived.get(),
                         "sent" to totalSent.get(),
-                        "duplicates-skipped" to duplicatesSkipped.get(),
                         "ws-connected" to wsClient.isConnected(),
                         "rate-limit-hz" to rateLimiter.get().rateHz,
                     )
-                logInfo("Stats requested: $stats")
                 transitComm.sendMessage(
                     transitComm.createMessage("stats", stats),
                 )
@@ -261,12 +220,9 @@ class StateWebSocketClient(
         coroutineScope {
             while (isRunning.get() && isActive) {
                 try {
-                    logInfo("[StateWebSocket] Attempting to connect to: $url")
-
                     val listener = StateWebSocketListener(onMessage)
                     val uri = URI.create(url)
                     val origin = "https://${uri.host}"
-                    logInfo("[StateWebSocket] Setting Origin header: $origin")
                     val future =
                         httpClient
                             .newWebSocketBuilder()
@@ -281,13 +237,8 @@ class StateWebSocketClient(
                     listener.awaitDisconnection()
                     connected.set(false)
                 } catch (e: Exception) {
-                    logError("[StateWebSocket] Failed to connect: ${e.message}", e)
-                    if (e is java.util.concurrent.ExecutionException && e.cause != null) {
-                        logError("[StateWebSocket] Cause: ${e.cause?.message}")
-                        if (e.cause is java.net.http.WebSocketHandshakeException) {
-                            logError("[StateWebSocket] This is a handshake exception - check Origin header and nginx config")
-                        }
-                    }
+                    // Only log critical errors to stderr
+                    logError("[StateWebSocket] Connection failed", e)
                     delay(5000) // Wait before reconnect
                 }
             }
@@ -309,7 +260,6 @@ class StateWebSocketListener(
     private val disconnected = CompletableDeferred<Unit>()
 
     override fun onOpen(webSocket: WebSocket) {
-        logInfo("[StateWebSocket] Successfully connected")
         webSocket.request(1)
     }
 
@@ -321,7 +271,6 @@ class StateWebSocketListener(
         // Copy data to buffer
         val remaining = data.remaining()
         if (bufferPos + remaining > messageBuffer.size) {
-            logWarn("Message too large, resetting buffer")
             bufferPos = 0
             webSocket.request(1)
             return null
@@ -349,7 +298,6 @@ class StateWebSocketListener(
         statusCode: Int,
         reason: String,
     ): CompletionStage<*>? {
-        logInfo("[StateWebSocket] Connection closed: $statusCode $reason")
         disconnected.complete(Unit)
         return null
     }
@@ -358,7 +306,6 @@ class StateWebSocketListener(
         webSocket: WebSocket,
         error: Throwable,
     ) {
-        logError("[StateWebSocket] Connection error: ${error.message}", error)
         disconnected.complete(Unit)
     }
 
@@ -400,8 +347,6 @@ fun main(args: Array<String>) {
 
         // Set the message protocol for the interceptor
         StdoutInterceptor.setMessageProtocol(messageProtocol)
-
-        logInfo("Starting state subprocess with URL: $wsUrl")
 
         runBlocking {
             subprocess.run()
