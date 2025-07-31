@@ -31,7 +31,7 @@
                                  :text "")]
 
     ;; Bind status labels to app-db
-    (bind/bind potatoclient.transit.app-db/app-db
+    (bind/bind app-db/app-db
                (bind/transform (fn [db]
                                  (let [process-key (case stream-key
                                                      :heat :heat-video
@@ -72,7 +72,7 @@
                                    :text "")]
 
     ;; Bind domain label to connection URL
-    (bind/bind potatoclient.transit.app-db/app-db
+    (bind/bind app-db/app-db
                (bind/transform #(or (get-in % [:app-state :connection :url]) ""))
                (bind/transform #(if (empty? %)
                                   (i18n/tr :no-server-configured)
@@ -103,7 +103,7 @@
                                            (ipc/start-stream stream-key endpoint)
                                            (ipc/stop-stream stream-key))))
                         ;; Bind toggle state to app-db
-                        (bind/bind potatoclient.transit.app-db/app-db
+                        (bind/bind app-db/app-db
                                    (bind/transform (fn [db]
                                                      (let [process-key (case stream-key
                                                                          :heat :heat-video

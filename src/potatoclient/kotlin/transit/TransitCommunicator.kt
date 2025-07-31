@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 // Message framing constants
 private const val MAX_MESSAGE_SIZE = 10 * 1024 * 1024 // 10MB max message size
-private const val FRAME_HEADER_SIZE = 4 // 4 bytes for message length
 
 // Backpressure configuration
 private const val HIGH_WATER_MARK = 1000 // Start applying backpressure

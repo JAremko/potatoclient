@@ -139,7 +139,12 @@ class ByteBufferPool(
             if (direct) ByteBuffer.allocateDirect(minCapacity) else ByteBuffer.allocate(minCapacity)
         }
 
-    private fun allocateBuffer(): ByteBuffer = if (direct) ByteBuffer.allocateDirect(bufferSize) else ByteBuffer.allocate(bufferSize)
+    private fun allocateBuffer(): ByteBuffer =
+        if (direct) {
+            ByteBuffer.allocateDirect(bufferSize)
+        } else {
+            ByteBuffer.allocate(bufferSize)
+        }
 
     /**
      * Get pool statistics for monitoring

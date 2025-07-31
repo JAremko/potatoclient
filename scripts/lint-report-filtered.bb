@@ -66,6 +66,8 @@
    ;; False positive unused namespaces that are actually used
    {:pattern #"namespace potatoclient\.(logging|state|theme) is required but never used"
     :reason "Namespace is actually used in the file"}
+   {:pattern #"namespace seesaw\.border is required but never used"
+    :reason "Namespace is actually used for line-border function"}
    
    ;; False positive unused private vars in UI files
    {:pattern #"Unused private var potatoclient\.ui\..*/(panel-border-width|header-font|label-font|status-font)"
@@ -190,6 +192,11 @@
    {:pattern #"Unresolved symbol: (db|connected\?)"
     :file-pattern #"(control_panel|main_frame)\.clj$"
     :reason "Destructured binding from app-db"}
+   
+   ;; app-db/app-db is an atom, not a function
+   {:pattern #"Function name must be simple symbol but got: app-db/app-db"
+    :file-pattern #"control_panel\.clj$"
+    :reason "app-db/app-db is an atom passed to bind/bind"}
    
    ;; Test utility unused bindings
    {:pattern #"unused binding (e|in)"

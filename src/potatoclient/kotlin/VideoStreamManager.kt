@@ -1,9 +1,9 @@
 package potatoclient.kotlin
 
 import kotlinx.coroutines.runBlocking
-import potatoclient.transit.MessageKeys
 import potatoclient.kotlin.transit.TransitCommunicator
 import potatoclient.kotlin.transit.TransitMessageProtocol
+import potatoclient.transit.MessageKeys
 import java.awt.Component
 import java.net.URI
 import java.nio.ByteOrder
@@ -16,6 +16,11 @@ import java.util.concurrent.atomic.AtomicLong
 import javax.swing.JFrame
 import kotlin.system.exitProcess
 
+class VideoStreamCreationException(
+    message: String,
+    cause: Throwable,
+) : Exception(message, cause)
+
 class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
@@ -25,7 +30,12 @@ class VideoStreamManager(
     GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener {
     // Core components - use original stdout for Transit
-    private val transitReader = TransitCommunicator(System.`in`, potatoclient.kotlin.transit.StdoutInterceptor.getOriginalStdout())
+    private val transitReader =
+        TransitCommunicator(
+            System.`in`,
+            potatoclient.kotlin.transit.StdoutInterceptor
+                .getOriginalStdout(),
+        )
 
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
@@ -54,7 +64,8 @@ class VideoStreamManager(
 
     init {
         // Set the message protocol for the interceptor (already installed in main)
-        potatoclient.kotlin.transit.StdoutInterceptor.setMessageProtocol(messageProtocol)
+        potatoclient.kotlin.transit.StdoutInterceptor
+            .setMessageProtocol(messageProtocol)
     }
 
     private val frameManager = FrameManager(streamId, domain, this, messageProtocol)
@@ -125,7 +136,7 @@ class VideoStreamManager(
                 },
             )
         } catch (e: Exception) {
-            throw RuntimeException("Failed to create WebSocket client", e)
+            throw VideoStreamCreationException("Failed to create WebSocket client", e)
         }
 
     fun start() {
@@ -237,10 +248,18 @@ class VideoStreamManager(
             eventThrottleExecutor.shutdown()
 
             try {
-                if (!reconnectExecutor.awaitTermination(Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                if (!reconnectExecutor.awaitTermination(
+                        Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS,
+                        TimeUnit.SECONDS,
+                    )
+                ) {
                     reconnectExecutor.shutdownNow()
                 }
-                if (!eventThrottleExecutor.awaitTermination(Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                if (!eventThrottleExecutor.awaitTermination(
+                        Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS,
+                        TimeUnit.SECONDS,
+                    )
+                ) {
                     eventThrottleExecutor.shutdownNow()
                 }
             } catch (_: InterruptedException) {
@@ -362,7 +381,8 @@ class VideoStreamManager(
         @JvmStatic
         fun main(args: Array<String>) {
             // Install stdout interceptor EARLY before any code runs
-            potatoclient.kotlin.transit.StdoutInterceptor.installEarly()
+            potatoclient.kotlin.transit.StdoutInterceptor
+                .installEarly()
 
             // Give the parent process time to set up Transit reader
             Thread.sleep(100)
@@ -377,7 +397,8 @@ class VideoStreamManager(
             val domain = args[2]
 
             // Initialize logging for this subprocess
-            potatoclient.kotlin.transit.LoggingUtils.initializeLogging("video-stream-$streamId")
+            potatoclient.kotlin.transit.LoggingUtils
+                .initializeLogging("video-stream-$streamId")
 
             // Install shutdown hook for clean exit
             Runtime.getRuntime().addShutdownHook(
@@ -394,7 +415,8 @@ class VideoStreamManager(
                 potatoclient.kotlin.transit.logError("Fatal error in video stream", e)
                 exitProcess(1)
             } finally {
-                potatoclient.kotlin.transit.LoggingUtils.close()
+                potatoclient.kotlin.transit.LoggingUtils
+                    .close()
             }
         }
     }

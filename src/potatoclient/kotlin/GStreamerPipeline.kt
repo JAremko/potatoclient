@@ -104,8 +104,7 @@ class GStreamerPipeline(
                 try {
                     // Initialize with plugin path if available
                     if (!gstPluginPath.isNullOrEmpty()) {
-                        val args = arrayOf("--gst-plugin-path=$gstPluginPath")
-                        Gst.init(Constants.GSTREAMER_APP_NAME, *args)
+                        Gst.init(Constants.GSTREAMER_APP_NAME, "--gst-plugin-path=$gstPluginPath")
                     } else {
                         Gst.init(Constants.GSTREAMER_APP_NAME)
                     }
@@ -539,6 +538,7 @@ class GStreamerPipeline(
         callback.onLog(
             "DEBUG",
             String.format(
+                java.util.Locale.US,
                 "%d frames, %.1f fps, pool hit rate: %.1f%%",
                 frames,
                 fps,
@@ -576,6 +576,7 @@ class GStreamerPipeline(
                 callback.onLog(
                     "INFO",
                     String.format(
+                        java.util.Locale.US,
                         "Buffer pool final stats: %.1f%% hit rate (%d hits, %d misses)",
                         hitRate,
                         hits,
