@@ -151,8 +151,10 @@
                :target-dir class-dir})
   ;; Create release marker file
   (spit (io/file class-dir "RELEASE") "true")
-  (compile-kotlin nil)
+  ;; Compile in correct order: Java proto first, then enums, then Kotlin
   (compile-java-proto nil)
+  (compile-java-enums nil)
+  (compile-kotlin nil)
   ;; Compile with release optimizations
   (b/compile-clj {:basis (get-basis)
                   :src-dirs ["src"]
