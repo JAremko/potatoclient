@@ -47,7 +47,9 @@
           classpath-with-proto (str class-dir ":" java-src-path ":" src-path ":" (str/join ":" (:classpath-roots (get-basis))))]
       (when (seq kotlin-paths)
         (println (str "Compiling " (count kotlin-paths) " Kotlin files..."))
-        (let [result (apply shell/sh 
+        ;; kotlinc needs to be redefined here since it's out of scope from the outer let
+        (let [kotlinc (str "tools/kotlin-2.2.0/bin/kotlinc")
+              result (apply shell/sh 
                            kotlinc
                            "-d" class-dir
                            "-cp" classpath-with-proto

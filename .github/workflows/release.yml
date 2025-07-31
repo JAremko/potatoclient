@@ -123,8 +123,10 @@ jobs:
       run: |
         echo "Building release JAR..."
         # Proto files already generated, skip that step
-        make compile-kotlin
+        # Compile Java protobuf classes first (Kotlin depends on them)
         make compile-java-proto
+        make compile-java-enums
+        make compile-kotlin
         POTATOCLIENT_RELEASE=true clojure -T:build release
         ls -la target/
     
