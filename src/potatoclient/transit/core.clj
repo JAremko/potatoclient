@@ -8,16 +8,17 @@
            [clojure.lang Keyword]))
 
 ;; Custom write handlers for domain types
-(def write-handlers
+(def ^{:doc "Custom Transit write handlers for domain types"}
+  write-handlers
   {Keyword (transit/write-handler
              "keyword"
              (fn [^Keyword k] (subs (str k) 1))  ; Remove leading colon
              (fn [^Keyword k] (subs (str k) 1)))})
 
 ;; Custom read handlers for domain types  
-(def read-handlers
-  {"keyword" (transit/read-handler
-               (fn [s] (keyword s)))})
+(def ^{:doc "Custom Transit read handlers for domain types"}
+  read-handlers
+  {"keyword" (transit/read-handler keyword)})
 
 ;; Writer creation with Guardrails
 (>defn make-writer

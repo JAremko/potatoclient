@@ -128,7 +128,7 @@
   (logging/log-stream-event stream-key :window-closed
                             {:message "Stream window closed by X button"})
   (logging/log-info {:msg (str "Attempting to get stream process for " stream-key)})
-  
+
   ;; Get the full stream process map from app-db instead of the simplified state
   (if-let [stream (app-db/get-stream-process stream-key)]
     (do
@@ -140,11 +140,11 @@
           (let [cmd-result (process/send-command stream {:action "shutdown"})]
             (logging/log-info {:msg (str "Shutdown command result for " stream-key ": " cmd-result)}))
           (Thread/sleep 100)
-          
+
           (logging/log-info {:msg (str "Stopping stream process for " stream-key)})
           (let [stop-result (process/stop-stream stream)]
             (logging/log-info {:msg (str "Stop stream result for " stream-key ": " stop-result)}))
-          
+
           (logging/log-info {:msg (str "Clearing stream state for " stream-key)})
           (state/clear-stream! stream-key)
           (app-db/remove-stream-process! stream-key)
@@ -164,9 +164,9 @@
   (logging/log-stream-event stream-key :response
                             {:action (get msg "action")
                              :data msg})
-  
+
   ;; DEBUG: Log the actual message structure
-  (logging/log-debug {:msg (str "Response event - stream-key: " stream-key 
+  (logging/log-debug {:msg (str "Response event - stream-key: " stream-key
                                 ", action: " (get msg "action")
                                 ", full msg: " (pr-str msg))})
 
@@ -187,7 +187,7 @@
                                 {:nav-type (:type event)
                                  :message (format-navigation-event event)
                                  :data event})
-      
+
       ;; Check for double-click (left button with clickCount > 1)
       (when (and (= (:type event) :mouse-click)
                  (= (:button event) 1)  ; Left button

@@ -6,7 +6,8 @@
             [potatoclient.specs :as specs]))
 
 ;; Default initial state
-(def initial-state
+(def ^{:doc "Default initial application state"}
+  initial-state
   {:server-state {:system {:battery-level 0
                            :localization "en"
                            :recording false
@@ -78,7 +79,8 @@
 
 ;; The single source of truth
 ;; Global application state atom following re-frame pattern.
-(defonce app-db (atom initial-state))
+(defonce ^{:doc "Global application state atom following re-frame pattern"}
+  app-db (atom initial-state))
 
 ;; Basic accessors with Guardrails
 (>defn get-server-state
@@ -113,7 +115,8 @@
   (get-in @app-db [:server-state subsystem]))
 
 ;; Alias for tests
-(def get-subsystem get-subsystem-state)
+(def ^{:doc "Alias for get-subsystem-state for backward compatibility in tests"}
+  get-subsystem get-subsystem-state)
 
 ;; Connection state
 (>defn connected?

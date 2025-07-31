@@ -118,7 +118,7 @@
   [[:fn #(instance? BufferedReader %)]
    fn?
    string? => [:fn #(instance? Thread %)]]
-  (Thread. 
+  (Thread.
     (fn []
       (try
         (loop []
@@ -294,9 +294,9 @@
   [:potatoclient.specs/stream-process-map :potatoclient.specs/process-command => boolean?]
   (if stream
     (let [current-state @(:state stream)]
-      (logging/log-debug {:msg (str "send-command: stream-id=" (:stream-id stream) 
-                                   ", state=" current-state 
-                                   ", cmd=" cmd)})
+      (logging/log-debug {:msg (str "send-command: stream-id=" (:stream-id stream)
+                                    ", state=" current-state
+                                    ", cmd=" cmd)})
       (if (= current-state :running)
         (try
           (let [write-fn (:writer stream)
@@ -313,7 +313,7 @@
             false))
         (do
           (logging/log-warn {:msg (str "Cannot send command to stream in state " current-state)
-                            :stream-id (:stream-id stream)})
+                             :stream-id (:stream-id stream)})
           false)))
     (do
       (logging/log-error {:msg "send-command called with nil stream"})
@@ -334,13 +334,13 @@
   [stream]
   [:potatoclient.specs/stream-process-map => :potatoclient.specs/process-state]
   (when stream
-    (logging/log-debug {:msg (str "stop-stream called for " (:stream-id stream) 
-                                 ", current state: " @(:state stream))})
-    
+    (logging/log-debug {:msg (str "stop-stream called for " (:stream-id stream)
+                                  ", current state: " @(:state stream))})
+
     ;; Try graceful shutdown first BEFORE changing state
     (send-command stream {:action "shutdown"})
     (Thread/sleep ^long shutdown-grace-period-ms)
-    
+
     ;; Now change state to stopping
     (reset! (:state stream) :stopping)
 

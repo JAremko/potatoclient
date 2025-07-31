@@ -3,19 +3,14 @@
   (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Frozen
             JonSharedCmd$Noop]
            [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Stop
-            JonSharedCmdRotary$AngleTo JonSharedCmdRotary$Axis
-            JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Elevation]
-           [cmd.DayCamera JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$ZoomTo
-            JonSharedCmdDayCamera$Focus JonSharedCmdDayCamera$Iris]
+            JonSharedCmdRotary$AngleTo]
+           [cmd.DayCamera JonSharedCmdDayCamera$Root
+            JonSharedCmdDayCamera$Focus]
            [ser JonSharedData$JonGUIState
             JonSharedDataSystem$JonGuiDataSystem
             JonSharedDataTime$JonGuiDataTime
             JonSharedDataRotary$JonGuiDataRotary
-            JonSharedDataDayCamera$JonGuiDataDayCamera
-            JonSharedDataHeatCamera$JonGuiDataHeatCamera]
-           [ser JonSharedDataTypes$JonGuiDataRotaryMode
-            JonSharedDataTypes$JonGuiDataRotaryDirection
-            JonSharedDataTypes$JonGuiDataVideoChannel]))
+            JonSharedDataDayCamera$JonGuiDataDayCamera]))
 
 ;; Command creation helpers
 

@@ -1,12 +1,10 @@
 (ns potatoclient.transit-minimal-test
   "Minimal test to verify Transit system works without Kotlin compilation"
   (:require [clojure.test :refer [deftest testing is]]
-            [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.commands :as commands]
-            [potatoclient.transit.subprocess-launcher :as launcher]
-            [cognitect.transit :as transit]
-            [clojure.java.io :as io])
+            [potatoclient.transit.core :as transit-core]
+            [potatoclient.transit.subprocess-launcher :as launcher])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (deftest test-transit-core-basics

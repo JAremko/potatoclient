@@ -10,10 +10,12 @@
 
 ;; Atom to hold translations and translator instance
 ;; Atom holding all loaded translations.
-(defonce translations-atom (atom {}))
+(defonce ^{:doc "Atom holding all loaded translations"}
+  translations-atom (atom {}))
 
 ;; Atom holding the tongue translator instance.
-(defonce translator-atom (atom nil))
+(defonce ^{:doc "Atom holding the tongue translator instance"}
+  translator-atom (atom nil))
 
 (>defn load-translation-file
   "Load a translation file from resources"

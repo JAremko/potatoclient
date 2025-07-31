@@ -113,7 +113,7 @@
     ;; Telemere adds a default console handler automatically which causes duplication
     (tel/remove-handler! :default/console)  ; Remove the auto-added default console handler
     (tel/remove-handler! :default)
-    (tel/remove-handler! :console) 
+    (tel/remove-handler! :console)
     (tel/remove-handler! :file)
 
     ;; Set minimum level based on build type
@@ -160,7 +160,7 @@
        :id ::startup
        :data {:build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")}}
       "PotatoClient logging initialized")
-    
+
     ;; Log where init was called from for debugging double-init
     (let [stack-trace (Thread/currentThread)
           stack (.getStackTrace stack-trace)]

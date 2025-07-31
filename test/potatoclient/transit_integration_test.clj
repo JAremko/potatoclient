@@ -5,11 +5,13 @@
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.subprocess-launcher :as launcher]
-            [potatoclient.logging :as logging]))
+))
 
 ;; Test configuration
-(def test-domain "test.sych.local")
-(def test-timeout-ms 5000)
+(def ^{:doc "Test domain for integration tests"}
+  test-domain "test.sych.local")
+(def ^{:doc "Timeout in milliseconds for test operations"}
+  test-timeout-ms 5000)
 
 ;; Fixtures
 (defn reset-app-db-fixture

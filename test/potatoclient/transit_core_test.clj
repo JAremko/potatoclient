@@ -1,9 +1,7 @@
 (ns potatoclient.transit-core-test
   "Unit tests for Transit core functionality"
   (:require [clojure.test :refer [deftest testing is]]
-            [potatoclient.transit.core :as transit-core]
-            [cognitect.transit :as transit]
-            [clojure.java.io :as io])
+            [potatoclient.transit.core :as transit-core])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (deftest test-transit-write-read-cycle
@@ -137,7 +135,7 @@
           ;; The important thing is it doesn't crash
           (is (some? result)
               (str "Non-transit data parsed as: " (pr-str result) " (type: " (type result) ")")))
-        (catch Exception e
+        (catch Exception _
           ;; This is also acceptable
           (is true "Exception thrown for corrupted data"))))))
 
@@ -155,5 +153,4 @@
         (doseq [f futures] @f))
 
       ;; Verify we can read something (exact count may vary due to interleaving)
-      (let [in (ByteArrayInputStream. (.toByteArray out))]
-        (is (pos? (count (.toByteArray out))))))))
+      (is (pos? (count (.toByteArray out)))))))

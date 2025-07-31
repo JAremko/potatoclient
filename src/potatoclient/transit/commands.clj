@@ -3,8 +3,7 @@
   
   This namespace provides all the command functions previously in cmd.core
   but uses Transit messages instead of protobuf builders."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [potatoclient.logging :as logging]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]))
 
 ;; ============================================================================
 ;; Basic Commands

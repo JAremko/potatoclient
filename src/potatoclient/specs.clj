@@ -164,10 +164,6 @@
   "Client type values"
   [:enum :java :rust :go :clojure])
 
-(def url
-  "WebSocket URL"
-  [:and string? [:re #"^wss?://.*"]])
-
 (def payload-type
   "Command payload types"
   [:enum :ping :pong :noop :frozen :gimbal-angle-to
@@ -784,7 +780,7 @@
      ::command-payload-map command-payload-map
 
      ;; Channel Types
-}))
+     }))
 
 ;; -----------------------------------------------------------------------------
 ;; Transit Subprocess Schemas

@@ -2,8 +2,7 @@
   "Simple test for Transit core functionality"
   (:require [clojure.test :refer [deftest testing is]]
             [potatoclient.transit.core :as transit-core]
-            [cognitect.transit :as transit]
-            [clojure.java.io :as io])
+)
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (deftest test-transit-basic-operations

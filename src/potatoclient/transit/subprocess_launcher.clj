@@ -194,27 +194,27 @@
   [subprocess-type url domain message-handler]
   [keyword? string? string? fn? => ::specs/transit-subprocess]
   (let [subprocess (create-subprocess subprocess-type url domain message-handler)
-        reader-thread ((create-reader-thread (:input-stream subprocess) 
-                                             subprocess-type 
+        reader-thread ((create-reader-thread (:input-stream subprocess)
+                                             subprocess-type
                                              message-handler))
-        error-thread ((monitor-error-stream subprocess-type 
+        error-thread ((monitor-error-stream subprocess-type
                                             (:error-stream subprocess)))]
     ;; Start threads
     (.start reader-thread)
     (.start error-thread)
-    
+
     ;; Update state
     (reset! (:state subprocess) :running)
-    
+
     ;; Register subprocess
     (swap! subprocess-registry assoc subprocess-type subprocess)
-    
+
     (logging/log-info
       {:id ::subprocess-started
        :data {:subprocess-type subprocess-type
               :url url}
        :msg (str "Started " (name subprocess-type) " subprocess")})
-    
+
     subprocess))
 
 (>defn send-message
@@ -272,34 +272,34 @@
       {:id ::stopping-subprocess
        :data {:subprocess-type subprocess-type}
        :msg (str "Stopping " (name subprocess-type) " subprocess")})
-    
+
     ;; Update state
     (reset! (:state subprocess) :stopping)
-    
+
     ;; Send shutdown message if possible
     (send-message subprocess-type
                   {:msg-type "command"
                    :msg-id (str (java.util.UUID/randomUUID))
                    :timestamp (System/currentTimeMillis)
                    :payload {:action "shutdown"}})
-    
+
     ;; Wait briefly for graceful shutdown
     (Thread/sleep shutdown-grace-period-ms)
-    
+
     ;; Force kill if still alive
     (let [^Process process (:process subprocess)]
       (when (.isAlive process)
         (.destroyForcibly process)))
-    
+
     ;; Close resources
     (close-resource (:input-stream subprocess) #(.close ^InputStream %))
     (close-resource (:output-stream subprocess) #(.close ^OutputStream %))
     (close-resource (:error-stream subprocess) #(.close ^InputStream %))
-    
+
     ;; Update state and remove from registry
     (reset! (:state subprocess) :stopped)
     (swap! subprocess-registry dissoc subprocess-type)
-    
+
     (logging/log-info
       {:id ::subprocess-stopped
        :data {:subprocess-type subprocess-type}
@@ -310,17 +310,13 @@
   "Start the command subprocess that converts Transit commands to protobuf."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (let [handler (fn [msg]
-                  (app-db/handle-command-response msg))]
-    (start-subprocess :command url domain handler)))
+  (start-subprocess :command url domain app-db/handle-command-response))
 
 (>defn start-state-subprocess
   "Start the state subprocess that converts protobuf state to Transit."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (let [handler (fn [msg]
-                  (app-db/handle-state-update msg))]
-    (start-subprocess :state url domain handler)))
+  (start-subprocess :state url domain app-db/handle-state-update))
 
 (>defn stop-all-subprocesses
   "Stop all running subprocesses."

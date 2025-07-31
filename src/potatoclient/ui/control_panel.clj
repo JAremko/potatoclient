@@ -6,20 +6,14 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
             [potatoclient.ipc :as ipc]
-            [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [seesaw.core :as seesaw]
             [seesaw.bind :as bind]
-            [seesaw.border :as border]
+            [seesaw.core :as seesaw]
             [seesaw.mig :as mig])
   (:import (javax.swing JPanel)))
 
 ;; UI styling constants
-(def ^:private panel-border-width 10)
-(def ^:private header-font {:name "Arial" :style :bold :size 16})
-(def ^:private label-font {:name "Arial" :size 12})
-(def ^:private status-font {:name "Arial" :style :italic :size 11})
 
 (>defn- create-stream-status-panel
   "Create a status panel for a single stream."
@@ -31,11 +25,9 @@
                       :day (i18n/tr :stream-day))
         status-label (seesaw/label :id (keyword (str (name stream-key) "-status"))
                                    :text (i18n/tr :status-disconnected)
-                                   :font status-font
                                    :foreground :red)
         info-label (seesaw/label :id (keyword (str (name stream-key) "-info"))
-                                 :text ""
-                                 :font status-font)]
+                                 :text "")]
 
     ;; Bind status labels to app-db
     (bind/bind app-db/app-db
@@ -65,8 +57,7 @@
     (mig/mig-panel
       :constraints ["wrap 2, insets 5"
                     "[right]rel[grow,fill]"]
-      :items [[(seesaw/label :text stream-name
-                             :font label-font)]
+      :items [[(seesaw/label :text stream-name)]
               [status-label]
               [""]
               [info-label "span 2"]])))
@@ -77,8 +68,7 @@
   [=> [:fn {:error/message "must be a Swing panel"}
        #(instance? JPanel %)]]
   (let [domain-label (seesaw/label :id :domain-info
-                                   :text ""
-                                   :font label-font)]
+                                   :text "")]
 
     ;; Bind domain label to connection URL
     (bind/bind app-db/app-db

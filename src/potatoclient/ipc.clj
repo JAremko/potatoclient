@@ -22,7 +22,7 @@
 
 ;; Default handler for unknown message types
 (defmethod handle-message :default
-  [msg-type stream-key payload]
+  [msg-type stream-key _payload]
   (logging/log-warn
     {:id ::unknown-message-type
      :data {:stream stream-key
@@ -121,8 +121,8 @@
          :data {:stream-key stream-key
                 :action (get payload "action")
                 :payload payload}
-         :msg (str "DISPATCH: Handling response for " stream-key 
-                  " with action: " (get payload "action"))}))
+         :msg (str "DISPATCH: Handling response for " stream-key
+                   " with action: " (get payload "action"))}))
     (try
       (handle-message (keyword msg-type) stream-key payload)
       true

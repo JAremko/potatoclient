@@ -21,7 +21,7 @@
             [seesaw.action :as action]
             [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
-  (:import (javax.swing Box JFrame JPanel)))
+  (:import (javax.swing JFrame JPanel)))
 
 ;; Additional schemas not in specs
 (def version

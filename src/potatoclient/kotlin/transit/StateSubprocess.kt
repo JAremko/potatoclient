@@ -3,8 +3,8 @@
 package potatoclient.transit
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -40,7 +40,8 @@ class StateSubprocess(
     private val stateConverter = SimpleStateConverter()
 
     // Rate limiting
-    private val rateLimiter = AtomicReference(RateLimiter(30)) // 30Hz default
+    private val rateLimiterScope = CoroutineScope(Dispatchers.Default)
+    private val rateLimiter = AtomicReference(RateLimiter(30, rateLimiterScope)) // 30Hz default
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -109,7 +110,7 @@ class StateSubprocess(
             }
             "set-rate-limit" -> {
                 val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
-                rateLimiter.set(RateLimiter(rateHz))
+                rateLimiter.set(RateLimiter(rateHz, rateLimiterScope))
             }
             "get-stats" -> {
                 val stats =
@@ -132,6 +133,7 @@ class StateSubprocess(
  */
 class RateLimiter(
     val rateHz: Int,
+    private val scope: CoroutineScope,
 ) {
     private val bucketSize = rateHz
     private val tokens = AtomicInteger(bucketSize)
@@ -142,7 +144,7 @@ class RateLimiter(
         require(rateHz > 0) { "Rate must be positive" }
 
         refillJob =
-            GlobalScope.launch {
+            scope.launch {
                 while (isActive) {
                     delay(1000L / rateHz)
                     refill()
@@ -220,7 +222,7 @@ class StateWebSocketClient(
         coroutineScope {
             while (isRunning.get() && isActive) {
                 try {
-                    val listener = StateWebSocketListener(onMessage)
+                    val listener = StateWebSocketListener(onMessage, this)
                     val uri = URI.create(url)
                     val origin = "https://${uri.host}"
                     val future =
@@ -254,6 +256,7 @@ class StateWebSocketClient(
 
 class StateWebSocketListener(
     private val onMessage: suspend (ByteArray) -> Unit,
+    private val scope: CoroutineScope,
 ) : WebSocket.Listener {
     private val messageBuffer = ByteArray(1024 * 1024) // 1MB buffer
     private var bufferPos = 0
@@ -284,7 +287,7 @@ class StateWebSocketListener(
             val fullMessage = messageBuffer.copyOfRange(0, bufferPos)
             bufferPos = 0
 
-            GlobalScope.launch {
+            scope.launch {
                 onMessage(fullMessage)
             }
         }

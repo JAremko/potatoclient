@@ -51,7 +51,7 @@
                                  (require 'potatoclient.logging)
                                  (let [shutdown-logging (resolve 'potatoclient.logging/shutdown!)]
                                    (when shutdown-logging (shutdown-logging)))
-                                 
+
                                  ;; Then clean up subprocesses
                                  (require 'potatoclient.process)
                                  (require 'potatoclient.transit.subprocess-launcher)
