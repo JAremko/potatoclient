@@ -4,21 +4,32 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 
 ## Architecture Overview
 
-- **Main Process (Clojure)**: UI, state management, subprocess coordination
+- **Main Process (Clojure)**: UI, state management with Transit app-db, subprocess coordination
 - **Command Subprocess (Kotlin)**: Receives Transit commands, converts to protobuf, sends via WebSocket
 - **State Subprocess (Kotlin)**: Receives protobuf state from WebSocket, converts to Transit, sends to main process
 - **Video Subprocesses (Kotlin)**: Handle H.264 video streams with hardware acceleration
 
-**Key architectural principle**: Protobuf is completely isolated in Kotlin subprocesses. The Clojure process never touches protobuf directly, using Transit/MessagePack for all IPC communication.
+**Key architectural principles**: 
+- Protobuf is completely isolated in Kotlin subprocesses
+- All Clojure functions use Guardrails `>defn` for runtime validation
+- Single app-db atom following re-frame pattern for state management
+- Transit/MessagePack for all IPC communication
 
 **Documentation:**
 - **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
 - **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
+- **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
 
 ## Important: Function Validation with Guardrails
 
 **ALWAYS** use Guardrails' `>defn` and `>defn-` instead of regular `defn` and `defn-` for all functions. This provides runtime validation in development and is automatically removed in release builds.
+
+**Key requirements**:
+- Every function must use `>defn` or `>defn-` (never raw `defn`)
+- All schemas must be defined in `potatoclient.specs` namespace
+- Function instrumentation goes in `potatoclient.instrumentation` (excluded from AOT)
+- Use `make report-unspecced` to find functions missing Guardrails
 
 ### Basic Usage
 
@@ -78,6 +89,12 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 
 To find functions still using raw `defn`/`defn-`:
 
+```bash
+# Generate report of functions without Guardrails
+make report-unspecced
+```
+
+Alternatively, in the REPL:
 ```clojure
 (require '[potatoclient.guardrails.check :as check])
 
@@ -85,7 +102,7 @@ To find functions still using raw `defn`/`defn-`:
 (check/print-report)
 
 ;; Get data structure
-(check/report-unspecced-functions)
+(check/find-unspecced-functions)
 ```
 
 ### Configuration
@@ -162,12 +179,17 @@ The Makefile is self-documenting and includes comprehensive inline documentation
 - Primary development commands with startup times and features
 - Build and release targets with optimization details
 - Code quality tools with version numbers and configurations
-- Lint report generators with false positive filtering capabilities
+- Lint report generators with false positive filtering capabilities (~56% false positive reduction)
 
 Key development commands:
 - `make dev` - Primary development command with full validation
 - `make nrepl` - REPL development on port 7888
-- `make lint` - Run all code quality checks
+- `make mcp-server` - MCP server for Claude integration on port 7888
+- `make lint` - Run all code quality checks (clj-kondo, ktlint, detekt)
+- `make lint-report-filtered` - Generate lint report with false positives filtered out
+- `make test` - Run tests with automatic logging to `logs/test-runs/`
+- `make test-summary` - View latest test run summary
+- `make report-unspecced` - Find functions without Guardrails specs
 - `make help` - View all available commands with descriptions
 
 ## Development vs Release Builds
@@ -204,24 +226,29 @@ For comprehensive information on code quality, linting tools, and static analysi
 **[.claude/linting-guide.md](.claude/linting-guide.md)**
 
 This guide covers:
-- Linting tools for Clojure (clj-kondo) and Kotlin (ktlint, detekt)
+- **Clojure**: clj-kondo (v2025.06.05) with Guardrails, Seesaw, and Telemere support
+- **Kotlin**: ktlint (v1.5.0) and detekt (v1.23.7) for style and analysis
 - Running linters and generating reports
-- False positive filtering (removes ~56% of false positives)
+- Advanced false positive filtering (removes ~56% of false positives)
+- Custom lint-as mappings for Clojure macros
 - Integration with development workflow
-- Periodic build verification to ensure code hasn't been broken
 - Best practices for maintaining code quality
+
+**Quick commands**:
+- `make lint` - Run all linters
+- `make lint-report-filtered` - Generate report with false positives filtered out
 
 ## Testing Infrastructure
 
 ### Test Execution and Logging
 
-The test suite now includes comprehensive logging and analysis capabilities:
+The test suite includes comprehensive logging and analysis capabilities:
 
 **Key Commands**:
 - `make test` - Run all tests with automatic logging to timestamped directories
 - `make test-summary` - View the latest test run summary
-- `make coverage` - Generate test coverage report with jacoco
-- `make report-unspecced` - Find functions without Malli specs
+- `make test-coverage` - Generate comprehensive coverage report for Clojure, Java, and Kotlin
+- `make report-unspecced` - Find functions without Guardrails specs
 
 **Test Logging System**:
 - All test runs are automatically logged to `logs/test-runs/YYYYMMDD_HHMMSS/`
@@ -230,60 +257,62 @@ The test suite now includes comprehensive logging and analysis capabilities:
   - `test-full-summary.txt` - Compact analysis of results
   - `test-full-failures.txt` - Extracted failures for quick review
 - Logs are automatically compacted and analyzed by `scripts/compact-test-logs.sh`
+- Latest test run is symlinked to `logs/test-runs/latest/`
 
 **Coverage Reports**:
-- Coverage analysis uses jacoco via the `cloverage` tool
+- Coverage analysis uses JaCoCo via the `cloverage` tool
 - Reports generated in `target/coverage/` include:
   - HTML reports for browser viewing
   - XML reports for CI integration
   - Console summary of coverage percentages
-- Run `make coverage` then open `target/coverage/index.html`
+- Run `make test-coverage` then open `target/coverage/index.html`
 
-### WebSocket Test Infrastructure
+### Test Infrastructure
 
-Tests now use a sophisticated stubbing approach instead of real WebSocket servers:
-
-**Stubbing Benefits**:
-- No port conflicts or network delays
-- Deterministic test behavior
-- Faster test execution (no server startup/shutdown)
-- Better isolation between tests
+Tests use Transit-based architecture with proper isolation:
 
 **Key Components**:
-- `test/potatoclient/test_utils.clj` - Core stubbing infrastructure
-- Mock WebSocket managers with command capture
-- State simulation capabilities
-- Async command verification
+- `test/potatoclient/transit_integration_test.clj` - Transit integration tests
+- `test/potatoclient/test_utils/protobuf.clj` - Protobuf test utilities
+- App-db reset fixtures for test isolation
+- Condition waiting helpers for async testing
 
-**Example Usage**:
+**Test Categories**:
+- **Unit Tests**: Transit encoding/decoding, command generation, state management
+- **Integration Tests**: Subprocess communication, event handling, app-db updates
+- **Property Tests**: Malli schema validation and generators
+
+**Example Test Pattern**:
 ```clojure
-(use-fixtures :each h/websocket-fixture)
+(use-fixtures :each reset-app-db-fixture)
 
-(deftest test-command-sending
-  (h/send-test-command! (cmd/ping))
-  (is (= 1 (count (h/get-captured-commands))))
-  (is (= :ping (h/get-command-type (first (h/get-captured-commands))))))
+(deftest test-transit-encoding-decoding
+  (testing "Transit message encoding and decoding"
+    (let [test-data {:action "ping" :params {:test true}}
+          encoded (encode-transit test-data)
+          decoded (decode-transit encoded)]
+      (is (= test-data decoded)))))
 ```
 
 ### Test Organization
 
 **Unit Tests**:
-- Command generation and validation
-- State management and transformations
-- Protobuf serialization/deserialization
-- Malli schema validation
+- Transit encoding/decoding and message envelopes
+- Command generation with Transit
+- App-db state management
+- Guardrails validation
 
 **Integration Tests**:
-- WebSocket communication (stubbed)
+- Transit-based subprocess communication
+- App-db subsystem updates
+- Process lifecycle management
 - Event system integration
-- Frame timing with CV events
-- Command dispatch and handling
 
-**Property-Based Tests**:
-- Generator-based testing with Malli
-- Comprehensive command coverage
-- State schema validation
-- Edge case discovery
+**Quality Assurance**:
+- Guardrails catches runtime type errors in development
+- Comprehensive linting with false positive filtering
+- Test coverage analysis for all languages
+- Automated test logging and summary generation
 
 ## Architecture
 
@@ -324,6 +353,7 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `LoggingUtils` - Individual log files per subprocess in development mode
 - `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
 - `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
+- `StdoutInterceptor` - Captures stdout for clean subprocess communication
 - For detailed implementation, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
 
 ### Transit Message Flow
@@ -1177,28 +1207,29 @@ The ArcherBC2 example demonstrates sophisticated data binding patterns:
    ```
    Note: This is a workaround for a Swing quirk where maximized frames animate to normal state before disposal. The frame briefly appears in the taskbar before disappearing. We use a Timer instead of invoke-later because invoke-later callbacks don't execute after frame iconification.
 
-## Malli Integration
+## Guardrails and Malli Integration
 
-PotatoClient uses comprehensive runtime validation through Malli schemas:
+PotatoClient uses Guardrails with Malli for comprehensive runtime validation:
 
-### What is Malli?
-Malli is a high-performance data and function schema library that provides:
-- **Function schemas**: Validate function inputs, outputs, and relationships
-- **Data schemas**: Define and validate data structures
-- **Better error messages**: Human-readable error explanations
-- **Performance**: Faster validation than clojure.spec
-- **Clj-kondo support**: Static analysis integration
+### What is Guardrails?
+Guardrails is a runtime validation library that:
+- **Enforces contracts**: Validates function inputs and outputs in development
+- **Zero overhead in production**: Completely removed from release builds
+- **Better error messages**: Clear, actionable error reports
+- **Works with Malli**: Uses Malli schemas for validation
+- **clj-kondo support**: Static analysis understands `>defn` syntax
 
-### Implementation Details
+### Implementation Requirements
 
-**Centralized Schemas**:
-All data schemas are defined in `potatoclient.specs` namespace for reuse across the codebase.
+**Mandatory for all functions**:
+- Use `>defn` for public functions
+- Use `>defn-` for private functions
+- Never use raw `defn` or `defn-`
 
-**Function Instrumentation**:
-All function schemas are defined in `potatoclient.instrumentation` namespace (excluded from AOT compilation).
-
-**Private Functions**:
-Use `defn-` instead of `defn ^:private` for idiomatic Clojure code.
+**Schema Organization**:
+- All data schemas in `potatoclient.specs` namespace
+- Function instrumentation in `potatoclient.instrumentation` (excluded from AOT)
+- Prefer precise schemas over broad types like `any?`
 
 ### Adding New Functions
 
@@ -1292,26 +1323,28 @@ This report will:
 - Provide statistics on coverage
 - Only include actual functions (not schema definitions)
 
-### Instrumentation Usage
+### Guardrails Usage
 
-**Development REPL**:
-```clojure
-;; Enable instrumentation manually:
-(require 'potatoclient.instrumentation)
-(potatoclient.instrumentation/start!)
+**Development Mode** (`make dev`, `make nrepl`):
+- Guardrails is automatically enabled via JVM option `-Dguardrails.enabled=true`
+- All function calls are validated at runtime
+- Detailed error messages for contract violations
 
-;; Now all function calls are validated
-(calculate-area {:width -5 :height 10})
-;; => Throws detailed error about invalid input
-```
+**Production Mode** (`make release`):
+- All Guardrails code is completely removed from bytecode
+- Zero runtime overhead
+- Window title shows `[RELEASE]` to indicate production build
 
 ## Best Practices
 
 ### Development Workflow
 
 1. **Fix Guardrails errors immediately** - They indicate real bugs in your code
-2. **Write precise specs** - Use domain-specific types from `potatoclient.specs`
-3. **Check reflection warnings** - They indicate performance issues
+2. **Always use `>defn` or `>defn-`** - Never use raw `defn`
+3. **Write precise specs** - Use domain-specific types from `potatoclient.specs`
+4. **Check reflection warnings** - They indicate performance issues
+5. **Run `make lint-report-filtered`** - Review real issues without false positives
+6. **Run `make report-unspecced`** - Ensure all functions have Guardrails
 
 ### Function Development
 
