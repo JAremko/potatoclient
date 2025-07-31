@@ -10,7 +10,7 @@
             [potatoclient.process :as process]
             [potatoclient.state :as state]
             [potatoclient.transit.app-db :as app-db])
-  (:import (potatoclient.transit MessageType MessageKeys)))
+  (:import (potatoclient.transit MessageKeys)))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -18,7 +18,7 @@
 ;; Multimethod for message handling based on message type
 (defmulti handle-message
   "Handle messages from subprocesses based on their type."
-  (fn [msg-type stream-key payload] msg-type))
+  (fn [msg-type _stream-key _payload] msg-type))
 
 ;; Default handler for unknown message types
 (defmethod handle-message :default

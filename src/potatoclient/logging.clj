@@ -70,10 +70,9 @@
   "Create a file handler for Telemere"
   []
   [=> fn?]
-  (let [log-file (get-log-file-path)]
-    (tel/handler:file
-      {:output-fn (tel/format-signal-fn)
-       :path (.getAbsolutePath log-file)})))
+  (tel/handler:file
+    {:output-fn (tel/format-signal-fn)
+     :path (.getAbsolutePath (get-log-file-path))}))
 
 (>defn- cleanup-old-logs!
   "Keep only the newest N log files, delete older ones"

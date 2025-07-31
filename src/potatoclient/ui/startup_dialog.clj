@@ -1,6 +1,8 @@
 (ns potatoclient.ui.startup-dialog
   "Startup dialog for server connection with theme and localization support."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [malli.core :as m]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
@@ -19,27 +21,27 @@
   Handles: domain.com, http://domain.com, wss://domain.com:8080/path?query, IP addresses, etc."
   [input]
   [string? => string?]
-  (let [cleaned (clojure.string/trim input)]
+  (let [cleaned (str/trim input)]
     ;; If it's already just a domain/IP (no protocol, no path), return as-is
-    (if (and (not (clojure.string/includes? cleaned "://"))
+    (if (and (not (str/includes? cleaned "://"))
              (not (re-find #"[/?#&:]" cleaned)))
       cleaned
       ;; Otherwise extract the domain/IP part
       (let [;; Remove protocol if present
-            after-protocol (if-let [idx (clojure.string/index-of cleaned "://")]
+            after-protocol (if-let [idx (str/index-of cleaned "://")]
                              (subs cleaned (+ idx 3))
                              cleaned)
             ;; Take everything up to the first separator (excluding port)
-            domain (if-let [sep-idx (some #(clojure.string/index-of after-protocol %)
+            domain (if-let [sep-idx (some #(str/index-of after-protocol %)
                                           ["/" "?" "#" "&"])]
                      (subs after-protocol 0 sep-idx)
                      after-protocol)
             ;; Remove port if present
-            domain (if-let [port-idx (clojure.string/index-of domain ":")]
+            domain (if-let [port-idx (str/index-of domain ":")]
                      (subs domain 0 port-idx)
                      domain)]
         ;; Return the extracted domain or original if extraction failed
-        (if (clojure.string/blank? domain)
+        (if (str/blank? domain)
           cleaned
           domain)))))
 
@@ -67,8 +69,8 @@
     #(instance? JFrame %)]
    ifn? => any?]
   (let [flag-icon (case lang-key
-                    :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
-                    :ukrainian (seesaw/icon (clojure.java.io/resource "flags/ua.png"))
+                    :english (seesaw/icon (io/resource "flags/en.png"))
+                    :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
                     nil)]
     (action/action
       :name (str display-name "    ")
@@ -171,7 +173,7 @@
                                           (seesaw/dispose! @dialog)
                                           (callback :connect))
                                         (seesaw/alert @dialog
-                                                      (if (clojure.string/blank? extracted)
+                                                      (if (str/blank? extracted)
                                                         "Please enter a valid domain or IP address"
                                                         (str "Invalid domain/IP: " extracted "\n\n"
                                                              "Valid formats:\n"
@@ -206,7 +208,7 @@
     (reset! dialog
             (seesaw/frame
               :title (i18n/tr :startup-title)
-              :icon (clojure.java.io/resource "main.png")
+              :icon (io/resource "main.png")
               :resizable? false
               :content main-panel
               :on-close :nothing))

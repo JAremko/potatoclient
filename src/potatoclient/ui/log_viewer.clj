@@ -22,12 +22,14 @@
            (javax.swing JFrame JTable Timer)))
 
 (>defn- get-log-directory
+  "Get the log directory based on runtime mode."
   []
   [=> [:fn {:error/message "must be a File"}
        #(instance? File %)]]
   (logging/get-logs-directory))
 
 (>defn- parse-log-filename
+  "Parse log filename to extract version and timestamp."
   [filename]
   [string? => [:maybe [:map
                        [:version string?]
@@ -39,6 +41,7 @@
      :filename filename}))
 
 (>defn- format-timestamp
+  "Format timestamp string from yyyyMMdd-HHmmss to human-readable format."
   [timestamp-str]
   [string? => string?]
   (try
@@ -50,6 +53,7 @@
       timestamp-str)))
 
 (>defn- get-log-files
+  "Get all log files from the log directory, sorted by modification time."
   []
   [=> [:sequential map?]]
   (let [log-dir (get-log-directory)]
@@ -69,6 +73,7 @@
       [])))
 
 (>defn- format-file-size
+  "Format file size in bytes to human-readable format."
   [size]
   [int? => string?]
   (cond

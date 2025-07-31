@@ -3,7 +3,9 @@
   
   Provides a clean-slate constructor for the main window that ensures
   proper initialization of all UI elements including theme-aware icons."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.ipc :as ipc]
@@ -12,15 +14,13 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
+            [potatoclient.transit.app-db :as app-db]
+            [potatoclient.transit.subprocess-launcher :as launcher]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-viewer :as log-viewer]
-            [potatoclient.ui.utils :as ui-utils]
-            [potatoclient.transit.app-db :as app-db]
-            [potatoclient.transit.commands :as commands]
-            [potatoclient.transit.subprocess-launcher :as launcher]
             [seesaw.action :as action]
-            [seesaw.core :as seesaw]
-            [seesaw.bind :as bind])
+            [seesaw.bind :as bind]
+            [seesaw.core :as seesaw])
   (:import (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
@@ -66,8 +66,8 @@
   [lang-key display-name reload-fn]
   [:potatoclient.specs/locale string? ifn? => any?]
   (let [flag-icon (case lang-key
-                    :english (seesaw/icon (clojure.java.io/resource "flags/en.png"))
-                    :ukrainian (seesaw/icon (clojure.java.io/resource "flags/ua.png"))
+                    :english (seesaw/icon (io/resource "flags/en.png"))
+                    :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
                     nil)]
     (action/action
       :name (str display-name "    ")
@@ -121,7 +121,7 @@
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)] => nil?]
   (let [version (try
-                  (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
+                  (str/trim (slurp (io/resource "VERSION")))
                   (catch Exception _ "dev"))
         build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")]
     (seesaw/alert parent
@@ -275,7 +275,7 @@
                       domain)
         frame (seesaw/frame
                 :title title
-                :icon (clojure.java.io/resource "main.png")
+                :icon (io/resource "main.png")
                 :on-close :nothing
                 :size [800 :by 600]
                 :content (create-main-content))]

@@ -13,11 +13,13 @@
   {1 "Left" 2 "Middle" 3 "Right"})
 
 (>defn- format-dimensions
+  "Format width and height as a dimension string."
   [width height]
   [int? int? => string?]
   (str width "x" height))
 
 (>defn- format-position
+  "Format x,y coordinates as a position string."
   [x y]
   [int? int? => string?]
   (format "(%d, %d)" x y))

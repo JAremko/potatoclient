@@ -8,13 +8,11 @@
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
-            [potatoclient.state :as state]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.framed-io :as framed-io])
   (:import (java.io BufferedReader InputStreamReader InputStream OutputStream)
            (java.lang Process ProcessBuilder)
            (java.util List Map)
-           (java.util.concurrent LinkedBlockingQueue TimeUnit)
            (potatoclient.transit MessageType MessageKeys)))
 
 ;; Configuration constants

@@ -4,9 +4,8 @@
   This namespace provides all state management functions that directly
   interact with the single app-db atom following the re-frame pattern."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
-            [potatoclient.transit.app-db :as app-db]
             [potatoclient.specs :as specs]
-            [potatoclient.logging :as log]))
+            [potatoclient.transit.app-db :as app-db]))
 
 ;; ============================================================================
 ;; Stream Process Management

@@ -11,7 +11,7 @@
            (cmd.RotaryPlatform JonSharedCmdRotary$Axis$Builder JonSharedCmdRotary$Azimuth$Builder JonSharedCmdRotary$Elevation$Builder)
            (com.google.protobuf Message Message$Builder)
            (java.awt Color Rectangle)
-           (java.io BufferedReader BufferedWriter File)
+           (java.io BufferedReader File)
            (javax.swing AbstractButton Action Icon JFrame JMenu JMenuBar JPanel JScrollPane JTextField JToggleButton)
            (javax.swing.table DefaultTableCellRenderer)
            (ser JonSharedDataTypes$JonGuiDataFxModeDay JonSharedDataTypes$JonGuiDataFxModeHeat JonSharedDataTypes$JonGuiDataRotaryDirection JonSharedDataTypes$JonGuiDataRotaryMode JonSharedDataTypes$JonGuiDataVideoChannel JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters)))
@@ -812,6 +812,7 @@
 
 ;; Update registry with transit schemas
 (def updated-registry
+  "Registry with additional Transit subprocess schemas."
   (assoc registry
          :potatoclient.specs/transit-subprocess transit-subprocess))
 

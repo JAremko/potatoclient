@@ -7,10 +7,10 @@
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
-            [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.framed-io :as framed-io]
+            [potatoclient.specs :as specs]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.specs :as specs])
+            [potatoclient.transit.core :as transit-core]
+            [potatoclient.transit.framed-io :as framed-io])
   (:import (java.io InputStream OutputStream)
            (java.lang Process ProcessBuilder)
            (java.util List Map)))

@@ -9,10 +9,10 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.ui.utils :as ui-utils]
             [seesaw.core :as seesaw]
-            [seesaw.mig :as mig]
-            [seesaw.bind :as bind])
+            [seesaw.bind :as bind]
+            [seesaw.border :as border]
+            [seesaw.mig :as mig])
   (:import (javax.swing JPanel)))
 
 ;; UI styling constants
@@ -48,7 +48,7 @@
                                    {:connected? running?
                                     :pid (:pid process)})))
                (bind/tee
-                 (bind/bind (bind/transform :connected?)
+                 (bind/bind (bind/transform #(:connected? %))
                             (bind/b-do [connected?]
                                        (seesaw/config! status-label
                                                        :text (if connected?
@@ -89,7 +89,7 @@
                (bind/property domain-label :text))
 
     (seesaw/border-panel
-      :border (i18n/tr :connection-info)
+      :border (border/line-border :title (i18n/tr :connection-info))
       :center domain-label)))
 
 (>defn- create-stream-controls-panel
@@ -125,7 +125,7 @@
     (setup-toggle! day-toggle :day "/ws/ws_rec_video_day")
 
     (seesaw/border-panel
-      :border (i18n/tr :stream-controls)
+      :border (border/line-border :title (i18n/tr :stream-controls))
       :center (seesaw/flow-panel
                 :align :center
                 :hgap 10
@@ -146,7 +146,7 @@
     ;; This would be updated with real statistics from the streams
     ;; For now, just a placeholder
     (seesaw/border-panel
-      :border (i18n/tr :statistics)
+      :border (border/line-border :title (i18n/tr :statistics))
       :center (seesaw/scrollable stats-label
                                  :border 0))))
 
@@ -168,7 +168,7 @@
         stats-panel (create-statistics-panel)]
 
     (seesaw/border-panel
-      :border panel-border-width
+      :border panel-border-width ; Creates empty border with specified width
       :north header
       :center (mig/mig-panel
                 :constraints ["wrap 1, fill, insets 10"

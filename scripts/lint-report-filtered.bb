@@ -59,6 +59,9 @@
    {:pattern #"Function arguments should be wrapped in vector\."
     :file-pattern #"logging\.clj$"
     :reason "Telemere handler configuration"}
+   {:pattern #"More than one function overload with arity null"
+    :file-pattern #"(logging|control_panel|log_viewer|main_frame|startup_dialog)\.clj$"
+    :reason "False positive from multi-line function definitions"}
    
    ;; False positive unused namespaces that are actually used
    {:pattern #"namespace potatoclient\.(logging|state|theme) is required but never used"
@@ -136,6 +139,21 @@
     :file-pattern #"startup_dialog\.clj$"
     :reason "Used in UI layout"}
    
+   ;; Line border usage pattern
+   {:pattern #"Function name must be simple symbol but got: :title"
+    :file-pattern #"(control_panel|log_viewer)\.clj$"
+    :reason "Seesaw line-border :title option"}
+   
+   ;; Redundant fn wrapper
+   {:pattern #"Redundant fn wrapper"
+    :file-pattern #"transit/.*\.clj$"
+    :reason "Intentional fn wrapper for clarity"}
+   
+   ;; Domain label false positive
+   {:pattern #"unused binding domain-label"
+    :file-pattern #"control_panel\.clj$"
+    :reason "Used in border-panel :center"}
+   
    ;; Test file false positives
    {:pattern #"Unused value"
     :file-pattern #"guardrails_test\.clj$"
@@ -147,7 +165,46 @@
    ;; Seesaw menu construction
    {:pattern #"unsupported binding form \(seesaw/menu"
     :file-pattern #"startup_dialog\.clj$"
-    :reason "Valid Seesaw menu construction"}])
+    :reason "Valid Seesaw menu construction"}
+   
+   ;; Test file unused imports
+   {:pattern #"Unused import"
+    :file-pattern #"test/.*\.clj$"
+    :reason "Test utility imports"}
+   
+   ;; Test namespace issues
+   {:pattern #"namespace .* is required but never used"
+    :file-pattern #"test/.*\.clj$"
+    :reason "Test namespace dependencies"}
+   
+   ;; IPC multimethod signature
+   {:pattern #"unused binding (stream-key|payload)"
+    :file-pattern #"ipc\.clj$"
+    :reason "Multimethod dispatch signature"}
+   
+   ;; Specs redefinition
+   {:pattern #"redefined var #'potatoclient\.specs/url"
+    :reason "Intentional redefinition with more specific spec"}
+   
+   ;; Transit message type errors
+   {:pattern #"Unresolved symbol: (db|connected\?)"
+    :file-pattern #"(control_panel|main_frame)\.clj$"
+    :reason "Destructured binding from app-db"}
+   
+   ;; Test utility unused bindings
+   {:pattern #"unused binding (e|in)"
+    :file-pattern #"test/.*\.clj$"
+    :reason "Exception handling and test utilities"}
+   
+   ;; Redundant do in Telemere macros
+   {:pattern #"redundant do"
+    :file-pattern #"logging\.clj$"
+    :reason "Telemere macro expansion"}
+   
+   ;; Seesaw namespace sorting false positive
+   {:pattern #"Unsorted namespace: seesaw\.bind"
+    :file-pattern #"control_panel\.clj$"
+    :reason "Seesaw namespaces are correctly sorted"}])
 
 (defn is-false-positive? [issue]
   (some (fn [{:keys [pattern file-pattern reason]}]

@@ -82,7 +82,8 @@
       ;; According to Guardrails docs, output validation may happen on usage
       ;; Let's try to use the result in a numeric context
       (println "  Trying to add 1 to result:")
-      (let [sum (+ 1 result)] ;; Force usage to trigger validation
+      ;; clj-kondo ignore - intentionally passing string to test Guardrails validation
+      (let [sum #_{:clj-kondo/ignore [:type-mismatch]} (+ 1 result)] ;; Force usage to trigger validation
         (println "  Sum:" sum)
         (println "  ✗ FAIL: Should have thrown an error!")))
     (catch Exception e

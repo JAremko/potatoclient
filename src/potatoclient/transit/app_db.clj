@@ -1,9 +1,9 @@
 (ns potatoclient.transit.app-db
   "Single source of truth atom following re-frame pattern with Guardrails"
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
+            [potatoclient.logging :as log]
             [potatoclient.runtime :as runtime]
-            [potatoclient.specs :as specs]
-            [potatoclient.logging :as log]))
+            [potatoclient.specs :as specs]))
 
 ;; Default initial state
 (def initial-state
@@ -77,6 +77,7 @@
                  :last-update-time nil}})
 
 ;; The single source of truth
+;; Global application state atom following re-frame pattern.
 (defonce app-db (atom initial-state))
 
 ;; Basic accessors with Guardrails
