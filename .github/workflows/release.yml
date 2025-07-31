@@ -122,9 +122,7 @@ jobs:
     - name: Build project
       run: |
         echo "Building release JAR..."
-        # Proto files already generated, skip that step
-        make compile-kotlin
-        make compile-java-proto
+        # Proto files already generated, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         ls -la target/
     
@@ -428,9 +426,7 @@ jobs:
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
-        # Proto files already generated, skip that step
-        make compile-kotlin
-        make compile-java-proto
+        # Proto files already generated, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
@@ -638,9 +634,7 @@ jobs:
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
-        # Proto files already generated, skip that step
-        make compile-kotlin
-        make compile-java-proto
+        # Proto files already generated, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
