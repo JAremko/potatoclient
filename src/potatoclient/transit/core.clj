@@ -61,22 +61,14 @@
   [any? => any?]
   (cond
     (map? msg) (into {} (map (fn [[k v]]
-                              [(if (string? k) (keyword k) k)
-                               (keywordize-message v)])
-                            msg))
+                               [(if (string? k) (keyword k) k)
+                                (keywordize-message v)])
+                             msg))
     (sequential? msg) (mapv keywordize-message msg)
     :else msg))
 
 ;; Read operations
 (>defn read-message
-  "Read a single message from Transit reader"
-  [reader]
-  [[:fn {:error/message "must be a Transit Reader"}
-    #(instance? Reader %)]
-   => any?]
-  (transit/read reader))
-
-(>defn read-message-keywordized
   "Read a single message from Transit reader with string keys converted to keywords"
   [reader]
   [[:fn {:error/message "must be a Transit Reader"}

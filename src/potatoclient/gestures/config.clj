@@ -75,17 +75,17 @@
   "Calculate azimuth and elevation rotation speeds based on NDC deltas and config"
   [ndc-delta-x ndc-delta-y config]
   [number? number? ::specs/speed-config => [:tuple number? number?]]
-  (let [{:keys [max-rotation-speed min-rotation-speed ndc-threshold 
+  (let [{:keys [max-rotation-speed min-rotation-speed ndc-threshold
                 dead-zone-radius curve-steepness]} config
         ;; Calculate magnitude
-        magnitude (Math/sqrt (+ (* ndc-delta-x ndc-delta-x) 
-                               (* ndc-delta-y ndc-delta-y)))
+        magnitude (Math/sqrt (+ (* ndc-delta-x ndc-delta-x)
+                                (* ndc-delta-y ndc-delta-y)))
         ;; Apply dead zone
         magnitude-adjusted (max 0 (- magnitude dead-zone-radius))
         ;; Apply curve (exponential mapping)
         normalized-speed (if (> magnitude-adjusted 0)
-                          (Math/pow (/ magnitude-adjusted ndc-threshold) curve-steepness)
-                          0)
+                           (Math/pow (/ magnitude-adjusted ndc-threshold) curve-steepness)
+                           0)
         ;; Clamp to speed range
         speed (if (> magnitude-adjusted 0)
                 (-> normalized-speed

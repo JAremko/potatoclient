@@ -94,8 +94,8 @@
         app-env (get-appimage-environment)
         jvm-args (build-jvm-args app-env)
         main-class (case subprocess-type
-                     :command "potatoclient.transit.CommandSubprocessKt"
-                     :state "potatoclient.transit.StateSubprocessKt")
+                     :command "potatoclient.kotlin.transit.CommandSubprocessKt"
+                     :state "potatoclient.kotlin.transit.StateSubprocessKt")
         cmd (vec (concat [java-exe "-cp" classpath]
                          jvm-args
                          [main-class url domain]))]
@@ -116,7 +116,7 @@
         (try
           (let [framed-input (framed-io/make-framed-input-stream input-stream)
                 reader (transit-core/make-reader framed-input)
-                read-fn (fn [] (transit-core/read-message-keywordized reader))]
+                read-fn (fn [] (transit-core/read-message reader))]
             (loop []
               (when-let [msg (try
                                (read-fn)

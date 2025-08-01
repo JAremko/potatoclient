@@ -226,7 +226,7 @@
               ;; Only forward map messages to the handler
               (when (map? msg)
                 ;; Add debug logging for video stream messages
-                (when (and (not (get msg MessageKeys/MSG_TYPE)) (not (:type msg)))
+                (when (and (not (:msg-type msg)) (not (:type msg)))
                   (logging/log-debug
                     {:id ::video-stream-raw-message
                      :data {:stream stream-id
@@ -234,13 +234,13 @@
                             :msg msg}
                      :msg "Video stream sent non-standard message"}))
                 ;; Log response messages for debugging window-closed issue
-                (when (= (get msg MessageKeys/MSG_TYPE) "response")
+                (when (= (:msg-type msg) :response)
                   (logging/log-info
                     {:id ::transit-response-received
                      :data {:stream stream-id
-                            :action (get-in msg ["payload" "action"])
+                            :action (get-in msg [:payload :action])
                             :full-msg msg}
-                     :msg (str "TRANSIT RESPONSE RECEIVED from " stream-id " - action: " (get-in msg ["payload" "action"]))}))
+                     :msg (str "TRANSIT RESPONSE RECEIVED from " stream-id " - action: " (get-in msg [:payload :action]))}))
                 ;; Call the message handler directly
                 (message-handler msg))
               (recur))))

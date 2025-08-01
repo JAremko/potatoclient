@@ -10,8 +10,7 @@
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.state :as state]
-            [potatoclient.transit.app-db :as app-db])
-  (:import (potatoclient.transit MessageKeys)))
+            [potatoclient.transit.app-db :as app-db]))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -81,18 +80,18 @@
   ;; With automatic keyword conversion, payload keys should already be keywords
   (case (:type payload)
     "navigation" (stream-events/handle-navigation-event payload)
-    "window" (stream-events/handle-window-event payload) 
+    "window" (stream-events/handle-window-event payload)
     "gesture" (potatoclient.gestures.handler/handle-gesture-event payload)
     "frame" (logging/log-debug
-             {:id ::frame-event
-              :data {:stream stream-key
-                     :payload payload}
-              :msg "Frame event received"})
+              {:id ::frame-event
+               :data {:stream stream-key
+                      :payload payload}
+               :msg "Frame event received"})
     "error" (logging/log-error
-             {:id ::video-stream-error
-              :data {:stream stream-key
-                     :payload payload}
-              :msg "Video stream error event"})
+              {:id ::video-stream-error
+               :data {:stream stream-key
+                      :payload payload}
+               :msg "Video stream error event"})
     ;; Log unknown event types
     (logging/log-warn
       {:id ::unknown-event-type
@@ -105,7 +104,11 @@
 (defmethod handle-message :request
   [_ stream-key payload]
   (case (:action payload)
-    "forward-command" (process/send-command :command (:command payload))
+    "forward-command" (let [subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
+                            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
+                        (when (and subprocess-launcher transit-core)
+                          (@subprocess-launcher :command
+                                                (@transit-core :command (:command payload)))))
     ;; Log unknown request types
     (logging/log-warn
       {:id ::unknown-request-type
@@ -131,7 +134,7 @@
                 :msg msg}
          :msg "Message missing required msg-type field"}))
     ;; Log response dispatching for debugging
-    (when (= msg-type "response")
+    (when (= msg-type :response)
       (logging/log-info
         {:id ::dispatch-response
          :data {:stream-key stream-key
@@ -140,7 +143,7 @@
          :msg (str "DISPATCH: Handling response for " stream-key
                    " with action: " (:action payload))}))
     (try
-      (handle-message (if (string? msg-type) (keyword msg-type) msg-type) stream-key payload)
+      (handle-message msg-type stream-key payload)
       true
       (catch Exception e
         (logging/log-error

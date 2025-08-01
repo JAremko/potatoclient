@@ -740,7 +740,7 @@
      ::wheel-rotation wheel-rotation
      ::window-event window-event
      ::navigation-event navigation-event
-     
+
      ;; Gesture schemas
      ::gesture-type gesture-type
      ::swipe-direction swipe-direction

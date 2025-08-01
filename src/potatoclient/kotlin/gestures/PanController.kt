@@ -34,7 +34,12 @@ data class SpeedConfig(
 )
 
 class PanController(
-    private val onRotaryCommand: (azSpeed: Double, elSpeed: Double, azDir: RotaryDirection, elDir: RotaryDirection) -> Unit,
+    private val onRotaryCommand: (
+        azSpeed: Double,
+        elSpeed: Double,
+        azDir: RotaryDirection,
+        elDir: RotaryDirection,
+    ) -> Unit,
     private val onHaltCommand: () -> Unit,
     private val streamType: StreamType,
 ) {
