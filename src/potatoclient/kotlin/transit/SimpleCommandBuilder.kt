@@ -8,9 +8,35 @@ import cmd.RotaryPlatform.JonSharedCmdRotary
 import ser.JonSharedDataTypes
 
 /**
- * Command builder for Transit-based commands
+ * Command builder for Transit-based commands with proper error handling
  */
 class SimpleCommandBuilder {
+    /**
+     * Build a command from action and params, returning Result for error handling
+     */
+    fun buildCommand(
+        action: String,
+        params: Map<*, *>? = null,
+    ): Result<JonSharedCmd.Root> =
+        try {
+            when (action) {
+                "ping" -> Result.success(buildPing())
+                "rotary-halt" -> Result.success(buildRotaryHalt())
+                "rotary-goto-ndc" -> buildRotaryGotoNDC(params)
+                "rotary-set-velocity" -> buildRotarySetVelocity(params)
+                "cv-start-track-ndc" -> buildCVStartTrackNDC(params)
+                "heat-camera-next-zoom-table-pos" -> Result.success(buildHeatCameraNextZoomTablePos())
+                "heat-camera-prev-zoom-table-pos" -> Result.success(buildHeatCameraPrevZoomTablePos())
+                "day-camera-next-zoom-table-pos" -> Result.success(buildDayCameraNextZoomTablePos())
+                "day-camera-prev-zoom-table-pos" -> Result.success(buildDayCameraPrevZoomTablePos())
+                else -> Result.failure(
+                    IllegalArgumentException("Unknown command action: $action")
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
     fun buildPing(): JonSharedCmd.Root {
         // Build a simple ping command
         val pingCmd = JonSharedCmd.Ping.newBuilder().build()
@@ -20,23 +46,6 @@ class SimpleCommandBuilder {
             .setPing(pingCmd)
             .build()
     }
-
-    fun buildCommand(
-        action: String,
-        params: Map<*, *>? = null,
-    ): JonSharedCmd.Root =
-        when (action) {
-            "ping" -> buildPing()
-            "rotary-halt" -> buildRotaryHalt()
-            "rotary-goto-ndc" -> buildRotaryGotoNDC(params)
-            "rotary-set-velocity" -> buildRotarySetVelocity(params)
-            "cv-start-track-ndc" -> buildCVStartTrackNDC(params)
-            "heat-camera-next-zoom-table-pos" -> buildHeatCameraNextZoomTablePos()
-            "heat-camera-prev-zoom-table-pos" -> buildHeatCameraPrevZoomTablePos()
-            "day-camera-next-zoom-table-pos" -> buildDayCameraNextZoomTablePos()
-            "day-camera-prev-zoom-table-pos" -> buildDayCameraPrevZoomTablePos()
-            else -> buildPing() // Default to ping for unknown commands
-        }
 
     private fun buildRotaryHalt(): JonSharedCmd.Root {
         val haltMsg = JonSharedCmdRotary.Halt.newBuilder().build()
@@ -54,17 +63,32 @@ class SimpleCommandBuilder {
             .build()
     }
 
-    private fun buildRotaryGotoNDC(params: Map<*, *>?): JonSharedCmd.Root {
-        if (params == null) return buildPing()
+    private fun buildRotaryGotoNDC(params: Map<*, *>?): Result<JonSharedCmd.Root> {
+        if (params == null) {
+            return Result.failure(
+                IllegalArgumentException("rotary-goto-ndc requires parameters")
+            )
+        }
 
-        val channel = parseChannel(params["channel"] as? String)
-        val x = (params["x"] as? Number)?.toFloat() ?: return buildPing()
-        val y = (params["y"] as? Number)?.toFloat() ?: return buildPing()
+        val channel = params["channel"] as? String
+            ?: return Result.failure(
+                IllegalArgumentException("rotary-goto-ndc missing required parameter: channel")
+            )
+        
+        val x = (params["x"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("rotary-goto-ndc missing required parameter: x")
+            )
+            
+        val y = (params["y"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("rotary-goto-ndc missing required parameter: y")
+            )
 
         val rotateToNdc =
             JonSharedCmdRotary.RotateToNDC
                 .newBuilder()
-                .setChannel(channel)
+                .setChannel(parseChannel(channel))
                 .setX(x)
                 .setY(y)
                 .build()
@@ -75,18 +99,32 @@ class SimpleCommandBuilder {
                 .setRotateToNdc(rotateToNdc)
                 .build()
 
-        return JonSharedCmd.Root
-            .newBuilder()
-            .setProtocolVersion(1)
-            .setRotary(rotaryRoot)
-            .build()
+        return Result.success(
+            JonSharedCmd.Root
+                .newBuilder()
+                .setProtocolVersion(1)
+                .setRotary(rotaryRoot)
+                .build()
+        )
     }
 
-    private fun buildRotarySetVelocity(params: Map<*, *>?): JonSharedCmd.Root {
-        if (params == null) return buildPing()
+    private fun buildRotarySetVelocity(params: Map<*, *>?): Result<JonSharedCmd.Root> {
+        if (params == null) {
+            return Result.failure(
+                IllegalArgumentException("rotary-set-velocity requires parameters")
+            )
+        }
 
-        val azSpeed = (params["azimuth-speed"] as? Number)?.toFloat() ?: return buildPing()
-        val elSpeed = (params["elevation-speed"] as? Number)?.toFloat() ?: return buildPing()
+        val azSpeed = (params["azimuth-speed"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("rotary-set-velocity missing required parameter: azimuth-speed")
+            )
+            
+        val elSpeed = (params["elevation-speed"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("rotary-set-velocity missing required parameter: elevation-speed")
+            )
+            
         val azDirStr = params["azimuth-direction"] as? String ?: "clockwise"
         val elDirStr = params["elevation-direction"] as? String ?: "clockwise"
 
@@ -144,25 +182,43 @@ class SimpleCommandBuilder {
                 .setAxis(axisMsg)
                 .build()
 
-        return JonSharedCmd.Root
-            .newBuilder()
-            .setProtocolVersion(1)
-            .setRotary(rotaryRoot)
-            .build()
+        return Result.success(
+            JonSharedCmd.Root
+                .newBuilder()
+                .setProtocolVersion(1)
+                .setRotary(rotaryRoot)
+                .build()
+        )
     }
 
-    private fun buildCVStartTrackNDC(params: Map<*, *>?): JonSharedCmd.Root {
-        if (params == null) return buildPing()
+    private fun buildCVStartTrackNDC(params: Map<*, *>?): Result<JonSharedCmd.Root> {
+        if (params == null) {
+            return Result.failure(
+                IllegalArgumentException("cv-start-track-ndc requires parameters")
+            )
+        }
 
-        val channel = parseChannel(params["channel"] as? String)
-        val x = (params["x"] as? Number)?.toFloat() ?: return buildPing()
-        val y = (params["y"] as? Number)?.toFloat() ?: return buildPing()
+        val channel = params["channel"] as? String
+            ?: return Result.failure(
+                IllegalArgumentException("cv-start-track-ndc missing required parameter: channel")
+            )
+            
+        val x = (params["x"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("cv-start-track-ndc missing required parameter: x")
+            )
+            
+        val y = (params["y"] as? Number)?.toFloat()
+            ?: return Result.failure(
+                IllegalArgumentException("cv-start-track-ndc missing required parameter: y")
+            )
+            
         val frameTimestamp = params["frame-timestamp"] as? Long
 
         val builder =
             JonSharedCmdCv.StartTrackNDC
                 .newBuilder()
-                .setChannel(channel)
+                .setChannel(parseChannel(channel))
                 .setX(x)
                 .setY(y)
 
@@ -175,11 +231,13 @@ class SimpleCommandBuilder {
                 .setStartTrackNdc(builder.build())
                 .build()
 
-        return JonSharedCmd.Root
-            .newBuilder()
-            .setProtocolVersion(1)
-            .setCv(cvRoot)
-            .build()
+        return Result.success(
+            JonSharedCmd.Root
+                .newBuilder()
+                .setProtocolVersion(1)
+                .setCv(cvRoot)
+                .build()
+        )
     }
 
     private fun parseChannel(channelStr: String?): JonSharedDataTypes.JonGuiDataVideoChannel =

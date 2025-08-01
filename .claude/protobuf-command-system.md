@@ -30,6 +30,7 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 - Protobuf version 4.29.5 with protoc 29.5
 - Google's JsonFormat for protobuf to JSON conversion (debugging)
 - **protobuf-java-util** dependency required for JsonFormat functionality
+- **Enum to Keyword Conversion**: All protobuf enums automatically convert to Transit keywords
 
 **Package Structure for Generated Classes**:
 - Proto files generate classes in simple package names (not `com.potatocode.jon`)
@@ -113,6 +114,43 @@ The command system uses Transit/MessagePack for IPC between Clojure and Kotlin:
 - The data types class is `JonSharedDataTypes`, not `JonGuiDataTypes`
 - All enums are nested classes within `JonSharedDataTypes`
 - Example: `ser.JonSharedDataTypes$JonGuiDataClientType`
+
+## Protobuf Enum to Keyword Conversion
+
+With the Transit keyword type system, all protobuf enums automatically become keywords:
+
+**Conversion Pattern**:
+```kotlin
+// Protobuf enum: JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+// Conversion steps:
+// 1. Remove prefix: "JON_GUI_DATA_"
+// 2. Remove type: "VIDEO_CHANNEL_"
+// 3. Lowercase: "heat"
+// 4. Transit converts to keyword: :heat
+
+fun convertProtoEnumToKeyword(enum: ProtocolMessageEnum): String {
+    return enum.name
+        .removePrefix("JON_GUI_DATA_")
+        .removePrefix("VIDEO_CHANNEL_")
+        .removePrefix("ROTARY_DIRECTION_")
+        .lowercase()
+}
+```
+
+**Examples**:
+- `JON_GUI_DATA_VIDEO_CHANNEL_HEAT` → `:heat`
+- `JON_GUI_DATA_VIDEO_CHANNEL_DAY` → `:day`
+- `JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE` → `:clockwise`
+- `JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE` → `:counter-clockwise`
+
+**In Transit Messages**:
+```clojure
+;; Commands arrive with keyword enums
+{:action "rotary-goto-ndc"
+ :params {:channel :heat    ; Automatically converted from protobuf enum
+          :x 0.5
+          :y -0.5}}
+```
 
 ## Command Validation and Specs
 

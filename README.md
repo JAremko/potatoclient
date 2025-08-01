@@ -131,12 +131,15 @@ PotatoClient uses Transit-based command routing with protobuf isolation:
 
 **Transit Message Types:**
 - `command` - Control commands to server
-- `state` - State updates from server
+- `state-update` - Full state updates from server
+- `state-partial` - Partial state updates
 - `log` - Subprocess logging messages
 - `error` - Error reports with stack traces
 - `metric` - Performance metrics
-- `event` - UI events (navigation, window, frame)
+- `event` - UI events (navigation, window, frame, gesture)
 - `status` - Process lifecycle status
+- `request` - Subprocess requests to main process
+- `response` - Command acknowledgments
 
 ## Development
 
@@ -279,6 +282,7 @@ tail -f ~/.local/share/potatoclient/logs/*.log
 For detailed implementation information, see:
 
 - **[CLAUDE.md](CLAUDE.md)** - Complete developer guide with architecture details
+- **[TODO_AGGREGATED.md](TODO_AGGREGATED.md)** - Comprehensive TODO list and technical debt tracking
 - **[.claude/transit-architecture.md](.claude/transit-architecture.md)** - Transit IPC implementation
 - **[.claude/transit-quick-reference.md](.claude/transit-quick-reference.md)** - Quick reference for Transit commands
 - **[.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)** - Kotlin subprocess details

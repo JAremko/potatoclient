@@ -378,13 +378,14 @@ class VideoStreamManager(
     override fun onFrameClosing() {
         // Only send the close event once to avoid multiple messages
         if (closeEventSent.compareAndSet(false, true)) {
-            // Send a window-closed event to the main process
-            messageProtocol.sendResponse(
-                "window-closed",
+            // Send a window close event to the main process (not a response!)
+            // We need to send the event with additional data including streamId
+            messageProtocol.sendEvent(
+                EventType.WINDOW.key,
                 mapOf(
-                    MessageKeys.STREAM_ID to streamId,
-                    "reason" to "user-closed",
-                ),
+                    MessageKeys.TYPE to EventType.CLOSE.key,
+                    MessageKeys.STREAM_ID to streamId
+                )
             )
             // Don't stop immediately - let the main process handle shutdown
         } else {

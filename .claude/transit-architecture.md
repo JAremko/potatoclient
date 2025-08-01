@@ -269,10 +269,86 @@ when (msg.msgType) {
 - Direct ByteArray operations
 - No intermediate string conversions
 
+## Automatic Keyword Type System (In Progress)
+
+### Overview
+The codebase is transitioning to an automatic keyword-based type system that leverages Transit's capabilities to eliminate manual string/keyword conversions.
+
+### Core Insight
+Our system only uses:
+1. **Enums** (from protobuf) → Automatically become keywords
+2. **Numbers** (int/float/double) → Stay as numbers  
+3. **Special case**: Log messages with `:text` key → Stay as strings
+
+### Implementation Strategy
+
+#### Transit Handlers
+Custom Transit handlers automatically convert strings to keywords based on patterns:
+
+```clojure
+;; In transit/keyword_handlers.clj
+(defn should-keywordize? [value]
+  (and (string? value)
+       (re-matches #"^[a-z][a-z0-9-]*$" value)  ; Enum pattern
+       (not (uuid-string? value))))              ; Preserve UUIDs
+
+;; Text preservation for log messages
+(def text-preserving-message-types
+  #{:log :error :debug :info :warn :trace})
+```
+
+#### Enum Integration
+Java enums provide type safety and automatic conversion:
+
+```java
+// MessageType.java
+public enum MessageType {
+    COMMAND("command"),
+    STATE_UPDATE("state-update");
+    
+    private final Keyword keyword;
+    
+    MessageType(String key) {
+        this.key = key;
+        this.keyword = TransitFactory.keyword(key);
+    }
+}
+```
+
+#### Benefits
+1. **No Manual Conversion**: Enums automatically become keywords
+2. **Type Safety**: Compile-time checking with enums
+3. **Performance**: Keywords are interned, faster comparisons
+4. **Clean Code**: No more `(keyword ...)` or `.toString()` calls
+
+### Migration Path
+1. **Phase 1**: Add Transit handlers (backward compatible)
+2. **Phase 2**: Remove manual conversions
+3. **Phase 3**: Add validation and type registry
+
+### Examples
+
+```kotlin
+// Kotlin - sending
+messageProtocol.sendEvent(
+    EventType.WINDOW,  // enum
+    mapOf("type" to WindowEventType.CLOSE.name.lowercase())
+)
+
+// Transit wire format (automatic conversion)
+{:msg-type :event
+ :payload {:type :close}}
+
+// Clojure - receiving
+(case (:type payload)
+  :close (handle-close))  ; Direct keyword comparison!
+```
+
 ## Future Improvements
 
-1. **Message Compression**: Add optional gzip for large states
-2. **Batching**: Combine multiple commands in single message
-3. **Metrics**: Add performance metrics collection
-4. **Schema Evolution**: Version message formats
-5. **Binary Diffing**: Send only changed fields for states
+1. **Complete Keyword System**: Finish automatic keyword conversion implementation
+2. **Message Compression**: Add optional gzip for large states
+3. **Batching**: Combine multiple commands in single message
+4. **Metrics**: Add performance metrics collection
+5. **Schema Evolution**: Version message formats
+6. **Binary Diffing**: Send only changed fields for states

@@ -21,6 +21,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
 - **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
+- **TODO and Technical Debt**: [TODO_AGGREGATED.md](TODO_AGGREGATED.md) - Comprehensive tracking of all pending work
 
 ## Important: Function Validation with Guardrails
 
@@ -519,7 +520,25 @@ val timestamp = msg.timestamp
 val batteryLevel = stateUpdate.system?.batteryLevel
 ```
 
-For the complete protocol specification, see `TRANSIT_MESSAGE_PROTOCOL_SPEC.md`.
+For the complete protocol specification, see `.claude/transit-protocol.md`.
+
+## Transit Keyword Type System (Coming Soon)
+
+The codebase is transitioning to a keyword-based type system that leverages Transit's automatic conversion capabilities:
+
+**Key Principles**:
+- All enum values (from protobuf) automatically convert to keywords
+- No manual string/keyword conversions needed
+- Type safety through Java enums shared between Kotlin and Clojure
+- Special handling for text fields (log messages) that remain as strings
+
+**Benefits**:
+- Cleaner code without string/keyword conversion logic
+- Compile-time type safety with runtime validation
+- Better performance (keywords are interned)
+- Clear distinction between enums and free text
+
+See `src/potatoclient/transit/keyword_handlers.clj` for the implementation design.
 
 ## UI Utilities
 

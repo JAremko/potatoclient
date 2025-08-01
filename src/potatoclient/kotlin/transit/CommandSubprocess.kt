@@ -69,19 +69,30 @@ class CommandSubprocess(
         try {
             val action = payload.action ?: "ping"
             val params = payload.params
-            val rootCmd = cmdBuilder.buildCommand(action, params)
-
-            wsClient.send(rootCmd.toByteArray())
-            totalSent.incrementAndGet()
-
-            // Send success response using direct write (critical path)
-            transitComm.sendMessageDirect(
-                mapOf(
-                    "msg-type" to "response",
-                    "msg-id" to msgId,
-                    "timestamp" to System.currentTimeMillis(),
-                    "payload" to mapOf("status" to "sent"),
-                ),
+            
+            // Build command with proper error handling
+            cmdBuilder.buildCommand(action, params).fold(
+                onSuccess = { rootCmd ->
+                    wsClient.send(rootCmd.toByteArray())
+                    totalSent.incrementAndGet()
+                    
+                    // Send success response using direct write (critical path)
+                    transitComm.sendMessageDirect(
+                        messageProtocol.createMessage(
+                            MessageType.RESPONSE.key,
+                            mapOf(
+                                TransitKeys.ACTION.toString() to action,
+                                TransitKeys.STATUS.toString() to "sent"
+                            )
+                        )
+                    )
+                },
+                onFailure = { error ->
+                    // Send error with detailed message
+                    messageProtocol.sendError("Command build failed for '$action': ${error.message}")
+                    // Also send error response
+                    sendError(msgId, error as Exception)
+                }
             )
         } catch (e: Exception) {
             sendError(msgId, e)
@@ -95,12 +106,12 @@ class CommandSubprocess(
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
-                        mapOf(
-                            "msg-type" to "response",
-                            "msg-id" to (msg.msgId ?: ""),
-                            "timestamp" to System.currentTimeMillis(),
-                            "payload" to mapOf("status" to "stopped"),
-                        ),
+                        messageProtocol.createMessage(
+                            MessageType.RESPONSE.key,
+                            mapOf(
+                                TransitKeys.STATUS.toString() to "stopped"
+                            )
+                        )
                     )
                 }
                 wsClient.close()
@@ -113,8 +124,15 @@ class CommandSubprocess(
                         "sent" to totalSent.get(),
                         "ws-connected" to wsClient.isConnected(),
                     )
+                // Use proper message type for stats
                 transitComm.sendMessage(
-                    transitComm.createMessage("stats", stats),
+                    messageProtocol.createMessage(
+                        MessageType.METRIC.key,
+                        mapOf(
+                            TransitKeys.NAME.toString() to "command-stats",
+                            TransitKeys.VALUE.toString() to stats
+                        )
+                    )
                 )
             }
         }
@@ -125,16 +143,13 @@ class CommandSubprocess(
         error: Exception,
     ) {
         transitComm.sendMessage(
-            mapOf(
-                "msg-type" to "response",
-                "msg-id" to msgId,
-                "timestamp" to System.currentTimeMillis(),
-                "payload" to
-                    mapOf(
-                        "status" to "error",
-                        "error" to error.message,
-                    ),
-            ),
+            messageProtocol.createMessage(
+                MessageType.ERROR.key,
+                mapOf(
+                    TransitKeys.CONTEXT.toString() to "command-error",
+                    TransitKeys.ERROR.toString() to (error.message ?: "Unknown error")
+                )
+            )
         )
     }
 }

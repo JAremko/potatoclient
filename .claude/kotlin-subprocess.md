@@ -110,12 +110,62 @@ To modify the GStreamer pipeline:
    }
    ```
 
+## Transit IPC Integration
+
+### Message Protocol
+All Kotlin subprocesses communicate with the main Clojure process using Transit/MessagePack:
+
+```kotlin
+// TransitMessageProtocol provides standardized message creation
+val messageProtocol = TransitMessageProtocol("video-stream", transitComm)
+
+// Send events with automatic keyword conversion
+messageProtocol.sendEvent(
+    EventType.WINDOW.key,
+    mapOf(
+        "type" to EventType.CLOSE.key,  // Becomes :close keyword
+        "stream-id" to streamId
+    )
+)
+```
+
+### Keyword Type System
+With the automatic keyword conversion system:
+- All enum values automatically become keywords in Clojure
+- No manual string/keyword conversion needed
+- Type safety through Java enums
+
+**Examples**:
+```kotlin
+// Kotlin sends:
+mapOf("channel" to "heat", "action" to "rotary-goto-ndc")
+
+// Clojure receives:
+{:channel :heat, :action :rotary-goto-ndc}  // Automatic conversion!
+```
+
+### Transit Extensions
+Kotlin code uses extension properties for clean keyword-based map access:
+
+```kotlin
+// Clean property access instead of map lookups
+val msgType = msg.msgType          // Instead of msg["msg-type"]
+val action = msg.payload?.action    // Instead of msg["payload"]?.get("action")
+
+// Type-safe with nullability
+when (msg.msgType) {
+    MessageType.COMMAND.keyword -> handleCommand(msg)
+    MessageType.REQUEST.keyword -> handleRequest(msg)
+}
+```
+
 ## Logging Integration
 
 Kotlin subprocesses integrate with the main Clojure logging system:
-- Log messages sent via IPC to main process
+- Log messages sent via Transit protocol to main process
 - Main process controls logging level and destinations
 - Consistent logging format across all processes
+- Individual log files per subprocess in development mode
 - Development mode: All log levels to console and file
 - Production mode: Only WARN/ERROR levels
 

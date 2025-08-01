@@ -162,16 +162,16 @@
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => nil?]
   (logging/log-stream-event stream-key :response
-                            {:action (get msg "action")
+                            {:action (:action msg)
                              :data msg})
 
   ;; DEBUG: Log the actual message structure
   (logging/log-debug {:msg (str "Response event - stream-key: " stream-key
-                                ", action: " (get msg "action")
+                                ", action: " (:action msg)
                                 ", full msg: " (pr-str msg))})
 
   ;; Handle specific response types
-  (when (= (get msg "action") "window-closed")
+  (when (= (:action msg) "window-closed")
     (logging/log-info {:msg (str "Window close detected for " (name stream-key))})
     (handle-window-closed stream-key))
   nil)
@@ -205,9 +205,15 @@
   "Handle a window event."
   [msg]
   [map? => nil?]
-  (let [event (:event msg)]
-    (logging/log-stream-event (:streamId msg) :window
-                              {:event-type (:type event)
-                               :message (format-window-event event)
-                               :data event})
+  ;; Window events have the event data directly in the payload
+  (let [window-type (:type msg)
+        stream-id (:streamId msg)]
+    (logging/log-stream-event stream-id :window
+                              {:event-type window-type
+                               :message (str "Window event: " window-type)
+                               :data msg})
+    ;; Check if this is a window close event
+    (when (= window-type "close")
+      (logging/log-info {:msg (str "Window close event detected for " (name stream-id))})
+      (handle-window-closed stream-id))
     nil))

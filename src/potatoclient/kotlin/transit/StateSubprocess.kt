@@ -39,6 +39,7 @@ class StateSubprocess(
 ) {
     private val wsClient = StateWebSocketClient(wsUrl)
     private val stateConverter = SimpleStateConverter()
+    private val messageProtocol = TransitMessageProtocol("state", transitComm)
 
     // Rate limiting
     private val rateLimiterScope = CoroutineScope(Dispatchers.Default)
@@ -47,6 +48,16 @@ class StateSubprocess(
     // Metrics
     private val totalReceived = AtomicInteger(0)
     private val totalSent = AtomicInteger(0)
+    
+    /**
+     * Create a properly formatted state update message
+     */
+    private fun createStateUpdateMessage(state: Map<String, Any>): Map<String, Any> {
+        return messageProtocol.createMessage(
+            MessageType.STATE_UPDATE.key,
+            state
+        )
+    }
 
     suspend fun run() =
         coroutineScope {
@@ -80,8 +91,9 @@ class StateSubprocess(
             val transitState = stateConverter.convert(protoState)
 
             // Send to Clojure using direct write (critical path)
+            // Use proper message type for state updates
             transitComm.sendMessageDirect(
-                transitComm.createMessage("state", transitState as Map<String, Any>),
+                createStateUpdateMessage(transitState as Map<String, Any>)
             )
 
             totalSent.incrementAndGet()
@@ -98,12 +110,12 @@ class StateSubprocess(
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
-                        mapOf(
-                            "msg-type" to "response",
-                            "msg-id" to (msg.msgId ?: ""),
-                            "timestamp" to System.currentTimeMillis(),
-                            "payload" to mapOf("status" to "stopped"),
-                        ),
+                        messageProtocol.createMessage(
+                            MessageType.RESPONSE.key,
+                            mapOf(
+                                TransitKeys.STATUS.toString() to "stopped"
+                            )
+                        )
                     )
                 }
                 wsClient.close()
@@ -122,7 +134,13 @@ class StateSubprocess(
                         "rate-limit-hz" to rateLimiter.get().rateHz,
                     )
                 transitComm.sendMessage(
-                    transitComm.createMessage("stats", stats),
+                    messageProtocol.createMessage(
+                        MessageType.METRIC.key,
+                        mapOf(
+                            TransitKeys.NAME.toString() to "state-stats",
+                            TransitKeys.VALUE.toString() to stats
+                        )
+                    )
                 )
             }
         }
