@@ -22,12 +22,15 @@
 
 ;; Default handler for unknown message types
 (defmethod handle-message :default
-  [msg-type stream-key _payload]
+  [msg-type stream-key payload]
   (logging/log-warn
     {:id ::unknown-message-type
      :data {:stream stream-key
-            :msg-type msg-type}
-     :msg (str "Unknown message type: " msg-type)}))
+            :msg-type msg-type
+            :payload-keys (keys payload)
+            :payload payload}
+     :msg (str "Unknown message type: " msg-type 
+               " | Payload keys: " (pr-str (keys payload)))}))
 
 ;; Response messages
 (defmethod handle-message :response
@@ -103,18 +106,31 @@
 ;; Request messages (from video streams that need something)
 (defmethod handle-message :request
   [_ stream-key payload]
-  (case (:action payload)
-    "forward-command" (let [subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
-                            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
-                        (when (and subprocess-launcher transit-core)
-                          (@subprocess-launcher :command
-                                                (@transit-core :command (:command payload)))))
-    ;; Log unknown request types
-    (logging/log-warn
-      {:id ::unknown-request-type
-       :data {:stream stream-key
-              :request-type (:action payload)}
-       :msg (str "Unknown request type: " (:action payload))})))
+  (let [action (:action payload)]
+    ;; For gesture-based commands, forward them to the command subprocess
+    (if (contains? #{"rotary-set-velocity" "rotary-halt" "rotary-goto-ndc" 
+                     "cv-start-track-ndc" "forward-command"} action)
+      (let [subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
+            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
+        (when (and subprocess-launcher transit-core)
+          ;; Create a command message with the action and data from the request
+          (let [command-msg (@transit-core :command 
+                              (merge {:action action} 
+                                     (dissoc payload :action :process)))]
+            (@subprocess-launcher :command command-msg)
+            (logging/log-debug
+              {:id ::forwarded-command
+               :data {:stream stream-key
+                      :action action
+                      :command command-msg}
+               :msg (str "Forwarded " action " command from " stream-key)}))))
+      ;; Log unknown request types
+      (logging/log-warn
+        {:id ::unknown-request-type
+         :data {:stream stream-key
+                :request-type action
+                :payload payload}
+         :msg (str "Unknown request type: " action)}))))
 
 ;; No need to define specs here as they're available in potatoclient.specs
 
@@ -123,8 +139,10 @@
   This is called directly from the subprocess reader thread."
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
-  ;; Messages now have keyword keys thanks to keywordize-message
-  (let [msg-type (:msg-type msg)
+  ;; Messages should have keyword keys thanks to keywordize-message
+  ;; But msg-type needs special handling because it's coming as a string
+  (let [msg-type-raw (or (:msg-type msg) (get msg "msg-type"))
+        msg-type (if (string? msg-type-raw) (keyword msg-type-raw) msg-type-raw)
         payload (:payload msg)]
     ;; Log error if message type is missing
     (when-not msg-type

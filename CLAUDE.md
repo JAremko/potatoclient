@@ -14,6 +14,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - All Clojure functions use Guardrails `>defn` for runtime validation
 - Single app-db atom following re-frame pattern for state management
 - Transit/MessagePack for all IPC communication
+- **No Legacy Code**: Clean implementations only - no backward compatibility layers, adapters, or deprecated code paths
 
 **Documentation:**
 - **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
