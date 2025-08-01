@@ -322,7 +322,7 @@ Tests use Transit-based architecture with proper isolation:
 The system uses Transit/MessagePack for all inter-process communication:
 
 **Transit Keywords Innovation**
-- Java enums (`MessageType`, `EventType`) create Transit Keywords using `new KeywordImpl(key)`
+- Java enums (`MessageType`, `EventType`) create Transit Keywords using `TransitFactory.keyword(key)`
 - Keywords are automatically converted to Clojure keywords without manual processing
 - Provides type safety in Java/Kotlin while maintaining idiomatic Clojure usage
 - Single source of truth for message and event types across languages
@@ -513,7 +513,7 @@ when (msg.msgType) {
     }
 }
 
-// No more KeywordImpl("msg-type") everywhere!
+// No more string-based map access everywhere!
 val msgId = msg.msgId  // Clean property access
 val timestamp = msg.timestamp
 val batteryLevel = stateUpdate.system?.batteryLevel

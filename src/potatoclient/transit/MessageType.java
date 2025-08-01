@@ -1,7 +1,7 @@
 package potatoclient.transit;
 
 import com.cognitect.transit.Keyword;
-import com.cognitect.transit.impl.KeywordImpl;
+import com.cognitect.transit.TransitFactory;
 
 /**
  * Transit message types used for communication between Clojure and Kotlin processes.
@@ -39,7 +39,7 @@ public enum MessageType {
     
     MessageType(String key) {
         this.key = key;
-        this.keyword = new KeywordImpl(key);
+        this.keyword = TransitFactory.keyword(key);
     }
     
     public String getKey() {

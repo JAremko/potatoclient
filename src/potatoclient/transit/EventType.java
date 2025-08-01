@@ -1,7 +1,7 @@
 package potatoclient.transit;
 
 import com.cognitect.transit.Keyword;
-import com.cognitect.transit.impl.KeywordImpl;
+import com.cognitect.transit.TransitFactory;
 
 /**
  * Event type constants for all events in the system.
@@ -51,7 +51,7 @@ public enum EventType {
     
     EventType(String key) {
         this.key = key;
-        this.keyword = new KeywordImpl(key);
+        this.keyword = TransitFactory.keyword(key);
     }
     
     public String getKey() {

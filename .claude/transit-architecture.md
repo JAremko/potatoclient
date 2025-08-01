@@ -70,7 +70,7 @@ Handles Transit communication over stdin/stdout:
 
 #### `TransitKeys`
 Pre-created Transit keyword constants:
-- Avoids repeated `KeywordImpl` instantiation
+- Avoids repeated keyword instantiation
 - Central location for all Transit keys
 - Performance optimized with static instances
 
@@ -81,6 +81,32 @@ Kotlin extension properties for Transit maps:
 - Helper functions for nested access and type checking
 - Proper type handling for Transit writer
 - Error handling and logging
+
+## Keyword Creation Best Practices
+
+### Creating Keywords in Java/Kotlin
+Always use the Transit public API for creating keywords:
+```java
+// CORRECT - Using Transit public API
+import com.cognitect.transit.TransitFactory;
+Keyword myKeyword = TransitFactory.keyword("my-key");
+
+// WRONG - Using internal implementation
+import com.cognitect.transit.impl.KeywordImpl;
+Keyword myKeyword = new KeywordImpl("my-key");  // Don't do this!
+```
+
+### Pre-created Keywords
+For performance, create keywords once and reuse them:
+- Java enums (`MessageType`, `EventType`) create keywords in constructors
+- Kotlin `TransitKeys` object holds pre-created keyword constants
+- This avoids repeated keyword instantiation during message processing
+
+### Automatic Conversion
+Transit automatically converts between string keys and keywords:
+- Kotlin sends maps with string keys
+- Clojure receives maps with keyword keys
+- No manual conversion needed
 
 ## Message Flow
 
