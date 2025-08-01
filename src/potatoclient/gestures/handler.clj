@@ -89,7 +89,7 @@
   [event]
   [::specs/gesture-event => nil?]
   ;; With automatic Transit keyword conversion, event keys should already be keywords
-  (let [gesture-type (keyword (:gesture-type event))]
+  (let [gesture-type (:gesture-type event)]
     (case gesture-type
       :tap (handle-tap-gesture event)
       :doubletap (handle-double-tap-gesture event)

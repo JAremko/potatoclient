@@ -37,7 +37,7 @@ class TransitMessageProtocol(
         try {
             val logMsg =
                 createMessage(
-                    MessageType.LOG.key,
+                    MessageType.LOG,
                     mapOf(
                         MessageKeys.LEVEL to level,
                         MessageKeys.MESSAGE to message,
@@ -80,7 +80,7 @@ class TransitMessageProtocol(
 
             val errorMsg =
                 createMessage(
-                    MessageType.ERROR.key,
+                    MessageType.ERROR,
                     mapOf(
                         MessageKeys.CONTEXT to context,
                         MessageKeys.ERROR to ex.message,
@@ -142,7 +142,7 @@ class TransitMessageProtocol(
         try {
             val metricMsg =
                 createMessage(
-                    MessageType.METRIC.key,
+                    MessageType.METRIC,
                     mapOf(
                         MessageKeys.NAME to name,
                         MessageKeys.VALUE to value,
@@ -167,7 +167,7 @@ class TransitMessageProtocol(
         try {
             val statusMsg =
                 createMessage(
-                    MessageType.STATUS.key,
+                    MessageType.STATUS,
                     mapOf(
                         MessageKeys.STATUS to status,
                         MessageKeys.PROCESS to processType,
@@ -191,7 +191,7 @@ class TransitMessageProtocol(
         try {
             val responseMsg =
                 createMessage(
-                    MessageType.RESPONSE.key,
+                    MessageType.RESPONSE,
                     mapOf(
                         MessageKeys.ACTION to action,
                         MessageKeys.PROCESS to processType,
@@ -210,13 +210,13 @@ class TransitMessageProtocol(
      * Send an event message
      */
     fun sendEvent(
-        eventType: String,
+        eventType: EventType,
         data: Map<String, Any>,
     ) {
         try {
             val eventMsg =
                 createMessage(
-                    MessageType.EVENT.key,
+                    MessageType.EVENT,
                     mapOf(
                         MessageKeys.TYPE to eventType,
                         MessageKeys.PROCESS to processType,
@@ -245,7 +245,7 @@ class TransitMessageProtocol(
         ndcY: Double,
     ) {
         sendEvent(
-            EventType.NAVIGATION.key,
+            EventType.NAVIGATION,
             mapOf(
                 MessageKeys.X to x,
                 MessageKeys.Y to y,
@@ -278,7 +278,7 @@ class TransitMessageProtocol(
         width?.let { data[MessageKeys.WIDTH] = it }
         height?.let { data[MessageKeys.HEIGHT] = it }
 
-        sendEvent(EventType.WINDOW.key, data)
+        sendEvent(EventType.WINDOW, data)
     }
 
     /**
@@ -291,7 +291,7 @@ class TransitMessageProtocol(
         try {
             val requestMsg =
                 createMessage(
-                    MessageType.REQUEST.key,
+                    MessageType.REQUEST,
                     mapOf(
                         MessageKeys.ACTION to action,
                         MessageKeys.PROCESS to processType,
@@ -309,7 +309,7 @@ class TransitMessageProtocol(
      * Create a properly formatted Transit message
      */
     fun createMessage(
-        msgType: String,
+        msgType: MessageType,
         payload: Map<String, Any>,
     ): Map<String, Any> =
         mapOf(
@@ -339,7 +339,7 @@ class MessageBuilder(
         action: String,
         params: Map<String, Any> = emptyMap(),
     ) = protocol.createMessage(
-        MessageType.COMMAND.key,
+        MessageType.COMMAND,
         mapOf(
             MessageKeys.ACTION to action,
             MessageKeys.PARAMS to params,
@@ -351,7 +351,7 @@ class MessageBuilder(
         status: String,
         data: Map<String, Any> = emptyMap(),
     ) = protocol.createMessage(
-        MessageType.RESPONSE.key,
+        MessageType.RESPONSE,
         mapOf(
             MessageKeys.ACTION to action,
             MessageKeys.STATUS to status,
@@ -363,7 +363,7 @@ class MessageBuilder(
         action: String,
         data: Map<String, Any> = emptyMap(),
     ) = protocol.createMessage(
-        MessageType.REQUEST.key,
+        MessageType.REQUEST,
         mapOf(
             MessageKeys.ACTION to action,
             MessageKeys.DATA to data,
@@ -374,7 +374,7 @@ class MessageBuilder(
         eventType: EventType,
         data: Map<String, Any>,
     ) = protocol.createMessage(
-        MessageType.EVENT.key,
+        MessageType.EVENT,
         mapOf(MessageKeys.TYPE to eventType.key) + data,
     )
 
@@ -445,7 +445,7 @@ class MessageBuilder(
         level: String,
         message: String,
     ) = protocol.createMessage(
-        MessageType.LOG.key,
+        MessageType.LOG,
         mapOf(
             MessageKeys.LEVEL to level,
             MessageKeys.MESSAGE to message,
@@ -470,14 +470,14 @@ class MessageBuilder(
             payload[MessageKeys.STACK_TRACE] = ex.stackTraceToString()
         }
 
-        return protocol.createMessage(MessageType.ERROR.key, payload)
+        return protocol.createMessage(MessageType.ERROR, payload)
     }
 
     fun metric(
         name: String,
         value: Any,
     ) = protocol.createMessage(
-        MessageType.METRIC.key,
+        MessageType.METRIC,
         mapOf(
             MessageKeys.NAME to name,
             MessageKeys.VALUE to value,
@@ -489,7 +489,7 @@ class MessageBuilder(
         status: String,
         details: Map<String, Any> = emptyMap(),
     ) = protocol.createMessage(
-        MessageType.STATUS.key,
+        MessageType.STATUS,
         mapOf(
             MessageKeys.STATUS to status,
             MessageKeys.PROCESS to protocol.processType,

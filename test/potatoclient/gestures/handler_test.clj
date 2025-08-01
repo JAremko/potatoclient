@@ -26,26 +26,26 @@
 
 ;; Test data
 (def test-tap-gesture
-  {:type "gesture"
-   :gesture-type "tap"
+  {:type :gesture
+   :gesture-type :tap
    :timestamp 1234567890
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "heat"
+   :stream-type :heat
    :x 960
    :y 540
    :ndc-x 0.0
    :ndc-y 0.0})
 
 (def test-double-tap-gesture
-  {:type "gesture"
-   :gesture-type "doubletap"
+  {:type :gesture
+   :gesture-type :doubletap
    :timestamp 1234567890
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "day"
+   :stream-type :day
    :x 480
    :y 270
    :ndc-x -0.5
@@ -54,26 +54,26 @@
    :frame-duration 33})
 
 (def test-pan-start-gesture
-  {:type "gesture"
-   :gesture-type "panstart"
+  {:type :gesture
+   :gesture-type :panstart
    :timestamp 1234567890
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "heat"
+   :stream-type :heat
    :x 960
    :y 540
    :ndc-x 0.0
    :ndc-y 0.0})
 
 (def test-pan-move-gesture
-  {:type "gesture"
-   :gesture-type "panmove"
+  {:type :gesture
+   :gesture-type :panmove
    :timestamp 1234567990
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "heat"
+   :stream-type :heat
    :x 1000
    :y 580
    :delta-x 40
@@ -82,25 +82,25 @@
    :ndc-delta-y -0.1})
 
 (def test-pan-stop-gesture
-  {:type "gesture"
-   :gesture-type "panstop"
+  {:type :gesture
+   :gesture-type :panstop
    :timestamp 1234568000
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "heat"
+   :stream-type :heat
    :x 1000
    :y 580})
 
 (def test-swipe-gesture
-  {:type "gesture"
-   :gesture-type "swipe"
+  {:type :gesture
+   :gesture-type :swipe
    :timestamp 1234567890
    :canvas-width 1920
    :canvas-height 1080
    :aspect-ratio 1.78
-   :stream-type "heat"
-   :direction "right"
+   :stream-type :heat
+   :direction :right
    :distance 150})
 
 ;; Tests
@@ -246,22 +246,22 @@
                                   :curve-steepness 4.0}]}})]
 
       (testing "Heat camera zoom values"
-        (let [config0 (config/get-speed-config-for-zoom-value "heat" 1.0)]  ; 1.0x = index 0
+        (let [config0 (config/get-speed-config-for-zoom-value :heat 1.0)]  ; 1.0x = index 0
           (is (= 0.1 (:max-rotation-speed config0))))
-        (let [config1 (config/get-speed-config-for-zoom-value "heat" 2.0)]  ; 2.0x = index 1
+        (let [config1 (config/get-speed-config-for-zoom-value :heat 2.0)]  ; 2.0x = index 1
           (is (= 0.25 (:max-rotation-speed config1)))))
 
       (testing "Day camera zoom values"
-        (let [config0 (config/get-speed-config-for-zoom-value "day" 1.0)]  ; 1.0x = index 0
+        (let [config0 (config/get-speed-config-for-zoom-value :day 1.0)]  ; 1.0x = index 0
           (is (= 0.05 (:max-rotation-speed config0)))))
 
       (testing "Default fallback for out of range zoom"
-        (let [config (config/get-speed-config-for-zoom-value "heat" 10.0)]  ; 10.0x = clamped to index 4
+        (let [config (config/get-speed-config-for-zoom-value :heat 10.0)]  ; 10.0x = clamped to index 4
           ;; Should get config for index 4
           (is (= 1.0 (:max-rotation-speed config)))))
 
       (testing "Default fallback for unknown camera"
-        (let [config (config/get-speed-config-for-zoom-value "unknown" 1.0)]
+        (let [config (config/get-speed-config-for-zoom-value :unknown 1.0)]
           (is (= 1.0 (:max-rotation-speed config))))))))
 
 (deftest test-pan-throttling

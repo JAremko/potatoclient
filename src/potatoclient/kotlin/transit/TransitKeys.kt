@@ -51,4 +51,12 @@ object TransitKeys {
     // Frame-related keys
     val FRAME_TIMESTAMP: Keyword = TransitFactory.keyword("frame-timestamp")
     val FRAME_DURATION: Keyword = TransitFactory.keyword("frame-duration")
+    
+    // Metric keys
+    val NAME: Keyword = TransitFactory.keyword("name")
+    val VALUE: Keyword = TransitFactory.keyword("value")
+    val CONTEXT: Keyword = TransitFactory.keyword("context")
+    
+    // Event type key
+    val TYPE: Keyword = TransitFactory.keyword("type")
 }

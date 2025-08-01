@@ -260,11 +260,11 @@
 
 (def gesture-type
   "Gesture event types"
-  [:enum "tap" "doubletap" "panstart" "panmove" "panstop" "swipe"])
+  [:enum :tap :doubletap :panstart :panmove :panstop :swipe])
 
 (def swipe-direction
   "Swipe gesture direction"
-  [:enum "up" "down" "left" "right"])
+  [:enum :up :down :left :right])
 
 (def rotary-direction-keyword
   "Rotary platform direction as keyword"
@@ -273,13 +273,13 @@
 (def gesture-event
   "Gesture event structure"
   [:map
-   [:type [:= "gesture"]]
+   [:type [:= :gesture]]
    [:gesture-type gesture-type]
    [:timestamp int?]
    [:canvas-width int?]
    [:canvas-height int?]
    [:aspect-ratio number?]
-   [:stream-type string?]
+   [:stream-type stream-key]
    [:x {:optional true} int?]
    [:y {:optional true} int?]
    [:ndc-x {:optional true} number?]

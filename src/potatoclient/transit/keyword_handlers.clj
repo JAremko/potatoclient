@@ -12,10 +12,26 @@
   #{:log :error :debug :info :warn :trace})
 
 (defn enum-string?
-  "Check if a string looks like an enum value (lowercase with dashes)"
+  "Check if a string looks like an enum value (lowercase with dashes).
+  Must match known enum patterns to avoid false positives."
   [s]
   (and (string? s)
-       (re-matches #"^[a-z][a-z0-9-]*$" s)))
+       ;; Must be lowercase with optional dashes
+       (re-matches #"^[a-z][a-z0-9-]*$" s)
+       ;; And match known enum patterns
+       (or 
+         ;; Message types
+         (#{"command" "response" "request" "log" "error" "status" "metric" "event"
+            "navigation" "window" "frame" "state-update" "state-partial" 
+            "stream-ready" "stream-error" "stream-closed"} s)
+         ;; Event types  
+         (#{"gesture" "close" "tap" "doubletap" "panstart" "panmove" "panstop" "swipe"} s)
+         ;; Stream types
+         (#{"heat" "day"} s)
+         ;; Gesture directions
+         (#{"up" "down" "left" "right"} s)
+         ;; Status values
+         (#{"connected" "disconnected" "stopped" "sent"} s))))
 
 (defn should-keywordize?
   "Determine if a value should be converted to a keyword.
@@ -46,26 +62,11 @@
 (defn create-keywordizing-read-handler
   "Creates a Transit read handler that intelligently converts strings to keywords"
   []
-  (let [context (atom {})]
-    (transit/read-handler
-      (fn [tag rep]
-        (cond
-          ;; Handle the string conversion
-          (and (= tag "?") (string? rep))
-          (if (should-keywordize? @context rep)
-            (keyword rep)
-            rep)
-          
-          ;; Track context for nested structures
-          (map? rep)
-          (do
-            ;; Update context with message type if present
-            (when-let [msg-type (:msg-type rep)]
-              (swap! context assoc :msg-type msg-type))
-            rep)
-          
-          ;; Default passthrough
-          :else rep)))))
+  (transit/read-handler
+    (fn [rep]
+      (if (and (string? rep) (enum-string? rep))
+        (keyword rep)
+        rep))))
 
 (defn create-keyword-writer
   "Creates a Transit writer for the Kotlin side that handles enums properly"
@@ -110,6 +111,30 @@
   (let [in (java.io.ByteArrayInputStream. bytes)
         reader (create-keyword-reader :msgpack)]
     (transit/read reader in)))
+
+(defn convert-enums-to-keywords
+  "Convert enum-like strings to keywords in a data structure.
+  This is applied after Transit reading."
+  [data]
+  (cond
+    (map? data)
+    (into {}
+          (map (fn [[k v]]
+                 [(if (and (string? k) (enum-string? k))
+                    (keyword k)
+                    k)
+                  (convert-enums-to-keywords v)])
+               data))
+    
+    (sequential? data)
+    (mapv convert-enums-to-keywords data)
+    
+    (string? data)
+    (if (enum-string? data)
+      (keyword data)
+      data)
+    
+    :else data))
 
 ;; Testing the conversion logic
 (comment

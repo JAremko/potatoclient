@@ -51,9 +51,9 @@
 (>defn get-speed-config-for-zoom
   "Get speed configuration for a given stream type and zoom table index"
   [stream-type zoom-table-index]
-  [string? int? => ::specs/speed-config]
+  [keyword? int? => ::specs/speed-config]
   (let [gesture-config (get-gesture-config)
-        configs (get-in gesture-config [:zoom-speed-config (keyword stream-type)])]
+        configs (get-in gesture-config [:zoom-speed-config stream-type])]
     (or (first (filter #(= (or (:zoom-table-index %) (:index %)) zoom-table-index) configs))
         ;; Default to zoom table index 0 if not found
         (first (filter #(= (or (:zoom-table-index %) (:index %)) 0) configs))
@@ -67,7 +67,7 @@
 (>defn get-speed-config-for-zoom-value
   "Get speed configuration for a given stream type and zoom value (e.g. 1.0, 2.5)"
   [stream-type zoom-value]
-  [string? number? => ::specs/speed-config]
+  [keyword? number? => ::specs/speed-config]
   (let [zoom-index (zoom-value-to-table-index zoom-value)]
     (get-speed-config-for-zoom stream-type zoom-index)))
 

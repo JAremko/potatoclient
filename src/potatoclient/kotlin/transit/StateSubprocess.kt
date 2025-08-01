@@ -54,7 +54,7 @@ class StateSubprocess(
      */
     private fun createStateUpdateMessage(state: Map<String, Any>): Map<String, Any> {
         return messageProtocol.createMessage(
-            MessageType.STATE_UPDATE.key,
+            MessageType.STATE_UPDATE,
             state
         )
     }
@@ -111,9 +111,9 @@ class StateSubprocess(
                 runBlocking {
                     transitComm.sendMessage(
                         messageProtocol.createMessage(
-                            MessageType.RESPONSE.key,
+                            MessageType.RESPONSE,
                             mapOf(
-                                TransitKeys.STATUS.toString() to "stopped"
+                                "status" to "stopped"
                             )
                         )
                     )
@@ -135,10 +135,10 @@ class StateSubprocess(
                     )
                 transitComm.sendMessage(
                     messageProtocol.createMessage(
-                        MessageType.METRIC.key,
+                        MessageType.METRIC,
                         mapOf(
-                            TransitKeys.NAME.toString() to "state-stats",
-                            TransitKeys.VALUE.toString() to stats
+                            "name" to "state-stats",
+                            "value" to stats
                         )
                     )
                 )

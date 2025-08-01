@@ -315,7 +315,7 @@ class VideoStreamManager(
     // New MouseEventHandler.EventCallback methods for gestures
     override fun onGestureEvent(event: Map<String, Any>) {
         // Send gesture event to main process via Transit
-        messageProtocol.sendEvent(EventType.GESTURE.key, event)
+        messageProtocol.sendEvent(EventType.GESTURE, event)
     }
 
     override fun sendCommand(command: Map<String, Any>) {
@@ -381,9 +381,9 @@ class VideoStreamManager(
             // Send a window close event to the main process (not a response!)
             // We need to send the event with additional data including streamId
             messageProtocol.sendEvent(
-                EventType.WINDOW.key,
+                EventType.WINDOW,
                 mapOf(
-                    MessageKeys.TYPE to EventType.CLOSE.key,
+                    MessageKeys.TYPE to EventType.CLOSE,
                     MessageKeys.STREAM_ID to streamId
                 )
             )

@@ -79,10 +79,10 @@ class CommandSubprocess(
                     // Send success response using direct write (critical path)
                     transitComm.sendMessageDirect(
                         messageProtocol.createMessage(
-                            MessageType.RESPONSE.key,
+                            MessageType.RESPONSE,
                             mapOf(
-                                TransitKeys.ACTION.toString() to action,
-                                TransitKeys.STATUS.toString() to "sent"
+                                "action" to action,
+                                "status" to "sent"
                             )
                         )
                     )
@@ -107,9 +107,9 @@ class CommandSubprocess(
                 runBlocking {
                     transitComm.sendMessage(
                         messageProtocol.createMessage(
-                            MessageType.RESPONSE.key,
+                            MessageType.RESPONSE,
                             mapOf(
-                                TransitKeys.STATUS.toString() to "stopped"
+                                "status" to "stopped"
                             )
                         )
                     )
@@ -127,10 +127,10 @@ class CommandSubprocess(
                 // Use proper message type for stats
                 transitComm.sendMessage(
                     messageProtocol.createMessage(
-                        MessageType.METRIC.key,
+                        MessageType.METRIC,
                         mapOf(
-                            TransitKeys.NAME.toString() to "command-stats",
-                            TransitKeys.VALUE.toString() to stats
+                            "name" to "command-stats",
+                            "value" to stats
                         )
                     )
                 )
@@ -144,10 +144,10 @@ class CommandSubprocess(
     ) {
         transitComm.sendMessage(
             messageProtocol.createMessage(
-                MessageType.ERROR.key,
+                MessageType.ERROR,
                 mapOf(
-                    TransitKeys.CONTEXT.toString() to "command-error",
-                    TransitKeys.ERROR.toString() to (error.message ?: "Unknown error")
+                    "context" to "command-error",
+                    "error" to (error.message ?: "Unknown error")
                 )
             )
         )

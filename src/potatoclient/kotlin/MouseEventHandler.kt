@@ -116,8 +116,8 @@ class MouseEventHandler(
 
         val baseEvent =
             mutableMapOf(
-                "type" to EventType.GESTURE.key,
-                "gesture-type" to gesture.getEventType().key,
+                "type" to EventType.GESTURE,
+                "gesture-type" to gesture.getEventType(),
                 "timestamp" to gesture.timestamp,
                 "canvas-width" to canvasWidth,
                 "canvas-height" to canvasHeight,

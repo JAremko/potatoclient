@@ -158,10 +158,8 @@
   This is called directly from the subprocess reader thread."
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
-  ;; Messages should have keyword keys thanks to keywordize-message
-  ;; But msg-type needs special handling because it's coming as a string
-  (let [msg-type-raw (or (:msg-type msg) (get msg "msg-type"))
-        msg-type (if (string? msg-type-raw) (keyword msg-type-raw) msg-type-raw)
+  ;; Messages should have keyword keys thanks to automatic Transit conversion
+  (let [msg-type (:msg-type msg)
         payload (:payload msg)]
     ;; Log error if message type is missing
     (when-not msg-type

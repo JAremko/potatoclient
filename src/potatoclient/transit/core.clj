@@ -2,7 +2,8 @@
   "Transit MessagePack communication infrastructure with Guardrails specs"
   (:require [cognitect.transit :as transit]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
-            [potatoclient.logging :as log])
+            [potatoclient.logging :as log]
+            [potatoclient.transit.keyword-handlers :as kw-handlers])
   (:import [java.io OutputStream InputStream ByteArrayOutputStream ByteArrayInputStream]
            [cognitect.transit Writer Reader]
            [clojure.lang Keyword]))
@@ -10,15 +11,25 @@
 ;; Custom write handlers for domain types
 (def ^{:doc "Custom Transit write handlers for domain types"}
   write-handlers
-  {Keyword (transit/write-handler
-             "keyword"
-             (fn [^Keyword k] (subs (str k) 1))  ; Remove leading colon
-             (fn [^Keyword k] (subs (str k) 1)))})
+  {;; Java enums write as their string representation
+   java.lang.Enum
+   (transit/write-handler
+     "enum"
+     (fn [e] (.name e))
+     str)
+   
+   ;; Clojure keywords write as strings for Kotlin
+   clojure.lang.Keyword
+   (transit/write-handler
+     "kw"
+     name
+     str)})
 
 ;; Custom read handlers for domain types  
 (def ^{:doc "Custom Transit read handlers for domain types"}
   read-handlers
-  {"keyword" (transit/read-handler keyword)})
+  {"enum" (transit/read-handler keyword)
+   "kw" (transit/read-handler keyword)})
 
 ;; Writer creation with Guardrails
 (>defn make-writer
@@ -54,28 +65,19 @@
   (.flush ^OutputStream out-stream)
   nil)
 
-;; Keywordization helper
-(>defn keywordize-message
-  "Convert string keys to keywords in Transit messages for ergonomics"
-  [msg]
-  [any? => any?]
-  (cond
-    (map? msg) (into {} (map (fn [[k v]]
-                               [(if (string? k) (keyword k) k)
-                                (keywordize-message v)])
-                             msg))
-    (sequential? msg) (mapv keywordize-message msg)
-    :else msg))
+;; Note: keywordize-message has been removed as keyword conversion is now
+;; handled automatically by the Transit read handlers
 
 ;; Read operations
 (>defn read-message
-  "Read a single message from Transit reader with string keys converted to keywords"
+  "Read a single message from Transit reader with automatic keyword conversion"
   [reader]
   [[:fn {:error/message "must be a Transit Reader"}
     #(instance? Reader %)]
    => any?]
+  ;; Apply keyword conversion after reading
   (-> (transit/read reader)
-      keywordize-message))
+      kw-handlers/convert-enums-to-keywords))
 
 ;; Message envelope validation
 (>defn validate-message-envelope

@@ -37,13 +37,13 @@
   (testing "Complete tap gesture flow from video stream to command"
     (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Simulate gesture event from video stream
-      (let [gesture-payload {:type "gesture"
-                             :gesture-type "tap"
+      (let [gesture-payload {:type :gesture
+                             :gesture-type :tap
                              :timestamp 1234567890
                              :canvas-width 1920
                              :canvas-height 1080
                              :aspect-ratio 1.78
-                             :stream-type "heat"
+                             :stream-type :heat
                              :x 960
                              :y 540
                              :ndc-x 0.0
@@ -53,7 +53,7 @@
 
         ;; Process through IPC dispatcher with proper envelope
         (ipc/dispatch-message :heat {:msg-type :event
-                                     :payload (assoc gesture-payload :type "gesture")})
+                                     :payload (assoc gesture-payload :type :gesture)})
 
         ;; Verify command was generated
         (is (= 1 (count @*captured-commands*)))
@@ -67,19 +67,19 @@
   (testing "Complete pan gesture flow with multiple updates"
     (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Pan start
-      (let [pan-start {:type "gesture"
-                       :gesture-type "panstart"
+      (let [pan-start {:type :gesture
+                       :gesture-type :panstart
                        :timestamp 1000
                        :canvas-width 1920
                        :canvas-height 1080
                        :aspect-ratio 1.78
-                       :stream-type "day"
+                       :stream-type :day
                        :x 500
                        :y 500
                        :ndc-x -0.48
                        :ndc-y -0.07}]
         (ipc/dispatch-message :day {:msg-type :event
-                                    :payload (assoc pan-start :type "gesture")})
+                                    :payload (assoc pan-start :type :gesture)})
 
         ;; Verify pan state
         (let [pan-state (app-db/get-in-app-db [:gestures :pan])]
@@ -88,13 +88,13 @@
 
         ;; Pan move after throttle period
         (Thread/sleep 120)
-        (let [pan-move {:type "gesture"
-                        :gesture-type "panmove"
+        (let [pan-move {:type :gesture
+                        :gesture-type :panmove
                         :timestamp 1150
                         :canvas-width 1920
                         :canvas-height 1080
                         :aspect-ratio 1.78
-                        :stream-type "day"
+                        :stream-type :day
                         :x 600
                         :y 550
                         :delta-x 100
@@ -102,7 +102,7 @@
                         :ndc-delta-x 0.104
                         :ndc-delta-y -0.093}]
           (ipc/dispatch-message :day {:msg-type :event
-                                      :payload (assoc pan-move :type "gesture")}))
+                                      :payload (assoc pan-move :type :gesture)}))
 
         ;; Should have velocity command
         (is (>= (count @*captured-commands*) 1))
@@ -113,17 +113,17 @@
 
         ;; Pan stop
         (reset! *captured-commands* [])
-        (let [pan-stop {:type "gesture"
-                        :gesture-type "panstop"
+        (let [pan-stop {:type :gesture
+                        :gesture-type :panstop
                         :timestamp 1300
                         :canvas-width 1920
                         :canvas-height 1080
                         :aspect-ratio 1.78
-                        :stream-type "day"
+                        :stream-type :day
                         :x 600
                         :y 550}]
           (ipc/dispatch-message :day {:msg-type :event
-                                      :payload (assoc pan-stop :type "gesture")}))
+                                      :payload (assoc pan-stop :type :gesture)}))
 
         ;; Should have halt command
         (is (= 1 (count @*captured-commands*)))
@@ -135,13 +135,13 @@
 (deftest test-double-tap-with-frame-timing
   (testing "Double-tap includes frame timestamp for CV tracking"
     (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
-      (let [gesture {:type "gesture"
-                     :gesture-type "doubletap"
+      (let [gesture {:type :gesture
+                     :gesture-type :doubletap
                      :timestamp 1234567890
                      :canvas-width 1920
                      :canvas-height 1080
                      :aspect-ratio 1.78
-                     :stream-type "heat"
+                     :stream-type :heat
                      :x 1000
                      :y 600
                      :ndc-x 0.042
@@ -150,7 +150,7 @@
                      :frame-duration 33}]
 
         (ipc/dispatch-message :heat {:msg-type :event
-                                     :payload (assoc gesture :type "gesture")})
+                                     :payload (assoc gesture :type :gesture)})
 
         (is (= 1 (count @*captured-commands*)))
         (let [cmd (first @*captured-commands*)]
@@ -159,13 +159,13 @@
 
 (deftest test-gesture-validation
   (testing "Gesture events are validated against specs"
-    (let [valid-gesture {:type "gesture"
-                         :gesture-type "tap"
+    (let [valid-gesture {:type :gesture
+                         :gesture-type :tap
                          :timestamp 123
                          :canvas-width 1920
                          :canvas-height 1080
                          :aspect-ratio 1.78
-                         :stream-type "heat"
+                         :stream-type :heat
                          :x 100
                          :y 100
                          :ndc-x 0.5
@@ -174,7 +174,7 @@
       (is (m/validate specs/gesture-event valid-gesture))
 
       ;; Invalid gesture type
-      (let [invalid-gesture (assoc valid-gesture :gesture-type "invalid")]
+      (let [invalid-gesture (assoc valid-gesture :gesture-type :invalid)]
         (is (not (m/validate specs/gesture-event invalid-gesture))))
 
       ;; Missing required fields
@@ -217,13 +217,13 @@
   (testing "Gestures are routed to correct camera based on stream type"
     (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Heat camera tap
-      (handler/handle-tap-gesture {:type "gesture"
-                                   :gesture-type "tap"
+      (handler/handle-tap-gesture {:type :gesture
+                                   :gesture-type :tap
                                    :timestamp 123
                                    :canvas-width 1920
                                    :canvas-height 1080
                                    :aspect-ratio 1.78
-                                   :stream-type "heat"
+                                   :stream-type :heat
                                    :ndc-x 0.5
                                    :ndc-y 0.5})
 
@@ -231,13 +231,13 @@
         (is (= "heat" (get-in heat-cmd [:params :channel]))))
 
       ;; Day camera tap
-      (handler/handle-tap-gesture {:type "gesture"
-                                   :gesture-type "tap"
+      (handler/handle-tap-gesture {:type :gesture
+                                   :gesture-type :tap
                                    :timestamp 456
                                    :canvas-width 1920
                                    :canvas-height 1080
                                    :aspect-ratio 1.78
-                                   :stream-type "day"
+                                   :stream-type :day
                                    :ndc-x -0.5
                                    :ndc-y -0.5})
 
@@ -252,25 +252,25 @@
       (app-db/update-in-app-db! [:camera-day :zoom] 3.0)   ; 3.0x zoom = table index 2, max speed 0.5
 
       ;; Start pan
-      (handler/handle-pan-start-gesture {:type "gesture"
-                                         :gesture-type "panstart"
+      (handler/handle-pan-start-gesture {:type :gesture
+                                         :gesture-type :panstart
                                          :timestamp 1000
                                          :canvas-width 1920
                                          :canvas-height 1080
                                          :aspect-ratio 1.78
-                                         :stream-type "heat"
+                                         :stream-type :heat
                                          :ndc-x 0.0
                                          :ndc-y 0.0})
 
       ;; Pan with heat camera at zoom 0
       (Thread/sleep 120)
-      (handler/handle-pan-move-gesture {:type "gesture"
-                                        :gesture-type "panmove"
+      (handler/handle-pan-move-gesture {:type :gesture
+                                        :gesture-type :panmove
                                         :timestamp 1150
                                         :canvas-width 1920
                                         :canvas-height 1080
                                         :aspect-ratio 1.78
-                                        :stream-type "heat"
+                                        :stream-type :heat
                                         :ndc-delta-x 0.4
                                         :ndc-delta-y 0.0})
 
@@ -280,36 +280,36 @@
         (is (= 1.0 heat-zoom) "Heat zoom should be 1.0")
 
         ;; Stop heat camera pan
-        (handler/handle-pan-stop-gesture {:type "gesture"
-                                          :gesture-type "panstop"
+        (handler/handle-pan-stop-gesture {:type :gesture
+                                          :gesture-type :panstop
                                           :timestamp 1200
                                           :canvas-width 1920
                                           :canvas-height 1080
                                           :aspect-ratio 1.78
-                                          :stream-type "heat"
+                                          :stream-type :heat
                                           :x 1000
                                           :y 580})
 
         ;; Reset and test day camera at zoom 3
         (reset! *captured-commands* [])
-        (handler/handle-pan-start-gesture {:type "gesture"
-                                           :gesture-type "panstart"
+        (handler/handle-pan-start-gesture {:type :gesture
+                                           :gesture-type :panstart
                                            :timestamp 2000
                                            :canvas-width 1920
                                            :canvas-height 1080
                                            :aspect-ratio 1.78
-                                           :stream-type "day"
+                                           :stream-type :day
                                            :ndc-x 0.0
                                            :ndc-y 0.0})
 
         (Thread/sleep 120)
-        (handler/handle-pan-move-gesture {:type "gesture"
-                                          :gesture-type "panmove"
+        (handler/handle-pan-move-gesture {:type :gesture
+                                          :gesture-type :panmove
                                           :timestamp 2150
                                           :canvas-width 1920
                                           :canvas-height 1080
                                           :aspect-ratio 1.78
-                                          :stream-type "day"
+                                          :stream-type :day
                                           :ndc-delta-x 0.4
                                           :ndc-delta-y 0.0})
 
