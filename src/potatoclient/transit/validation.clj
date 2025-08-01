@@ -1,9 +1,9 @@
 (ns potatoclient.transit.validation
   "Transit message validation using Malli schemas"
   (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
-            [potatoclient.specs :as specs]
             [malli.core :as m]
-            [potatoclient.logging :as logging]))
+            [potatoclient.logging :as logging]
+            [potatoclient.specs :as specs]))
 
 (>defn- validate-with-schema
   "Validate a value against a schema and return [valid? errors]"

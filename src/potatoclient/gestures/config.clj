@@ -1,9 +1,9 @@
 (ns potatoclient.gestures.config
-  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
-            [clojure.edn :as edn]
+  (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [potatoclient.specs :as specs]
-            [potatoclient.logging :as logging]))
+            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+            [potatoclient.logging :as logging]
+            [potatoclient.specs :as specs]))
 
 (def ^:private gesture-config-atom (atom nil))
 

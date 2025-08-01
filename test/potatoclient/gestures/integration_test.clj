@@ -24,8 +24,9 @@
 (use-fixtures :each reset-test-state)
 
 ;; Mock functions
-(defn mock-send-command [_ command]
-  (swap! *captured-commands* conj command))
+(defn mock-send-message [subprocess-type message]
+  (when (= subprocess-type :command)
+    (swap! *captured-commands* conj (:payload message))))
 
 (defn mock-handle-event [event]
   (swap! *captured-events* conj event))
@@ -34,7 +35,7 @@
 
 (deftest test-complete-tap-flow
   (testing "Complete tap gesture flow from video stream to command"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Simulate gesture event from video stream
       (let [gesture-payload {:type "gesture"
                              :gesture-type "tap"
@@ -64,7 +65,7 @@
 
 (deftest test-complete-pan-flow
   (testing "Complete pan gesture flow with multiple updates"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Pan start
       (let [pan-start {:type "gesture"
                        :gesture-type "panstart"
@@ -133,7 +134,7 @@
 
 (deftest test-double-tap-with-frame-timing
   (testing "Double-tap includes frame timestamp for CV tracking"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       (let [gesture {:type "gesture"
                      :gesture-type "doubletap"
                      :timestamp 1234567890
@@ -182,7 +183,7 @@
 
 (deftest test-forward-command-request
   (testing "Forward command requests from video stream"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       (let [command {:action "rotary-halt"
                      :params {}}]
 
@@ -214,7 +215,7 @@
 
 (deftest test-stream-type-routing
   (testing "Gestures are routed to correct camera based on stream type"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Heat camera tap
       (handler/handle-tap-gesture {:type "gesture"
                                    :gesture-type "tap"
@@ -245,7 +246,7 @@
 
 (deftest test-pan-speed-by-zoom
   (testing "Pan speed varies by zoom level"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Setup zoom values in app-db (1.0x and 3.0x zoom)
       (app-db/update-in-app-db! [:camera-heat :zoom] 1.0)  ; 1.0x zoom = table index 0, max speed 0.1
       (app-db/update-in-app-db! [:camera-day :zoom] 3.0)   ; 3.0x zoom = table index 2, max speed 0.5

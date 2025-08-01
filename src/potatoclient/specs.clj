@@ -131,14 +131,14 @@
 ;; IPC/Message Schemas
 ;; -----------------------------------------------------------------------------
 
-(def message-type
-  "IPC message types"
+(def ipc-message-type
+  "IPC message types for video streams"
   [:enum :response :log :navigation :window])
 
 (def message
   "IPC message structure"
   [:map {:closed false}
-   [:type message-type]])
+   [:type ipc-message-type]])
 
 ;; -----------------------------------------------------------------------------
 ;; Protocol Schemas
@@ -684,6 +684,15 @@
    [:should-buffer boolean?]])
 
 ;; -----------------------------------------------------------------------------
+;; Transit Message Types (moved here to be available for registry)
+;; -----------------------------------------------------------------------------
+
+(def message-type
+  "Valid message types from MessageType enum"
+  [:enum "command" "response" "request" "log" "error" "status" "metric" "event"
+   "state-update" "state-partial" "stream-ready" "stream-error" "stream-closed"])
+
+;; -----------------------------------------------------------------------------
 ;; Registry Setup
 ;; -----------------------------------------------------------------------------
 
@@ -716,7 +725,8 @@
      ::process-command process-command
 
 ;; IPC
-     ::message-type message-type
+     ::message-type ipc-message-type
+     ::transit-message-type message-type
      ::message message
 
     ;; Protocol
@@ -867,11 +877,6 @@
 ;; Transit Message Protocol Schemas
 ;; -----------------------------------------------------------------------------
 
-(def message-type
-  "Valid message types from MessageType enum"
-  [:enum "command" "response" "request" "log" "error" "status" "metric" "event"
-   "state-update" "state-partial" "stream-ready" "stream-error" "stream-closed"])
-
 (def message-envelope
   "Standard message envelope for all Transit messages"
   [:map
@@ -995,7 +1000,7 @@
   "Registry with additional Transit subprocess schemas."
   (assoc registry
          :potatoclient.specs/transit-subprocess transit-subprocess
-         :potatoclient.specs/message-type message-type
+         :potatoclient.specs/transit-message-type message-type
          :potatoclient.specs/message-envelope message-envelope
          :potatoclient.specs/command-payload command-payload
          :potatoclient.specs/response-payload response-payload

@@ -19,9 +19,10 @@
 
 (use-fixtures :each reset-test-state)
 
-;; Mock the process/send-command to capture commands
-(defn mock-send-command [_ command]
-  (swap! *captured-commands* conj command))
+;; Mock the subprocess/send-message to capture commands
+(defn mock-send-message [subprocess-type message]
+  (when (= subprocess-type :command)
+    (swap! *captured-commands* conj (:payload message))))
 
 ;; Test data
 (def test-tap-gesture
@@ -107,7 +108,7 @@
 (deftest test-handle-tap-gesture
   "Test tap gesture handling"
   (testing "Tap gesture sends rotary-goto-ndc command"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       (handler/handle-tap-gesture test-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
@@ -119,7 +120,7 @@
 (deftest test-handle-double-tap-gesture
   "Test double-tap gesture handling"
   (testing "Double-tap gesture sends cv-start-track-ndc command"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       (handler/handle-double-tap-gesture test-double-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
@@ -132,7 +133,7 @@
 (deftest test-handle-pan-gestures
   "Test pan gesture sequence handling"
   (testing "Pan gesture flow"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Start pan
       (handler/handle-pan-start-gesture test-pan-start-gesture)
       (let [pan-state (app-db/get-in-app-db [:gestures :pan])]
@@ -172,7 +173,7 @@
 (deftest test-handle-gesture-event
   "Test gesture event dispatcher"
   (testing "Gesture event dispatcher routes to correct handlers"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Test each gesture type
       (handler/handle-gesture-event test-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
@@ -266,7 +267,7 @@
 (deftest test-pan-throttling
   "Test pan gesture throttling"
   (testing "Pan move commands are throttled"
-    (with-redefs [process/send-command mock-send-command]
+    (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
       ;; Start pan
       (handler/handle-pan-start-gesture test-pan-start-gesture)
 
