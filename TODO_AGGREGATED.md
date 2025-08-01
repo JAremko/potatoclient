@@ -70,7 +70,7 @@ These issues were breaking functionality and have been fixed:
 
 ### ⏳ Message Type Corrections
 - **Issue**: Control messages using "response" type
-- **Should Be**: REQUEST type for control messages
+- **Should Be**: CTL type for control messages
 - **Affects**: Both CommandSubprocess and StateSubprocess
 
 ## 🧪 Testing Infrastructure
@@ -140,40 +140,8 @@ From analysis documents:
 - **Fix**: Add periodic metric reporting
 
 ### WebSocket Error Handling
-- **Issue**: Errors only logged to stderr
+- **Issue**: Errors logged to stderr
 - **Fix**: Send errors via Transit protocol
-
-### Incomplete Gesture Implementation
-- **Status**: Basic gestures work
-- **TODO**: 
-  - Swipe gesture not connected to commands
-  - Pan throttling improvements
-  - Multi-touch support
-
-## 🚀 Future Enhancements
-
-### From Various Analysis Documents
-
-1. **Transit Optimization**
-   - Implement protobuf byte array support (based on research below)
-   - Add compression for large state updates
-   - Batch small messages
-   
-   **Protobuf over Transit Research**:
-   - Transit can send protobuf as byte arrays, JSON strings, or maps
-   - Byte array is most efficient for round-tripping between JVMs
-   - Requires custom WriteHandler/ReadHandler registration
-   - Example handler provided in research for reference
-
-2. **Monitoring & Metrics**
-   - Add OpenTelemetry integration
-   - Track message latency
-   - Monitor subprocess health
-
-3. **Development Experience**
-   - Hot reload for Transit handlers
-   - Message inspector UI
-   - Automatic spec generation from protos
 
 ## 📅 Implementation Phases
 
@@ -218,8 +186,3 @@ From analysis documents:
 2. Add logging for unknown message types
 3. Create helper functions for common patterns
 4. Add comments explaining Transit flow
-
----
-
-**Last Updated**: 2025-08-01
-**Next Review**: After Phase 1 implementation
