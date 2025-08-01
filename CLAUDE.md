@@ -327,6 +327,12 @@ The system uses Transit/MessagePack for all inter-process communication:
 - Provides type safety in Java/Kotlin while maintaining idiomatic Clojure usage
 - Single source of truth for message and event types across languages
 
+**Keyword Usage Policy**
+- **ALL Transit maps use keyword keys** - No string keys in Transit messages
+- Clojure side: Use keywords naturally (`:msg-type`, `:payload`, etc.)
+- Kotlin side: Use `TransitKeys` constants and extension properties for clean access
+- Performance optimized with pre-created keyword instances
+
 **Transit Namespaces**
 - `potatoclient.transit.core` - Transit reader/writer creation and message envelope handling
 - `potatoclient.transit.app-db` - Single source of truth atom following re-frame pattern
@@ -359,6 +365,8 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `TransitCommunicator` - Handles Transit message framing and serialization over stdin/stdout
 - `TransitMessageProtocol` - Unified message protocol for subprocess communication
 - `VideoStreamTransitAdapter` - Adapter for video streams to use Transit protocol
+- `TransitKeys` - Pre-created Transit keyword constants for performance
+- `TransitExtensions` - Kotlin extension properties for clean keyword-based map access
 - `LoggingUtils` - Individual log files per subprocess in development mode
 - `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
 - `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
@@ -485,6 +493,30 @@ val cmd = messageBuilder.command(
 (let [[valid? errors] (validation/validate-message msg)]
   (when-not valid?
     (validation/log-validation-error msg errors)))
+```
+
+**Kotlin Usage with Extensions**:
+```kotlin
+// Clean access using extension properties
+when (msg.msgType) {
+    MessageType.COMMAND.keyword -> {
+        val action = msg.payload?.action ?: "ping"
+        val params = msg.payload?.params
+        handleCommand(action, params)
+    }
+    MessageType.EVENT.keyword -> {
+        val eventType = msg.payload?.get(TransitKeys.TYPE)
+        when (eventType) {
+            EventType.GESTURE.keyword -> handleGesture(msg.payload)
+            EventType.NAVIGATION.keyword -> handleNavigation(msg.payload)
+        }
+    }
+}
+
+// No more KeywordImpl("msg-type") everywhere!
+val msgId = msg.msgId  // Clean property access
+val timestamp = msg.timestamp
+val batteryLevel = stateUpdate.system?.batteryLevel
 ```
 
 For the complete protocol specification, see `TRANSIT_MESSAGE_PROTOCOL_SPEC.md`.

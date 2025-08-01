@@ -278,37 +278,7 @@ class VideoStreamManager(
     }
 
     // MouseEventHandler.EventCallback implementation
-    override fun onNavigationEvent(
-        type: EventFilter.EventType,
-        eventName: String,
-        x: Int,
-        y: Int,
-        details: Map<String, Any>?,
-    ) {
-        frameManager.getVideoComponent()?.let { videoComponent ->
-            // Include current frame timing information
-            val frameTimestamp = currentFrameTimestamp.get()
-            val frameDuration = currentFrameDuration.get()
-
-            // Calculate NDC coordinates
-            val canvasWidth = videoComponent.width
-            val canvasHeight = videoComponent.height
-            val ndcX = if (canvasWidth > 0) (2.0 * x / canvasWidth - 1.0) else 0.0
-            val ndcY = if (canvasHeight > 0) (1.0 - 2.0 * y / canvasHeight) else 0.0
-
-            messageProtocol.sendNavigationEvent(
-                x,
-                y,
-                frameTimestamp,
-                frameDuration,
-                canvasWidth,
-                canvasHeight,
-                eventName,
-                ndcX,
-                ndcY,
-            )
-        }
-    }
+    // Note: onNavigationEvent removed - we only send gesture events now
 
     // WindowEventHandler.EventCallback implementation
     override fun onWindowEvent(
@@ -349,8 +319,11 @@ class VideoStreamManager(
     }
 
     override fun sendCommand(command: Map<String, Any>) {
-        // Send command to main process for forwarding to command subprocess
-        messageProtocol.sendRequest("forward-command", command)
+        // Send command as a request message to be forwarded to command subprocess
+        messageProtocol.sendRequest(
+            command["action"] as String,
+            command["params"] as? Map<String, Any> ?: emptyMap(),
+        )
     }
 
     // FrameDataProvider implementation
@@ -390,8 +363,6 @@ class VideoStreamManager(
                 MouseEventHandler(
                     videoComponent,
                     this,
-                    eventFilter,
-                    eventThrottleExecutor,
                     streamType,
                     this, // as FrameDataProvider
                 )

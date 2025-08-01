@@ -1,6 +1,8 @@
 package potatoclient.kotlin.transit
 
 import cmd.CV.JonSharedCmdCv
+import cmd.DayCamera.JonSharedCmdDayCamera
+import cmd.HeatCamera.JonSharedCmdHeatCamera
 import cmd.JonSharedCmd
 import cmd.RotaryPlatform.JonSharedCmdRotary
 import ser.JonSharedDataTypes
@@ -29,6 +31,10 @@ class SimpleCommandBuilder {
             "rotary-goto-ndc" -> buildRotaryGotoNDC(params)
             "rotary-set-velocity" -> buildRotarySetVelocity(params)
             "cv-start-track-ndc" -> buildCVStartTrackNDC(params)
+            "heat-camera-next-zoom-table-pos" -> buildHeatCameraNextZoomTablePos()
+            "heat-camera-prev-zoom-table-pos" -> buildHeatCameraPrevZoomTablePos()
+            "day-camera-next-zoom-table-pos" -> buildDayCameraNextZoomTablePos()
+            "day-camera-prev-zoom-table-pos" -> buildDayCameraPrevZoomTablePos()
             else -> buildPing() // Default to ping for unknown commands
         }
 
@@ -182,4 +188,85 @@ class SimpleCommandBuilder {
             "day" -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY
             else -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_HEAT
         }
+
+    // Zoom command builders
+    private fun buildHeatCameraNextZoomTablePos(): JonSharedCmd.Root {
+        val zoom =
+            JonSharedCmdHeatCamera.Zoom
+                .newBuilder()
+                .setNextZoomTablePos(JonSharedCmdHeatCamera.NextZoomTablePos.newBuilder().build())
+                .build()
+
+        val heatRoot =
+            JonSharedCmdHeatCamera.Root
+                .newBuilder()
+                .setZoom(zoom)
+                .build()
+
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setHeatCamera(heatRoot)
+            .build()
+    }
+
+    private fun buildHeatCameraPrevZoomTablePos(): JonSharedCmd.Root {
+        val zoom =
+            JonSharedCmdHeatCamera.Zoom
+                .newBuilder()
+                .setPrevZoomTablePos(JonSharedCmdHeatCamera.PrevZoomTablePos.newBuilder().build())
+                .build()
+
+        val heatRoot =
+            JonSharedCmdHeatCamera.Root
+                .newBuilder()
+                .setZoom(zoom)
+                .build()
+
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setHeatCamera(heatRoot)
+            .build()
+    }
+
+    private fun buildDayCameraNextZoomTablePos(): JonSharedCmd.Root {
+        val zoom =
+            JonSharedCmdDayCamera.Zoom
+                .newBuilder()
+                .setNextZoomTablePos(JonSharedCmdDayCamera.NextZoomTablePos.newBuilder().build())
+                .build()
+
+        val dayRoot =
+            JonSharedCmdDayCamera.Root
+                .newBuilder()
+                .setZoom(zoom)
+                .build()
+
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setDayCamera(dayRoot)
+            .build()
+    }
+
+    private fun buildDayCameraPrevZoomTablePos(): JonSharedCmd.Root {
+        val zoom =
+            JonSharedCmdDayCamera.Zoom
+                .newBuilder()
+                .setPrevZoomTablePos(JonSharedCmdDayCamera.PrevZoomTablePos.newBuilder().build())
+                .build()
+
+        val dayRoot =
+            JonSharedCmdDayCamera.Root
+                .newBuilder()
+                .setZoom(zoom)
+                .build()
+
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setDayCamera(dayRoot)
+            .build()
+    }
 }

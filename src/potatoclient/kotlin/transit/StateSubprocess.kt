@@ -12,6 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import potatoclient.transit.MessageType
 import ser.JonSharedData
 import java.net.URI
 import java.net.http.HttpClient
@@ -60,7 +61,7 @@ class StateSubprocess(
             launch {
                 while (isActive) {
                     val msg = transitComm.readMessage()
-                    if (msg != null && msg["msg-type"] == "control") {
+                    if (msg != null && msg.isMessageType(MessageType.RESPONSE.keyword)) {
                         handleControl(msg)
                     }
                 }
@@ -90,16 +91,16 @@ class StateSubprocess(
     }
 
     private suspend fun handleControl(msg: Map<*, *>) {
-        val payload = msg["payload"] as? Map<*, *> ?: return
+        val payload = msg.payload ?: return
 
-        when (payload["action"]) {
+        when (payload.action) {
             "shutdown" -> {
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
                         mapOf(
                             "msg-type" to "response",
-                            "msg-id" to (msg["msg-id"] as? String ?: ""),
+                            "msg-id" to (msg.msgId ?: ""),
                             "timestamp" to System.currentTimeMillis(),
                             "payload" to mapOf("status" to "stopped"),
                         ),
@@ -109,7 +110,7 @@ class StateSubprocess(
                 transitComm.close()
             }
             "set-rate-limit" -> {
-                val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
+                val rateHz = payload.rateHz?.toInt() ?: 30
                 rateLimiter.set(RateLimiter(rateHz, rateLimiterScope))
             }
             "get-stats" -> {

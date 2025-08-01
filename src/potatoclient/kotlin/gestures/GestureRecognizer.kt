@@ -3,9 +3,7 @@ package potatoclient.kotlin.gestures
 // EventFilter not needed in GestureRecognizer
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.math.PI
 import kotlin.math.abs
-import kotlin.math.atan2
 import kotlin.math.sqrt
 
 enum class GestureState {
@@ -19,7 +17,6 @@ data class GestureConfig(
     val moveThreshold: Int = 20, // pixels before gesture starts (from gestures.json)
     val tapLongPressThreshold: Long = 300, // ms for long press
     val doubleTapThreshold: Long = 300, // ms between taps
-    val swipeThreshold: Int = 100, // pixels for swipe
     val panUpdateInterval: Long = 120, // ms between pan updates
     val doubleTapTolerance: Int = 10, // pixels tolerance for double tap position
 )
@@ -97,6 +94,7 @@ class GestureRecognizer(
 
         when (currentState) {
             GestureState.PENDING -> {
+                // Only process as tap if movement is minimal and duration is short
                 if (distance <= config.moveThreshold && elapsedTime < config.tapLongPressThreshold) {
                     // Check for double tap
                     if (time - lastTapTime < config.doubleTapThreshold &&
@@ -104,7 +102,7 @@ class GestureRecognizer(
                         abs(y - lastTapY) < config.doubleTapTolerance
                     ) {
                         onGesture(GestureEvent.DoubleTap(x, y, time))
-                        lastTapTime = 0
+                        lastTapTime = 0 // Reset to prevent triple tap
                     } else {
                         // Single tap
                         onGesture(GestureEvent.Tap(x, y, time))
@@ -112,11 +110,8 @@ class GestureRecognizer(
                         lastTapX = x
                         lastTapY = y
                     }
-                } else if (distance > config.swipeThreshold && elapsedTime < config.tapLongPressThreshold) {
-                    // Swipe gesture
-                    val direction = calculateSwipeDirection(startX, startY, x, y)
-                    onGesture(GestureEvent.Swipe(direction, distance.toInt(), time))
                 }
+                // No swipe detection - any other release is just ignored
             }
             GestureState.PANNING -> {
                 onGesture(GestureEvent.PanStop(x, y, time))
@@ -126,25 +121,6 @@ class GestureRecognizer(
 
         state.set(GestureState.IDLE)
         panStartNotified = false
-    }
-
-    private fun calculateSwipeDirection(
-        x1: Int,
-        y1: Int,
-        x2: Int,
-        y2: Int,
-    ): SwipeDirection {
-        val dx = x2 - x1
-        val dy = y2 - y1
-        val angle = atan2(dy.toDouble(), dx.toDouble())
-
-        // Convert angle to direction (matching web frontend logic)
-        return when {
-            angle > -PI / 4 && angle <= PI / 4 -> SwipeDirection.RIGHT
-            angle > PI / 4 && angle <= 3 * PI / 4 -> SwipeDirection.DOWN
-            angle > 3 * PI / 4 || angle <= -3 * PI / 4 -> SwipeDirection.LEFT
-            else -> SwipeDirection.UP
-        }
     }
 
     fun reset() {

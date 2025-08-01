@@ -2,12 +2,7 @@ package potatoclient.kotlin.gestures
 
 import potatoclient.transit.EventType
 
-enum class SwipeDirection {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-}
+// SwipeDirection removed - no swipe detection per design
 
 sealed class GestureEvent {
     abstract val timestamp: Long
@@ -44,11 +39,7 @@ sealed class GestureEvent {
         override val timestamp: Long,
     ) : GestureEvent()
 
-    data class Swipe(
-        val direction: SwipeDirection,
-        val distance: Int,
-        override val timestamp: Long,
-    ) : GestureEvent()
+    // Swipe removed intentionally - all drags should trigger pan
 
     /**
      * Get the EventType enum value for this gesture
@@ -60,6 +51,5 @@ sealed class GestureEvent {
             is PanStart -> EventType.PAN_START
             is PanMove -> EventType.PAN_MOVE
             is PanStop -> EventType.PAN_STOP
-            is Swipe -> EventType.SWIPE
         }
 }

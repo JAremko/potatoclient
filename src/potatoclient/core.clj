@@ -102,6 +102,34 @@
                    (logging/log-warn {:msg "Low battery warning" :level new-battery})))))
   nil)
 
+;; Store ping timer reference
+(def ^:private ping-timer (atom nil))
+
+(>defn- setup-ping-sender!
+  "Set up periodic ping command sender (every 300ms like web frontend)."
+  []
+  [=> nil?]
+  (let [send-message (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
+        create-message (requiring-resolve 'potatoclient.transit.core/create-message)
+        ping-cmd (requiring-resolve 'potatoclient.transit.commands/ping)]
+    (when (and send-message create-message ping-cmd)
+      ;; Create a timer that sends ping every 300ms
+      (let [timer (java.util.Timer. "PingTimer" true)]
+        (.scheduleAtFixedRate timer
+                              (proxy [java.util.TimerTask] []
+                                (run []
+                                  (try
+                ;; Create ping command message
+                                    (let [ping-msg (@create-message :command (@ping-cmd))]
+                                      (@send-message :command ping-msg))
+                                    (catch Exception e
+                                      (logging/log-debug {:msg "Failed to send ping" :error (.getMessage e)})))))
+                              300  ; initial delay
+                              300) ; period
+        ;; Store timer reference so we can stop it later if needed
+        (reset! ping-timer timer))))
+  nil)
+
 (>defn -main
   "Application entry point."
   [& _]
@@ -130,6 +158,8 @@
                     (launcher/start-state-subprocess state-url domain)
                     ;; Set up state monitoring
                     (setup-state-monitoring!)
+                    ;; Start periodic ping sender (every 300ms like web frontend)
+                    (setup-ping-sender!)
                     ;; Set initial UI state from config
                     (when-let [saved-theme (:theme (config/load-config))]
                       (app-db/set-theme! saved-theme))

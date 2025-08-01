@@ -10,6 +10,7 @@ PotatoClient uses a Transit-based architecture to completely isolate protobuf ha
 2. **Transit for IPC**: All inter-process communication uses Transit with MessagePack format
 3. **Single App State**: Following re-frame pattern with a single app-db atom
 4. **Subprocess Management**: Clean lifecycle management for all subprocesses
+5. **Keyword-Based Maps**: All Transit messages use keyword keys for consistency and performance
 
 ## Components
 
@@ -46,7 +47,8 @@ Process lifecycle management:
 
 #### `CommandSubprocess`
 Main class for command processing:
-- Receives Transit commands via stdin
+- Receives Transit commands via stdin (with keyword keys)
+- Uses extension properties for clean message access
 - Converts to protobuf using `SimpleCommandBuilder`
 - Sends protobuf commands via WebSocket to server
 - Handles reconnection and error recovery
@@ -58,11 +60,25 @@ Main class for state updates:
 - Implements debouncing (compares with last sent state)
 - Token bucket rate limiting (configurable)
 - Sends Transit messages to main process via stdout
+- Uses extension properties for clean keyword access
 
 #### `TransitCommunicator`
 Handles Transit communication over stdin/stdout:
 - Message framing with length prefix
 - Thread-safe read/write operations
+- Preserves Transit keywords in both directions
+
+#### `TransitKeys`
+Pre-created Transit keyword constants:
+- Avoids repeated `KeywordImpl` instantiation
+- Central location for all Transit keys
+- Performance optimized with static instances
+
+#### `TransitExtensions`
+Kotlin extension properties for Transit maps:
+- Clean property-style access to keyword-based maps
+- Type-safe getters with nullable returns
+- Helper functions for nested access and type checking
 - Proper type handling for Transit writer
 - Error handling and logging
 
@@ -90,6 +106,51 @@ Handles Transit communication over stdin/stdout:
 8. UI components react to state changes
 ```
 
+## Keyword Usage Examples
+
+### Clojure Side
+```clojure
+;; Creating messages with keyword keys
+(transit-core/create-message :command
+  {:action "rotary-goto-ndc"
+   :channel :heat
+   :x 0.5
+   :y -0.5})
+;; Result: {:msg-type :command
+;;          :msg-id "uuid..."
+;;          :timestamp 1234567890
+;;          :payload {:action "rotary-goto-ndc" ...}}
+
+;; Handling messages - keywords arrive naturally
+(defmethod handle-message :state
+  [_ _ msg]
+  (let [battery-level (get-in msg [:payload :system :battery-level])]
+    (when (< battery-level 20)
+      (log/warn "Low battery" battery-level))))
+```
+
+### Kotlin Side
+```kotlin
+// OLD way with string keys (don't do this!)
+val msgType = msg["msg-type"] as? String
+val payload = msg["payload"] as? Map<*, *>
+
+// NEW way with extension properties
+val msgType = msg.msgType  // Clean!
+val payload = msg.payload   // Type-safe!
+
+// Accessing nested values
+val batteryLevel = stateMsg.payload?.system?.batteryLevel
+val action = commandMsg.payload?.action ?: "ping"
+
+// Using with when expressions
+when (msg.msgType) {
+    MessageType.COMMAND.keyword -> handleCommand(msg)
+    MessageType.EVENT.keyword -> handleEvent(msg)
+    else -> log.warn("Unknown message type: ${msg.msgType}")
+}
+```
+
 ## Key Design Decisions
 
 ### Why Transit?
@@ -97,6 +158,13 @@ Handles Transit communication over stdin/stdout:
 - Efficient binary format (MessagePack) in production
 - Excellent Clojure/Java interop
 - Preserves rich data types (keywords, sets, etc.)
+
+### Why Keywords Everywhere?
+- **Performance**: Keywords are interned and compared by reference
+- **Consistency**: One pattern throughout the codebase
+- **Type Safety**: Can't accidentally use wrong string keys
+- **Transit Native**: Transit handles keywords efficiently
+- **Clean Code**: Extension properties make Kotlin side readable
 
 ### Why Subprocess Isolation?
 - Protobuf version conflicts avoided

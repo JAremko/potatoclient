@@ -8,6 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import potatoclient.transit.MessageType
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -49,10 +50,11 @@ class CommandSubprocess(
                 while (isActive) {
                     val msg = transitComm.readMessage()
                     if (msg != null) {
-                        when (msg["msg-type"]) {
-                            "command" -> handleCommand(msg)
-                            "control" -> handleControl(msg)
-                            else -> messageProtocol.sendWarn("Unknown message type: ${msg["msg-type"]}")
+                        // Use extension properties for cleaner access
+                        when (msg.msgType) {
+                            MessageType.COMMAND.keyword -> handleCommand(msg)
+                            MessageType.RESPONSE.keyword -> handleControl(msg) // Control messages come as response type
+                            else -> messageProtocol.sendWarn("Unknown message type: ${msg.msgType}")
                         }
                         totalReceived.incrementAndGet()
                     }
@@ -61,12 +63,12 @@ class CommandSubprocess(
         }
 
     private suspend fun handleCommand(msg: Map<*, *>) {
-        val payload = msg["payload"] as? Map<*, *> ?: return
-        val msgId = msg["msg-id"] as? String ?: ""
+        val payload = msg.payload ?: return
+        val msgId = msg.msgId ?: ""
 
         try {
-            val action = payload["action"] as? String ?: "ping"
-            val params = payload["params"] as? Map<*, *>
+            val action = payload.action ?: "ping"
+            val params = payload.params
             val rootCmd = cmdBuilder.buildCommand(action, params)
 
             wsClient.send(rootCmd.toByteArray())
@@ -87,15 +89,15 @@ class CommandSubprocess(
     }
 
     private suspend fun handleControl(msg: Map<*, *>) {
-        val payload = msg["payload"] as? Map<*, *> ?: return
-        when (payload["action"]) {
+        val payload = msg.payload ?: return
+        when (payload.action) {
             "shutdown" -> {
                 // Send shutdown confirmation
                 runBlocking {
                     transitComm.sendMessage(
                         mapOf(
                             "msg-type" to "response",
-                            "msg-id" to (msg["msg-id"] as? String ?: ""),
+                            "msg-id" to (msg.msgId ?: ""),
                             "timestamp" to System.currentTimeMillis(),
                             "payload" to mapOf("status" to "stopped"),
                         ),

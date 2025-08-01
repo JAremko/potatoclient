@@ -10,7 +10,8 @@
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.state :as state]
-            [potatoclient.transit.app-db :as app-db]))
+            [potatoclient.transit.app-db :as app-db]
+            [potatoclient.transit.debug :as transit-debug]))
 
 ;; Constants
 (def ^:private stream-init-delay-ms 200)
@@ -23,14 +24,10 @@
 ;; Default handler for unknown message types
 (defmethod handle-message :default
   [msg-type stream-key payload]
-  (logging/log-warn
-    {:id ::unknown-message-type
-     :data {:stream stream-key
-            :msg-type msg-type
-            :payload-keys (keys payload)
-            :payload payload}
-     :msg (str "Unknown message type: " msg-type 
-               " | Payload keys: " (pr-str (keys payload)))}))
+  (transit-debug/log-unknown-message
+    (str "IPC handler for stream " stream-key)
+    {:msg-type msg-type :payload payload}
+    (str "Unknown message type: " msg-type)))
 
 ;; Response messages
 (defmethod handle-message :response
@@ -107,16 +104,36 @@
 (defmethod handle-message :request
   [_ stream-key payload]
   (let [action (:action payload)]
-    ;; For gesture-based commands, forward them to the command subprocess
-    (if (contains? #{"rotary-set-velocity" "rotary-halt" "rotary-goto-ndc" 
-                     "cv-start-track-ndc" "forward-command"} action)
+    ;; Handle different request types
+    (cond
+      ;; Special case for forward-command - extract the nested command
+      (= action "forward-command")
+      (let [nested-command (:command payload)
+            subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
+            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
+        (when (and subprocess-launcher transit-core nested-command)
+          (let [command-msg (@transit-core :command nested-command)]
+            (@subprocess-launcher :command command-msg)
+            (logging/log-debug
+              {:id ::forwarded-command
+               :data {:stream stream-key
+                      :action (:action nested-command)
+                      :original-action action
+                      :command command-msg}
+               :msg (str "Forwarded nested command " (:action nested-command) " from " stream-key)}))))
+
+      ;; Direct gesture-based commands
+      (contains? #{"rotary-set-velocity" "rotary-halt" "rotary-goto-ndc"
+                   "cv-start-track-ndc"
+                   "heat-camera-next-zoom-table-pos" "heat-camera-prev-zoom-table-pos"
+                   "day-camera-next-zoom-table-pos" "day-camera-prev-zoom-table-pos"} action)
       (let [subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
             transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
         (when (and subprocess-launcher transit-core)
           ;; Create a command message with the action and data from the request
-          (let [command-msg (@transit-core :command 
-                              (merge {:action action} 
-                                     (dissoc payload :action :process)))]
+          (let [command-msg (@transit-core :command
+                                           (merge {:action action}
+                                                  (dissoc payload :action :process)))]
             (@subprocess-launcher :command command-msg)
             (logging/log-debug
               {:id ::forwarded-command
@@ -124,7 +141,9 @@
                       :action action
                       :command command-msg}
                :msg (str "Forwarded " action " command from " stream-key)}))))
-      ;; Log unknown request types
+
+      ;; Unknown request types
+      :else
       (logging/log-warn
         {:id ::unknown-request-type
          :data {:stream stream-key
@@ -146,11 +165,10 @@
         payload (:payload msg)]
     ;; Log error if message type is missing
     (when-not msg-type
-      (logging/log-error
-        {:id ::missing-msg-type
-         :data {:stream stream-key
-                :msg msg}
-         :msg "Message missing required msg-type field"}))
+      (transit-debug/log-unknown-message
+        (str "dispatch-message for " stream-key)
+        msg
+        "Message missing required msg-type field"))
     ;; Log response dispatching for debugging
     (when (= msg-type :response)
       (logging/log-info
