@@ -13,6 +13,7 @@ public final class MessageKeys {
     
     // Common payload keys
     public static final String ACTION = "action";
+    public static final String PARAMS = "params";
     public static final String PROCESS = "process";
     public static final String STREAM_ID = "streamId";
     public static final String LEVEL = "level";

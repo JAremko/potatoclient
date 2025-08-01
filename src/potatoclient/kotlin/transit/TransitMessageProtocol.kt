@@ -6,6 +6,7 @@ import potatoclient.kotlin.transit.logDebug
 import potatoclient.kotlin.transit.logError
 import potatoclient.kotlin.transit.logInfo
 import potatoclient.kotlin.transit.logWarn
+import potatoclient.transit.EventType
 import potatoclient.transit.MessageKeys
 import potatoclient.transit.MessageType
 import java.io.PrintWriter
@@ -18,7 +19,7 @@ import java.io.StringWriter
  * Messages are sent as Transit maps with proper type information.
  */
 class TransitMessageProtocol(
-    private val processType: String, // "command" or "state"
+    val processType: String, // "command" or "state" - made public for MessageBuilder
     private val transitComm: TransitCommunicator,
 ) {
     // Track if we're in release mode
@@ -244,7 +245,7 @@ class TransitMessageProtocol(
         ndcY: Double,
     ) {
         sendEvent(
-            "navigation",
+            EventType.NAVIGATION.key,
             mapOf(
                 MessageKeys.X to x,
                 MessageKeys.Y to y,
@@ -277,13 +278,37 @@ class TransitMessageProtocol(
         width?.let { data[MessageKeys.WIDTH] = it }
         height?.let { data[MessageKeys.HEIGHT] = it }
 
-        sendEvent("window", data)
+        sendEvent(EventType.WINDOW.key, data)
+    }
+
+    /**
+     * Send a request message (for forwarding commands from video streams)
+     */
+    fun sendRequest(
+        action: String,
+        data: Map<String, Any>,
+    ) {
+        try {
+            val requestMsg =
+                createMessage(
+                    MessageType.REQUEST.key,
+                    mapOf(
+                        MessageKeys.ACTION to action,
+                        MessageKeys.PROCESS to processType,
+                    ) + data,
+                )
+            kotlinx.coroutines.GlobalScope.launch {
+                transitComm.sendMessage(requestMsg)
+            }
+        } catch (e: Exception) {
+            logError("Failed to send request $action: ${e.message}")
+        }
     }
 
     /**
      * Create a properly formatted Transit message
      */
-    private fun createMessage(
+    fun createMessage(
         msgType: String,
         payload: Map<String, Any>,
     ): Map<String, Any> =
@@ -296,4 +321,178 @@ class TransitMessageProtocol(
             MessageKeys.TIMESTAMP to System.currentTimeMillis(),
             MessageKeys.PAYLOAD to payload,
         )
+
+    /**
+     * Get a MessageBuilder for creating standardized messages
+     */
+    fun messageBuilder(): MessageBuilder = MessageBuilder(this)
+}
+
+/**
+ * Builder class for creating standardized Transit messages.
+ * Provides a fluent API for constructing messages with proper structure.
+ */
+class MessageBuilder(
+    private val protocol: TransitMessageProtocol,
+) {
+    fun command(
+        action: String,
+        params: Map<String, Any> = emptyMap(),
+    ) = protocol.createMessage(
+        MessageType.COMMAND.key,
+        mapOf(
+            MessageKeys.ACTION to action,
+            MessageKeys.PARAMS to params,
+        ),
+    )
+
+    fun response(
+        action: String,
+        status: String,
+        data: Map<String, Any> = emptyMap(),
+    ) = protocol.createMessage(
+        MessageType.RESPONSE.key,
+        mapOf(
+            MessageKeys.ACTION to action,
+            MessageKeys.STATUS to status,
+            MessageKeys.DATA to data,
+        ),
+    )
+
+    fun request(
+        action: String,
+        data: Map<String, Any> = emptyMap(),
+    ) = protocol.createMessage(
+        MessageType.REQUEST.key,
+        mapOf(
+            MessageKeys.ACTION to action,
+            MessageKeys.DATA to data,
+        ) + mapOf(MessageKeys.PROCESS to protocol.processType),
+    )
+
+    fun event(
+        eventType: EventType,
+        data: Map<String, Any>,
+    ) = protocol.createMessage(
+        MessageType.EVENT.key,
+        mapOf(MessageKeys.TYPE to eventType.key) + data,
+    )
+
+    fun gestureEvent(
+        gestureType: EventType,
+        timestamp: Long,
+        canvasWidth: Int,
+        canvasHeight: Int,
+        aspectRatio: Double,
+        streamType: String,
+        additionalData: Map<String, Any> = emptyMap(),
+    ) = event(
+        EventType.GESTURE,
+        mapOf(
+            "gesture-type" to gestureType.key,
+            "timestamp" to timestamp,
+            "canvas-width" to canvasWidth,
+            "canvas-height" to canvasHeight,
+            "aspect-ratio" to aspectRatio,
+            "stream-type" to streamType,
+        ) + additionalData,
+    )
+
+    fun navigationEvent(
+        navType: EventType,
+        x: Int,
+        y: Int,
+        ndcX: Double,
+        ndcY: Double,
+        frameTimestamp: Long,
+        frameDuration: Long,
+        canvasWidth: Int,
+        canvasHeight: Int,
+    ) = event(
+        EventType.NAVIGATION,
+        mapOf(
+            MessageKeys.NAV_TYPE to navType.key,
+            MessageKeys.X to x,
+            MessageKeys.Y to y,
+            MessageKeys.NDC_X to ndcX,
+            MessageKeys.NDC_Y to ndcY,
+            MessageKeys.FRAME_TIMESTAMP to frameTimestamp,
+            MessageKeys.FRAME_DURATION to frameDuration,
+            MessageKeys.CANVAS_WIDTH to canvasWidth,
+            MessageKeys.CANVAS_HEIGHT to canvasHeight,
+        ),
+    )
+
+    fun windowEvent(
+        windowType: EventType,
+        windowState: Int? = null,
+        x: Int? = null,
+        y: Int? = null,
+        width: Int? = null,
+        height: Int? = null,
+    ): Map<String, Any> {
+        val data = mutableMapOf<String, Any>("window-type" to windowType.key)
+        windowState?.let { data[MessageKeys.WINDOW_STATE] = it }
+        x?.let { data[MessageKeys.X] = it }
+        y?.let { data[MessageKeys.Y] = it }
+        width?.let { data[MessageKeys.WIDTH] = it }
+        height?.let { data[MessageKeys.HEIGHT] = it }
+
+        return event(EventType.WINDOW, data)
+    }
+
+    fun log(
+        level: String,
+        message: String,
+    ) = protocol.createMessage(
+        MessageType.LOG.key,
+        mapOf(
+            MessageKeys.LEVEL to level,
+            MessageKeys.MESSAGE to message,
+            MessageKeys.PROCESS to protocol.processType,
+        ),
+    )
+
+    fun error(
+        context: String,
+        error: String,
+        exception: Exception? = null,
+    ): Map<String, Any> {
+        val payload =
+            mutableMapOf(
+                MessageKeys.CONTEXT to context,
+                MessageKeys.ERROR to error,
+                MessageKeys.PROCESS to protocol.processType,
+            )
+
+        exception?.let { ex ->
+            payload[MessageKeys.CLASS] = ex.javaClass.name
+            payload[MessageKeys.STACK_TRACE] = ex.stackTraceToString()
+        }
+
+        return protocol.createMessage(MessageType.ERROR.key, payload)
+    }
+
+    fun metric(
+        name: String,
+        value: Any,
+    ) = protocol.createMessage(
+        MessageType.METRIC.key,
+        mapOf(
+            MessageKeys.NAME to name,
+            MessageKeys.VALUE to value,
+            MessageKeys.PROCESS to protocol.processType,
+        ),
+    )
+
+    fun status(
+        status: String,
+        details: Map<String, Any> = emptyMap(),
+    ) = protocol.createMessage(
+        MessageType.STATUS.key,
+        mapOf(
+            MessageKeys.STATUS to status,
+            MessageKeys.PROCESS to protocol.processType,
+        ) + details,
+    )
 }

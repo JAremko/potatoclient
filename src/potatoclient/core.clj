@@ -6,6 +6,7 @@
             [clojure.string]
             [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
             [potatoclient.config :as config]
+            [potatoclient.gestures.config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
@@ -61,6 +62,7 @@
   [=> nil?]
   (config/initialize!)
   (i18n/init!)
+  (potatoclient.gestures.config/load-gesture-config!)
   (setup-shutdown-hook!))
 
 (>defn- log-startup!

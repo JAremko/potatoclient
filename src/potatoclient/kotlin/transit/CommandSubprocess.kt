@@ -66,7 +66,8 @@ class CommandSubprocess(
 
         try {
             val action = payload["action"] as? String ?: "ping"
-            val rootCmd = cmdBuilder.buildCommand(action)
+            val params = payload["params"] as? Map<*, *>
+            val rootCmd = cmdBuilder.buildCommand(action, params)
 
             wsClient.send(rootCmd.toByteArray())
             totalSent.incrementAndGet()

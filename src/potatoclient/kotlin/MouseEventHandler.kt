@@ -1,5 +1,7 @@
 package potatoclient.kotlin
 
+import potatoclient.kotlin.gestures.*
+import potatoclient.transit.EventType
 import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseAdapter
@@ -18,6 +20,8 @@ class MouseEventHandler(
     private val callback: EventCallback,
     private val eventFilter: EventFilter,
     private val eventThrottleExecutor: ScheduledExecutorService,
+    private val streamType: StreamType = StreamType.HEAT, // Default to heat
+    private val frameDataProvider: potatoclient.kotlin.gestures.FrameDataProvider? = null,
 ) {
     // Click caching for double-click detection
     private data class ClickInfo(
@@ -49,6 +53,11 @@ class MouseEventHandler(
             y: Int,
             details: Map<String, Any>?,
         )
+
+        // New methods for gesture events and commands
+        fun onGestureEvent(event: Map<String, Any>)
+
+        fun sendCommand(command: Map<String, Any>)
     }
 
     // State tracking
@@ -69,6 +78,34 @@ class MouseEventHandler(
 
     @Volatile private var dragOrigin: Point? = null
 
+    // Gesture recognition components
+    private val gestureConfig =
+        GestureConfig(
+            moveThreshold = 20,
+            tapLongPressThreshold = 300,
+            doubleTapThreshold = 300,
+            swipeThreshold = 100,
+            panUpdateInterval = 120,
+            doubleTapTolerance = 10,
+        )
+
+    private val gestureRecognizer =
+        GestureRecognizer(gestureConfig) { gesture ->
+            handleGesture(gesture)
+        }
+
+    // Pan controller for continuous rotation
+    private val panController =
+        PanController(
+            onRotaryCommand = { azSpeed, elSpeed, azDir, elDir ->
+                sendRotaryVelocityCommand(azSpeed, elSpeed, azDir, elDir)
+            },
+            onHaltCommand = {
+                sendRotaryHaltCommand()
+            },
+            streamType = streamType,
+        )
+
     fun attachListeners() {
         videoComponent.addMouseListener(
             object : MouseAdapter() {
@@ -77,6 +114,9 @@ class MouseEventHandler(
                 }
 
                 override fun mousePressed(e: MouseEvent) {
+                    // Feed to gesture recognizer
+                    gestureRecognizer.processMousePressed(e.x, e.y, e.button, System.currentTimeMillis())
+
                     // Internal tracking only - filtered from output
                     val details =
                         mapOf(
@@ -93,6 +133,9 @@ class MouseEventHandler(
                 }
 
                 override fun mouseReleased(e: MouseEvent) {
+                    // Feed to gesture recognizer
+                    gestureRecognizer.processMouseReleased(e.x, e.y, e.button, System.currentTimeMillis())
+
                     // Handle drag end first
                     if (isDragging.compareAndSet(true, false)) {
                         val details =
@@ -196,6 +239,9 @@ class MouseEventHandler(
                 }
 
                 override fun mouseDragged(e: MouseEvent) {
+                    // Feed to gesture recognizer
+                    gestureRecognizer.processMouseDragged(e.x, e.y, System.currentTimeMillis())
+
                     if (isDragging.compareAndSet(false, true)) {
                         // Store drag origin
                         dragOrigin = Point(e.x, e.y)
@@ -419,5 +465,123 @@ class MouseEventHandler(
         pendingClickTask?.cancel(false)
         pendingMouseMoveTask?.cancel(false)
         pendingMouseDragTask?.cancel(false)
+        panController.shutdown()
+        gestureRecognizer.reset()
+    }
+
+    // Gesture handling methods
+    private fun handleGesture(gesture: GestureEvent) {
+        val canvasWidth = videoComponent.width
+        val canvasHeight = videoComponent.height
+
+        // Calculate aspect ratio for pan gesture adjustment
+        val aspectRatio = canvasWidth.toDouble() / canvasHeight.toDouble()
+
+        val baseEvent =
+            mutableMapOf(
+                "type" to EventType.GESTURE.key,
+                "gesture-type" to gesture.getEventType().key,
+                "timestamp" to gesture.timestamp,
+                "canvas-width" to canvasWidth,
+                "canvas-height" to canvasHeight,
+                "aspect-ratio" to aspectRatio,
+                "stream-type" to streamType.name.lowercase(),
+            )
+
+        when (gesture) {
+            is GestureEvent.Tap -> {
+                baseEvent["x"] = gesture.x
+                baseEvent["y"] = gesture.y
+                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+            }
+            is GestureEvent.DoubleTap -> {
+                baseEvent["x"] = gesture.x
+                baseEvent["y"] = gesture.y
+                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+            }
+            is GestureEvent.PanStart -> {
+                baseEvent["x"] = gesture.x
+                baseEvent["y"] = gesture.y
+                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+                // Start pan controller
+                panController.startPan()
+            }
+            is GestureEvent.PanMove -> {
+                baseEvent["x"] = gesture.x
+                baseEvent["y"] = gesture.y
+                baseEvent["delta-x"] = gesture.deltaX
+                baseEvent["delta-y"] = gesture.deltaY
+                // Important: Apply aspect ratio adjustment to X delta (matching web frontend)
+                val ndcDeltaX = pixelToNDC(gesture.deltaX, canvasWidth, false)
+                val ndcDeltaY = pixelToNDC(gesture.deltaY, canvasHeight, true)
+                val adjustedNdcDeltaX = ndcDeltaX * aspectRatio
+                baseEvent["ndc-delta-x"] = adjustedNdcDeltaX
+                baseEvent["ndc-delta-y"] = ndcDeltaY
+
+                // Update pan controller with current zoom level
+                val currentZoomLevel = frameDataProvider?.getCurrentZoomLevel() ?: 0
+                panController.updatePan(adjustedNdcDeltaX, ndcDeltaY, currentZoomLevel)
+            }
+            is GestureEvent.PanStop -> {
+                baseEvent["x"] = gesture.x
+                baseEvent["y"] = gesture.y
+                // Stop pan controller
+                panController.stopPan()
+            }
+            is GestureEvent.Swipe -> {
+                baseEvent["direction"] = gesture.direction.name.lowercase()
+                baseEvent["distance"] = gesture.distance
+            }
+        }
+
+        // Add frame data if available
+        frameDataProvider?.getFrameData()?.let { frameData ->
+            baseEvent["frame-timestamp"] = frameData.timestamp
+            baseEvent["frame-duration"] = frameData.duration
+        }
+
+        callback.onGestureEvent(baseEvent)
+    }
+
+    private fun pixelToNDC(
+        value: Int,
+        dimension: Int,
+        invertY: Boolean = false,
+    ): Double {
+        val ndc = (value.toDouble() / dimension) * 2.0 - 1.0
+        return if (invertY) -ndc else ndc
+    }
+
+    // Send commands via Transit
+    private fun sendRotaryVelocityCommand(
+        azSpeed: Double,
+        elSpeed: Double,
+        azDir: RotaryDirection,
+        elDir: RotaryDirection,
+    ) {
+        val command =
+            mapOf(
+                "action" to "rotary-set-velocity",
+                "params" to
+                    mapOf(
+                        "azimuth-speed" to azSpeed,
+                        "elevation-speed" to elSpeed,
+                        "azimuth-direction" to azDir.name.lowercase().replace("_", "-"),
+                        "elevation-direction" to elDir.name.lowercase().replace("_", "-"),
+                    ),
+            )
+        callback.sendCommand(command)
+    }
+
+    private fun sendRotaryHaltCommand() {
+        val command =
+            mapOf(
+                "action" to "rotary-halt",
+                "params" to emptyMap<String, Any>(),
+            )
+        callback.sendCommand(command)
     }
 }

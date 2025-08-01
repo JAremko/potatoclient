@@ -176,6 +176,21 @@
   [keyword? map? => map?]
   (swap! app-db update-in [:server-state subsystem] merge state-update))
 
+(>defn update-in-app-db!
+  "Generic update-in for app-db with path and value"
+  [path value]
+  [vector? any? => map?]
+  (swap! app-db assoc-in path value))
+
+(>defn get-in-app-db
+  "Generic get-in for app-db with path and optional default"
+  ([path]
+   [vector? => any?]
+   (get-in @app-db path))
+  ([path default]
+   [vector? any? => any?]
+   (get-in @app-db path default)))
+
 (>defn set-connection-state!
   "Update connection state"
   [connected? url latency-ms]

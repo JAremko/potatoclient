@@ -52,6 +52,27 @@
 (m/=> potatoclient.state.dispatch/enable-debug! [:=> [:cat boolean?] nil?])
 
 ;; ============================================================================
+;; Gesture System Instrumentation
+;; ============================================================================
+
+;; gestures.config functions
+(m/=> potatoclient.gestures.config/load-gesture-config! [:=> [:cat] nil?])
+(m/=> potatoclient.gestures.config/get-gesture-config [:=> [:cat] [:maybe map?]])
+(m/=> potatoclient.gestures.config/zoom-value-to-table-index [:=> [:cat number?] int?])
+(m/=> potatoclient.gestures.config/get-speed-config-for-zoom [:=> [:cat string? int?] ::specs/speed-config])
+(m/=> potatoclient.gestures.config/get-speed-config-for-zoom-value [:=> [:cat string? number?] ::specs/speed-config])
+(m/=> potatoclient.gestures.config/calculate-rotation-speeds [:=> [:cat number? number? ::specs/speed-config] [:tuple number? number?]])
+
+;; gestures.handler functions
+(m/=> potatoclient.gestures.handler/handle-tap-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-double-tap-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-start-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-move-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-stop-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-swipe-gesture [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-gesture-event [:=> [:cat ::specs/gesture-event] nil?])
+
+;; ============================================================================
 ;; Instrumentation Control
 ;; ============================================================================
 

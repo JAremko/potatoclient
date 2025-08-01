@@ -118,16 +118,45 @@
   [=> map?]
   {:action "rotary-stop"})
 
+(>defn rotary-halt
+  "Halt all rotary movement (alias for stop)"
+  []
+  [=> map?]
+  {:action "rotary-halt"
+   :params {}})
+
+(>defn rotary-goto-ndc
+  "Command to rotate camera to NDC position"
+  [channel ndc-x ndc-y]
+  [keyword? number? number? => map?]
+  {:action "rotary-goto-ndc"
+   :params {:channel (name channel)
+            :x ndc-x
+            :y ndc-y}})
+
 (>defn rotary-set-velocity
-  "Set rotary platform velocity"
-  [{:keys [azimuth-velocity elevation-velocity]}]
-  [[:map
-    [:azimuth-velocity [:double {:min -180.0 :max 180.0}]]
-    [:elevation-velocity [:double {:min -90.0 :max 90.0}]]]
-   => map?]
+  "Set rotary platform velocity with speed and direction"
+  [azimuth-speed elevation-speed azimuth-direction elevation-direction]
+  [number? number? keyword? keyword? => map?]
   {:action "rotary-set-velocity"
-   :params {:azimuth-velocity azimuth-velocity
-            :elevation-velocity elevation-velocity}})
+   :params {:azimuth-speed azimuth-speed
+            :elevation-speed elevation-speed
+            :azimuth-direction (name azimuth-direction)
+            :elevation-direction (name elevation-direction)}})
+
+;; ============================================================================
+;; Computer Vision Commands
+;; ============================================================================
+
+(>defn cv-start-track-ndc
+  "Start CV tracking at NDC position"
+  [channel ndc-x ndc-y frame-timestamp]
+  [keyword? number? number? (? int?) => map?]
+  {:action "cv-start-track-ndc"
+   :params {:channel (name channel)
+            :x ndc-x
+            :y ndc-y
+            :frame-timestamp frame-timestamp}})
 
 ;; ============================================================================
 ;; Day Camera Commands

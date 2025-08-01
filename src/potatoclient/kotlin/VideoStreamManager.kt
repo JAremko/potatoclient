@@ -3,6 +3,7 @@ package potatoclient.kotlin
 import kotlinx.coroutines.runBlocking
 import potatoclient.kotlin.transit.TransitCommunicator
 import potatoclient.kotlin.transit.TransitMessageProtocol
+import potatoclient.transit.EventType
 import potatoclient.transit.MessageKeys
 import java.awt.Component
 import java.net.URI
@@ -28,7 +29,8 @@ class VideoStreamManager(
 ) : MouseEventHandler.EventCallback,
     WindowEventHandler.EventCallback,
     GStreamerPipeline.EventCallback,
-    FrameManager.FrameEventListener {
+    FrameManager.FrameEventListener,
+    potatoclient.kotlin.gestures.FrameDataProvider {
     // Core components - use original stdout for Transit
     private val transitReader =
         TransitCommunicator(
@@ -340,6 +342,34 @@ class VideoStreamManager(
 
     override fun isRunning(): Boolean = running.get()
 
+    // New MouseEventHandler.EventCallback methods for gestures
+    override fun onGestureEvent(event: Map<String, Any>) {
+        // Send gesture event to main process via Transit
+        messageProtocol.sendEvent(EventType.GESTURE.key, event)
+    }
+
+    override fun sendCommand(command: Map<String, Any>) {
+        // Send command to main process for forwarding to command subprocess
+        messageProtocol.sendRequest("forward-command", command)
+    }
+
+    // FrameDataProvider implementation
+    override fun getFrameData(): potatoclient.kotlin.gestures.FrameData? {
+        val timestamp = currentFrameTimestamp.get()
+        val duration = currentFrameDuration.get()
+        return if (timestamp > 0) {
+            potatoclient.kotlin.gestures.FrameData(timestamp, duration)
+        } else {
+            null
+        }
+    }
+
+    override fun getCurrentZoomLevel(): Int {
+        // TODO: Track zoom level from state updates
+        // For now, return default zoom level 0
+        return 0
+    }
+
     // FrameManager.FrameEventListener implementation
     override fun onFrameCreated(
         frame: JFrame,
@@ -349,8 +379,22 @@ class VideoStreamManager(
             // Initialize GStreamer pipeline with video component
             gstreamerPipeline.initialize(videoComponent)
 
-            // Set up event handlers
-            mouseEventHandler = MouseEventHandler(videoComponent, this, eventFilter, eventThrottleExecutor)
+            // Set up event handlers with gesture support
+            val streamType =
+                if (streamId.contains("heat", ignoreCase = true)) {
+                    potatoclient.kotlin.gestures.StreamType.HEAT
+                } else {
+                    potatoclient.kotlin.gestures.StreamType.DAY
+                }
+            mouseEventHandler =
+                MouseEventHandler(
+                    videoComponent,
+                    this,
+                    eventFilter,
+                    eventThrottleExecutor,
+                    streamType,
+                    this, // as FrameDataProvider
+                )
             mouseEventHandler?.attachListeners()
 
             windowEventHandler = WindowEventHandler(frame, this, eventFilter, eventThrottleExecutor)

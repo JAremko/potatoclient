@@ -32,7 +32,7 @@
 
 ;; Reader creation with Guardrails
 (>defn make-reader
-  "Create a Transit MessagePack reader with custom handlers"
+  "Create a Transit MessagePack reader with custom handlers and automatic keyword conversion"
   [in]
   [[:fn {:error/message "must be an InputStream"}
     #(instance? InputStream %)]
@@ -54,6 +54,19 @@
   (.flush ^OutputStream out-stream)
   nil)
 
+;; Keywordization helper
+(>defn keywordize-message
+  "Convert string keys to keywords in Transit messages for ergonomics"
+  [msg]
+  [any? => any?]
+  (cond
+    (map? msg) (into {} (map (fn [[k v]]
+                              [(if (string? k) (keyword k) k)
+                               (keywordize-message v)])
+                            msg))
+    (sequential? msg) (mapv keywordize-message msg)
+    :else msg))
+
 ;; Read operations
 (>defn read-message
   "Read a single message from Transit reader"
@@ -62,6 +75,15 @@
     #(instance? Reader %)]
    => any?]
   (transit/read reader))
+
+(>defn read-message-keywordized
+  "Read a single message from Transit reader with string keys converted to keywords"
+  [reader]
+  [[:fn {:error/message "must be a Transit Reader"}
+    #(instance? Reader %)]
+   => any?]
+  (-> (transit/read reader)
+      keywordize-message))
 
 ;; Message envelope validation
 (>defn validate-message-envelope

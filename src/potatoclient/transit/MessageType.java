@@ -1,13 +1,18 @@
 package potatoclient.transit;
 
+import com.cognitect.transit.Keyword;
+import com.cognitect.transit.impl.KeywordImpl;
+
 /**
  * Transit message types used for communication between Clojure and Kotlin processes.
  * Using a Java enum ensures both sides stay in sync and can use the same constants.
+ * Uses Transit Keywords for automatic conversion in Clojure.
  */
 public enum MessageType {
     // Core message types
     COMMAND("command"),
     RESPONSE("response"),
+    REQUEST("request"),
     LOG("log"),
     ERROR("error"),
     STATUS("status"),
@@ -30,13 +35,19 @@ public enum MessageType {
     STREAM_CLOSED("stream-closed");
     
     private final String key;
+    private final Keyword keyword;
     
     MessageType(String key) {
         this.key = key;
+        this.keyword = new KeywordImpl(key);
     }
     
     public String getKey() {
         return key;
+    }
+    
+    public Keyword getKeyword() {
+        return keyword;
     }
     
     public static MessageType fromKey(String key) {
@@ -46,5 +57,9 @@ public enum MessageType {
             }
         }
         return null;
+    }
+    
+    public static MessageType fromKeyword(Keyword keyword) {
+        return fromKey(keyword.toString());
     }
 }

@@ -6,6 +6,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.events.stream :as stream-events]
+            [potatoclient.gestures.handler]
             [potatoclient.logging :as logging]
             [potatoclient.process :as process]
             [potatoclient.state :as state]
@@ -38,54 +39,56 @@
 (defmethod handle-message :log
   [_ stream-key payload]
   (logging/log-event ::stream-log
-                     {:stream (or (get payload MessageKeys/STREAM_ID)
-                                  (get payload MessageKeys/PROCESS)
+                     {:stream (or (:streamId payload)
+                                  (:process payload)
                                   stream-key)
-                      :level (get payload MessageKeys/LEVEL)
-                      :message (get payload MessageKeys/MESSAGE)}))
+                      :level (:level payload)
+                      :message (:message payload)}))
 
 ;; Error messages
 (defmethod handle-message :error
   [_ stream-key payload]
   (logging/log-error
     {:id ::stream-error
-     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
-            :context (get payload MessageKeys/CONTEXT)
-            :error (get payload MessageKeys/ERROR)
-            :stackTrace (get payload MessageKeys/STACK_TRACE)}
-     :msg (str "Error from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/CONTEXT))}))
+     :data {:stream (or (:process payload) stream-key)
+            :context (:context payload)
+            :error (:error payload)
+            :stackTrace (:stackTrace payload)}
+     :msg (str "Error from " (or (:process payload) stream-key) ": " (:context payload))}))
 
 ;; Metric messages
 (defmethod handle-message :metric
   [_ stream-key payload]
   (logging/log-debug
     {:id ::stream-metric
-     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
-            :name (get payload MessageKeys/NAME)
-            :value (get payload MessageKeys/VALUE)}
-     :msg (str "Metric from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/NAME) " = " (get payload MessageKeys/VALUE))}))
+     :data {:stream (or (:process payload) stream-key)
+            :name (:name payload)
+            :value (:value payload)}
+     :msg (str "Metric from " (or (:process payload) stream-key) ": " (:name payload) " = " (:value payload))}))
 
 ;; Status messages
 (defmethod handle-message :status
   [_ stream-key payload]
   (logging/log-info
     {:id ::stream-status
-     :data {:stream (or (get payload MessageKeys/PROCESS) stream-key)
-            :status (get payload MessageKeys/STATUS)}
-     :msg (str "Status from " (or (get payload MessageKeys/PROCESS) stream-key) ": " (get payload MessageKeys/STATUS))}))
+     :data {:stream (or (:process payload) stream-key)
+            :status (:status payload)}
+     :msg (str "Status from " (or (:process payload) stream-key) ": " (:status payload))}))
 
 ;; Event messages (contains sub-types)
 (defmethod handle-message :event
   [_ stream-key payload]
-  (case (keyword (get payload MessageKeys/TYPE))
-    :navigation (stream-events/handle-navigation-event payload)
-    :window (stream-events/handle-window-event payload)
-    :frame (logging/log-debug
+  ;; With automatic keyword conversion, payload keys should already be keywords
+  (case (:type payload)
+    "navigation" (stream-events/handle-navigation-event payload)
+    "window" (stream-events/handle-window-event payload) 
+    "gesture" (potatoclient.gestures.handler/handle-gesture-event payload)
+    "frame" (logging/log-debug
              {:id ::frame-event
               :data {:stream stream-key
                      :payload payload}
               :msg "Frame event received"})
-    :error (logging/log-error
+    "error" (logging/log-error
              {:id ::video-stream-error
               :data {:stream stream-key
                      :payload payload}
@@ -94,8 +97,21 @@
     (logging/log-warn
       {:id ::unknown-event-type
        :data {:stream stream-key
-              :event-type (get payload MessageKeys/TYPE)}
-       :msg (str "Unknown event type: " (get payload MessageKeys/TYPE))})))
+              :event-type (:type payload)
+              :payload-keys (keys payload)}
+       :msg (str "Unknown event type: " (:type payload))})))
+
+;; Request messages (from video streams that need something)
+(defmethod handle-message :request
+  [_ stream-key payload]
+  (case (:action payload)
+    "forward-command" (process/send-command :command (:command payload))
+    ;; Log unknown request types
+    (logging/log-warn
+      {:id ::unknown-request-type
+       :data {:stream stream-key
+              :request-type (:action payload)}
+       :msg (str "Unknown request type: " (:action payload))})))
 
 ;; No need to define specs here as they're available in potatoclient.specs
 
@@ -104,9 +120,9 @@
   This is called directly from the subprocess reader thread."
   [stream-key msg]
   [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
-  ;; Extract message type and payload from Transit message structure
-  (let [msg-type (get msg MessageKeys/MSG_TYPE)
-        payload (get msg MessageKeys/PAYLOAD)]
+  ;; Messages now have keyword keys thanks to keywordize-message
+  (let [msg-type (:msg-type msg)
+        payload (:payload msg)]
     ;; Log error if message type is missing
     (when-not msg-type
       (logging/log-error
@@ -119,12 +135,12 @@
       (logging/log-info
         {:id ::dispatch-response
          :data {:stream-key stream-key
-                :action (get payload "action")
+                :action (:action payload)
                 :payload payload}
          :msg (str "DISPATCH: Handling response for " stream-key
-                   " with action: " (get payload "action"))}))
+                   " with action: " (:action payload))}))
     (try
-      (handle-message (keyword msg-type) stream-key payload)
+      (handle-message (if (string? msg-type) (keyword msg-type) msg-type) stream-key payload)
       true
       (catch Exception e
         (logging/log-error

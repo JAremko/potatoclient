@@ -320,6 +320,12 @@ Tests use Transit-based architecture with proper isolation:
 
 The system uses Transit/MessagePack for all inter-process communication:
 
+**Transit Keywords Innovation**
+- Java enums (`MessageType`, `EventType`) create Transit Keywords using `new KeywordImpl(key)`
+- Keywords are automatically converted to Clojure keywords without manual processing
+- Provides type safety in Java/Kotlin while maintaining idiomatic Clojure usage
+- Single source of truth for message and event types across languages
+
 **Transit Namespaces**
 - `potatoclient.transit.core` - Transit reader/writer creation and message envelope handling
 - `potatoclient.transit.app-db` - Single source of truth atom following re-frame pattern
@@ -342,11 +348,13 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `potatoclient.specs` - Centralized Malli schemas
 - `potatoclient.instrumentation` - Function schemas (dev only)
 - `potatoclient.logging` - Telemere-based logging configuration
+- `potatoclient.gestures.handler` - Gesture event processing and command generation
+- `potatoclient.gestures.config` - Zoom-based speed configurations
 
 **Kotlin (Subprocess Components)**
 - `CommandSubprocess` - Receives Transit commands, converts to protobuf, sends via WebSocket
 - `StateSubprocess` - Receives protobuf state, converts to Transit maps, implements debouncing and rate limiting
-- `VideoStreamManager` - Video streaming with Transit-based communication
+- `VideoStreamManager` - Video streaming with Transit-based communication and gesture support
 - `TransitCommunicator` - Handles Transit message framing and serialization over stdin/stdout
 - `TransitMessageProtocol` - Unified message protocol for subprocess communication
 - `VideoStreamTransitAdapter` - Adapter for video streams to use Transit protocol
@@ -354,6 +362,9 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
 - `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
 - `StdoutInterceptor` - Captures stdout for clean subprocess communication
+- `GestureRecognizer` - Detects tap, double-tap, pan, and swipe gestures
+- `PanController` - Manages pan gesture state and throttling
+- `MouseEventHandler` - Processes mouse events and delegates to gesture recognizer
 - For detailed implementation, see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)
 
 ### Transit Message Flow
@@ -387,6 +398,95 @@ The system uses Transit/MessagePack for all inter-process communication:
    - Automatic reconnection with exponential backoff
    - Clean subprocess lifecycle management
    - SSL certificate validation disabled for internal use
+
+### Gesture Recognition System
+
+**Supported Gestures**:
+- **Tap**: Single click → `rotary-goto-ndc` command
+- **Double-tap**: Double click → `cv-start-track-ndc` command  
+- **Pan**: Click and drag → `rotary-set-velocity` commands with zoom-based speed
+- **Swipe**: Quick flick gesture (detected but not currently used)
+
+**Gesture Configuration** (`resources/config/gestures.edn`):
+- Movement thresholds for gesture detection
+- Timing parameters (tap duration, double-tap interval)
+- Zoom-based speed configurations per camera type
+- Dead zone and curve steepness for precise control
+
+**Speed Calculation**:
+- Speed varies by zoom level (5 levels: 0-4)
+- Each camera type (heat/day) has unique speed curves
+- Dead zone filtering prevents micro-movements
+- Exponential curve mapping for intuitive control
+- NDC (Normalized Device Coordinates) for resolution independence
+
+### Transit Message Protocol
+
+All inter-process communication follows a standardized message protocol defined in `TRANSIT_MESSAGE_PROTOCOL_SPEC.md`. The key aspects are:
+
+**Message Envelope Structure**:
+```clojure
+{:msg-type string?    ; Message type from MessageType enum
+ :msg-id   string?    ; UUID for message tracking  
+ :timestamp long?     ; Unix timestamp in milliseconds
+ :payload  map?}      ; Message-specific payload
+```
+
+**Java Enum Integration**:
+- Message types defined in `potatoclient.transit.MessageType` enum
+- Event types defined in `potatoclient.transit.EventType` enum  
+- Enums automatically convert to keywords in Clojure (e.g., `MessageType.COMMAND` → `:command`)
+- Use `EventType.GESTURE.key` in Kotlin to get string value
+
+**Automatic Keyword Conversion**:
+- Transit configured to automatically convert string keys to keywords
+- No manual `keywordize-keys` needed in Clojure handlers
+- Kotlin uses string keys, Clojure receives keyword keys
+
+**Message Validation**:
+- All messages validated with Malli schemas in `potatoclient.specs`
+- Use `potatoclient.transit.validation/validate-message` to check messages
+- Schemas for: command, response, request, log, error, status, metric, event
+
+**Kotlin MessageBuilder**:
+```kotlin
+// In any subprocess
+val messageBuilder = protocol.messageBuilder()
+
+// Send a gesture event
+val message = messageBuilder.gestureEvent(
+    EventType.TAP,
+    timestamp = System.currentTimeMillis(),
+    canvasWidth = 800,
+    canvasHeight = 600,
+    aspectRatio = 1.33,
+    streamType = "heat",
+    additionalData = mapOf("x" to 100, "y" to 200)
+)
+
+// Send a command
+val cmd = messageBuilder.command(
+    "rotary-goto-ndc",
+    mapOf("channel" to "heat", "x" to 0.5, "y" to -0.5)
+)
+```
+
+**Clojure Usage**:
+```clojure
+;; Messages arrive with keyword keys automatically
+(defmethod handle-message :event
+  [_ stream-key payload]
+  (case (:type payload)  ; Already a keyword!
+    "gesture" (handle-gesture (:gesture-type payload))
+    "navigation" (handle-nav payload)))
+
+;; Validate incoming messages
+(let [[valid? errors] (validation/validate-message msg)]
+  (when-not valid?
+    (validation/log-validation-error msg errors)))
+```
+
+For the complete protocol specification, see `TRANSIT_MESSAGE_PROTOCOL_SPEC.md`.
 
 ## UI Utilities
 
@@ -480,6 +580,19 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
 4. Update `tr` function in `i18n.clj` to map new locale
 5. Update menu in `core.clj` with new language option
 
+**Add or Modify Gesture**
+1. Update gesture detection logic in `potatoclient.kotlin.gestures.GestureRecognizer`
+2. Add/modify gesture type in `GestureType.kt` enum
+3. Update handler in `potatoclient.gestures.handler` namespace
+4. Adjust thresholds in `resources/config/gestures.edn` if needed
+5. Add tests for new gesture behavior
+
+**Adjust Pan Speed by Zoom**
+1. Edit `resources/config/gestures.edn` zoom-speed-config section
+2. Modify max-rotation-speed values for each zoom-table-index (0-4)
+3. Adjust curve-steepness for different acceleration curves
+4. Test with different dead-zone-radius values for precision
+
 **Help Menu Features**
 - **About Dialog**: Shows application version, build type (DEVELOPMENT/RELEASE)
 - **View Logs**: Opens log directory in system file explorer
@@ -487,15 +600,16 @@ Unlike debouncing, throttling guarantees regular execution during continuous cal
   - Release: Shows platform-specific user directory (see Logging System)
 
 **Add Event Type**
-1. Define in `potatoclient.kotlin.EventTypes` - Application event constants
+1. Define in `potatoclient.transit.EventType` Java enum with Transit Keyword
 2. Handle in Kotlin subprocess (see [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md#event-system-integration))
-3. Add handler in `potatoclient.events.stream` for processing
+3. Add handler in `potatoclient.events.stream` or `potatoclient.gestures.handler` for processing
 
-**Event Types** (defined in `EventTypes.kt`):
-- `EVENT_NAVIGATION` - Mouse interactions (move, click, drag, wheel)
-- `EVENT_WINDOW` - Window state changes (resize, focus, minimize)
-- `EVENT_FRAME` - Frame timing and rendering events
-- `EVENT_ERROR` - Video stream errors
+**Event Types** (defined in `EventType.java` enum):
+- `NAVIGATION` - Mouse interactions (move, click, drag, wheel)
+- `WINDOW` - Window state changes (resize, focus, minimize)
+- `FRAME` - Frame timing and rendering events
+- `ERROR` - Video stream errors
+- `GESTURE` - Touch gestures (tap, double-tap, pan, swipe)
 
 **Protobuf and Command System**
 See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) for:

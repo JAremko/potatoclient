@@ -116,7 +116,7 @@
         (try
           (let [framed-input (framed-io/make-framed-input-stream input-stream)
                 reader (transit-core/make-reader framed-input)
-                read-fn (fn [] (transit-core/read-message reader))]
+                read-fn (fn [] (transit-core/read-message-keywordized reader))]
             (loop []
               (when-let [msg (try
                                (read-fn)

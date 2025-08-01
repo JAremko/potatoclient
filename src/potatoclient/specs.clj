@@ -200,7 +200,9 @@
    ;; Mouse events
    :mouse-click :mouse-press :mouse-release :mouse-move
    :mouse-drag-start :mouse-drag :mouse-drag-end
-   :mouse-enter :mouse-exit :mouse-wheel])
+   :mouse-enter :mouse-exit :mouse-wheel
+   ;; Gesture events
+   :gesture])
 
 (def x-coord
   "X coordinate in pixels"
@@ -251,6 +253,54 @@
    [:button {:optional true} mouse-button]
    [:clickCount {:optional true} click-count]
    [:wheelRotation {:optional true} wheel-rotation]])
+
+;; -----------------------------------------------------------------------------
+;; Gesture Schemas
+;; -----------------------------------------------------------------------------
+
+(def gesture-type
+  "Gesture event types"
+  [:enum "tap" "doubletap" "panstart" "panmove" "panstop" "swipe"])
+
+(def swipe-direction
+  "Swipe gesture direction"
+  [:enum "up" "down" "left" "right"])
+
+(def rotary-direction-keyword
+  "Rotary platform direction as keyword"
+  [:enum :clockwise :counter-clockwise])
+
+(def gesture-event
+  "Gesture event structure"
+  [:map
+   [:type [:= "gesture"]]
+   [:gesture-type gesture-type]
+   [:timestamp int?]
+   [:canvas-width int?]
+   [:canvas-height int?]
+   [:aspect-ratio number?]
+   [:stream-type string?]
+   [:x {:optional true} int?]
+   [:y {:optional true} int?]
+   [:ndc-x {:optional true} number?]
+   [:ndc-y {:optional true} number?]
+   [:delta-x {:optional true} int?]
+   [:delta-y {:optional true} int?]
+   [:ndc-delta-x {:optional true} number?]
+   [:ndc-delta-y {:optional true} number?]
+   [:direction {:optional true} swipe-direction]
+   [:distance {:optional true} int?]
+   [:frame-timestamp {:optional true} int?]
+   [:frame-duration {:optional true} int?]])
+
+(def speed-config
+  "Rotation speed configuration"
+  [:map
+   [:max-rotation-speed number?]
+   [:min-rotation-speed number?]
+   [:ndc-threshold number?]
+   [:dead-zone-radius number?]
+   [:curve-steepness number?]])
 
 ;; -----------------------------------------------------------------------------
 ;; Java Interop Schemas
@@ -690,6 +740,13 @@
      ::wheel-rotation wheel-rotation
      ::window-event window-event
      ::navigation-event navigation-event
+     
+     ;; Gesture schemas
+     ::gesture-type gesture-type
+     ::swipe-direction swipe-direction
+     ::rotary-direction-keyword rotary-direction-keyword
+     ::gesture-event gesture-event
+     ::speed-config speed-config
 
     ;; Java interop
      ::file file
@@ -806,11 +863,154 @@
    [:shutting-down? {:optional true} [:fn {:error/message "must be an atom"}
                                       #(instance? clojure.lang.Atom %)]]])
 
+;; -----------------------------------------------------------------------------
+;; Transit Message Protocol Schemas
+;; -----------------------------------------------------------------------------
+
+(def message-type
+  "Valid message types from MessageType enum"
+  [:enum "command" "response" "request" "log" "error" "status" "metric" "event"
+   "state-update" "state-partial" "stream-ready" "stream-error" "stream-closed"])
+
+(def message-envelope
+  "Standard message envelope for all Transit messages"
+  [:map
+   [:msg-type message-type]
+   [:msg-id uuid?]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def command-payload
+  "Command message payload"
+  [:map
+   [:action string?]
+   [:params {:optional true} map?]])
+
+(def response-payload
+  "Response message payload"
+  [:map
+   [:status string?]
+   [:action string?]
+   [:data {:optional true} map?]])
+
+(def request-payload
+  "Request message payload"
+  [:map
+   [:action string?]
+   [:process {:optional true} string?]
+   [:data {:optional true} map?]])
+
+(def log-payload
+  "Log message payload"
+  [:map
+   [:level [:enum "DEBUG" "INFO" "WARN" "ERROR"]]
+   [:message string?]
+   [:process {:optional true} string?]])
+
+(def error-payload
+  "Error message payload"
+  [:map
+   [:context string?]
+   [:error {:optional true} string?]
+   [:class {:optional true} string?]
+   [:stackTrace {:optional true} string?]
+   [:process {:optional true} string?]])
+
+(def metric-payload
+  "Metric message payload"
+  [:map
+   [:name string?]
+   [:value any?]
+   [:process {:optional true} string?]])
+
+(def status-payload
+  "Status message payload"
+  [:map
+   [:status string?]
+   [:process {:optional true} string?]
+   ;; Additional fields allowed
+   ])
+
+(def event-payload
+  "Base event payload"
+  [:map
+   [:type string?]
+   [:process {:optional true} string?]
+   ;; Additional fields based on event type
+   ])
+
+(def navigation-event-payload
+  "Navigation event payload"
+  [:map
+   [:type [:= "navigation"]]
+   [:navType [:enum "mouse-move" "mouse-click" "mouse-drag" "mouse-wheel"]]
+   [:x int?]
+   [:y int?]
+   [:canvasWidth pos-int?]
+   [:canvasHeight pos-int?]
+   [:ndcX number?]
+   [:ndcY number?]
+   [:frameTimestamp {:optional true} pos-int?]
+   [:frameDuration {:optional true} pos-int?]
+   [:process {:optional true} string?]])
+
+(def window-event-payload
+  "Window event payload"
+  [:map
+   [:type [:= "window"]]
+   [:window-type [:enum "resize" "move" "focus" "minimize" "maximize" "restore" "close"]]
+   [:windowState {:optional true} int?]
+   [:x {:optional true} int?]
+   [:y {:optional true} int?]
+   [:width {:optional true} pos-int?]
+   [:height {:optional true} pos-int?]
+   [:process {:optional true} string?]])
+
+(def command-message
+  "Complete command message"
+  [:map
+   [:msg-type [:= "command"]]
+   [:msg-id uuid?]
+   [:timestamp pos-int?]
+   [:payload command-payload]])
+
+(def response-message
+  "Complete response message"
+  [:map
+   [:msg-type [:= "response"]]
+   [:msg-id uuid?]
+   [:timestamp pos-int?]
+   [:payload response-payload]])
+
+(def event-message
+  "Complete event message"
+  [:map
+   [:msg-type [:= "event"]]
+   [:msg-id uuid?]
+   [:timestamp pos-int?]
+   [:payload event-payload]])
+
 ;; Update registry with transit schemas
 (def updated-registry
   "Registry with additional Transit subprocess schemas."
   (assoc registry
-         :potatoclient.specs/transit-subprocess transit-subprocess))
+         :potatoclient.specs/transit-subprocess transit-subprocess
+         :potatoclient.specs/message-type message-type
+         :potatoclient.specs/message-envelope message-envelope
+         :potatoclient.specs/command-payload command-payload
+         :potatoclient.specs/response-payload response-payload
+         :potatoclient.specs/request-payload request-payload
+         :potatoclient.specs/log-payload log-payload
+         :potatoclient.specs/error-payload error-payload
+         :potatoclient.specs/metric-payload metric-payload
+         :potatoclient.specs/status-payload status-payload
+         :potatoclient.specs/event-payload event-payload
+         :potatoclient.specs/navigation-event-payload navigation-event-payload
+         :potatoclient.specs/gesture-event-payload gesture-event
+         :potatoclient.specs/window-event-payload window-event-payload
+         :potatoclient.specs/command-message command-message
+         :potatoclient.specs/response-message response-message
+         :potatoclient.specs/event-message event-message))
 
 ;; Set as default registry for this namespace
 (mr/set-default-registry! updated-registry)
