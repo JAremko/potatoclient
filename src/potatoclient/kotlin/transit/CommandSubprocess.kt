@@ -33,7 +33,7 @@ class CommandSubprocess(
 ) {
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
-    private val cmdBuilder = SimpleCommandBuilder() // Keep for fallback
+    private val cmdBuilder = SimpleCommandBuilder() // Keep for now until builders are fixed
 
     // Metrics
     private val totalReceived = AtomicInteger(0)

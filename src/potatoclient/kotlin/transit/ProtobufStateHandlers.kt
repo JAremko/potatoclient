@@ -13,13 +13,13 @@ import ser.JonSharedDataSystem
 import ser.JonSharedDataTime
 
 /**
- * Simplified Transit write handlers for protobuf messages.
- * These handlers convert protobuf objects to Transit-compatible maps.
+ * Transit write handlers for protobuf state messages.
+ * These handlers convert protobuf state objects to Transit-compatible maps.
  *
  * Note: We always include all fields without checking for presence,
  * as the protobuf classes don't have has methods.
  */
-object SimpleProtobufHandlers {
+object ProtobufStateHandlers {
     /**
      * Create all protobuf write handlers
      */
