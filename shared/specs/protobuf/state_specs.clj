@@ -1,7 +1,8 @@
 (ns protobuf.state-specs
   "Malli specifications for state (ser.*) protobuf messages"
   (:require [malli.core :as m]
-            [malli.generator :as mg]))
+            [malli.generator :as mg]
+            [protobuf.malli-oneof :as oneof]))
 
 ;; Generated from protobuf definitions
 ;; NOTE: These specs are automatically generated and may not include
@@ -9,9 +10,13 @@
 
 (def registry
   "Malli registry for protobuf messages"
-  {
-   :ser/JonGUIState
-   [:map
+  (merge
+   ;; Include the custom :oneof schema type
+   {:oneof oneof/-oneof-schema}
+   ;; Generated specs
+   {
+    :ser/JonGUIState
+    [:map
  {:closed true}
  [:system {:optional true} [:maybe [:ref :message]]]
  [:camera_heat {:optional true} [:maybe [:ref :message]]]
@@ -29,8 +34,8 @@
  [:protocol_version {:optional true} [:maybe [:int {:min 0}]]]]
 
 
-   :ser/JonGuiDataActualSpaceTime
-   [:map
+    :ser/JonGuiDataActualSpaceTime
+    [:map
  {:closed true}
  [:azimuth {:optional true} [:maybe :double]]
  [:elevation {:optional true} [:maybe :double]]
@@ -41,8 +46,8 @@
  [:timestamp {:optional true} [:maybe :int]]]
 
 
-   :ser/JonGuiDataCameraDay
-   [:map
+    :ser/JonGuiDataCameraDay
+    [:map
  {:closed true}
  [:iris_pos {:optional true} [:maybe :double]]
  [:zoom_table_pos_max {:optional true} [:maybe :int]]
@@ -57,8 +62,8 @@
  [:auto_focus {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataCameraHeat
-   [:map
+    :ser/JonGuiDataCameraHeat
+    [:map
  {:closed true}
  [:agc_mode {:optional true} [:maybe [:ref :enum]]]
  [:zoom_table_pos_max {:optional true} [:maybe :int]]
@@ -73,8 +78,8 @@
  [:auto_focus {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataCompass
-   [:map
+    :ser/JonGuiDataCompass
+    [:map
  {:closed true}
  [:azimuth {:optional true} [:maybe :double]]
  [:elevation {:optional true} [:maybe :double]]
@@ -85,8 +90,8 @@
  [:calibrating {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataCompassCalibration
-   [:map
+    :ser/JonGuiDataCompassCalibration
+    [:map
  {:closed true}
  [:stage {:optional true} [:maybe [:int {:min 0}]]]
  [:final_stage {:optional true} [:maybe [:int {:min 0}]]]
@@ -96,15 +101,15 @@
  [:status {:optional true} [:maybe [:ref :enum]]]]
 
 
-   :ser/JonGuiDataDayCamGlassHeater
-   [:map
+    :ser/JonGuiDataDayCamGlassHeater
+    [:map
  {:closed true}
  [:temperature {:optional true} [:maybe :double]]
  [:status {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataGps
-   [:map
+    :ser/JonGuiDataGps
+    [:map
  {:closed true}
  [:longitude {:optional true} [:maybe :double]]
  [:latitude {:optional true} [:maybe :double]]
@@ -116,8 +121,8 @@
  [:use_manual {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataLrf
-   [:map
+    :ser/JonGuiDataLrf
+    [:map
  {:closed true}
  [:is_scanning {:optional true} [:maybe :boolean]]
  [:is_measuring {:optional true} [:maybe :boolean]]
@@ -128,16 +133,16 @@
  [:is_refining {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataMeteo
-   [:map
+    :ser/JonGuiDataMeteo
+    [:map
  {:closed true}
  [:temperature {:optional true} [:maybe :double]]
  [:humidity {:optional true} [:maybe :double]]
  [:pressure {:optional true} [:maybe :double]]]
 
 
-   :ser/JonGuiDataRecOsd
-   [:map
+    :ser/JonGuiDataRecOsd
+    [:map
  {:closed true}
  [:screen {:optional true} [:maybe [:ref :enum]]]
  [:heat_osd_enabled {:optional true} [:maybe :boolean]]
@@ -148,8 +153,8 @@
  [:day_crosshair_offset_vertical {:optional true} [:maybe :int]]]
 
 
-   :ser/JonGuiDataRotary
-   [:map
+    :ser/JonGuiDataRotary
+    [:map
  {:closed true}
  [:platform_bank {:optional true} [:maybe :double]]
  [:elevation {:optional true} [:maybe :double]]
@@ -170,8 +175,8 @@
  [:current_scan_node {:optional true} [:maybe [:ref :message]]]]
 
 
-   :ser/JonGuiDataSystem
-   [:map
+    :ser/JonGuiDataSystem
+    [:map
  {:closed true}
  [:cur_video_rec_dir_month {:optional true} [:maybe :int]]
  [:vampire_mode {:optional true} [:maybe :boolean]]
@@ -197,8 +202,8 @@
  [:no_disk_space {:optional true} [:maybe :boolean]]]
 
 
-   :ser/JonGuiDataTarget
-   [:map
+    :ser/JonGuiDataTarget
+    [:map
  {:closed true}
  [:distance_2d {:optional true} [:maybe :double]]
  [:observer_longitude {:optional true} [:maybe :double]]
@@ -223,8 +228,8 @@
  [:uuid_part2 {:optional true} [:maybe :int]]]
 
 
-   :ser/JonGuiDataTime
-   [:map
+    :ser/JonGuiDataTime
+    [:map
  {:closed true}
  [:timestamp {:optional true} [:maybe :int]]
  [:manual_timestamp {:optional true} [:maybe :int]]
@@ -232,16 +237,16 @@
  [:use_manual_time {:optional true} [:maybe :boolean]]]
 
 
-   :ser/RgbColor
-   [:map
+    :ser/RgbColor
+    [:map
  {:closed true}
  [:red {:optional true} [:maybe [:int {:min 0}]]]
  [:green {:optional true} [:maybe [:int {:min 0}]]]
  [:blue {:optional true} [:maybe [:int {:min 0}]]]]
 
 
-   :ser/ScanNode
-   [:map
+    :ser/ScanNode
+    [:map
  {:closed true}
  [:index {:optional true} [:maybe :int]]
  [:DayZoomTableValue {:optional true} [:maybe :int]]
@@ -250,7 +255,7 @@
  [:elevation {:optional true} [:maybe :double]]
  [:linger {:optional true} [:maybe :double]]
  [:speed {:optional true} [:maybe :double]]]
-})
+   }))
 
 (def schema
   "Schema with registry"
