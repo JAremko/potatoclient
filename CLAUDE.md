@@ -23,6 +23,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - **Transit Protocol**: [.claude/transit-protocol.md](.claude/transit-protocol.md) - Message protocol specification (keywords everywhere!)
 - **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
+- **Proto Explorer**: [tools/proto-explorer/README.md](tools/proto-explorer/README.md) - Malli spec generation from protobuf
 - **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
 - **TODO and Technical Debt**: [TODO_AGGREGATED.md](TODO_AGGREGATED.md) - Comprehensive tracking of all pending work
 
@@ -32,7 +33,8 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 
 **Key requirements**:
 - Every function must use `>defn` or `>defn-` (never raw `defn`)
-- All schemas must be defined in `potatoclient.specs` namespace
+- All data schemas must be defined in `potatoclient.specs` namespace
+- Generated protobuf specs are in `potatoclient.specs.*` namespaces
 - Function instrumentation goes in `potatoclient.instrumentation` (excluded from AOT)
 - Use `make report-unspecced` to find functions missing Guardrails
 
@@ -1558,6 +1560,108 @@ The application detects build type via `potatoclient.runtime/release-build?` whi
 1. System property: `potatoclient.release`
 2. Environment variable: `POTATOCLIENT_RELEASE`
 3. Embedded `RELEASE` marker file (in release JARs)
+
+## Proto Explorer and Malli Specs
+
+PotatoClient uses the **Proto Explorer** tool to generate comprehensive Malli specifications from Protocol Buffer definitions. This provides compile-time validation, constraint-aware test data generation, and eliminates runtime protobuf reflection.
+
+### Architecture
+
+Proto Explorer uses a JSON-based architecture:
+1. **Protogen** generates protobuf classes and JSON descriptors using Buf CLI
+2. **Proto Explorer** converts JSON descriptors → EDN → Malli specs with constraints
+3. **Specs** are exported to `shared/specs/protobuf/` for use in the main application
+
+### Key Features
+
+- **Complete buf.validate Support**: All constraints are extracted and applied to specs
+- **Constraint-Aware Generation**: Test data respects all validation rules
+- **Idiomatic Clojure**: Automatic kebab-case conversion for all names
+- **No Runtime Reflection**: Specs are pre-generated at build time
+- **Property-Based Testing**: Generators produce valid data for property tests
+
+### Using Generated Specs
+
+```clojure
+;; Require the generated specs
+(require '[potatoclient.specs.cmd :as cmd])
+(require '[potatoclient.specs.cmd.RotaryPlatform :as rotary])
+(require '[malli.core :as m])
+(require '[malli.generator :as mg])
+
+;; Validate commands
+(m/validate cmd/Root {:protocol-version 1 :cmd {:ping {}}})
+;; => true
+
+;; Get validation errors
+(m/explain rotary/set-azimuth-value {:value 400})
+;; => {:errors [{:path [:value], :in [:value], :schema [:< 360], :value 400}]}
+
+;; Generate constraint-aware test data
+(mg/generate rotary/set-azimuth-value)
+;; => {:value 234.5 :direction 1}  ; value always 0-360, direction never 0
+```
+
+### Constraint Examples
+
+Specs include all buf.validate constraints:
+
+```clojure
+;; SetAzimuthValue: value must be [0, 360), direction cannot be 0
+potatoclient.specs.cmd.RotaryPlatform/set-azimuth-value
+;; => [:map 
+;;     [:value [:and [:maybe :double] [:>= 0] [:< 360]]]
+;;     [:direction [:and [:maybe :potatoclient.specs.ser/jon-gui-data-rotary-direction]
+;;                  [:not [:enum [0]]]]]]
+
+;; SetElevationValue: value must be [-90, 90]
+potatoclient.specs.cmd.RotaryPlatform/set-elevation-value
+;; => [:map [:value [:and [:maybe :double] [:>= -90] [:<= 90]]]]
+```
+
+### Proto Explorer CLI
+
+Proto Explorer provides a Babashka CLI for querying specs:
+
+```bash
+cd tools/proto-explorer
+
+# Find specs by pattern
+bb find rotary
+
+# Get spec definition
+bb spec :cmd.RotaryPlatform/set-velocity
+
+# Generate example data
+bb example :cmd.RotaryPlatform/set-azimuth-value
+# => {:spec :cmd.RotaryPlatform/set-azimuth-value
+#     :example {:value 245.7 :direction 1}}
+
+# Generate multiple examples
+bb examples :cmd.RotaryPlatform/set-elevation-value 5
+```
+
+### Regenerating Specs
+
+After protobuf changes:
+
+```bash
+cd tools/proto-explorer
+make proto          # Generate proto files and JSON descriptors
+make generate-specs # Convert to Malli specs
+```
+
+### Benefits
+
+1. **Type Safety**: All protobuf messages have corresponding Malli specs
+2. **Validation**: Commands are validated before sending to Kotlin subprocesses
+3. **Test Data**: Generated examples always respect constraints
+4. **Documentation**: Specs serve as living documentation
+5. **Performance**: No runtime reflection or protobuf class loading
+
+For detailed documentation, see:
+- [Proto Explorer README](tools/proto-explorer/README.md)
+- [Generated Specs README](shared/specs/protobuf/README.md)
 
 ## Technical Details
 
