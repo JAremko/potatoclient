@@ -218,19 +218,20 @@ class TransitCommunicator(
         handlers: Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>? = null,
     ): Writer<Any> {
         // Create writer with optional custom handlers
-        val writer = if (handlers != null) {
-            TransitFactory.writer<Any>(
-                TransitFactory.Format.MSGPACK,
-                out,
-                TransitFactory.writeHandlerMap(handlers),
-            )
-        } else {
-            TransitFactory.writer<Any>(
-                TransitFactory.Format.MSGPACK,
-                out,
-                null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?,
-            )
-        }
+        val writer =
+            if (handlers != null) {
+                TransitFactory.writer<Any>(
+                    TransitFactory.Format.MSGPACK,
+                    out,
+                    TransitFactory.writeHandlerMap(handlers),
+                )
+            } else {
+                TransitFactory.writer<Any>(
+                    TransitFactory.Format.MSGPACK,
+                    out,
+                    null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?,
+                )
+            }
         return writer
     }
 

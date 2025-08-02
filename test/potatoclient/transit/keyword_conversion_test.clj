@@ -13,7 +13,7 @@
       (is (kw-handlers/enum-string? "tap"))
       (is (kw-handlers/enum-string? "doubletap"))
       (is (kw-handlers/enum-string? "up")))
-    
+
     (testing "Invalid enum strings"
       (is (not (kw-handlers/enum-string? "Hello World")))
       (is (not (kw-handlers/enum-string? "UPPERCASE")))
@@ -27,7 +27,7 @@
       (is (= :command (kw-handlers/convert-enums-to-keywords "command")))
       (is (= :heat (kw-handlers/convert-enums-to-keywords "heat")))
       (is (= "Hello World" (kw-handlers/convert-enums-to-keywords "Hello World"))))
-    
+
     (testing "Map conversion"
       (let [input {"msg-type" "command"
                    "action" "rotary-goto-ndc"
@@ -38,18 +38,18 @@
                       "stream" :heat
                       "message" "Hello World"}]
         (is (= expected (kw-handlers/convert-enums-to-keywords input)))))
-    
+
     (testing "Nested map conversion"
       (let [input {"type" "event"
                    "payload" {"gesture-type" "tap"
-                             "stream-type" "day"
-                             "direction" "left"}}
+                              "stream-type" "day"
+                              "direction" "left"}}
             expected {"type" :event
                       "payload" {"gesture-type" :tap
-                               "stream-type" :day  
-                               "direction" :left}}]
+                                 "stream-type" :day
+                                 "direction" :left}}]
         (is (= expected (kw-handlers/convert-enums-to-keywords input)))))
-    
+
     (testing "Vector conversion"
       (let [input ["command" "heat" "Hello"]
             expected [:command :heat "Hello"]]
@@ -62,9 +62,9 @@
                       :msg-id "123"
                       :timestamp 1234567890
                       :payload {:action :rotary-goto-ndc
-                               :params {:channel :heat
-                                       :x 0.5
-                                       :y -0.5}}}
+                                :params {:channel :heat
+                                         :x 0.5
+                                         :y -0.5}}}
             ;; Encode and decode through Transit
             encoded (transit-core/encode-to-bytes test-msg)
             decoded (transit-core/decode-from-bytes encoded)]
@@ -72,16 +72,16 @@
         (is (= :command (:msg-type decoded)))
         (is (= :rotary-goto-ndc (get-in decoded [:payload :action])))
         (is (= :heat (get-in decoded [:payload :params :channel])))))
-    
+
     (testing "Gesture event conversion"
       (let [gesture-event {:msg-type :event
-                          :msg-id "456"
-                          :timestamp 1234567890
-                          :payload {:type :gesture
-                                   :gesture-type :doubletap
-                                   :stream-type :day
-                                   :x 100
-                                   :y 200}}
+                           :msg-id "456"
+                           :timestamp 1234567890
+                           :payload {:type :gesture
+                                     :gesture-type :doubletap
+                                     :stream-type :day
+                                     :x 100
+                                     :y 200}}
             encoded (transit-core/encode-to-bytes gesture-event)
             decoded (transit-core/decode-from-bytes encoded)]
         (is (= :event (:msg-type decoded)))

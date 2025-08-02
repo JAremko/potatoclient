@@ -353,8 +353,8 @@
    :state      {:can-send #{:state-update :state-partial :log :error :status}
                 :can-receive #{:request}}
    :main       {:can-send #{:command :request}
-                :can-receive #{:event :log :error :status :metric :state-update 
-                              :state-partial :response}}})
+                :can-receive #{:event :log :error :status :metric :state-update
+                               :state-partial :response}}})
 
 ;; -----------------------------------------------------------------------------
 ;; Message Type Registry
@@ -392,14 +392,14 @@
   [subprocess-type direction msg-type]
   (let [contract (get subprocess-contracts subprocess-type)
         allowed-types (get contract (if (= direction :outgoing)
-                                     :can-send
-                                     :can-receive))]
+                                      :can-send
+                                      :can-receive))]
     (if (contains? allowed-types msg-type)
       [true nil]
       [false {:error :contract-violation
               :message (str subprocess-type " cannot "
-                           (if (= direction :outgoing) "send" "receive")
-                           " " msg-type " messages")
+                            (if (= direction :outgoing) "send" "receive")
+                            " " msg-type " messages")
               :allowed allowed-types}])))
 
 (defn validate-message-type
@@ -411,10 +411,10 @@
       (nil? schema)
       [false {:error :unknown-message-type
               :message (str "No schema defined for message type: " msg-type)}]
-      
+
       (m/validate schema message)
       [true nil]
-      
+
       :else
       [false (me/humanize (m/explain schema message))])))
 
@@ -425,19 +425,19 @@
   ([message subprocess-type direction]
    (let [;; Check structure
          [struct-valid? struct-errors] (validate-message-structure message)
-         
+
          ;; Check contract if subprocess info provided
-         [contract-valid? contract-errors] 
+         [contract-valid? contract-errors]
          (if (and subprocess-type direction)
            (validate-subprocess-contract subprocess-type direction (:msg-type message))
            [true nil])
-         
+
          ;; Check specific message type
-         [type-valid? type-errors] 
+         [type-valid? type-errors]
          (if struct-valid?
            (validate-message-type message)
            [false nil])]
-     
+
      [(and struct-valid? contract-valid? type-valid?)
       (cond-> {}
         struct-errors (assoc :structure struct-errors)
@@ -472,9 +472,9 @@
   (when (development-mode?)
     (let [[valid? errors] (validate-message message subprocess direction)]
       (when-not valid?
-        (log-validation-error message errors 
-                             :subprocess subprocess 
-                             :direction direction))
+        (log-validation-error message errors
+                              :subprocess subprocess
+                              :direction direction))
       [valid? errors])))
 
 ;; -----------------------------------------------------------------------------

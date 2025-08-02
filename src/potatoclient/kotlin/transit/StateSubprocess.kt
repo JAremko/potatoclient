@@ -47,16 +47,15 @@ class StateSubprocess(
     // Metrics
     private val totalReceived = AtomicInteger(0)
     private val totalSent = AtomicInteger(0)
-    
+
     /**
      * Create a properly formatted state update message
      */
-    private fun createStateUpdateMessage(state: Map<String, Any>): Map<String, Any> {
-        return messageProtocol.createMessage(
+    private fun createStateUpdateMessage(state: Map<String, Any>): Map<String, Any> =
+        messageProtocol.createMessage(
             MessageType.STATE_UPDATE,
-            state
+            state,
         )
-    }
 
     suspend fun run() =
         coroutineScope {
@@ -98,8 +97,8 @@ class StateSubprocess(
             transitComm.sendMessageDirect(
                 messageProtocol.createMessage(
                     MessageType.STATE_UPDATE,
-                    stateMap
-                )
+                    stateMap,
+                ),
             )
 
             totalSent.incrementAndGet()
@@ -120,9 +119,9 @@ class StateSubprocess(
                         messageProtocol.createMessage(
                             MessageType.RESPONSE,
                             mapOf(
-                                "status" to "stopped"
-                            )
-                        )
+                                "status" to "stopped",
+                            ),
+                        ),
                     )
                 }
                 wsClient.close()
@@ -145,9 +144,9 @@ class StateSubprocess(
                         MessageType.METRIC,
                         mapOf(
                             "name" to "state-stats",
-                            "value" to stats
-                        )
-                    )
+                            "value" to stats,
+                        ),
+                    ),
                 )
             }
         }
@@ -372,11 +371,12 @@ fun main(args: Array<String>) {
 
         // Create Transit communicator with protobuf write handlers
         val writeHandlers = SimpleProtobufHandlers.createWriteHandlers()
-        val transitComm = TransitCommunicator(
-            System.`in`, 
-            StdoutInterceptor.getOriginalStdout(),
-            writeHandlers
-        )
+        val transitComm =
+            TransitCommunicator(
+                System.`in`,
+                StdoutInterceptor.getOriginalStdout(),
+                writeHandlers,
+            )
         val subprocess = StateSubprocess(wsUrl, transitComm)
         val messageProtocol = TransitMessageProtocol("state", transitComm)
 

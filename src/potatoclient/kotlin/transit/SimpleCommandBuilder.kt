@@ -1,20 +1,20 @@
 package potatoclient.kotlin.transit
 
 import cmd.CV.JonSharedCmdCv
+import cmd.Compass.JonSharedCmdCompass
+import cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater
 import cmd.DayCamera.JonSharedCmdDayCamera
+import cmd.Gps.JonSharedCmdGps
 import cmd.HeatCamera.JonSharedCmdHeatCamera
 import cmd.JonSharedCmd
+import cmd.Lrf.JonSharedCmdLrf
 import cmd.RotaryPlatform.JonSharedCmdRotary
 import cmd.System.JonSharedCmdSystem
-import cmd.Gps.JonSharedCmdGps
-import cmd.Compass.JonSharedCmdCompass
-import cmd.Lrf.JonSharedCmdLrf
-// OSD commands not found in protobuf
-import cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater
 import ser.JonSharedDataTypes
 
 /**
  * Command builder for Transit-based commands with proper error handling
+ * Note: OSD commands not found in protobuf
  */
 class SimpleCommandBuilder {
     /**
@@ -61,9 +61,10 @@ class SimpleCommandBuilder {
                 // Glass heater commands
                 "glass-heater-turn-on" -> Result.success(buildGlassHeaterTurnOn())
                 "glass-heater-turn-off" -> Result.success(buildGlassHeaterTurnOff())
-                else -> Result.failure(
-                    IllegalArgumentException("Unknown command action: $action")
-                )
+                else ->
+                    Result.failure(
+                        IllegalArgumentException("Unknown command action: $action"),
+                    )
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -98,24 +99,27 @@ class SimpleCommandBuilder {
     private fun buildRotaryGotoNDC(params: Map<*, *>?): Result<JonSharedCmd.Root> {
         if (params == null) {
             return Result.failure(
-                IllegalArgumentException("rotary-goto-ndc requires parameters")
+                IllegalArgumentException("rotary-goto-ndc requires parameters"),
             )
         }
 
-        val channel = params["channel"] as? String
-            ?: return Result.failure(
-                IllegalArgumentException("rotary-goto-ndc missing required parameter: channel")
-            )
-        
-        val x = (params["x"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("rotary-goto-ndc missing required parameter: x")
-            )
-            
-        val y = (params["y"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("rotary-goto-ndc missing required parameter: y")
-            )
+        val channel =
+            params["channel"] as? String
+                ?: return Result.failure(
+                    IllegalArgumentException("rotary-goto-ndc missing required parameter: channel"),
+                )
+
+        val x =
+            (params["x"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("rotary-goto-ndc missing required parameter: x"),
+                )
+
+        val y =
+            (params["y"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("rotary-goto-ndc missing required parameter: y"),
+                )
 
         val rotateToNdc =
             JonSharedCmdRotary.RotateToNDC
@@ -136,27 +140,29 @@ class SimpleCommandBuilder {
                 .newBuilder()
                 .setProtocolVersion(1)
                 .setRotary(rotaryRoot)
-                .build()
+                .build(),
         )
     }
 
     private fun buildRotarySetVelocity(params: Map<*, *>?): Result<JonSharedCmd.Root> {
         if (params == null) {
             return Result.failure(
-                IllegalArgumentException("rotary-set-velocity requires parameters")
+                IllegalArgumentException("rotary-set-velocity requires parameters"),
             )
         }
 
-        val azSpeed = (params["azimuth-speed"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("rotary-set-velocity missing required parameter: azimuth-speed")
-            )
-            
-        val elSpeed = (params["elevation-speed"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("rotary-set-velocity missing required parameter: elevation-speed")
-            )
-            
+        val azSpeed =
+            (params["azimuth-speed"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("rotary-set-velocity missing required parameter: azimuth-speed"),
+                )
+
+        val elSpeed =
+            (params["elevation-speed"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("rotary-set-velocity missing required parameter: elevation-speed"),
+                )
+
         val azDirStr = params["azimuth-direction"] as? String ?: "clockwise"
         val elDirStr = params["elevation-direction"] as? String ?: "clockwise"
 
@@ -219,32 +225,35 @@ class SimpleCommandBuilder {
                 .newBuilder()
                 .setProtocolVersion(1)
                 .setRotary(rotaryRoot)
-                .build()
+                .build(),
         )
     }
 
     private fun buildCVStartTrackNDC(params: Map<*, *>?): Result<JonSharedCmd.Root> {
         if (params == null) {
             return Result.failure(
-                IllegalArgumentException("cv-start-track-ndc requires parameters")
+                IllegalArgumentException("cv-start-track-ndc requires parameters"),
             )
         }
 
-        val channel = params["channel"] as? String
-            ?: return Result.failure(
-                IllegalArgumentException("cv-start-track-ndc missing required parameter: channel")
-            )
-            
-        val x = (params["x"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("cv-start-track-ndc missing required parameter: x")
-            )
-            
-        val y = (params["y"] as? Number)?.toFloat()
-            ?: return Result.failure(
-                IllegalArgumentException("cv-start-track-ndc missing required parameter: y")
-            )
-            
+        val channel =
+            params["channel"] as? String
+                ?: return Result.failure(
+                    IllegalArgumentException("cv-start-track-ndc missing required parameter: channel"),
+                )
+
+        val x =
+            (params["x"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("cv-start-track-ndc missing required parameter: x"),
+                )
+
+        val y =
+            (params["y"] as? Number)?.toFloat()
+                ?: return Result.failure(
+                    IllegalArgumentException("cv-start-track-ndc missing required parameter: y"),
+                )
+
         val frameTimestamp = params["frame-timestamp"] as? Long
 
         val builder =
@@ -268,7 +277,7 @@ class SimpleCommandBuilder {
                 .newBuilder()
                 .setProtocolVersion(1)
                 .setCv(cvRoot)
-                .build()
+                .build(),
         )
     }
 
@@ -359,294 +368,316 @@ class SimpleCommandBuilder {
             .setDayCamera(dayRoot)
             .build()
     }
-    
+
     // System command builders
     private fun buildSystemReboot(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setReboot(JonSharedCmdSystem.Reboot.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setReboot(JonSharedCmdSystem.Reboot.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemPowerOff(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setPowerOff(JonSharedCmdSystem.PowerOff.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setPowerOff(JonSharedCmdSystem.PowerOff.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemResetConfigs(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setResetConfigs(JonSharedCmdSystem.ResetConfigs.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setResetConfigs(JonSharedCmdSystem.ResetConfigs.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemStartAll(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setStartAll(JonSharedCmdSystem.StartALl.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setStartAll(JonSharedCmdSystem.StartALl.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemStopAll(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setStopAll(JonSharedCmdSystem.StopALl.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setStopAll(JonSharedCmdSystem.StopALl.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemMarkRecImportant(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setMarkRecImportant(JonSharedCmdSystem.MarkRecImportant.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setMarkRecImportant(JonSharedCmdSystem.MarkRecImportant.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemUnmarkRecImportant(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setUnmarkRecImportant(JonSharedCmdSystem.UnmarkRecImportant.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setUnmarkRecImportant(JonSharedCmdSystem.UnmarkRecImportant.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemEnterTransport(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setEnterTransport(JonSharedCmdSystem.EnterTransport.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setEnterTransport(JonSharedCmdSystem.EnterTransport.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemEnableGeodesicMode(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setGeodesicModeEnable(JonSharedCmdSystem.EnableGeodesicMode.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setGeodesicModeEnable(JonSharedCmdSystem.EnableGeodesicMode.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemDisableGeodesicMode(): JonSharedCmd.Root {
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setGeodesicModeDisable(JonSharedCmdSystem.DisableGeodesicMode.newBuilder().build())
-            .build()
-            
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setGeodesicModeDisable(JonSharedCmdSystem.DisableGeodesicMode.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setSystem(systemRoot)
             .build()
     }
-    
+
     private fun buildSystemSetLocalization(params: Map<*, *>?): Result<JonSharedCmd.Root> {
         if (params == null) {
             return Result.failure(
-                IllegalArgumentException("system-set-localization requires parameters")
+                IllegalArgumentException("system-set-localization requires parameters"),
             )
         }
-        
-        val localization = params["localization"] as? String
-            ?: return Result.failure(
-                IllegalArgumentException("system-set-localization missing required parameter: localization")
-            )
-            
+
+        val localization =
+            params["localization"] as? String
+                ?: return Result.failure(
+                    IllegalArgumentException("system-set-localization missing required parameter: localization"),
+                )
+
         val loc = parseLocalization(localization)
-        
-        val setLocalization = JonSharedCmdSystem.SetLocalization
-            .newBuilder()
-            .setLoc(loc)
-            .build()
-            
-        val systemRoot = JonSharedCmdSystem.Root
-            .newBuilder()
-            .setLocalization(setLocalization)
-            .build()
-            
+
+        val setLocalization =
+            JonSharedCmdSystem.SetLocalization
+                .newBuilder()
+                .setLoc(loc)
+                .build()
+
+        val systemRoot =
+            JonSharedCmdSystem.Root
+                .newBuilder()
+                .setLocalization(setLocalization)
+                .build()
+
         return Result.success(
             JonSharedCmd.Root
                 .newBuilder()
                 .setProtocolVersion(1)
                 .setSystem(systemRoot)
-                .build()
+                .build(),
         )
     }
-    
+
     // GPS command builders
     private fun buildGpsStart(): JonSharedCmd.Root {
-        val gpsRoot = JonSharedCmdGps.Root
-            .newBuilder()
-            .setStart(JonSharedCmdGps.Start.newBuilder().build())
-            .build()
-            
+        val gpsRoot =
+            JonSharedCmdGps.Root
+                .newBuilder()
+                .setStart(JonSharedCmdGps.Start.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setGps(gpsRoot)
             .build()
     }
-    
+
     private fun buildGpsStop(): JonSharedCmd.Root {
-        val gpsRoot = JonSharedCmdGps.Root
-            .newBuilder()
-            .setStop(JonSharedCmdGps.Stop.newBuilder().build())
-            .build()
-            
+        val gpsRoot =
+            JonSharedCmdGps.Root
+                .newBuilder()
+                .setStop(JonSharedCmdGps.Stop.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setGps(gpsRoot)
             .build()
     }
-    
+
     // Compass command builders
     private fun buildCompassStart(): JonSharedCmd.Root {
-        val compassRoot = JonSharedCmdCompass.Root
-            .newBuilder()
-            .setStart(JonSharedCmdCompass.Start.newBuilder().build())
-            .build()
-            
+        val compassRoot =
+            JonSharedCmdCompass.Root
+                .newBuilder()
+                .setStart(JonSharedCmdCompass.Start.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setCompass(compassRoot)
             .build()
     }
-    
+
     private fun buildCompassStop(): JonSharedCmd.Root {
-        val compassRoot = JonSharedCmdCompass.Root
-            .newBuilder()
-            .setStop(JonSharedCmdCompass.Stop.newBuilder().build())
-            .build()
-            
+        val compassRoot =
+            JonSharedCmdCompass.Root
+                .newBuilder()
+                .setStop(JonSharedCmdCompass.Stop.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setCompass(compassRoot)
             .build()
     }
-    
+
     // LRF command builders
     private fun buildLrfMeasure(): JonSharedCmd.Root {
-        val lrfRoot = JonSharedCmdLrf.Root
-            .newBuilder()
-            .setMeasure(JonSharedCmdLrf.Measure.newBuilder().build())
-            .build()
-            
+        val lrfRoot =
+            JonSharedCmdLrf.Root
+                .newBuilder()
+                .setMeasure(JonSharedCmdLrf.Measure.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setLrf(lrfRoot)
             .build()
     }
-    
+
     private fun buildLrfStart(): JonSharedCmd.Root {
-        val lrfRoot = JonSharedCmdLrf.Root
-            .newBuilder()
-            .setStart(JonSharedCmdLrf.Start.newBuilder().build())
-            .build()
-            
+        val lrfRoot =
+            JonSharedCmdLrf.Root
+                .newBuilder()
+                .setStart(JonSharedCmdLrf.Start.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setLrf(lrfRoot)
             .build()
     }
-    
+
     private fun buildLrfStop(): JonSharedCmd.Root {
-        val lrfRoot = JonSharedCmdLrf.Root
-            .newBuilder()
-            .setStop(JonSharedCmdLrf.Stop.newBuilder().build())
-            .build()
-            
+        val lrfRoot =
+            JonSharedCmdLrf.Root
+                .newBuilder()
+                .setStop(JonSharedCmdLrf.Stop.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setLrf(lrfRoot)
             .build()
     }
-    
+
     // OSD commands removed - not found in actual protobuf
-    
+
     // Glass heater command builders
     private fun buildGlassHeaterTurnOn(): JonSharedCmd.Root {
-        val heaterRoot = JonSharedCmdDayCamGlassHeater.Root
-            .newBuilder()
-            .setTurnOn(JonSharedCmdDayCamGlassHeater.TurnOn.newBuilder().build())
-            .build()
-            
+        val heaterRoot =
+            JonSharedCmdDayCamGlassHeater.Root
+                .newBuilder()
+                .setTurnOn(JonSharedCmdDayCamGlassHeater.TurnOn.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setDayCamGlassHeater(heaterRoot)
             .build()
     }
-    
+
     private fun buildGlassHeaterTurnOff(): JonSharedCmd.Root {
-        val heaterRoot = JonSharedCmdDayCamGlassHeater.Root
-            .newBuilder()
-            .setTurnOff(JonSharedCmdDayCamGlassHeater.TurnOff.newBuilder().build())
-            .build()
-            
+        val heaterRoot =
+            JonSharedCmdDayCamGlassHeater.Root
+                .newBuilder()
+                .setTurnOff(JonSharedCmdDayCamGlassHeater.TurnOff.newBuilder().build())
+                .build()
+
         return JonSharedCmd.Root
             .newBuilder()
             .setProtocolVersion(1)
             .setDayCamGlassHeater(heaterRoot)
             .build()
     }
-    
+
     // Helper functions for parsing enums
     private fun parseLocalization(locStr: String): JonSharedDataTypes.JonGuiDataSystemLocalizations =
         when (locStr.lowercase()) {

@@ -68,7 +68,7 @@
 (def rotary-command
   "Rotary command structure"
   [:map
-   [:action [:enum 
+   [:action [:enum
              :rotary-halt
              :rotary-start
              :rotary-stop

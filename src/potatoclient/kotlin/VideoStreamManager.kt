@@ -384,8 +384,8 @@ class VideoStreamManager(
                 EventType.WINDOW,
                 mapOf(
                     MessageKeys.TYPE to EventType.CLOSE,
-                    MessageKeys.STREAM_ID to streamId
-                )
+                    MessageKeys.STREAM_ID to streamId,
+                ),
             )
             // Don't stop immediately - let the main process handle shutdown
         } else {

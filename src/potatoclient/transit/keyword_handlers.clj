@@ -19,10 +19,10 @@
        ;; Must be lowercase with optional dashes
        (re-matches #"^[a-z][a-z0-9-]*$" s)
        ;; And match known enum patterns
-       (or 
+       (or
          ;; Message types
          (#{"command" "response" "request" "log" "error" "status" "metric" "event"
-            "navigation" "window" "frame" "state-update" "state-partial" 
+            "navigation" "window" "frame" "state-update" "state-partial"
             "stream-ready" "stream-error" "stream-closed"} s)
          ;; Event types  
          (#{"gesture" "close" "tap" "doubletap" "panstart" "panmove" "panstop" "swipe"} s)
@@ -45,17 +45,17 @@
   (cond
     ;; Not a string - pass through
     (not (string? value)) false
-    
+
     ;; UUID pattern - keep as string
     (re-matches #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" value) false
-    
+
     ;; In a text-preserving context and this is the text field
     (and (= (:key context) :text)
          (contains? text-preserving-message-types (:msg-type context))) false
-    
+
     ;; Looks like an enum value
     (enum-string? value) true
-    
+
     ;; Default: keep as string
     :else false))
 
@@ -72,29 +72,29 @@
   "Creates a Transit writer for the Kotlin side that handles enums properly"
   [format]
   (transit/writer format
-    {:handlers
-     {;; Java enums write as their string representation
-      java.lang.Enum
-      (transit/write-handler
-        "enum"
-        (fn [e] (.name e))
-        str)
-      
+                  {:handlers
+                   {;; Java enums write as their string representation
+                    java.lang.Enum
+                    (transit/write-handler
+                      "enum"
+                      (fn [e] (.name e))
+                      str)
+
       ;; Clojure keywords write as strings for Kotlin
-      clojure.lang.Keyword
-      (transit/write-handler
-        "kw"
-        name
-        str)}}))
+                    clojure.lang.Keyword
+                    (transit/write-handler
+                      "kw"
+                      name
+                      str)}}))
 
 (defn create-keyword-reader
   "Creates a Transit reader that automatically converts appropriate strings to keywords"
   [format]
   (transit/reader format
-    {:handlers
-     {"?" (create-keywordizing-read-handler)
-      "enum" (transit/read-handler keyword)
-      "kw" (transit/read-handler keyword)}}))
+                  {:handlers
+                   {"?" (create-keywordizing-read-handler)
+                    "enum" (transit/read-handler keyword)
+                    "kw" (transit/read-handler keyword)}}))
 
 ;; Example usage functions
 (defn write-for-kotlin
@@ -125,15 +125,15 @@
                     k)
                   (convert-enums-to-keywords v)])
                data))
-    
+
     (sequential? data)
     (mapv convert-enums-to-keywords data)
-    
+
     (string? data)
     (if (enum-string? data)
       (keyword data)
       data)
-    
+
     :else data))
 
 ;; Testing the conversion logic
@@ -142,12 +142,12 @@
   (should-keywordize? {} "heat") ;=> true
   (should-keywordize? {} "window-close") ;=> true
   (should-keywordize? {} "double-tap") ;=> true
-  
+
   ;; These should stay as strings
   (should-keywordize? {} "Hello World") ;=> false
   (should-keywordize? {} "123e4567-e89b-12d3-a456-426614174000") ;=> false
   (should-keywordize? {:key :text :msg-type :log} "This is log text") ;=> false
-  
+
   ;; Round trip test
   (let [data {:msg-type "command"
               :action "rotary-goto-ndc"

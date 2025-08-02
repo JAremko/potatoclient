@@ -83,15 +83,15 @@
     :window (stream-events/handle-window-event payload)
     :gesture (potatoclient.gestures.handler/handle-gesture-event payload)
     :frame (logging/log-debug
-              {:id ::frame-event
-               :data {:stream stream-key
-                      :payload payload}
-               :msg "Frame event received"})
+             {:id ::frame-event
+              :data {:stream stream-key
+                     :payload payload}
+              :msg "Frame event received"})
     :error (logging/log-error
-              {:id ::video-stream-error
-               :data {:stream stream-key
-                      :payload payload}
-               :msg "Video stream error event"})
+             {:id ::video-stream-error
+              :data {:stream stream-key
+                     :payload payload}
+              :msg "Video stream error event"})
     ;; Log unknown event types
     (logging/log-warn
       {:id ::unknown-event-type

@@ -20,14 +20,14 @@
   (let [event-type (get-in message [:payload :type])]
     (case event-type
       :navigation (validate-with-schema
-                     (:payload message)
-                     ::specs/navigation-event-payload)
+                    (:payload message)
+                    ::specs/navigation-event-payload)
       :gesture (validate-with-schema
-                  (:payload message)
-                  ::specs/gesture-event-payload)
-      :window (validate-with-schema
                  (:payload message)
-                 ::specs/window-event-payload)
+                 ::specs/gesture-event-payload)
+      :window (validate-with-schema
+                (:payload message)
+                ::specs/window-event-payload)
       ;; For other event types, just validate basic structure
       (validate-with-schema message ::specs/event-message))))
 
@@ -40,35 +40,35 @@
       :command (validate-with-schema message ::specs/command-message)
       :response (validate-with-schema message ::specs/response-message)
       :request (validate-with-schema message
-                                      [:map
-                                       [:msg-type [:= :request]]
-                                       [:msg-id uuid?]
-                                       [:timestamp pos-int?]
-                                       [:payload ::specs/request-payload]])
+                                     [:map
+                                      [:msg-type [:= :request]]
+                                      [:msg-id uuid?]
+                                      [:timestamp pos-int?]
+                                      [:payload ::specs/request-payload]])
       :log (validate-with-schema message
-                                  [:map
-                                   [:msg-type [:= :log]]
-                                   [:msg-id uuid?]
-                                   [:timestamp pos-int?]
-                                   [:payload ::specs/log-payload]])
+                                 [:map
+                                  [:msg-type [:= :log]]
+                                  [:msg-id uuid?]
+                                  [:timestamp pos-int?]
+                                  [:payload ::specs/log-payload]])
       :error (validate-with-schema message
+                                   [:map
+                                    [:msg-type [:= :error]]
+                                    [:msg-id uuid?]
+                                    [:timestamp pos-int?]
+                                    [:payload ::specs/error-payload]])
+      :status (validate-with-schema message
                                     [:map
-                                     [:msg-type [:= :error]]
+                                     [:msg-type [:= :status]]
                                      [:msg-id uuid?]
                                      [:timestamp pos-int?]
-                                     [:payload ::specs/error-payload]])
-      :status (validate-with-schema message
-                                     [:map
-                                      [:msg-type [:= :status]]
-                                      [:msg-id uuid?]
-                                      [:timestamp pos-int?]
-                                      [:payload ::specs/status-payload]])
+                                     [:payload ::specs/status-payload]])
       :metric (validate-with-schema message
-                                     [:map
-                                      [:msg-type [:= :metric]]
-                                      [:msg-id uuid?]
-                                      [:timestamp pos-int?]
-                                      [:payload ::specs/metric-payload]])
+                                    [:map
+                                     [:msg-type [:= :metric]]
+                                     [:msg-id uuid?]
+                                     [:timestamp pos-int?]
+                                     [:payload ::specs/metric-payload]])
       :event (validate-event-message message)
       :control (validate-with-schema message ::specs/control-message)
       :state-update (validate-with-schema message ::specs/state-update-message)

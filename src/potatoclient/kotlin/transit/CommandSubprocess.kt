@@ -2,6 +2,7 @@
 
 package potatoclient.kotlin.transit
 
+import cmd.JonSharedCmd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -22,8 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import cmd.JonSharedCmd
-import com.cognitect.transit.TransitFactory
 
 /**
  * Simplified Command subprocess without protovalidate
@@ -34,7 +33,7 @@ class CommandSubprocess(
 ) {
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
-    private val cmdBuilder = SimpleCommandBuilder()  // Keep for fallback
+    private val cmdBuilder = SimpleCommandBuilder() // Keep for fallback
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -72,24 +71,24 @@ class CommandSubprocess(
         try {
             val action = payload[TransitKeys.ACTION] as? String ?: "ping"
             val params = payload[TransitKeys.PARAMS] as? Map<*, *>
-            
+
             // Try to use Transit handlers first
             val rootCmd = tryBuildWithHandlers(action, params)
-            
+
             if (rootCmd != null) {
                 // Successfully built with handlers
                 wsClient.send(rootCmd.toByteArray())
                 totalSent.incrementAndGet()
-                
+
                 // Send success response using direct write (critical path)
                 transitComm.sendMessageDirect(
                     messageProtocol.createMessage(
                         MessageType.RESPONSE,
                         mapOf(
                             "action" to action,
-                            "status" to "sent"
-                        )
-                    )
+                            "status" to "sent",
+                        ),
+                    ),
                 )
             } else {
                 // Fallback to SimpleCommandBuilder for compatibility
@@ -97,16 +96,16 @@ class CommandSubprocess(
                     onSuccess = { cmd ->
                         wsClient.send(cmd.toByteArray())
                         totalSent.incrementAndGet()
-                        
+
                         // Send success response using direct write (critical path)
                         transitComm.sendMessageDirect(
                             messageProtocol.createMessage(
                                 MessageType.RESPONSE,
                                 mapOf(
                                     "action" to action,
-                                    "status" to "sent"
-                                )
-                            )
+                                    "status" to "sent",
+                                ),
+                            ),
                         )
                     },
                     onFailure = { error ->
@@ -114,16 +113,19 @@ class CommandSubprocess(
                         messageProtocol.sendError("Command build failed for '$action': ${error.message}")
                         // Also send error response
                         sendError(msgId, error as Exception)
-                    }
+                    },
                 )
             }
         } catch (e: Exception) {
             sendError(msgId, e)
         }
     }
-    
-    private fun tryBuildWithHandlers(action: String, params: Map<*, *>?): JonSharedCmd.Root? {
-        return try {
+
+    private fun tryBuildWithHandlers(
+        action: String,
+        params: Map<*, *>?,
+    ): JonSharedCmd.Root? =
+        try {
             // Try using SimpleCommandHandlers first
             SimpleCommandHandlers.buildCommand(action, params)
         } catch (e: Exception) {
@@ -131,7 +133,6 @@ class CommandSubprocess(
             messageProtocol.sendDebug("Handler failed for $action: ${e.message}, using fallback")
             null
         }
-    }
 
     private suspend fun handleControl(msg: Map<*, *>) {
         val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return
@@ -144,9 +145,9 @@ class CommandSubprocess(
                         messageProtocol.createMessage(
                             MessageType.RESPONSE,
                             mapOf(
-                                "status" to "stopped"
-                            )
-                        )
+                                "status" to "stopped",
+                            ),
+                        ),
                     )
                 }
                 wsClient.close()
@@ -165,9 +166,9 @@ class CommandSubprocess(
                         MessageType.METRIC,
                         mapOf(
                             "name" to "command-stats",
-                            "value" to stats
-                        )
-                    )
+                            "value" to stats,
+                        ),
+                    ),
                 )
             }
         }
@@ -182,9 +183,9 @@ class CommandSubprocess(
                 MessageType.ERROR,
                 mapOf(
                     "context" to "command-error",
-                    "error" to (error.message ?: "Unknown error")
-                )
-            )
+                    "error" to (error.message ?: "Unknown error"),
+                ),
+            ),
         )
     }
 }

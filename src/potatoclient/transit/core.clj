@@ -17,7 +17,7 @@
      "enum"
      (fn [e] (.name e))
      str)
-   
+
    ;; Clojure keywords write as strings for Kotlin
    clojure.lang.Keyword
    (transit/write-handler

@@ -2,9 +2,9 @@
   "Verify Transit handlers work for state subprocess"
   (:require [clojure.test :refer [deftest testing is]])
   (:import [potatoclient.kotlin.transit SimpleProtobufHandlers SimpleCommandHandlers]
-           [ser JonSharedData$JonGUIState 
-                JonSharedDataSystem$JonGuiDataSystem 
-                JonSharedDataTypes$JonGuiDataSystemLocalizations]
+           [ser JonSharedData$JonGUIState
+            JonSharedDataSystem$JonGuiDataSystem
+            JonSharedDataTypes$JonGuiDataSystemLocalizations]
            [com.cognitect.transit TransitFactory TransitFactory$Format]
            [java.io ByteArrayOutputStream ByteArrayInputStream]))
 
@@ -19,35 +19,35 @@
                           (.setLowDiskSpace false)
                           (.setLoc JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN)
                           (.build))
-          
+
           proto-state (-> (JonSharedData$JonGUIState/newBuilder)
                           (.setProtocolVersion 1)
                           (.setSystem system-data)
                           (.build))
-          
+
           ;; Get handlers from StateSubprocess
           handlers (.createWriteHandlers SimpleProtobufHandlers/INSTANCE)
-          
+
           ;; Serialize like StateSubprocess does
           out (ByteArrayOutputStream.)
           writer (TransitFactory/writer TransitFactory$Format/MSGPACK out handlers)
           _ (.write writer proto-state)
-          
+
           ;; Read back to verify
           in (ByteArrayInputStream. (.toByteArray out))
           reader (TransitFactory/reader TransitFactory$Format/MSGPACK in)
           result (.read reader)]
-      
+
       ;; The result is a TaggedValue "jon-gui-state"
       (is (instance? com.cognitect.transit.TaggedValue result))
       (is (= "jon-gui-state" (.getTag result)))
-      
+
       ;; The representation contains our data
       (let [state-map (.getRep result)]
         (is (map? state-map))
         (is (= 1 (get state-map "protocol-version")))
         (is (not (nil? (get state-map "system"))))
-        
+
         ;; System is also tagged
         (let [system (get state-map "system")]
           (is (instance? com.cognitect.transit.TaggedValue system))
@@ -60,14 +60,14 @@
           params {(TransitFactory/keyword "channel") "heat"
                   (TransitFactory/keyword "x") 0.5
                   (TransitFactory/keyword "y") -0.5}
-          
+
           ;; Build command
           cmd (.buildCommand SimpleCommandHandlers/INSTANCE "rotary-goto-ndc" params)]
-      
+
       (is (not (nil? cmd)))
       (is (.hasRotary cmd))
       (is (= 1 (.getProtocolVersion cmd)))
-      
+
       ;; Verify the command was built correctly
       (let [rotary (.getRotary cmd)
             rotate (.getRotateToNdc rotary)]
