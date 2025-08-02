@@ -37,6 +37,7 @@ private const val LOW_WATER_MARK = 100 // Resume normal operation
 class TransitCommunicator(
     private val inputStream: InputStream = System.`in`,
     private val outputStream: OutputStream = System.out,
+    private val writeHandlers: Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>? = null,
 ) {
     private lateinit var writer: Writer<Any>
     private lateinit var reader: Reader
@@ -52,8 +53,8 @@ class TransitCommunicator(
         val framedOutput = FramedOutputStream(outputStream)
         val framedInput = FramedInputStream(inputStream)
 
-        // Create Transit writer with MessagePack format
-        writer = createWriter(framedOutput)
+        // Create Transit writer with MessagePack format and custom handlers
+        writer = createWriter(framedOutput, writeHandlers)
 
         // Create Transit reader with MessagePack format
         reader = TransitFactory.reader(TransitFactory.Format.MSGPACK, framedInput)
@@ -212,14 +213,24 @@ class TransitCommunicator(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun createWriter(out: OutputStream): Writer<Any> {
-        // Use null map for custom handlers to help type inference
-        val writer =
+    private fun createWriter(
+        out: OutputStream,
+        handlers: Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>? = null,
+    ): Writer<Any> {
+        // Create writer with optional custom handlers
+        val writer = if (handlers != null) {
+            TransitFactory.writer<Any>(
+                TransitFactory.Format.MSGPACK,
+                out,
+                TransitFactory.writeHandlerMap(handlers),
+            )
+        } else {
             TransitFactory.writer<Any>(
                 TransitFactory.Format.MSGPACK,
                 out,
                 null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?,
             )
+        }
         return writer
     }
 

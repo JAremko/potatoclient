@@ -319,6 +319,37 @@
       (logging/log-error {:msg "send-command called with nil stream"})
       false)))
 
+(>defn send-control
+  "Send a control message to a stream process."
+  [stream control-msg]
+  [:potatoclient.specs/stream-process-map map? => boolean?]
+  (if stream
+    (let [current-state @(:state stream)]
+      (logging/log-debug {:msg (str "send-control: stream-id=" (:stream-id stream)
+                                    ", state=" current-state
+                                    ", control=" control-msg)})
+      (if (= current-state :running)
+        (try
+          (let [write-fn (:writer stream)
+                message {MessageKeys/MSG_TYPE (.getKey MessageType/CONTROL)
+                         MessageKeys/MSG_ID (str (java.util.UUID/randomUUID))
+                         MessageKeys/TIMESTAMP (System/currentTimeMillis)
+                         MessageKeys/PAYLOAD control-msg}]
+            (write-fn message)
+            true)
+          (catch Exception e
+            (logging/log-error {:msg "Failed to send control message"
+                                :error (.getMessage e)
+                                :stream-id (:stream-id stream)})
+            false))
+        (do
+          (logging/log-warn {:msg (str "Cannot send control message to stream in state " current-state)
+                             :stream-id (:stream-id stream)})
+          false)))
+    (do
+      (logging/log-error {:msg "send-control called with nil stream"})
+      false)))
+
 (>defn- close-resource
   "Safely close a resource, ignoring exceptions."
   [resource close-fn]
@@ -338,7 +369,7 @@
                                   ", current state: " @(:state stream))})
 
     ;; Try graceful shutdown first BEFORE changing state
-    (send-command stream {:action "shutdown"})
+    (send-control stream {:action "shutdown"})
     (Thread/sleep ^long shutdown-grace-period-ms)
 
     ;; Now change state to stopping

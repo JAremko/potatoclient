@@ -5,6 +5,12 @@ import cmd.DayCamera.JonSharedCmdDayCamera
 import cmd.HeatCamera.JonSharedCmdHeatCamera
 import cmd.JonSharedCmd
 import cmd.RotaryPlatform.JonSharedCmdRotary
+import cmd.System.JonSharedCmdSystem
+import cmd.GPS.JonSharedCmdGps
+import cmd.Compass.JonSharedCmdCompass
+import cmd.LRF.JonSharedCmdLrf
+import cmd.OSD.JonSharedCmdOsd
+import cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater
 import ser.JonSharedDataTypes
 
 /**
@@ -29,6 +35,36 @@ class SimpleCommandBuilder {
                 "heat-camera-prev-zoom-table-pos" -> Result.success(buildHeatCameraPrevZoomTablePos())
                 "day-camera-next-zoom-table-pos" -> Result.success(buildDayCameraNextZoomTablePos())
                 "day-camera-prev-zoom-table-pos" -> Result.success(buildDayCameraPrevZoomTablePos())
+                // System commands
+                "system-reboot" -> Result.success(buildSystemReboot())
+                "system-power-off" -> Result.success(buildSystemPowerOff())
+                "system-reset-configs" -> Result.success(buildSystemResetConfigs())
+                "system-start-all" -> Result.success(buildSystemStartAll())
+                "system-stop-all" -> Result.success(buildSystemStopAll())
+                "system-mark-rec-important" -> Result.success(buildSystemMarkRecImportant())
+                "system-unmark-rec-important" -> Result.success(buildSystemUnmarkRecImportant())
+                "system-enter-transport" -> Result.success(buildSystemEnterTransport())
+                "system-enable-geodesic-mode" -> Result.success(buildSystemEnableGeodesicMode())
+                "system-disable-geodesic-mode" -> Result.success(buildSystemDisableGeodesicMode())
+                "system-set-localization" -> buildSystemSetLocalization(params)
+                // GPS commands
+                "gps-enable" -> Result.success(buildGpsEnable())
+                "gps-disable" -> Result.success(buildGpsDisable())
+                "gps-reset" -> Result.success(buildGpsReset())
+                // Compass commands
+                "compass-calibrate" -> Result.success(buildCompassCalibrate())
+                "compass-reset" -> Result.success(buildCompassReset())
+                // LRF commands
+                "lrf-measure" -> Result.success(buildLrfMeasure())
+                "lrf-continuous-start" -> Result.success(buildLrfContinuousStart())
+                "lrf-continuous-stop" -> Result.success(buildLrfContinuousStop())
+                // OSD commands
+                "osd-enable" -> Result.success(buildOsdEnable())
+                "osd-disable" -> Result.success(buildOsdDisable())
+                // Glass heater commands
+                "glass-heater-enable" -> Result.success(buildGlassHeaterEnable())
+                "glass-heater-disable" -> Result.success(buildGlassHeaterDisable())
+                "glass-heater-set-mode" -> buildGlassHeaterSetMode(params)
                 else -> Result.failure(
                     IllegalArgumentException("Unknown command action: $action")
                 )
@@ -327,4 +363,383 @@ class SimpleCommandBuilder {
             .setDayCamera(dayRoot)
             .build()
     }
+    
+    // System command builders
+    private fun buildSystemReboot(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setReboot(JonSharedCmdSystem.Reboot.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemPowerOff(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setPowerOff(JonSharedCmdSystem.PowerOff.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemResetConfigs(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setResetConfigs(JonSharedCmdSystem.ResetConfigs.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemStartAll(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setStartAll(JonSharedCmdSystem.StartALl.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemStopAll(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setStopAll(JonSharedCmdSystem.StopALl.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemMarkRecImportant(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setMarkRecImportant(JonSharedCmdSystem.MarkRecImportant.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemUnmarkRecImportant(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setUnmarkRecImportant(JonSharedCmdSystem.UnmarkRecImportant.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemEnterTransport(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setEnterTransport(JonSharedCmdSystem.EnterTransport.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemEnableGeodesicMode(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setGeodesicModeEnable(JonSharedCmdSystem.EnableGeodesicMode.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemDisableGeodesicMode(): JonSharedCmd.Root {
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setGeodesicModeDisable(JonSharedCmdSystem.DisableGeodesicMode.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setSystem(systemRoot)
+            .build()
+    }
+    
+    private fun buildSystemSetLocalization(params: Map<*, *>?): Result<JonSharedCmd.Root> {
+        if (params == null) {
+            return Result.failure(
+                IllegalArgumentException("system-set-localization requires parameters")
+            )
+        }
+        
+        val localization = params["localization"] as? String
+            ?: return Result.failure(
+                IllegalArgumentException("system-set-localization missing required parameter: localization")
+            )
+            
+        val loc = parseLocalization(localization)
+        
+        val setLocalization = JonSharedCmdSystem.SetLocalization
+            .newBuilder()
+            .setLoc(loc)
+            .build()
+            
+        val systemRoot = JonSharedCmdSystem.Root
+            .newBuilder()
+            .setLocalization(setLocalization)
+            .build()
+            
+        return Result.success(
+            JonSharedCmd.Root
+                .newBuilder()
+                .setProtocolVersion(1)
+                .setSystem(systemRoot)
+                .build()
+        )
+    }
+    
+    // GPS command builders
+    private fun buildGpsEnable(): JonSharedCmd.Root {
+        val gpsRoot = JonSharedCmdGps.Root
+            .newBuilder()
+            .setEnable(JonSharedCmdGps.Enable.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setGps(gpsRoot)
+            .build()
+    }
+    
+    private fun buildGpsDisable(): JonSharedCmd.Root {
+        val gpsRoot = JonSharedCmdGps.Root
+            .newBuilder()
+            .setDisable(JonSharedCmdGps.Disable.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setGps(gpsRoot)
+            .build()
+    }
+    
+    private fun buildGpsReset(): JonSharedCmd.Root {
+        val gpsRoot = JonSharedCmdGps.Root
+            .newBuilder()
+            .setReset(JonSharedCmdGps.Reset.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setGps(gpsRoot)
+            .build()
+    }
+    
+    // Compass command builders
+    private fun buildCompassCalibrate(): JonSharedCmd.Root {
+        val compassRoot = JonSharedCmdCompass.Root
+            .newBuilder()
+            .setCalibrate(JonSharedCmdCompass.Calibrate.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setCompass(compassRoot)
+            .build()
+    }
+    
+    private fun buildCompassReset(): JonSharedCmd.Root {
+        val compassRoot = JonSharedCmdCompass.Root
+            .newBuilder()
+            .setReset(JonSharedCmdCompass.Reset.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setCompass(compassRoot)
+            .build()
+    }
+    
+    // LRF command builders
+    private fun buildLrfMeasure(): JonSharedCmd.Root {
+        val lrfRoot = JonSharedCmdLrf.Root
+            .newBuilder()
+            .setMeasure(JonSharedCmdLrf.Measure.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setLrf(lrfRoot)
+            .build()
+    }
+    
+    private fun buildLrfContinuousStart(): JonSharedCmd.Root {
+        val lrfRoot = JonSharedCmdLrf.Root
+            .newBuilder()
+            .setContinuousStart(JonSharedCmdLrf.ContinuousStart.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setLrf(lrfRoot)
+            .build()
+    }
+    
+    private fun buildLrfContinuousStop(): JonSharedCmd.Root {
+        val lrfRoot = JonSharedCmdLrf.Root
+            .newBuilder()
+            .setContinuousStop(JonSharedCmdLrf.ContinuousStop.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setLrf(lrfRoot)
+            .build()
+    }
+    
+    // OSD command builders
+    private fun buildOsdEnable(): JonSharedCmd.Root {
+        val osdRoot = JonSharedCmdOsd.Root
+            .newBuilder()
+            .setEnableOsd(JonSharedCmdOsd.EnableOSD.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setOsd(osdRoot)
+            .build()
+    }
+    
+    private fun buildOsdDisable(): JonSharedCmd.Root {
+        val osdRoot = JonSharedCmdOsd.Root
+            .newBuilder()
+            .setDisableOsd(JonSharedCmdOsd.DisableOSD.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setOsd(osdRoot)
+            .build()
+    }
+    
+    // Glass heater command builders
+    private fun buildGlassHeaterEnable(): JonSharedCmd.Root {
+        val heaterRoot = JonSharedCmdDayCamGlassHeater.Root
+            .newBuilder()
+            .setEnable(JonSharedCmdDayCamGlassHeater.Enable.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setDayCamGlassHeater(heaterRoot)
+            .build()
+    }
+    
+    private fun buildGlassHeaterDisable(): JonSharedCmd.Root {
+        val heaterRoot = JonSharedCmdDayCamGlassHeater.Root
+            .newBuilder()
+            .setDisable(JonSharedCmdDayCamGlassHeater.Disable.newBuilder().build())
+            .build()
+            
+        return JonSharedCmd.Root
+            .newBuilder()
+            .setProtocolVersion(1)
+            .setDayCamGlassHeater(heaterRoot)
+            .build()
+    }
+    
+    private fun buildGlassHeaterSetMode(params: Map<*, *>?): Result<JonSharedCmd.Root> {
+        if (params == null) {
+            return Result.failure(
+                IllegalArgumentException("glass-heater-set-mode requires parameters")
+            )
+        }
+        
+        val mode = params["mode"] as? String
+            ?: return Result.failure(
+                IllegalArgumentException("glass-heater-set-mode missing required parameter: mode")
+            )
+            
+        val heaterMode = parseGlassHeaterMode(mode)
+        
+        val setMode = JonSharedCmdDayCamGlassHeater.SetMode
+            .newBuilder()
+            .setMode(heaterMode)
+            .build()
+            
+        val heaterRoot = JonSharedCmdDayCamGlassHeater.Root
+            .newBuilder()
+            .setSetMode(setMode)
+            .build()
+            
+        return Result.success(
+            JonSharedCmd.Root
+                .newBuilder()
+                .setProtocolVersion(1)
+                .setDayCamGlassHeater(heaterRoot)
+                .build()
+        )
+    }
+    
+    // Helper functions for parsing enums
+    private fun parseLocalization(locStr: String): JonSharedDataTypes.JonGuiDataSystemLocalizations =
+        when (locStr.lowercase()) {
+            "en", "english" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
+            "ua", "ukrainian" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_UA
+            "cs", "czech" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_CS
+            "ar", "arabic" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_AR
+            "fr", "french" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_FR
+            "de", "german" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_DE
+            "es", "spanish" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_ES
+            else -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
+        }
+        
+    private fun parseGlassHeaterMode(modeStr: String): JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode =
+        when (modeStr.lowercase()) {
+            "auto" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
+            "manual" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_MANUAL
+            "off" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_OFF
+            else -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
+        }
 }

@@ -38,7 +38,6 @@ class StateSubprocess(
     private val transitComm: TransitCommunicator,
 ) {
     private val wsClient = StateWebSocketClient(wsUrl)
-    private val stateConverter = SimpleStateConverter()
     private val messageProtocol = TransitMessageProtocol("state", transitComm)
 
     // Rate limiting
@@ -72,7 +71,7 @@ class StateSubprocess(
             launch {
                 while (isActive) {
                     val msg = transitComm.readMessage()
-                    if (msg != null && msg.isMessageType(MessageType.RESPONSE.keyword)) {
+                    if (msg != null && msg.isMessageType(MessageType.CONTROL.keyword)) {
                         handleControl(msg)
                     }
                 }
@@ -86,14 +85,16 @@ class StateSubprocess(
         if (!rateLimiter.get().tryAcquire()) return
 
         try {
-            // Parse and convert
+            // Parse protobuf
             val protoState = JonSharedData.JonGUIState.parseFrom(protoBytes)
-            val transitState = stateConverter.convert(protoState)
 
-            // Send to Clojure using direct write (critical path)
-            // Use proper message type for state updates
+            // Send protobuf directly - Transit handlers will serialize it
+            // The handler tags it as "jon-state" and converts all enums to keywords
             transitComm.sendMessageDirect(
-                createStateUpdateMessage(transitState as Map<String, Any>)
+                messageProtocol.createMessage(
+                    MessageType.STATE_UPDATE,
+                    protoState as Any  // Send the protobuf object directly as payload
+                )
             )
 
             totalSent.incrementAndGet()
@@ -363,7 +364,13 @@ fun main(args: Array<String>) {
 
         val wsUrl = args[0]
 
-        val transitComm = TransitCommunicator(System.`in`, StdoutInterceptor.getOriginalStdout())
+        // Create Transit communicator with protobuf write handlers
+        val writeHandlers = ProtobufTransitHandlers.createWriteHandlers()
+        val transitComm = TransitCommunicator(
+            System.`in`, 
+            StdoutInterceptor.getOriginalStdout(),
+            writeHandlers
+        )
         val subprocess = StateSubprocess(wsUrl, transitComm)
         val messageProtocol = TransitMessageProtocol("state", transitComm)
 

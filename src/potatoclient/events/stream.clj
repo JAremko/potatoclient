@@ -135,10 +135,10 @@
       (logging/log-info {:msg (str "Found stream process for " stream-key ", sending shutdown command")})
       (future
         (try
-          ;; Send shutdown command and stop the stream
-          (logging/log-info {:msg (str "Sending shutdown command to " stream-key)})
-          (let [cmd-result (process/send-command stream {:action "shutdown"})]
-            (logging/log-info {:msg (str "Shutdown command result for " stream-key ": " cmd-result)}))
+          ;; Send shutdown control message and stop the stream
+          (logging/log-info {:msg (str "Sending shutdown control message to " stream-key)})
+          (let [cmd-result (process/send-control stream {:action "shutdown"})]
+            (logging/log-info {:msg (str "Shutdown control result for " stream-key ": " cmd-result)}))
           (Thread/sleep 100)
 
           (logging/log-info {:msg (str "Stopping stream process for " stream-key)})

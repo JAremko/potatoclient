@@ -30,48 +30,141 @@ These issues were breaking functionality and have been fixed:
 - **Before**: Unknown commands defaulted to ping
 - **After**: Throws IllegalArgumentException with specific error
 
-### ⏳ Transit Keyword Type System (NEW)
-- **Status**: DESIGNED - Implementation pending
-- **Design**: `src/potatoclient/transit/keyword_handlers.clj` (created, not integrated)
-- **Research**: Based on protobuf analysis showing only enums and numbers in our system
-- **Benefits**:
-  - Automatic enum → keyword conversion
+### ✅ Transit Keyword Type System
+- **Status**: IMPLEMENTED - Transit handlers and protocol documentation complete
+- **Design**: Created comprehensive protocol specification in `.claude/transit-protocol.md`
+- **Implementation**: 
+  - `ProtobufTransitHandlers.kt` - WriteHandlers for all message types
+  - StateSubprocess updated to use Transit handlers
+  - Protocol emphasizes "Keywords Everywhere" principle
+- **Benefits Achieved**:
+  - Automatic enum → keyword conversion via Transit handlers
   - No more string/keyword confusion  
   - Type safety with Java enums
-  - Eliminates all manual string/keyword conversions
-- **Implementation Strategy**:
-  - Custom Transit handlers for automatic string→keyword conversion
-  - Preserve strings only for designated text fields (log messages)
-  - Java enums with Transit keyword support
-- **Next Steps**:
-  1. Integrate Transit handlers into core reader/writer creation
-  2. Update all Kotlin subprocesses to use enum handlers
-  3. Remove manual keyword conversions throughout codebase
-  4. Add tests for automatic conversion
+  - Clean architecture with no manual serialization
+- **Completed Steps**:
+  1. Created Transit protocol specification emphasizing keyword-based data model
+  2. Updated TransitCommunicator to accept custom handlers
+  3. StateSubprocess now uses Transit handlers for automatic serialization
+  4. Added CONTROL message type to MessageType enum
 
 ## 📋 Medium Priority Tasks
 
+### ✅ Complete Protobuf Converters
+- **Status**: REDESIGNED - Now using Transit handlers for automatic serialization
+- **Proto Files Location**: [`examples/protogen/proto/`](examples/protogen/proto/)
+- **Generated Java Classes**: [`src/potatoclient/java/ser/`](src/potatoclient/java/ser/) and [`src/potatoclient/java/cmd/`](src/potatoclient/java/cmd/)
+- **Reference Implementation**: 
+  - TypeScript command building: [`examples/web/frontend/ts/cmd/cmdSender/`](examples/web/frontend/ts/cmd/cmdSender/)
+  - Example command sender: [`cmdRotary.ts`](examples/web/frontend/ts/cmd/cmdSender/cmdRotary.ts)
+  - Example shared utilities: [`cmdSenderShared.ts`](examples/web/frontend/ts/cmd/cmdSender/cmdSenderShared.ts)
+- **New Approach**: Transit Handlers
+  - [`ProtobufTransitHandlers.kt`](src/potatoclient/kotlin/transit/ProtobufTransitHandlers.kt) - Automatic protobuf serialization (COMPLETED)
+  - Provides WriteHandlers for all data types (system, rotary, GPS, compass, LRF, cameras, time)
+  - Automatically converts enums to Transit keywords
+  - No manual conversion needed - Transit handles serialization
+- **Legacy Converters** (kept for reference):
+  - [`SimpleStateConverter.kt`](src/potatoclient/kotlin/transit/SimpleStateConverter.kt) - Manual state converter
+  - [`SimpleCommandBuilder.kt`](src/potatoclient/kotlin/transit/SimpleCommandBuilder.kt) - Command builder (kept for fallback)
+- **Command Building** (Transit → Proto):
+  - ✅ Created `ProtobufCommandHandlers.kt` with Transit ReadHandlers
+  - ✅ All core commands implemented: rotary, system, GPS, compass, CV, day_camera, heat_camera, LRF, OSD, glass_heater
+  - Remaining commands for future implementation: LIRA, LRF_align
+
+### ✅ Update All Subprocesses to Use Transit Handlers
+- **Status**: COMPLETED - All major subprocesses updated
+- **Goal**: Replace manual serialization with Transit handlers across all subprocesses
+- **Implementation**:
+  1. ✅ Update TransitCommunicator to use ProtobufTransitHandlers
+  2. ✅ StateSubprocess: Replace SimpleStateConverter with automatic protobuf handlers
+  3. ✅ VideoStreamManager: Already uses Transit protocol correctly for events
+  4. ✅ CommandSubprocess: Updated to use ProtobufCommandHandlers with fallback
+  5. ⏳ Error handling: Use error message handlers instead of stderr
+- **Benefits**:
+  - Consistent serialization across all message types
+  - Automatic enum to keyword conversion
+  - Type safety with proper Transit tagging
+  - Cleaner code without manual map building
+- **Handler Coverage**:
+  - ✅ Protobuf state messages (all data types)
+  - ✅ Gesture events
+  - ✅ Navigation events
+  - ✅ Window events
+  - ✅ Control messages
+  - ✅ Error messages
+  - ✅ Log messages
+
+### ✅ Create Malli Spec Structure for Protobuf Validation
+- **Status**: COMPLETED - All data specs created
+- **Goal**: Create Clojure specs mirroring protobuf validation constraints
+- **Completed**:
+  - ✅ `potatoclient.specs.data.gps` - GPS data validation
+  - ✅ `potatoclient.specs.data.system` - System data validation
+  - ✅ `potatoclient.specs.data.rotary` - Rotary data validation
+  - ✅ `potatoclient.specs.data.compass` - Compass data validation
+  - ✅ `potatoclient.specs.data.lrf` - LRF data validation
+  - ✅ `potatoclient.specs.data.time` - Time data validation
+  - ✅ `potatoclient.specs.data.camera` - Camera data validation (heat and day)
+  - ✅ `potatoclient.specs.data.types` - Common enum types
+  - ✅ `potatoclient.specs.data.state` - Top-level state structure (includes all data types)
+  - ✅ `potatoclient.specs.cmd.rotary` - Rotary command validation
+- **Structure**: One spec namespace per proto file:
+  - `potatoclient.specs.data.system` for `jon_shared_data_system.proto`
+  - `potatoclient.specs.data.rotary` for `jon_shared_data_rotary.proto`
+  - `potatoclient.specs.cmd.rotary` for `jon_shared_cmd_rotary.proto`
+  - etc.
+- **Reference**: Use buf.validate annotations from proto files:
+  - Float/double ranges: `[(buf.validate.field).float = {gte: 0, lte: 100}]`
+  - Enum constraints: `[(buf.validate.field).enum = {defined_only: true, not_in: [0]}]`
+  - Required fields: `[(buf.validate.field).required = true]`
+- **Implementation Strategy**:
+  1. Parse proto files to extract validation constraints
+  2. Generate corresponding Malli specs
+  3. Use specs for command validation before sending
+  4. Use specs for state validation after receiving
+- **Example Spec**:
+  ```clojure
+  ;; From jon_shared_data_rotary.proto azimuth field
+  (def azimuth
+    [:float {:min 0 :max 360}])  ; From gte: 0, lt: 360
+  ```
+
+### ✅ Implement Transit ReadHandlers for Command Building
+- **Status**: COMPLETED
+- **Goal**: Replace SimpleCommandBuilder with Transit ReadHandlers
+- **Rationale**: Clean architecture - use Transit handlers for both directions
+- **Implementation**:
+  - ✅ Created `ProtobufCommandHandlers.kt` with ReadHandlers for command building
+  - ✅ Maps Transit command structures to protobuf builders
+  - ✅ Supports all command types (rotary, system, GPS, compass, CV, cameras, LRF, OSD, glass heater)
+  - ✅ Automatic keyword to enum conversion
+  - ✅ Updated CommandSubprocess to use handlers with fallback to SimpleCommandBuilder
+- **Benefits Achieved**:
+  - Symmetric with WriteHandlers for state messages
+  - No manual command building logic
+  - Type-safe command construction
+  - Consistent error handling
+  - Backward compatibility maintained
+
 ### ⏳ Kotlin Message Validation
-- **Status**: DESIGNED - Not implemented
+- **Status**: DESIGNED - Not implemented  
 - **Spec Location**: `src/potatoclient/specs/transit_messages.clj`
 - **Components Needed**:
   - `TransitMessageValidator` class
   - Per-subprocess contracts
   - Development-only validation
   - Detailed error logging
+- **Note**: Should be implemented AFTER Malli spec structure is created
 
-### ⏳ Complete State Converter
-- **File**: `src/potatoclient/kotlin/transit/SimpleStateConverter.kt`
-- **Status**: Stub implementation only
-- **TODO**: 
-  - Convert all protobuf fields to Transit maps
-  - Handle battery level properly
-  - Add all system state fields
-
-### ⏳ Message Type Corrections
-- **Issue**: Control messages using "response" type
-- **Should Be**: CTL type for control messages
-- **Affects**: Both CommandSubprocess and StateSubprocess
+### ✅ Message Type Corrections
+- **Status**: COMPLETED
+- **Issue**: Control messages were using "response" type
+- **Fix**: Added CONTROL message type to MessageType enum
+- **Updated Files**:
+  - `MessageType.java` - Added CONTROL("control") enum value
+  - `CommandSubprocess.kt` - Now expects MessageType.CONTROL
+  - `StateSubprocess.kt` - Now expects MessageType.CONTROL
+- **Remaining**: Update Clojure side to send control messages with CONTROL type
 
 ## 🧪 Testing Infrastructure
 
@@ -128,16 +221,14 @@ From analysis documents:
 - **VideoStreamManager**: Handles UI events and video streaming
 
 ### Related Documentation
-- [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation
-- [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Kotlin subprocess details
-- [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system design
+- [`.claude/transit-architecture.md`](.claude/transit-architecture.md) - Complete Transit implementation
+- [`.claude/transit-protocol.md`](.claude/transit-protocol.md) - Transit message protocol specification (keywords everywhere!)
+- [`.claude/kotlin-subprocess.md`](.claude/kotlin-subprocess.md) - Kotlin subprocess details
+- [`.claude/protobuf-command-system.md`](.claude/protobuf-command-system.md) - Command system design
+- [`.claude/linting-guide.md`](.claude/linting-guide.md) - Code quality tools and false positive filtering
 
 ## 🐛 Known Issues
 
-### Rate Limiter Observability
-- **Location**: `src/potatoclient/kotlin/transit/StateSubprocess.kt`
-- **Issue**: No metrics on dropped messages
-- **Fix**: Add periodic metric reporting
 
 ### WebSocket Error Handling
 - **Issue**: Errors logged to stderr
@@ -145,11 +236,11 @@ From analysis documents:
 
 ## 📅 Implementation Phases
 
-### Phase 1: Type System (Current Priority)
-1. Implement keyword handlers
-2. Update all message creation
-3. Remove string conversions
-4. Update tests
+### Phase 1: Type System (COMPLETED)
+1. ✅ Implement keyword handlers (both WriteHandlers and ReadHandlers)
+2. ✅ Update all message creation (using Transit protocol helpers)
+3. ✅ Remove string conversions (automatic via handlers)
+4. ⏳ Update tests
 
 ### Phase 2: Validation System
 1. Create TransitMessageValidator
@@ -166,19 +257,19 @@ From analysis documents:
 ## 🔍 Code Locations Reference
 
 ### Core Transit Files
-- `src/potatoclient/transit/` - Clojure Transit code
-- `src/potatoclient/kotlin/transit/` - Kotlin Transit code
-- `src/potatoclient/specs/transit_messages.clj` - Malli specs
+- [`src/potatoclient/transit/`](src/potatoclient/transit/) - Clojure Transit code
+- [`src/potatoclient/kotlin/transit/`](src/potatoclient/kotlin/transit/) - Kotlin Transit code
+- [`src/potatoclient/specs/transit_messages.clj`](src/potatoclient/specs/transit_messages.clj) - Malli specs
 
 ### Subprocess Entry Points
-- `src/potatoclient/kotlin/transit/CommandSubprocess.kt` - main() at line 255
-- `src/potatoclient/kotlin/transit/StateSubprocess.kt` - main() at line 326
-- `src/potatoclient/kotlin/VideoStreamManager.kt` - main() at line 397
+- [`src/potatoclient/kotlin/transit/CommandSubprocess.kt`](src/potatoclient/kotlin/transit/CommandSubprocess.kt) - main() at line 255
+- [`src/potatoclient/kotlin/transit/StateSubprocess.kt`](src/potatoclient/kotlin/transit/StateSubprocess.kt) - main() at line 326
+- [`src/potatoclient/kotlin/VideoStreamManager.kt`](src/potatoclient/kotlin/VideoStreamManager.kt) - main() at line 397
 
 ### Key Integration Points
-- `src/potatoclient/ipc.clj` - Message routing
-- `src/potatoclient/events/stream.clj` - Event handling
-- `src/potatoclient/kotlin/transit/TransitMessageProtocol.kt` - Message creation
+- [`src/potatoclient/ipc.clj`](src/potatoclient/ipc.clj) - Message routing
+- [`src/potatoclient/events/stream.clj`](src/potatoclient/events/stream.clj) - Event handling
+- [`src/potatoclient/kotlin/transit/TransitMessageProtocol.kt`](src/potatoclient/kotlin/transit/TransitMessageProtocol.kt) - Message creation
 
 ## ✨ Quick Wins
 

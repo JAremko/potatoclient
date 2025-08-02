@@ -4,6 +4,8 @@
 
 PotatoClient uses a Transit-based architecture to completely isolate protobuf handling from the Clojure codebase. This design provides clean separation of concerns, better testability, and eliminates protobuf dependencies in the main process.
 
+**For the complete message protocol specification with emphasis on our keyword-based data model, see [transit-protocol.md](./transit-protocol.md).**
+
 ## Architecture Principles
 
 1. **Complete Protobuf Isolation**: All protobuf code is confined to Kotlin subprocesses
@@ -11,6 +13,7 @@ PotatoClient uses a Transit-based architecture to completely isolate protobuf ha
 3. **Single App State**: Following re-frame pattern with a single app-db atom
 4. **Subprocess Management**: Clean lifecycle management for all subprocesses
 5. **Keyword-Based Maps**: All Transit messages use keyword keys for consistency and performance
+6. **Clean Architecture**: Single approach using Transit handlers - no manual serialization
 
 ## Components
 
@@ -49,14 +52,14 @@ Process lifecycle management:
 Main class for command processing:
 - Receives Transit commands via stdin (with keyword keys)
 - Uses extension properties for clean message access
-- Converts to protobuf using `SimpleCommandBuilder`
+- Converts to protobuf using `SimpleCommandBuilder` (to be replaced with ReadHandlers)
 - Sends protobuf commands via WebSocket to server
 - Handles reconnection and error recovery
 
 #### `StateSubprocess`
 Main class for state updates:
 - Receives protobuf state from WebSocket
-- Converts to Transit maps using `SimpleStateConverter`
+- Uses Transit handlers for automatic serialization via `ProtobufTransitHandlers`
 - Implements debouncing (compares with last sent state)
 - Token bucket rate limiting (configurable)
 - Sends Transit messages to main process via stdout
@@ -67,6 +70,7 @@ Handles Transit communication over stdin/stdout:
 - Message framing with length prefix
 - Thread-safe read/write operations
 - Preserves Transit keywords in both directions
+- Configurable to use custom handlers
 
 #### `TransitKeys`
 Pre-created Transit keyword constants:
@@ -81,6 +85,26 @@ Kotlin extension properties for Transit maps:
 - Helper functions for nested access and type checking
 - Proper type handling for Transit writer
 - Error handling and logging
+
+#### `ProtobufTransitHandlers`
+Transit handlers for automatic serialization:
+- WriteHandlers for all message types:
+  - Protobuf state messages (system, rotary, GPS, compass, LRF, cameras, time)
+  - Event messages (gesture, navigation, window)
+  - Control messages (rate limiting, configuration)
+  - Error and log messages
+- Automatic enum to Transit keyword conversion
+- Proper Transit tagging for all types
+- Clean separation between data and serialization
+
+#### `ProtobufCommandHandlers`
+Transit ReadHandlers for command building:
+- Converts Transit command messages to protobuf commands
+- Enum handlers for automatic conversion (video-channel, rotary-direction, etc.)
+- Command handler builds `JonSharedCmd.Root` from Transit data
+- Supports all command types: rotary, system, GPS, compass, CV, cameras, LRF, OSD, glass heater
+- Type-safe construction with proper error handling
+- Replaces manual command building with handler-based approach
 
 ## Keyword Creation Best Practices
 
@@ -126,8 +150,8 @@ Transit automatically converts between string keys and keywords:
 2. StateSubprocess receives and parses protobuf
 3. Debouncing: Compare with last sent state, skip if identical
 4. Rate limiting: Check token bucket, skip if rate exceeded
-5. Convert protobuf to Transit map using SimpleStateConverter
-6. Send Transit map to main process via stdout
+5. Transit automatically serializes protobuf using registered handlers
+6. Send Transit message to main process via stdout
 7. Main process updates app-db with new state
 8. UI components react to state changes
 ```
@@ -157,13 +181,9 @@ Transit automatically converts between string keys and keywords:
 
 ### Kotlin Side
 ```kotlin
-// OLD way with string keys (don't do this!)
-val msgType = msg["msg-type"] as? String
-val payload = msg["payload"] as? Map<*, *>
-
-// NEW way with extension properties
-val msgType = msg.msgType  // Clean!
-val payload = msg.payload   // Type-safe!
+// Clean access with extension properties
+val msgType = msg.msgType  // Type-safe!
+val payload = msg.payload   // Clean!
 
 // Accessing nested values
 val batteryLevel = stateMsg.payload?.system?.batteryLevel
@@ -269,10 +289,40 @@ when (msg.msgType) {
 - Direct ByteArray operations
 - No intermediate string conversions
 
-## Automatic Keyword Type System (In Progress)
+## Message Conversion
+
+### Command Generation
+- Commands start as Transit maps in Clojure
+- CommandSubprocess converts Transit to protobuf
+- SimpleCommandBuilder handles the conversion logic (to be replaced with ReadHandlers)
+- Supports common commands: ping, rotary-halt, rotary-goto-ndc, etc.
+
+### State Updates with Transit Handlers
+- Server sends protobuf state messages
+- StateSubprocess uses Transit handlers for automatic serialization
+- ProtobufTransitHandlers provides WriteHandlers for all message types
+- Enums automatically converted to Transit keywords
+- No manual conversion needed - Transit handles everything
+
+```kotlin
+// Register handlers with Transit
+val writeHandlers = ProtobufTransitHandlers.createWriteHandlers()
+val writer = TransitFactory.writer(
+    TransitFactory.Format.MSGPACK, 
+    outputStream, 
+    TransitFactory.writeHandlerMap(writeHandlers)
+)
+
+// All types serialize automatically with proper tagging
+writer.write(protoState)      // Tagged as "jon-state"
+writer.write(gestureEvent)    // Tagged as "gesture-event"
+writer.write(controlMessage)  // Tagged as "ctl-message"
+```
+
+## Automatic Keyword Type System
 
 ### Overview
-The codebase is transitioning to an automatic keyword-based type system that leverages Transit's capabilities to eliminate manual string/keyword conversions.
+The codebase uses an automatic keyword-based type system that leverages Transit's capabilities to eliminate manual string/keyword conversions. This system is now fully implemented and operational.
 
 ### Core Insight
 Our system only uses:
@@ -321,10 +371,34 @@ public enum MessageType {
 3. **Performance**: Keywords are interned, faster comparisons
 4. **Clean Code**: No more `(keyword ...)` or `.toString()` calls
 
-### Migration Path
-1. **Phase 1**: Add Transit handlers (backward compatible)
-2. **Phase 2**: Remove manual conversions
-3. **Phase 3**: Add validation and type registry
+### Implementation Status
+1. **Phase 1**: ✅ Transit keyword system implemented
+2. **Phase 2**: ✅ All manual keyword conversions removed
+3. **Phase 3**: ✅ Full Transit handler architecture completed
+   - WriteHandlers for all message types (state, events, control, errors)
+   - ReadHandlers for command building
+   - Both subprocesses updated to use handlers
+4. **Phase 4**: ⏳ Remove all legacy code and manual serialization
+
+### Transit Handler Architecture
+The system uses Transit handlers for all message serialization:
+
+```kotlin
+// In any subprocess
+val handlers = ProtobufTransitHandlers.createWriteHandlers()
+val writer = TransitFactory.writer(
+    TransitFactory.Format.MSGPACK,
+    outputStream,
+    TransitFactory.writeHandlerMap(handlers)
+)
+
+// Write any supported type - Transit handles serialization
+writer.write(protoState)     // Tagged as "jon-state"
+writer.write(gestureEvent)   // Tagged as "gesture-event"
+writer.write(errorMessage)   // Tagged as "error-message"
+```
+
+**No Manual Serialization**: All message types use handlers for consistent, type-safe serialization.
 
 ### Examples
 
@@ -344,11 +418,35 @@ messageProtocol.sendEvent(
   :close (handle-close))  ; Direct keyword comparison!
 ```
 
+## Implementation Files
+
+### Clojure Side
+- `src/potatoclient/transit/core.clj` - Transit reader/writer creation
+- `src/potatoclient/transit/app_db.clj` - App-db atom and state management  
+- `src/potatoclient/transit/commands.clj` - Command API functions
+- `src/potatoclient/transit/subprocess_launcher.clj` - Process lifecycle
+- `src/potatoclient/transit/handlers.clj` - Message handlers
+- `src/potatoclient/transit/validation.clj` - Message validation
+- `src/potatoclient/transit/keyword_handlers.clj` - Automatic keyword conversion
+
+### Kotlin Side
+- `TransitCommunicator.kt` - Low-level Transit I/O with handler support
+- `TransitMessageProtocol.kt` - Message protocol implementation
+- `CommandSubprocess.kt` - Command handling subprocess
+- `StateSubprocess.kt` - State update subprocess  
+- `SimpleCommandBuilder.kt` - Transit to protobuf conversion (kept for fallback)
+- `ProtobufCommandHandlers.kt` - Transit ReadHandlers for command building
+- `ProtobufTransitHandlers.kt` - Transit handlers for all message types
+
 ## Future Improvements
 
-1. **Complete Keyword System**: Finish automatic keyword conversion implementation
-2. **Message Compression**: Add optional gzip for large states
-3. **Batching**: Combine multiple commands in single message
-4. **Metrics**: Add performance metrics collection
-5. **Schema Evolution**: Version message formats
-6. **Binary Diffing**: Send only changed fields for states
+1. ~~**Replace SimpleCommandBuilder**: Use Transit ReadHandlers for command building~~ ✅ COMPLETED
+2. ~~**Malli Spec Validation**: Create specs matching protobuf validation constraints~~ ✅ COMPLETED
+3. **Message Compression**: Add optional gzip for large states
+4. **Batching**: Combine multiple commands in single message
+5. **Metrics**: Add performance metrics collection
+6. **Schema Evolution**: Version message formats
+7. **Binary Diffing**: Send only changed fields for states
+8. **Complete Command Support**: Add remaining command types (LIRA, LRF_align)
+9. **Remove Legacy Code**: Clean up SimpleCommandBuilder and SimpleStateConverter once handlers are proven stable
+10. **WebSocket Error Handling**: Send errors via Transit protocol instead of stderr

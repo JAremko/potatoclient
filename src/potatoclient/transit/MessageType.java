@@ -13,6 +13,7 @@ public enum MessageType {
     COMMAND("command"),
     RESPONSE("response"),
     REQUEST("request"),
+    CONTROL("control"),
     LOG("log"),
     ERROR("error"),
     STATUS("status"),

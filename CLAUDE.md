@@ -14,10 +14,12 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - All Clojure functions use Guardrails `>defn` for runtime validation
 - Single app-db atom following re-frame pattern for state management
 - Transit/MessagePack for all IPC communication
-- **No Legacy Code**: Clean implementations only - no backward compatibility layers, adapters, or deprecated code paths
+- **Clean Architecture**: Single approach using Transit handlers - no manual serialization
+- **Keywords Everywhere**: All data is keywords and numbers in Clojure (except log message text)
 
 **Documentation:**
 - **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
+- **Transit Protocol**: [.claude/transit-protocol.md](.claude/transit-protocol.md) - Message protocol specification (keywords everywhere!)
 - **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
 - **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
@@ -322,17 +324,31 @@ Tests use Transit-based architecture with proper isolation:
 
 The system uses Transit/MessagePack for all inter-process communication:
 
-**Transit Keywords Innovation**
-- Java enums (`MessageType`, `EventType`) create Transit Keywords using `TransitFactory.keyword(key)`
-- Keywords are automatically converted to Clojure keywords without manual processing
-- Provides type safety in Java/Kotlin while maintaining idiomatic Clojure usage
-- Single source of truth for message and event types across languages
+**Clean Transit Handler Architecture**
+- All message serialization uses Transit handlers - no manual map building
+- Protobuf objects automatically serialize with proper tagging
+- Event messages use type-safe handler classes
+- Consistent approach across entire system
 
-**Keyword Usage Policy**
-- **ALL Transit maps use keyword keys** - No string keys in Transit messages
-- Clojure side: Use keywords naturally (`:msg-type`, `:payload`, etc.)
-- Kotlin side: Use `TransitKeys` constants and extension properties for clean access
-- Performance optimized with pre-created keyword instances
+**Keyword-Based Data Model**
+- **In Clojure**: Everything is keywords and numbers (plus booleans)
+- **Only Strings**: Log message text and error descriptions
+- **Automatic Conversion**: All enum-like values become keywords
+- **Examples**:
+  - Message types: `:command`, `:event`, `:state`
+  - Event types: `:gesture`, `:navigation`, `:window`
+  - Stream types: `:heat`, `:day`
+  - Gesture types: `:tap`, `:double-tap`, `:pan`, `:swipe`
+- **See [.claude/transit-protocol.md](.claude/transit-protocol.md) for the complete protocol specification**
+
+**Transit Handler Coverage**
+- ✅ Protobuf state messages (all data types)
+- ✅ Gesture events with proper keyword conversion
+- ✅ Navigation events (mouse interactions)
+- ✅ Window events (resize, focus, minimize)
+- ✅ Control messages (rate limiting, configuration)
+- ✅ Error messages (preserving text content)
+- ✅ Log messages (preserving text content)
 
 **Transit Namespaces**
 - `potatoclient.transit.core` - Transit reader/writer creation and message envelope handling
@@ -340,6 +356,7 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `potatoclient.transit.commands` - Command API that creates Transit messages
 - `potatoclient.transit.subprocess-launcher` - Process lifecycle management for Transit subprocesses
 - `potatoclient.transit.handlers` - Message handlers for incoming Transit messages
+- `potatoclient.transit.keyword-handlers` - Automatic keyword conversion for enums
 
 **Key Components**
 
@@ -361,7 +378,7 @@ The system uses Transit/MessagePack for all inter-process communication:
 
 **Kotlin (Subprocess Components)**
 - `CommandSubprocess` - Receives Transit commands, converts to protobuf, sends via WebSocket
-- `StateSubprocess` - Receives protobuf state, converts to Transit maps, implements debouncing and rate limiting
+- `StateSubprocess` - Receives protobuf state, uses Transit handlers for automatic serialization
 - `VideoStreamManager` - Video streaming with Transit-based communication and gesture support
 - `TransitCommunicator` - Handles Transit message framing and serialization over stdin/stdout
 - `TransitMessageProtocol` - Unified message protocol for subprocess communication
@@ -369,8 +386,8 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `TransitKeys` - Pre-created Transit keyword constants for performance
 - `TransitExtensions` - Kotlin extension properties for clean keyword-based map access
 - `LoggingUtils` - Individual log files per subprocess in development mode
-- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data
-- `SimpleStateConverter` - Converts protobuf state to Transit-compatible maps
+- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data (to be replaced)
+- `ProtobufTransitHandlers` - Transit handlers for all message types - automatic serialization
 - `StdoutInterceptor` - Captures stdout for clean subprocess communication
 - `GestureRecognizer` - Detects tap, double-tap, pan, and swipe gestures
 - `PanController` - Manages pan gesture state and throttling
@@ -386,7 +403,7 @@ The system uses Transit/MessagePack for all inter-process communication:
 
 2. **State Updates (Server → Clojure)**:
    ```
-   Server → WebSocket → Protobuf → StateSubprocess → Transit map → Clojure app-db
+   Server → WebSocket → Protobuf → StateSubprocess → Transit handlers → Clojure app-db
    ```
 
 3. **Video Streams (Server → UI)**:
@@ -436,7 +453,7 @@ All inter-process communication follows a standardized message protocol defined 
 
 **Message Envelope Structure**:
 ```clojure
-{:msg-type string?    ; Message type from MessageType enum
+{:msg-type keyword?   ; Message type from MessageType enum (e.g., :command)
  :msg-id   string?    ; UUID for message tracking  
  :timestamp long?     ; Unix timestamp in milliseconds
  :payload  map?}      ; Message-specific payload
@@ -446,12 +463,13 @@ All inter-process communication follows a standardized message protocol defined 
 - Message types defined in `potatoclient.transit.MessageType` enum
 - Event types defined in `potatoclient.transit.EventType` enum  
 - Enums automatically convert to keywords in Clojure (e.g., `MessageType.COMMAND` → `:command`)
-- Use `EventType.GESTURE.key` in Kotlin to get string value
+- Use `EventType.GESTURE.keyword` in Kotlin to access Transit keyword
 
 **Automatic Keyword Conversion**:
 - Transit configured to automatically convert string keys to keywords
+- All enum values become keywords
 - No manual `keywordize-keys` needed in Clojure handlers
-- Kotlin uses string keys, Clojure receives keyword keys
+- Kotlin uses Transit handlers for automatic serialization
 
 **Message Validation**:
 - All messages validated with Malli schemas in `potatoclient.specs`
@@ -487,13 +505,14 @@ val cmd = messageBuilder.command(
 (defmethod handle-message :event
   [_ stream-key payload]
   (case (:type payload)  ; Already a keyword!
-    "gesture" (handle-gesture (:gesture-type payload))
-    "navigation" (handle-nav payload)))
+    :gesture (handle-gesture (:gesture-type payload))
+    :navigation (handle-nav payload)))
 
-;; Validate incoming messages
-(let [[valid? errors] (validation/validate-message msg)]
-  (when-not valid?
-    (validation/log-validation-error msg errors)))
+;; All data uses keywords
+(let [gesture-type (:gesture-type event)  ; :tap, :double-tap, :pan, :swipe
+      stream-type (:stream-type event)    ; :heat or :day
+      msg-type (:msg-type message)]       ; :command, :event, :state
+  (process-gesture gesture-type stream-type))
 ```
 
 **Kotlin Usage with Extensions**:
@@ -522,23 +541,25 @@ val batteryLevel = stateUpdate.system?.batteryLevel
 
 For the complete protocol specification, see `.claude/transit-protocol.md`.
 
-## Transit Keyword Type System (Coming Soon)
+## Transit Handler Architecture
 
-The codebase is transitioning to a keyword-based type system that leverages Transit's automatic conversion capabilities:
+The codebase uses Transit handlers for all message serialization, providing a clean, consistent architecture:
 
-**Key Principles**:
-- All enum values (from protobuf) automatically convert to keywords
-- No manual string/keyword conversions needed
-- Type safety through Java enums shared between Kotlin and Clojure
-- Special handling for text fields (log messages) that remain as strings
+**Single Approach**: All messages use Transit handlers - no manual serialization
+- Protobuf state messages → Automatically tagged and serialized
+- Event messages (gesture, navigation, window) → Type-safe handler classes
+- Control messages → Consistent tagging and structure
+- Error and log messages → Proper handling with text preservation
 
-**Benefits**:
-- Cleaner code without string/keyword conversion logic
-- Compile-time type safety with runtime validation
-- Better performance (keywords are interned)
-- Clear distinction between enums and free text
+**Key Benefits**:
+- **Type Safety**: Handler classes ensure compile-time checking
+- **Consistency**: All messages follow same serialization pattern
+- **Performance**: No manual map building or conversion overhead
+- **Clean Code**: No string manipulation or manual serialization logic
 
-See `src/potatoclient/transit/keyword_handlers.clj` for the implementation design.
+**Implementation**:
+- Clojure: `src/potatoclient/transit/keyword_handlers.clj` - Automatic detection
+- Kotlin: `src/potatoclient/kotlin/transit/ProtobufTransitHandlers.kt` - All handlers
 
 ## UI Utilities
 
@@ -1602,3 +1623,12 @@ PotatoClient uses the [protogen](https://github.com/JAremko/protogen) Docker-bas
 
 **Note**: The validated Java bindings require the `protovalidate-java` library if you want to use them. Standard bindings work without additional dependencies.
 
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+      
+      IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.

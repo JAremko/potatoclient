@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import cmd.JonSharedCmd
+import com.cognitect.transit.TransitFactory
 
 /**
  * Simplified Command subprocess without protovalidate
@@ -32,7 +34,15 @@ class CommandSubprocess(
 ) {
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
-    private val cmdBuilder = SimpleCommandBuilder()
+    private val cmdBuilder = SimpleCommandBuilder()  // Keep for fallback
+    
+    // Create Transit communicator with protobuf handlers
+    private val protobufReadHandlers = ProtobufCommandHandlers.createReadHandlers()
+    private val transitWithHandlers = TransitCommunicator(
+        System.`in`, 
+        StdoutInterceptor.getOriginalStdout(),
+        readHandlers = protobufReadHandlers
+    )
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -53,7 +63,7 @@ class CommandSubprocess(
                         // Use extension properties for cleaner access
                         when (msg.msgType) {
                             MessageType.COMMAND.keyword -> handleCommand(msg)
-                            MessageType.RESPONSE.keyword -> handleControl(msg) // Control messages come as response type
+                            MessageType.CONTROL.keyword -> handleControl(msg)
                             else -> messageProtocol.sendWarn("Unknown message type: ${msg.msgType}")
                         }
                         totalReceived.incrementAndGet()
@@ -70,32 +80,71 @@ class CommandSubprocess(
             val action = payload.action ?: "ping"
             val params = payload.params
             
-            // Build command with proper error handling
-            cmdBuilder.buildCommand(action, params).fold(
-                onSuccess = { rootCmd ->
-                    wsClient.send(rootCmd.toByteArray())
-                    totalSent.incrementAndGet()
-                    
-                    // Send success response using direct write (critical path)
-                    transitComm.sendMessageDirect(
-                        messageProtocol.createMessage(
-                            MessageType.RESPONSE,
-                            mapOf(
-                                "action" to action,
-                                "status" to "sent"
-                            )
+            // Try to use Transit handlers first
+            val rootCmd = tryBuildWithHandlers(action, params)
+            
+            if (rootCmd != null) {
+                // Successfully built with handlers
+                wsClient.send(rootCmd.toByteArray())
+                totalSent.incrementAndGet()
+                
+                // Send success response using direct write (critical path)
+                transitComm.sendMessageDirect(
+                    messageProtocol.createMessage(
+                        MessageType.RESPONSE,
+                        mapOf(
+                            "action" to action,
+                            "status" to "sent"
                         )
                     )
-                },
-                onFailure = { error ->
-                    // Send error with detailed message
-                    messageProtocol.sendError("Command build failed for '$action': ${error.message}")
-                    // Also send error response
-                    sendError(msgId, error as Exception)
-                }
-            )
+                )
+            } else {
+                // Fallback to SimpleCommandBuilder for compatibility
+                cmdBuilder.buildCommand(action, params).fold(
+                    onSuccess = { cmd ->
+                        wsClient.send(cmd.toByteArray())
+                        totalSent.incrementAndGet()
+                        
+                        // Send success response using direct write (critical path)
+                        transitComm.sendMessageDirect(
+                            messageProtocol.createMessage(
+                                MessageType.RESPONSE,
+                                mapOf(
+                                    "action" to action,
+                                    "status" to "sent"
+                                )
+                            )
+                        )
+                    },
+                    onFailure = { error ->
+                        // Send error with detailed message
+                        messageProtocol.sendError("Command build failed for '$action': ${error.message}")
+                        // Also send error response
+                        sendError(msgId, error as Exception)
+                    }
+                )
+            }
         } catch (e: Exception) {
             sendError(msgId, e)
+        }
+    }
+    
+    private fun tryBuildWithHandlers(action: String, params: Map<*, *>?): JonSharedCmd.Root? {
+        return try {
+            // The command handler in our read handlers expects the command data
+            val commandData = mutableMapOf<Any?, Any?>()
+            commandData[TransitFactory.keyword("action")] = action
+            if (params != null) {
+                commandData[TransitFactory.keyword("params")] = params
+            }
+            
+            // Look for the command handler
+            val commandHandler = protobufReadHandlers["command"] as? com.cognitect.transit.ReadHandler<Map<*, *>, JonSharedCmd.Root>
+            commandHandler?.fromRep(commandData)
+        } catch (e: Exception) {
+            // If handlers fail, return null to trigger fallback
+            messageProtocol.sendDebug("Handler failed for $action: ${e.message}, using fallback")
+            null
         }
     }
 
