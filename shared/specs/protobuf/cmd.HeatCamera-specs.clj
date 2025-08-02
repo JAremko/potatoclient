@@ -1,75 +1,78 @@
 (ns potatoclient.specs.cmd.HeatCamera "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def Calibrate "Schema for Calibrate" [:map])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def FocusStepMinus "Schema for FocusStepMinus" [:map])
+(def prev-zoom-table-pos "Schema for prev-zoom-table-pos" [:map])
 
-(def FocusOut "Schema for FocusOut" [:map])
+(def set-dde-level "Schema for set-dde-level" [:map [:value [:and [:maybe :int] [:>= 0] [:<= 100]]]])
 
-(def PrevFxMode "Schema for PrevFxMode" [:map])
+(def set-calib-mode "Schema for set-calib-mode" [:map])
 
-(def Stop "Schema for Stop" [:map])
+(def zoom "Schema for zoom" [:map [:cmd [:oneof {:set-zoom-table-value [:map [:set-zoom-table-value [:maybe :cmd/set-zoom-table-value]]], :next-zoom-table-pos [:map [:next-zoom-table-pos [:maybe :cmd/next-zoom-table-pos]]], :prev-zoom-table-pos [:map [:prev-zoom-table-pos [:maybe :cmd/prev-zoom-table-pos]]]}]]])
 
-(def ZoomIn "Schema for ZoomIn" [:map])
+(def set-agc "Schema for set-agc" [:map [:value [:not [:enum [0]]]]])
 
-(def SetCalibMode "Schema for SetCalibMode" [:map])
+(def shift-dde "Schema for shift-dde" [:map [:value [:and [:maybe :int] [:>= -100] [:<= 100]]]])
 
-(def SetZoomTableValue "Schema for SetZoomTableValue" [:map [:value [:and [:maybe :int] [:>= 0]]]])
+(def set-clahe-level "Schema for set-clahe-level" [:map [:value [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def SetDDELevel "Schema for SetDDELevel" [:map [:value [:and [:maybe :int] [:>= 0] [:<= 100]]]])
+(def disable-dde "Schema for disable-dde" [:map])
 
-(def Zoom "Schema for Zoom" [:map [:cmd [:oneof {:set-zoom-table-value [:map [:set-zoom-table-value [:maybe :cmd/SetZoomTableValue]]], :next-zoom-table-pos [:map [:next-zoom-table-pos [:maybe :cmd/NextZoomTablePos]]], :prev-zoom-table-pos [:map [:prev-zoom-table-pos [:maybe :cmd/PrevZoomTablePos]]]}]]])
+(def prev-fx-mode "Schema for prev-fx-mode" [:map])
 
-(def NextZoomTablePos "Schema for NextZoomTablePos" [:map])
+(def start "Schema for start" [:map])
 
-(def SetAGC "Schema for SetAGC" [:map [:value [:maybe :ser/JonGuiDataVideoChannelHeatAGCModes]]])
+(def focus-step-minus "Schema for focus-step-minus" [:map])
 
-(def SetClaheLevel "Schema for SetClaheLevel" [:map [:value [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def set-digital-zoom-level "Schema for set-digital-zoom-level" [:map [:value [:>= 1]]])
 
-(def SetValue "Schema for SetValue" [:map [:value [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def enable-dde "Schema for enable-dde" [:map])
 
-(def PrevZoomTablePos "Schema for PrevZoomTablePos" [:map])
+(def focus-stop "Schema for focus-stop" [:map])
 
-(def SetDigitalZoomLevel "Schema for SetDigitalZoomLevel" [:map [:value [:and [:maybe :float] [:>= 1]]]])
+(def stop "Schema for stop" [:map])
 
-(def SetFxMode "Schema for SetFxMode" [:map [:mode [:maybe :ser/JonGuiDataFxModeHeat]]])
+(def reset-zoom "Schema for reset-zoom" [:map])
 
-(def SaveToTable "Schema for SaveToTable" [:map])
+(def zoom-out "Schema for zoom-out" [:map])
 
-(def Halt "Schema for Halt" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:set-dde-level [:map [:set-dde-level [:maybe :cmd/set-dde-level]]], :set-calib-mode [:map [:set-calib-mode [:maybe :cmd/set-calib-mode]]], :zoom [:map [:zoom [:maybe :cmd/zoom]]], :set-agc [:map [:set-agc [:maybe :cmd/set-agc]]], :shift-dde [:map [:shift-dde [:maybe :cmd/shift-dde]]], :set-filter [:map [:set-filter [:maybe :cmd/set-filters]]], :set-clahe-level [:map [:set-clahe-level [:maybe :cmd/set-clahe-level]]], :disable-dde [:map [:disable-dde [:maybe :cmd/disable-dde]]], :prev-fx-mode [:map [:prev-fx-mode [:maybe :cmd/prev-fx-mode]]], :start [:map [:start [:maybe :cmd/start]]], :focus-step-minus [:map [:focus-step-minus [:maybe :cmd/focus-step-minus]]], :set-digital-zoom-level [:map [:set-digital-zoom-level [:maybe :cmd/set-digital-zoom-level]]], :enable-dde [:map [:enable-dde [:maybe :cmd/enable-dde]]], :focus-stop [:map [:focus-stop [:maybe :cmd/focus-stop]]], :stop [:map [:stop [:maybe :cmd/stop]]], :reset-zoom [:map [:reset-zoom [:maybe :cmd/reset-zoom]]], :zoom-out [:map [:zoom-out [:maybe :cmd/zoom-out]]], :photo [:map [:photo [:maybe :cmd/photo]]], :zoom-in [:map [:zoom-in [:maybe :cmd/zoom-in]]], :get-meteo [:map [:get-meteo [:maybe :cmd/get-meteo]]], :focus-step-plus [:map [:focus-step-plus [:maybe :cmd/focus-step-plus]]], :set-fx-mode [:map [:set-fx-mode [:maybe :cmd/set-fx-mode]]], :refresh-fx-mode [:map [:refresh-fx-mode [:maybe :cmd/refresh-fx-mode]]], :focus-out [:map [:focus-out [:maybe :cmd/focus-out]]], :set-auto-focus [:map [:set-auto-focus [:maybe :cmd/set-auto-focus]]], :zoom-stop [:map [:zoom-stop [:maybe :cmd/zoom-stop]]], :save-to-table [:map [:save-to-table [:maybe :cmd/save-to-table]]], :next-fx-mode [:map [:next-fx-mode [:maybe :cmd/next-fx-mode]]], :calibrate [:map [:calibrate [:maybe :cmd/calibrate]]], :shift-clahe-level [:map [:shift-clahe-level [:maybe :cmd/shift-clahe-level]]], :focus-in [:map [:focus-in [:maybe :cmd/focus-in]]]}]]])
 
-(def FocusIn "Schema for FocusIn" [:map])
+(def photo "Schema for photo" [:map])
 
-(def RefreshFxMode "Schema for RefreshFxMode" [:map])
+(def zoom-in "Schema for zoom-in" [:map])
 
-(def ShiftDDE "Schema for ShiftDDE" [:map [:value [:and [:maybe :int] [:>= -100] [:<= 100]]]])
+(def get-meteo "Schema for get-meteo" [:map])
 
-(def Photo "Schema for Photo" [:map])
+(def next-zoom-table-pos "Schema for next-zoom-table-pos" [:map])
 
-(def SetAutoFocus "Schema for SetAutoFocus" [:map [:value [:maybe :boolean]]])
+(def focus-step-plus "Schema for focus-step-plus" [:map])
 
-(def SetFilters "Schema for SetFilters" [:map [:value [:maybe :ser/JonGuiDataVideoChannelHeatFilters]]])
+(def set-value "Schema for set-value" [:map [:value [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def FocusStepPlus "Schema for FocusStepPlus" [:map])
+(def set-zoom-table-value "Schema for set-zoom-table-value" [:map [:value [:>= 0]]])
 
-(def ResetZoom "Schema for ResetZoom" [:map])
+(def set-filters "Schema for set-filters" [:map [:value [:not [:enum [0]]]]])
 
-(def ShiftClaheLevel "Schema for ShiftClaheLevel" [:map [:value [:and [:maybe :float] [:>= -1] [:<= 1]]]])
+(def set-fx-mode "Schema for set-fx-mode" [:map [:mode [:not [:enum [0]]]]])
 
-(def GetMeteo "Schema for GetMeteo" [:map])
+(def refresh-fx-mode "Schema for refresh-fx-mode" [:map])
 
-(def EnableDDE "Schema for EnableDDE" [:map])
+(def halt "Schema for halt" [:map])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:set-dde-level [:map [:set-dde-level [:maybe :cmd/SetDDELevel]]], :set-calib-mode [:map [:set-calib-mode [:maybe :cmd/SetCalibMode]]], :zoom [:map [:zoom [:maybe :cmd/Zoom]]], :set-agc [:map [:set-agc [:maybe :cmd/SetAGC]]], :shift-dde [:map [:shift-dde [:maybe :cmd/ShiftDDE]]], :set-filter [:map [:set-filter [:maybe :cmd/SetFilters]]], :set-clahe-level [:map [:set-clahe-level [:maybe :cmd/SetClaheLevel]]], :disable-dde [:map [:disable-dde [:maybe :cmd/DisableDDE]]], :prev-fx-mode [:map [:prev-fx-mode [:maybe :cmd/PrevFxMode]]], :start [:map [:start [:maybe :cmd/Start]]], :focus-step-minus [:map [:focus-step-minus [:maybe :cmd/FocusStepMinus]]], :set-digital-zoom-level [:map [:set-digital-zoom-level [:maybe :cmd/SetDigitalZoomLevel]]], :enable-dde [:map [:enable-dde [:maybe :cmd/EnableDDE]]], :focus-stop [:map [:focus-stop [:maybe :cmd/FocusStop]]], :stop [:map [:stop [:maybe :cmd/Stop]]], :reset-zoom [:map [:reset-zoom [:maybe :cmd/ResetZoom]]], :zoom-out [:map [:zoom-out [:maybe :cmd/ZoomOut]]], :photo [:map [:photo [:maybe :cmd/Photo]]], :zoom-in [:map [:zoom-in [:maybe :cmd/ZoomIn]]], :get-meteo [:map [:get-meteo [:maybe :cmd/GetMeteo]]], :focus-step-plus [:map [:focus-step-plus [:maybe :cmd/FocusStepPlus]]], :set-fx-mode [:map [:set-fx-mode [:maybe :cmd/SetFxMode]]], :refresh-fx-mode [:map [:refresh-fx-mode [:maybe :cmd/RefreshFxMode]]], :focus-out [:map [:focus-out [:maybe :cmd/FocusOut]]], :set-auto-focus [:map [:set-auto-focus [:maybe :cmd/SetAutoFocus]]], :zoom-stop [:map [:zoom-stop [:maybe :cmd/ZoomStop]]], :save-to-table [:map [:save-to-table [:maybe :cmd/SaveToTable]]], :next-fx-mode [:map [:next-fx-mode [:maybe :cmd/NextFxMode]]], :calibrate [:map [:calibrate [:maybe :cmd/Calibrate]]], :shift-clahe-level [:map [:shift-clahe-level [:maybe :cmd/ShiftClaheLevel]]], :focus-in [:map [:focus-in [:maybe :cmd/FocusIn]]]}]]])
+(def focus-out "Schema for focus-out" [:map])
 
-(def NextFxMode "Schema for NextFxMode" [:map])
+(def set-auto-focus "Schema for set-auto-focus" [:map [:value [:maybe :boolean]]])
 
-(def FocusStop "Schema for FocusStop" [:map])
+(def zoom-stop "Schema for zoom-stop" [:map])
 
-(def Start "Schema for Start" [:map])
+(def save-to-table "Schema for save-to-table" [:map])
 
-(def DisableDDE "Schema for DisableDDE" [:map])
+(def next-fx-mode "Schema for next-fx-mode" [:map])
 
-(def ZoomStop "Schema for ZoomStop" [:map])
+(def calibrate "Schema for calibrate" [:map])
 
-(def ZoomOut "Schema for ZoomOut" [:map])
+(def shift-clahe-level "Schema for shift-clahe-level" [:map [:value [:and [:maybe :double] [:>= -1] [:<= 1]]]])
+
+(def focus-in "Schema for focus-in" [:map])

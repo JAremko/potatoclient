@@ -1,33 +1,36 @@
 (ns potatoclient.specs.cmd.Lrf "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def Stop "Schema for Stop" [:map])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def TargetDesignatorOnModeB "Schema for TargetDesignatorOnModeB" [:map])
+(def target-designator-off "Schema for target-designator-off" [:map])
 
-(def DisableFogMode "Schema for DisableFogMode" [:map])
+(def target-designator-on-mode-b "Schema for target-designator-on-mode-b" [:map])
 
-(def SetScanMode "Schema for SetScanMode" [:map [:mode [:maybe :ser/JonGuiDataLrfScanModes]]])
+(def disable-fog-mode "Schema for disable-fog-mode" [:map])
 
-(def RefineOff "Schema for RefineOff" [:map])
+(def set-scan-mode "Schema for set-scan-mode" [:map [:mode [:not [:enum [0]]]]])
 
-(def NewSession "Schema for NewSession" [:map])
+(def refine-off "Schema for refine-off" [:map])
 
-(def RefineOn "Schema for RefineOn" [:map])
+(def scan-off "Schema for scan-off" [:map])
 
-(def ScanOn "Schema for ScanOn" [:map])
+(def refine-on "Schema for refine-on" [:map])
 
-(def ScanOff "Schema for ScanOff" [:map])
+(def start "Schema for start" [:map])
 
-(def Measure "Schema for Measure" [:map])
+(def measure "Schema for measure" [:map])
 
-(def TargetDesignatorOff "Schema for TargetDesignatorOff" [:map])
+(def scan-on "Schema for scan-on" [:map])
 
-(def GetMeteo "Schema for GetMeteo" [:map])
+(def stop "Schema for stop" [:map])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:target-designator-off [:map [:target-designator-off [:maybe :cmd/TargetDesignatorOff]]], :target-designator-on-mode-b [:map [:target-designator-on-mode-b [:maybe :cmd/TargetDesignatorOnModeB]]], :disable-fog-mode [:map [:disable-fog-mode [:maybe :cmd/DisableFogMode]]], :set-scan-mode [:map [:set-scan-mode [:maybe :cmd/SetScanMode]]], :refine-off [:map [:refine-off [:maybe :cmd/RefineOff]]], :scan-off [:map [:scan-off [:maybe :cmd/ScanOff]]], :refine-on [:map [:refine-on [:maybe :cmd/RefineOn]]], :start [:map [:start [:maybe :cmd/Start]]], :measure [:map [:measure [:maybe :cmd/Measure]]], :scan-on [:map [:scan-on [:maybe :cmd/ScanOn]]], :stop [:map [:stop [:maybe :cmd/Stop]]], :new-session [:map [:new-session [:maybe :cmd/NewSession]]], :get-meteo [:map [:get-meteo [:maybe :cmd/GetMeteo]]], :enable-fog-mode [:map [:enable-fog-mode [:maybe :cmd/EnableFogMode]]], :target-designator-on-mode-a [:map [:target-designator-on-mode-a [:maybe :cmd/TargetDesignatorOnModeA]]]}]]])
+(def new-session "Schema for new-session" [:map])
 
-(def TargetDesignatorOnModeA "Schema for TargetDesignatorOnModeA" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:target-designator-off [:map [:target-designator-off [:maybe :cmd/target-designator-off]]], :target-designator-on-mode-b [:map [:target-designator-on-mode-b [:maybe :cmd/target-designator-on-mode-b]]], :disable-fog-mode [:map [:disable-fog-mode [:maybe :cmd/disable-fog-mode]]], :set-scan-mode [:map [:set-scan-mode [:maybe :cmd/set-scan-mode]]], :refine-off [:map [:refine-off [:maybe :cmd/refine-off]]], :scan-off [:map [:scan-off [:maybe :cmd/scan-off]]], :refine-on [:map [:refine-on [:maybe :cmd/refine-on]]], :start [:map [:start [:maybe :cmd/start]]], :measure [:map [:measure [:maybe :cmd/measure]]], :scan-on [:map [:scan-on [:maybe :cmd/scan-on]]], :stop [:map [:stop [:maybe :cmd/stop]]], :new-session [:map [:new-session [:maybe :cmd/new-session]]], :get-meteo [:map [:get-meteo [:maybe :cmd/get-meteo]]], :enable-fog-mode [:map [:enable-fog-mode [:maybe :cmd/enable-fog-mode]]], :target-designator-on-mode-a [:map [:target-designator-on-mode-a [:maybe :cmd/target-designator-on-mode-a]]]}]]])
 
-(def EnableFogMode "Schema for EnableFogMode" [:map])
+(def get-meteo "Schema for get-meteo" [:map])
 
-(def Start "Schema for Start" [:map])
+(def enable-fog-mode "Schema for enable-fog-mode" [:map])
+
+(def target-designator-on-mode-a "Schema for target-designator-on-mode-a" [:map])

@@ -1,19 +1,22 @@
 (ns potatoclient.specs.cmd.OSD "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def DisableHeatOSD "Schema for DisableHeatOSD" [:map])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def ShowDefaultScreen "Schema for ShowDefaultScreen" [:map])
+(def show-lrf-result-simplified-screen "Schema for show-lrf-result-simplified-screen" [:map])
 
-(def DisableDayOSD "Schema for DisableDayOSD" [:map])
+(def show-lrf-measure-screen "Schema for show-lrf-measure-screen" [:map])
 
-(def ShowLRFResultScreen "Schema for ShowLRFResultScreen" [:map])
+(def disable-heat-osd "Schema for disable-heat-osd" [:map])
 
-(def EnableHeatOSD "Schema for EnableHeatOSD" [:map])
+(def disable-day-osd "Schema for disable-day-osd" [:map])
 
-(def EnableDayOSD "Schema for EnableDayOSD" [:map])
+(def show-lrf-result-screen "Schema for show-lrf-result-screen" [:map])
 
-(def ShowLRFMeasureScreen "Schema for ShowLRFMeasureScreen" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:show-default-screen [:map [:show-default-screen [:maybe :cmd/show-default-screen]]], :show-lrf-measure-screen [:map [:show-lrf-measure-screen [:maybe :cmd/show-lrf-measure-screen]]], :show-lrf-result-screen [:map [:show-lrf-result-screen [:maybe :cmd/show-lrf-result-screen]]], :show-lrf-result-simplified-screen [:map [:show-lrf-result-simplified-screen [:maybe :cmd/show-lrf-result-simplified-screen]]], :enable-heat-osd [:map [:enable-heat-osd [:maybe :cmd/enable-heat-osd]]], :disable-heat-osd [:map [:disable-heat-osd [:maybe :cmd/disable-heat-osd]]], :enable-day-osd [:map [:enable-day-osd [:maybe :cmd/enable-day-osd]]], :disable-day-osd [:map [:disable-day-osd [:maybe :cmd/disable-day-osd]]]}]]])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:show-default-screen [:map [:show-default-screen [:maybe :cmd/ShowDefaultScreen]]], :show-lrf-measure-screen [:map [:show-lrf-measure-screen [:maybe :cmd/ShowLRFMeasureScreen]]], :show-lrf-result-screen [:map [:show-lrf-result-screen [:maybe :cmd/ShowLRFResultScreen]]], :show-lrf-result-simplified-screen [:map [:show-lrf-result-simplified-screen [:maybe :cmd/ShowLRFResultSimplifiedScreen]]], :enable-heat-osd [:map [:enable-heat-osd [:maybe :cmd/EnableHeatOSD]]], :disable-heat-osd [:map [:disable-heat-osd [:maybe :cmd/DisableHeatOSD]]], :enable-day-osd [:map [:enable-day-osd [:maybe :cmd/EnableDayOSD]]], :disable-day-osd [:map [:disable-day-osd [:maybe :cmd/DisableDayOSD]]]}]]])
+(def enable-heat-osd "Schema for enable-heat-osd" [:map])
 
-(def ShowLRFResultSimplifiedScreen "Schema for ShowLRFResultSimplifiedScreen" [:map])
+(def show-default-screen "Schema for show-default-screen" [:map])
+
+(def enable-day-osd "Schema for enable-day-osd" [:map])

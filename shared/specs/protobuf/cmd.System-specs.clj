@@ -1,29 +1,32 @@
 (ns potatoclient.specs.cmd.System "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def EnterTransport "Schema for EnterTransport" [:map])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def EnableGeodesicMode "Schema for EnableGeodesicMode" [:map])
+(def enable-geodesic-mode "Schema for enable-geodesic-mode" [:map])
 
-(def UnmarkRecImportant "Schema for UnmarkRecImportant" [:map])
+(def unmark-rec-important "Schema for unmark-rec-important" [:map])
 
-(def ResetConfigs "Schema for ResetConfigs" [:map])
+(def stop-rec "Schema for stop-rec" [:map])
 
-(def StopRec "Schema for StopRec" [:map])
+(def stop-a-ll "Schema for stop-a-ll" [:map])
 
-(def MarkRecImportant "Schema for MarkRecImportant" [:map])
+(def reboot "Schema for reboot" [:map])
 
-(def StartALl "Schema for StartALl" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:geodesic-mode-disable [:map [:geodesic-mode-disable [:maybe :cmd/disable-geodesic-mode]]], :start-all [:map [:start-all [:maybe :cmd/start-a-ll]]], :geodesic-mode-enable [:map [:geodesic-mode-enable [:maybe :cmd/enable-geodesic-mode]]], :localization [:map [:localization [:maybe :cmd/set-localization]]], :unmark-rec-important [:map [:unmark-rec-important [:maybe :cmd/unmark-rec-important]]], :stop-rec [:map [:stop-rec [:maybe :cmd/stop-rec]]], :reboot [:map [:reboot [:maybe :cmd/reboot]]], :start-rec [:map [:start-rec [:maybe :cmd/start-rec]]], :power-off [:map [:power-off [:maybe :cmd/power-off]]], :reset-configs [:map [:reset-configs [:maybe :cmd/reset-configs]]], :stop-all [:map [:stop-all [:maybe :cmd/stop-a-ll]]], :enter-transport [:map [:enter-transport [:maybe :cmd/enter-transport]]], :mark-rec-important [:map [:mark-rec-important [:maybe :cmd/mark-rec-important]]]}]]])
 
-(def Reboot "Schema for Reboot" [:map])
+(def start-rec "Schema for start-rec" [:map])
 
-(def StartRec "Schema for StartRec" [:map])
+(def power-off "Schema for power-off" [:map])
 
-(def StopALl "Schema for StopALl" [:map])
+(def set-localization "Schema for set-localization" [:map [:loc [:not [:enum [0]]]]])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:geodesic-mode-disable [:map [:geodesic-mode-disable [:maybe :cmd/DisableGeodesicMode]]], :start-all [:map [:start-all [:maybe :cmd/StartALl]]], :geodesic-mode-enable [:map [:geodesic-mode-enable [:maybe :cmd/EnableGeodesicMode]]], :localization [:map [:localization [:maybe :cmd/SetLocalization]]], :unmark-rec-important [:map [:unmark-rec-important [:maybe :cmd/UnmarkRecImportant]]], :stop-rec [:map [:stop-rec [:maybe :cmd/StopRec]]], :reboot [:map [:reboot [:maybe :cmd/Reboot]]], :start-rec [:map [:start-rec [:maybe :cmd/StartRec]]], :power-off [:map [:power-off [:maybe :cmd/PowerOff]]], :reset-configs [:map [:reset-configs [:maybe :cmd/ResetConfigs]]], :stop-all [:map [:stop-all [:maybe :cmd/StopALl]]], :enter-transport [:map [:enter-transport [:maybe :cmd/EnterTransport]]], :mark-rec-important [:map [:mark-rec-important [:maybe :cmd/MarkRecImportant]]]}]]])
+(def reset-configs "Schema for reset-configs" [:map])
 
-(def SetLocalization "Schema for SetLocalization" [:map [:loc [:maybe :ser/JonGuiDataSystemLocalizations]]])
+(def disable-geodesic-mode "Schema for disable-geodesic-mode" [:map])
 
-(def DisableGeodesicMode "Schema for DisableGeodesicMode" [:map])
+(def enter-transport "Schema for enter-transport" [:map])
 
-(def PowerOff "Schema for PowerOff" [:map])
+(def mark-rec-important "Schema for mark-rec-important" [:map])
+
+(def start-a-ll "Schema for start-a-ll" [:map])

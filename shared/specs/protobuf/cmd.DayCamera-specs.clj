@@ -1,61 +1,64 @@
 (ns potatoclient.specs.cmd.DayCamera "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def PrevFxMode "Schema for PrevFxMode" [:map])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def Stop "Schema for Stop" [:map])
+(def prev-zoom-table-pos "Schema for prev-zoom-table-pos" [:map])
 
-(def SetZoomTableValue "Schema for SetZoomTableValue" [:map [:value [:and [:maybe :int] [:>= 0]]]])
+(def zoom "Schema for zoom" [:map [:cmd [:oneof {:prev-zoom-table-pos [:map [:prev-zoom-table-pos [:maybe :cmd/prev-zoom-table-pos]]], :offset [:map [:offset [:maybe :cmd/offset]]], :move [:map [:move [:maybe :cmd/move]]], :reset-zoom [:map [:reset-zoom [:maybe :cmd/reset-zoom]]], :next-zoom-table-pos [:map [:next-zoom-table-pos [:maybe :cmd/next-zoom-table-pos]]], :set-value [:map [:set-value [:maybe :cmd/set-value]]], :set-zoom-table-value [:map [:set-zoom-table-value [:maybe :cmd/set-zoom-table-value]]], :halt [:map [:halt [:maybe :cmd/halt]]], :save-to-table [:map [:save-to-table [:maybe :cmd/save-to-table]]]}]]])
 
-(def Offset "Schema for Offset" [:map [:offset-value [:and [:maybe :float] [:>= -1] [:<= 1]]]])
+(def set-infra-red-filter "Schema for set-infra-red-filter" [:map [:value [:maybe :boolean]]])
 
-(def Zoom "Schema for Zoom" [:map [:cmd [:oneof {:prev-zoom-table-pos [:map [:prev-zoom-table-pos [:maybe :cmd/PrevZoomTablePos]]], :offset [:map [:offset [:maybe :cmd/Offset]]], :move [:map [:move [:maybe :cmd/Move]]], :reset-zoom [:map [:reset-zoom [:maybe :cmd/ResetZoom]]], :next-zoom-table-pos [:map [:next-zoom-table-pos [:maybe :cmd/NextZoomTablePos]]], :set-value [:map [:set-value [:maybe :cmd/SetValue]]], :set-zoom-table-value [:map [:set-zoom-table-value [:maybe :cmd/SetZoomTableValue]]], :halt [:map [:halt [:maybe :cmd/Halt]]], :save-to-table [:map [:save-to-table [:maybe :cmd/SaveToTable]]]}]]])
+(def offset "Schema for offset" [:map [:offset-value [:and [:maybe :double] [:>= -1] [:<= 1]]]])
 
-(def NextZoomTablePos "Schema for NextZoomTablePos" [:map])
+(def set-clahe-level "Schema for set-clahe-level" [:map [:value [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def SaveToTableFocus "Schema for SaveToTableFocus" [:map])
+(def prev-fx-mode "Schema for prev-fx-mode" [:map])
 
-(def SetClaheLevel "Schema for SetClaheLevel" [:map [:value [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def start "Schema for start" [:map])
 
-(def SetValue "Schema for SetValue" [:map [:value [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def move "Schema for move" [:map [:target-value [:and [:maybe :double] [:>= 0] [:<= 1]]] [:speed [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def PrevZoomTablePos "Schema for PrevZoomTablePos" [:map])
+(def reset-focus "Schema for reset-focus" [:map])
 
-(def SetDigitalZoomLevel "Schema for SetDigitalZoomLevel" [:map [:value [:and [:maybe :float] [:>= 1]]]])
+(def halt-all "Schema for halt-all" [:map])
 
-(def SetFxMode "Schema for SetFxMode" [:map [:mode [:maybe :ser/JonGuiDataFxModeDay]]])
+(def get-pos "Schema for get-pos" [:map])
 
-(def SaveToTable "Schema for SaveToTable" [:map])
+(def set-digital-zoom-level "Schema for set-digital-zoom-level" [:map [:value [:>= 1]]])
 
-(def Halt "Schema for Halt" [:map])
+(def stop "Schema for stop" [:map])
 
-(def RefreshFxMode "Schema for RefreshFxMode" [:map])
+(def reset-zoom "Schema for reset-zoom" [:map])
 
-(def Move "Schema for Move" [:map [:target-value [:and [:maybe :float] [:>= 0] [:<= 1]]] [:speed [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def save-to-table-focus "Schema for save-to-table-focus" [:map])
 
-(def SetInfraRedFilter "Schema for SetInfraRedFilter" [:map [:value [:maybe :boolean]]])
+(def root "Schema for root" [:map [:cmd [:oneof {:zoom [:map [:zoom [:maybe :cmd/zoom]]], :set-infra-red-filter [:map [:set-infra-red-filter [:maybe :cmd/set-infra-red-filter]]], :set-clahe-level [:map [:set-clahe-level [:maybe :cmd/set-clahe-level]]], :prev-fx-mode [:map [:prev-fx-mode [:maybe :cmd/prev-fx-mode]]], :start [:map [:start [:maybe :cmd/start]]], :halt-all [:map [:halt-all [:maybe :cmd/halt-all]]], :set-digital-zoom-level [:map [:set-digital-zoom-level [:maybe :cmd/set-digital-zoom-level]]], :stop [:map [:stop [:maybe :cmd/stop]]], :photo [:map [:photo [:maybe :cmd/photo]]], :get-meteo [:map [:get-meteo [:maybe :cmd/get-meteo]]], :focus [:map [:focus [:maybe :cmd/focus]]], :set-fx-mode [:map [:set-fx-mode [:maybe :cmd/set-fx-mode]]], :set-iris [:map [:set-iris [:maybe :cmd/set-iris]]], :refresh-fx-mode [:map [:refresh-fx-mode [:maybe :cmd/refresh-fx-mode]]], :set-auto-iris [:map [:set-auto-iris [:maybe :cmd/set-auto-iris]]], :next-fx-mode [:map [:next-fx-mode [:maybe :cmd/next-fx-mode]]], :shift-clahe-level [:map [:shift-clahe-level [:maybe :cmd/shift-clahe-level]]]}]]])
 
-(def SetAutoIris "Schema for SetAutoIris" [:map [:value [:maybe :boolean]]])
+(def photo "Schema for photo" [:map])
 
-(def Photo "Schema for Photo" [:map])
+(def get-meteo "Schema for get-meteo" [:map])
 
-(def ResetZoom "Schema for ResetZoom" [:map])
+(def next-zoom-table-pos "Schema for next-zoom-table-pos" [:map])
 
-(def ShiftClaheLevel "Schema for ShiftClaheLevel" [:map [:value [:and [:maybe :float] [:>= -1] [:<= 1]]]])
+(def focus "Schema for focus" [:map [:cmd [:oneof {:set-value [:map [:set-value [:maybe :cmd/set-value]]], :move [:map [:move [:maybe :cmd/move]]], :halt [:map [:halt [:maybe :cmd/halt]]], :offset [:map [:offset [:maybe :cmd/offset]]], :reset-focus [:map [:reset-focus [:maybe :cmd/reset-focus]]], :save-to-table-focus [:map [:save-to-table-focus [:maybe :cmd/save-to-table-focus]]]}]]])
 
-(def GetPos "Schema for GetPos" [:map])
+(def set-value "Schema for set-value" [:map [:value [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def GetMeteo "Schema for GetMeteo" [:map])
+(def set-zoom-table-value "Schema for set-zoom-table-value" [:map [:value [:>= 0]]])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:zoom [:map [:zoom [:maybe :cmd/Zoom]]], :set-infra-red-filter [:map [:set-infra-red-filter [:maybe :cmd/SetInfraRedFilter]]], :set-clahe-level [:map [:set-clahe-level [:maybe :cmd/SetClaheLevel]]], :prev-fx-mode [:map [:prev-fx-mode [:maybe :cmd/PrevFxMode]]], :start [:map [:start [:maybe :cmd/Start]]], :halt-all [:map [:halt-all [:maybe :cmd/HaltAll]]], :set-digital-zoom-level [:map [:set-digital-zoom-level [:maybe :cmd/SetDigitalZoomLevel]]], :stop [:map [:stop [:maybe :cmd/Stop]]], :photo [:map [:photo [:maybe :cmd/Photo]]], :get-meteo [:map [:get-meteo [:maybe :cmd/GetMeteo]]], :focus [:map [:focus [:maybe :cmd/Focus]]], :set-fx-mode [:map [:set-fx-mode [:maybe :cmd/SetFxMode]]], :set-iris [:map [:set-iris [:maybe :cmd/SetIris]]], :refresh-fx-mode [:map [:refresh-fx-mode [:maybe :cmd/RefreshFxMode]]], :set-auto-iris [:map [:set-auto-iris [:maybe :cmd/SetAutoIris]]], :next-fx-mode [:map [:next-fx-mode [:maybe :cmd/NextFxMode]]], :shift-clahe-level [:map [:shift-clahe-level [:maybe :cmd/ShiftClaheLevel]]]}]]])
+(def set-fx-mode "Schema for set-fx-mode" [:map [:mode [:not [:enum [0]]]]])
 
-(def NextFxMode "Schema for NextFxMode" [:map])
+(def set-iris "Schema for set-iris" [:map [:value [:and [:maybe :double] [:>= 0] [:<= 1]]]])
 
-(def ResetFocus "Schema for ResetFocus" [:map])
+(def refresh-fx-mode "Schema for refresh-fx-mode" [:map])
 
-(def Start "Schema for Start" [:map])
+(def halt "Schema for halt" [:map])
 
-(def HaltAll "Schema for HaltAll" [:map])
+(def set-auto-iris "Schema for set-auto-iris" [:map [:value [:maybe :boolean]]])
 
-(def Focus "Schema for Focus" [:map [:cmd [:oneof {:set-value [:map [:set-value [:maybe :cmd/SetValue]]], :move [:map [:move [:maybe :cmd/Move]]], :halt [:map [:halt [:maybe :cmd/Halt]]], :offset [:map [:offset [:maybe :cmd/Offset]]], :reset-focus [:map [:reset-focus [:maybe :cmd/ResetFocus]]], :save-to-table-focus [:map [:save-to-table-focus [:maybe :cmd/SaveToTableFocus]]]}]]])
+(def save-to-table "Schema for save-to-table" [:map])
 
-(def SetIris "Schema for SetIris" [:map [:value [:and [:maybe :float] [:>= 0] [:<= 1]]]])
+(def next-fx-mode "Schema for next-fx-mode" [:map])
+
+(def shift-clahe-level "Schema for shift-clahe-level" [:map [:value [:and [:maybe :double] [:>= -1] [:<= 1]]]])

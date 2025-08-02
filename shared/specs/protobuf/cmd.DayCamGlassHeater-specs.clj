@@ -1,13 +1,16 @@
 (ns potatoclient.specs.cmd.DayCamGlassHeater "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:start [:map [:start [:maybe :cmd/Start]]], :stop [:map [:stop [:maybe :cmd/Stop]]], :turn-on [:map [:turn-on [:maybe :cmd/TurnOn]]], :turn-off [:map [:turn-off [:maybe :cmd/TurnOff]]], :get-meteo [:map [:get-meteo [:maybe :cmd/GetMeteo]]]}]]])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def Start "Schema for Start" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:start [:map [:start [:maybe :cmd/start]]], :stop [:map [:stop [:maybe :cmd/stop]]], :turn-on [:map [:turn-on [:maybe :cmd/turn-on]]], :turn-off [:map [:turn-off [:maybe :cmd/turn-off]]], :get-meteo [:map [:get-meteo [:maybe :cmd/get-meteo]]]}]]])
 
-(def Stop "Schema for Stop" [:map])
+(def start "Schema for start" [:map])
 
-(def TurnOn "Schema for TurnOn" [:map])
+(def stop "Schema for stop" [:map])
 
-(def TurnOff "Schema for TurnOff" [:map])
+(def turn-on "Schema for turn-on" [:map])
 
-(def GetMeteo "Schema for GetMeteo" [:map])
+(def turn-off "Schema for turn-off" [:map])
+
+(def get-meteo "Schema for get-meteo" [:map])

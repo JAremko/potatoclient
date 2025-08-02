@@ -1,21 +1,24 @@
 (ns potatoclient.specs.cmd.CV "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def StartTrackNDC "Schema for StartTrackNDC" [:map [:channel [:maybe :ser/JonGuiDataVideoChannel]] [:x [:and [:maybe :float] [:>= -1] [:<= 1]]] [:y [:and [:maybe :float] [:>= -1] [:<= 1]]] [:frame-time [:maybe :int]]])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def VampireModeEnable "Schema for VampireModeEnable" [:map])
+(def vampire-mode-enable "Schema for vampire-mode-enable" [:map])
 
-(def SetAutoFocus "Schema for SetAutoFocus" [:map [:channel [:maybe :ser/JonGuiDataVideoChannel]] [:value [:maybe :boolean]]])
+(def vampire-mode-disable "Schema for vampire-mode-disable" [:map])
 
-(def VampireModeDisable "Schema for VampireModeDisable" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:vampire-mode-enable [:map [:vampire-mode-enable [:maybe :cmd/vampire-mode-enable]]], :vampire-mode-disable [:map [:vampire-mode-disable [:maybe :cmd/vampire-mode-disable]]], :dump-stop [:map [:dump-stop [:maybe :cmd/dump-stop]]], :stabilization-mode-disable [:map [:stabilization-mode-disable [:maybe :cmd/stabilization-mode-disable]]], :set-auto-focus [:map [:set-auto-focus [:maybe :cmd/set-auto-focus]]], :start-track-ndc [:map [:start-track-ndc [:maybe :cmd/start-track-ndc]]], :dump-start [:map [:dump-start [:maybe :cmd/dump-start]]], :stop-track [:map [:stop-track [:maybe :cmd/stop-track]]], :stabilization-mode-enable [:map [:stabilization-mode-enable [:maybe :cmd/stabilization-mode-enable]]]}]]])
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:vampire-mode-enable [:map [:vampire-mode-enable [:maybe :cmd/VampireModeEnable]]], :vampire-mode-disable [:map [:vampire-mode-disable [:maybe :cmd/VampireModeDisable]]], :dump-stop [:map [:dump-stop [:maybe :cmd/DumpStop]]], :stabilization-mode-disable [:map [:stabilization-mode-disable [:maybe :cmd/StabilizationModeDisable]]], :set-auto-focus [:map [:set-auto-focus [:maybe :cmd/SetAutoFocus]]], :start-track-ndc [:map [:start-track-ndc [:maybe :cmd/StartTrackNDC]]], :dump-start [:map [:dump-start [:maybe :cmd/DumpStart]]], :stop-track [:map [:stop-track [:maybe :cmd/StopTrack]]], :stabilization-mode-enable [:map [:stabilization-mode-enable [:maybe :cmd/StabilizationModeEnable]]]}]]])
+(def dump-stop "Schema for dump-stop" [:map])
 
-(def StabilizationModeEnable "Schema for StabilizationModeEnable" [:map])
+(def stabilization-mode-disable "Schema for stabilization-mode-disable" [:map])
 
-(def DumpStop "Schema for DumpStop" [:map])
+(def set-auto-focus "Schema for set-auto-focus" [:map [:channel [:not [:enum [0]]]] [:value [:maybe :boolean]]])
 
-(def StabilizationModeDisable "Schema for StabilizationModeDisable" [:map])
+(def start-track-ndc "Schema for start-track-ndc" [:map [:channel [:not [:enum [0]]]] [:x [:and [:maybe :double] [:>= -1] [:<= 1]]] [:y [:and [:maybe :double] [:>= -1] [:<= 1]]] [:frame-time [:maybe :int]]])
 
-(def DumpStart "Schema for DumpStart" [:map])
+(def dump-start "Schema for dump-start" [:map])
 
-(def StopTrack "Schema for StopTrack" [:map])
+(def stop-track "Schema for stop-track" [:map])
+
+(def stabilization-mode-enable "Schema for stabilization-mode-enable" [:map])

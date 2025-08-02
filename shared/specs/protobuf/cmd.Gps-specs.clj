@@ -1,13 +1,16 @@
 (ns potatoclient.specs.cmd.Gps "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def Root "Schema for Root" [:map [:cmd [:oneof {:start [:map [:start [:maybe :cmd/Start]]], :stop [:map [:stop [:maybe :cmd/Stop]]], :set-manual-position [:map [:set-manual-position [:maybe :cmd/SetManualPosition]]], :set-use-manual-position [:map [:set-use-manual-position [:maybe :cmd/SetUseManualPosition]]], :get-meteo [:map [:get-meteo [:maybe :cmd/GetMeteo]]]}]]])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def Start "Schema for Start" [:map])
+(def root "Schema for root" [:map [:cmd [:oneof {:start [:map [:start [:maybe :cmd/start]]], :stop [:map [:stop [:maybe :cmd/stop]]], :set-manual-position [:map [:set-manual-position [:maybe :cmd/set-manual-position]]], :set-use-manual-position [:map [:set-use-manual-position [:maybe :cmd/set-use-manual-position]]], :get-meteo [:map [:get-meteo [:maybe :cmd/get-meteo]]]}]]])
 
-(def Stop "Schema for Stop" [:map])
+(def start "Schema for start" [:map])
 
-(def GetMeteo "Schema for GetMeteo" [:map])
+(def stop "Schema for stop" [:map])
 
-(def SetUseManualPosition "Schema for SetUseManualPosition" [:map [:flag [:maybe :boolean]]])
+(def get-meteo "Schema for get-meteo" [:map])
 
-(def SetManualPosition "Schema for SetManualPosition" [:map [:latitude [:and [:maybe :float] [:>= -90] [:<= 90]]] [:longitude [:and [:maybe :float] [:>= -180] [:< 180]]] [:altitude [:and [:maybe :float] [:>= -432] [:<= 8848]]]])
+(def set-use-manual-position "Schema for set-use-manual-position" [:map [:flag [:maybe :boolean]]])
+
+(def set-manual-position "Schema for set-manual-position" [:map [:latitude [:and [:maybe :double] [:>= -90] [:<= 90]]] [:longitude [:and [:maybe :double] [:>= -180] [:< 180]]] [:altitude [:and [:maybe :double] [:>= -432] [:<= 8848]]]])

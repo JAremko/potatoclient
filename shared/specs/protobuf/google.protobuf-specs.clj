@@ -1,55 +1,58 @@
 (ns potatoclient.specs.google.protobuf "Generated Malli specs from protobuf descriptors" (:require [malli.core :as proto-explorer.spec-generator/m] [malli.generator :as proto-explorer.spec-generator/mg]))
 
-(def EnumValueOptions "Schema for EnumValueOptions" [:map [:deprecated [:maybe :boolean]] [:features [:maybe :google/FeatureSet]] [:debug-redact [:maybe :boolean]] [:feature-support [:maybe :google/FeatureSupport]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
+;; These will be replaced with actual implementations when loaded
 
-(def ExtensionRangeOptions "Schema for ExtensionRangeOptions" [:map [:uninterpreted-option [:vector :google/UninterpretedOption]] [:declaration [:vector :google/Declaration]] [:features [:maybe :google/FeatureSet]] [:verification [:maybe :google/VerificationState]]])
+(def extension-range-options "Schema for extension-range-options" [:map [:uninterpreted-option [:vector :google/uninterpreted-option]] [:declaration [:vector :google/declaration]] [:features [:maybe :google/feature-set]] [:verification [:maybe :google/verification-state]]])
 
-(def OneofDescriptorProto "Schema for OneofDescriptorProto" [:map [:name [:maybe :string]] [:options [:maybe :google/OneofOptions]]])
+(def field-descriptor-proto "Schema for field-descriptor-proto" [:map [:name [:maybe :string]] [:number [:maybe :int]] [:label [:maybe :google/label]] [:type [:maybe :google/type]] [:type-name [:maybe :string]] [:extendee [:maybe :string]] [:default-value [:maybe :string]] [:oneof-index [:maybe :int]] [:json-name [:maybe :string]] [:options [:maybe :google/field-options]] [:proto3-optional [:maybe :boolean]]])
 
-(def OneofOptions "Schema for OneofOptions" [:map [:features [:maybe :google/FeatureSet]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def enum-options "Schema for enum-options" [:map [:allow-alias [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:deprecated-legacy-json-field-conflicts [:maybe :boolean]] [:features [:maybe :google/feature-set]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def FeatureSetDefaults "Schema for FeatureSetDefaults" [:map [:defaults [:vector :google/FeatureSetEditionDefault]] [:minimum-edition [:maybe :google/Edition]] [:maximum-edition [:maybe :google/Edition]]])
+(def generated-code-info "Schema for generated-code-info" [:map [:annotation [:vector :google/annotation]]])
 
-(def SymbolVisibility "Schema for SymbolVisibility" [:enum :VISIBILITY-UNSET :VISIBILITY-LOCAL :VISIBILITY-EXPORT])
+(def field-options "Schema for field-options" [:map [:ctype [:maybe :google/c-type]] [:packed [:maybe :boolean]] [:jstype [:maybe :google/js-type]] [:lazy [:maybe :boolean]] [:unverified-lazy [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:weak [:maybe :boolean]] [:debug-redact [:maybe :boolean]] [:retention [:maybe :google/option-retention]] [:targets [:vector :google/option-target-type]] [:edition-defaults [:vector :google/edition-default]] [:features [:maybe :google/feature-set]] [:feature-support [:maybe :google/feature-support]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def DescriptorProto "Schema for DescriptorProto" [:map [:name [:maybe :string]] [:field [:vector :google/FieldDescriptorProto]] [:extension [:vector :google/FieldDescriptorProto]] [:nested-type [:vector :google/DescriptorProto]] [:enum-type [:vector :google/EnumDescriptorProto]] [:extension-range [:vector :google/ExtensionRange]] [:oneof-decl [:vector :google/OneofDescriptorProto]] [:options [:maybe :google/MessageOptions]] [:reserved-range [:vector :google/ReservedRange]] [:reserved-name [:vector :string]] [:visibility [:maybe :google/SymbolVisibility]]])
+(def method-descriptor-proto "Schema for method-descriptor-proto" [:map [:name [:maybe :string]] [:input-type [:maybe :string]] [:output-type [:maybe :string]] [:options [:maybe :google/method-options]] [:client-streaming [:maybe :boolean]] [:server-streaming [:maybe :boolean]]])
 
-(def FeatureSet "Schema for FeatureSet" [:map [:field-presence [:maybe :google/FieldPresence]] [:enum-type [:maybe :google/EnumType]] [:repeated-field-encoding [:maybe :google/RepeatedFieldEncoding]] [:utf8-validation [:maybe :google/Utf8Validation]] [:message-encoding [:maybe :google/MessageEncoding]] [:json-format [:maybe :google/JsonFormat]] [:enforce-naming-style [:maybe :google/EnforceNamingStyle]] [:default-symbol-visibility [:maybe :google/DefaultSymbolVisibility]]])
+(def service-descriptor-proto "Schema for service-descriptor-proto" [:map [:name [:maybe :string]] [:method [:vector :google/method-descriptor-proto]] [:options [:maybe :google/service-options]]])
 
-(def GeneratedCodeInfo "Schema for GeneratedCodeInfo" [:map [:annotation [:vector :google/Annotation]]])
+(def duration "Schema for duration" [:map [:seconds [:maybe :int]] [:nanos [:maybe :int]]])
 
-(def ServiceOptions "Schema for ServiceOptions" [:map [:features [:maybe :google/FeatureSet]] [:deprecated [:maybe :boolean]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def descriptor-proto "Schema for descriptor-proto" [:map [:name [:maybe :string]] [:field [:vector :google/field-descriptor-proto]] [:extension [:vector :google/field-descriptor-proto]] [:nested-type [:vector :google/descriptor-proto]] [:enum-type [:vector :google/enum-descriptor-proto]] [:extension-range [:vector :google/extension-range]] [:oneof-decl [:vector :google/oneof-descriptor-proto]] [:options [:maybe :google/message-options]] [:reserved-range [:vector :google/reserved-range]] [:reserved-name [:vector :string]] [:visibility [:maybe :google/symbol-visibility]]])
 
-(def Edition "Schema for Edition" [:enum :EDITION-UNKNOWN :EDITION-LEGACY :EDITION-PROTO2 :EDITION-PROTO3 :EDITION-2023 :EDITION-2024 :EDITION-1-TEST-ONLY :EDITION-2-TEST-ONLY :EDITION-99997-TEST-ONLY :EDITION-99998-TEST-ONLY :EDITION-99999-TEST-ONLY :EDITION-MAX])
+(def file-options "Schema for file-options" [:map [:java-package [:maybe :string]] [:java-outer-classname [:maybe :string]] [:java-multiple-files [:maybe :boolean]] [:java-generate-equals-and-hash [:maybe :boolean]] [:java-string-check-utf8 [:maybe :boolean]] [:optimize-for [:maybe :google/optimize-mode]] [:go-package [:maybe :string]] [:cc-generic-services [:maybe :boolean]] [:java-generic-services [:maybe :boolean]] [:py-generic-services [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:cc-enable-arenas [:maybe :boolean]] [:objc-class-prefix [:maybe :string]] [:csharp-namespace [:maybe :string]] [:swift-prefix [:maybe :string]] [:php-class-prefix [:maybe :string]] [:php-namespace [:maybe :string]] [:php-metadata-namespace [:maybe :string]] [:ruby-package [:maybe :string]] [:features [:maybe :google/feature-set]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def MethodDescriptorProto "Schema for MethodDescriptorProto" [:map [:name [:maybe :string]] [:input-type [:maybe :string]] [:output-type [:maybe :string]] [:options [:maybe :google/MethodOptions]] [:client-streaming [:maybe :boolean]] [:server-streaming [:maybe :boolean]]])
+(def method-options "Schema for method-options" [:map [:deprecated [:maybe :boolean]] [:idempotency-level [:maybe :google/idempotency-level]] [:features [:maybe :google/feature-set]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def MethodOptions "Schema for MethodOptions" [:map [:deprecated [:maybe :boolean]] [:idempotency-level [:maybe :google/IdempotencyLevel]] [:features [:maybe :google/FeatureSet]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def file-descriptor-set "Schema for file-descriptor-set" [:map [:file [:vector :google/file-descriptor-proto]]])
 
-(def EnumOptions "Schema for EnumOptions" [:map [:allow-alias [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:deprecated-legacy-json-field-conflicts [:maybe :boolean]] [:features [:maybe :google/FeatureSet]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def service-options "Schema for service-options" [:map [:features [:maybe :google/feature-set]] [:deprecated [:maybe :boolean]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def MessageOptions "Schema for MessageOptions" [:map [:message-set-wire-format [:maybe :boolean]] [:no-standard-descriptor-accessor [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:map-entry [:maybe :boolean]] [:deprecated-legacy-json-field-conflicts [:maybe :boolean]] [:features [:maybe :google/FeatureSet]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def enum-descriptor-proto "Schema for enum-descriptor-proto" [:map [:name [:maybe :string]] [:value [:vector :google/enum-value-descriptor-proto]] [:options [:maybe :google/enum-options]] [:reserved-range [:vector :google/enum-reserved-range]] [:reserved-name [:vector :string]] [:visibility [:maybe :google/symbol-visibility]]])
 
-(def EnumDescriptorProto "Schema for EnumDescriptorProto" [:map [:name [:maybe :string]] [:value [:vector :google/EnumValueDescriptorProto]] [:options [:maybe :google/EnumOptions]] [:reserved-range [:vector :google/EnumReservedRange]] [:reserved-name [:vector :string]] [:visibility [:maybe :google/SymbolVisibility]]])
+(def uninterpreted-option "Schema for uninterpreted-option" [:map [:name [:vector :google/name-part]] [:identifier-value [:maybe :string]] [:positive-int-value [:maybe :int]] [:negative-int-value [:maybe :int]] [:double-value [:maybe :double]] [:string-value [:maybe :bytes]] [:aggregate-value [:maybe :string]]])
 
-(def FileOptions "Schema for FileOptions" [:map [:java-package [:maybe :string]] [:java-outer-classname [:maybe :string]] [:java-multiple-files [:maybe :boolean]] [:java-generate-equals-and-hash [:maybe :boolean]] [:java-string-check-utf8 [:maybe :boolean]] [:optimize-for [:maybe :google/OptimizeMode]] [:go-package [:maybe :string]] [:cc-generic-services [:maybe :boolean]] [:java-generic-services [:maybe :boolean]] [:py-generic-services [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:cc-enable-arenas [:maybe :boolean]] [:objc-class-prefix [:maybe :string]] [:csharp-namespace [:maybe :string]] [:swift-prefix [:maybe :string]] [:php-class-prefix [:maybe :string]] [:php-namespace [:maybe :string]] [:php-metadata-namespace [:maybe :string]] [:ruby-package [:maybe :string]] [:features [:maybe :google/FeatureSet]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def oneof-options "Schema for oneof-options" [:map [:features [:maybe :google/feature-set]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def UninterpretedOption "Schema for UninterpretedOption" [:map [:name [:vector :google/NamePart]] [:identifier-value [:maybe :string]] [:positive-int-value [:maybe :int]] [:negative-int-value [:maybe :int]] [:double-value [:maybe :double]] [:string-value [:maybe :bytes]] [:aggregate-value [:maybe :string]]])
+(def file-descriptor-proto "Schema for file-descriptor-proto" [:map [:name [:maybe :string]] [:package [:maybe :string]] [:dependency [:vector :string]] [:public-dependency [:vector :int]] [:weak-dependency [:vector :int]] [:option-dependency [:vector :string]] [:message-type [:vector :google/descriptor-proto]] [:enum-type [:vector :google/enum-descriptor-proto]] [:service [:vector :google/service-descriptor-proto]] [:extension [:vector :google/field-descriptor-proto]] [:options [:maybe :google/file-options]] [:source-code-info [:maybe :google/source-code-info]] [:syntax [:maybe :string]] [:edition [:maybe :google/edition]]])
 
-(def SourceCodeInfo "Schema for SourceCodeInfo" [:map [:location [:vector :google/Location]]])
+(def feature-set "Schema for feature-set" [:map [:field-presence [:maybe :google/field-presence]] [:enum-type [:maybe :google/enum-type]] [:repeated-field-encoding [:maybe :google/repeated-field-encoding]] [:utf8-validation [:maybe :google/utf8-validation]] [:message-encoding [:maybe :google/message-encoding]] [:json-format [:maybe :google/json-format]] [:enforce-naming-style [:maybe :google/enforce-naming-style]] [:default-symbol-visibility [:maybe :google/default-symbol-visibility]]])
 
-(def FileDescriptorProto "Schema for FileDescriptorProto" [:map [:name [:maybe :string]] [:package [:maybe :string]] [:dependency [:vector :string]] [:public-dependency [:vector :int]] [:weak-dependency [:vector :int]] [:option-dependency [:vector :string]] [:message-type [:vector :google/DescriptorProto]] [:enum-type [:vector :google/EnumDescriptorProto]] [:service [:vector :google/ServiceDescriptorProto]] [:extension [:vector :google/FieldDescriptorProto]] [:options [:maybe :google/FileOptions]] [:source-code-info [:maybe :google/SourceCodeInfo]] [:syntax [:maybe :string]] [:edition [:maybe :google/Edition]]])
+(def enum-value-options "Schema for enum-value-options" [:map [:deprecated [:maybe :boolean]] [:features [:maybe :google/feature-set]] [:debug-redact [:maybe :boolean]] [:feature-support [:maybe :google/feature-support]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def EnumValueDescriptorProto "Schema for EnumValueDescriptorProto" [:map [:name [:maybe :string]] [:number [:maybe :int]] [:options [:maybe :google/EnumValueOptions]]])
+(def edition "Schema for edition" [:enum :edition-unknown :edition-legacy :edition-proto2 :edition-proto3 :edition-2023 :edition-2024 :edition-1-test-only :edition-2-test-only :edition-99997-test-only :edition-99998-test-only :edition-99999-test-only :edition-max])
 
-(def ServiceDescriptorProto "Schema for ServiceDescriptorProto" [:map [:name [:maybe :string]] [:method [:vector :google/MethodDescriptorProto]] [:options [:maybe :google/ServiceOptions]]])
+(def timestamp "Schema for timestamp" [:map [:seconds [:maybe :int]] [:nanos [:maybe :int]]])
 
-(def Duration "Schema for Duration" [:map [:seconds [:maybe :int]] [:nanos [:maybe :int]]])
+(def symbol-visibility "Schema for symbol-visibility" [:enum :visibility-unset :visibility-local :visibility-export])
 
-(def Timestamp "Schema for Timestamp" [:map [:seconds [:maybe :int]] [:nanos [:maybe :int]]])
+(def source-code-info "Schema for source-code-info" [:map [:location [:vector :google/location]]])
 
-(def FileDescriptorSet "Schema for FileDescriptorSet" [:map [:file [:vector :google/FileDescriptorProto]]])
+(def message-options "Schema for message-options" [:map [:message-set-wire-format [:maybe :boolean]] [:no-standard-descriptor-accessor [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:map-entry [:maybe :boolean]] [:deprecated-legacy-json-field-conflicts [:maybe :boolean]] [:features [:maybe :google/feature-set]] [:uninterpreted-option [:vector :google/uninterpreted-option]]])
 
-(def FieldDescriptorProto "Schema for FieldDescriptorProto" [:map [:name [:maybe :string]] [:number [:maybe :int]] [:label [:maybe :google/Label]] [:type [:maybe :google/Type]] [:type-name [:maybe :string]] [:extendee [:maybe :string]] [:default-value [:maybe :string]] [:oneof-index [:maybe :int]] [:json-name [:maybe :string]] [:options [:maybe :google/FieldOptions]] [:proto3-optional [:maybe :boolean]]])
+(def oneof-descriptor-proto "Schema for oneof-descriptor-proto" [:map [:name [:maybe :string]] [:options [:maybe :google/oneof-options]]])
 
-(def FieldOptions "Schema for FieldOptions" [:map [:ctype [:maybe :google/CType]] [:packed [:maybe :boolean]] [:jstype [:maybe :google/JSType]] [:lazy [:maybe :boolean]] [:unverified-lazy [:maybe :boolean]] [:deprecated [:maybe :boolean]] [:weak [:maybe :boolean]] [:debug-redact [:maybe :boolean]] [:retention [:maybe :google/OptionRetention]] [:targets [:vector :google/OptionTargetType]] [:edition-defaults [:vector :google/EditionDefault]] [:features [:maybe :google/FeatureSet]] [:feature-support [:maybe :google/FeatureSupport]] [:uninterpreted-option [:vector :google/UninterpretedOption]]])
+(def enum-value-descriptor-proto "Schema for enum-value-descriptor-proto" [:map [:name [:maybe :string]] [:number [:maybe :int]] [:options [:maybe :google/enum-value-options]]])
+
+(def feature-set-defaults "Schema for feature-set-defaults" [:map [:defaults [:vector :google/feature-set-edition-default]] [:minimum-edition [:maybe :google/edition]] [:maximum-edition [:maybe :google/edition]]])
