@@ -19,13 +19,13 @@
   [map? => [:tuple boolean? [:maybe map?]]]
   (let [event-type (get-in message [:payload :type])]
     (case event-type
-      "navigation" (validate-with-schema
+      :navigation (validate-with-schema
                      (:payload message)
                      ::specs/navigation-event-payload)
-      "gesture" (validate-with-schema
+      :gesture (validate-with-schema
                   (:payload message)
                   ::specs/gesture-event-payload)
-      "window" (validate-with-schema
+      :window (validate-with-schema
                  (:payload message)
                  ::specs/window-event-payload)
       ;; For other event types, just validate basic structure
@@ -37,39 +37,41 @@
   [map? => [:tuple boolean? [:maybe map?]]]
   (let [msg-type (:msg-type message)]
     (case msg-type
-      "command" (validate-with-schema message ::specs/command-message)
-      "response" (validate-with-schema message ::specs/response-message)
-      "request" (validate-with-schema message
+      :command (validate-with-schema message ::specs/command-message)
+      :response (validate-with-schema message ::specs/response-message)
+      :request (validate-with-schema message
                                       [:map
-                                       [:msg-type [:= "request"]]
+                                       [:msg-type [:= :request]]
                                        [:msg-id uuid?]
                                        [:timestamp pos-int?]
                                        [:payload ::specs/request-payload]])
-      "log" (validate-with-schema message
+      :log (validate-with-schema message
                                   [:map
-                                   [:msg-type [:= "log"]]
+                                   [:msg-type [:= :log]]
                                    [:msg-id uuid?]
                                    [:timestamp pos-int?]
                                    [:payload ::specs/log-payload]])
-      "error" (validate-with-schema message
+      :error (validate-with-schema message
                                     [:map
-                                     [:msg-type [:= "error"]]
+                                     [:msg-type [:= :error]]
                                      [:msg-id uuid?]
                                      [:timestamp pos-int?]
                                      [:payload ::specs/error-payload]])
-      "status" (validate-with-schema message
+      :status (validate-with-schema message
                                      [:map
-                                      [:msg-type [:= "status"]]
+                                      [:msg-type [:= :status]]
                                       [:msg-id uuid?]
                                       [:timestamp pos-int?]
                                       [:payload ::specs/status-payload]])
-      "metric" (validate-with-schema message
+      :metric (validate-with-schema message
                                      [:map
-                                      [:msg-type [:= "metric"]]
+                                      [:msg-type [:= :metric]]
                                       [:msg-id uuid?]
                                       [:timestamp pos-int?]
                                       [:payload ::specs/metric-payload]])
-      "event" (validate-event-message message)
+      :event (validate-event-message message)
+      :control (validate-with-schema message ::specs/control-message)
+      :state-update (validate-with-schema message ::specs/state-update-message)
       [false {:error "Unknown message type" :type msg-type}])))
 
 (>defn log-validation-error

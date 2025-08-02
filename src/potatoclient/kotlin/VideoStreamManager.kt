@@ -427,7 +427,7 @@ class VideoStreamManager(
                 val manager = VideoStreamManager(streamId, streamUrl, domain)
                 manager.start()
             } catch (e: Exception) {
-                System.err.println("Fatal error: ${e.message}")
+                // Log fatal error - no messageProtocol available in main yet
                 potatoclient.kotlin.transit.logError("Fatal error in video stream", e)
                 exitProcess(1)
             } finally {

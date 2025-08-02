@@ -71,8 +71,11 @@ class StateSubprocess(
             launch {
                 while (isActive) {
                     val msg = transitComm.readMessage()
-                    if (msg != null && msg.isMessageType(MessageType.CONTROL.keyword)) {
-                        handleControl(msg)
+                    if (msg != null) {
+                        val msgType = msg[TransitKeys.MSG_TYPE] as? String
+                        if (msgType == MessageType.CONTROL.key) {
+                            handleControl(msg)
+                        }
                     }
                 }
             }
@@ -90,10 +93,12 @@ class StateSubprocess(
 
             // Send protobuf directly - Transit handlers will serialize it
             // The handler tags it as "jon-state" and converts all enums to keywords
+            // We need to wrap the protobuf in a map since createMessage expects Map<String, Any>
+            val stateMap = mapOf<String, Any>("state" to protoState)
             transitComm.sendMessageDirect(
                 messageProtocol.createMessage(
                     MessageType.STATE_UPDATE,
-                    protoState as Any  // Send the protobuf object directly as payload
+                    stateMap
                 )
             )
 
@@ -104,9 +109,10 @@ class StateSubprocess(
     }
 
     private suspend fun handleControl(msg: Map<*, *>) {
-        val payload = msg.payload ?: return
+        val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return
+        val action = payload[TransitKeys.ACTION] as? String ?: return
 
-        when (payload.action) {
+        when (action) {
             "shutdown" -> {
                 // Send shutdown confirmation
                 runBlocking {
@@ -123,7 +129,7 @@ class StateSubprocess(
                 transitComm.close()
             }
             "set-rate-limit" -> {
-                val rateHz = payload.rateHz?.toInt() ?: 30
+                val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
                 rateLimiter.set(RateLimiter(rateHz, rateLimiterScope))
             }
             "get-stats" -> {
@@ -365,7 +371,7 @@ fun main(args: Array<String>) {
         val wsUrl = args[0]
 
         // Create Transit communicator with protobuf write handlers
-        val writeHandlers = ProtobufTransitHandlers.createWriteHandlers()
+        val writeHandlers = SimpleProtobufHandlers.createWriteHandlers()
         val transitComm = TransitCommunicator(
             System.`in`, 
             StdoutInterceptor.getOriginalStdout(),

@@ -16,6 +16,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - Transit/MessagePack for all IPC communication
 - **Clean Architecture**: Single approach using Transit handlers - no manual serialization
 - **Keywords Everywhere**: All data is keywords and numbers in Clojure (except log message text)
+- **No Legacy Code**: Clean implementations only - no backward compatibility layers
 
 **Documentation:**
 - **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
@@ -386,8 +387,9 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `TransitKeys` - Pre-created Transit keyword constants for performance
 - `TransitExtensions` - Kotlin extension properties for clean keyword-based map access
 - `LoggingUtils` - Individual log files per subprocess in development mode
-- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data (to be replaced)
-- `ProtobufTransitHandlers` - Transit handlers for all message types - automatic serialization
+- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data (legacy, use handlers)
+- `SimpleProtobufHandlers` - Transit WriteHandlers for automatic protobuf serialization
+- `SimpleCommandHandlers` - Builds protobuf commands from Transit messages (replaces builder)
 - `StdoutInterceptor` - Captures stdout for clean subprocess communication
 - `GestureRecognizer` - Detects tap, double-tap, pan, and swipe gestures
 - `PanController` - Manages pan gesture state and throttling
@@ -403,7 +405,7 @@ The system uses Transit/MessagePack for all inter-process communication:
 
 2. **State Updates (Server → Clojure)**:
    ```
-   Server → WebSocket → Protobuf → StateSubprocess → Transit handlers → Clojure app-db
+   Server → WebSocket → Protobuf → StateSubprocess → Transit WriteHandlers → Clojure app-db
    ```
 
 3. **Video Streams (Server → UI)**:
@@ -541,25 +543,28 @@ val batteryLevel = stateUpdate.system?.batteryLevel
 
 For the complete protocol specification, see `.claude/transit-protocol.md`.
 
-## Transit Handler Architecture
+## Transit Handler Architecture (COMPLETED)
 
-The codebase uses Transit handlers for all message serialization, providing a clean, consistent architecture:
+The codebase now uses Transit handlers for all message serialization, providing a clean, consistent architecture:
 
 **Single Approach**: All messages use Transit handlers - no manual serialization
-- Protobuf state messages → Automatically tagged and serialized
-- Event messages (gesture, navigation, window) → Type-safe handler classes
-- Control messages → Consistent tagging and structure
-- Error and log messages → Proper handling with text preservation
+- ✅ Protobuf state messages → Automatically tagged and serialized via `SimpleProtobufHandlers`
+- ✅ Commands → Built via `SimpleCommandHandlers` from Transit messages
+- ✅ All enums → Automatically converted to keywords
+- ✅ Error and log messages → Proper handling with text preservation
 
 **Key Benefits**:
-- **Type Safety**: Handler classes ensure compile-time checking
-- **Consistency**: All messages follow same serialization pattern
-- **Performance**: No manual map building or conversion overhead
-- **Clean Code**: No string manipulation or manual serialization logic
+- **Type Safety**: Protobuf types ensure compile-time checking
+- **Zero Manual Conversion**: Handlers do all the work
+- **Consistency**: All messages follow same pattern
+- **Performance**: No manual map building overhead
+- **Clean Code**: StateSubprocess just sends protobuf objects directly
 
-**Implementation**:
-- Clojure: `src/potatoclient/transit/keyword_handlers.clj` - Automatic detection
-- Kotlin: `src/potatoclient/kotlin/transit/ProtobufTransitHandlers.kt` - All handlers
+**Implementation Status**:
+- ✅ Kotlin: `SimpleProtobufHandlers.kt` - WriteHandlers for all protobuf types
+- ✅ Kotlin: `SimpleCommandHandlers.kt` - Command building from Transit
+- ✅ Integration: Both subprocesses updated to use handlers
+- ✅ Testing: Verified handlers work correctly
 
 ## UI Utilities
 

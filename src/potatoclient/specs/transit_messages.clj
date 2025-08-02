@@ -16,7 +16,7 @@
 
 (def message-type
   "Valid message types from MessageType enum"
-  [:enum :command :response :request :log :error :status :metric :event
+  [:enum :command :response :request :control :log :error :status :metric :event
    :state-update :state-partial :stream-ready :stream-error :stream-closed])
 
 (def subprocess-type

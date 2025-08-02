@@ -51,19 +51,20 @@ Process lifecycle management:
 #### `CommandSubprocess`
 Main class for command processing:
 - Receives Transit commands via stdin (with keyword keys)
-- Uses extension properties for clean message access
-- Converts to protobuf using `SimpleCommandBuilder` (to be replaced with ReadHandlers)
+- Uses Transit keys for message access (e.g., `msg[TransitKeys.MSG_TYPE]`)
+- Converts to protobuf using `SimpleCommandHandlers` with fallback to `SimpleCommandBuilder`
 - Sends protobuf commands via WebSocket to server
 - Handles reconnection and error recovery
+- Sends WebSocket errors via Transit protocol (not stderr)
 
 #### `StateSubprocess`
 Main class for state updates:
 - Receives protobuf state from WebSocket
-- Uses Transit handlers for automatic serialization via `ProtobufTransitHandlers`
-- Implements debouncing (compares with last sent state)
-- Token bucket rate limiting (configurable)
+- Uses Transit handlers for automatic serialization via `SimpleProtobufHandlers`
+- Sends protobuf objects directly - handlers do the conversion
+- Token bucket rate limiting (configurable via control messages)
 - Sends Transit messages to main process via stdout
-- Uses extension properties for clean keyword access
+- All state data automatically converted to keywords
 
 #### `TransitCommunicator`
 Handles Transit communication over stdin/stdout:
@@ -86,25 +87,26 @@ Kotlin extension properties for Transit maps:
 - Proper type handling for Transit writer
 - Error handling and logging
 
-#### `ProtobufTransitHandlers`
-Transit handlers for automatic serialization:
-- WriteHandlers for all message types:
-  - Protobuf state messages (system, rotary, GPS, compass, LRF, cameras, time)
-  - Event messages (gesture, navigation, window)
-  - Control messages (rate limiting, configuration)
-  - Error and log messages
+#### `SimpleProtobufHandlers`
+Transit handlers for automatic protobuf serialization:
+- WriteHandlers for all protobuf message types:
+  - Main state (`JonGUIState`) tagged as "jon-gui-state"
+  - System data tagged as "system-data"
+  - Rotary, GPS, compass, LRF, camera data with appropriate tags
 - Automatic enum to Transit keyword conversion
-- Proper Transit tagging for all types
+- All fields included (no "has" checks - protobuf v3 style)
 - Clean separation between data and serialization
+- No manual conversion needed in StateSubprocess
 
-#### `ProtobufCommandHandlers`
-Transit ReadHandlers for command building:
+#### `SimpleCommandHandlers`
+Simple command builder from Transit data:
 - Converts Transit command messages to protobuf commands
-- Enum handlers for automatic conversion (video-channel, rotary-direction, etc.)
-- Command handler builds `JonSharedCmd.Root` from Transit data
-- Supports all command types: rotary, system, GPS, compass, CV, cameras, LRF, OSD, glass heater
+- Uses Transit keywords for parameter access
+- Builds `JonSharedCmd.Root` from action and params
+- Supports all command types: rotary, system, GPS, compass, CV, cameras, LRF, glass heater
 - Type-safe construction with proper error handling
-- Replaces manual command building with handler-based approach
+- Cleaner alternative to `SimpleCommandBuilder`
+- Note: OSD commands removed (not found in protobuf)
 
 ## Keyword Creation Best Practices
 
@@ -138,15 +140,22 @@ Transit automatically converts between string keys and keywords:
 ```
 1. User action in UI
 2. Clojure calls command function (e.g., `commands/rotary-goto`)
-3. Command returns Transit map: `{:action "rotary-goto" :params {...}}`
+3. Command returns Transit map: `{:action "rotary-goto" :params {:channel "heat" :x 0.5 :y -0.3}}`
 4. Subprocess launcher sends map to CommandSubprocess via Transit
-5. CommandSubprocess converts to protobuf using SimpleCommandBuilder
+5. CommandSubprocess tries SimpleCommandHandlers first, falls back to SimpleCommandBuilder
 6. Protobuf sent via WebSocket to server
 ```
 
 ### State Flow (Server → UI)
 ```
 1. Server sends protobuf state via WebSocket
+2. StateSubprocess receives binary protobuf data
+3. Parses to `JonGUIState` protobuf object
+4. Sends protobuf object directly via Transit (handlers serialize automatically)
+5. Transit WriteHandlers convert all enums to keywords
+6. Main process receives Transit message with keyword-based state
+7. State updates app-db atom
+```
 2. StateSubprocess receives and parses protobuf
 3. Debouncing: Compare with last sent state, skip if identical
 4. Rate limiting: Check token bucket, skip if rate exceeded

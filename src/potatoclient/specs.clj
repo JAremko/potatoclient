@@ -881,7 +881,7 @@
   "Standard message envelope for all Transit messages"
   [:map
    [:msg-type message-type]
-   [:msg-id uuid?]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
    [:timestamp pos-int?]
    [:payload map?]])
 
@@ -974,26 +974,42 @@
 (def command-message
   "Complete command message"
   [:map
-   [:msg-type [:= "command"]]
-   [:msg-id uuid?]
+   [:msg-type [:= :command]]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
    [:timestamp pos-int?]
    [:payload command-payload]])
 
 (def response-message
   "Complete response message"
   [:map
-   [:msg-type [:= "response"]]
-   [:msg-id uuid?]
+   [:msg-type [:= :response]]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
    [:timestamp pos-int?]
    [:payload response-payload]])
 
 (def event-message
   "Complete event message"
   [:map
-   [:msg-type [:= "event"]]
-   [:msg-id uuid?]
+   [:msg-type [:= :event]]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
    [:timestamp pos-int?]
    [:payload event-payload]])
+
+(def control-message
+  "Control message for subprocess management"
+  [:map
+   [:msg-type [:= :control]]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def state-update-message
+  "State update message from server"
+  [:map
+   [:msg-type [:= :state-update]]
+   [:msg-id [:re #"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"]]
+   [:timestamp pos-int?]
+   [:payload map?]])
 
 ;; Update registry with transit schemas
 (def updated-registry
@@ -1015,7 +1031,9 @@
          :potatoclient.specs/window-event-payload window-event-payload
          :potatoclient.specs/command-message command-message
          :potatoclient.specs/response-message response-message
-         :potatoclient.specs/event-message event-message))
+         :potatoclient.specs/event-message event-message
+         :potatoclient.specs/control-message control-message
+         :potatoclient.specs/state-update-message state-update-message))
 
 ;; Set as default registry for this namespace
 (mr/set-default-registry! updated-registry)

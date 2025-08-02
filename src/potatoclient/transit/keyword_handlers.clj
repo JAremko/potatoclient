@@ -31,10 +31,7 @@
          ;; Gesture directions
          (#{"up" "down" "left" "right"} s)
          ;; Status values
-         (#{"connected" "disconnected" "stopped" "sent"} s)
-         ;; Command actions (common ones)
-         (#{"rotary-goto-ndc" "rotary-set-velocity" "rotary-halt" 
-            "cv-start-track-ndc" "ping"} s))))
+         (#{"connected" "disconnected" "stopped" "sent"} s))))
 
 (defn should-keywordize?
   "Determine if a value should be converted to a keyword.

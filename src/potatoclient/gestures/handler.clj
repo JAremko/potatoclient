@@ -13,7 +13,7 @@
   [{:keys [ndc-x ndc-y stream-type]}]
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
-  (let [channel (if (= stream-type "heat") :heat :day)]
+  (let [channel (if (= stream-type :heat) :heat :day)]
     (subprocess/send-message :command
                              (transit-core/create-message :command
                                                           (commands/rotary-goto-ndc channel ndc-x ndc-y))))
@@ -24,7 +24,7 @@
   [{:keys [ndc-x ndc-y stream-type frame-timestamp]}]
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Double-tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
-  (let [channel (if (= stream-type "heat") :heat :day)]
+  (let [channel (if (= stream-type :heat) :heat :day)]
     (subprocess/send-message :command
                              (transit-core/create-message :command
                                                           (commands/cv-start-track-ndc channel ndc-x ndc-y frame-timestamp))))
@@ -51,7 +51,7 @@
     (when (and (:active pan-state)
                (> (- now (:last-update pan-state)) 100)) ; Throttle to ~10Hz
       (let [;; Get current zoom value for the active stream
-            camera-key (if (= stream-type "heat") :camera-heat :camera-day)
+            camera-key (if (= stream-type :heat) :camera-heat :camera-day)
             zoom-value (app-db/get-in-app-db [camera-key :zoom] 1.0)
             speed-config (config/get-speed-config-for-zoom-value stream-type zoom-value)
             [az-speed el-speed] (calculate-rotation-speeds

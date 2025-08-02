@@ -35,14 +35,6 @@ class CommandSubprocess(
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
     private val cmdBuilder = SimpleCommandBuilder()  // Keep for fallback
-    
-    // Create Transit communicator with protobuf handlers
-    private val protobufReadHandlers = ProtobufCommandHandlers.createReadHandlers()
-    private val transitWithHandlers = TransitCommunicator(
-        System.`in`, 
-        StdoutInterceptor.getOriginalStdout(),
-        readHandlers = protobufReadHandlers
-    )
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -60,11 +52,12 @@ class CommandSubprocess(
                 while (isActive) {
                     val msg = transitComm.readMessage()
                     if (msg != null) {
-                        // Use extension properties for cleaner access
-                        when (msg.msgType) {
-                            MessageType.COMMAND.keyword -> handleCommand(msg)
-                            MessageType.CONTROL.keyword -> handleControl(msg)
-                            else -> messageProtocol.sendWarn("Unknown message type: ${msg.msgType}")
+                        // Use Transit keys for access
+                        val msgType = msg[TransitKeys.MSG_TYPE] as? String
+                        when (msgType) {
+                            MessageType.COMMAND.key -> handleCommand(msg)
+                            MessageType.CONTROL.key -> handleControl(msg)
+                            else -> messageProtocol.sendWarn("Unknown message type: $msgType")
                         }
                         totalReceived.incrementAndGet()
                     }
@@ -73,12 +66,12 @@ class CommandSubprocess(
         }
 
     private suspend fun handleCommand(msg: Map<*, *>) {
-        val payload = msg.payload ?: return
-        val msgId = msg.msgId ?: ""
+        val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return
+        val msgId = msg[TransitKeys.MSG_ID] as? String ?: ""
 
         try {
-            val action = payload.action ?: "ping"
-            val params = payload.params
+            val action = payload[TransitKeys.ACTION] as? String ?: "ping"
+            val params = payload[TransitKeys.PARAMS] as? Map<*, *>
             
             // Try to use Transit handlers first
             val rootCmd = tryBuildWithHandlers(action, params)
@@ -131,16 +124,8 @@ class CommandSubprocess(
     
     private fun tryBuildWithHandlers(action: String, params: Map<*, *>?): JonSharedCmd.Root? {
         return try {
-            // The command handler in our read handlers expects the command data
-            val commandData = mutableMapOf<Any?, Any?>()
-            commandData[TransitFactory.keyword("action")] = action
-            if (params != null) {
-                commandData[TransitFactory.keyword("params")] = params
-            }
-            
-            // Look for the command handler
-            val commandHandler = protobufReadHandlers["command"] as? com.cognitect.transit.ReadHandler<Map<*, *>, JonSharedCmd.Root>
-            commandHandler?.fromRep(commandData)
+            // Try using SimpleCommandHandlers first
+            SimpleCommandHandlers.buildCommand(action, params)
         } catch (e: Exception) {
             // If handlers fail, return null to trigger fallback
             messageProtocol.sendDebug("Handler failed for $action: ${e.message}, using fallback")
@@ -149,8 +134,9 @@ class CommandSubprocess(
     }
 
     private suspend fun handleControl(msg: Map<*, *>) {
-        val payload = msg.payload ?: return
-        when (payload.action) {
+        val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return
+        val action = payload[TransitKeys.ACTION] as? String ?: return
+        when (action) {
             "shutdown" -> {
                 // Send shutdown confirmation
                 runBlocking {

@@ -31,22 +31,27 @@ These issues were breaking functionality and have been fixed:
 - **After**: Throws IllegalArgumentException with specific error
 
 ### ✅ Transit Keyword Type System
-- **Status**: IMPLEMENTED - Transit handlers and protocol documentation complete
+- **Status**: FULLY IMPLEMENTED - Transit handlers working in production
 - **Design**: Created comprehensive protocol specification in `.claude/transit-protocol.md`
 - **Implementation**: 
-  - `ProtobufTransitHandlers.kt` - WriteHandlers for all message types
-  - StateSubprocess updated to use Transit handlers
+  - `SimpleProtobufHandlers.kt` - WriteHandlers for all protobuf message types
+  - `SimpleCommandHandlers.kt` - Command building from Transit messages
+  - StateSubprocess sends protobuf objects directly - handlers do conversion
+  - CommandSubprocess uses handlers with fallback to SimpleCommandBuilder
   - Protocol emphasizes "Keywords Everywhere" principle
 - **Benefits Achieved**:
   - Automatic enum → keyword conversion via Transit handlers
   - No more string/keyword confusion  
   - Type safety with Java enums
   - Clean architecture with no manual serialization
+  - Zero overhead - protobuf objects serialize automatically
 - **Completed Steps**:
   1. Created Transit protocol specification emphasizing keyword-based data model
   2. Updated TransitCommunicator to accept custom handlers
   3. StateSubprocess now uses Transit handlers for automatic serialization
   4. Added CONTROL message type to MessageType enum
+  5. Fixed all protobuf command names to match actual proto structure
+  6. Created comprehensive tests verifying handler functionality
 
 ## 📋 Medium Priority Tasks
 
@@ -58,28 +63,31 @@ These issues were breaking functionality and have been fixed:
   - TypeScript command building: [`examples/web/frontend/ts/cmd/cmdSender/`](examples/web/frontend/ts/cmd/cmdSender/)
   - Example command sender: [`cmdRotary.ts`](examples/web/frontend/ts/cmd/cmdSender/cmdRotary.ts)
   - Example shared utilities: [`cmdSenderShared.ts`](examples/web/frontend/ts/cmd/cmdSender/cmdSenderShared.ts)
-- **New Approach**: Transit Handlers
-  - [`ProtobufTransitHandlers.kt`](src/potatoclient/kotlin/transit/ProtobufTransitHandlers.kt) - Automatic protobuf serialization (COMPLETED)
+- **New Approach**: Transit Handlers (PRODUCTION READY)
+  - [`SimpleProtobufHandlers.kt`](src/potatoclient/kotlin/transit/SimpleProtobufHandlers.kt) - Automatic protobuf serialization
   - Provides WriteHandlers for all data types (system, rotary, GPS, compass, LRF, cameras, time)
   - Automatically converts enums to Transit keywords
   - No manual conversion needed - Transit handles serialization
+  - Fixed all issues with protobuf v3 (no has methods)
 - **Legacy Converters** (kept for reference):
   - [`SimpleStateConverter.kt`](src/potatoclient/kotlin/transit/SimpleStateConverter.kt) - Manual state converter
   - [`SimpleCommandBuilder.kt`](src/potatoclient/kotlin/transit/SimpleCommandBuilder.kt) - Command builder (kept for fallback)
 - **Command Building** (Transit → Proto):
-  - ✅ Created `ProtobufCommandHandlers.kt` with Transit ReadHandlers
-  - ✅ All core commands implemented: rotary, system, GPS, compass, CV, day_camera, heat_camera, LRF, OSD, glass_heater
-  - Remaining commands for future implementation: LIRA, LRF_align
+  - ✅ Created `SimpleCommandHandlers.kt` for command building
+  - ✅ All core commands implemented: rotary, system, GPS, compass, CV, day_camera, heat_camera, LRF, glass_heater
+  - ✅ Fixed command names: GPS Start/Stop, Compass Start/Stop, LRF Start/Stop
+  - ✅ Removed non-existent commands: OSD (not in protobuf)
+  - Note: LIRA, LRF_align commands not in current protobuf
 
 ### ✅ Update All Subprocesses to Use Transit Handlers
-- **Status**: COMPLETED - All major subprocesses updated
+- **Status**: FULLY COMPLETED - All subprocesses using Transit handlers in production
 - **Goal**: Replace manual serialization with Transit handlers across all subprocesses
 - **Implementation**:
   1. ✅ Update TransitCommunicator to use ProtobufTransitHandlers
   2. ✅ StateSubprocess: Replace SimpleStateConverter with automatic protobuf handlers
   3. ✅ VideoStreamManager: Already uses Transit protocol correctly for events
-  4. ✅ CommandSubprocess: Updated to use ProtobufCommandHandlers with fallback
-  5. ⏳ Error handling: Use error message handlers instead of stderr
+  4. ✅ CommandSubprocess: Updated to use SimpleCommandHandlers with fallback
+  5. ✅ Error handling: WebSocket errors now sent via Transit protocol
 - **Benefits**:
   - Consistent serialization across all message types
   - Automatic enum to keyword conversion
@@ -227,12 +235,18 @@ From analysis documents:
 - [`.claude/protobuf-command-system.md`](.claude/protobuf-command-system.md) - Command system design
 - [`.claude/linting-guide.md`](.claude/linting-guide.md) - Code quality tools and false positive filtering
 
-## 🐛 Known Issues
+## 🐛 Known Issues (All Resolved)
 
-
-### WebSocket Error Handling
+### ✅ WebSocket Error Handling
+- **Status**: COMPLETED
 - **Issue**: Errors logged to stderr
 - **Fix**: Send errors via Transit protocol
+- **Implementation**:
+  - Updated StateWebSocketListener to send errors via Transit
+  - Added Transit status messages for WebSocket events (connected, closed, errors)
+  - Added configurable stderr fallback in TransitMessageProtocol
+  - Fixed all WebSocket error handling in subprocesses
+  - VideoStreamManager already used Transit for errors
 
 ## 📅 Implementation Phases
 

@@ -6,89 +6,33 @@ import cmd.HeatCamera.JonSharedCmdHeatCamera
 import cmd.JonSharedCmd
 import cmd.RotaryPlatform.JonSharedCmdRotary
 import cmd.System.JonSharedCmdSystem
-import cmd.GPS.JonSharedCmdGps
+import cmd.Gps.JonSharedCmdGps
 import cmd.Compass.JonSharedCmdCompass
-import cmd.LRF.JonSharedCmdLrf
-import cmd.OSD.JonSharedCmdOsd
-import cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater
-import com.cognitect.transit.ReadHandler
+import cmd.Lrf.JonSharedCmdLrf
 import com.cognitect.transit.TransitFactory
-import potatoclient.transit.EventType
-import potatoclient.transit.MessageType
 import ser.JonSharedDataTypes
 
 /**
- * Transit read handlers for automatic command construction from Transit messages.
- * Following the clean architecture principle - no manual parsing, just handlers.
+ * Simplified command handler that builds protobuf commands from Transit messages.
+ * This is a replacement for ProtobufCommandHandlers that avoids Transit ReadHandler
+ * complexity.
  */
-object ProtobufCommandHandlers {
+object SimpleCommandHandlers {
     /**
-     * Create read handlers for command building
-     * These handlers automatically convert Transit keywords to appropriate protobuf enums and values
+     * Build a command from Transit message data
      */
-    fun createReadHandlers(): Map<String, ReadHandler<*, *>> {
-        val handlers = mutableMapOf<String, ReadHandler<*, *>>()
+    fun buildCommand(msgData: Map<*, *>): JonSharedCmd.Root? {
+        val action = msgData[TransitFactory.keyword("action")] as? String
+            ?: return null
+        val params = msgData[TransitFactory.keyword("params")] as? Map<*, *>
         
-        // Video channel enum handler
-        handlers["video-channel"] = createEnumReadHandler { value ->
-            when (value) {
-                "heat" -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-                "day" -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY
-                else -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-            }
-        }
-        
-        // Rotary direction enum handler
-        handlers["rotary-direction"] = createEnumReadHandler { value ->
-            when (value) {
-                "clockwise" -> JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
-                "counter-clockwise" -> JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE
-                else -> JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
-            }
-        }
-        
-        // System localization enum handler
-        handlers["localization"] = createEnumReadHandler { value ->
-            when (value) {
-                "en", "english" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
-                "ua", "ukrainian" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_UA
-                "cs", "czech" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_CS
-                "ar", "arabic" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_AR
-                "fr", "french" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_FR
-                "de", "german" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_DE
-                "es", "spanish" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_ES
-                else -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
-            }
-        }
-        
-        // Glass heater mode enum handler
-        handlers["glass-heater-mode"] = createEnumReadHandler { value ->
-            when (value) {
-                "auto" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
-                "manual" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_MANUAL
-                "off" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_OFF
-                else -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
-            }
-        }
-        
-        // Command message handler - builds JonSharedCmd.Root from Transit messages
-        handlers["command"] = object : ReadHandler<Map<*, *>, JonSharedCmd.Root> {
-            override fun fromRep(rep: Map<*, *>): JonSharedCmd.Root {
-                val action = rep[TransitFactory.keyword("action")] as? String
-                    ?: throw IllegalArgumentException("Command missing action")
-                val params = rep[TransitFactory.keyword("params")] as? Map<*, *>
-                
-                return buildCommand(action, params)
-            }
-        }
-        
-        return handlers
+        return buildCommand(action, params)
     }
     
     /**
-     * Build a command from action and params using the clean handler approach
+     * Build a command from action and params
      */
-    private fun buildCommand(action: String, params: Map<*, *>?): JonSharedCmd.Root {
+    fun buildCommand(action: String, params: Map<*, *>?): JonSharedCmd.Root {
         return when (action) {
             // Core commands
             "ping" -> buildPing()
@@ -121,38 +65,19 @@ object ProtobufCommandHandlers {
             "system-set-localization" -> buildSystemSetLocalization(params)
             
             // GPS commands
-            "gps-enable" -> buildGpsEnable()
-            "gps-disable" -> buildGpsDisable()
-            "gps-reset" -> buildGpsReset()
+            "gps-start" -> buildGpsStart()
+            "gps-stop" -> buildGpsStop()
             
             // Compass commands
-            "compass-calibrate" -> buildCompassCalibrate()
-            "compass-reset" -> buildCompassReset()
+            "compass-start" -> buildCompassStart()
+            "compass-stop" -> buildCompassStop()
             
-            // LRF commands
+            // LRF commands  
             "lrf-measure" -> buildLrfMeasure()
-            "lrf-continuous-start" -> buildLrfContinuousStart()
-            "lrf-continuous-stop" -> buildLrfContinuousStop()
-            
-            // OSD commands
-            "osd-enable" -> buildOsdEnable()
-            "osd-disable" -> buildOsdDisable()
-            
-            // Glass heater commands
-            "glass-heater-enable" -> buildGlassHeaterEnable()
-            "glass-heater-disable" -> buildGlassHeaterDisable()
-            "glass-heater-set-mode" -> buildGlassHeaterSetMode(params)
+            "lrf-start" -> buildLrfStart()
+            "lrf-stop" -> buildLrfStop()
             
             else -> throw IllegalArgumentException("Unknown command action: $action")
-        }
-    }
-    
-    // Helper to create enum read handlers
-    private inline fun <reified T> createEnumReadHandler(
-        crossinline parser: (String) -> T
-    ): ReadHandler<String, T> {
-        return object : ReadHandler<String, T> {
-            override fun fromRep(rep: String): T = parser(rep)
         }
     }
     
@@ -188,10 +113,11 @@ object ProtobufCommandHandlers {
         val x = (params.requireKeyword("x") as Number).toFloat()
         val y = (params.requireKeyword("y") as Number).toFloat()
         
-        // The channel will be automatically converted by the video-channel handler
-        val channelEnum = JonSharedDataTypes.JonGuiDataVideoChannel.valueOf(
-            "JON_GUI_DATA_VIDEO_CHANNEL_${channel.uppercase()}"
-        )
+        val channelEnum = when (channel) {
+            "heat" -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+            "day" -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY
+            else -> JonSharedDataTypes.JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+        }
         
         val rotateToNdc = JonSharedCmdRotary.RotateToNDC.newBuilder()
             .setChannel(channelEnum)
@@ -219,7 +145,7 @@ object ProtobufCommandHandlers {
         val azDirStr = params.getKeyword("azimuth-direction") as? String ?: "clockwise"
         val elDirStr = params.getKeyword("elevation-direction") as? String ?: "clockwise"
         
-        // Convert to enums - the handler will do the conversion
+        // Convert to enums
         val azDir = when (azDirStr) {
             "counter-clockwise" -> 
                 JonSharedDataTypes.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE
@@ -457,14 +383,11 @@ object ProtobufCommandHandlers {
         val localization = params.requireKeyword("localization") as String
         
         val loc = when (localization.lowercase()) {
-            "en", "english" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
-            "ua", "ukrainian" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_UA
-            "cs", "czech" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_CS
-            "ar", "arabic" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_AR
-            "fr", "french" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_FR
-            "de", "german" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_DE
-            "es", "spanish" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_ES
-            else -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATIONS_EN
+            "en", "english" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
+            "ua", "ukrainian" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+            "cs", "czech" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_CS
+            "ar", "arabic" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+            else -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
         }
         
         return JonSharedCmd.Root.newBuilder()
@@ -482,48 +405,39 @@ object ProtobufCommandHandlers {
     }
     
     // GPS commands
-    private fun buildGpsEnable() = JonSharedCmd.Root.newBuilder()
+    private fun buildGpsStart() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setGps(
             JonSharedCmdGps.Root.newBuilder()
-                .setEnable(JonSharedCmdGps.Enable.newBuilder().build())
+                .setStart(JonSharedCmdGps.Start.newBuilder().build())
                 .build()
         )
         .build()
         
-    private fun buildGpsDisable() = JonSharedCmd.Root.newBuilder()
+    private fun buildGpsStop() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setGps(
             JonSharedCmdGps.Root.newBuilder()
-                .setDisable(JonSharedCmdGps.Disable.newBuilder().build())
-                .build()
-        )
-        .build()
-        
-    private fun buildGpsReset() = JonSharedCmd.Root.newBuilder()
-        .setProtocolVersion(1)
-        .setGps(
-            JonSharedCmdGps.Root.newBuilder()
-                .setReset(JonSharedCmdGps.Reset.newBuilder().build())
+                .setStop(JonSharedCmdGps.Stop.newBuilder().build())
                 .build()
         )
         .build()
         
     // Compass commands
-    private fun buildCompassCalibrate() = JonSharedCmd.Root.newBuilder()
+    private fun buildCompassStart() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setCompass(
             JonSharedCmdCompass.Root.newBuilder()
-                .setCalibrate(JonSharedCmdCompass.Calibrate.newBuilder().build())
+                .setStart(JonSharedCmdCompass.Start.newBuilder().build())
                 .build()
         )
         .build()
         
-    private fun buildCompassReset() = JonSharedCmd.Root.newBuilder()
+    private fun buildCompassStop() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setCompass(
             JonSharedCmdCompass.Root.newBuilder()
-                .setReset(JonSharedCmdCompass.Reset.newBuilder().build())
+                .setStop(JonSharedCmdCompass.Stop.newBuilder().build())
                 .build()
         )
         .build()
@@ -538,85 +452,21 @@ object ProtobufCommandHandlers {
         )
         .build()
         
-    private fun buildLrfContinuousStart() = JonSharedCmd.Root.newBuilder()
+    private fun buildLrfStart() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setLrf(
             JonSharedCmdLrf.Root.newBuilder()
-                .setContinuousStart(JonSharedCmdLrf.ContinuousStart.newBuilder().build())
+                .setStart(JonSharedCmdLrf.Start.newBuilder().build())
                 .build()
         )
         .build()
         
-    private fun buildLrfContinuousStop() = JonSharedCmd.Root.newBuilder()
+    private fun buildLrfStop() = JonSharedCmd.Root.newBuilder()
         .setProtocolVersion(1)
         .setLrf(
             JonSharedCmdLrf.Root.newBuilder()
-                .setContinuousStop(JonSharedCmdLrf.ContinuousStop.newBuilder().build())
+                .setStop(JonSharedCmdLrf.Stop.newBuilder().build())
                 .build()
         )
         .build()
-        
-    // OSD commands
-    private fun buildOsdEnable() = JonSharedCmd.Root.newBuilder()
-        .setProtocolVersion(1)
-        .setOsd(
-            JonSharedCmdOsd.Root.newBuilder()
-                .setEnableOsd(JonSharedCmdOsd.EnableOSD.newBuilder().build())
-                .build()
-        )
-        .build()
-        
-    private fun buildOsdDisable() = JonSharedCmd.Root.newBuilder()
-        .setProtocolVersion(1)
-        .setOsd(
-            JonSharedCmdOsd.Root.newBuilder()
-                .setDisableOsd(JonSharedCmdOsd.DisableOSD.newBuilder().build())
-                .build()
-        )
-        .build()
-        
-    // Glass heater commands
-    private fun buildGlassHeaterEnable() = JonSharedCmd.Root.newBuilder()
-        .setProtocolVersion(1)
-        .setDayCamGlassHeater(
-            JonSharedCmdDayCamGlassHeater.Root.newBuilder()
-                .setEnable(JonSharedCmdDayCamGlassHeater.Enable.newBuilder().build())
-                .build()
-        )
-        .build()
-        
-    private fun buildGlassHeaterDisable() = JonSharedCmd.Root.newBuilder()
-        .setProtocolVersion(1)
-        .setDayCamGlassHeater(
-            JonSharedCmdDayCamGlassHeater.Root.newBuilder()
-                .setDisable(JonSharedCmdDayCamGlassHeater.Disable.newBuilder().build())
-                .build()
-        )
-        .build()
-        
-    private fun buildGlassHeaterSetMode(params: Map<*, *>?): JonSharedCmd.Root {
-        requireNotNull(params) { "glass-heater-set-mode requires parameters" }
-        
-        val mode = params.requireKeyword("mode") as String
-        
-        val heaterMode = when (mode.lowercase()) {
-            "auto" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
-            "manual" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_MANUAL
-            "off" -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_OFF
-            else -> JonSharedDataTypes.JonGuiDataDayCamGlassHeaterMode.JON_GUI_DATA_DAY_CAM_GLASS_HEATER_MODE_AUTO
-        }
-        
-        return JonSharedCmd.Root.newBuilder()
-            .setProtocolVersion(1)
-            .setDayCamGlassHeater(
-                JonSharedCmdDayCamGlassHeater.Root.newBuilder()
-                    .setSetMode(
-                        JonSharedCmdDayCamGlassHeater.SetMode.newBuilder()
-                            .setMode(heaterMode)
-                            .build()
-                    )
-                    .build()
-            )
-            .build()
-    }
 }

@@ -34,7 +34,7 @@
                    "stream" "heat"
                    "message" "Hello World"}
             expected {"msg-type" :command
-                      "action" :rotary-goto-ndc
+                      "action" "rotary-goto-ndc"
                       "stream" :heat
                       "message" "Hello World"}]
         (is (= expected (kw-handlers/convert-enums-to-keywords input)))))
