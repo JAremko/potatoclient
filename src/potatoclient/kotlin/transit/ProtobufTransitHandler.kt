@@ -307,11 +307,11 @@ class ProtobufTransitHandler {
             val customHandlers = mutableMapOf<Class<*>, WriteHandler<*, *>>()
             customHandlers[Message::class.java] = ProtobufWriteHandler()
 
-            return TransitFactory.writer(
+            return TransitFactory.writer<Any>(
                 TransitFactory.Format.MSGPACK,
                 outputStream,
                 TransitFactory.writeHandlerMap(customHandlers),
-            ) as Writer<Any>
+            )
         }
     }
 }

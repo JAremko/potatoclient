@@ -80,9 +80,8 @@
 
 ### Command Message
 ```clojure
-{:action "rotary-goto"
- :params {:azimuth 45.0
-          :elevation 30.0}}
+{:rotary {:goto {:azimuth 45.0
+                 :elevation 30.0}}}
 ```
 
 ### State Message (from Kotlin)
@@ -101,8 +100,7 @@
 {:msg-type :control
  :msg-id "uuid-string"
  :timestamp 1234567890
- :payload {:action "set-rate-limit"
-           :max-rate-hz 60}}
+ :payload {:rate-limit {:max-hz 60}}}
 ```
 
 ## Transit Utilities
@@ -112,11 +110,11 @@
 (require '[potatoclient.transit.core :as transit])
 
 ;; Create message with envelope
-(transit/create-message :command {:action "ping"})
+(transit/create-message :command {:ping {}})
 ;; => {:msg-type :command
 ;;     :msg-id "uuid..."
 ;;     :timestamp 1234567890
-;;     :payload {:action "ping"}}
+;;     :payload {:ping {}}}
 
 ;; Validate message
 (transit/validate-message-envelope my-message)
@@ -178,8 +176,7 @@ StateSubprocess automatically debounces identical states. No action needed in Cl
   {:msg-type :control
    :msg-id (str (java.util.UUID/randomUUID))
    :timestamp (System/currentTimeMillis)
-   :payload {:action "set-rate-limit"
-             :max-rate-hz 30}})
+   :payload {:rate-limit {:max-hz 30}}})
 ```
 
 ### Error Recovery
@@ -206,6 +203,7 @@ Subprocesses automatically reconnect on WebSocket failure. Monitor via:
 
 (deftest test-command-creation
   (let [cmd (cmd/rotary-goto {:azimuth 90.0 :elevation 45.0})]
-    (is (= "rotary-goto" (:action cmd)))
-    (is (= 90.0 (get-in cmd [:params :azimuth])))))
+    (is (= {:azimuth 90.0 :elevation 45.0} 
+           (get-in cmd [:rotary :goto])))
+    (is (= 90.0 (get-in cmd [:rotary :goto :azimuth])))))
 ```

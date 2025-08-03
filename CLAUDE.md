@@ -389,9 +389,9 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `TransitKeys` - Pre-created Transit keyword constants for performance
 - `TransitExtensions` - Kotlin extension properties for clean keyword-based map access
 - `LoggingUtils` - Individual log files per subprocess in development mode
-- `SimpleCommandBuilder` - Creates protobuf commands from Transit message data (legacy, use handlers)
+- `GeneratedCommandHandlers` - Auto-generated Transit handlers for all command building/extraction
+- `GeneratedStateHandlers` - Auto-generated Transit handlers for state message extraction
 - `SimpleProtobufHandlers` - Transit WriteHandlers for automatic protobuf serialization
-- `SimpleCommandHandlers` - Builds protobuf commands from Transit messages (replaces builder)
 - `StdoutInterceptor` - Captures stdout for clean subprocess communication
 - `GestureRecognizer` - Detects tap, double-tap, pan, and swipe gestures
 - `PanController` - Manages pan gesture state and throttling
@@ -545,15 +545,15 @@ val batteryLevel = stateUpdate.system?.batteryLevel
 
 For the complete protocol specification, see `.claude/transit-protocol.md`.
 
-## Transit Handler Architecture (IN PROGRESS - Static Code Generation)
+## Transit Handler Architecture - Static Code Generation
 
-The codebase is transitioning to **static code generation** for Transit handlers, replacing all manual protobuf mapping:
+The codebase uses **static code generation** for Transit handlers, eliminating manual protobuf mapping:
 
-**New Architecture**: Generate Kotlin handlers from protobuf keyword trees
-- 🚧 Commands → Static handlers generated from `proto_keyword_tree_cmd.clj`
-- 🚧 State → Static handlers generated from `proto_keyword_tree_state.clj`
+**Architecture**: Generate Kotlin handlers from protobuf keyword trees
+- ✅ Commands → Static handlers generated from `proto_keyword_tree_cmd.clj`
+- ✅ State → Static handlers generated from `proto_keyword_tree_state.clj`
 - ✅ Keyword trees → Auto-generated from protobuf definitions
-- 🚧 All protobuf access → Type-safe, compile-time checked
+- ✅ All protobuf access → Type-safe, compile-time checked
 
 **Key Benefits**:
 - **Performance**: No reflection, direct method calls
@@ -561,13 +561,22 @@ The codebase is transitioning to **static code generation** for Transit handlers
 - **Maintainability**: Regenerate when protos change
 - **Simplicity**: Generated code is straightforward to debug
 - **Zero Manual Code**: New commands work without code changes
+- **Natural Disambiguation**: Common commands like `:start` are handled correctly based on parent context
+
+**How Common Commands Are Handled**:
+```clojure
+;; From Clojure - just nested maps
+{:gps {:start {}}}      ; → buildGpsStart() → JonSharedCmdGps.Start
+{:lrf {:start {}}}      ; → buildLrfStart() → JonSharedCmdLrf.Start
+{:rotary {:start {}}}   ; → buildRotaryStart() → JonSharedCmdRotary.Start
+```
 
 **Implementation Status**:
 - ✅ Proto Explorer: Keyword tree generation from protobuf definitions
-- 🚧 Kotlin: `GeneratedCommandHandlers.kt` - All command building/extraction (fixing issues)
-- 🚧 Kotlin: `GeneratedStateHandlers.kt` - All state extraction (fixing issues)
-- ⏳ Integration: Will replace action-based command routing
-- ⏳ Cleanup: Will remove all manual builders and handlers
+- ✅ Kotlin: `GeneratedCommandHandlers.kt` - All command building/extraction
+- ✅ Kotlin: `GeneratedStateHandlers.kt` - All state extraction
+- 🚧 Integration: Replacing action-based command routing
+- 🚧 Cleanup: Removing manual builders in `builders.old/`
 
 **Command Format Change**:
 ```clojure

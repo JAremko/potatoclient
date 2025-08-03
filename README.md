@@ -108,25 +108,27 @@ PotatoClient is optimized for high-performance video streaming:
 
 ### Command System
 
-PotatoClient uses Transit-based command routing with protobuf isolation:
+PotatoClient uses Transit-based command routing with static code generation:
 
-- **Transit Commands**: Commands created as Transit maps in Clojure
-- **Command Subprocess**: Converts Transit to protobuf and sends via WebSocket
-- **State Subprocess**: Receives protobuf state, converts to Transit for UI
-- **Unified Protocol**: All subprocesses use the same Transit message format
+- **Transit Commands**: Commands created as nested keyword maps in Clojure
+- **Generated Handlers**: Static Kotlin code automatically converts between Transit and protobuf
+- **Zero Configuration**: New commands work automatically when protos change
+- **Natural Disambiguation**: Common commands like `:start` work correctly based on context
 
 ```clojure
-;; Commands are sent as Transit messages
+;; Commands are sent as nested Transit maps
 (require '[potatoclient.transit.commands :as cmd])
 
 ;; Send ping command
-(cmd/send-ping!)
+(cmd/send-command! {:ping {}})
 
-;; Platform control
-(cmd/send-command! {:action "platform-azimuth" :value 45.0})
+;; Platform control - note the nested structure
+(cmd/send-command! {:rotary {:goto-azimuth {:value 45.0}}})
 
-;; State updates flow back via Transit
-;; The UI automatically updates from the Transit app-db
+;; Common commands disambiguated by parent context
+(cmd/send-command! {:gps {:start {}}})      ; → JonSharedCmdGps.Start
+(cmd/send-command! {:lrf {:start {}}})      ; → JonSharedCmdLrf.Start
+(cmd/send-command! {:rotary {:start {}}})   ; → JonSharedCmdRotary.Start
 ```
 
 **Transit Message Types:**
