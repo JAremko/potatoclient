@@ -16,6 +16,29 @@ This document tracks the remaining work to finalize the Kotlin command system in
 - [ ] Add missing builders for any commands
 - [ ] Test each builder individually with sample data
 
+## Phase 1.5: Metadata-Based Architecture (NEW APPROACH)
+
+### Overview
+Instead of action-based routing, use Transit metadata to specify protobuf types:
+- Clojure sends full EDN structure with metadata containing proto class info
+- Kotlin Transit handlers use metadata to instantiate correct protobuf class
+- Eliminates action registry and naming collisions
+
+### Implementation
+- [x] Design metadata architecture (see docs/TRANSIT_METADATA_ARCHITECTURE.md)
+- [x] Create `command-sender.clj` with metadata attachment
+- [x] Create `ProtobufTransitHandler.kt` for Kotlin side
+- [ ] Implement custom Transit handlers for metadata preservation
+- [ ] Test with actual protobuf classes
+- [ ] Migrate existing commands to new approach
+
+### Benefits
+- No action naming schemes needed
+- Handles nested messages with same names
+- Natural Clojure data structures
+- No manual routing in Kotlin
+- Type safety via metadata
+
 ## Phase 2: Key Canonicalization Strategy
 
 ### 2.1 Define Key Format Standards
