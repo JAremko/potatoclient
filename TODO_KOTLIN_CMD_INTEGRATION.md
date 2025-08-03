@@ -1,623 +1,448 @@
-# TODO: Kotlin Command Integration and Testing
+# TODO: Kotlin Command Integration with Reflection-Based Architecture
 
 ## Overview
-This document tracks the remaining work to finalize the Kotlin command system integration with Clojure and implement comprehensive roundtrip testing.
+With the keyword tree generation in place, we can now implement a powerful reflection-based architecture that:
+1. Automatically converts Transit EDN to Protobuf using keyword trees
+2. Validates using buf.validate annotations
+3. Tests roundtrip integrity: Transit → Protobuf → Binary → Protobuf → Transit
+4. Uses protobuf's built-in equals() and hashCode() for comparison
 
-## Phase 0: Proto-Explorer Usage for Finding Correct Names
+## Phase 0: Proto-Explorer and Keyword Tree Usage
 
-Proto-Explorer is an essential tool for discovering the correct protobuf class names, field names, and structure. Use it before making any code changes.
-
-### Basic Usage Workflow
-
-**Note**: Proto-Explorer now outputs JSON by default for easy tool integration!
+### Essential Babashka Commands for Development
 
 ```bash
-# 1. Find specs using fuzzy search (from proto-explorer directory)
+# Navigate to proto-explorer directory first
 cd tools/proto-explorer
+
+# 1. Generate/regenerate keyword trees (after proto changes)
+bb generate-keyword-tree-cmd    # Creates proto_keyword_tree_cmd.clj
+bb generate-keyword-tree-state  # Creates proto_keyword_tree_state.clj
+
+# 2. Find protobuf specs using fuzzy search
 bb find "track"           # Find all track-related specs
 bb find "start track"     # Multi-word search
 bb find CV                # Find all CV-related specs
 
-# JSON output example:
-{
-  "found" : 2,
-  "specs" : [ {
-    "spec" : "potatoclient.specs.cmd.CV/start-track-ndc",
-    "namespace" : "potatoclient.specs.cmd.CV",
-    "name" : "start-track-ndc"
-  }, ... ]
-}
-
-# 2. Get exact spec definition with constraints
+# 3. Get exact spec definition with constraints
 bb spec :potatoclient.specs.cmd.CV/start-track-ndc
-# Returns JSON with definition
 
-# 3. Generate example data respecting constraints
+# 4. Generate example data respecting constraints
 bb example :potatoclient.specs.cmd.CV/start-track-ndc
-# Returns: {"spec": "...", "example": {"channel": 1, "x": 0.5, "y": -0.3}}
 
-# 4. Get Java class information (slower - starts JVM)
+# 5. Get Java class information (slower - starts JVM)
 bb java-class StartTrackNDC
 bb java-fields StartTrackNDC
 bb java-builder StartTrackNDC
 
-# 5. Use EDN output if needed (for Clojure tools)
-./proto-explorer --edn find "track"
-```
+# 6. Check statistics
+bb stats                  # Shows all loaded specs by package
 
-### Finding Correct Protobuf Names
-The protobuf class names don't always match what you'd expect:
-- `StartTrackNdc` in Kotlin → `StartTrackNDC` in Java protobuf
-- `setSetAgc` method → `setAgc` actual setter
-- Package names: `cmd.CV` not `cmd.cv`
+# 7. List all messages in a package
+bb list cmd.CV           # List all CV commands
+bb list ser              # List all state messages
 
-### Example: Fixing CV Command Builder
-```bash
-# 1. Find all CV commands
-bb find CV
-# Returns list of CV-related specs
-
-# 2. Check specific command structure
-bb spec :potatoclient.specs.cmd.CV/start-track-ndc
-# Shows the exact field names and types
-
-# 3. Verify Java class name
-bb java-class "cmd.CV.JonSharedCmdCv\$StartTrackNDC"
-# Shows actual Java class structure
-```
-
-### Proto-Explorer Key Features
-- **JSON output by default**: Easy integration with tools and scripts
-- **Fuzzy search**: Typo-tolerant, case-insensitive searching
-- **Constraint awareness**: Shows buf.validate constraints in specs
-- **Example generation**: Creates valid test data respecting all constraints
-- **Java reflection**: Can inspect actual protobuf classes (via JVM)
-- **Batch processing**: Can process multiple queries via stdin
-- **Proto type mapping**: Auto-generates domain→Java class mapping
-- **EDN output option**: Use `./proto-explorer --edn` for Clojure tools
-
-### Regenerating Proto Type Mapping
-When protobuf definitions change, regenerate the mapping:
-```bash
-cd tools/proto-explorer
-bb generate-proto-mapping
-# Generates: shared/specs/protobuf/proto_type_mapping.clj
-```
-
-### Batch Processing with Proto-Explorer
-For complex investigations, use batch mode:
-```bash
-# Create batch queries
+# 8. Batch processing for multiple queries
 cat > queries.edn <<EOF
 [{:op :find :pattern "rotary"}
- {:op :spec :spec :potatoclient.specs.cmd.RotaryPlatform/rotate-to-ndc}
- {:op :example :spec :potatoclient.specs.cmd.RotaryPlatform/rotate-to-ndc}]
+ {:op :spec :spec :potatoclient.specs.cmd.RotaryPlatform/set-velocity}
+ {:op :example :spec :potatoclient.specs.cmd.RotaryPlatform/set-velocity}]
 EOF
-
-# Execute batch
 bb batch < queries.edn
-
-# Returns JSON with all results:
-{
-  "batch-results" : [ 
-    {"op": "find", "pattern": "rotary", "results": [...]},
-    {"op": "spec", "spec": "...", "definition": [...]},
-    {"op": "example", "spec": "...", "example": {...}}
-  ]
-}
 ```
 
-## Phase 1: Kotlin Command System Finalization
+### Using Keyword Trees in Development
 
-### 1.1 Fix Protobuf Builder Compilation Errors
-- [ ] Use proto-explorer to find correct class names for each error
-- [ ] Fix naming mismatches (CV → Cv, OSD → Osd, StartTrackNdc → StartTrackNDC, etc.)
-- [ ] Update builder methods to match actual protobuf generated classes
-- [ ] Handle special cases (refine_target, stop-a-ll → stopAll)
-- [ ] Ensure all builders compile without errors
-
-### 1.2 Complete Protobuf Builder Coverage
-- [ ] Verify all commands from `transit/commands.clj` have corresponding builders
-- [ ] Add missing builders for any commands
-- [ ] Test each builder individually with sample data
-
-## Phase 1.5: Metadata-Based Architecture (NEW APPROACH)
-
-### Overview
-Instead of action-based routing, use Transit metadata to specify protobuf types:
-- Clojure sends full EDN structure with metadata containing proto class info
-- Kotlin Transit handlers use metadata to instantiate correct protobuf class
-- Eliminates action registry and naming collisions
-
-### The Problem
-In deeply nested protobuf structures, the same message names appear in different contexts:
-```protobuf
-// Different "Start" messages in different contexts
-message RotaryPlatform {
-  message Root {
-    oneof data {
-      Start start = 1;    // cmd.JonSharedCmdRotaryPlatform$Start
-      Stop stop = 2;
-    }
-  }
-}
-
-message VideoRecording {
-  message Root {
-    oneof data {
-      Start start = 1;    // cmd.JonSharedCmdVideoRecording$Start (different class!)
-      Stop stop = 2;
-    }
-  }
-}
-```
-
-### The Solution: Auto-Generated Proto Type Mapping
-Proto-explorer now generates a mapping from command domains to Java protobuf classes automatically!
-
-**Generated Mapping** (from `bb generate-proto-mapping`):
 ```clojure
-;; Auto-generated in shared/specs/protobuf/proto_type_mapping.clj
-{:rotary-platform "cmd.RotaryPlatform.JonSharedCmdRotary$Root"
- :cv              "cmd.CV.JonSharedCmdCv$Root"
- :compass         "cmd.Compass.JonSharedCmdCompass$Root"
- :day-camera      "cmd.DayCamera.JonSharedCmdDayCamera$Root"
- :heat-camera     "cmd.HeatCamera.JonSharedCmdHeatCamera$Root"
- ;; ... etc
-}
+;; Load and examine keyword trees in REPL
+(require '[clojure.edn :as edn])
+
+;; Load command tree
+(def cmd-tree 
+  (-> "shared/specs/protobuf/proto_keyword_tree_cmd.clj"
+      slurp
+      (subs (+ (.indexOf content "(def keyword-tree") 17))
+      (subs 0 (- (count content) 1))
+      edn/read-string))
+
+;; Explore available commands
+(keys cmd-tree)
+;; => (:compass :cv :day-cam-glass-heater :day-camera :frozen :gps ...)
+
+;; Check specific command structure
+(get-in cmd-tree [:cv :children :start-track-ndc])
+;; => {:java-class "cmd.CV.JonSharedCmdCv$StartTrackNDC" ...}
+
+;; Load state tree
+(def state-tree 
+  (-> "shared/specs/protobuf/proto_keyword_tree_state.clj" 
+      ;; same loading pattern
+      ))
 ```
 
-**Handling Nested Protobuf Structures**:
-The mapping correctly handles deeply nested protobuf structures like those in `jon_shared_cmd_rotary.proto`:
+## New Architecture Benefits
 
-```protobuf
-// Proto structure
-package cmd.RotaryPlatform;
+### Automatic Transit Handler Generation
+With keyword trees, we can:
+- Generate Transit write handlers that know how to serialize each protobuf type
+- Generate Transit read handlers that use reflection to build protobuf messages
+- No manual routing or action registry needed
+- Support both commands and state with the same infrastructure
 
-message Root {
-  oneof cmd {
-    RotateToNDC rotate_to_ndc = 12;
-    ScanStart scan_start = 13;
-    // ... many more nested messages
-  }
-}
+### Comprehensive Roundtrip Testing
+```
+Transit EDN → Java Protobuf → buf.validate → Proto Binary → 
+Java Protobuf → buf.validate → Transit EDN
 ```
 
-This generates the Java class `cmd.RotaryPlatform.JonSharedCmdRotary$Root` which contains all nested command types. The inference function correctly maps:
-- `{:rotary-platform {:rotate-to-ndc {:x 0.5}}}` → `"cmd.RotaryPlatform.JonSharedCmdRotary$Root"`
-- `{:cv {:start-track-ndc {:channel 1}}}` → `"cmd.CV.JonSharedCmdCv$Root"`
+**Comparison Strategy**:
+- Compare the Java Protobuf representations (before serialization and after deserialization)
+- Use protobuf's built-in `equals()` method for deep equality check
+- Use protobuf's `hashCode()` for consistent hashing
+- If comparison fails, use protobuf's built-in JSON converter to visualize differences
 
-The Root message type contains the oneof with all possible commands for that domain.
-
-**Clojure Side:**
-```clojure
-;; Old string-based approach:
-(send-command "rotaryplatform-goto" {:azimuth 180.0 :elevation 45.0})
-
-;; New approach - proto type is inferred automatically:
-(send-command {:rotary-platform {:goto {:azimuth 180.0 :elevation 45.0}}})
-
-;; The system automatically:
-;; 1. Detects :rotary-platform key
-;; 2. Looks up proto type: "cmd.RotaryPlatform.JonSharedCmdRotary$Root"
-;; 3. Attaches metadata for Kotlin to use
-```
-
-**Key Benefits**:
-1. **Zero manual mapping** - Proto-explorer generates it from descriptors
-2. **Always up-to-date** - Regenerate when protos change
-3. **No spec paths needed** - Proto type is sufficient
-4. **Natural command structure** - Commands look like data
-5. **Automatic validation** - Against the base command spec
-
-**Kotlin Side:**
-The Transit handler reads the metadata and instantiates the correct protobuf class:
+**Debugging Failed Comparisons**:
 ```kotlin
-class ProtobufReadHandler : ReadHandler<Message, Map<*, *>> {
+if (protobuf1 != protobuf2) {
+    // Convert both to JSON for detailed diff
+    val json1 = JsonFormat.printer().print(protobuf1)
+    val json2 = JsonFormat.printer().print(protobuf2)
+    
+    // Log or diff the JSON representations
+    println("Expected: $json1")
+    println("Actual: $json2")
+    
+    // Can use any JSON diff tool to see exact differences
+}
+```
+
+## Phase 1: Reflection-Based Transit Handlers
+
+### 1.1 Generate Transit Write Handlers
+Using the keyword trees, generate Kotlin code that:
+- [ ] Creates Transit write handlers for each protobuf message type
+- [ ] Uses the tree structure to know which fields to extract
+- [ ] Handles nested messages recursively
+- [ ] Preserves field types and repeated fields
+
+Example generated handler:
+```kotlin
+// Auto-generated from keyword tree
+class StartTrackNDCWriteHandler : WriteHandler<JonSharedCmdCv.StartTrackNDC> {
+    override fun tag(o: StartTrackNDC) = "protobuf"
+    override fun rep(o: StartTrackNDC) = mapOf(
+        "channel" to o.channel,
+        "x" to o.x,
+        "y" to o.y
+    )
+}
+```
+
+### 1.2 Implement Reflection-Based Read Handler
+- [ ] Create `ReflectionProtobufReadHandler` that uses keyword tree
+- [ ] Navigate tree based on EDN structure
+- [ ] Use reflection to call setter methods
+- [ ] Handle all protobuf field types
+- [ ] Support repeated fields and oneofs
+
+```kotlin
+class ReflectionProtobufReadHandler(
+    private val keywordTree: Map<String, Any>
+) : ReadHandler<Map<*, *>, Message> {
+    
     override fun fromRep(rep: Map<*, *>): Message {
-        val protoType = rep["proto-type"] as String
+        // Use keyword tree to build protobuf via reflection
+        return buildProtobuf(rep, keywordTree)
+    }
+    
+    private fun buildProtobuf(data: Map<*, *>, node: Map<String, Any>): Message {
+        val javaClass = Class.forName(node["java-class"] as String)
+        val builder = javaClass.getMethod("newBuilder").invoke(null) as Message.Builder
         
-        // Use reflection to instantiate the exact protobuf class
-        val clazz = Class.forName(protoType)
-        val builder = clazz.getMethod("newBuilder").invoke(null) as Message.Builder
+        val fields = node["fields"] as Map<String, Map<String, Any>>
         
-        // Populate from the data
-        populateBuilder(builder, data)
+        data.forEach { (key, value) ->
+            val fieldInfo = fields[key.toString()]
+            if (fieldInfo != null) {
+                setField(builder, fieldInfo, value, node)
+            }
+        }
+        
         return builder.build()
     }
 }
 ```
 
-### Phase 1: Core Infrastructure (Week 1)
-- [ ] **1.1 Fix Kotlin Compilation Errors** (Priority: CRITICAL)
-  - [ ] Fix protobuf class naming mismatches (CV → Cv, OSD → Osd)
-  - [ ] Update all builder methods to match generated classes
-  - [ ] Ensure basic compilation succeeds
-  - **Test**: Run `make test-kotlin` to verify compilation
-  
-- [x] **1.2 Create Metadata Embedding System**
-  - [x] Implement `metadata-handler.clj` with embed/extract functions
-  - [x] Create type-wrapped command structure
-  - [x] Add proto-type registry mapping paths to classes
-  - **Test**: `metadata_command_test.clj` - verify metadata attachment
+## Phase 2: Roundtrip Testing Infrastructure
 
-- [ ] **1.3 Update Transit Communication**
-  - [ ] Modify `transit/core.clj` to use metadata handlers
-  - [ ] Ensure wrapped commands serialize correctly
-  - [ ] Test roundtrip through Transit
-  - **Test**: Verify metadata survives Transit encode/decode cycle
-
-### Phase 2: Kotlin Handler Implementation (Week 1-2)
-- [ ] **2.1 Implement ProtobufTransitHandler**
-  - [ ] Complete `fromRep` method with reflection
-  - [ ] Handle nested message building
-  - [ ] Support all field types (scalar, repeated, nested)
-  - **Test**: `ProtobufRoundtripTest.kt` - test each field type
-
-- [x] **2.2 Create MetadataCommandSubprocess**
-  - [x] Replace action-based routing
-  - [x] Use metadata to instantiate protobuf classes
-  - [x] Handle errors gracefully
-  - **Test**: `MetadataCommandSubprocessTest.kt` - mock Transit messages
-
-- [ ] **2.3 Integration Testing**
-  - [ ] Test simple commands (ping, noop)
-  - [ ] Test parameterized commands (goto, zoom)
-  - [ ] Test deeply nested structures
-  - **Test**: `kotlin_integration_test.clj` with actual subprocess
-
-### Phase 3: Command Migration (Week 2)
-- [ ] **3.1 Update Command Functions**
-  - [ ] Migrate `transit/commands.clj` to use `send-command`
-  - [ ] Keep backward compatibility temporarily
-  - [ ] Add deprecation warnings to old functions
-  - **Test**: All existing command tests should still pass
-
-- [ ] **3.2 Proto-Explorer Integration**
-  - [ ] Use proto-explorer specs for validation
-  - [ ] Generate test data for all command types
-  - [ ] Validate commands before sending
-  - **Test**: `command_roundtrip_test.clj` with generated data
-
-- [x] **3.3 Buf.Validate Integration**
-  - [x] Validate protobuf after building
-  - [x] Return validation errors to Clojure
-  - [x] Test constraint violations
-  - **Test**: `BufValidateTest.kt` - test all constraints
-
-### Phase 4: Full System Testing (Week 2-3)
-- [ ] **4.1 End-to-End Testing**
-  - [ ] Test all commands with real subprocess
-  - [ ] Verify correct protobuf generation
-  - [ ] Check WebSocket transmission
-  - **Test**: Create `system_integration_test.clj`
-
-- [ ] **4.2 Performance Testing**
-  - [ ] Benchmark metadata vs action approach
-  - [ ] Measure reflection overhead
-  - [ ] Test with high command volume
-  - **Test**: `performance_benchmark_test.clj`
-
-- [ ] **4.3 Error Scenario Testing**
-  - [ ] Unknown proto types
-  - [ ] Malformed metadata
-  - [ ] Missing required fields
-  - [ ] Type mismatches
-  - **Test**: `error_handling_test.clj`
-
-### Phase 5: Cleanup and Documentation (Week 3)
-- [ ] **5.1 Remove Legacy Code**
-  - [ ] Delete action-based routing
-  - [ ] Remove ProtobufCommandBuilder switch statements
-  - [ ] Clean up old command builders
-  - **Test**: All tests still pass after removal
-
-- [ ] **5.2 Remove Outdated Key Conversion Code**
-  - [ ] Delete `src/potatoclient/transit/keyword_handlers.clj` (manual conversion obsolete)
-  - [ ] Delete `test/potatoclient/transit/keyword_conversion_test.clj`
-  - [ ] Review/update `src/potatoclient/java/transit/EnumUtils.java`
-  - [ ] Remove manual case conversion in Kotlin files:
-    - `MetadataCommandSubprocess.kt`
-    - `ProtobufTransitHandler.kt`
-    - `ProtobufStateHandlers.kt`
-    - `StateSubprocess.kt`
-  - **Test**: Automatic Transit conversion still works
-
-- [ ] **5.3 Clean Up Outdated Specs**
-  - [ ] Delete the entire `src/potatoclient/specs/` directory EXCEPT:
-    - Keep `src/potatoclient/specs/transit_messages.clj` (subprocess communication, not protobuf-related)
-  - [ ] This removes:
-    - `src/potatoclient/specs/cmd/rotary.clj` (manual command specs)
-    - All files in `src/potatoclient/specs/data/` (9 files: camera, compass, gps, lrf, rotary, state, system, time, types)
-  - [ ] Clean up `src/potatoclient/specs.clj`:
-    - Remove legacy command payload specs (lines 172-188)
-    - Remove temporary enum definitions (lines 585-633)
-    - Remove redundant command domain schemas (lines 420-546)
-    - Remove protobuf-related type specs (lines 550-850)
-    - Keep only core app specs (themes, locales, UI components, process management)
-  - [ ] Delete empty placeholder specs in shared:
-    - `shared/specs/protobuf/cmd_specs.clj` (empty placeholder)
-    - `shared/specs/protobuf/state_specs.clj` (empty placeholder)
-  - [ ] Use only proto-explorer generated specs from `shared/specs/protobuf/`
-  - **Test**: All spec validations use generated specs
-
-- [ ] **5.4 Remove Legacy Command Functions**
-  - [ ] Delete `src/potatoclient/transit/commands.clj` (263 lines of individual functions)
-  - [ ] Delete `src/potatoclient/transit/command_sender.clj` (hardcoded registry)
-  - [ ] Migrate any still-needed functionality to metadata approach
-  - **Test**: Commands still work without legacy functions
-
-- [ ] **5.5 Clean Up Test Files**
-  - [ ] Delete all `.skip` test files:
-    - `test/potatoclient/transit/unified_transit_test.clj.skip`
-    - `test/potatoclient/state/*.clj.skip` (7 files)
-    - `test/potatoclient/proto/serialization_test.clj.skip`
-  - [ ] Review and update/delete legacy handler tests:
-    - `test/potatoclient/protobuf_handler_test.clj`
-    - `test/potatoclient/transit_handler_test.clj`
-    - `test/potatoclient/transit_handlers_working_test.clj`
-  - **Test**: Remaining tests provide adequate coverage
-
-- [ ] **5.6 Update IPC Message Handling**
-  - [ ] Update `src/potatoclient/ipc.clj` to work with proto-explorer types
-  - [ ] Remove any hardcoded message type handling
-  - **Test**: IPC works with new message types
-
-- [ ] **5.7 Documentation Updates**
-  - [ ] Update CLAUDE.md with new architecture
-  - [ ] Create developer guide for adding commands
-  - [ ] Document troubleshooting steps
-  - [ ] Remove references to old approaches
-  - **Test**: Follow docs to add a new command
-
-- [ ] **5.8 Final Validation**
-  - [ ] Run full test suite
-  - [ ] Manual testing of UI commands
-  - [ ] Performance comparison report
-  - [ ] Verify no old code references remain
-  - **Test**: `make test-all` passes
-
-### Benefits
-- **No Name Collisions**: Each command carries its full type information
-- **No Action Registry**: No need to maintain action-to-class mappings
-- **Type Safety with Validation**: Validate against the appropriate spec
-- **Natural Clojure Syntax**: Commands look like data, not string-based actions
-- **Automatic Proto Discovery**: Type path can be derived from proto structure
-
-### Simplified Validation Approach
-
-**Instead of spec-per-command**, we use a unified validation strategy:
-
-```clojure
-;; Single base spec that validates all commands
-(def command-spec
-  ;; This spec comes from proto-explorer and includes ALL command variations
-  :potatoclient.specs.cmd/root)
-
-;; Validate any command against the base spec
-(defn validate-command [command]
-  (m/validate command-spec command))
-
-;; No need to know the specific sub-spec!
-```
-
-**Benefits of this approach**:
-1. **Simpler API**: Just pass the command data, no spec selection needed
-2. **Single source of truth**: Proto-explorer generates the complete spec
-3. **Automatic validation**: The spec knows all valid command shapes
-4. **Better errors**: Malli provides clear validation errors for the entire command tree
-
-### Example Usage
-```clojure
-;; Simple Commands - no spec path needed!
-(send-command {:ping {}} [:root :ping])
-
-;; Nested Commands
-(send-command {:goto {:azimuth 180.0 :elevation 45.0}}
-              [:rotary-platform :goto])
-
-;; Complex nesting
-(send-command {:day {:offsets {:set {:x-offset 10 :y-offset -5}}}}
-              [:lrf-calib :day :offsets :set])
-```
-
-### Testing Strategy at Each Stage
-- **Unit Tests**: Test metadata attachment, command building, validation
-- **Integration Tests**: Test actual Transit communication, roundtrip data integrity
-- **System Tests**: Full command flow from UI to WebSocket
-- **Performance Tests**: Measure latency and throughput
-
-### Success Criteria
-1. All commands use metadata approach
-2. No action-based routing remains
-3. All tests pass (unit, integration, system)
-4. Documentation is complete
-5. Zero compilation warnings
-
-### Risk Mitigation
-1. **Reflection Performance**: Cache reflection lookups
-2. **Unknown Edge Cases**: Extensive testing at each phase
-
-## Phase 2: Key Canonicalization Strategy
-
-### 2.1 Define Key Format Standards
-- [ ] Document Transit keyword format (kebab-case: `frame-timestamp`)
-- [ ] Document Protobuf field format (snake_case: `frame_timestamp`)
-- [ ] Document JSON field format (which convention to use?)
-- [ ] Create conversion utilities for consistent transformation
-
-### 2.2 Implement Key Canonicalization
-```kotlin
-// Example approach
-object KeyCanonicalizer {
-    // Transit keyword → Protobuf field name
-    fun transitToProto(key: String): String = key.replace("-", "_")
-    
-    // Protobuf field → Transit keyword
-    fun protoToTransit(key: String): String = key.replace("_", "-")
-    
-    // Ensure consistent JSON representation
-    fun canonicalizeJson(json: String): String {
-        // Sort keys, normalize format
-    }
-}
-```
-
-### 2.3 JSON Comparison Strategy
-- [ ] Decide on JSON key format (snake_case to match proto? kebab-case to match Transit?)
-- [ ] Implement JSON normalizer that:
-  - Sorts keys alphabetically
-  - Handles numeric precision consistently
-  - Normalizes enum values (UPPER_CASE vs lower-case)
-  - Handles null/missing fields consistently
-
-## Phase 3: Clojure-side Test Data Generation
-
-### 3.1 Leverage Proto-Explorer Specs
-- [ ] Use `proto-explorer.test-data-generator` to generate valid test data
-- [ ] Create test data generator that produces commands via `transit/commands.clj` functions
-- [ ] Ensure generated data respects buf.validate constraints
-
-### 3.2 Test Data Generator
-```clojure
-(ns potatoclient.test.command-generator
-  (:require [proto-explorer.generated-specs :as specs]
-            [proto-explorer.test-data-generator :as gen]
-            [potatoclient.transit.commands :as cmd]))
-
-(defn generate-test-command [action-name]
-  ;; 1. Look up spec for the action
-  ;; 2. Generate valid data using proto-explorer
-  ;; 3. Call appropriate command function
-  ;; 4. Return Transit message
-  )
-
-(defn generate-all-test-commands []
-  ;; Generate test cases for all known commands
-  )
-```
-
-## Phase 4: Roundtrip Testing Implementation
-
-### 4.1 Clojure → Kotlin → Protobuf → Validation
-- [ ] Clojure generates command using specs
-- [ ] Sends via Transit to Kotlin subprocess
-- [ ] Kotlin builds protobuf
-- [ ] Validate with buf.validate (if protovalidate-java added)
-- [ ] Serialize to JSON
-- [ ] Send JSON back to Clojure
-- [ ] Compare original command data with JSON
-
-### 4.2 Test Harness Structure
-```clojure
-;; Clojure side
-(deftest roundtrip-all-commands
-  (doseq [cmd (generate-all-test-commands)]
-    (let [json-response (send-to-kotlin-and-get-json cmd)
-          original-data (:params cmd)
-          proto-data (parse-json json-response)]
-      ;; Compare with canonicalization
-      (is (= (canonicalize original-data)
-             (canonicalize proto-data))))))
-```
+### 2.1 Create Comprehensive Test Framework
+- [ ] Load both command and state keyword trees
+- [ ] Generate test data using proto-explorer specs
+- [ ] Implement roundtrip test for each message type
+- [ ] Use protobuf equals() for comparison
 
 ```kotlin
-// Kotlin side - test mode that returns JSON instead of sending
-class TestCommandProcessor {
-    fun processForTest(action: String, params: Map<*, *>): String {
-        val result = ProtobufCommandBuilder.build(action, params)
-        return when (result) {
-            is Success -> {
-                val proto = result.value
-                // Validate if protovalidate available
-                // Convert to canonical JSON
-                JsonFormat.printer()
-                    .includingDefaultValueFields()
-                    .sortingMapKeys()  // If available
-                    .print(proto)
-            }
-            is Failure -> {
-                // Return error as JSON
-            }
+class ProtobufRoundtripTest {
+    @Test
+    fun testCommandRoundtrip() {
+        val original = generateTestCommand() // From proto-explorer
+        
+        // Transit → Protobuf
+        val protobuf1 = transitHandler.fromRep(original)
+        
+        // Validate with buf.validate
+        val violations1 = validator.validate(protobuf1)
+        assertTrue(violations1.isEmpty())
+        
+        // Protobuf → Binary
+        val binary = protobuf1.toByteArray()
+        
+        // Binary → Protobuf
+        val protobuf2 = parseFrom(binary)
+        
+        // Validate again
+        val violations2 = validator.validate(protobuf2)
+        assertTrue(violations2.isEmpty())
+        
+        // Compare Java Protobuf representations using equals()
+        if (protobuf1 != protobuf2) {
+            // Debug using JSON representation
+            val json1 = JsonFormat.printer()
+                .includingDefaultValueFields()
+                .preservingProtoFieldNames()
+                .print(protobuf1)
+            val json2 = JsonFormat.printer()
+                .includingDefaultValueFields()
+                .preservingProtoFieldNames()
+                .print(protobuf2)
+            
+            fail("Protobuf roundtrip failed!\nExpected:\n$json1\nActual:\n$json2")
         }
+        
+        // Also verify hashCode consistency
+        assertEquals(protobuf1.hashCode(), protobuf2.hashCode())
+        
+        // Protobuf → Transit
+        val reconstructed = transitHandler.toRep(protobuf2)
+        
+        // Compare Transit EDN structures (optional verification)
+        assertEquals(original, reconstructed)
     }
 }
 ```
 
-### 4.3 Validation Integration ✅
-- [x] protovalidate-java dependency already included (build.buf/protovalidate 0.13.0)
-- [x] Protobuf bindings generated with buf.validate annotations
-- [x] Validator integrated in TestCommandProcessor
-- [x] BufValidateTest created to verify constraint validation
-- [ ] Add validation to production CommandSubprocess (optional - may impact performance)
+### 2.2 Test All Message Types
+- [ ] Iterate through keyword tree to find all message types
+- [ ] Generate valid test data for each
+- [ ] Run roundtrip test
+- [ ] Report any failures with clear diagnostics
 
-## Phase 5: Edge Cases and Error Handling
+## Phase 3: Integration with Existing System
 
-### 5.1 Test Edge Cases
-- [ ] Missing required fields
-- [ ] Out-of-range numeric values
-- [ ] Invalid enum values
-- [ ] Null vs missing optional fields
-- [ ] Very large/small numbers (precision limits)
-- [ ] String length constraints
-- [ ] Special characters in strings
+### 3.1 Update CommandSubprocess
+- [ ] Replace action-based routing with keyword tree navigation
+- [ ] Use reflection-based handler for all commands
+- [ ] Remove all manual command builders
+- [ ] Add comprehensive error handling
 
-### 5.2 Error Reporting
-- [ ] Standardize error format from Kotlin
-- [ ] Include field path in validation errors
-- [ ] Distinguish between build errors vs validation errors
-- [ ] Test error propagation back to Clojure
+### 3.2 Update StateSubprocess
+- [ ] Use state keyword tree for protobuf → Transit conversion
+- [ ] Replace manual field extraction with reflection
+- [ ] Ensure all state fields are captured
+- [ ] Test with real state updates
+
+### 3.3 Performance Optimization
+- [ ] Cache reflection lookups (Method objects)
+- [ ] Pre-compile setter method references
+- [ ] Benchmark against manual approach
+- [ ] Optimize hot paths if needed
+
+## Phase 4: Code Generation Options
+
+### 4.1 Static Handler Generation (Optional)
+If reflection performance is inadequate:
+- [ ] Generate Kotlin source files from keyword trees
+- [ ] Create specific handlers for each message type
+- [ ] Compile for zero-reflection operation
+- [ ] Trade-off: Larger JAR, faster runtime
+
+### 4.2 Hybrid Approach
+- [ ] Use reflection for development/testing
+- [ ] Generate static handlers for production
+- [ ] Same code paths, different implementations
+- [ ] Best of both worlds
+
+## Phase 5: Comprehensive Legacy Code Cleanup
+
+### 5.1 Remove Manual Command Builders
+- [ ] Delete all individual command builder files in `src/potatoclient/kotlin/command/builders/`
+  - [ ] `CVCommandBuilder.kt`
+  - [ ] `CompassCommandBuilder.kt`
+  - [ ] `DayCameraCommandBuilder.kt`
+  - [ ] `HeatCameraCommandBuilder.kt`
+  - [ ] `LrfCommandBuilder.kt`
+  - [ ] `OSDCommandBuilder.kt`
+  - [ ] `RotaryPlatformCommandBuilder.kt`
+  - [ ] `SystemCommandBuilder.kt`
+- [ ] Delete `ProtobufCommandBuilder.kt` with its giant switch statement
+- [ ] Delete action registry in `CommandSubprocess.kt`
+
+### 5.2 Remove Manual Key Conversion Code
+- [ ] Delete `src/potatoclient/transit/keyword_handlers.clj`
+- [ ] Delete `test/potatoclient/transit/keyword_conversion_test.clj`
+- [ ] Remove manual case conversion in Kotlin files:
+  - [ ] `MetadataCommandSubprocess.kt` - remove kebab/snake case conversions
+  - [ ] `ProtobufTransitHandler.kt` - remove manual field mapping
+  - [ ] `ProtobufStateHandlers.kt` - replace with reflection
+  - [ ] `StateSubprocess.kt` - use state keyword tree
+- [ ] Update `src/potatoclient/java/transit/EnumUtils.java` if needed
+
+### 5.3 Clean Up Outdated Specs
+- [ ] Delete manual command specs directory: `src/potatoclient/specs/`
+  - [ ] Keep only `transit_messages.clj` (subprocess communication)
+  - [ ] Delete `cmd/rotary.clj` and all manual command specs
+  - [ ] Delete all 9 files in `specs/data/` directory
+- [ ] Clean up `src/potatoclient/specs.clj`:
+  - [ ] Remove command payload specs (lines 172-188)
+  - [ ] Remove temporary enum definitions (lines 585-633)
+  - [ ] Remove command domain schemas (lines 420-546)
+  - [ ] Remove protobuf type specs (lines 550-850)
+  - [ ] Keep only: themes, locales, UI components, process management
+- [ ] Delete placeholder files in shared:
+  - [ ] `shared/specs/protobuf/cmd_specs.clj`
+  - [ ] `shared/specs/protobuf/state_specs.clj`
+
+### 5.4 Remove Legacy Command System
+- [ ] Delete `src/potatoclient/transit/commands.clj` (263 lines of functions)
+- [ ] Delete `src/potatoclient/transit/command_sender.clj` (hardcoded registry)
+- [ ] Update all UI code to use new command system
+- [ ] Remove references in `core.clj` menu actions
+
+### 5.5 Clean Up Test Files
+- [ ] Delete all `.skip` test files (9 files):
+  - [ ] `test/potatoclient/transit/unified_transit_test.clj.skip`
+  - [ ] `test/potatoclient/state/camera_day_test.clj.skip`
+  - [ ] `test/potatoclient/state/camera_heat_test.clj.skip`
+  - [ ] `test/potatoclient/state/compass_test.clj.skip`
+  - [ ] `test/potatoclient/state/gps_test.clj.skip`
+  - [ ] `test/potatoclient/state/lrf_test.clj.skip`
+  - [ ] `test/potatoclient/state/rotary_test.clj.skip`
+  - [ ] `test/potatoclient/state/system_test.clj.skip`
+  - [ ] `test/potatoclient/proto/serialization_test.clj.skip`
+- [ ] Update or delete legacy handler tests:
+  - [ ] `test/potatoclient/protobuf_handler_test.clj`
+  - [ ] `test/potatoclient/transit_handler_test.clj`
+  - [ ] `test/potatoclient/transit_handlers_working_test.clj`
+
+### 5.6 Update Core Systems
+- [ ] Update `src/potatoclient/ipc.clj`:
+  - [ ] Remove hardcoded message type handling
+  - [ ] Use proto-explorer generated types
+  - [ ] Simplify message dispatch
+- [ ] Update `src/potatoclient/process.clj`:
+  - [ ] Remove references to old command system
+  - [ ] Ensure subprocess launching works with new handlers
+
+### 5.7 Documentation Updates
+- [ ] Update `CLAUDE.md`:
+  - [ ] Remove references to action-based commands
+  - [ ] Document reflection-based architecture
+  - [ ] Update examples to use new command format
+- [ ] Update `.claude/kotlin-subprocess.md`:
+  - [ ] Document keyword tree usage
+  - [ ] Remove manual builder documentation
+  - [ ] Add reflection handler examples
+- [ ] Create new guide: `docs/ADDING_COMMANDS.md`:
+  - [ ] Show how to add new proto commands
+  - [ ] Explain keyword tree regeneration
+  - [ ] Document testing approach
+
+### 5.8 Final Validation
+- [ ] Run `make clean` and rebuild everything
+- [ ] Run full test suite: `make test`
+- [ ] Manually test each command type from UI
+- [ ] Verify no references to old code remain:
+  ```bash
+  # Search for old patterns
+  grep -r "ProtobufCommandBuilder" src/
+  grep -r "action-registry" src/
+  grep -r "kebab->snake" src/
+  grep -r "snake->kebab" src/
+  ```
+- [ ] Performance comparison report
+- [ ] Create migration guide for any external code
+
+## Testing Strategy
+
+### Unit Tests
+- [ ] Test each field type conversion
+- [ ] Test nested message handling
+- [ ] Test repeated field handling
+- [ ] Test oneof handling
+- [ ] Test enum conversions
+
+### Integration Tests
+- [ ] Full command roundtrips
+- [ ] Full state roundtrips
+- [ ] Error scenarios
+- [ ] Performance benchmarks
+
+### System Tests
+- [ ] End-to-end command flow
+- [ ] UI → Subprocess → WebSocket
+- [ ] State updates → UI
+- [ ] Concurrent command handling
+
+## Success Criteria
+
+1. **Zero Manual Mapping**: All conversions use keyword trees
+2. **100% Roundtrip Success**: Every message type passes roundtrip test
+3. **Validation Coverage**: All buf.validate constraints enforced
+4. **Performance**: < 1ms overhead vs manual approach
+5. **Maintainability**: Adding new commands requires zero code changes
+
+## Benefits Over Previous Approach
+
+1. **Native Protobuf Comparison**: Use Java's `equals()` and `hashCode()` methods directly
+2. **Built-in Debugging**: Protobuf's `JsonFormat` provides detailed JSON for failed comparisons
+3. **No JSON Canonicalization**: Compare Java objects, not JSON strings
+4. **No Manual Builders**: Everything driven by keyword trees
+5. **Automatic Updates**: Regenerate trees when protos change
+6. **Type Safety**: Compiler catches type mismatches
+7. **Comprehensive Testing**: Every field of every message tested
 
 ## Implementation Order
 
-1. **First**: Fix Kotlin compilation (Phase 1.1) - CRITICAL BLOCKER
-2. **Second**: Complete metadata-based architecture (Phase 1.5)
-3. **Third**: Implement Kotlin handlers (Phase 2)
-4. **Fourth**: Migrate commands and integrate validation (Phase 3)
-5. **Then**: Full system testing (Phase 4)
-6. **Finally**: Clean up all legacy code and documentation (Phase 5)
+1. **Week 1**: Implement reflection-based handlers
+2. **Week 1-2**: Create roundtrip testing framework
+3. **Week 2**: Integrate with subprocesses
+4. **Week 2-3**: Performance optimization
+5. **Week 3**: Cleanup and documentation
 
-## Summary of Major Cleanup Items
+This approach leverages the keyword trees to create a truly automated, maintainable system that eliminates all manual protobuf handling code.
 
-### Legacy Code to Remove:
-1. **Manual Key Conversion**: `keyword_handlers.clj` and related code
-2. **Placeholder Specs**: Empty `cmd_specs.clj` and `state_specs.clj`
-3. **Manual Command Specs**: All hardcoded specs in `specs/cmd/` and `specs/data/`
-4. **Legacy Command Functions**: 263 lines in `commands.clj` with individual functions
-5. **Skipped Tests**: 9 `.skip` test files from old approaches
-6. **Outdated Handlers**: Manual Transit and protobuf handlers
+## Summary of Major Changes
 
-### What to Keep:
-- Proto-explorer generated specs (in `shared/specs/protobuf/`)
-- Metadata-based command architecture
-- Video stream management code (unrelated to commands)
-- Core Transit communication infrastructure
+### What We're Removing (Legacy):
+1. **Manual Command Builders**: 8+ Kotlin files with hardcoded field mappings
+2. **Action Registry**: String-based command routing system
+3. **Manual Specs**: 10+ manually maintained Clojure spec files
+4. **Key Conversion**: Manual kebab-case ↔ snake_case converters
+5. **Legacy Tests**: 9 skipped test files from old approaches
+6. **Command Functions**: 263 lines of individual command functions
 
-## Notes
+### What We're Adding (New):
+1. **Keyword Trees**: Auto-generated EDN → Java class mappings
+2. **Reflection Handlers**: Universal Transit ↔ Protobuf converters
+3. **Roundtrip Testing**: Comprehensive validation of every message type
+4. **Proto-Explorer Integration**: Leverage existing specs and generators
+5. **Native Comparison**: Use protobuf's equals() instead of JSON
 
-### Key Format Considerations
-- Transit uses keywords with kebab-case (`:frame-timestamp`)
-- Protobuf uses snake_case (`frame_timestamp`)
-- JSON could use either - need to decide
-- Canonicalization must handle all three formats
+### Development Workflow:
+1. **Proto Changes**: When protos change, regenerate keyword trees with `bb`
+2. **Finding Commands**: Use `bb find` to discover command names and structure
+3. **Testing**: Use `bb example` to generate valid test data
+4. **Validation**: buf.validate constraints enforced automatically
+5. **Zero Code Changes**: New commands work without touching Kotlin/Clojure code
 
-### Validation Options
-Without protovalidate-java:
-- Basic type checking via protobuf
-- Range validation would need manual implementation
-- Regex patterns would need manual implementation
-
-With protovalidate-java:
-- Full buf.validate constraint checking
-- Better error messages
-- Additional dependency and complexity
-
-### Testing Strategy
-The roundtrip tests will catch:
-- Key naming mismatches
-- Type conversion issues
-- Missing/extra fields
-- Precision loss
-- Enum handling differences
-
-This comprehensive testing will ensure the Transit → Protobuf conversion is correct and reliable.
+This represents a complete paradigm shift from manual, error-prone mapping to automated, reflection-based conversion that stays in sync with protobuf definitions.

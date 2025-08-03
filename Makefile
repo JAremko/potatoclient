@@ -65,6 +65,33 @@ proto: ## Regenerate protobuf classes from protogen repository - always fresh
 	@echo "  • Custom kebab-case conversion for Clojure idioms"
 	@echo "  • Cleans up Docker images after generation to save space"
 	./scripts/generate-protos.sh
+	@$(MAKE) generate-keyword-trees
+
+# Generate keyword tree for commands
+.PHONY: generate-keyword-tree-cmd
+generate-keyword-tree-cmd: ## Generate keyword tree mapping for command protos
+	@echo "Generating command keyword tree mapping..."
+	@echo "  • Extracts all command message types from proto descriptors"
+	@echo "  • Maps EDN keywords to Java protobuf classes"
+	@echo "  • Includes field mappings with setter methods and types"
+	@echo "  • Generates static Clojure data structure (no runtime reflection)"
+	cd tools/proto-explorer && bb generate-keyword-tree-cmd ../../examples/protogen/output/json-descriptors
+	@echo "Generated: shared/specs/protobuf/proto_keyword_tree_cmd.clj"
+
+# Generate keyword tree for state
+.PHONY: generate-keyword-tree-state
+generate-keyword-tree-state: ## Generate keyword tree mapping for state protos
+	@echo "Generating state keyword tree mapping..."
+	@echo "  • Extracts all state message types from proto descriptors"
+	@echo "  • Maps EDN keywords to Java protobuf classes"
+	@echo "  • Includes field mappings with setter methods and types"
+	@echo "  • Generates static Clojure data structure (no runtime reflection)"
+	cd tools/proto-explorer && bb generate-keyword-tree-state ../../examples/protogen/output/json-descriptors
+	@echo "Generated: shared/specs/protobuf/proto_keyword_tree_state.clj"
+
+# Generate both keyword trees
+.PHONY: generate-keyword-trees
+generate-keyword-trees: generate-keyword-tree-cmd generate-keyword-tree-state ## Generate keyword trees for both commands and state
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin
