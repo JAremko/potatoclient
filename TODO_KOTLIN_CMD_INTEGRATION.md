@@ -56,6 +56,15 @@ bb java-class "cmd.CV.JonSharedCmdCv\$StartTrackNDC"
 - **Example generation**: Creates valid test data respecting all constraints
 - **Java reflection**: Can inspect actual protobuf classes (via JVM)
 - **Batch processing**: Can process multiple queries via stdin
+- **Proto type mapping**: Auto-generates domain→Java class mapping
+
+### Regenerating Proto Type Mapping
+When protobuf definitions change, regenerate the mapping:
+```bash
+cd tools/proto-explorer
+bb generate-proto-mapping
+# Generates: shared/specs/protobuf/proto_type_mapping.clj
+```
 
 ## Phase 1: Kotlin Command System Finalization
 
@@ -102,23 +111,41 @@ message VideoRecording {
 }
 ```
 
-### The Solution: Metadata-Based Transit Handlers
-Instead of action tags, we send the complete EDN structure with metadata specifying the exact protobuf type:
+### The Solution: Auto-Generated Proto Type Mapping
+Proto-explorer now generates a mapping from command domains to Java protobuf classes automatically!
+
+**Generated Mapping** (from `bb generate-proto-mapping`):
+```clojure
+;; Auto-generated in shared/specs/protobuf/proto_type_mapping.clj
+{:rotary-platform "cmd.RotaryPlatform.JonSharedCmdRotary$Root"
+ :cv              "cmd.CV.JonSharedCmdCv$Root"
+ :compass         "cmd.Compass.JonSharedCmdCompass$Root"
+ :day-camera      "cmd.DayCamera.JonSharedCmdDayCamera$Root"
+ :heat-camera     "cmd.HeatCamera.JonSharedCmdHeatCamera$Root"
+ ;; ... etc
+}
+```
 
 **Clojure Side:**
 ```clojure
-;; Instead of this:
+;; Old string-based approach:
 (send-command "rotaryplatform-goto" {:azimuth 180.0 :elevation 45.0})
 
-;; We do this:
-(send-command {:goto {:azimuth 180.0 :elevation 45.0}}
-              [:rotary-platform :goto])
+;; New approach - proto type is inferred automatically:
+(send-command {:rotary-platform {:goto {:azimuth 180.0 :elevation 45.0}}})
 
-;; The function attaches metadata:
-^{:proto-type "cmd.JonSharedCmdRotaryPlatform$Root"
-  :proto-path [:rotary-platform :goto]}
-{:goto {:azimuth 180.0 :elevation 45.0}}
+;; The system automatically:
+;; 1. Detects :rotary-platform key
+;; 2. Looks up proto type: "cmd.RotaryPlatform.JonSharedCmdRotary$Root"
+;; 3. Attaches metadata for Kotlin to use
 ```
+
+**Key Benefits**:
+1. **Zero manual mapping** - Proto-explorer generates it from descriptors
+2. **Always up-to-date** - Regenerate when protos change
+3. **No spec paths needed** - Proto type is sufficient
+4. **Natural command structure** - Commands look like data
+5. **Automatic validation** - Against the base command spec
 
 **Kotlin Side:**
 The Transit handler reads the metadata and instantiates the correct protobuf class:
@@ -294,9 +321,32 @@ class ProtobufReadHandler : ReadHandler<Message, Map<*, *>> {
 - **Natural Clojure Syntax**: Commands look like data, not string-based actions
 - **Automatic Proto Discovery**: Type path can be derived from proto structure
 
+### Simplified Validation Approach
+
+**Instead of spec-per-command**, we use a unified validation strategy:
+
+```clojure
+;; Single base spec that validates all commands
+(def command-spec
+  ;; This spec comes from proto-explorer and includes ALL command variations
+  :potatoclient.specs.cmd/root)
+
+;; Validate any command against the base spec
+(defn validate-command [command]
+  (m/validate command-spec command))
+
+;; No need to know the specific sub-spec!
+```
+
+**Benefits of this approach**:
+1. **Simpler API**: Just pass the command data, no spec selection needed
+2. **Single source of truth**: Proto-explorer generates the complete spec
+3. **Automatic validation**: The spec knows all valid command shapes
+4. **Better errors**: Malli provides clear validation errors for the entire command tree
+
 ### Example Usage
 ```clojure
-;; Simple Commands
+;; Simple Commands - no spec path needed!
 (send-command {:ping {}} [:root :ping])
 
 ;; Nested Commands
@@ -318,15 +368,12 @@ class ProtobufReadHandler : ReadHandler<Message, Map<*, *>> {
 1. All commands use metadata approach
 2. No action-based routing remains
 3. All tests pass (unit, integration, system)
-4. Performance is equal or better
-5. Documentation is complete
-6. Zero compilation warnings
+4. Documentation is complete
+5. Zero compilation warnings
 
 ### Risk Mitigation
 1. **Reflection Performance**: Cache reflection lookups
-2. **Breaking Changes**: Maintain compatibility layer
-3. **Complex Nesting**: Incremental migration by command type
-4. **Unknown Edge Cases**: Extensive testing at each phase
+2. **Unknown Edge Cases**: Extensive testing at each phase
 
 ## Phase 2: Key Canonicalization Strategy
 
@@ -457,33 +504,6 @@ class TestCommandProcessor {
 - [ ] Include field path in validation errors
 - [ ] Distinguish between build errors vs validation errors
 - [ ] Test error propagation back to Clojure
-
-## Phase 6: Performance Testing
-
-### 6.1 Benchmark Suite
-- [ ] Measure Transit parsing time
-- [ ] Measure protobuf building time
-- [ ] Measure validation time (if using buf.validate)
-- [ ] Measure JSON serialization time
-- [ ] Compare with direct protobuf construction
-
-### 6.2 Optimization Opportunities
-- [ ] Cache protobuf builders?
-- [ ] Reuse Transit readers/writers?
-- [ ] Batch command processing?
-
-## Phase 7: Documentation and Maintenance
-
-### 7.1 Documentation Updates
-- [ ] Document the command flow without Action Registry
-- [ ] Explain key format conversions
-- [ ] Provide examples of adding new commands
-- [ ] Document the test strategy
-
-### 7.2 Maintenance Tools
-- [ ] Script to verify all commands have tests
-- [ ] Script to check command coverage
-- [ ] GitHub Action for roundtrip tests
 
 ## Implementation Order
 

@@ -18,7 +18,6 @@ object CompassCommandBuilder {
             "compass-set-offset-angle-elevation" -> buildSetOffsetAngleElevation(params)
             "compass-stop" -> buildStop(params)
             "compass-calibrate-start-long" -> buildCalibrateStartLong(params)
-            "compass-next" -> buildNext(params)
             "compass-calibrate-next" -> buildCalibrateNext(params)
             "compass-get-meteo" -> buildGetMeteo(params)
             "compass-set-use-rotary-position" -> buildSetUseRotaryPosition(params)
@@ -52,7 +51,7 @@ object CompassCommandBuilder {
 
     private fun buildCalibrateStartShort(params: Map<*, *>): Result<JonSharedCmdCompass.Root> = Result.success(
         JonSharedCmdCompass.Root.newBuilder()
-            .setCalibrateStartShort(JonSharedCmdCompass.CalibrateStartShort.newBuilder().build())
+            .setStartCalibrateShort(JonSharedCmdCompass.CalibrateStartShort.newBuilder().build())
             .build()
     )
 
@@ -70,15 +69,10 @@ object CompassCommandBuilder {
 
     private fun buildCalibrateStartLong(params: Map<*, *>): Result<JonSharedCmdCompass.Root> = Result.success(
         JonSharedCmdCompass.Root.newBuilder()
-            .setCalibrateStartLong(JonSharedCmdCompass.CalibrateStartLong.newBuilder().build())
+            .setStartCalibrateLong(JonSharedCmdCompass.CalibrateStartLong.newBuilder().build())
             .build()
     )
 
-    private fun buildNext(params: Map<*, *>): Result<JonSharedCmdCompass.Root> = Result.success(
-        JonSharedCmdCompass.Root.newBuilder()
-            .setNext(JonSharedCmdCompass.Next.newBuilder().build())
-            .build()
-    )
 
     private fun buildCalibrateNext(params: Map<*, *>): Result<JonSharedCmdCompass.Root> = Result.success(
         JonSharedCmdCompass.Root.newBuilder()

@@ -36,7 +36,7 @@ object LrfCommandBuilder {
         return lrfMsg.map { lrf ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetlrf(lrf)
+                .setLrf(lrf)
                 .build()
         }
     }

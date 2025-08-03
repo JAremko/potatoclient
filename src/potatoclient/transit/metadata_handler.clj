@@ -107,12 +107,18 @@
 
 (defn wrap-with-type
   "Wrap a command with explicit type information.
-  This approach doesn't use metadata but explicit structure."
-  [command proto-type proto-path]
-  {:type :protobuf-command
-   :proto-type proto-type
-   :proto-path proto-path
-   :data command})
+  This approach doesn't use metadata but explicit structure.
+  
+  Note: proto-path is optional. The protobuf type alone is sufficient
+  for building the correct message. The path can be useful for debugging
+  or tracing but is not required for the actual protobuf construction."
+  ([command proto-type]
+   (wrap-with-type command proto-type nil))
+  ([command proto-type proto-path]
+   {:type :protobuf-command
+    :proto-type proto-type
+    :proto-path proto-path
+    :data command}))
 
 (defn unwrap-typed-command
   "Extract command data and type information."
@@ -128,18 +134,24 @@
 
 (defn prepare-for-kotlin
   "Prepare a command for sending to Kotlin subprocess.
-  This embeds all necessary type information."
-  [command proto-type proto-path]
-  ;; Use the explicit structure approach for clarity
-  (wrap-with-type command proto-type proto-path))
+  This embeds all necessary type information.
+  Proto-path is optional - only proto-type is required."
+  ([command proto-type]
+   (prepare-for-kotlin command proto-type nil))
+  ([command proto-type proto-path]
+   ;; Use the explicit structure approach for clarity
+   (wrap-with-type command proto-type proto-path)))
 
 (defn create-command-message
-  "Create a complete Transit message with embedded type info."
-  [command proto-type proto-path]
-  {:msg-type "command"
-   :msg-id (str (random-uuid))
-   :timestamp (System/currentTimeMillis)
-   :payload (prepare-for-kotlin command proto-type proto-path)})
+  "Create a complete Transit message with embedded type info.
+  Proto-path is optional and mainly useful for debugging."
+  ([command proto-type]
+   (create-command-message command proto-type nil))
+  ([command proto-type proto-path]
+   {:msg-type "command"
+    :msg-id (str (random-uuid))
+    :timestamp (System/currentTimeMillis)
+    :payload (prepare-for-kotlin command proto-type proto-path)}))
 
 ;; =============================================================================
 ;; Usage Examples

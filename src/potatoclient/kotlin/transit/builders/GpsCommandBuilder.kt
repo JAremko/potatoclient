@@ -26,7 +26,7 @@ object GpsCommandBuilder {
         return gpsMsg.map { gps ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetgps(gps)
+                .setGps(gps)
                 .build()
         }
     }

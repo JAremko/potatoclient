@@ -50,7 +50,7 @@ object DayCameraCommandBuilder {
         return daycameraMsg.map { daycamera ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetdaycamera(daycamera)
+                .setDayCamera(daycamera)
                 .build()
         }
     }

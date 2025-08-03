@@ -57,7 +57,7 @@ object HeatCameraCommandBuilder {
         return heatcameraMsg.map { heatcamera ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetheatcamera(heatcamera)
+                .setHeatCamera(heatcamera)
                 .build()
         }
     }

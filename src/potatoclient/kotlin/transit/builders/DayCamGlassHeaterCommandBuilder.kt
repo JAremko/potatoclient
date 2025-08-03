@@ -26,7 +26,7 @@ object DayCamGlassHeaterCommandBuilder {
         return daycamglassheaterMsg.map { daycamglassheater ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetdaycamglassheater(daycamglassheater)
+                .setDayCamGlassHeater(daycamglassheater)
                 .build()
         }
     }

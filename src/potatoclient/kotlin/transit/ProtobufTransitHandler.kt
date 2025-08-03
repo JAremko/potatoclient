@@ -38,10 +38,7 @@ class ProtobufTransitHandler {
                 return buildProtobuf(protoType, data, protoPath)
             } else {
                 // Fallback: try to find embedded metadata (older approach)
-                val metaKey = TransitFactory.keyword(
-                    "potatoclient.transit.metadata-handler", 
-                    "proto-meta"
-                )
+                val metaKey = TransitFactory.keyword("proto-meta")
                 val metadata = rep[metaKey] as? Map<*, *>
                 
                 if (metadata != null) {
@@ -257,7 +254,7 @@ class ProtobufTransitHandler {
         
         override fun stringRep(o: Message): String? = null
         
-        override fun getVerboseHandler(): WriteHandler<Message, *>? = null
+        override fun <V> getVerboseHandler(): WriteHandler<Message, V>? = null
         
         private fun protobufToMap(message: Message): Map<String, Any?> {
             val result = mutableMapOf<String, Any?>()
@@ -304,9 +301,8 @@ class ProtobufTransitHandler {
          * Create a Transit writer with protobuf support
          */
         fun createWriter(outputStream: java.io.OutputStream): Writer<Any> {
-            val customHandlers = mapOf(
-                Message::class.java to ProtobufWriteHandler()
-            )
+            val customHandlers = mutableMapOf<Class<*>, WriteHandler<*, *>>()
+            customHandlers[Message::class.java] = ProtobufWriteHandler()
             
             return TransitFactory.writer(
                 TransitFactory.Format.MSGPACK,
@@ -326,18 +322,3 @@ fun TransitCommunicator.withProtobufSupport(): TransitCommunicator {
     return this
 }
 
-/**
- * Direct protobuf command processor using metadata
- */
-class MetadataCommandProcessor {
-    
-    fun processCommand(message: Map<*, *>): Result<Message> {
-        return try {
-            val handler = ProtobufTransitHandler.ProtobufReadHandler()
-            val protobuf = handler.fromRep(message)
-            Result.success(protobuf)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-}

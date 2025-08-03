@@ -34,7 +34,7 @@ object SystemCommandBuilder {
         return systemMsg.map { system ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetsystem(system)
+                .setSystem(system)
                 .build()
         }
     }
