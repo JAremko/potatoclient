@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import potatoclient.kotlin.TestModeWebSocketStub
 
 /**
  * Simplified Command subprocess without protovalidate
@@ -276,12 +277,13 @@ fun main(args: Array<String>) {
     )
 
     try {
-        if (args.isEmpty()) {
-            logError("Usage: CommandSubprocess <websocket-url>")
+        val isTestMode = args.contains("--test-mode")
+        
+        if (!isTestMode && args.isEmpty()) {
+            logError("Usage: CommandSubprocess <websocket-url> [--test-mode]")
             System.exit(1)
         }
 
-        val wsUrl = args[0]
         val transitComm = TransitCommunicator(System.`in`, StdoutInterceptor.getOriginalStdout())
         val messageProtocol = TransitMessageProtocol("command", transitComm)
 
@@ -291,12 +293,17 @@ fun main(args: Array<String>) {
         runBlocking {
             messageProtocol.sendStatus("starting")
 
-            val subprocess = CommandSubprocess(wsUrl, transitComm)
-
-            try {
-                subprocess.run()
-            } finally {
-                messageProtocol.sendStatus("stopped")
+            if (isTestMode) {
+                logInfo("Running in test mode - no WebSocket connection")
+                runTestMode(transitComm, messageProtocol)
+            } else {
+                val wsUrl = args[0]
+                val subprocess = CommandSubprocess(wsUrl, transitComm)
+                try {
+                    subprocess.run()
+                } finally {
+                    messageProtocol.sendStatus("stopped")
+                }
             }
         }
     } catch (e: Exception) {
@@ -305,4 +312,52 @@ fun main(args: Array<String>) {
     } finally {
         LoggingUtils.close()
     }
+}
+
+/**
+ * Test mode - handles commands without WebSocket connection
+ */
+suspend fun runTestMode(
+    transitComm: TransitCommunicator,
+    messageProtocol: TransitMessageProtocol
+) = coroutineScope {
+    val testStub = TestModeWebSocketStub(transitComm)
+    
+    messageProtocol.sendStatus("test-mode-ready")
+    
+    // Handle incoming Transit messages
+    while (isActive) {
+        try {
+            val msg = transitComm.readMessage() ?: break
+            
+            val msgType = msg[TransitKeys.MSG_TYPE] as? String
+            if (msgType == MessageType.COMMAND.key) {
+                val payload = msg[TransitKeys.PAYLOAD]
+                
+                if (payload is Map<*, *>) {
+                    // Build protobuf from Transit command
+                    val proto = GeneratedCommandHandlers.buildCommand(payload)
+                    
+                    if (proto != null) {
+                        // Handle command through test stub
+                        testStub.handleCommand(proto)
+                    } else {
+                        messageProtocol.sendError("Failed to build command from Transit data")
+                    }
+                } else {
+                    messageProtocol.sendError("Invalid command payload")
+                }
+            } else if (msgType == MessageType.CONTROL.key) {
+                val action = (msg[TransitKeys.PAYLOAD] as? Map<*, *>)?.get("action")
+                if (action == "shutdown") {
+                    messageProtocol.sendStatus("shutting-down")
+                    break
+                }
+            }
+        } catch (e: Exception) {
+            messageProtocol.sendException("Error processing message", e)
+        }
+    }
+    
+    messageProtocol.sendStatus("test-mode-stopped")
 }

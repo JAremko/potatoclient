@@ -313,7 +313,7 @@ class TransitMessageProtocol(
         payload: Map<String, Any>,
     ): Map<String, Any> =
         mapOf(
-            MessageKeys.MSG_TYPE to msgType,
+            MessageKeys.MSG_TYPE to msgType.key,
             MessageKeys.MSG_ID to
                 java.util.UUID
                     .randomUUID()
