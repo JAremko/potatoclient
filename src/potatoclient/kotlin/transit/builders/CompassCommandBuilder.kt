@@ -33,7 +33,7 @@ object CompassCommandBuilder {
         return compassMsg.map { compass ->
             JonSharedCmd.Root.newBuilder()
                 .setProtocolVersion(1)
-                .setSetcompass(compass)
+                .setCompass(compass)
                 .build()
         }
     }

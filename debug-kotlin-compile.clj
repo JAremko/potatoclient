@@ -10,7 +10,11 @@
         kotlin-paths (map #(.getPath %) kotlin-files)
         class-dir "target/classes"
         ;; Simple classpath for now
-        cp (str class-dir ":src/potatoclient/java:src:lib/*")]
+        ;; Get the actual classpath from Clojure
+        cp (str class-dir ":src/potatoclient/java:src:" 
+                (with-out-str 
+                  (require '[clojure.java.shell :as sh])
+                  (print (:out (sh/sh "clojure" "-Spath")))))]
     (when (seq kotlin-paths)
       (println (str "Compiling " (count kotlin-paths) " Kotlin files..."))
       (let [kotlinc "tools/kotlin-2.2.0/bin/kotlinc"

@@ -3,10 +3,65 @@
 ## Overview
 This document tracks the remaining work to finalize the Kotlin command system integration with Clojure and implement comprehensive roundtrip testing.
 
+## Phase 0: Proto-Explorer Usage for Finding Correct Names
+
+Proto-Explorer is an essential tool for discovering the correct protobuf class names, field names, and structure. Use it before making any code changes.
+
+### Basic Usage Workflow
+```bash
+# 1. Find specs using fuzzy search (from proto-explorer directory)
+cd tools/proto-explorer
+bb find "track"           # Find all track-related specs
+bb find "start track"     # Multi-word search
+bb find CV                # Find all CV-related specs
+
+# 2. Get exact spec definition with constraints
+bb spec :potatoclient.specs.cmd.CV/start-track-ndc
+# Returns: [:map [:channel [:not [:enum [0]]]] [:x [:and [:maybe :double] [:>= -1] [:<= 1]]] ...]
+
+# 3. Generate example data respecting constraints
+bb example :potatoclient.specs.cmd.CV/start-track-ndc
+# Returns: {:channel 1, :x 0.5, :y -0.3, :frame-time 12345}
+
+# 4. Get Java class information (slower - starts JVM)
+bb java-class StartTrackNDC
+bb java-fields StartTrackNDC
+bb java-builder StartTrackNDC
+```
+
+### Finding Correct Protobuf Names
+The protobuf class names don't always match what you'd expect:
+- `StartTrackNdc` in Kotlin → `StartTrackNDC` in Java protobuf
+- `setSetAgc` method → `setAgc` actual setter
+- Package names: `cmd.CV` not `cmd.cv`
+
+### Example: Fixing CV Command Builder
+```bash
+# 1. Find all CV commands
+bb find CV
+# Returns list of CV-related specs
+
+# 2. Check specific command structure
+bb spec :potatoclient.specs.cmd.CV/start-track-ndc
+# Shows the exact field names and types
+
+# 3. Verify Java class name
+bb java-class "cmd.CV.JonSharedCmdCv\$StartTrackNDC"
+# Shows actual Java class structure
+```
+
+### Proto-Explorer Key Features
+- **Fuzzy search**: Typo-tolerant, case-insensitive searching
+- **Constraint awareness**: Shows buf.validate constraints in specs
+- **Example generation**: Creates valid test data respecting all constraints
+- **Java reflection**: Can inspect actual protobuf classes (via JVM)
+- **Batch processing**: Can process multiple queries via stdin
+
 ## Phase 1: Kotlin Command System Finalization
 
 ### 1.1 Fix Protobuf Builder Compilation Errors
-- [ ] Fix naming mismatches (CV → Cv, OSD → Osd, etc.)
+- [ ] Use proto-explorer to find correct class names for each error
+- [ ] Fix naming mismatches (CV → Cv, OSD → Osd, StartTrackNdc → StartTrackNDC, etc.)
 - [ ] Update builder methods to match actual protobuf generated classes
 - [ ] Handle special cases (refine_target, stop-a-ll → stopAll)
 - [ ] Ensure all builders compile without errors

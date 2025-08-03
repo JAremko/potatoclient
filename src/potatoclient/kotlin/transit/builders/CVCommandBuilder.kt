@@ -67,7 +67,7 @@ object CVCommandBuilder {
 
     private fun buildStartTrackNdc(params: Map<*, *>): Result<JonSharedCmdCv.Root> = Result.success(
         JonSharedCmdCv.Root.newBuilder()
-            .setStartTrackNdc(JonSharedCmdCv.StartTrackNdc.newBuilder().build())
+            .setStartTrackNdc(JonSharedCmdCv.StartTrackNDC.newBuilder().build())
             .build()
     )
 
