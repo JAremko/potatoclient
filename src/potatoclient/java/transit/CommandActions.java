@@ -1,4 +1,4 @@
-package potatoclient.transit;
+package potatoclient.java.transit;
 
 /**
  * Common actions for command messages.

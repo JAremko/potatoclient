@@ -6,9 +6,9 @@ import potatoclient.kotlin.transit.logDebug
 import potatoclient.kotlin.transit.logError
 import potatoclient.kotlin.transit.logInfo
 import potatoclient.kotlin.transit.logWarn
-import potatoclient.transit.EventType
-import potatoclient.transit.MessageKeys
-import potatoclient.transit.MessageType
+import potatoclient.java.transit.EventType
+import potatoclient.java.transit.MessageKeys
+import potatoclient.java.transit.MessageType
 import java.io.PrintWriter
 import java.io.StringWriter
 

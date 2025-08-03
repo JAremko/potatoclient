@@ -1,4 +1,4 @@
-package potatoclient.transit;
+package potatoclient.java.transit;
 
 /**
  * Common message payload keys used in Transit communication.

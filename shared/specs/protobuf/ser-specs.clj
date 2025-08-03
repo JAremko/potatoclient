@@ -9,7 +9,7 @@
 
 (def jon-gui-data-video-channel-heat-agc-modes "Schema for jon-gui-data-video-channel-heat-agc-modes" [:enum :jon-gui-data-video-channel-heat-agc-mode-unspecified :jon-gui-data-video-channel-heat-agc-mode-1 :jon-gui-data-video-channel-heat-agc-mode-2 :jon-gui-data-video-channel-heat-agc-mode-3])
 
-(def jon-gui-data-target "Schema for jon-gui-data-target" [:map [:timestamp [:and [:maybe :int] [:>= "0"]]] [:target-longitude [:maybe :double]] [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]] [:observer-longitude [:maybe :double]] [:observer-latitude [:maybe :double]] [:observer-altitude [:maybe :double]] [:observer-azimuth [:maybe :double]] [:observer-elevation [:maybe :double]] [:observer-bank [:maybe :double]] [:distance-2d [:maybe :double]] [:distance-3b [:maybe :double]] [:observer-fix-type [:not [:enum [0]]]] [:session-id [:>= 0]] [:target-id [:>= 0]] [:target-color [:maybe :ser/rgb-color]] [:type [:maybe :int]] [:uuid-part1 [:maybe :int]] [:uuid-part2 [:maybe :int]] [:uuid-part3 [:maybe :int]] [:uuid-part4 [:maybe :int]]])
+(def jon-gui-data-target "Schema for jon-gui-data-target" [:map [:timestamp [:and [:maybe :int] [:>= 0.0]]] [:target-longitude [:maybe :double]] [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]] [:observer-longitude [:maybe :double]] [:observer-latitude [:maybe :double]] [:observer-altitude [:maybe :double]] [:observer-azimuth [:maybe :double]] [:observer-elevation [:maybe :double]] [:observer-bank [:maybe :double]] [:distance-2d [:maybe :double]] [:distance-3b [:maybe :double]] [:observer-fix-type [:not [:enum [0]]]] [:session-id [:>= 0]] [:target-id [:>= 0]] [:target-color [:maybe :ser/rgb-color]] [:type [:maybe :int]] [:uuid-part1 [:maybe :int]] [:uuid-part2 [:maybe :int]] [:uuid-part3 [:maybe :int]] [:uuid-part4 [:maybe :int]]])
 
 (def jon-gui-data-client-type "Schema for jon-gui-data-client-type" [:enum :jon-gui-data-client-type-unspecified :jon-gui-data-client-type-internal-cv :jon-gui-data-client-type-local-network :jon-gui-data-client-type-certificate-protected :jon-gui-data-client-type-lira])
 
@@ -31,7 +31,7 @@
 
 (def jon-gui-data-accumulator-state-idx "Schema for jon-gui-data-accumulator-state-idx" [:enum :jon-gui-data-accumulator-state-unspecified :jon-gui-data-accumulator-state-unknown :jon-gui-data-accumulator-state-empty :jon-gui-data-accumulator-state-1 :jon-gui-data-accumulator-state-2 :jon-gui-data-accumulator-state-3 :jon-gui-data-accumulator-state-4 :jon-gui-data-accumulator-state-5 :jon-gui-data-accumulator-state-6 :jon-gui-data-accumulator-state-full :jon-gui-data-accumulator-state-charging])
 
-(def jon-gui-data-time "Schema for jon-gui-data-time" [:map [:timestamp [:and [:maybe :int] [:>= "0"]]] [:manual-timestamp [:and [:maybe :int] [:>= "0"]]] [:zone-id [:maybe :int]] [:use-manual-time [:maybe :boolean]]])
+(def jon-gui-data-time "Schema for jon-gui-data-time" [:map [:timestamp [:and [:maybe :int] [:>= 0.0]]] [:manual-timestamp [:and [:maybe :int] [:>= 0.0]]] [:zone-id [:maybe :int]] [:use-manual-time [:maybe :boolean]]])
 
 (def jon-gui-data-gps-fix-type "Schema for jon-gui-data-gps-fix-type" [:enum :jon-gui-data-gps-fix-type-unspecified :jon-gui-data-gps-fix-type-none :jon-gui-data-gps-fix-type-1-d :jon-gui-data-gps-fix-type-2-d :jon-gui-data-gps-fix-type-3-d :jon-gui-data-gps-fix-type-manual])
 
@@ -67,7 +67,7 @@
 
 (def jon-gui-data-rotary-direction "Schema for jon-gui-data-rotary-direction" [:enum :jon-gui-data-rotary-direction-unspecified :jon-gui-data-rotary-direction-clockwise :jon-gui-data-rotary-direction-counter-clockwise])
 
-(def jon-gui-data-actual-space-time "Schema for jon-gui-data-actual-space-time" [:map [:azimuth [:and [:maybe :double] [:>= 0] [:< 360]]] [:elevation [:and [:maybe :double] [:>= -90] [:<= 90]]] [:bank [:and [:maybe :double] [:>= -180] [:< 180]]] [:latitude [:and [:maybe :double] [:>= -90] [:<= 90]]] [:longitude [:and [:maybe :double] [:>= -180] [:< 180]]] [:altitude [:maybe :double]] [:timestamp [:and [:maybe :int] [:>= "0"]]]])
+(def jon-gui-data-actual-space-time "Schema for jon-gui-data-actual-space-time" [:map [:azimuth [:and [:maybe :double] [:>= 0] [:< 360]]] [:elevation [:and [:maybe :double] [:>= -90] [:<= 90]]] [:bank [:and [:maybe :double] [:>= -180] [:< 180]]] [:latitude [:and [:maybe :double] [:>= -90] [:<= 90]]] [:longitude [:and [:maybe :double] [:>= -180] [:< 180]]] [:altitude [:maybe :double]] [:timestamp [:and [:maybe :int] [:>= 0.0]]]])
 
 (def scan-node "Schema for scan-node" [:map [:index [:>= 0]] [:DayZoomTableValue [:>= 0]] [:HeatZoomTableValue [:>= 0]] [:azimuth [:maybe :double]] [:elevation [:maybe :double]] [:linger [:maybe :double]] [:speed [:maybe :double]]])
 

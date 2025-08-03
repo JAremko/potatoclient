@@ -12,7 +12,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import potatoclient.transit.MessageType
+import potatoclient.java.transit.MessageType
 import ser.JonSharedData
 import java.net.URI
 import java.net.http.HttpClient

@@ -71,7 +71,7 @@
 (defn compile-java-enums [_]
   (println "Compiling Java enum classes...")
   ;; Compile the Transit Java enums
-  (b/javac {:src-dirs ["src/potatoclient/transit"]
+  (b/javac {:src-dirs ["src/potatoclient/java/transit"]
             :class-dir class-dir
             :basis (get-basis)
             :javac-opts ["--release" "17"]})

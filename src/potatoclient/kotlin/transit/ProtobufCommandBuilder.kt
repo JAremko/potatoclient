@@ -2,12 +2,10 @@ package potatoclient.kotlin.transit
 
 import cmd.JonSharedCmd
 import com.cognitect.transit.TransitFactory
-import potatoclient.transit.ActionRegistry
 import potatoclient.kotlin.transit.builders.*
 
 /**
- * Command builder that uses Action Registry for validation and delegates
- * to category-specific builders for protobuf construction.
+ * Command builder that delegates to category-specific builders for protobuf construction.
  */
 class ProtobufCommandBuilder {
     
@@ -33,21 +31,10 @@ class ProtobufCommandBuilder {
     }
     
     /**
-     * Build a command from action and params with full validation
+     * Build a command from action and params
      */
     fun buildCommand(action: String, params: Map<*, *>?): Result<JonSharedCmd.Root> {
-        // Validate action exists
-        if (!ActionRegistry.isKnownAction(action)) {
-            return Result.failure(UnknownCommandException(action))
-        }
-        
-        // Validate required parameters
         val paramsMap = params ?: emptyMap<Any, Any>()
-        if (!ActionRegistry.hasRequiredParams(action, paramsMap)) {
-            val actionDef = ActionRegistry.getAction(action)
-            val missingParams = getMissingParameters(actionDef, paramsMap)
-            return Result.failure(MissingParametersException(action, missingParams))
-        }
         
         // Delegate to appropriate builder based on command category
         return try {
@@ -127,41 +114,7 @@ class ProtobufCommandBuilder {
         )
     }
     
-    /**
-     * Get missing parameters by comparing required params with provided params
-     */
-    private fun getMissingParameters(
-        actionDef: potatoclient.transit.ActionDefinition?,
-        params: Map<*, *>
-    ): Set<String> {
-        if (actionDef == null) return emptySet()
-        
-        val missing = mutableSetOf<String>()
-        for (required in actionDef.requiredParams) {
-            val paramName = required.name
-            // Check both string key and keyword key
-            if (!params.containsKey(paramName) && 
-                !params.containsKey(TransitFactory.keyword(paramName))) {
-                missing.add(paramName)
-            }
-        }
-        return missing
-    }
 }
-
-/**
- * Exception thrown when an unknown command is requested
- */
-class UnknownCommandException(val action: String) : 
-    IllegalArgumentException("Unknown command action: $action")
-
-/**
- * Exception thrown when required parameters are missing
- */
-class MissingParametersException(val action: String, val missingParams: Set<String>) :
-    IllegalArgumentException(
-        "Command '$action' missing required parameters: ${missingParams.joinToString(", ")}"
-    )
 
 /**
  * Exception thrown when command building fails

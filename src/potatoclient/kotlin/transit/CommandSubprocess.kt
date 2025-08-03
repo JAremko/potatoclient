@@ -9,7 +9,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import potatoclient.transit.MessageType
+import potatoclient.java.transit.MessageType
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -72,67 +72,34 @@ class CommandSubprocess(
             val action = payload[TransitKeys.ACTION] as? String ?: "ping"
             val params = payload[TransitKeys.PARAMS] as? Map<*, *>
 
-            // Try to use Transit handlers first
-            val rootCmd = tryBuildWithHandlers(action, params)
+            // Use ProtobufCommandBuilder directly
+            cmdBuilder.buildCommand(action, params).fold(
+                onSuccess = { cmd ->
+                    wsClient.send(cmd.toByteArray())
+                    totalSent.incrementAndGet()
 
-            if (rootCmd != null) {
-                // Successfully built with handlers
-                wsClient.send(rootCmd.toByteArray())
-                totalSent.incrementAndGet()
-
-                // Send success response using direct write (critical path)
-                transitComm.sendMessageDirect(
-                    messageProtocol.createMessage(
-                        MessageType.RESPONSE,
-                        mapOf(
-                            "action" to action,
-                            "status" to "sent",
-                        ),
-                    ),
-                )
-            } else {
-                // Use ProtobufCommandBuilder
-                cmdBuilder.buildCommand(action, params).fold(
-                    onSuccess = { cmd ->
-                        wsClient.send(cmd.toByteArray())
-                        totalSent.incrementAndGet()
-
-                        // Send success response using direct write (critical path)
-                        transitComm.sendMessageDirect(
-                            messageProtocol.createMessage(
-                                MessageType.RESPONSE,
-                                mapOf(
-                                    "action" to action,
-                                    "status" to "sent",
-                                ),
+                    // Send success response using direct write (critical path)
+                    transitComm.sendMessageDirect(
+                        messageProtocol.createMessage(
+                            MessageType.RESPONSE,
+                            mapOf(
+                                "action" to action,
+                                "status" to "sent",
                             ),
-                        )
-                    },
-                    onFailure = { error ->
-                        // Send error with detailed message
-                        messageProtocol.sendError("Command build failed for '$action': ${error.message}")
-                        // Also send error response
-                        sendError(msgId, error as Exception)
-                    },
-                )
-            }
+                        ),
+                    )
+                },
+                onFailure = { error ->
+                    // Send error with detailed message
+                    messageProtocol.sendError("Command build failed for '$action': ${error.message}")
+                    // Also send error response
+                    sendError(msgId, error as Exception)
+                },
+            )
         } catch (e: Exception) {
             sendError(msgId, e)
         }
     }
-
-    private fun tryBuildWithHandlers(
-        action: String,
-        params: Map<*, *>?,
-    ): JonSharedCmd.Root? =
-        try {
-            // Try using SimpleCommandHandlers first
-            SimpleCommandHandlers.buildCommand(action, params)
-        } catch (e: Exception) {
-            // If handlers fail, return null to trigger fallback
-            messageProtocol.sendDebug("Handler failed for $action: ${e.message}, using fallback")
-            null
-        }
 
     private suspend fun handleControl(msg: Map<*, *>) {
         val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return

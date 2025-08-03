@@ -23,7 +23,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - **Transit Protocol**: [.claude/transit-protocol.md](.claude/transit-protocol.md) - Message protocol specification (keywords everywhere!)
 - **Kotlin Subprocesses**: [.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md) - Video streaming and subprocess details
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
-- **Proto Explorer**: [tools/proto-explorer/README.md](tools/proto-explorer/README.md) - Malli spec generation from protobuf
+- **Proto Explorer**: [tools/proto-explorer/README.md](tools/proto-explorer/README.md) - Malli spec generation from protobuf (Babashka CLI only, no REPL interface)
 - **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
 - **TODO and Technical Debt**: [TODO_AGGREGATED.md](TODO_AGGREGATED.md) - Comprehensive tracking of all pending work
 
@@ -1609,6 +1609,8 @@ Proto Explorer uses a JSON-based architecture:
 - **Idiomatic Clojure**: Automatic kebab-case conversion for all names
 - **No Runtime Reflection**: Specs are pre-generated at build time
 - **Property-Based Testing**: Generators produce valid data for property tests
+- **Babashka CLI**: Fast spec queries without JVM startup overhead
+- **Java Reflection**: Available via uberjar for detailed protobuf class information
 
 ### Using Generated Specs
 
@@ -1651,24 +1653,34 @@ potatoclient.specs.cmd.RotaryPlatform/set-elevation-value
 
 ### Proto Explorer CLI
 
-Proto Explorer provides a Babashka CLI for querying specs:
+Proto Explorer provides a Babashka CLI for fast spec queries without JVM startup:
 
 ```bash
 cd tools/proto-explorer
 
-# Find specs by pattern
-bb find rotary
+# Find specs by pattern (fuzzy search, typo-tolerant)
+bb find rotary           # Find all specs matching "rotary"
+bb find setvel          # Fuzzy matches "set-velocity", etc.
 
-# Get spec definition
-bb spec :cmd.RotaryPlatform/set-velocity
+# Get spec definition (requires full namespace)
+bb spec :potatoclient.specs.cmd.RotaryPlatform/set-velocity
 
-# Generate example data
-bb example :cmd.RotaryPlatform/set-azimuth-value
-# => {:spec :cmd.RotaryPlatform/set-azimuth-value
+# Generate example data (constraint-aware)
+bb example :potatoclient.specs.cmd.RotaryPlatform/set-azimuth-value
+# => {:spec :potatoclient.specs.cmd.RotaryPlatform/set-azimuth-value
 #     :example {:value 245.7 :direction 1}}
 
 # Generate multiple examples
-bb examples :cmd.RotaryPlatform/set-elevation-value 5
+bb examples :potatoclient.specs.cmd.RotaryPlatform/set-elevation-value 5
+
+# Show statistics
+bb stats
+
+# Java reflection features (requires uberjar, slower due to JVM startup)
+make uberjar            # Build uberjar first (only needed once)
+bb java-class Root      # Get Java class info
+bb java-fields Root     # Get proto field mapping
+bb java-builder Root    # Get builder methods
 ```
 
 ### Regenerating Specs

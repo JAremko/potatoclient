@@ -1,6 +1,6 @@
 package potatoclient.kotlin.gestures
 
-import potatoclient.transit.EventType
+import potatoclient.java.transit.EventType
 
 // SwipeDirection removed - no swipe detection per design
 

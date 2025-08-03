@@ -1,4 +1,4 @@
-package potatoclient.transit;
+package potatoclient.java.transit;
 
 import com.cognitect.transit.Keyword;
 import com.cognitect.transit.TransitFactory;
