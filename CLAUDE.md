@@ -25,7 +25,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - **Protobuf Commands**: [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) - Command system implementation
 - **Proto Explorer**: [tools/proto-explorer/README.md](tools/proto-explorer/README.md) - Malli spec generation from protobuf (Babashka CLI only, no REPL interface)
 - **Linting Guide**: [.claude/linting-guide.md](.claude/linting-guide.md) - Code quality tools and false positive filtering
-- **TODO and Technical Debt**: [TODO_AGGREGATED.md](TODO_AGGREGATED.md) - Comprehensive tracking of all pending work
+- **Static Code Generation**: [TODO_KOTLIN_CMD_INTEGRATION.md](TODO_KOTLIN_CMD_INTEGRATION.md) - Transit-Protobuf static code generation implementation
 
 ## Important: Function Validation with Guardrails
 
@@ -295,7 +295,7 @@ Tests use Transit-based architecture with proper isolation:
 
 (deftest test-transit-encoding-decoding
   (testing "Transit message encoding and decoding"
-    (let [test-data {:action "ping" :params {:test true}}
+    (let [test-data {:ping {}}
           encoded (encode-transit test-data)
           decoded (decode-transit encoded)]
       (is (= test-data decoded)))))
@@ -391,7 +391,6 @@ The system uses Transit/MessagePack for all inter-process communication:
 - `LoggingUtils` - Individual log files per subprocess in development mode
 - `GeneratedCommandHandlers` - Auto-generated Transit handlers for all command building/extraction
 - `GeneratedStateHandlers` - Auto-generated Transit handlers for state message extraction
-- `SimpleProtobufHandlers` - Transit WriteHandlers for automatic protobuf serialization
 - `StdoutInterceptor` - Captures stdout for clean subprocess communication
 - `GestureRecognizer` - Detects tap, double-tap, pan, and swipe gestures
 - `PanController` - Manages pan gesture state and throttling
@@ -480,13 +479,26 @@ All inter-process communication follows a standardized message protocol defined 
 - Use `potatoclient.transit.validation/validate-message` to check messages
 - Schemas for: command, response, request, log, error, status, metric, event
 
-**Kotlin MessageBuilder**:
+**Kotlin Command Handling (Static Generated Code)**:
 ```kotlin
-// In any subprocess
-val messageBuilder = protocol.messageBuilder()
+// Commands arrive as nested Transit maps
+// The generated handlers automatically convert to protobuf
+val command = mapOf(
+    "cv" to mapOf(
+        "start-track-ndc" to mapOf(
+            "channel" to "heat",
+            "x" to 0.5,
+            "y" to 0.5
+        )
+    )
+)
 
-// Send a gesture event
-val message = messageBuilder.gestureEvent(
+// Generated handlers do the conversion
+val protobuf = GeneratedCommandHandlers.buildCommand(command)
+
+// Events are still sent using MessageBuilder
+val messageBuilder = protocol.messageBuilder()
+val gestureEvent = messageBuilder.gestureEvent(
     EventType.TAP,
     timestamp = System.currentTimeMillis(),
     canvasWidth = 800,
@@ -494,12 +506,6 @@ val message = messageBuilder.gestureEvent(
     aspectRatio = 1.33,
     streamType = "heat",
     additionalData = mapOf("x" to 100, "y" to 200)
-)
-
-// Send a command
-val cmd = messageBuilder.command(
-    "rotary-goto-ndc",
-    mapOf("channel" to "heat", "x" to 0.5, "y" to -0.5)
 )
 ```
 
@@ -519,14 +525,18 @@ val cmd = messageBuilder.command(
   (process-gesture gesture-type stream-type))
 ```
 
-**Kotlin Usage with Extensions**:
+**Kotlin Usage with Static Generated Handlers**:
 ```kotlin
-// Clean access using extension properties
+// Commands now use generated handlers
 when (msg.msgType) {
     MessageType.COMMAND.keyword -> {
-        val action = msg.payload?.action ?: "ping"
-        val params = msg.payload?.params
-        handleCommand(action, params)
+        // Extract nested command map from payload
+        val commandData = msg.payload as? Map<String, Any>
+        if (commandData != null) {
+            // Generated handler converts Transit map to protobuf
+            val protobufCommand = GeneratedCommandHandlers.buildCommand(commandData)
+            sendToServer(protobufCommand)
+        }
     }
     MessageType.EVENT.keyword -> {
         val eventType = msg.payload?.get(TransitKeys.TYPE)
@@ -537,10 +547,10 @@ when (msg.msgType) {
     }
 }
 
-// No more string-based map access everywhere!
-val msgId = msg.msgId  // Clean property access
-val timestamp = msg.timestamp
-val batteryLevel = stateUpdate.system?.batteryLevel
+// State extraction uses generated handlers too
+val stateProto = receiveFromServer()
+val transitState = GeneratedStateHandlers.extractState(stateProto)
+// Transit state is automatically converted to keyword maps
 ```
 
 For the complete protocol specification, see `.claude/transit-protocol.md`.
@@ -575,8 +585,8 @@ The codebase uses **static code generation** for Transit handlers, eliminating m
 - ✅ Proto Explorer: Keyword tree generation from protobuf definitions
 - ✅ Kotlin: `GeneratedCommandHandlers.kt` - All command building/extraction
 - ✅ Kotlin: `GeneratedStateHandlers.kt` - All state extraction
-- 🚧 Integration: Replacing action-based command routing
-- 🚧 Cleanup: Removing manual builders in `builders.old/`
+- ✅ Integration: CommandSubprocess uses generated handlers
+- ✅ Cleanup: Old manual builders removed from compilation path
 
 **Command Format Change**:
 ```clojure
@@ -722,12 +732,11 @@ See [.claude/protobuf-command-system.md](.claude/protobuf-command-system.md) for
 - Protobuf implementation details and troubleshooting
 
 **Testing and Validation**
-See [docs/TESTING_AND_VALIDATION.md](docs/TESTING_AND_VALIDATION.md) for:
-- Comprehensive test suite documentation
-- Protobuf validation with buf.validate annotations
-- TypeScript reference implementation location
-- Test organization and running instructions
-- Debugging test failures and common issues
+- Tests use Transit-based architecture with proper isolation
+- Protobuf validation uses buf.validate annotations  
+- Test organization: Unit tests for Transit/commands, Integration tests for subprocess communication
+- Run tests with `make test` - automatic logging to `logs/test-runs/`
+- See test files in `test/` directory for examples
 
 ## Localization
 

@@ -17,6 +17,30 @@
 - Type-safe enum conversion with error handling
 - Correct Transit WriteHandler interface implementation
 
+## Tools Overview
+
+The static code generation architecture is powered by three complementary tools:
+
+### 1. Proto Explorer (`tools/proto-explorer`)
+- **Primary Role**: Generates keyword trees and Malli specs from protobuf definitions
+- **Interfaces**: Babashka CLI (fast queries) + JVM uberjar (Java reflection)
+- **Critical Commands**: 
+  - `bb generate-keyword-tree-cmd/state` - Creates data for static code generation
+  - `bb generate-kotlin-handlers.clj` - Generates Kotlin Transit handlers
+- **Output**: Keyword trees that map EDN keywords → Java protobuf classes
+
+### 2. Transit Test Generator (`tools/transit-test-generator`)
+- **Primary Role**: Generates and validates Transit command messages for testing
+- **Interface**: JVM uberjar with JSON output for easy integration
+- **Key Features**: Malli-based generation with fallback, batch testing, roundtrip validation
+- **Use Case**: Testing the static code generation implementation
+
+### 3. Guardrails Check Tool (`tools/guardrails-check`)
+- **Primary Role**: Ensures all functions use Guardrails validation
+- **Interface**: Babashka tool (no JVM startup)
+- **Integration**: `make report-unspecced` in main project
+- **Purpose**: Maintain code quality and consistent validation
+
 ## Current Status: Kotlin Side ✅ COMPLETE
 
 The Kotlin implementation is **fully functional**:
@@ -39,6 +63,31 @@ The Kotlin implementation is **fully functional**:
   - `shared/specs/protobuf/proto_keyword_tree_cmd.clj` (15 root commands, 198 total nodes)
   - `shared/specs/protobuf/proto_keyword_tree_state.clj` (13 root state types, 17 total nodes)
 - Trees include Java class names, field info, setter methods, and type information
+
+### Proto Explorer Tool ✅ ENHANCED
+- Located at `tools/proto-explorer` - Comprehensive protobuf schema exploration
+- **Dual Interface Architecture**:
+  - **Babashka CLI**: Fast spec queries without JVM startup
+  - **JVM Uberjar**: Java reflection features and spec generation
+- **Key APIs**:
+  ```bash
+  # Babashka CLI (fast queries)
+  bb find rotary                    # Fuzzy search for specs
+  bb spec :potatoclient.specs.cmd/ping  # Get Malli spec definition
+  bb example :cmd.CV/start-track-ndc    # Generate valid test data
+  bb stats                              # Show spec statistics
+  
+  # Generate keyword trees for static code generation
+  bb generate-keyword-tree-cmd      # Creates proto_keyword_tree_cmd.clj
+  bb generate-keyword-tree-state    # Creates proto_keyword_tree_state.clj
+  bb generate-kotlin-handlers.clj   # Generate Kotlin Transit handlers
+  
+  # JVM Uberjar (Java reflection)
+  java -jar target/proto-explorer-0.1.0.jar java-class Root
+  java -jar target/proto-explorer-0.1.0.jar java-fields cmd.JonSharedCmd\$Root
+  ```
+- **Supports**: Fuzzy search, constraint-aware generation, buf.validate rules
+- **Critical for**: Keyword tree generation that powers static code generation
 
 ### Transit Test Generator Tool ✅ COMPLETED
 - Created `tools/transit-test-generator` - JVM-based tool for test data generation
@@ -74,11 +123,30 @@ The Kotlin implementation is **fully functional**:
   cd tools/transit-test-generator
   make test                 # Run full test suite (all tests passing)
   make uberjar             # Build optimized JAR
-  ./transit-test-generator generate --command ping --output-file test.edn
-  ./transit-test-generator generate --command cv.start-track-ndc --output-file cv.edn
-  ./transit-test-generator validate --input-file test.edn --format edn
+  java -jar target/transit-test-generator-1.0.0.jar generate --command ping --output-file test.edn
+  java -jar target/transit-test-generator-1.0.0.jar generate --command cv.start-track-ndc --output-file cv.edn
+  java -jar target/transit-test-generator-1.0.0.jar validate --input-file test.edn --format edn
+  java -jar target/transit-test-generator-1.0.0.jar batch --output-dir test-data/
+  java -jar target/transit-test-generator-1.0.0.jar roundtrip --input-file test.edn
   ```
 - **Status**: Fully functional with both Malli generation and simple fallback
+
+### Guardrails Check Tool ✅ MAINTAINED
+- Located at `tools/guardrails-check` - Babashka tool for function validation
+- **Purpose**: Find functions using raw `defn`/`defn-` instead of Guardrails' `>defn`/`>defn-`
+- **Key APIs**:
+  ```bash
+  # Check for unspecced functions
+  bb check src/potatoclient          # EDN output
+  bb report src/potatoclient         # Markdown report
+  bb stats src/potatoclient          # Quick statistics
+  bb find process src/potatoclient   # Find specific functions
+  
+  # From main project
+  make report-unspecced              # Generate report in reports/
+  ```
+- **Features**: Fast Babashka-based analysis, multiple output formats, pattern search
+- **Critical for**: Maintaining consistent validation across codebase
 
 ### Phase 1: Static Handler Generation ✅ COMPLETED
 - Created `tools/proto-explorer/generate-kotlin-handlers.clj` generator

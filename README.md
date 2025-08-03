@@ -284,7 +284,7 @@ tail -f ~/.local/share/potatoclient/logs/*.log
 For detailed implementation information, see:
 
 - **[CLAUDE.md](CLAUDE.md)** - Complete developer guide with architecture details
-- **[TODO_AGGREGATED.md](TODO_AGGREGATED.md)** - Comprehensive TODO list and technical debt tracking
+- **[TODO_KOTLIN_CMD_INTEGRATION.md](TODO_KOTLIN_CMD_INTEGRATION.md)** - Static code generation implementation status
 - **[.claude/transit-architecture.md](.claude/transit-architecture.md)** - Transit IPC implementation
 - **[.claude/transit-quick-reference.md](.claude/transit-quick-reference.md)** - Quick reference for Transit commands
 - **[.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)** - Kotlin subprocess details

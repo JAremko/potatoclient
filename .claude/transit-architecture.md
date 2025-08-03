@@ -52,7 +52,7 @@ Process lifecycle management:
 Main class for command processing:
 - Receives Transit commands via stdin (with keyword keys)
 - Uses Transit keys for message access (e.g., `msg[TransitKeys.MSG_TYPE]`)
-- Converts to protobuf using `SimpleCommandHandlers` with fallback to `SimpleCommandBuilder`
+- Converts to protobuf using `GeneratedCommandHandlers` (static code generation)
 - Sends protobuf commands via WebSocket to server
 - Handles reconnection and error recovery
 - Sends WebSocket errors via Transit protocol (not stderr)
@@ -60,11 +60,11 @@ Main class for command processing:
 #### `StateSubprocess`
 Main class for state updates:
 - Receives protobuf state from WebSocket
-- Uses Transit handlers for automatic serialization via `SimpleProtobufHandlers`
-- Sends protobuf objects directly - handlers do the conversion
+- Uses `GeneratedStateHandlers` for automatic Transit conversion
+- All protobuf fields automatically converted to keyword-based maps
 - Token bucket rate limiting (configurable via control messages)
 - Sends Transit messages to main process via stdout
-- All state data automatically converted to keywords
+- Zero manual conversion needed
 
 #### `TransitCommunicator`
 Handles Transit communication over stdin/stdout:
@@ -87,26 +87,25 @@ Kotlin extension properties for Transit maps:
 - Proper type handling for Transit writer
 - Error handling and logging
 
-#### `SimpleProtobufHandlers`
-Transit handlers for automatic protobuf serialization:
-- WriteHandlers for all protobuf message types:
-  - Main state (`JonGUIState`) tagged as "jon-gui-state"
-  - System data tagged as "system-data"
-  - Rotary, GPS, compass, LRF, camera data with appropriate tags
-- Automatic enum to Transit keyword conversion
-- All fields included (no "has" checks - protobuf v3 style)
-- Clean separation between data and serialization
-- No manual conversion needed in StateSubprocess
+#### `GeneratedCommandHandlers` & `GeneratedStateHandlers`
+Auto-generated Transit handlers from protobuf definitions:
+- Static code generation from keyword trees (`proto_keyword_tree_cmd.clj`, `proto_keyword_tree_state.clj`)
+- Type-safe conversion between Transit maps and protobuf objects
+- Automatic handling of nested messages and enums
+- Natural disambiguation of common commands (`:start`, `:stop`) by parent context
+- Zero reflection, compile-time checked
+- Regenerated automatically when protos change
 
-#### `SimpleCommandHandlers`
-Simple command builder from Transit data:
-- Converts Transit command messages to protobuf commands
-- Uses Transit keywords for parameter access
-- Builds `JonSharedCmd.Root` from action and params
-- Supports all command types: rotary, system, GPS, compass, CV, cameras, LRF, glass heater
-- Type-safe construction with proper error handling
-- Cleaner alternative to `SimpleCommandBuilder`
-- Note: OSD commands removed (not found in protobuf)
+#### Static Code Generation Architecture
+The system uses generated handlers created from protobuf definitions:
+- Keyword trees map EDN keywords to Java protobuf classes
+- Generated at build time by Proto Explorer tool
+- Supports all 15 command types and 13 state types
+- Handles complex nested structures and oneofs
+- Common commands disambiguated by parent context:
+  - `{:gps {:start {}}}` → `JonSharedCmdGps.Start`
+  - `{:lrf {:start {}}}` → `JonSharedCmdLrf.Start`
+  - `{:rotary {:start {}}}` → `JonSharedCmdRotary.Start`
 
 ## Keyword Creation Best Practices
 
@@ -139,29 +138,27 @@ Transit automatically converts between string keys and keywords:
 ### Command Flow (UI → Server)
 ```
 1. User action in UI
-2. Clojure calls command function (e.g., `commands/rotary-goto`)
-3. Command returns Transit map: `{:action "rotary-goto" :params {:channel "heat" :x 0.5 :y -0.3}}`
-4. Subprocess launcher sends map to CommandSubprocess via Transit
-5. CommandSubprocess tries SimpleCommandHandlers first, falls back to SimpleCommandBuilder
-6. Protobuf sent via WebSocket to server
+2. Clojure creates nested command map: `{:rotary {:goto {:azimuth 180.0}}}`
+3. Subprocess launcher sends map to CommandSubprocess via Transit
+4. GeneratedCommandHandlers converts Transit map to protobuf:
+   - Finds `:rotary` in root → calls `buildRotary()`
+   - Finds `:goto` in rotary → calls `buildRotaryGoto()`
+   - Sets field values and builds protobuf message
+5. Protobuf sent via WebSocket to server
 ```
 
 ### State Flow (Server → UI)
 ```
 1. Server sends protobuf state via WebSocket
-2. StateSubprocess receives binary protobuf data
-3. Parses to `JonGUIState` protobuf object
-4. Sends protobuf object directly via Transit (handlers serialize automatically)
-5. Transit WriteHandlers convert all enums to keywords
-6. Main process receives Transit message with keyword-based state
-7. State updates app-db atom
-```
-2. StateSubprocess receives and parses protobuf
-3. Debouncing: Compare with last sent state, skip if identical
-4. Rate limiting: Check token bucket, skip if rate exceeded
-5. Transit automatically serializes protobuf using registered handlers
+2. StateSubprocess receives and parses to `JonGUIState` protobuf
+3. GeneratedStateHandlers extracts all fields to Transit maps:
+   - Recursively converts nested messages
+   - Enums become keywords (e.g., `LOCKED` → `:locked`)
+   - All field names kebab-cased
+4. Debouncing: Compare with last sent state, skip if identical
+5. Rate limiting: Check token bucket, skip if rate exceeded
 6. Send Transit message to main process via stdout
-7. Main process updates app-db with new state
+7. Main process updates app-db with keyword-based state
 8. UI components react to state changes
 ```
 
@@ -169,16 +166,13 @@ Transit automatically converts between string keys and keywords:
 
 ### Clojure Side
 ```clojure
-;; Creating messages with keyword keys
+;; Creating messages with nested structure
 (transit-core/create-message :command
-  {:action "rotary-goto-ndc"
-   :channel :heat
-   :x 0.5
-   :y -0.5})
+  {:rotary {:goto-ndc {:channel "heat" :x 0.5 :y -0.5}}})
 ;; Result: {:msg-type :command
 ;;          :msg-id "uuid..."
 ;;          :timestamp 1234567890
-;;          :payload {:action "rotary-goto-ndc" ...}}
+;;          :payload {:rotary {:goto-ndc {:channel "heat" ...}}}}
 
 ;; Handling messages - keywords arrive naturally
 (defmethod handle-message :state
@@ -194,9 +188,13 @@ Transit automatically converts between string keys and keywords:
 val msgType = msg.msgType  // Type-safe!
 val payload = msg.payload   // Clean!
 
-// Accessing nested values
-val batteryLevel = stateMsg.payload?.system?.batteryLevel
-val action = commandMsg.payload?.action ?: "ping"
+// Accessing nested command values
+val commandData = msg.payload as? Map<String, Any>
+val rotaryCmd = commandData?.get("rotary") as? Map<String, Any>
+val gotoParams = rotaryCmd?.get("goto") as? Map<String, Any>
+
+// Or use generated handlers directly
+val protobuf = GeneratedCommandHandlers.buildCommand(commandData)
 
 // Using with when expressions
 when (msg.msgType) {
@@ -443,19 +441,20 @@ messageProtocol.sendEvent(
 - `TransitMessageProtocol.kt` - Message protocol implementation
 - `CommandSubprocess.kt` - Command handling subprocess
 - `StateSubprocess.kt` - State update subprocess  
-- `SimpleCommandBuilder.kt` - Transit to protobuf conversion (kept for fallback)
-- `ProtobufCommandHandlers.kt` - Transit ReadHandlers for command building
-- `ProtobufTransitHandlers.kt` - Transit handlers for all message types
+- `GeneratedCommandHandlers.kt` - Auto-generated command builders
+- `GeneratedStateHandlers.kt` - Auto-generated state extractors
+- `TransitKeys.kt` - Pre-created keyword constants
+- `TransitExtensions.kt` - Extension properties for clean access
 
 ## Future Improvements
 
-1. ~~**Replace SimpleCommandBuilder**: Use Transit ReadHandlers for command building~~ ✅ COMPLETED
-2. ~~**Malli Spec Validation**: Create specs matching protobuf validation constraints~~ ✅ COMPLETED
-3. **Message Compression**: Add optional gzip for large states
-4. **Batching**: Combine multiple commands in single message
-5. **Metrics**: Add performance metrics collection
-6. **Schema Evolution**: Version message formats
-7. **Binary Diffing**: Send only changed fields for states
-8. **Complete Command Support**: Add remaining command types (LIRA, LRF_align)
-9. **Remove Legacy Code**: Clean up SimpleCommandBuilder and SimpleStateConverter once handlers are proven stable
-10. **WebSocket Error Handling**: Send errors via Transit protocol instead of stderr
+1. ~~**Replace Manual Builders**: Use static code generation~~ ✅ COMPLETED
+2. ~~**Malli Spec Validation**: Create specs matching protobuf constraints~~ ✅ COMPLETED
+3. ~~**Remove Legacy Code**: Clean up manual builders~~ ✅ COMPLETED
+4. **Message Compression**: Add optional gzip for large states
+5. **Batching**: Combine multiple commands in single message
+6. **Metrics**: Add performance metrics collection
+7. **Schema Evolution**: Version message formats
+8. **Binary Diffing**: Send only changed fields for states
+9. **Complete Clojure Integration**: Update all command senders to use new format
+10. **WebSocket Error Handling**: Improve error propagation via Transit

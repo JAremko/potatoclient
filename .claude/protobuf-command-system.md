@@ -145,11 +145,11 @@ fun convertProtoEnumToKeyword(enum: ProtocolMessageEnum): String {
 
 **In Transit Messages**:
 ```clojure
-;; Commands arrive with keyword enums
-{:action "rotary-goto-ndc"
- :params {:channel :heat    ; Automatically converted from protobuf enum
-          :x 0.5
-          :y -0.5}}
+;; Commands use nested structure matching protobuf hierarchy
+{:rotary {:goto-ndc {:channel "heat"  ; Channel as string
+                     :x 0.5
+                     :y -0.5}}}
+;; Enums in state messages become keywords automatically
 ```
 
 ## Command Validation and Specs

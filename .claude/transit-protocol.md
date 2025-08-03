@@ -78,16 +78,15 @@ Only these fields remain as strings:
 
 ### Command Messages
 
-Commands use keywords for actions and parameters:
+Commands use nested keyword structure matching protobuf hierarchy:
 
 ```clojure
 {:msg-type :command
  :msg-id "uuid-here"
  :timestamp 1234567890
- :payload {:action :rotary-goto-ndc    ; Keyword action
-           :params {:channel :heat      ; Keyword channel
-                   :x 0.5               ; Number
-                   :y -0.5}}}           ; Number
+ :payload {:rotary {:goto-ndc {:channel "heat"  ; String for channel
+                               :x 0.5           ; Number
+                               :y -0.5}}}}      ; Number
 ```
 
 ### State Update Messages
@@ -244,9 +243,9 @@ Use Malli schemas with keyword specs:
 
 ```clojure
 (def command-payload
-  [:map
-   [:action keyword?]
-   [:params [:map-of keyword? any?]]])
+  ;; Nested structure matching protobuf hierarchy
+  ;; Top-level keys are command categories
+  [:map-of keyword? [:map-of keyword? any?]])
 
 (def state-payload
   [:map
@@ -267,8 +266,8 @@ Extension properties provide type-safe access:
 ```kotlin
 // Clean keyword access
 val msgType = msg.msgType      // Returns keyword
-val action = msg.payload?.action // Returns keyword
-val level = msg.payload?.level   // Returns keyword
+val commandData = msg.payload as? Map<String, Any>
+val rotaryCmd = commandData?.get("rotary") as? Map<String, Any>
 
 // Type checking built-in
 when (msg.msgType) {
