@@ -14,7 +14,7 @@
 (>defn get-stream
   "Get stream process for given key (:heat or :day)."
   [stream-key]
-  [::ui-specs/stream-key => (? map?)]
+  [::specs/stream-key => (? map?)]
   (case stream-key
     :heat (app-db/get-process-state :heat-video)
     :day (app-db/get-process-state :day-video)
@@ -23,7 +23,7 @@
 (>defn set-stream!
   "Set stream process for given key."
   [stream-key pid status]
-  [::ui-specs/stream-key (? pos-int?) [:enum :running :stopped :error] => map?]
+  [::specs/stream-key (? pos-int?) [:enum :running :stopped :error] => map?]
   (let [process-key (case stream-key
                       :heat :heat-video
                       :day :day-video)]
@@ -32,13 +32,13 @@
 (>defn clear-stream!
   "Clear stream process for given key."
   [stream-key]
-  [::ui-specs/stream-key => map?]
+  [::specs/stream-key => map?]
   (set-stream! stream-key nil :stopped))
 
 (>defn stream-running?
   "Check if a stream is running."
   [stream-key]
-  [::ui-specs/stream-key => boolean?]
+  [::specs/stream-key => boolean?]
   (let [process-key (case stream-key
                       :heat :heat-video
                       :day :day-video)]
@@ -58,13 +58,13 @@
 (>defn get-locale
   "Get current locale."
   []
-  [=> ::ui-specs/locale]
+  [=> ::specs/locale]
   (app-db/get-locale))
 
 (>defn set-locale!
   "Set current locale and update Java default."
   [locale]
-  [::ui-specs/locale => map?]
+  [::specs/locale => map?]
   ;; Update app-db
   (app-db/set-locale! locale)
   ;; Also update Java default Locale
@@ -78,13 +78,13 @@
 (>defn get-theme
   "Get current theme."
   []
-  [=> ::ui-specs/theme-key]
+  [=> ::specs/theme-key]
   (app-db/get-theme))
 
 (>defn set-theme!
   "Set UI theme."
   [theme]
-  [::ui-specs/theme-key => map?]
+  [::specs/theme-key => map?]
   (app-db/set-theme! theme))
 
 (>defn get-domain
@@ -103,7 +103,7 @@
 (>defn set-domain!
   "Set domain by updating connection URL."
   [domain]
-  [::ui-specs/domain => map?]
+  [::specs/domain => map?]
   (let [url (str "wss://" domain)]
     (app-db/set-connection-state! false url nil)))
 

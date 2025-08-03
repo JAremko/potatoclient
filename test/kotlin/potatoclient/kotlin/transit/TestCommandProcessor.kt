@@ -6,6 +6,7 @@ import com.cognitect.transit.TransitFactory
 import com.google.protobuf.Message
 import com.google.protobuf.util.JsonFormat
 import kotlinx.coroutines.runBlocking
+import potatoclient.kotlin.transit.generated.GeneratedCommandHandlers
 import java.io.PrintStream
 
 /**
@@ -14,7 +15,6 @@ import java.io.PrintStream
  */
 class TestCommandProcessor {
     
-    private val commandBuilder = ProtobufCommandBuilder.getInstance()
     private val jsonPrinter = JsonFormat.printer()
         .includingDefaultValueFields()
         .preservingProtoFieldNames()
@@ -22,23 +22,19 @@ class TestCommandProcessor {
     
     /**
      * Process a command and return JSON representation
+     * Now expects commands in nested format: {:cv {:start-track-ndc {:x 0.5 :y 0.5}}}
      */
-    fun processCommand(action: String, params: Map<*, *>?): String {
+    fun processCommand(commandMap: Map<*, *>): String {
         return try {
-            val result = commandBuilder.buildCommand(action, params)
+            val proto = GeneratedCommandHandlers.buildCommand(commandMap)
             
-            when {
-                result.isSuccess -> {
-                    val proto = result.getOrThrow()
-                    // Convert to JSON with sorted keys
-                    val json = jsonPrinter.print(proto)
-                    // Wrap in success envelope
-                    """{"success": true, "proto": $json}"""
-                }
-                else -> {
-                    val error = result.exceptionOrNull()
-                    """{"success": false, "error": "${error?.message?.replace("\"", "\\\"")}"}"""
-                }
+            if (proto != null) {
+                // Convert to JSON with sorted keys
+                val json = jsonPrinter.print(proto)
+                // Wrap in success envelope
+                """{"success": true, "proto": $json}"""
+            } else {
+                """{"success": false, "error": "Failed to build command from map"}"""
             }
         } catch (e: Exception) {
             """{"success": false, "error": "${e.message?.replace("\"", "\\\"")}"}"""
@@ -48,42 +44,36 @@ class TestCommandProcessor {
     /**
      * Process with buf.validate validation
      */
-    fun processCommandWithValidation(action: String, params: Map<*, *>?): String {
+    fun processCommandWithValidation(commandMap: Map<*, *>): String {
         return try {
-            val result = commandBuilder.buildCommand(action, params)
+            val proto = GeneratedCommandHandlers.buildCommand(commandMap)
             
-            when {
-                result.isSuccess -> {
-                    val proto = result.getOrThrow()
+            if (proto != null) {
+                // Validate using buf.validate
+                try {
+                    val validator = build.buf.protovalidate.Validator.newBuilder().build()
+                    val validationResult = validator.validate(proto)
                     
-                    // Validate using buf.validate
-                    try {
-                        val validator = build.buf.protovalidate.Validator.newBuilder().build()
-                        val validationResult = validator.validate(proto)
-                        
-                        if (!validationResult.isSuccess) {
-                            val violations = validationResult.violations.violations.map { violation ->
-                                mapOf(
-                                    "field" to violation.fieldPath,
-                                    "message" to violation.message,
-                                    "constraint" to violation.constraintId
-                                )
-                            }
-                            return """{"success": false, "validation_errors": ${toJson(violations)}}"""
+                    if (!validationResult.isSuccess) {
+                        val violations = validationResult.violations.violations.map { violation ->
+                            mapOf(
+                                "field" to violation.fieldPath,
+                                "message" to violation.message,
+                                "constraint" to violation.constraintId
+                            )
                         }
-                        
-                        val json = jsonPrinter.print(proto)
-                        """{"success": true, "proto": $json, "validated": true}"""
-                    } catch (e: Exception) {
-                        // If validation fails, still return the proto but note validation couldn't run
-                        val json = jsonPrinter.print(proto)
-                        """{"success": true, "proto": $json, "validated": false, "validation_error": "${e.message}"}"""
+                        return """{"success": false, "validation_errors": ${toJson(violations)}}"""
                     }
+                    
+                    val json = jsonPrinter.print(proto)
+                    """{"success": true, "proto": $json, "validated": true}"""
+                } catch (e: Exception) {
+                    // If validation fails, still return the proto but note validation couldn't run
+                    val json = jsonPrinter.print(proto)
+                    """{"success": true, "proto": $json, "validated": false, "validation_error": "${e.message}"}"""
                 }
-                else -> {
-                    val error = result.exceptionOrNull()
-                    """{"success": false, "error": "${error?.message}"}"""
-                }
+            } else {
+                """{"success": false, "error": "Failed to build command from map"}"""
             }
         } catch (e: Exception) {
             """{"success": false, "error": "${e.message}"}"""
@@ -92,33 +82,36 @@ class TestCommandProcessor {
     
     /**
      * Get detailed field mapping for a command
+     * Now works with nested command structure
      */
-    fun getFieldMapping(action: String, params: Map<*, *>?): String {
+    fun getFieldMapping(commandMap: Map<*, *>): String {
         val mapping = mutableMapOf<String, Any>()
         
-        // Track which Transit keys map to which proto fields
-        params?.forEach { (key, value) ->
-            val transitKey = when (key) {
-                is com.cognitect.transit.Keyword -> key.toString()
-                else -> key.toString()
+        // Process nested command structure
+        fun processMap(map: Map<*, *>, prefix: String = "") {
+            map.forEach { (key, value) ->
+                val transitKey = when (key) {
+                    is com.cognitect.transit.Keyword -> key.toString()
+                    else -> key.toString()
+                }
+                
+                val fullKey = if (prefix.isEmpty()) transitKey else "$prefix.$transitKey"
+                
+                when (value) {
+                    is Map<*, *> -> processMap(value, fullKey)
+                    else -> {
+                        mapping[fullKey] = mapOf(
+                            "transit_value" to value,
+                            "value_type" to value?.javaClass?.simpleName
+                        )
+                    }
+                }
             }
-            
-            // Convert kebab-case to snake_case
-            val protoField = transitKey.replace("-", "_")
-            
-            mapping[transitKey] = mapOf(
-                "proto_field" to protoField,
-                "transit_value" to value,
-                "value_type" to value?.javaClass?.simpleName
-            )
         }
         
-        return JsonFormat.printer().print(
-            com.google.protobuf.util.JsonFormat.parser().parse(
-                """{"action": "$action", "field_mapping": ${toJson(mapping)}}""",
-                com.google.protobuf.Empty.getDefaultInstance()
-            )
-        )
+        processMap(commandMap)
+        
+        return toJson(mapOf("field_mapping" to mapping))
     }
     
     private fun toJson(obj: Any): String {
@@ -153,25 +146,35 @@ fun main(args: Array<String>) {
                 val msgType = msg[TransitKeys.MSG_TYPE] as? String
                 if (msgType == "command") {
                     val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *>
-                    val action = payload?.get(TransitKeys.ACTION) as? String ?: "unknown"
-                    val params = payload?.get(TransitKeys.PARAMS) as? Map<*, *>
                     
-                    val jsonResult = if (args.contains("--validate")) {
-                        processor.processCommandWithValidation(action, params)
-                    } else {
-                        processor.processCommand(action, params)
-                    }
-                    
-                    // Send back as Transit message
-                    val response = mapOf(
-                        TransitKeys.MSG_TYPE to "response",
-                        TransitKeys.PAYLOAD to mapOf(
-                            "json" to jsonResult,
-                            "action" to action
+                    // New format: payload is the command map directly
+                    // e.g., {:cv {:start-track-ndc {:x 0.5 :y 0.5}}}
+                    if (payload != null) {
+                        val jsonResult = if (args.contains("--validate")) {
+                            processor.processCommandWithValidation(payload)
+                        } else {
+                            processor.processCommand(payload)
+                        }
+                        
+                        // Send back as Transit message
+                        val response = mapOf(
+                            TransitKeys.MSG_TYPE to "response",
+                            TransitKeys.PAYLOAD to mapOf(
+                                "json" to jsonResult,
+                                "command" to payload
+                            )
                         )
-                    )
-                    
-                    transitComm.sendMessage(response)
+                        
+                        transitComm.sendMessage(response)
+                    } else {
+                        val response = mapOf(
+                            TransitKeys.MSG_TYPE to "error",
+                            TransitKeys.PAYLOAD to mapOf(
+                                "error" to "No payload found in command message"
+                            )
+                        )
+                        transitComm.sendMessage(response)
+                    }
                 } else if (msgType == "control" && 
                           (msg[TransitKeys.PAYLOAD] as? Map<*, *>)?.get("action") == "shutdown") {
                     break

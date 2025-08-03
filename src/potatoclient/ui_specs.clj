@@ -2,6 +2,7 @@
   "Essential UI and video stream specs for PotatoClient.
    This replaces the legacy specs.clj with only the schemas actually in use."
   (:require [malli.core :as m]
+            [malli.registry :as mr]
             [clojure.string :as str])
   (:import (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
@@ -67,6 +68,14 @@
 (def url-history
   "Collection of URL history entries"
   [:sequential url-history-entry])
+
+(def speed-config
+  "Speed configuration for pan gestures"
+  [:map
+   [:zoom-table-index int?]
+   [:max-rotation-speed number?]
+   [:dead-zone-radius number?]
+   [:curve-steepness number?]])
 
 (def config
   "Application configuration"
@@ -198,3 +207,203 @@
    [:msg-id string?]
    [:timestamp pos-int?]
    [:payload map?]])
+
+;; -----------------------------------------------------------------------------
+;; Additional Transit Message Schemas
+;; -----------------------------------------------------------------------------
+
+(def command-message
+  "Command message"
+  [:map
+   [:msg-type [:= :command]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def response-message
+  "Response message"
+  [:map
+   [:msg-type [:= :response]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def request-payload
+  "Request payload"
+  [:map
+   [:method keyword?]
+   [:params {:optional true} map?]])
+
+(def log-payload
+  "Log message payload"
+  [:map
+   [:level keyword?]
+   [:message string?]
+   [:timestamp pos-int?]
+   [:process {:optional true} keyword?]
+   [:data {:optional true} map?]])
+
+(def error-payload
+  "Error message payload"
+  [:map
+   [:message string?]
+   [:type {:optional true} keyword?]
+   [:stack-trace {:optional true} string?]
+   [:data {:optional true} map?]])
+
+(def status-payload
+  "Status message payload"
+  [:map
+   [:status keyword?]
+   [:message {:optional true} string?]
+   [:data {:optional true} map?]])
+
+(def metric-payload
+  "Metric message payload"
+  [:map
+   [:name keyword?]
+   [:value number?]
+   [:timestamp pos-int?]
+   [:tags {:optional true} map?]])
+
+(def control-message
+  "Control message"
+  [:map
+   [:msg-type [:= :control]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload [:map [:action keyword?]]]])
+
+(def state-update-message
+  "State update message"
+  [:map
+   [:msg-type [:= :state-update]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def navigation-event-payload
+  "Navigation event payload"
+  [:map
+   [:x number?]
+   [:y number?]
+   [:button {:optional true} keyword?]
+   [:action keyword?]])
+
+(def gesture-event-payload
+  "Gesture event payload - matches gesture-event structure"
+  gesture-event)
+
+(def window-event-payload
+  "Window event payload"
+  [:map
+   [:action keyword?]
+   [:width {:optional true} pos-int?]
+   [:height {:optional true} pos-int?]
+   [:state {:optional true} keyword?]])
+
+(def event-message
+  "Event message"
+  [:map
+   [:msg-type [:= :event]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload [:map
+              [:type keyword?]
+              [:data map?]]]])
+
+(def protobuf-state-message
+  "Message containing protobuf state update"
+  [:map
+   [:msg-type [:= :state]]
+   [:msg-id string?]
+   [:timestamp pos-int?]
+   [:payload map?]])
+
+(def window-bounds
+  "Window bounds"
+  [:map
+   [:x int?]
+   [:y int?]
+   [:width pos-int?]
+   [:height pos-int?]])
+
+(def stream-process
+  "Stream subprocess state"
+  [:map
+   [:pid {:optional true} pos-int?]
+   [:status process-state]
+   [:error {:optional true} string?]])
+
+(def app-state
+  "Full app state"
+  [:map
+   [:config config]
+   [:connection {:optional true} [:map
+                                  [:connected? boolean?]
+                                  [:url {:optional true} string?]
+                                  [:error {:optional true} string?]]]
+   [:processes {:optional true} [:map-of subprocess-type stream-process]]
+   [:streams {:optional true} [:map-of stream-type map?]]
+   [:zoom-table-index {:optional true} [:map-of stream-type int?]]])
+
+(def transit-subprocess
+  "Transit subprocess"
+  [:map
+   [:subprocess-type subprocess-type]
+   [:jar-path string?]
+   [:main-class string?]
+   [:process any?]
+   [:in-chan any?]
+   [:out-chan any?]
+   [:error-handler [:=> [:cat any?] any?]]
+   [:stream-context {:optional true} map?]])
+
+;; -----------------------------------------------------------------------------
+;; Schema Registry
+;; -----------------------------------------------------------------------------
+
+(def registry
+  "Registry of all UI specs for qualified keyword lookups"
+  (merge (m/default-schemas)
+         {::theme-key theme-key
+          ::locale locale
+          ::locale-code locale-code
+          ::domain domain
+          ::stream-key stream-key
+          ::stream-type stream-type
+          ::stream-process stream-process
+          ::transit-subprocess transit-subprocess
+          ::speed-config speed-config
+          ::config config
+          ::app-state app-state
+          ::gesture-event gesture-event
+          ::gesture-type gesture-type
+          ::swipe-direction swipe-direction
+          ::window-bounds window-bounds
+          ::icon icon
+          ::command-message command-message
+          ::response-message response-message
+          ::request-payload request-payload
+          ::log-payload log-payload
+          ::error-payload error-payload
+          ::status-payload status-payload
+          ::metric-payload metric-payload
+          ::control-message control-message
+          ::state-update-message state-update-message
+          ::navigation-event-payload navigation-event-payload
+          ::gesture-event-payload gesture-event-payload
+          ::window-event-payload window-event-payload
+          ::event-message event-message
+          ::protobuf-state-message protobuf-state-message
+          ::message-type message-type
+          ::process-state process-state
+          ::subprocess-type subprocess-type
+          ::canvas-dimensions canvas-dimensions
+          ::aspect-ratio aspect-ratio
+          ::url url
+          ::url-history url-history
+          ::config-key config-key}))
+
+;; Set as default registry so qualified keywords work
+(mr/set-default-registry! registry)

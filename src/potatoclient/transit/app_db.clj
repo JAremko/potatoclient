@@ -148,13 +148,13 @@
 (>defn get-theme
   "Get current theme"
   []
-  [=> ::ui-specs/theme-key]
+  [=> ::specs/theme-key]
   (get-in @app-db [:app-state :ui :theme]))
 
 (>defn get-locale
   "Get current locale"
   []
-  [=> ::ui-specs/locale]
+  [=> ::specs/locale]
   (get-in @app-db [:app-state :ui :locale]))
 
 (>defn read-only-mode?
@@ -276,13 +276,13 @@
 (>defn set-theme!
   "Update UI theme"
   [theme]
-  [::ui-specs/theme-key => map?]
+  [::specs/theme-key => map?]
   (swap! app-db assoc-in [:app-state :ui :theme] theme))
 
 (>defn set-locale!
   "Update UI locale"
   [locale]
-  [::ui-specs/locale => map?]
+  [::specs/locale => map?]
   (swap! app-db assoc-in [:app-state :ui :locale] locale))
 
 ;; Domain and connection helpers for tests

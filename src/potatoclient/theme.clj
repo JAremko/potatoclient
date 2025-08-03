@@ -42,7 +42,7 @@
   "Set and apply a new theme"
   [theme-key]
   [:potatoclient.ui-specs/theme-key => boolean?]
-  (if (m/validate ::ui-specs/theme-key theme-key)
+  (if (m/validate ::specs/theme-key theme-key)
     (do
       (swap! theme-config assoc :current-theme theme-key)
       (apply-theme! theme-key)
@@ -55,7 +55,7 @@
   "Initialize the theming system with default or saved theme"
   [initial-theme]
   [:potatoclient.ui-specs/theme-key => nil?]
-  (when (m/validate ::ui-specs/theme-key initial-theme)
+  (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme))
   nil)
 

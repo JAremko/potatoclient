@@ -11,7 +11,7 @@
 (>defn handle-tap-gesture
   "Handle single tap gesture - rotate camera to NDC position"
   [{:keys [ndc-x ndc-y stream-type]}]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
     (subprocess/send-message :command
@@ -22,7 +22,7 @@
 (>defn handle-double-tap-gesture
   "Handle double tap gesture - start CV tracking at NDC position"
   [{:keys [ndc-x ndc-y stream-type frame-timestamp]}]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Double-tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
     (subprocess/send-message :command
@@ -33,7 +33,7 @@
 (>defn handle-pan-start-gesture
   "Handle pan gesture start"
   [{:keys [ndc-x ndc-y]}]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (logging/log-debug {:msg "Pan start" :ndc-x ndc-x :ndc-y ndc-y})
   (app-db/update-in-app-db! [:gestures :pan]
                             {:active true
@@ -45,7 +45,7 @@
 (>defn handle-pan-move-gesture
   "Handle pan gesture movement - send rotary velocity commands"
   [{:keys [ndc-delta-x ndc-delta-y stream-type]}]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (let [pan-state (app-db/get-in-app-db [:gestures :pan])
         now (System/currentTimeMillis)]
     (when (and (:active pan-state)
@@ -68,7 +68,7 @@
 (>defn handle-pan-stop-gesture
   "Handle pan gesture stop"
   [_gesture]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (logging/log-debug {:msg "Pan stop"})
   (subprocess/send-message :command
                            (transit-core/create-message :command
@@ -79,7 +79,7 @@
 (>defn handle-swipe-gesture
   "Handle swipe gesture"
   [{:keys [direction]}]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Swipe gesture" :direction direction})
   ;; Can be used for UI navigation or other actions
   nil)
@@ -87,7 +87,7 @@
 (>defn handle-gesture-event
   "Main gesture event dispatcher"
   [event]
-  [::ui-specs/gesture-event => nil?]
+  [::specs/gesture-event => nil?]
   ;; With automatic Transit keyword conversion, event keys should already be keywords
   (let [gesture-type (:gesture-type event)]
     (case gesture-type

@@ -8,7 +8,7 @@
             [potatoclient.ipc :as ipc]
             [potatoclient.ui-specs :as specs]
             [malli.core :as m])
-  (:import (potatoclient.transit MessageKeys)))
+  (:import (potatoclient.java.transit MessageKeys)))
 
 ;; Test fixtures
 (def ^:dynamic *captured-commands* (atom []))

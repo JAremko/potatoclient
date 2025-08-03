@@ -13,7 +13,7 @@
   (:import (java.io BufferedReader InputStreamReader InputStream OutputStream)
            (java.lang Process ProcessBuilder)
            (java.util List Map)
-           (potatoclient.transit MessageType MessageKeys)))
+           (potatoclient.java.transit MessageType MessageKeys)))
 
 ;; Configuration constants
 (def ^:private shutdown-grace-period-ms 50)

@@ -108,7 +108,8 @@
     (is (fn? commands/noop))
     (is (fn? commands/frozen))
     (is (fn? commands/set-localization))
-    (is (fn? commands/set-recording))
+    (is (fn? commands/start-recording))
+    (is (fn? commands/stop-recording))
     (is (fn? commands/rotary-goto))
     (is (fn? commands/day-camera-zoom))))
 

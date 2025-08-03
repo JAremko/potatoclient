@@ -87,14 +87,14 @@
       (is (= cmd-en roundtrip-en))
       (is (= cmd-uk roundtrip-uk))))
   
-  (testing "Set recording"
-    (let [cmd-start (cmd/set-recording true)
-          cmd-stop (cmd/set-recording false)
+  (testing "Recording commands"
+    (let [cmd-start (cmd/start-recording)
+          cmd-stop (cmd/stop-recording)
           roundtrip-start (transit-roundtrip cmd-start)
           roundtrip-stop (transit-roundtrip cmd-stop)]
       (is (= cmd-start roundtrip-start))
       (is (= cmd-stop roundtrip-stop))
-      ;; Check that different commands are generated
+      ;; Check correct commands are generated
       (is (contains? (:system cmd-start) :start-rec))
       (is (contains? (:system cmd-stop) :stop-rec))
       (is (= {} (get-in cmd-start [:system :start-rec])))
@@ -371,8 +371,8 @@
            
            ;; System commands
            [(cmd/set-localization "en") [:system :localization]]
-           [(cmd/set-recording true) [:system :start-rec]]
-           [(cmd/set-recording false) [:system :stop-rec]]
+           [(cmd/start-recording) [:system :start-rec]]
+           [(cmd/stop-recording) [:system :stop-rec]]
            
            ;; GPS commands
            [(cmd/set-gps-manual {:use-manual true}) [:gps :set-use-manual-position]]

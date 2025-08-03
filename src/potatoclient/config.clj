@@ -110,12 +110,12 @@
                                   (dissoc :domain))
                               file-data)]
           ;; Validate without merging defaults
-          (if (m/validate ::ui-specs/config migrated-data)
+          (if (m/validate ::specs/config migrated-data)
             migrated-data
             (do
               (logging/log-warn {:id ::invalid-config
                                  :data {:config migrated-data
-                                        :errors (m/explain ::ui-specs/config migrated-data)}
+                                        :errors (m/explain ::specs/config migrated-data)}
                                  :msg "Invalid config detected, using minimal config"})
               minimal-config)))
         (catch Exception e
@@ -127,7 +127,7 @@
   "Save configuration to file"
   [config]
   [:potatoclient.ui-specs/config => boolean?]
-  (if (m/validate ::ui-specs/config config)
+  (if (m/validate ::specs/config config)
     (try
       (ensure-config-dir!)
       (let [config-file (get-config-file)]
@@ -137,7 +137,7 @@
         (logging/log-error {:msg (str "Error saving config: " (.getMessage ^Exception e))})
         false))
     (do
-      (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::ui-specs/config config))})
+      (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::specs/config config))})
       false)))
 
 (>defn save-theme!
