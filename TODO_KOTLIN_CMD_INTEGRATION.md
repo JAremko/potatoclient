@@ -226,8 +226,16 @@ The static code generation architecture is powered by three complementary tools:
 
 ### Phase 4: End-to-End Testing & Cleanup ✅ DOCUMENTATION COMPLETE
 
-#### End-to-End Testing
-- [ ] Test actual command flow: Clojure → Transit → Kotlin → Protobuf → Server
+#### End-to-End Testing ✅ INFRASTRUCTURE EXISTS
+**Current Status**: Testing infrastructure is in place, ready for execution
+- ✅ `GeneratedHandlersRoundtripTest.kt` - Comprehensive tests using GeneratedCommandHandlers
+- ✅ `command_roundtrip_test.clj` - All 29 command types have Transit roundtrip tests
+- ✅ `kotlin_integration_test.clj` - Framework for running actual Kotlin subprocesses
+- ⚠️ `TestCommandProcessor.kt` - Needs update to use GeneratedCommandHandlers (currently uses old ProtobufCommandBuilder)
+
+**Next Steps**:
+- [ ] Update TestCommandProcessor to use GeneratedCommandHandlers instead of ProtobufCommandBuilder
+- [ ] Run full end-to-end tests: Clojure → Transit → Kotlin → Protobuf → Server
 - [ ] Verify all 29 command types work with real Kotlin subprocess
 - [ ] Test gesture-triggered commands (tap, double-tap, pan)
 - [ ] Validate buf.validate constraints are enforced
@@ -239,18 +247,20 @@ The static code generation architecture is powered by three complementary tools:
 - [ ] Profile memory usage and GC impact
 - [ ] Test with high-frequency commands (pan gestures)
 
-#### Final Cleanup
-- [ ] Delete old manual command builders directory
-- [ ] Remove ProtobufCommandBuilder.kt.old permanently
-- [ ] Clean up any remaining action-based code
-- [ ] Remove deprecated SimpleCommandBuilder references
-- [ ] Update all documentation with new command examples
-- [ ] **Remove legacy specs and test files** (see LEGACY_CLEANUP_LIST.md)
-  - [ ] Delete entire `src/potatoclient/specs/cmd/` directory
-  - [ ] Delete entire `src/potatoclient/specs/data/` directory
-  - [ ] Remove legacy protobuf specs from `specs.clj`
-  - [ ] Delete old test files using action/params format
-  - [ ] Remove all `.clj.skip` files
+#### Final Cleanup ✅ COMPLETED
+**Legacy Cleanup Status**: All legacy code has been removed!
+- ✅ Deleted `src/potatoclient/specs.clj` and entire `specs/` directory
+- ✅ Removed all `.skip` test files
+- ✅ Deleted `ProtobufCommandBuilder.kt.old`
+- ✅ Removed `transit/proto_type_registry.clj`
+- ✅ Cleaned up all legacy test files using action/params format
+- ✅ Deleted the cleanup script itself (no longer needed)
+
+**Remaining Tasks**:
+- [ ] Update TestCommandProcessor to use GeneratedCommandHandlers
+- [ ] Clean up test files still using old ProtobufCommandBuilder
+- [ ] Run `make test` to ensure nothing is broken after cleanup
+- [ ] Commit the cleanup changes
 
 **Note on Transit Behavior**: Transit automatically converts certain string values to keywords during roundtrip (e.g., "heat" → :heat). This is expected behavior with the current Transit configuration.
 
@@ -397,3 +407,35 @@ cd ../.. && make fmt-kotlin
 1. Running `./scripts/delete-legacy-specs.sh` to remove all legacy code
 2. End-to-end testing with actual Kotlin subprocesses
 3. Performance benchmarking of new architecture
+
+### Session 3: Testing Infrastructure Review
+**What We Found**:
+1. ✅ End-to-end testing infrastructure already exists
+   - `GeneratedHandlersRoundtripTest.kt` - Uses new generated handlers
+   - `command_roundtrip_test.clj` - Comprehensive Clojure-side tests
+   - `kotlin_integration_test.clj` - Framework for subprocess testing
+2. ✅ Legacy cleanup script `delete-legacy-specs.sh` is ready to run
+3. ⚠️ `TestCommandProcessor.kt` still uses old ProtobufCommandBuilder
+4. ✅ Extensive test coverage exists for generated handlers
+
+**Immediate Actions Needed**:
+1. Update `TestCommandProcessor.kt` to use `GeneratedCommandHandlers`
+2. Run the legacy cleanup script after backing up/committing
+3. Execute full end-to-end tests with real subprocesses
+4. Benchmark performance improvements
+
+### Session 4: Legacy Cleanup Execution ✅ COMPLETED
+**What We Accomplished**:
+1. ✅ Ran `delete-legacy-specs.sh` script successfully
+2. ✅ Removed all legacy spec files and directories:
+   - `src/potatoclient/specs.clj` (old monolithic spec file)
+   - `src/potatoclient/specs/` directory (cmd/ and data/ subdirs)
+   - All `.clj.skip` test files (~10 files)
+   - `ProtobufCommandBuilder.kt.old`
+   - `proto_type_registry.clj`
+3. ✅ Deleted the cleanup script itself (no longer needed)
+4. ✅ Verified cleanup - 0 legacy files remain in src/ and test/
+
+**Impact**: Removed ~30+ legacy files, significantly cleaning up the codebase
+
+**Next Priority**: Update `TestCommandProcessor.kt` to use new handlers, then run full test suite
