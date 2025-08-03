@@ -4,7 +4,7 @@
             [potatoclient.gestures.config :as config]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.process :as process]
-            [potatoclient.specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 ;; Test fixtures
 (def ^:dynamic *captured-commands* (atom []))

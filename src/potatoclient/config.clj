@@ -6,7 +6,7 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [potatoclient.theme :as theme])
   (:import (java.io File)
            (java.util Date)))
@@ -16,7 +16,7 @@
 (>defn- extract-domain*
   "Extract domain/IP from various URL formats."
   [input]
-  [string? => :potatoclient.specs/domain]
+  [string? => :potatoclient.ui-specs/domain]
   (let [cleaned (str/trim input)]
     ;; If it's already just a domain/IP (no protocol, no path), return as-is
     (if (and (not (str/includes? cleaned "://"))
@@ -44,7 +44,7 @@
 (>defn- get-config-dir
   "Get the configuration directory path using platform-specific conventions"
   []
-  [=> :potatoclient.specs/file]
+  [=> :potatoclient.ui-specs/file]
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
@@ -79,7 +79,7 @@
 (>defn- get-config-file
   "Get the configuration file"
   []
-  [=> :potatoclient.specs/file]
+  [=> :potatoclient.ui-specs/file]
   (io/file (get-config-dir) config-file-name))
 
 (>defn- ensure-config-dir!
@@ -93,7 +93,7 @@
 (>defn load-config
   "Load configuration from file, return minimal config if not found"
   []
-  [=> :potatoclient.specs/config]
+  [=> :potatoclient.ui-specs/config]
   (let [config-file (get-config-file)
         ;; Minimal config - no URL by default
         minimal-config {:theme :sol-dark
@@ -110,12 +110,12 @@
                                   (dissoc :domain))
                               file-data)]
           ;; Validate without merging defaults
-          (if (m/validate ::specs/config migrated-data)
+          (if (m/validate ::ui-specs/config migrated-data)
             migrated-data
             (do
               (logging/log-warn {:id ::invalid-config
                                  :data {:config migrated-data
-                                        :errors (m/explain ::specs/config migrated-data)}
+                                        :errors (m/explain ::ui-specs/config migrated-data)}
                                  :msg "Invalid config detected, using minimal config"})
               minimal-config)))
         (catch Exception e
@@ -126,8 +126,8 @@
 (>defn save-config!
   "Save configuration to file"
   [config]
-  [:potatoclient.specs/config => boolean?]
-  (if (m/validate ::specs/config config)
+  [:potatoclient.ui-specs/config => boolean?]
+  (if (m/validate ::ui-specs/config config)
     (try
       (ensure-config-dir!)
       (let [config-file (get-config-file)]
@@ -137,20 +137,20 @@
         (logging/log-error {:msg (str "Error saving config: " (.getMessage ^Exception e))})
         false))
     (do
-      (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::specs/config config))})
+      (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::ui-specs/config config))})
       false)))
 
 (>defn save-theme!
   "Save the current theme to config"
   [theme-key]
-  [:potatoclient.specs/theme-key => boolean?]
+  [:potatoclient.ui-specs/theme-key => boolean?]
   (let [config (load-config)]
     (save-config! (assoc config :theme theme-key))))
 
 (>defn update-config!
   "Update a specific configuration key-value pair"
   [key value]
-  [:potatoclient.specs/config-key [:or :potatoclient.specs/theme-key :potatoclient.specs/domain :potatoclient.specs/locale :potatoclient.specs/url-history] => boolean?]
+  [:potatoclient.ui-specs/config-key [:or :potatoclient.ui-specs/theme-key :potatoclient.ui-specs/domain :potatoclient.ui-specs/locale :potatoclient.ui-specs/url-history] => boolean?]
   (let [config (load-config)]
     (save-config! (assoc config key value))))
 
@@ -163,7 +163,7 @@
 (>defn initialize!
   "Initialize configuration system"
   []
-  [=> :potatoclient.specs/config]
+  [=> :potatoclient.ui-specs/config]
   (let [config (load-config)
         config-file (get-config-file)]
     ;; Log config location on first run
@@ -188,7 +188,7 @@
 (>defn get-url-history
   "Get URL history from current config"
   []
-  [=> :potatoclient.specs/url-history]
+  [=> :potatoclient.ui-specs/url-history]
   (let [config (load-config)]
     (or (:url-history config) #{})))
 
@@ -210,7 +210,7 @@
 (>defn get-domain
   "Get the domain from the most recent URL or legacy domain field"
   []
-  [=> :potatoclient.specs/domain]
+  [=> :potatoclient.ui-specs/domain]
   (let [config (load-config)]
     ;; Try to get domain from most recent URL in history
     (if-let [recent-url (get-most-recent-url)]

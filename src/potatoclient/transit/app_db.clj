@@ -3,7 +3,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
             [potatoclient.logging :as log]
             [potatoclient.runtime :as runtime]
-            [potatoclient.specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 ;; Default initial state
 (def ^{:doc "Default initial application state"}
@@ -148,13 +148,13 @@
 (>defn get-theme
   "Get current theme"
   []
-  [=> ::specs/theme-key]
+  [=> ::ui-specs/theme-key]
   (get-in @app-db [:app-state :ui :theme]))
 
 (>defn get-locale
   "Get current locale"
   []
-  [=> ::specs/locale]
+  [=> ::ui-specs/locale]
   (get-in @app-db [:app-state :ui :locale]))
 
 (>defn read-only-mode?
@@ -276,13 +276,13 @@
 (>defn set-theme!
   "Update UI theme"
   [theme]
-  [::specs/theme-key => map?]
+  [::ui-specs/theme-key => map?]
   (swap! app-db assoc-in [:app-state :ui :theme] theme))
 
 (>defn set-locale!
   "Update UI locale"
   [locale]
-  [::specs/locale => map?]
+  [::ui-specs/locale => map?]
   (swap! app-db assoc-in [:app-state :ui :locale] locale))
 
 ;; Domain and connection helpers for tests

@@ -36,7 +36,9 @@ Single source of truth for application state:
 #### `potatoclient.transit.commands`
 Command API that creates Transit messages:
 - All commands return plain maps (no side effects)
-- Commands include: ping, set-localization, rotary-goto, camera controls, etc.
+- Commands use nested format matching protobuf structure
+- All parameters use keywords consistently (`:heat`, `:day`, `:en`, etc.)
+- Commands include: ping, start-recording, rotary-goto, camera controls, etc.
 - Guardrails validation on all parameters
 
 #### `potatoclient.transit.subprocess-launcher`
@@ -301,8 +303,8 @@ when (msg.msgType) {
 ### Command Generation
 - Commands start as Transit maps in Clojure
 - CommandSubprocess converts Transit to protobuf
-- SimpleCommandBuilder handles the conversion logic (to be replaced with ReadHandlers)
-- Supports common commands: ping, rotary-halt, rotary-goto-ndc, etc.
+- GeneratedCommandHandlers handles all conversion automatically
+- No manual mapping needed - static code generation from protobuf
 
 ### State Updates with Transit Handlers
 - Server sends protobuf state messages

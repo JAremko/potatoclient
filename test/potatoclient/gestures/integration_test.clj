@@ -6,7 +6,7 @@
             [potatoclient.transit.commands :as commands]
             [potatoclient.process :as process]
             [potatoclient.ipc :as ipc]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [malli.core :as m])
   (:import (potatoclient.transit MessageKeys)))
 

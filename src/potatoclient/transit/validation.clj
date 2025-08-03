@@ -3,7 +3,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
-            [potatoclient.specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 (>defn- validate-with-schema
   "Validate a value against a schema and return [valid? errors]"
@@ -21,15 +21,15 @@
     (case event-type
       :navigation (validate-with-schema
                     (:payload message)
-                    ::specs/navigation-event-payload)
+                    ::ui-specs/navigation-event-payload)
       :gesture (validate-with-schema
                  (:payload message)
-                 ::specs/gesture-event-payload)
+                 ::ui-specs/gesture-event-payload)
       :window (validate-with-schema
                 (:payload message)
-                ::specs/window-event-payload)
+                ::ui-specs/window-event-payload)
       ;; For other event types, just validate basic structure
-      (validate-with-schema message ::specs/event-message))))
+      (validate-with-schema message ::ui-specs/event-message))))
 
 (>defn validate-message
   "Validate a Transit message against its schema"
@@ -37,41 +37,41 @@
   [map? => [:tuple boolean? [:maybe map?]]]
   (let [msg-type (:msg-type message)]
     (case msg-type
-      :command (validate-with-schema message ::specs/command-message)
-      :response (validate-with-schema message ::specs/response-message)
+      :command (validate-with-schema message ::ui-specs/command-message)
+      :response (validate-with-schema message ::ui-specs/response-message)
       :request (validate-with-schema message
                                      [:map
                                       [:msg-type [:= :request]]
                                       [:msg-id uuid?]
                                       [:timestamp pos-int?]
-                                      [:payload ::specs/request-payload]])
+                                      [:payload ::ui-specs/request-payload]])
       :log (validate-with-schema message
                                  [:map
                                   [:msg-type [:= :log]]
                                   [:msg-id uuid?]
                                   [:timestamp pos-int?]
-                                  [:payload ::specs/log-payload]])
+                                  [:payload ::ui-specs/log-payload]])
       :error (validate-with-schema message
                                    [:map
                                     [:msg-type [:= :error]]
                                     [:msg-id uuid?]
                                     [:timestamp pos-int?]
-                                    [:payload ::specs/error-payload]])
+                                    [:payload ::ui-specs/error-payload]])
       :status (validate-with-schema message
                                     [:map
                                      [:msg-type [:= :status]]
                                      [:msg-id uuid?]
                                      [:timestamp pos-int?]
-                                     [:payload ::specs/status-payload]])
+                                     [:payload ::ui-specs/status-payload]])
       :metric (validate-with-schema message
                                     [:map
                                      [:msg-type [:= :metric]]
                                      [:msg-id uuid?]
                                      [:timestamp pos-int?]
-                                     [:payload ::specs/metric-payload]])
+                                     [:payload ::ui-specs/metric-payload]])
       :event (validate-event-message message)
-      :control (validate-with-schema message ::specs/control-message)
-      :state-update (validate-with-schema message ::specs/state-update-message)
+      :control (validate-with-schema message ::ui-specs/control-message)
+      :state-update (validate-with-schema message ::ui-specs/state-update-message)
       [false {:error "Unknown message type" :type msg-type}])))
 
 (>defn log-validation-error

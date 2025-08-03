@@ -17,6 +17,7 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 - **Clean Architecture**: Single approach using Transit handlers - no manual serialization
 - **Keywords Everywhere**: All data is keywords and numbers in Clojure (except log message text)
 - **No Legacy Code**: Clean implementations only - no backward compatibility layers
+- **Minimal Specs**: New `ui-specs.clj` contains only essential specs (90% reduction from legacy)
 
 **Documentation:**
 - **Transit Architecture**: [.claude/transit-architecture.md](.claude/transit-architecture.md) - Complete Transit implementation details
@@ -33,8 +34,8 @@ PotatoClient is a high-performance multi-process live video streaming client wit
 
 **Key requirements**:
 - Every function must use `>defn` or `>defn-` (never raw `defn`)
-- All data schemas must be defined in `potatoclient.specs` namespace
-- Generated protobuf specs are in `potatoclient.specs.*` namespaces
+- All UI/domain schemas are in `potatoclient.ui-specs` namespace (replaces old specs.clj)
+- Generated protobuf specs are in `shared/specs/protobuf/` from proto-explorer
 - Function instrumentation goes in `potatoclient.instrumentation` (excluded from AOT)
 - Use `make report-unspecced` to find functions missing Guardrails
 
@@ -593,9 +594,15 @@ The codebase uses **static code generation** for Transit handlers, eliminating m
 ;; Old (action-based):
 {:action "cv-start-track-ndc" :params {:channel "heat" :x 0.5}}
 
-;; New (direct protobuf mapping):
-{:cv {:start-track-ndc {:channel "heat" :x 0.5}}}
+;; New (direct protobuf mapping with keywords):
+{:cv {:start-track-ndc {:channel :heat :x 0.5}}}
 ```
+
+**Key API Improvements**:
+- All command parameters now use keywords consistently (`:heat`, `:day`, `:en`, `:uk`)
+- Split `set-recording` into `start-recording` and `stop-recording` for clarity
+- Focus modes use keywords: `:auto`, `:manual`, `:infinity`
+- Palette names use keywords: `:white-hot`, `:black-hot`, etc.
 
 See [TODO_KOTLIN_CMD_INTEGRATION.md](TODO_KOTLIN_CMD_INTEGRATION.md) for detailed progress.
 

@@ -20,7 +20,7 @@
 (>defn load-translation-file
   "Load a translation file from resources"
   [locale]
-  [:potatoclient.specs/locale-code => (? [:map-of keyword? string?])]
+  [:potatoclient.ui-specs/locale-code => (? [:map-of keyword? string?])]
   (try
     (let [resource-path (str "i18n/" (name locale) ".edn")
           resource (io/resource resource-path)]
@@ -34,7 +34,7 @@
 (>defn load-translations!
   "Load all translation files from resources"
   []
-  [=> :potatoclient.specs/translations-map]
+  [=> :potatoclient.ui-specs/translations-map]
   (let [locales [:en :uk]
         translations (reduce (fn [acc locale]
                                (if-let [translation (load-translation-file locale)]
@@ -49,7 +49,7 @@
 (>defn reload-translations!
   "Reload all translations - useful for development"
   []
-  [=> :potatoclient.specs/translations-map]
+  [=> :potatoclient.ui-specs/translations-map]
   (logging/log-info {:msg "Reloading translations..."})
   (load-translations!))
 
@@ -59,10 +59,10 @@
 (>defn tr
   "Translate a key using the current locale."
   ([key]
-   [:potatoclient.specs/translation-key => string?]
+   [:potatoclient.ui-specs/translation-key => string?]
    (tr key []))
   ([key args]
-   [:potatoclient.specs/translation-key :potatoclient.specs/translation-args => string?]
+   [:potatoclient.ui-specs/translation-key :potatoclient.ui-specs/translation-args => string?]
    (let [locale (case (state/get-locale)
                   :english :en
                   :ukrainian :uk

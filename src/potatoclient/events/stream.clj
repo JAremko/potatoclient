@@ -4,7 +4,7 @@
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
-    [potatoclient.specs]
+    [potatoclient.ui-specs]
     [potatoclient.state :as state]
     [potatoclient.transit.app-db :as app-db]))
 
@@ -124,7 +124,7 @@
 (>defn- handle-window-closed
   "Handle window closed event - terminate the associated process."
   [stream-key]
-  [:potatoclient.specs/stream-key => nil?]
+  [:potatoclient.ui-specs/stream-key => nil?]
   (logging/log-stream-event stream-key :window-closed
                             {:message "Stream window closed by X button"})
   (logging/log-info {:msg (str "Attempting to get stream process for " stream-key)})
@@ -160,7 +160,7 @@
 (>defn handle-response-event
   "Handle a response event from a stream."
   [stream-key msg]
-  [:potatoclient.specs/stream-key map? => nil?]
+  [:potatoclient.ui-specs/stream-key map? => nil?]
   (logging/log-stream-event stream-key :response
                             {:action (:action msg)
                              :data msg})

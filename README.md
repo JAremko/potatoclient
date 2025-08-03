@@ -104,6 +104,8 @@ PotatoClient is optimized for high-performance video streaming:
 - **Transit Protocol**: All IPC uses Transit/MessagePack for type safety
 - **Clean Separation**: Main process never touches protobuf directly
 - **Unified Communication**: All subprocesses use the same Transit message protocol
+- **Minimal Specs**: Only essential UI and video stream specs maintained
+- **Keywords Everywhere**: All data uses keywords (except log/error text)
 - **Graceful Shutdown**: All subprocesses automatically terminate when main process exits
 
 ### Command System
@@ -114,16 +116,21 @@ PotatoClient uses Transit-based command routing with static code generation:
 - **Generated Handlers**: Static Kotlin code automatically converts between Transit and protobuf
 - **Zero Configuration**: New commands work automatically when protos change
 - **Natural Disambiguation**: Common commands like `:start` work correctly based on context
+- **Keywords Everywhere**: All parameters use keywords (`:heat`, `:day`, `:en`, `:uk`)
 
 ```clojure
-;; Commands are sent as nested Transit maps
+;; Commands are sent as nested Transit maps with consistent keywords
 (require '[potatoclient.transit.commands :as cmd])
 
 ;; Send ping command
 (cmd/send-command! {:ping {}})
 
-;; Platform control - note the nested structure
-(cmd/send-command! {:rotary {:goto-azimuth {:value 45.0}}})
+;; Platform control - note keywords for all parameters
+(cmd/send-command! {:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.5}}})
+
+;; Recording control - split for clarity
+(cmd/send-command! {:system {:start-rec {}}})  ; Start recording
+(cmd/send-command! {:system {:stop-rec {}}})   ; Stop recording
 
 ;; Common commands disambiguated by parent context
 (cmd/send-command! {:gps {:start {}}})      ; → JonSharedCmdGps.Start
@@ -223,7 +230,7 @@ PotatoClient uses [Guardrails](https://github.com/fulcrologic/guardrails) with [
 - **Automatic in Dev**: Validation enabled automatically in development
 - **Zero overhead in Release**: Guardrails completely removed from bytecode
 - **Better error messages**: Human-readable validation errors with precise specs
-- **Centralized schemas**: All data schemas in `potatoclient.specs`
+- **Centralized schemas**: Essential UI schemas in `potatoclient.ui-specs`
 
 #### Function Development
 

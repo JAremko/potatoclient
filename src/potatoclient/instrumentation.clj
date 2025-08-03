@@ -4,7 +4,7 @@
   (:require [malli.core :as m]
             [malli.dev :as malli-dev]
             [malli.dev.pretty :as malli-pretty]
-            [potatoclient.specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 ;; ============================================================================
 ;; Core Namespace Instrumentation
@@ -59,18 +59,18 @@
 (m/=> potatoclient.gestures.config/load-gesture-config! [:=> [:cat] nil?])
 (m/=> potatoclient.gestures.config/get-gesture-config [:=> [:cat] [:maybe map?]])
 (m/=> potatoclient.gestures.config/zoom-value-to-table-index [:=> [:cat number?] int?])
-(m/=> potatoclient.gestures.config/get-speed-config-for-zoom [:=> [:cat string? int?] ::specs/speed-config])
-(m/=> potatoclient.gestures.config/get-speed-config-for-zoom-value [:=> [:cat string? number?] ::specs/speed-config])
-(m/=> potatoclient.gestures.config/calculate-rotation-speeds [:=> [:cat number? number? ::specs/speed-config] [:tuple number? number?]])
+(m/=> potatoclient.gestures.config/get-speed-config-for-zoom [:=> [:cat string? int?] ::ui-specs/speed-config])
+(m/=> potatoclient.gestures.config/get-speed-config-for-zoom-value [:=> [:cat string? number?] ::ui-specs/speed-config])
+(m/=> potatoclient.gestures.config/calculate-rotation-speeds [:=> [:cat number? number? ::ui-specs/speed-config] [:tuple number? number?]])
 
 ;; gestures.handler functions
-(m/=> potatoclient.gestures.handler/handle-tap-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-double-tap-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-pan-start-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-pan-move-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-pan-stop-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-swipe-gesture [:=> [:cat ::specs/gesture-event] nil?])
-(m/=> potatoclient.gestures.handler/handle-gesture-event [:=> [:cat ::specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-tap-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-double-tap-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-start-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-move-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-pan-stop-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-swipe-gesture [:=> [:cat ::ui-specs/gesture-event] nil?])
+(m/=> potatoclient.gestures.handler/handle-gesture-event [:=> [:cat ::ui-specs/gesture-event] nil?])
 
 ;; ============================================================================
 ;; Instrumentation Control

@@ -4,7 +4,7 @@ This document contains detailed information about the Kotlin subprocess implemen
 
 ## Overview
 
-PotatoClient uses Kotlin subprocesses to handle dual H.264 WebSocket streams (Heat: 900x720, Day: 1920x1080). Each stream runs in a separate process with optimized memory management and hardware acceleration.
+PotatoClient uses Kotlin subprocesses to handle dual H.264 WebSocket streams (Heat: 900x720, Day: 1920x1080). Each stream runs in a separate process with optimized memory management and hardware acceleration. All inter-process communication uses Transit with keyword-based messages.
 
 ## Key Components
 
@@ -12,7 +12,8 @@ PotatoClient uses Kotlin subprocesses to handle dual H.264 WebSocket streams (He
 The main coordinator for WebSocket and GStreamer pipeline integration. Handles:
 - WebSocket connection lifecycle
 - Stream data routing to GStreamer
-- Event dispatch to main process via IPC
+- Event dispatch to main process via Transit IPC (keyword-based)
+- Gesture recognition and Transit event generation
 - Graceful shutdown and resource cleanup
 
 ### WebSocketClientBuiltIn

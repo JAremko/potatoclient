@@ -311,3 +311,23 @@ This is a clean architecture with no backward compatibility:
 - No legacy string keys supported
 - No manual converters maintained
 - Single source of truth: Transit handlers
+
+## Command Format Evolution
+
+The command format has evolved to directly mirror protobuf structure:
+
+```clojure
+;; Old format (action-based)
+{:action "rotary-goto-ndc" :params {:channel "heat" :x 0.5 :y -0.5}}
+
+;; New format (nested with consistent keywords)
+{:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.5}}}
+```
+
+**Key improvements**:
+- Direct mapping to protobuf message structure
+- All parameters use keywords consistently (`:heat`, `:day`, `:en`, `:uk`)
+- No more action strings or params wrapping
+- Split complex commands (e.g., `set-recording` → `start-recording`/`stop-recording`)
+- Focus modes use keywords: `:auto`, `:manual`, `:infinity`
+- Palette names use keywords: `:white-hot`, `:black-hot`, etc.

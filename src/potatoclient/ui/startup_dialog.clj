@@ -7,7 +7,7 @@
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [seesaw.action :as action]
@@ -64,7 +64,7 @@
 (>defn- create-language-action
   "Create a language selection action."
   [lang-key display-name dialog callback]
-  [:potatoclient.specs/locale string?
+  [:potatoclient.ui-specs/locale string?
    [:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
    ifn? => any?]
@@ -84,7 +84,7 @@
 (>defn- create-theme-action
   "Create a theme selection action."
   [theme-key dialog callback]
-  [:potatoclient.specs/theme-key
+  [:potatoclient.ui-specs/theme-key
    [:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
    ifn? => any?]

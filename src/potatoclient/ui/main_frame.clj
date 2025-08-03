@@ -32,7 +32,7 @@
   "Extract window state for restoration."
   [frame]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => :potatoclient.specs/window-state]
+    #(instance? JFrame %)] => :potatoclient.ui-specs/window-state]
   {:bounds (.getBounds frame)
    :extended-state (.getExtendedState frame)})
 
@@ -41,7 +41,7 @@
   [frame state]
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
-   :potatoclient.specs/window-state
+   :potatoclient.ui-specs/window-state
    => [:fn {:error/message "must be a JFrame"}
        #(instance? JFrame %)]]
   (doto frame
@@ -64,7 +64,7 @@
 (>defn- create-language-action
   "Create a language selection action."
   [lang-key display-name reload-fn]
-  [:potatoclient.specs/locale string? ifn? => any?]
+  [:potatoclient.ui-specs/locale string? ifn? => any?]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
@@ -82,7 +82,7 @@
 (>defn- create-theme-action
   "Create a theme selection action."
   [theme-key reload-fn]
-  [:potatoclient.specs/theme-key ifn? => any?]
+  [:potatoclient.ui-specs/theme-key ifn? => any?]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
         theme-name (i18n/tr theme-i18n-key)]
     (action/action
@@ -158,7 +158,7 @@
 (>defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
   [stream-key]
-  [:potatoclient.specs/stream-key => any?]
+  [:potatoclient.ui-specs/stream-key => any?]
   (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
                               :tooltip "Heat Camera (900x720)"
                               :label-key :stream-thermal}

@@ -6,7 +6,7 @@
   side use this metadata to instantiate the correct Java class."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.transit.core :as transit]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [malli.core :as m]
             [taoensso.telemere :as t]))
 

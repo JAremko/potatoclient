@@ -85,7 +85,7 @@
 (>defn- create-process-builder
   "Create a configured ProcessBuilder for the video stream subprocess."
   [stream-id url domain]
-  [string? string? :potatoclient.specs/domain => [:fn #(instance? ProcessBuilder %)]]
+  [string? string? :potatoclient.ui-specs/domain => [:fn #(instance? ProcessBuilder %)]]
   (let [java-exe (get-java-executable)
         classpath (System/getProperty "java.class.path")
         app-env (get-appimage-environment)
@@ -254,7 +254,7 @@
 (>defn- create-stream-process
   "Create the process and I/O resources."
   [stream-id url domain message-handler]
-  [string? string? :potatoclient.specs/domain fn? => :potatoclient.specs/stream-process-map]
+  [string? string? :potatoclient.ui-specs/domain fn? => :potatoclient.ui-specs/stream-process-map]
   (let [^ProcessBuilder pb (create-process-builder stream-id url domain)
         ^Process process (.start pb)
         input-stream (.getInputStream process)
@@ -277,7 +277,7 @@
   "Start a video stream subprocess.
   Returns a map containing process info and communication channels."
   [stream-id url domain message-handler]
-  [string? string? :potatoclient.specs/domain fn? => :potatoclient.specs/stream-process-map]
+  [string? string? :potatoclient.ui-specs/domain fn? => :potatoclient.ui-specs/stream-process-map]
   (let [stream (create-stream-process stream-id url domain message-handler)
         ;; Start reader threads
         transit-reader (create-transit-reader (:input-stream stream) message-handler stream-id)
@@ -291,7 +291,7 @@
 (>defn send-command
   "Send a command to a stream process."
   [stream cmd]
-  [:potatoclient.specs/stream-process-map :potatoclient.specs/process-command => boolean?]
+  [:potatoclient.ui-specs/stream-process-map :potatoclient.ui-specs/process-command => boolean?]
   (if stream
     (let [current-state @(:state stream)]
       (logging/log-debug {:msg (str "send-command: stream-id=" (:stream-id stream)
@@ -322,7 +322,7 @@
 (>defn send-control
   "Send a control message to a stream process."
   [stream control-msg]
-  [:potatoclient.specs/stream-process-map map? => boolean?]
+  [:potatoclient.ui-specs/stream-process-map map? => boolean?]
   (if stream
     (let [current-state @(:state stream)]
       (logging/log-debug {:msg (str "send-control: stream-id=" (:stream-id stream)
@@ -363,7 +363,7 @@
 (>defn stop-stream
   "Stop a stream process gracefully, then forcefully if needed."
   [stream]
-  [:potatoclient.specs/stream-process-map => :potatoclient.specs/process-state]
+  [:potatoclient.ui-specs/stream-process-map => :potatoclient.ui-specs/process-state]
   (when stream
     (logging/log-debug {:msg (str "stop-stream called for " (:stream-id stream)
                                   ", current state: " @(:state stream))})
@@ -397,7 +397,7 @@
    (logging/log-info {:msg "Video stream cleanup called - streams managed by IPC"})
    nil)
   ([streams-map]
-   [[:map-of :potatoclient.specs/stream-key (? :potatoclient.specs/stream-process-map)] => nil?]
+   [[:map-of :potatoclient.ui-specs/stream-key (? :potatoclient.ui-specs/stream-process-map)] => nil?]
    ;; Original version that accepts a map
    (doseq [[_ stream-data] streams-map]
      (when (and (map? stream-data)

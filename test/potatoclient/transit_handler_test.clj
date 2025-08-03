@@ -3,7 +3,7 @@
   (:require [clojure.test :refer :all]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.validation :as validation]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [clojure.java.io :as io])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 

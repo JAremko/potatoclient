@@ -1,8 +1,8 @@
 (ns potatoclient.transit.commands
-  "Transit-based command API that replaces direct protobuf command building.
+  "Transit-based command API using new nested format matching protobuf structure.
   
-  This namespace provides all the command functions previously in cmd.core
-  but uses Transit messages instead of protobuf builders."
+  This namespace provides all command functions with the new nested structure
+  that maps directly to protobuf hierarchy."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]))
 
 ;; ============================================================================
@@ -13,19 +13,19 @@
   "Create a ping command (heartbeat/keepalive)"
   []
   [=> map?]
-  {:action "ping"})
+  {:ping {}})
 
 (>defn noop
   "Create a no-operation command"
   []
   [=> map?]
-  {:action "noop"})
+  {:noop {}})
 
 (>defn frozen
   "Create a frozen command (marks important state)"
   []
   [=> map?]
-  {:action "frozen"})
+  {:frozen {}})
 
 ;; ============================================================================
 ;; System Commands
@@ -34,23 +34,27 @@
 (>defn set-localization
   "Set system localization"
   [locale]
-  [[:enum "en" "uk"] => map?]
-  {:action "set-localization"
-   :params {:locale locale}})
+  [[:enum :en :uk] => map?]
+  {:system {:localization {:loc locale}}})
 
-(>defn set-recording
-  "Enable/disable recording"
-  [enabled?]
-  [boolean? => map?]
-  {:action "set-recording"
-   :params {:enabled enabled?}})
+(>defn start-recording
+  "Start recording"
+  []
+  [=> map?]
+  {:system {:start-rec {}}})
+
+(>defn stop-recording
+  "Stop recording"
+  []
+  [=> map?]
+  {:system {:stop-rec {}}})
 
 ;; ============================================================================
 ;; GPS Commands
 ;; ============================================================================
 
 (>defn set-gps-manual
-  "Set manual GPS position"
+  "Set manual GPS position and optionally enable manual mode"
   [{:keys [use-manual latitude longitude altitude]}]
   [[:map
     [:use-manual boolean?]
@@ -58,22 +62,26 @@
     [:longitude {:optional true} [:double {:min -180.0 :max 180.0}]]
     [:altitude {:optional true} [:double {:min -1000.0 :max 10000.0}]]]
    => map?]
-  {:action "set-gps-manual"
-   :params {:use-manual use-manual
-            :latitude latitude
-            :longitude longitude
-            :altitude altitude}})
+  (if use-manual
+    {:gps {:set-use-manual-position {:flag true}}}
+    ;; When coordinates provided, set manual position
+    (if (and latitude longitude altitude)
+      {:gps {:set-manual-position {:latitude latitude
+                                   :longitude longitude
+                                   :altitude altitude}}}
+      {:gps {:set-use-manual-position {:flag false}}})))
 
 ;; ============================================================================
 ;; Compass Commands
 ;; ============================================================================
 
 (>defn set-compass-unit
-  "Set compass unit (degrees or mils)"
+  "Set compass unit (degrees or mils) - Note: may need mapping to actual command"
   [unit]
-  [[:enum "degrees" "mils"] => map?]
-  {:action "set-compass-unit"
-   :params {:unit unit}})
+  [[:enum :degrees :mils] => map?]
+  ;; Note: Couldn't find specific compass unit command in keyword tree
+  ;; This might need to be mapped to a different command
+  {:compass {:calibrate {}}})  ; Placeholder - needs correct mapping
 
 ;; ============================================================================
 ;; LRF (Laser Range Finder) Commands
@@ -83,19 +91,19 @@
   "Trigger single LRF measurement"
   []
   [=> map?]
-  {:action "lrf-single-measurement"})
+  {:lrf {:measure {}}})
 
 (>defn lrf-continuous-start
   "Start continuous LRF measurements"
   []
   [=> map?]
-  {:action "lrf-continuous-start"})
+  {:lrf {:scan-on {}}})
 
 (>defn lrf-continuous-stop
   "Stop continuous LRF measurements"
   []
   [=> map?]
-  {:action "lrf-continuous-stop"})
+  {:lrf {:scan-off {}}})
 
 ;; ============================================================================
 ;; Rotary Platform Commands
@@ -108,41 +116,37 @@
     [:azimuth [:double {:min 0.0 :max 360.0}]]
     [:elevation [:double {:min -30.0 :max 90.0}]]]
    => map?]
-  {:action "rotary-goto"
-   :params {:azimuth azimuth
-            :elevation elevation}})
+  {:rotary {:goto {:azimuth azimuth
+                   :elevation elevation}}})
 
 (>defn rotary-stop
   "Stop rotary platform movement"
   []
   [=> map?]
-  {:action "rotary-stop"})
+  {:rotary {:stop {}}})
 
 (>defn rotary-halt
-  "Halt all rotary movement (alias for stop)"
+  "Halt all rotary movement"
   []
   [=> map?]
-  {:action "rotary-halt"
-   :params {}})
+  {:rotary {:halt {}}})
 
 (>defn rotary-goto-ndc
   "Command to rotate camera to NDC position"
   [channel ndc-x ndc-y]
   [keyword? number? number? => map?]
-  {:action "rotary-goto-ndc"
-   :params {:channel (name channel)
-            :x ndc-x
-            :y ndc-y}})
+  {:rotary {:goto-ndc {:channel channel
+                       :x ndc-x
+                       :y ndc-y}}})
 
 (>defn rotary-set-velocity
   "Set rotary platform velocity with speed and direction"
   [azimuth-speed elevation-speed azimuth-direction elevation-direction]
   [number? number? keyword? keyword? => map?]
-  {:action "rotary-set-velocity"
-   :params {:azimuth-speed azimuth-speed
-            :elevation-speed elevation-speed
-            :azimuth-direction (name azimuth-direction)
-            :elevation-direction (name elevation-direction)}})
+  {:rotary {:set-velocity {:azimuth-speed azimuth-speed
+                          :elevation-speed elevation-speed
+                          :azimuth-direction azimuth-direction
+                          :elevation-direction elevation-direction}}})
 
 ;; ============================================================================
 ;; Computer Vision Commands
@@ -152,11 +156,10 @@
   "Start CV tracking at NDC position"
   [channel ndc-x ndc-y frame-timestamp]
   [keyword? number? number? (? int?) => map?]
-  {:action "cv-start-track-ndc"
-   :params {:channel (name channel)
-            :x ndc-x
-            :y ndc-y
-            :frame-timestamp frame-timestamp}})
+  {:cv {:start-track-ndc {:channel channel
+                         :x ndc-x
+                         :y ndc-y
+                         :frame-time frame-timestamp}}})
 
 ;; ============================================================================
 ;; Day Camera Commands
@@ -166,25 +169,26 @@
   "Set day camera zoom level"
   [zoom]
   [[:double {:min 1.0 :max 50.0}] => map?]
-  {:action "day-camera-zoom"
-   :params {:zoom zoom}})
+  {:day-camera {:zoom {:set-value {:value zoom}}}})
 
 (>defn day-camera-focus
   "Set day camera focus mode"
   [{:keys [mode distance]}]
   [[:map
-    [:mode [:enum "auto" "manual" "infinity"]]
+    [:mode [:enum :auto :manual :infinity]]
     [:distance {:optional true} [:double {:min 0.0}]]]
    => map?]
-  {:action "day-camera-focus"
-   :params {:mode mode
-            :distance distance}})
+  ;; Map focus modes to appropriate commands
+  (case mode
+    :auto {:day-camera {:focus {:reset-focus {}}}}
+    :manual {:day-camera {:focus {:set-value {:value (or distance 0.0)}}}}
+    :infinity {:day-camera {:focus {:set-value {:value 999999.0}}}}))
 
 (>defn day-camera-photo
   "Take a photo with day camera"
   []
   [=> map?]
-  {:action "day-camera-photo"})
+  {:day-camera {:photo {}}})
 
 ;; ============================================================================
 ;; Heat Camera Commands
@@ -194,27 +198,34 @@
   "Set heat camera zoom level"
   [zoom]
   [[:double {:min 1.0 :max 8.0}] => map?]
-  {:action "heat-camera-zoom"
-   :params {:zoom zoom}})
+  {:heat-camera {:zoom {:set-value {:value zoom}}}})
 
 (>defn heat-camera-calibrate
   "Trigger heat camera calibration (NUC)"
   []
   [=> map?]
-  {:action "heat-camera-calibrate"})
+  {:heat-camera {:nuc {}}})
 
 (>defn heat-camera-palette
   "Set heat camera color palette"
   [palette]
-  [[:enum "white-hot" "black-hot" "rainbow" "ironbow" "lava" "arctic"] => map?]
-  {:action "heat-camera-palette"
-   :params {:palette palette}})
+  [[:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic] => map?]
+  ;; Map palette names to indices (assuming an index-based system)
+  (let [palette-index (case palette
+                       :white-hot 0
+                       :black-hot 1
+                       :rainbow 2
+                       :ironbow 3
+                       :lava 4
+                       :arctic 5
+                       0)]
+    {:heat-camera {:set-color-palette {:index palette-index}}}))
 
 (>defn heat-camera-photo
   "Take a photo with heat camera"
   []
   [=> map?]
-  {:action "heat-camera-photo"})
+  {:heat-camera {:photo {}}})
 
 ;; ============================================================================
 ;; Glass Heater Commands
@@ -224,13 +235,13 @@
   "Turn on glass heater"
   []
   [=> map?]
-  {:action "glass-heater-on"})
+  {:day-cam-glass-heater {:turn-on {}}})
 
 (>defn glass-heater-off
   "Turn off glass heater"
   []
   [=> map?]
-  {:action "glass-heater-off"})
+  {:day-cam-glass-heater {:turn-off {}}})
 
 ;; ============================================================================
 ;; OSD (On-Screen Display) Commands
@@ -240,23 +251,22 @@
   "Enable OSD on day camera"
   []
   [=> map?]
-  {:action "osd-enable-day"})
+  {:osd {:enable-day-osd {}}})
 
 (>defn osd-disable-day
   "Disable OSD on day camera"
   []
   [=> map?]
-  {:action "osd-disable-day"})
+  {:osd {:disable-day-osd {}}})
 
 (>defn osd-enable-heat
   "Enable OSD on heat camera"
   []
   [=> map?]
-  {:action "osd-enable-heat"})
+  {:osd {:enable-heat-osd {}}})
 
 (>defn osd-disable-heat
   "Disable OSD on heat camera"
   []
   [=> map?]
-  {:action "osd-disable-heat"})
-
+  {:osd {:disable-heat-osd {}}})

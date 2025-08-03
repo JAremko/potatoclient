@@ -25,12 +25,13 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 
 **Key Features**:
 - Custom kebab-case conversion for Clojure idioms
-- Direct manipulation of Protobuf builders and messages
+- Static code generation from protobuf definitions
 - No external wrapper dependencies
 - Protobuf version 4.29.5 with protoc 29.5
 - Google's JsonFormat for protobuf to JSON conversion (debugging)
 - **protobuf-java-util** dependency required for JsonFormat functionality
 - **Enum to Keyword Conversion**: All protobuf enums automatically convert to Transit keywords
+- **Generated Handlers**: Zero manual code for new protobuf commands
 
 **Package Structure for Generated Classes**:
 - Proto files generate classes in simple package names (not `com.potatocode.jon`)
@@ -43,11 +44,13 @@ PotatoClient uses a **direct Protobuf implementation** (migrated from Pronto wra
 - Command types are in the `cmd` package and sub-packages
 - The preprocessing script maintains these package names during proto compilation
 
-**Note**: In the Transit architecture, Clojure never directly serializes/deserializes Protobuf. This is handled exclusively in Kotlin subprocesses:
+**Note**: In the Transit architecture, Clojure never directly serializes/deserializes Protobuf. This is handled exclusively in Kotlin subprocesses using static code generation:
 
 **Kotlin Command Building** (Transit map → Protobuf):
 ```kotlin
-// In CommandSubprocess.kt
+// Using GeneratedCommandHandlers for automatic conversion
+// Transit: {:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.5}}}
+// Protobuf: JonSharedCmdRotary.GotoNdc message
 val command = SimpleCommandBuilder.buildCommand(transitMap)
 val bytes = command.toByteArray()
 ```
@@ -146,17 +149,24 @@ fun convertProtoEnumToKeyword(enum: ProtocolMessageEnum): String {
 **In Transit Messages**:
 ```clojure
 ;; Commands use nested structure matching protobuf hierarchy
-{:rotary {:goto-ndc {:channel "heat"  ; Channel as string
+;; All parameters use keywords consistently
+{:rotary {:goto-ndc {:channel :heat  ; Channel as keyword
                      :x 0.5
                      :y -0.5}}}
+
+;; Recording control - split for clarity
+{:system {:start-rec {}}}  ; Start recording
+{:system {:stop-rec {}}}   ; Stop recording
+
 ;; Enums in state messages become keywords automatically
+{:system {:localization :uk}}  ; Not "uk" string
 ```
 
 ## Command Validation and Specs
 
 **IMPORTANT**: All command functions must use domain-specific specs that match the protobuf validation constraints. The `.proto` files in `./proto` directory define exact valid ranges using `buf.validate` annotations.
 
-**Available Domain Specs** (defined in `potatoclient.specs`):
+**Available Domain Specs** (defined in `potatoclient.ui-specs`):
 - `::azimuth-degrees` - [0, 360) degrees
 - `::elevation-degrees` - [-90, 90] degrees
 - `::rotation-speed` - [0, 1] normalized
@@ -166,7 +176,7 @@ fun convertProtoEnumToKeyword(enum: ProtocolMessageEnum): String {
 - `::zoom-level` - [0, 1] normalized
 - `::focus-value` - [0, 1] normalized
 - `::ndc-x`, `::ndc-y` - [-1, 1] normalized device coordinates
-- All enum types (e.g., `::rotary-direction`, `::day-camera-palette`)
+- All enum types use keywords (e.g., `:clockwise`, `:heat`, `:white-hot`)
 
 ### Using Protobuf Validation Specs
 
@@ -189,7 +199,7 @@ fun convertProtoEnumToKeyword(enum: ProtocolMessageEnum): String {
    - `[(buf.validate.field).int32 = {gte: 0}]` - Non-negative integer
    - `[(buf.validate.field).enum = {defined_only: true}]` - Valid enum value
 
-3. **Create corresponding Malli specs in `potatoclient.specs`**:
+3. **Create corresponding Malli specs in `potatoclient.ui-specs`**:
    ```clojure
    ;; Example: From proto constraint [(buf.validate.field).float = {gte: 0.0, lt: 360.0}]
    (def azimuth-degrees

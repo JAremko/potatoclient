@@ -84,6 +84,12 @@
                  :elevation 30.0}}}
 ```
 
+**Note on Transit String/Keyword Behavior**:
+- Keywords written to Transit are preserved as keywords on roundtrip
+- Strings that look like keywords (e.g., "heat", "day") are read back as keywords
+- This is due to Transit's automatic keyword conversion for string keys
+- Commands use strings for channel names, but they become keywords after Transit roundtrip
+
 ### State Message (from Kotlin)
 ```clojure
 {:msg-type :state

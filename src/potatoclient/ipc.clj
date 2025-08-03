@@ -157,7 +157,7 @@
   "Dispatch a message to the appropriate handler using multimethod.
   This is called directly from the subprocess reader thread."
   [stream-key msg]
-  [:potatoclient.specs/stream-key map? => [:maybe boolean?]]
+  [:potatoclient.ui-specs/stream-key map? => [:maybe boolean?]]
   ;; Messages should have keyword keys thanks to automatic Transit conversion
   (let [msg-type (:msg-type msg)
         payload (:payload msg)]
@@ -210,7 +210,7 @@
 (>defn- initialize-stream
   "Initialize a newly started stream."
   [stream]
-  [:potatoclient.specs/stream-process-map => boolean?]
+  [:potatoclient.ui-specs/stream-process-map => boolean?]
   (Thread/sleep ^long stream-init-delay-ms)
   (process/send-command stream {:action "show"}))
 
@@ -220,7 +220,7 @@
   Creates the subprocess, registers it in state, and begins
   processing its output messages."
   [stream-key endpoint]
-  [:potatoclient.specs/stream-key string? => :potatoclient.specs/future-instance]
+  [:potatoclient.ui-specs/stream-key string? => :potatoclient.ui-specs/future-instance]
   (future
     (try
       (let [url (build-stream-url endpoint)
@@ -254,7 +254,7 @@
   
   Stops the subprocess and removes it from state."
   [stream-key]
-  [:potatoclient.specs/stream-key => :potatoclient.specs/future-instance]
+  [:potatoclient.ui-specs/stream-key => :potatoclient.ui-specs/future-instance]
   (future
     (try
       ;; Get the actual stream process map from app-db

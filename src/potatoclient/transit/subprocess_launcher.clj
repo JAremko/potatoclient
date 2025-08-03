@@ -7,7 +7,7 @@
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [potatoclient.logging :as logging]
-            [potatoclient.specs :as specs]
+            [potatoclient.ui-specs :as specs]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.framed-io :as framed-io])
@@ -142,7 +142,7 @@
 (>defn- create-subprocess
   "Create the subprocess and I/O resources."
   [subprocess-type url domain message-handler]
-  [keyword? string? string? fn? => ::specs/transit-subprocess]
+  [keyword? string? string? fn? => ::ui-specs/transit-subprocess]
   (let [^ProcessBuilder pb (create-process-builder subprocess-type url domain)
         ^Process process (.start pb)
         input-stream (.getInputStream process)
@@ -192,7 +192,7 @@
   "Start a Transit subprocess with a message handler.
   The handler will be called directly from the reader thread."
   [subprocess-type url domain message-handler]
-  [keyword? string? string? fn? => ::specs/transit-subprocess]
+  [keyword? string? string? fn? => ::ui-specs/transit-subprocess]
   (let [subprocess (create-subprocess subprocess-type url domain message-handler)
         reader-thread ((create-reader-thread (:input-stream subprocess)
                                              subprocess-type
@@ -309,13 +309,13 @@
 (>defn start-command-subprocess
   "Start the command subprocess that converts Transit commands to protobuf."
   [url domain]
-  [string? string? => ::specs/transit-subprocess]
+  [string? string? => ::ui-specs/transit-subprocess]
   (start-subprocess :command url domain app-db/handle-command-response))
 
 (>defn start-state-subprocess
   "Start the state subprocess that converts protobuf state to Transit."
   [url domain]
-  [string? string? => ::specs/transit-subprocess]
+  [string? string? => ::ui-specs/transit-subprocess]
   (start-subprocess :state url domain app-db/handle-state-update))
 
 (>defn stop-all-subprocesses

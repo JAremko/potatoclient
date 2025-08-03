@@ -19,7 +19,7 @@
 (>defn- create-stream-status-panel
   "Create a status panel for a single stream."
   [stream-key]
-  [:potatoclient.specs/stream-key => [:fn {:error/message "must be a Swing panel"}
+  [:potatoclient.ui-specs/stream-key => [:fn {:error/message "must be a Swing panel"}
                                       #(instance? JPanel %)]]
   (let [stream-name (case stream-key
                       :heat (i18n/tr :stream-thermal)

@@ -3,7 +3,7 @@
             [clojure.java.io :as io]
             [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
             [potatoclient.logging :as logging]
-            [potatoclient.specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 (def ^:private gesture-config-atom (atom nil))
 
@@ -51,7 +51,7 @@
 (>defn get-speed-config-for-zoom
   "Get speed configuration for a given stream type and zoom table index"
   [stream-type zoom-table-index]
-  [keyword? int? => ::specs/speed-config]
+  [keyword? int? => ::ui-specs/speed-config]
   (let [gesture-config (get-gesture-config)
         configs (get-in gesture-config [:zoom-speed-config stream-type])]
     (or (first (filter #(= (or (:zoom-table-index %) (:index %)) zoom-table-index) configs))
@@ -67,14 +67,14 @@
 (>defn get-speed-config-for-zoom-value
   "Get speed configuration for a given stream type and zoom value (e.g. 1.0, 2.5)"
   [stream-type zoom-value]
-  [keyword? number? => ::specs/speed-config]
+  [keyword? number? => ::ui-specs/speed-config]
   (let [zoom-index (zoom-value-to-table-index zoom-value)]
     (get-speed-config-for-zoom stream-type zoom-index)))
 
 (>defn calculate-rotation-speeds
   "Calculate azimuth and elevation rotation speeds based on NDC deltas and config"
   [ndc-delta-x ndc-delta-y config]
-  [number? number? ::specs/speed-config => [:tuple number? number?]]
+  [number? number? ::ui-specs/speed-config => [:tuple number? number?]]
   (let [{:keys [max-rotation-speed min-rotation-speed ndc-threshold
                 dead-zone-radius curve-steepness]} config
         ;; Calculate magnitude

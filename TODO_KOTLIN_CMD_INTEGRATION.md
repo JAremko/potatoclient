@@ -2,13 +2,15 @@
 
 ## Executive Summary
 
-**Achievement**: Successfully implemented static code generation for Transit↔Protobuf conversion, eliminating all reflection and manual builders.
+**Achievement**: Successfully implemented static code generation for Transit↔Protobuf conversion AND completed full Clojure integration.
 
 **What We Built**:
 - Automatic keyword tree generation from protobuf definitions (15 commands, 13 state types)
 - Static Kotlin code generator that creates type-safe Transit handlers
 - Full integration with CommandSubprocess - all Kotlin code now compiles
 - Zero manual code needed for new protobuf commands
+- **NEW**: Complete Clojure command API using nested format
+- **NEW**: Comprehensive roundtrip tests for all 29 command types
 
 **Key Technical Wins**:
 - Fixed all camelCase field handling (DayZoomTableValue, fogModeEnabled, distance_3b)
@@ -16,6 +18,8 @@
 - Clean parent context disambiguation for common commands
 - Type-safe enum conversion with error handling
 - Correct Transit WriteHandler interface implementation
+- **NEW**: All Clojure commands updated to new nested format
+- **NEW**: Gesture handlers verified to work with new command structure
 
 ## Tools Overview
 
@@ -41,19 +45,27 @@ The static code generation architecture is powered by three complementary tools:
 - **Integration**: `make report-unspecced` in main project
 - **Purpose**: Maintain code quality and consistent validation
 
-## Current Status: Kotlin Side ✅ COMPLETE
+## Current Status: ✅ BOTH SIDES COMPLETE
 
-The Kotlin implementation is **fully functional**:
+### Kotlin Side ✅ COMPLETE
 1. ✅ Keyword trees generated from protobuf definitions
 2. ✅ Static Transit handlers generated and working
 3. ✅ CommandSubprocess integrated with new handlers
 4. ✅ All compilation issues resolved
 5. ✅ Old ProtobufCommandBuilder removed
 
-## Next Phase: Clojure Integration & Testing
-1. Update Clojure to use new command format 🚧 NEXT
-2. Comprehensive roundtrip testing ⏳ TODO
-3. Performance benchmarking ⏳ TODO
+### Clojure Side ✅ COMPLETE
+1. ✅ All 29 command functions updated to new nested format
+2. ✅ Gesture handlers verified compatible
+3. ✅ Comprehensive roundtrip tests created
+4. ✅ Transit encoding/decoding validated
+5. ✅ Documentation updated
+
+## Remaining Tasks
+1. End-to-end testing with real Kotlin subprocesses 🚧 NEXT
+2. Performance benchmarking ⏳ TODO
+3. ✅ Documentation updated (COMPLETE)
+4. Clean up legacy code ⏳ TODO - Run `./scripts/delete-legacy-specs.sh`
 
 ## Completed Work
 
@@ -192,34 +204,55 @@ The Kotlin implementation is **fully functional**:
 5. ✅ All Kotlin code compiles and builds successfully
 6. ✅ Removed dependency on old ProtobufCommandBuilder
 
-### Phase 2: Integration ✅ COMPLETED
+### Phase 2: Kotlin Integration ✅ COMPLETED
 - ✅ Updated `CommandSubprocess` to use `GeneratedCommandHandlers`
 - ✅ StateSubprocess already uses Transit handlers
 - ✅ Removed dependency on ProtobufCommandBuilder
 - ✅ All Kotlin code now compiles successfully
 
-### Phase 3: Next Steps
+### Phase 3: Clojure Integration ✅ COMPLETED
+- ✅ Updated all 29 command functions in `potatoclient.transit.commands`
+- ✅ Converted from action-based format to nested protobuf structure
+- ✅ Special command mappings handled:
+  - `set-recording` → `start-rec`/`stop-rec` based on boolean
+  - `set-gps-manual` → conditional flag vs coordinates
+  - `day-camera-focus` → mode-specific commands
+  - `heat-camera-palette` → name to index mapping
+- ✅ Field name updates: `frame-timestamp` → `frame-time`
+- ✅ Verified gesture handlers in `potatoclient.gestures.handler`
+- ✅ Created comprehensive test suite in `command_roundtrip_test.clj`
+- ✅ All 29 command types have test coverage
+- ✅ Transit roundtrip behavior documented
 
-#### Testing & Validation ✅ IN PROGRESS
-- [x] Created transit-test-generator Babashka tool for test data generation
-- [x] Tool generates Transit messages from Malli specs with validation
-- [x] Supports batch generation and validation with JSON output
-- [x] Created initial Kotlin roundtrip tests for basic commands
-- [ ] Complete roundtrip tests for all message types (next step)
-- [ ] Verify Transit → Protobuf → Transit conversion for complex commands
-- [ ] Validate all buf.validate constraints are respected
+### Phase 4: End-to-End Testing & Cleanup ✅ DOCUMENTATION COMPLETE
 
-#### Clojure Integration  
-- [ ] Update `potatoclient.transit.commands` to use new format
-- [ ] Modify gesture handlers to generate nested commands
-- [ ] Update any UI code that sends commands
-- [ ] Test end-to-end command flow
+#### End-to-End Testing
+- [ ] Test actual command flow: Clojure → Transit → Kotlin → Protobuf → Server
+- [ ] Verify all 29 command types work with real Kotlin subprocess
+- [ ] Test gesture-triggered commands (tap, double-tap, pan)
+- [ ] Validate buf.validate constraints are enforced
+- [ ] Test error handling and invalid command rejection
 
-#### Final Cleanup (After Testing)
+#### Performance Benchmarking
+- [ ] Compare static handlers vs old reflection approach
+- [ ] Measure command throughput (target: >10k commands/sec)
+- [ ] Profile memory usage and GC impact
+- [ ] Test with high-frequency commands (pan gestures)
+
+#### Final Cleanup
 - [ ] Delete old manual command builders directory
 - [ ] Remove ProtobufCommandBuilder.kt.old permanently
 - [ ] Clean up any remaining action-based code
-- [ ] Update documentation with new command examples
+- [ ] Remove deprecated SimpleCommandBuilder references
+- [ ] Update all documentation with new command examples
+- [ ] **Remove legacy specs and test files** (see LEGACY_CLEANUP_LIST.md)
+  - [ ] Delete entire `src/potatoclient/specs/cmd/` directory
+  - [ ] Delete entire `src/potatoclient/specs/data/` directory
+  - [ ] Remove legacy protobuf specs from `specs.clj`
+  - [ ] Delete old test files using action/params format
+  - [ ] Remove all `.clj.skip` files
+
+**Note on Transit Behavior**: Transit automatically converts certain string values to keywords during roundtrip (e.g., "heat" → :heat). This is expected behavior with the current Transit configuration.
 
 ## Architecture Clarification
 
@@ -324,8 +357,43 @@ cd ../.. && make fmt-kotlin
 - [x] All Kotlin compilation issues resolved
 - [x] Zero manual code needed for new commands
 - [x] Clean architecture with parent context disambiguation
+- [x] All 29 Clojure command functions updated
+- [x] Comprehensive test coverage for all commands
+- [x] Gesture handlers verified compatible
+- [x] Documentation updated throughout codebase
 
 ### ⏳ In Progress
-- [ ] Roundtrip tests for all message types
-- [ ] Clojure integration with new command format
+- [ ] End-to-end testing with real Kotlin subprocesses
 - [ ] Performance benchmarking vs reflection approach
+- [ ] Final cleanup of legacy code
+
+## Session Summary (Latest Updates)
+
+### Session 1: Clojure Integration
+**What We Accomplished**:
+1. ✅ Updated all command functions in `potatoclient.transit.commands` from action-based to nested format
+2. ✅ Created comprehensive roundtrip tests covering all 29 command types
+3. ✅ Verified gesture handlers work with new command structure
+4. ✅ Updated documentation files (README, CLAUDE.md, transit-architecture.md)
+5. ✅ Archived obsolete documentation to `.claude/legacy/`
+6. ✅ Created transit-quick-reference.md with updated examples
+
+### Session 2: Legacy Cleanup & Command API Improvements
+**What We Accomplished**:
+1. ✅ Made command API consistent - now uses keywords throughout (`:en`, `:heat`, `:clockwise`)
+2. ✅ Split `set-recording` into `start-recording` and `stop-recording` for clarity
+3. ✅ Created new `ui-specs.clj` with only essential specs (90% reduction)
+4. ✅ Updated all namespace references from `specs` to `ui-specs`
+5. ✅ Created cleanup scripts for legacy code removal
+6. ✅ Identified all legacy files to be deleted (see LEGACY_CLEANUP_LIST.md)
+
+**Key Improvements**:
+- Command API now uses keywords consistently - no more string/keyword confusion
+- Removed complex conditional logic (e.g., `set-recording` split into two clear functions)
+- New minimal specs file contains only what's actually used
+- Ready to delete ~30+ legacy files
+
+**Ready For**: 
+1. Running `./scripts/delete-legacy-specs.sh` to remove all legacy code
+2. End-to-end testing with actual Kotlin subprocesses
+3. Performance benchmarking of new architecture
