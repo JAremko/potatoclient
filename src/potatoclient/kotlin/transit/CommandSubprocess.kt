@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import potatoclient.java.transit.MessageType
+import potatoclient.kotlin.transit.generated.GeneratedCommandHandlers
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.WebSocket
@@ -32,7 +33,6 @@ class CommandSubprocess(
 ) {
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
-    private val cmdBuilder = ProtobufCommandBuilder.getInstance()
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -68,34 +68,26 @@ class CommandSubprocess(
         val msgId = msg[TransitKeys.MSG_ID] as? String ?: ""
 
         try {
-            val action = payload[TransitKeys.ACTION] as? String ?: "ping"
-            val params = payload[TransitKeys.PARAMS] as? Map<*, *>
+            // The new architecture expects command data directly in payload
+            // Build command using generated handlers
+            val cmd = GeneratedCommandHandlers.buildCommand(payload)
+            
+            wsClient.send(cmd.toByteArray())
+            totalSent.incrementAndGet()
 
-            // Use ProtobufCommandBuilder directly
-            cmdBuilder.buildCommand(action, params).fold(
-                onSuccess = { cmd ->
-                    wsClient.send(cmd.toByteArray())
-                    totalSent.incrementAndGet()
-
-                    // Send success response using direct write (critical path)
-                    transitComm.sendMessageDirect(
-                        messageProtocol.createMessage(
-                            MessageType.RESPONSE,
-                            mapOf(
-                                "action" to action,
-                                "status" to "sent",
-                            ),
-                        ),
-                    )
-                },
-                onFailure = { error ->
-                    // Send error with detailed message
-                    messageProtocol.sendError("Command build failed for '$action': ${error.message}")
-                    // Also send error response
-                    sendError(msgId, error as Exception)
-                },
+            // Send success response using direct write (critical path)
+            transitComm.sendMessageDirect(
+                messageProtocol.createMessage(
+                    MessageType.RESPONSE,
+                    mapOf(
+                        "status" to "sent",
+                    ),
+                ),
             )
         } catch (e: Exception) {
+            // Send error with detailed message
+            messageProtocol.sendError("Command build failed: ${e.message}")
+            // Also send error response
             sendError(msgId, e)
         }
     }

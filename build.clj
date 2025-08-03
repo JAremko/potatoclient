@@ -56,6 +56,10 @@
                            "-jvm-target" "17"
                            kotlin-paths)]
           (when (not= 0 (:exit result))
+            (println "KOTLIN COMPILATION ERROR:")
+            (println (:err result))
+            (println "KOTLIN COMPILATION OUTPUT:")
+            (println (:out result))
             (throw (ex-info "Kotlin compilation failed" {:output (:out result) :error (:err result)})))
           (println "Kotlin compilation successful"))))))
 

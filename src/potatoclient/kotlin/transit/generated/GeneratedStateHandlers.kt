@@ -22,7 +22,7 @@ import ser.JonSharedDataTypes
  * This file is auto-generated from protobuf definitions.
  * DO NOT EDIT - regenerate with: bb generate-kotlin-handlers.clj
  * 
- * Generated on: Sun Aug 03 16:42:04 CEST 2025
+ * Generated on: Sun Aug 03 17:07:09 CEST 2025
  */
 object GeneratedStateHandlers {
     
@@ -181,7 +181,7 @@ object GeneratedStateHandlers {
     private fun extractLrfTarget(msg: JonSharedDataLrf.JonGuiDataTarget): Map<String, Any?> {
         val result = mutableMapOf<String, Any?>()
         
-        result["distance-3b"] = msg.getDistance3b()
+        result["distance-3b"] = msg.getDistance3B()
         result["session-id"] = msg.getSessionId()
         result["uuid-part4"] = msg.getUuidPart4()
         result["uuid-part2"] = msg.getUuidPart2()
@@ -197,7 +197,7 @@ object GeneratedStateHandlers {
         result["observer-elevation"] = msg.getObserverElevation()
         result["observer-azimuth"] = msg.getObserverAzimuth()
         result["observer-longitude"] = msg.getObserverLongitude()
-        result["distance-2d"] = msg.getDistance2d()
+        result["distance-2d"] = msg.getDistance2D()
         result["observer-latitude"] = msg.getObserverLatitude()
         result["target-longitude"] = msg.getTargetLongitude()
         result["timestamp"] = msg.getTimestamp()
@@ -407,4 +407,8 @@ class GeneratedStateWriteHandler : WriteHandler<JonSharedData.JonGUIState, Any> 
     override fun rep(o: JonSharedData.JonGUIState): Any {
         return GeneratedStateHandlers.extractState(o)
     }
+    
+    override fun stringRep(o: JonSharedData.JonGUIState): String? = null
+    
+    override fun <V : Any> getVerboseHandler(): WriteHandler<JonSharedData.JonGUIState, V>? = null
 }

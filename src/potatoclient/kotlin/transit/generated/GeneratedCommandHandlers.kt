@@ -25,7 +25,7 @@ import cmd.System.JonSharedCmdSystem
  * This file is auto-generated from protobuf definitions.
  * DO NOT EDIT - regenerate with: bb generate-kotlin-handlers.clj
  * 
- * Generated on: Sun Aug 03 16:42:04 CEST 2025
+ * Generated on: Sun Aug 03 17:07:09 CEST 2025
  */
 object GeneratedCommandHandlers {
     
@@ -3389,8 +3389,8 @@ object GeneratedCommandHandlers {
             
             when (key.toString()) {
                 "index" -> builder.setIndex(convertInt(value))
-                "DayZoomTableValue" -> builder.setDayzoomtablevalue(convertInt(value))
-                "HeatZoomTableValue" -> builder.setHeatzoomtablevalue(convertInt(value))
+                "DayZoomTableValue" -> builder.setDayZoomTableValue(convertInt(value))
+                "HeatZoomTableValue" -> builder.setHeatZoomTableValue(convertInt(value))
                 "azimuth" -> builder.setAzimuth(convertDouble(value))
                 "elevation" -> builder.setElevation(convertDouble(value))
                 "linger" -> builder.setLinger(convertDouble(value))
@@ -3924,8 +3924,8 @@ object GeneratedCommandHandlers {
             
             when (key.toString()) {
                 "index" -> builder.setIndex(convertInt(value))
-                "DayZoomTableValue" -> builder.setDayzoomtablevalue(convertInt(value))
-                "HeatZoomTableValue" -> builder.setHeatzoomtablevalue(convertInt(value))
+                "DayZoomTableValue" -> builder.setDayZoomTableValue(convertInt(value))
+                "HeatZoomTableValue" -> builder.setHeatZoomTableValue(convertInt(value))
                 "azimuth" -> builder.setAzimuth(convertDouble(value))
                 "elevation" -> builder.setElevation(convertDouble(value))
                 "linger" -> builder.setLinger(convertDouble(value))
@@ -7155,7 +7155,7 @@ object GeneratedCommandHandlers {
 /**
  * Transit read handler for command messages
  */
-class GeneratedCommandReadHandler : ReadHandler<Map<*, *>, Message> {
+class GeneratedCommandReadHandler : ReadHandler<Message, Map<*, *>> {
     override fun fromRep(rep: Map<*, *>): Message {
         return GeneratedCommandHandlers.buildCommand(rep)
     }
@@ -7170,4 +7170,8 @@ class GeneratedCommandWriteHandler : WriteHandler<JonSharedCmd.Root, Any> {
     override fun rep(o: JonSharedCmd.Root): Any {
         return GeneratedCommandHandlers.extractCommand(o)
     }
+    
+    override fun stringRep(o: JonSharedCmd.Root): String? = null
+    
+    override fun <V : Any> getVerboseHandler(): WriteHandler<JonSharedCmd.Root, V>? = null
 }
