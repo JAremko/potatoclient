@@ -285,6 +285,14 @@ Tests use Transit-based architecture with proper isolation:
 - App-db reset fixtures for test isolation
 - Condition waiting helpers for async testing
 
+**Malli Generator Validation Tests** (NEW):
+- `test/potatoclient/transit/malli_generation_test.clj` - Verifies Malli generates valid data
+- `test/potatoclient/transit/simple_malli_validation_test.clj` - Tests command creation from generated data
+- `test/potatoclient/transit/sanity_check_validation_test.clj` - Ensures each validation stage signals failures
+- `test/potatoclient/kotlin_malli_integration_test.clj` - Full Kotlin validation integration
+- `test/kotlin/potatoclient/kotlin/transit/ValidatorSanityTest.kt` - Kotlin-side validation tests
+- `test/kotlin/potatoclient/kotlin/transit/MalliPayloadValidator.kt` - Standalone validation tool
+
 **Test Categories**:
 - **Unit Tests**: Transit encoding/decoding, command generation, state management
 - **Integration Tests**: Subprocess communication, event handling, app-db updates

@@ -10,8 +10,11 @@
 (defn write-transit-to-temp-file
   "Write a Transit command to a temporary file"
   [command]
-  (let [temp-file (File/createTempFile "transit-test-" ".msgpack")]
-    (transit-core/write-transit-to-file command (.getAbsolutePath temp-file))
+  (let [temp-file (File/createTempFile "transit-test-" ".msgpack")
+        out (java.io.FileOutputStream. temp-file)
+        writer (transit-core/make-writer out)]
+    (transit-core/write-message! writer command out)
+    (.close out)
     temp-file))
 
 (defn validate-command-with-kotlin
@@ -47,8 +50,11 @@
     (try
       ;; Write each command to a file
       (doseq [[idx command] (map-indexed vector commands)]
-        (let [cmd-file (File. (.toFile temp-dir) (str "cmd-" idx ".msgpack"))]
-          (transit-core/write-transit-to-file command (.getAbsolutePath cmd-file))
+        (let [cmd-file (File. (.toFile temp-dir) (str "cmd-" idx ".msgpack"))
+              out (java.io.FileOutputStream. cmd-file)
+              writer (transit-core/make-writer out)]
+          (transit-core/write-message! writer command out)
+          (.close out)
           
           ;; Run through TestCommandProcessor
           (let [result (shell/sh "java"

@@ -18,13 +18,28 @@
   - `statePub/` - State management patterns
 
 ### Test Files
-- **Location**: `./test/potatoclient/cmd/`
-- **Purpose**: Comprehensive test coverage for command system
+
+#### Transit and Command Tests
+- **Location**: `./test/potatoclient/transit/`
+- **Purpose**: Transit-based command and validation testing
 - **Key files**:
-  - `comprehensive_command_test.clj` - Tests all 200+ commands
-  - `generator_test.clj` - Property-based testing
-  - `validation_safety_test.clj` - Boundary validation tests
-  - `test_helpers.clj` - Enum conversion helpers
+  - `command_roundtrip_test.clj` - Tests all 29 command types
+  - `malli_generation_test.clj` - Malli generator validation
+  - `simple_malli_validation_test.clj` - Basic command generation
+  - `sanity_check_validation_test.clj` - Pipeline sanity checks
+  - `generator_roundtrip_test.clj` - Property-based testing
+  - `kotlin_generator_validation_test.clj` - Full Kotlin integration
+  - `VALIDATION_SANITY_CHECKS.md` - Validation documentation
+
+#### Kotlin Tests
+- **Location**: `./test/kotlin/potatoclient/kotlin/transit/`
+- **Purpose**: Kotlin-side validation and integration
+- **Key files**:
+  - `TestCommandProcessor.kt` - Enhanced command processor for testing
+  - `ValidatorSanityTest.kt` - buf.validate constraint tests
+  - `MalliPayloadValidator.kt` - Standalone validation tool
+  - `BufValidateTest.kt` - Protobuf validation tests
+  - `GeneratedHandlersRoundtripTest.kt` - Handler roundtrip tests
 
 ### Documentation
 - **Main docs**:
@@ -35,6 +50,9 @@
   - `protobuf-command-system.md` - Protobuf implementation details
   - `kotlin-subprocess.md` - Kotlin video streaming architecture
   - `linting-guide.md` - Code quality tools
+  - `malli-validation-testing.md` - Comprehensive validation testing guide
+  - `transit-architecture.md` - Transit-based IPC architecture
+  - `transit-protocol.md` - Message protocol specification
 
 ## Important Files for Command System
 

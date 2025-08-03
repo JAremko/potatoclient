@@ -246,11 +246,29 @@ when (msg.msgType) {
 - `transit_minimal_test.clj` - Basic integration test
 - `transit_integration_test.clj` - Full integration scenarios
 
+### Malli Generator Validation Tests (NEW)
+Comprehensive validation testing with generated data:
+- `malli_generation_test.clj` - Tests Malli generates valid command parameters
+- `simple_malli_validation_test.clj` - Verifies generated data creates valid commands
+- `sanity_check_validation_test.clj` - Ensures each validation stage signals failures
+- `kotlin_malli_integration_test.clj` - Full Kotlin validation integration
+- `ValidatorSanityTest.kt` - Kotlin-side validation verification
+
+Each validation stage is verified to work:
+1. **Guardrails** - Catches invalid function arguments
+2. **Transit** - Detects corrupted data
+3. **Kotlin handlers** - Reject invalid structures
+4. **Protobuf** - Enforces required fields
+5. **buf.validate** - Validates constraints
+6. **Binary roundtrip** - Preserves data integrity
+7. **Java equals** - Detects differences
+
 ### Test Strategy
 - Mock subprocesses for unit tests
 - Test Transit serialization/deserialization
 - Verify message envelope structure
 - Test rate limiting and debouncing logic
+- Generate edge cases with Malli for comprehensive coverage
 
 ## Configuration
 
