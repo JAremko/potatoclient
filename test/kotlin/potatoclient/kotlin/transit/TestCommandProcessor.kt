@@ -2,6 +2,7 @@ package potatoclient.kotlin.transit
 
 import build.buf.protovalidate.Validator
 import build.buf.protovalidate.ValidationResult
+import cmd.JonSharedCmd
 import com.cognitect.transit.TransitFactory
 import com.google.protobuf.Message
 import com.google.protobuf.util.JsonFormat
@@ -29,10 +30,28 @@ class TestCommandProcessor {
             val proto = GeneratedCommandHandlers.buildCommand(commandMap)
             
             if (proto != null) {
+                // Validate with buf.validate
+                val validator = Validator.newBuilder().build()
+                val validationResult = validator.validate(proto)
+                
+                if (!validationResult.isSuccess) {
+                    val violations = validationResult.violations.violationsList
+                        .joinToString(", ") { "${it.fieldPath}: ${it.message}" }
+                    return """{"success": false, "error": "Validation failed: $violations"}"""
+                }
+                
+                // Test binary roundtrip
+                val binary = proto.toByteArray()
+                val deserialized = cmd.JonSharedCmd.Root.parseFrom(binary)
+                
+                // Check equality
+                val protoEquals = proto == deserialized
+                
                 // Convert to JSON with sorted keys
                 val json = jsonPrinter.print(proto)
-                // Wrap in success envelope
-                """{"success": true, "proto": $json}"""
+                
+                // Wrap in success envelope with additional info
+                """{"success": true, "proto": $json, "binary-size": ${binary.size}, "proto-equals": $protoEquals}"""
             } else {
                 """{"success": false, "error": "Failed to build command from map"}"""
             }
