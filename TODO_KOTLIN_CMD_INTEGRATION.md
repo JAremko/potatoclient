@@ -8,6 +8,9 @@ This document tracks the remaining work to finalize the Kotlin command system in
 Proto-Explorer is an essential tool for discovering the correct protobuf class names, field names, and structure. Use it before making any code changes.
 
 ### Basic Usage Workflow
+
+**Note**: Proto-Explorer now outputs JSON by default for easy tool integration!
+
 ```bash
 # 1. Find specs using fuzzy search (from proto-explorer directory)
 cd tools/proto-explorer
@@ -15,18 +18,31 @@ bb find "track"           # Find all track-related specs
 bb find "start track"     # Multi-word search
 bb find CV                # Find all CV-related specs
 
+# JSON output example:
+{
+  "found" : 2,
+  "specs" : [ {
+    "spec" : "potatoclient.specs.cmd.CV/start-track-ndc",
+    "namespace" : "potatoclient.specs.cmd.CV",
+    "name" : "start-track-ndc"
+  }, ... ]
+}
+
 # 2. Get exact spec definition with constraints
 bb spec :potatoclient.specs.cmd.CV/start-track-ndc
-# Returns: [:map [:channel [:not [:enum [0]]]] [:x [:and [:maybe :double] [:>= -1] [:<= 1]]] ...]
+# Returns JSON with definition
 
 # 3. Generate example data respecting constraints
 bb example :potatoclient.specs.cmd.CV/start-track-ndc
-# Returns: {:channel 1, :x 0.5, :y -0.3, :frame-time 12345}
+# Returns: {"spec": "...", "example": {"channel": 1, "x": 0.5, "y": -0.3}}
 
 # 4. Get Java class information (slower - starts JVM)
 bb java-class StartTrackNDC
 bb java-fields StartTrackNDC
 bb java-builder StartTrackNDC
+
+# 5. Use EDN output if needed (for Clojure tools)
+./proto-explorer --edn find "track"
 ```
 
 ### Finding Correct Protobuf Names
@@ -51,12 +67,14 @@ bb java-class "cmd.CV.JonSharedCmdCv\$StartTrackNDC"
 ```
 
 ### Proto-Explorer Key Features
+- **JSON output by default**: Easy integration with tools and scripts
 - **Fuzzy search**: Typo-tolerant, case-insensitive searching
 - **Constraint awareness**: Shows buf.validate constraints in specs
 - **Example generation**: Creates valid test data respecting all constraints
 - **Java reflection**: Can inspect actual protobuf classes (via JVM)
 - **Batch processing**: Can process multiple queries via stdin
 - **Proto type mapping**: Auto-generates domain→Java class mapping
+- **EDN output option**: Use `./proto-explorer --edn` for Clojure tools
 
 ### Regenerating Proto Type Mapping
 When protobuf definitions change, regenerate the mapping:
@@ -64,6 +82,29 @@ When protobuf definitions change, regenerate the mapping:
 cd tools/proto-explorer
 bb generate-proto-mapping
 # Generates: shared/specs/protobuf/proto_type_mapping.clj
+```
+
+### Batch Processing with Proto-Explorer
+For complex investigations, use batch mode:
+```bash
+# Create batch queries
+cat > queries.edn <<EOF
+[{:op :find :pattern "rotary"}
+ {:op :spec :spec :potatoclient.specs.cmd.RotaryPlatform/rotate-to-ndc}
+ {:op :example :spec :potatoclient.specs.cmd.RotaryPlatform/rotate-to-ndc}]
+EOF
+
+# Execute batch
+bb batch < queries.edn
+
+# Returns JSON with all results:
+{
+  "batch-results" : [ 
+    {"op": "find", "pattern": "rotary", "results": [...]},
+    {"op": "spec", "spec": "...", "definition": [...]},
+    {"op": "example", "spec": "...", "example": {...}}
+  ]
+}
 ```
 
 ## Phase 1: Kotlin Command System Finalization
@@ -125,6 +166,28 @@ Proto-explorer now generates a mapping from command domains to Java protobuf cla
  ;; ... etc
 }
 ```
+
+**Handling Nested Protobuf Structures**:
+The mapping correctly handles deeply nested protobuf structures like those in `jon_shared_cmd_rotary.proto`:
+
+```protobuf
+// Proto structure
+package cmd.RotaryPlatform;
+
+message Root {
+  oneof cmd {
+    RotateToNDC rotate_to_ndc = 12;
+    ScanStart scan_start = 13;
+    // ... many more nested messages
+  }
+}
+```
+
+This generates the Java class `cmd.RotaryPlatform.JonSharedCmdRotary$Root` which contains all nested command types. The inference function correctly maps:
+- `{:rotary-platform {:rotate-to-ndc {:x 0.5}}}` → `"cmd.RotaryPlatform.JonSharedCmdRotary$Root"`
+- `{:cv {:start-track-ndc {:channel 1}}}` → `"cmd.CV.JonSharedCmdCv$Root"`
+
+The Root message type contains the oneof with all possible commands for that domain.
 
 **Clojure Side:**
 ```clojure
