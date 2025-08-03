@@ -3,6 +3,7 @@ package potatoclient.kotlin.transit
 import cmd.JonSharedCmd
 import com.cognitect.transit.TransitFactory
 import potatoclient.transit.ActionRegistry
+import potatoclient.kotlin.transit.builders.*
 
 /**
  * Command builder that uses Action Registry for validation and delegates
@@ -60,7 +61,7 @@ class ProtobufCommandBuilder {
                 action == "frozen" -> buildFrozen()
                 
                 // Rotary commands
-                action.startsWith("rotary-") -> RotaryCommandBuilder.build(action, paramsMap)
+                action.startsWith("rotary-") -> RotaryPlatformCommandBuilder.build(action, paramsMap)
                 
                 // CV commands
                 action.startsWith("cv-") -> CVCommandBuilder.build(action, paramsMap)
@@ -69,17 +70,13 @@ class ProtobufCommandBuilder {
                 action.startsWith("system-") -> SystemCommandBuilder.build(action, paramsMap)
                 
                 // GPS commands
-                action.startsWith("gps-") -> GPSCommandBuilder.build(action, paramsMap)
+                action.startsWith("gps-") -> GpsCommandBuilder.build(action, paramsMap)
                 
                 // Compass commands
                 action.startsWith("compass-") -> CompassCommandBuilder.build(action, paramsMap)
                 
                 // LRF commands
-                action.startsWith("lrf-") && !action.startsWith("lrf-align-") -> 
-                    LRFCommandBuilder.build(action, paramsMap)
-                
-                // LRF Align commands
-                action.startsWith("lrf-align-") -> LRFAlignCommandBuilder.build(action, paramsMap)
+                action.startsWith("lrf-") -> LrfCommandBuilder.build(action, paramsMap)
                 
                 // Day camera commands
                 action.startsWith("day-camera-") -> DayCameraCommandBuilder.build(action, paramsMap)
@@ -91,14 +88,13 @@ class ProtobufCommandBuilder {
                 action.startsWith("osd-") -> OSDCommandBuilder.build(action, paramsMap)
                 
                 // Glass heater commands
-                action.startsWith("glass-heater-") -> GlassHeaterCommandBuilder.build(action, paramsMap)
+                action.startsWith("glass-heater-") -> DayCamGlassHeaterCommandBuilder.build(action, paramsMap)
                 
                 // LIRA commands
-                action.startsWith("lira-") -> LIRACommandBuilder.build(action, paramsMap)
+                action.startsWith("lira-") -> LiraCommandBuilder.build(action, paramsMap)
                 
-                else -> Result.failure(
-                    IllegalArgumentException("No builder available for command: $action")
-                )
+                // For now, delegate all others to SimpleCommandBuilder
+                else -> SimpleCommandBuilder.getInstance().buildCommand(msgData)
             }
         } catch (e: Exception) {
             Result.failure(CommandBuildException(action, e))

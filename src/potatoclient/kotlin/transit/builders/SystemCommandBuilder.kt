@@ -1,42 +1,33 @@
-package potatoclient.kotlin.transit
+package potatoclient.kotlin.transit.builders
 
 import cmd.JonSharedCmd
 import cmd.System.JonSharedCmdSystem
 import com.cognitect.transit.TransitFactory
-import ser.JonSharedDataTypes
 
 /**
- * Builder for system control commands
+ * Builder for System commands
+ * Generated from protobuf specs
  */
 object SystemCommandBuilder {
     
     fun build(action: String, params: Map<*, *>): Result<JonSharedCmd.Root> {
         val systemMsg = when (action) {
-            // Power control
-            "system-reboot" -> buildReboot()
-            "system-power-off" -> buildPowerOff()
-            
-            // Configuration
-            "system-reset-configs" -> buildResetConfigs()
-            "system-set-localization" -> buildSetLocalization(params)
-            
-            // Process control
-            "system-start-all" -> buildStartAll()
-            "system-stop-all" -> buildStopAll()
-            
-            // Recording
-            "system-start-recording" -> buildStartRecording()
-            "system-stop-recording" -> buildStopRecording()
-            "system-mark-rec-important" -> buildMarkRecImportant()
-            "system-unmark-rec-important" -> buildUnmarkRecImportant()
-            
-            // Modes
-            "system-enter-transport" -> buildEnterTransport()
             "system-enable-geodesic-mode" -> buildEnableGeodesicMode()
+            "system-unmark-rec-important" -> buildUnmarkRecImportant()
+            "system-stop-rec" -> buildStopRec()
+            "system-stop-a-ll" -> buildStopALl()
+            "system-reboot" -> buildReboot()
+            "system-start-rec" -> buildStartRec()
+            "system-power-off" -> buildPowerOff()
+            "system-set-localization" -> buildSetLocalization()
+            "system-reset-configs" -> buildResetConfigs()
             "system-disable-geodesic-mode" -> buildDisableGeodesicMode()
+            "system-enter-transport" -> buildEnterTransport()
+            "system-mark-rec-important" -> buildMarkRecImportant()
+            "system-start-a-ll" -> buildStartALl()
             
             else -> return Result.failure(
-                IllegalArgumentException("Unknown system command: $action")
+                IllegalArgumentException("Unknown System command: $action")
             )
         }
         
@@ -48,110 +39,81 @@ object SystemCommandBuilder {
         }
     }
     
-    // Power control
-    private fun buildReboot(): Result<JonSharedCmdSystem.Root> = Result.success(
+    private fun buildEnableGeodesicMode(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
-            .setReboot(JonSharedCmdSystem.Reboot.newBuilder().build())
+            .setEnableGeodesicMode(JonSharedCmdSystem.EnableGeodesicMode.newBuilder().build())
             .build()
     )
-    
-    private fun buildPowerOff(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setPowerOff(JonSharedCmdSystem.PowerOff.newBuilder().build())
-            .build()
-    )
-    
-    // Configuration
-    private fun buildResetConfigs(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setResetConfigs(JonSharedCmdSystem.ResetConfigs.newBuilder().build())
-            .build()
-    )
-    
-    private fun buildSetLocalization(params: Map<*, *>): Result<JonSharedCmdSystem.Root> {
-        val localization = getStringParam(params, "localization")
-            ?: return Result.failure(IllegalArgumentException("Missing localization parameter"))
-        
-        val loc = parseLocalization(localization)
-        val setLocalization = JonSharedCmdSystem.SetLocalization.newBuilder()
-            .setLoc(loc)
-            .build()
-        
-        return Result.success(
-            JonSharedCmdSystem.Root.newBuilder()
-                .setLocalization(setLocalization)
-                .build()
-        )
-    }
-    
-    // Process control
-    private fun buildStartAll(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setStartAll(JonSharedCmdSystem.StartALl.newBuilder().build())
-            .build()
-    )
-    
-    private fun buildStopAll(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setStopAll(JonSharedCmdSystem.StopALl.newBuilder().build())
-            .build()
-    )
-    
-    // Recording
-    private fun buildStartRecording(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setStartRec(JonSharedCmdSystem.StartRec.newBuilder().build())
-            .build()
-    )
-    
-    private fun buildStopRecording(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setStopRec(JonSharedCmdSystem.StopRec.newBuilder().build())
-            .build()
-    )
-    
-    private fun buildMarkRecImportant(): Result<JonSharedCmdSystem.Root> = Result.success(
-        JonSharedCmdSystem.Root.newBuilder()
-            .setMarkRecImportant(JonSharedCmdSystem.MarkRecImportant.newBuilder().build())
-            .build()
-    )
-    
+
     private fun buildUnmarkRecImportant(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
             .setUnmarkRecImportant(JonSharedCmdSystem.UnmarkRecImportant.newBuilder().build())
             .build()
     )
-    
-    // Modes
+
+    private fun buildStopRec(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setStopRec(JonSharedCmdSystem.StopRec.newBuilder().build())
+            .build()
+    )
+
+    private fun buildStopALl(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setStopALl(JonSharedCmdSystem.StopALl.newBuilder().build())
+            .build()
+    )
+
+    private fun buildReboot(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setReboot(JonSharedCmdSystem.Reboot.newBuilder().build())
+            .build()
+    )
+
+    private fun buildStartRec(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setStartRec(JonSharedCmdSystem.StartRec.newBuilder().build())
+            .build()
+    )
+
+    private fun buildPowerOff(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setPowerOff(JonSharedCmdSystem.PowerOff.newBuilder().build())
+            .build()
+    )
+
+    private fun buildSetLocalization(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setSetLocalization(JonSharedCmdSystem.SetLocalization.newBuilder().build())
+            .build()
+    )
+
+    private fun buildResetConfigs(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setResetConfigs(JonSharedCmdSystem.ResetConfigs.newBuilder().build())
+            .build()
+    )
+
+    private fun buildDisableGeodesicMode(): Result<JonSharedCmdSystem.Root> = Result.success(
+        JonSharedCmdSystem.Root.newBuilder()
+            .setDisableGeodesicMode(JonSharedCmdSystem.DisableGeodesicMode.newBuilder().build())
+            .build()
+    )
+
     private fun buildEnterTransport(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
             .setEnterTransport(JonSharedCmdSystem.EnterTransport.newBuilder().build())
             .build()
     )
-    
-    private fun buildEnableGeodesicMode(): Result<JonSharedCmdSystem.Root> = Result.success(
+
+    private fun buildMarkRecImportant(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
-            .setGeodesicModeEnable(JonSharedCmdSystem.EnableGeodesicMode.newBuilder().build())
+            .setMarkRecImportant(JonSharedCmdSystem.MarkRecImportant.newBuilder().build())
             .build()
     )
-    
-    private fun buildDisableGeodesicMode(): Result<JonSharedCmdSystem.Root> = Result.success(
+
+    private fun buildStartALl(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
-            .setGeodesicModeDisable(JonSharedCmdSystem.DisableGeodesicMode.newBuilder().build())
+            .setStartALl(JonSharedCmdSystem.StartALl.newBuilder().build())
             .build()
     )
-    
-    // Helper functions
-    private fun getStringParam(params: Map<*, *>, key: String): String? {
-        return params[key] as? String ?: params[TransitFactory.keyword(key)] as? String
-    }
-    
-    private fun parseLocalization(locStr: String): JonSharedDataTypes.JonGuiDataSystemLocalizations =
-        when (locStr.lowercase()) {
-            "en", "english" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
-            "ua", "ukrainian" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
-            "cs", "czech" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_CS
-            "ar", "arabic" -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
-            else -> JonSharedDataTypes.JonGuiDataSystemLocalizations.JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
-        }
 }
