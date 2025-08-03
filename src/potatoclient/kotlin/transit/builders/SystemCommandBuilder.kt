@@ -100,13 +100,13 @@ object SystemCommandBuilder {
     // Recording
     private fun buildStartRecording(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
-            .setStartRecording(JonSharedCmdSystem.StartRecording.newBuilder().build())
+            .setStartRec(JonSharedCmdSystem.StartRec.newBuilder().build())
             .build()
     )
     
     private fun buildStopRecording(): Result<JonSharedCmdSystem.Root> = Result.success(
         JonSharedCmdSystem.Root.newBuilder()
-            .setStopRecording(JonSharedCmdSystem.StopRecording.newBuilder().build())
+            .setStopRec(JonSharedCmdSystem.StopRec.newBuilder().build())
             .build()
     )
     

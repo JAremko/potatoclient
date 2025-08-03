@@ -11,17 +11,19 @@ object OSDCommandBuilder {
     
     fun build(action: String, params: Map<*, *>): Result<JonSharedCmd.Root> {
         val osdMsg = when (action) {
-            // Visibility commands
-            "osd-show" -> buildShow()
-            "osd-hide" -> buildHide()
+            // Screen display commands
+            "osd-show-default-screen" -> buildShowDefaultScreen()
+            "osd-show-lrf-measure-screen" -> buildShowLrfMeasureScreen()
+            "osd-show-lrf-result-screen" -> buildShowLrfResultScreen()
+            "osd-show-lrf-result-simplified-screen" -> buildShowLrfResultSimplifiedScreen()
             
-            // Brightness control
-            "osd-set-brightness" -> buildSetBrightness(params)
+            // Heat OSD commands
+            "osd-enable-heat-osd" -> buildEnableHeatOsd()
+            "osd-disable-heat-osd" -> buildDisableHeatOsd()
             
-            // Navigation
-            "osd-next-page" -> buildNextPage()
-            "osd-prev-page" -> buildPrevPage()
-            "osd-set-page" -> buildSetPage(params)
+            // Day OSD commands
+            "osd-enable-day-osd" -> buildEnableDayOsd()
+            "osd-disable-day-osd" -> buildDisableDayOsd()
             
             else -> return Result.failure(
                 IllegalArgumentException("Unknown OSD command: $action")
@@ -36,59 +38,53 @@ object OSDCommandBuilder {
         }
     }
     
-    private fun buildShow(): Result<JonSharedCmdOsd.Root> = Result.success(
+    private fun buildShowDefaultScreen(): Result<JonSharedCmdOsd.Root> = Result.success(
         JonSharedCmdOsd.Root.newBuilder()
-            .setShow(JonSharedCmdOsd.Show.newBuilder().build())
+            .setShowDefaultScreen(JonSharedCmdOsd.ShowDefaultScreen.newBuilder().build())
             .build()
     )
     
-    private fun buildHide(): Result<JonSharedCmdOsd.Root> = Result.success(
+    private fun buildShowLrfMeasureScreen(): Result<JonSharedCmdOsd.Root> = Result.success(
         JonSharedCmdOsd.Root.newBuilder()
-            .setHide(JonSharedCmdOsd.Hide.newBuilder().build())
+            .setShowLrfMeasureScreen(JonSharedCmdOsd.ShowLRFMeasureScreen.newBuilder().build())
             .build()
     )
     
-    private fun buildSetBrightness(params: Map<*, *>): Result<JonSharedCmdOsd.Root> {
-        val value = getIntParam(params, "value")
-            ?: return Result.failure(IllegalArgumentException("Missing value parameter"))
-        
-        val setBrightness = JonSharedCmdOsd.SetBrightness.newBuilder()
-            .setValue(value)
-            .build()
-        
-        return Result.success(
-            JonSharedCmdOsd.Root.newBuilder()
-                .setSetBrightness(setBrightness)
-                .build()
-        )
-    }
-    
-    private fun buildNextPage(): Result<JonSharedCmdOsd.Root> = Result.success(
+    private fun buildShowLrfResultScreen(): Result<JonSharedCmdOsd.Root> = Result.success(
         JonSharedCmdOsd.Root.newBuilder()
-            .setNextPage(JonSharedCmdOsd.NextPage.newBuilder().build())
+            .setShowLrfResultScreen(JonSharedCmdOsd.ShowLRFResultScreen.newBuilder().build())
             .build()
     )
     
-    private fun buildPrevPage(): Result<JonSharedCmdOsd.Root> = Result.success(
+    private fun buildShowLrfResultSimplifiedScreen(): Result<JonSharedCmdOsd.Root> = Result.success(
         JonSharedCmdOsd.Root.newBuilder()
-            .setPrevPage(JonSharedCmdOsd.PrevPage.newBuilder().build())
+            .setShowLrfResultSimplifiedScreen(JonSharedCmdOsd.ShowLRFResultSimplifiedScreen.newBuilder().build())
             .build()
     )
     
-    private fun buildSetPage(params: Map<*, *>): Result<JonSharedCmdOsd.Root> {
-        val value = getIntParam(params, "value")
-            ?: return Result.failure(IllegalArgumentException("Missing value parameter"))
-        
-        val setPage = JonSharedCmdOsd.SetPage.newBuilder()
-            .setValue(value)
+    private fun buildEnableHeatOsd(): Result<JonSharedCmdOsd.Root> = Result.success(
+        JonSharedCmdOsd.Root.newBuilder()
+            .setEnableHeatOsd(JonSharedCmdOsd.EnableHeatOSD.newBuilder().build())
             .build()
-        
-        return Result.success(
-            JonSharedCmdOsd.Root.newBuilder()
-                .setSetPage(setPage)
-                .build()
-        )
-    }
+    )
+    
+    private fun buildDisableHeatOsd(): Result<JonSharedCmdOsd.Root> = Result.success(
+        JonSharedCmdOsd.Root.newBuilder()
+            .setDisableHeatOsd(JonSharedCmdOsd.DisableHeatOSD.newBuilder().build())
+            .build()
+    )
+    
+    private fun buildEnableDayOsd(): Result<JonSharedCmdOsd.Root> = Result.success(
+        JonSharedCmdOsd.Root.newBuilder()
+            .setEnableDayOsd(JonSharedCmdOsd.EnableDayOSD.newBuilder().build())
+            .build()
+    )
+    
+    private fun buildDisableDayOsd(): Result<JonSharedCmdOsd.Root> = Result.success(
+        JonSharedCmdOsd.Root.newBuilder()
+            .setDisableDayOsd(JonSharedCmdOsd.DisableDayOSD.newBuilder().build())
+            .build()
+    )
     
     // Helper functions
     private fun getIntParam(params: Map<*, *>, key: String): Int? {

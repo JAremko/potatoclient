@@ -7,7 +7,7 @@
 
 (def vampire-mode-disable "Schema for vampire-mode-disable" [:map])
 
-(def root "Schema for root" [:map [:cmd [:oneof {:vampire-mode-enable [:map [:vampire-mode-enable [:maybe :cmd/vampire-mode-enable]]], :vampire-mode-disable [:map [:vampire-mode-disable [:maybe :cmd/vampire-mode-disable]]], :dump-stop [:map [:dump-stop [:maybe :cmd/dump-stop]]], :stabilization-mode-disable [:map [:stabilization-mode-disable [:maybe :cmd/stabilization-mode-disable]]], :set-auto-focus [:map [:set-auto-focus [:maybe :cmd/set-auto-focus]]], :start-track-ndc [:map [:start-track-ndc [:maybe :cmd/start-track-ndc]]], :dump-start [:map [:dump-start [:maybe :cmd/dump-start]]], :stop-track [:map [:stop-track [:maybe :cmd/stop-track]]], :stabilization-mode-enable [:map [:stabilization-mode-enable [:maybe :cmd/stabilization-mode-enable]]]}]]])
+(def root "Schema for root" [:map [:cmd [:oneof {:vampire-mode-enable [:map [:vampire-mode-enable :cmd/vampire-mode-enable]], :vampire-mode-disable [:map [:vampire-mode-disable :cmd/vampire-mode-disable]], :dump-stop [:map [:dump-stop :cmd/dump-stop]], :stabilization-mode-disable [:map [:stabilization-mode-disable :cmd/stabilization-mode-disable]], :set-auto-focus [:map [:set-auto-focus :cmd/set-auto-focus]], :start-track-ndc [:map [:start-track-ndc :cmd/start-track-ndc]], :dump-start [:map [:dump-start :cmd/dump-start]], :stop-track [:map [:stop-track :cmd/stop-track]], :stabilization-mode-enable [:map [:stabilization-mode-enable :cmd/stabilization-mode-enable]]}]]])
 
 (def dump-stop "Schema for dump-stop" [:map])
 

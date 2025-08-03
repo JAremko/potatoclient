@@ -12,44 +12,54 @@ public class OSDCommands {
      * Initialize and register all OSD commands
      */
     public static void initialize() {
-        // Visibility commands
+        // Screen display commands
         ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-show")
-                .description("Show OSD")
+            new ActionDefinition.Builder("osd-show-default-screen")
+                .description("Show default OSD screen")
                 .build()
         );
         
         ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-hide")
-                .description("Hide OSD")
-                .build()
-        );
-        
-        // Brightness control
-        ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-set-brightness")
-                .description("Set OSD brightness")
-                .required("value")
-                .build()
-        );
-        
-        // Navigation
-        ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-next-page")
-                .description("Go to next OSD page")
+            new ActionDefinition.Builder("osd-show-lrf-measure-screen")
+                .description("Show LRF measure screen")
                 .build()
         );
         
         ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-prev-page")
-                .description("Go to previous OSD page")
+            new ActionDefinition.Builder("osd-show-lrf-result-screen")
+                .description("Show LRF result screen")
                 .build()
         );
         
         ActionRegistry.registerAction(
-            new ActionDefinition.Builder("osd-set-page")
-                .description("Set OSD page")
-                .required("value")
+            new ActionDefinition.Builder("osd-show-lrf-result-simplified-screen")
+                .description("Show LRF result simplified screen")
+                .build()
+        );
+        
+        // Heat OSD commands
+        ActionRegistry.registerAction(
+            new ActionDefinition.Builder("osd-enable-heat-osd")
+                .description("Enable heat camera OSD")
+                .build()
+        );
+        
+        ActionRegistry.registerAction(
+            new ActionDefinition.Builder("osd-disable-heat-osd")
+                .description("Disable heat camera OSD")
+                .build()
+        );
+        
+        // Day OSD commands
+        ActionRegistry.registerAction(
+            new ActionDefinition.Builder("osd-enable-day-osd")
+                .description("Enable day camera OSD")
+                .build()
+        );
+        
+        ActionRegistry.registerAction(
+            new ActionDefinition.Builder("osd-disable-day-osd")
+                .description("Disable day camera OSD")
                 .build()
         );
     }

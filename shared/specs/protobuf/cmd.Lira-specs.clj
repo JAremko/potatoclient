@@ -3,7 +3,7 @@
 ;; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed
 ;; These will be replaced with actual implementations when loaded
 
-(def root "Schema for root" [:map [:cmd [:oneof {:refine-target [:map [:refine-target [:maybe :cmd/refine_target]]]}]]])
+(def root "Schema for root" [:map [:cmd [:oneof {:refine-target [:map [:refine-target :cmd/refine_target]]}]]])
 
 (def refine_target "Schema for refine_target" [:map [:target [:maybe :cmd/jon-gui-data-lira-target]]])
 

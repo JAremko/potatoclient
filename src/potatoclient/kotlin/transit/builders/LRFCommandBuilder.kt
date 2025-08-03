@@ -161,11 +161,14 @@ object LRFCommandBuilder {
         return params[key] as? String ?: params[TransitFactory.keyword(key)] as? String
     }
     
-    private fun parseScanMode(modeStr: String): JonSharedDataTypes.JonGuiDataLRFScanMode =
+    private fun parseScanMode(modeStr: String): JonSharedDataTypes.JonGuiDataLrfScanModes =
         when (modeStr.lowercase()) {
-            "fast" -> JonSharedDataTypes.JonGuiDataLRFScanMode.JON_GUI_DATA_LRF_SCAN_MODE_FAST
-            "slow" -> JonSharedDataTypes.JonGuiDataLRFScanMode.JON_GUI_DATA_LRF_SCAN_MODE_SLOW
-            "precision" -> JonSharedDataTypes.JonGuiDataLRFScanMode.JON_GUI_DATA_LRF_SCAN_MODE_PRECISION
-            else -> JonSharedDataTypes.JonGuiDataLRFScanMode.JON_GUI_DATA_LRF_SCAN_MODE_FAST
+            "1hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+            "4hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+            "10hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+            "20hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+            "100hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+            "200hz" -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS
+            else -> JonSharedDataTypes.JonGuiDataLrfScanModes.JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
         }
 }

@@ -13,7 +13,7 @@
 
 (def show-lrf-result-screen "Schema for show-lrf-result-screen" [:map])
 
-(def root "Schema for root" [:map [:cmd [:oneof {:show-default-screen [:map [:show-default-screen [:maybe :cmd/show-default-screen]]], :show-lrf-measure-screen [:map [:show-lrf-measure-screen [:maybe :cmd/show-lrf-measure-screen]]], :show-lrf-result-screen [:map [:show-lrf-result-screen [:maybe :cmd/show-lrf-result-screen]]], :show-lrf-result-simplified-screen [:map [:show-lrf-result-simplified-screen [:maybe :cmd/show-lrf-result-simplified-screen]]], :enable-heat-osd [:map [:enable-heat-osd [:maybe :cmd/enable-heat-osd]]], :disable-heat-osd [:map [:disable-heat-osd [:maybe :cmd/disable-heat-osd]]], :enable-day-osd [:map [:enable-day-osd [:maybe :cmd/enable-day-osd]]], :disable-day-osd [:map [:disable-day-osd [:maybe :cmd/disable-day-osd]]]}]]])
+(def root "Schema for root" [:map [:cmd [:oneof {:show-default-screen [:map [:show-default-screen :cmd/show-default-screen]], :show-lrf-measure-screen [:map [:show-lrf-measure-screen :cmd/show-lrf-measure-screen]], :show-lrf-result-screen [:map [:show-lrf-result-screen :cmd/show-lrf-result-screen]], :show-lrf-result-simplified-screen [:map [:show-lrf-result-simplified-screen :cmd/show-lrf-result-simplified-screen]], :enable-heat-osd [:map [:enable-heat-osd :cmd/enable-heat-osd]], :disable-heat-osd [:map [:disable-heat-osd :cmd/disable-heat-osd]], :enable-day-osd [:map [:enable-day-osd :cmd/enable-day-osd]], :disable-day-osd [:map [:disable-day-osd :cmd/disable-day-osd]]}]]])
 
 (def enable-heat-osd "Schema for enable-heat-osd" [:map])
 
