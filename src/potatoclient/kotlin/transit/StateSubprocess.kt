@@ -370,7 +370,7 @@ fun main(args: Array<String>) {
         val wsUrl = args[0]
 
         // Create Transit communicator with protobuf write handlers
-        val writeHandlers = SimpleProtobufHandlers.createWriteHandlers()
+        val writeHandlers = ProtobufStateHandlers.createWriteHandlers()
         val transitComm =
             TransitCommunicator(
                 System.`in`,

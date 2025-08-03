@@ -217,16 +217,26 @@ coverage-analyze: ## Analyze existing coverage reports and list uncovered functi
 
 # Report unspecced functions
 .PHONY: report-unspecced
-report-unspecced: proto compile-java-proto compile-java-enums compile-kotlin ## Check which functions need Guardrails specs - mandatory for all functions
+report-unspecced: ## Check which functions need Guardrails specs - mandatory for all functions
 	@echo "Generating unspecced functions report..."
 	@echo "  • Lists all functions that lack Malli instrumentation"
 	@echo "  • Groups them by namespace"
 	@echo "  • Provides statistics on coverage"
 	@echo "  • Remember: Use >defn and >defn- for ALL functions (never raw defn)"
 	@echo ""
-	clojure -M:run --report-unspecced
+	@cd tools/guardrails-check && bb report ../../src/potatoclient > ../../reports/unspecced-functions.md
 	@echo ""
 	@echo "Report saved to ./reports/unspecced-functions.md"
+
+# Validate Action Registry
+.PHONY: validate-actions
+validate-actions: compile-java-proto compile-java-enums ## Validate Action Registry against protobuf structure
+	@echo "Validating Action Registry..."
+	@echo "  • Compares registered actions with proto commands"
+	@echo "  • Identifies missing or extra actions"
+	@echo "  • Checks parameter consistency"
+	@echo ""
+	@cd tools/action-validator && $(MAKE) validate-dev
 
 # Simple coverage target (alias for coverage-clojure)
 .PHONY: coverage

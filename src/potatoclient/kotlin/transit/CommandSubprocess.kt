@@ -33,7 +33,7 @@ class CommandSubprocess(
 ) {
     private val messageProtocol = TransitMessageProtocol("command", transitComm)
     private val wsClient = CommandWebSocketClient(wsUrl, messageProtocol)
-    private val cmdBuilder = SimpleCommandBuilder() // Keep for now until builders are fixed
+    private val cmdBuilder = ProtobufCommandBuilder.getInstance()
 
     // Metrics
     private val totalReceived = AtomicInteger(0)
@@ -91,7 +91,7 @@ class CommandSubprocess(
                     ),
                 )
             } else {
-                // Fallback to SimpleCommandBuilder for compatibility
+                // Use ProtobufCommandBuilder
                 cmdBuilder.buildCommand(action, params).fold(
                     onSuccess = { cmd ->
                         wsClient.send(cmd.toByteArray())

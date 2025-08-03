@@ -1,13 +1,33 @@
-# Functions Not Using Guardrails Report
-
-*Generated: 2025-07-21 16:37:54*
+# Guardrails Check Report
 
 ## Summary
+- Total unspecced functions: 19
+- Namespaces with issues: 3
 
-![Coverage](https://img.shields.io/badge/Coverage-100%-brightgreen)
+## Functions Without Guardrails
 
-✅ **All functions are using Guardrails!**
+### instrumentation
+- start!
+- stop!
 
-## Next Steps
+### specs.transit-messages
+- create-gesture-event
+- create-window-close-event
+- development-mode?
+- log-validation-error
+- validate-and-log
+- validate-message
+- validate-message-structure
+- validate-message-type
+- validate-subprocess-contract
 
-Great job! All functions are properly using Guardrails!
+### transit.keyword-handlers
+- convert-enums-to-keywords
+- create-keyword-reader
+- create-keyword-writer
+- create-keywordizing-read-handler
+- enum-string?
+- read-from-kotlin
+- should-keywordize?
+- write-for-kotlin
+

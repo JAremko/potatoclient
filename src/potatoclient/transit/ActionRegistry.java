@@ -200,4 +200,35 @@ public class ActionRegistry {
         stats.put("handlers", handlers.size());
         return stats;
     }
+    
+    /**
+     * Get all actions as a manifest (for validation/comparison)
+     * Returns a map suitable for JSON serialization
+     */
+    public static Map<String, Object> getAllActions() {
+        Map<String, Object> manifest = new HashMap<>();
+        
+        for (ActionDefinition action : actions.values()) {
+            Map<String, Object> actionData = new HashMap<>();
+            actionData.put("description", action.getDescription());
+            actionData.put("implemented", action.isImplemented());
+            
+            // Convert keywords to strings for JSON compatibility
+            List<String> required = action.getRequiredParams().stream()
+                    .map(Keyword::getName)
+                    .sorted()
+                    .collect(Collectors.toList());
+            actionData.put("required", required);
+            
+            List<String> optional = action.getOptionalParams().stream()
+                    .map(Keyword::getName)
+                    .sorted()
+                    .collect(Collectors.toList());
+            actionData.put("optional", optional);
+            
+            manifest.put(action.getName(), actionData);
+        }
+        
+        return manifest;
+    }
 }

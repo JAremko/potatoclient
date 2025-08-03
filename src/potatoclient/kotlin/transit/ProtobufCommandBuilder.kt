@@ -8,9 +8,6 @@ import potatoclient.kotlin.transit.builders.*
 /**
  * Command builder that uses Action Registry for validation and delegates
  * to category-specific builders for protobuf construction.
- * 
- * This replaces the old SimpleCommandBuilder with a more maintainable,
- * registry-driven approach.
  */
 class ProtobufCommandBuilder {
     
@@ -93,8 +90,9 @@ class ProtobufCommandBuilder {
                 // LIRA commands
                 action.startsWith("lira-") -> LiraCommandBuilder.build(action, paramsMap)
                 
-                // For now, delegate all others to SimpleCommandBuilder
-                else -> SimpleCommandBuilder.getInstance().buildCommand(msgData)
+                else -> Result.failure(
+                    IllegalArgumentException("No builder available for command: $action")
+                )
             }
         } catch (e: Exception) {
             Result.failure(CommandBuildException(action, e))

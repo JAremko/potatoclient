@@ -1517,6 +1517,36 @@ This report will:
 - Provide statistics on coverage
 - Only include actual functions (not schema definitions)
 
+#### Guardrails Check Tool
+
+The `report-unspecced` command uses the **Guardrails Check Tool** located in `tools/guardrails-check/`. This is a standalone Babashka-based tool that can find functions using raw `defn`/`defn-` instead of Guardrails' `>defn`/`>defn-`.
+
+**Features**:
+- Fast analysis using Babashka (no JVM startup overhead)
+- Multiple output formats (EDN, Markdown)
+- Pattern-based function search
+- Statistics and namespace listing
+- Can be used independently of the main project
+
+**Standalone Usage**:
+```bash
+cd tools/guardrails-check
+
+# Check for unspecced functions (EDN output)
+bb check ../../src/potatoclient
+
+# Generate markdown report
+bb report ../../src/potatoclient
+
+# Find specific functions by pattern
+bb find process ../../src/potatoclient
+
+# Show statistics
+bb stats ../../src/potatoclient
+```
+
+The tool uses regex-based parsing to identify function definitions and generates reports grouped by namespace. It's particularly useful for maintaining consistent Guardrails usage across the entire codebase.
+
 ### Guardrails Usage
 
 **Development Mode** (`make dev`, `make nrepl`):
