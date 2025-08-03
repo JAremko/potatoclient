@@ -2,7 +2,6 @@
 
 package potatoclient.kotlin.transit
 
-import cmd.JonSharedCmd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive

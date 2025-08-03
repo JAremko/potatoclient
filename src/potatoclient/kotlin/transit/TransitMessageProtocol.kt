@@ -2,13 +2,13 @@ package potatoclient.kotlin.transit
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import potatoclient.java.transit.EventType
+import potatoclient.java.transit.MessageKeys
+import potatoclient.java.transit.MessageType
 import potatoclient.kotlin.transit.logDebug
 import potatoclient.kotlin.transit.logError
 import potatoclient.kotlin.transit.logInfo
 import potatoclient.kotlin.transit.logWarn
-import potatoclient.java.transit.EventType
-import potatoclient.java.transit.MessageKeys
-import potatoclient.java.transit.MessageType
 import java.io.PrintWriter
 import java.io.StringWriter
 

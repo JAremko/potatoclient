@@ -1,5 +1,6 @@
 package potatoclient.kotlin
 
+import potatoclient.java.transit.EventType
 import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.GestureConfig
 import potatoclient.kotlin.gestures.GestureEvent
@@ -7,7 +8,6 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
-import potatoclient.java.transit.EventType
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

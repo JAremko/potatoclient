@@ -1,10 +1,10 @@
 package potatoclient.kotlin
 
 import kotlinx.coroutines.runBlocking
-import potatoclient.kotlin.transit.TransitCommunicator
-import potatoclient.kotlin.transit.TransitMessageProtocol
 import potatoclient.java.transit.EventType
 import potatoclient.java.transit.MessageKeys
+import potatoclient.kotlin.transit.TransitCommunicator
+import potatoclient.kotlin.transit.TransitMessageProtocol
 import java.awt.Component
 import java.net.URI
 import java.nio.ByteOrder

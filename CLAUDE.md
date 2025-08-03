@@ -545,28 +545,40 @@ val batteryLevel = stateUpdate.system?.batteryLevel
 
 For the complete protocol specification, see `.claude/transit-protocol.md`.
 
-## Transit Handler Architecture (COMPLETED)
+## Transit Handler Architecture (IN PROGRESS - Static Code Generation)
 
-The codebase now uses Transit handlers for all message serialization, providing a clean, consistent architecture:
+The codebase is transitioning to **static code generation** for Transit handlers, replacing all manual protobuf mapping:
 
-**Single Approach**: All messages use Transit handlers - no manual serialization
-- ✅ Protobuf state messages → Automatically tagged and serialized via `SimpleProtobufHandlers`
-- ✅ Commands → Built via `SimpleCommandHandlers` from Transit messages
-- ✅ All enums → Automatically converted to keywords
-- ✅ Error and log messages → Proper handling with text preservation
+**New Architecture**: Generate Kotlin handlers from protobuf keyword trees
+- 🚧 Commands → Static handlers generated from `proto_keyword_tree_cmd.clj`
+- 🚧 State → Static handlers generated from `proto_keyword_tree_state.clj`
+- ✅ Keyword trees → Auto-generated from protobuf definitions
+- 🚧 All protobuf access → Type-safe, compile-time checked
 
 **Key Benefits**:
-- **Type Safety**: Protobuf types ensure compile-time checking
-- **Zero Manual Conversion**: Handlers do all the work
-- **Consistency**: All messages follow same pattern
-- **Performance**: No manual map building overhead
-- **Clean Code**: StateSubprocess just sends protobuf objects directly
+- **Performance**: No reflection, direct method calls
+- **Type Safety**: Compile-time validation of all protobuf access
+- **Maintainability**: Regenerate when protos change
+- **Simplicity**: Generated code is straightforward to debug
+- **Zero Manual Code**: New commands work without code changes
 
 **Implementation Status**:
-- ✅ Kotlin: `SimpleProtobufHandlers.kt` - WriteHandlers for all protobuf types
-- ✅ Kotlin: `SimpleCommandHandlers.kt` - Command building from Transit
-- ✅ Integration: Both subprocesses updated to use handlers
-- ✅ Testing: Verified handlers work correctly
+- ✅ Proto Explorer: Keyword tree generation from protobuf definitions
+- 🚧 Kotlin: `GeneratedCommandHandlers.kt` - All command building/extraction (fixing issues)
+- 🚧 Kotlin: `GeneratedStateHandlers.kt` - All state extraction (fixing issues)
+- ⏳ Integration: Will replace action-based command routing
+- ⏳ Cleanup: Will remove all manual builders and handlers
+
+**Command Format Change**:
+```clojure
+;; Old (action-based):
+{:action "cv-start-track-ndc" :params {:channel "heat" :x 0.5}}
+
+;; New (direct protobuf mapping):
+{:cv {:start-track-ndc {:channel "heat" :x 0.5}}}
+```
+
+See [TODO_KOTLIN_CMD_INTEGRATION.md](TODO_KOTLIN_CMD_INTEGRATION.md) for detailed progress.
 
 ## UI Utilities
 
@@ -1601,6 +1613,7 @@ Proto Explorer uses a JSON-based architecture:
 1. **Protogen** generates protobuf classes and JSON descriptors using Buf CLI
 2. **Proto Explorer** converts JSON descriptors → EDN → Malli specs with constraints
 3. **Specs** are exported to `shared/specs/protobuf/` for use in the main application
+4. **NEW**: Generates keyword trees for static Kotlin code generation
 
 ### Key Features
 
@@ -1611,6 +1624,7 @@ Proto Explorer uses a JSON-based architecture:
 - **Property-Based Testing**: Generators produce valid data for property tests
 - **Babashka CLI**: Fast spec queries without JVM startup overhead
 - **Java Reflection**: Available via uberjar for detailed protobuf class information
+- **Keyword Tree Generation**: Creates EDN trees mapping keywords to Java protobuf classes
 
 ### Using Generated Specs
 
@@ -1683,14 +1697,21 @@ bb java-fields Root     # Get proto field mapping
 bb java-builder Root    # Get builder methods
 ```
 
-### Regenerating Specs
+### Regenerating Specs and Keyword Trees
 
 After protobuf changes:
 
 ```bash
 cd tools/proto-explorer
-make proto          # Generate proto files and JSON descriptors
-make generate-specs # Convert to Malli specs
+make proto                    # Generate proto files and JSON descriptors
+make generate-specs           # Convert to Malli specs
+
+# Generate keyword trees for static code generation
+bb generate-keyword-tree-cmd  # Creates proto_keyword_tree_cmd.clj
+bb generate-keyword-tree-state # Creates proto_keyword_tree_state.clj
+
+# Generate Kotlin Transit handlers from keyword trees
+bb generate-kotlin-handlers.clj
 ```
 
 ### Benefits
