@@ -8,6 +8,7 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
+import potatoclient.kotlin.events.CommandBuilder
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -79,30 +80,20 @@ class MouseEventHandler(
             when {
                 e.wheelRotation < 0 -> {
                     // Wheel up = zoom in
-                    val command =
-                        mapOf(
-                            "action" to
-                                if (streamType == StreamType.HEAT) {
-                                    "heat-camera-next-zoom-table-pos"
-                                } else {
-                                    "day-camera-next-zoom-table-pos"
-                                },
-                            "params" to emptyMap<String, Any>(),
-                        )
+                    val command = if (streamType == StreamType.HEAT) {
+                        CommandBuilder.heatCameraNextZoom()
+                    } else {
+                        CommandBuilder.dayCameraNextZoom()
+                    }
                     callback.sendCommand(command)
                 }
                 e.wheelRotation > 0 -> {
                     // Wheel down = zoom out
-                    val command =
-                        mapOf(
-                            "action" to
-                                if (streamType == StreamType.HEAT) {
-                                    "heat-camera-prev-zoom-table-pos"
-                                } else {
-                                    "day-camera-prev-zoom-table-pos"
-                                },
-                            "params" to emptyMap<String, Any>(),
-                        )
+                    val command = if (streamType == StreamType.HEAT) {
+                        CommandBuilder.heatCameraPrevZoom()
+                    } else {
+                        CommandBuilder.dayCameraPrevZoom()
+                    }
                     callback.sendCommand(command)
                 }
             }
@@ -122,7 +113,7 @@ class MouseEventHandler(
                 "canvas-width" to canvasWidth,
                 "canvas-height" to canvasHeight,
                 "aspect-ratio" to aspectRatio,
-                "stream-type" to streamType.name.lowercase(),
+                "stream-type" to streamType.toKeyword(),
             )
 
         when (gesture) {
@@ -214,16 +205,7 @@ class MouseEventHandler(
         ndcX: Double,
         ndcY: Double,
     ) {
-        val command =
-            mapOf(
-                "action" to "rotary-goto-ndc",
-                "params" to
-                    mapOf(
-                        "channel" to streamType.name.lowercase(),
-                        "x" to ndcX,
-                        "y" to ndcY,
-                    ),
-            )
+        val command = CommandBuilder.rotaryGotoNDC(streamType, ndcX, ndcY)
         callback.sendCommand(command)
     }
 
@@ -232,22 +214,7 @@ class MouseEventHandler(
         ndcY: Double,
         frameTimestamp: Long?,
     ) {
-        val params =
-            mutableMapOf(
-                "channel" to streamType.name.lowercase(),
-                "x" to ndcX,
-                "y" to ndcY,
-            )
-
-        frameTimestamp?.let {
-            params["frame-timestamp"] = it
-        }
-
-        val command =
-            mapOf(
-                "action" to "cv-start-track-ndc",
-                "params" to params,
-            )
+        val command = CommandBuilder.cvStartTrackNDC(streamType, ndcX, ndcY, frameTimestamp)
         callback.sendCommand(command)
     }
 
@@ -257,26 +224,12 @@ class MouseEventHandler(
         azDir: RotaryDirection,
         elDir: RotaryDirection,
     ) {
-        val command =
-            mapOf(
-                "action" to "rotary-set-velocity",
-                "params" to
-                    mapOf(
-                        "azimuth-speed" to azSpeed,
-                        "elevation-speed" to elSpeed,
-                        "azimuth-direction" to azDir.name.lowercase().replace("_", "-"),
-                        "elevation-direction" to elDir.name.lowercase().replace("_", "-"),
-                    ),
-            )
+        val command = CommandBuilder.rotarySetVelocity(azSpeed, elSpeed, azDir, elDir)
         callback.sendCommand(command)
     }
 
     private fun sendRotaryHaltCommand() {
-        val command =
-            mapOf(
-                "action" to "rotary-halt",
-                "params" to emptyMap<String, Any>(),
-            )
+        val command = CommandBuilder.rotaryHalt()
         callback.sendCommand(command)
     }
 
