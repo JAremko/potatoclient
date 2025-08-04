@@ -10,15 +10,16 @@ Core system architecture and design decisions
 - [Transit Protocol](./architecture/transit-protocol.md) - Inter-process communication
 - [Video Streaming](./architecture/video-streaming.md) - Video subsystem architecture
 - [Command System](./architecture/command-system.md) - Command routing and protobuf integration
+- [Kotlin Subprocess](./architecture/kotlin-subprocess.md) - Subprocess architecture details
 
 ### [Development](./development/)
 Development guides and best practices
 - [Getting Started](./development/getting-started.md) - Quick start guide
 - [Code Standards](./development/code-standards.md) - Guardrails, Malli, and conventions
-<!-- TODO: Create these files
 - [Development Workflow](./development/workflow.md) - Day-to-day development
 - [Testing Guide](./development/testing.md) - Testing strategies and tools
--->
+- [Linting Guide](./development/linting.md) - Linting configuration and false positives
+- [Malli Validation Testing](./development/malli-validation-testing.md) - Property-based testing with Malli
 
 ### [Tools](./tools/)
 Documentation for development tools
@@ -37,11 +38,10 @@ How-to guides for common tasks
 ### [Reference](./reference/)
 API and configuration reference
 - [Build Targets](./reference/build-targets.md) - Makefile targets reference
-<!-- TODO: Create these files
 - [Configuration](./reference/configuration.md) - Config file format and options
 - [Message Types](./reference/message-types.md) - Transit message specifications
 - [Keyboard Shortcuts](./reference/keyboard-shortcuts.md) - UI shortcuts
--->
+- [Transit Quick Reference](./reference/transit-quick-reference.md) - Common Transit commands and patterns
 
 ## 🎯 Key Principles
 
