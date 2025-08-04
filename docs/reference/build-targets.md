@@ -11,6 +11,20 @@ Runs in development mode with full validation.
 - Individual subprocess log files
 - Window title shows `[DEVELOPMENT]`
 
+### `make dev-clean`
+Development with forced clean rebuild.
+- Regenerates all proto files
+- Recompiles all code
+- Ensures fresh start
+- Then runs `make dev`
+
+### `make ensure-compiled`
+Smart compilation check.
+- Compiles only if sources changed
+- Checks for missing proto files
+- Minimal rebuild when possible
+- Used by `make dev` and `make test`
+
 ### `make nrepl`
 Starts REPL server on port 7888.
 - Full Guardrails validation
@@ -51,6 +65,22 @@ Compiles Kotlin sources.
 - Compiles all subprocess code
 - Must run after `make proto`
 
+### `make compile-java-proto`
+Compiles Java protobuf sources.
+- Builds generated proto classes
+- Required after `make proto`
+
+### `make compile-java-enums`
+Compiles Java enum sources.
+- Builds enum classes for keywords
+- Part of build process
+
+### `make generate-keyword-trees`
+Generates keyword mappings.
+- Creates EDN to protobuf mappings
+- Runs both cmd and state generation
+- Output: `shared/specs/protobuf/proto_keyword_tree_*.clj`
+
 ## Testing Commands
 
 ### `make test`
@@ -66,12 +96,42 @@ Views latest test run summary.
 - Quick overview of test health
 
 ### `make test-coverage`
-Generates test coverage report.
-- Uses Cloverage with JaCoCo
-- HTML report in `target/coverage/`
+Generates comprehensive test coverage report.
+- Clojure coverage via Cloverage
+- Java/Kotlin coverage via JaCoCo
+- HTML reports in `target/coverage/`
 - Shows line and branch coverage
 
+### `make coverage-clojure`
+Quick Clojure-only coverage.
+- Faster than full coverage
+- Shows Clojure code coverage only
+- Good for quick checks
+
+### `make coverage-analyze`
+Analyzes existing coverage reports.
+- Lists uncovered functions
+- Generates uncovered code report
+- Helps identify testing gaps
+
+### `make coverage`
+Alias for `coverage-clojure`.
+- Quick coverage check
+- Same as `make coverage-clojure`
+
 ## Code Quality Commands
+
+### `make fmt`
+Formats all code automatically.
+- cljfmt for Clojure formatting
+- ktlint for Kotlin formatting
+- Fixes style issues in-place
+
+### `make fmt-check`
+Checks code formatting without changing files.
+- Reports formatting issues
+- Returns error if changes needed
+- Use in CI/CD pipelines
 
 ### `make lint`
 Runs all linters.
@@ -96,25 +156,22 @@ Finds functions without Guardrails.
 - Groups by namespace
 - Shows coverage statistics
 
+### `make validate-actions`
+Validates Action Registry.
+- Compares registered actions with proto commands
+- Identifies missing or extra actions
+- Checks parameter consistency
+
 ## Platform Builds
 
-### `make build-linux`
-Creates Linux AppImage.
-- Self-contained package
-- Works on most distributions
-- Includes all dependencies
+### `make build-macos-dev`
+Creates unsigned macOS development bundle.
+- `.app` format
+- Uses system Java
+- For development testing only
+- No code signing
 
-### `make build-windows`
-Creates Windows installer.
-- `.exe` format
-- Native Windows package
-- Includes JRE
-
-### `make build-macos`
-Creates macOS bundle.
-- `.dmg` disk image
-- Code signing ready
-- Universal binary support
+Note: Linux and Windows platform builds are not currently implemented in the Makefile.
 
 ## Utility Commands
 
@@ -123,6 +180,21 @@ Removes all build artifacts.
 - Cleans `target/` directory
 - Removes compiled classes
 - Preserves source code
+
+### `make clean-proto`
+Clean generated proto files.
+- Removes `src/potatoclient/java/` proto packages
+- Use before regenerating protos
+
+### `make clean-cache`
+Clean Clojure compilation cache.
+- Removes `.cpcache/` directory
+- Ensures fresh compilation
+
+### `make clean-app`
+Clean application classes only.
+- Preserves proto classes
+- Removes Clojure and Kotlin classes
 
 ### `make check-deps`
 Verifies all dependencies.
@@ -135,6 +207,18 @@ Shows all available commands.
 - Self-documenting Makefile
 - Includes descriptions
 - Shows common workflows
+
+### `make mcp-server`
+Starts MCP server for Claude integration.
+- Runs on port 7888
+- Allows Claude to interact with project
+- Keep terminal open while using
+
+### `make mcp-configure`
+Adds potatoclient to Claude configuration.
+- Configures MCP server in Claude
+- One-time setup command
+- Uses `claude` CLI tool
 
 ## Development Workflows
 
