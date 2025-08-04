@@ -22,7 +22,7 @@ import ser.JonSharedDataTypes
  * This file is auto-generated from protobuf definitions.
  * DO NOT EDIT - regenerate with: bb generate-kotlin-handlers.clj
  * 
- * Generated on: Sun Aug 03 17:07:09 CEST 2025
+ * Generated on: Mon Aug 04 08:09:39 CEST 2025
  */
 object GeneratedStateHandlers {
     

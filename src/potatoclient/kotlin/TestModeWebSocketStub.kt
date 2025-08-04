@@ -47,7 +47,7 @@ class TestModeWebSocketStub(
     
     private fun createPongResponse(): Map<String, Any> {
         return mapOf(
-            "msg-type" to "response",
+            "msg-type" to MessageType.RESPONSE.key,
             "msg-id" to java.util.UUID.randomUUID().toString(),
             "timestamp" to System.currentTimeMillis(),
             "payload" to mapOf(
@@ -59,7 +59,7 @@ class TestModeWebSocketStub(
     
     private fun createAckResponse(commandType: String, commandId: Int): Map<String, Any> {
         return mapOf(
-            "msg-type" to "response",
+            "msg-type" to MessageType.RESPONSE.key,
             "msg-id" to java.util.UUID.randomUUID().toString(),
             "timestamp" to System.currentTimeMillis(),
             "payload" to mapOf(
@@ -72,7 +72,7 @@ class TestModeWebSocketStub(
     
     private fun createErrorResponse(message: String): Map<String, Any> {
         return mapOf(
-            "msg-type" to "error",
+            "msg-type" to MessageType.ERROR.key,
             "msg-id" to java.util.UUID.randomUUID().toString(),
             "timestamp" to System.currentTimeMillis(),
             "payload" to mapOf(

@@ -63,7 +63,7 @@
   (let [start-time (System/currentTimeMillis)]
     (loop []
       (if-let [messages (seq @*response-chan*)]
-        (:payload (last messages))
+        (get (last messages) "payload")
         (if (< (- (System/currentTimeMillis) start-time) *test-timeout-ms*)
           (do (Thread/sleep 50)
               (recur))
@@ -95,13 +95,26 @@
         ;; Set up Transit communication
         output-stream (.getOutputStream process)
         input-stream (.getInputStream process)
+        error-stream (.getErrorStream process)
         framed-output (framed-io/make-framed-output-stream output-stream)
         writer (transit-core/make-writer framed-output)
         subprocess-info {:process process
                         :input-stream input-stream
                         :output-stream output-stream
+                        :error-stream error-stream
                         :writer writer
                         :state (atom :running)}
+        ;; Start error reader thread
+        error-reader (Thread.
+                      #(try
+                         (with-open [reader (io/reader error-stream)]
+                           (loop []
+                             (when-let [line (.readLine reader)]
+                               (println "STDERR:" line)
+                               (recur))))
+                         (catch Exception e
+                           (when-not (= :stopped @(:state subprocess-info))
+                             (println "Error reader exception:" (.getMessage e))))))
         ;; Start reader thread
         reader-thread (Thread.
                        #(try
@@ -109,7 +122,7 @@
                                 reader (transit-core/make-reader framed-input)]
                             (loop []
                               (when-let [msg (transit-core/read-message reader)]
-                                (println "Received message:" (:msg-type msg))
+                                (println "Received message:" (get msg "msg-type"))
                                 (handle-subprocess-message msg)
                                 (when (= :running @(:state subprocess-info))
                                   (recur)))))
@@ -117,18 +130,23 @@
                             (when-not (= :stopped @(:state subprocess-info))
                               (logging/log-error {:msg "Reader thread error" 
                                                 :error (.getMessage e)})))))]
+    (.start error-reader)
     (.start reader-thread)
-    (println "Reader thread started")
+    (println "Reader threads started")
     
     (binding [*subprocess* subprocess-info]
       (try
-        ;; Give subprocess time to start
-        (Thread/sleep 500)
+        ;; IMPORTANT: Send initial ping immediately to unblock subprocess
+        (println "Sending initial ping to unblock subprocess...")
+        (transit-core/write-message! writer
+                                    (transit-core/create-message :command (cmd/ping))
+                                    output-stream)
+        
         ;; Wait for test-mode-ready status
         (let [ready? (wait-for-condition
                        #(some (fn [msg]
-                               (and (= "status" (:msg-type msg))
-                                    (= "test-mode-ready" (get-in msg [:payload :status]))))
+                               (and (= :status (get msg "msg-type"))
+                                    (= "test-mode-ready" (get-in msg ["payload" :status]))))
                              @*response-chan*)
                        3000)]
           (println "Ready status:" ready? "Messages received:" (count @*response-chan*))
@@ -139,7 +157,8 @@
           ;; Stop subprocess
           (reset! (:state subprocess-info) :stopped)
           (.destroyForcibly process)
-          (.join reader-thread 1000))))))
+          (.join reader-thread 1000)
+          (.join error-reader 1000))))))
 
 (use-fixtures :each subprocess-fixture)
 
@@ -154,7 +173,8 @@
     ;; Send ping command
     (let [result (send-command-and-wait (cmd/ping))]
       (is (not= :timeout result) "Should receive response within timeout")
-      (is (= :pong (:type result)) "Should receive pong response"))))
+      (when (not= :timeout result)
+        (is (= "pong" (get result "type")) "Should receive pong response")))))
 
 (deftest ^:integration test-command-flow
   (testing "Commands flow through subprocess correctly"
@@ -163,7 +183,7 @@
           result (send-command-and-wait rotate-cmd)]
       (is (not= :timeout result) "Should process command within timeout")
       (when (not= :timeout result)
-        (is (= :ack (:type result)) "Should acknowledge command")))
+        (is (= "ack" (get result "type")) "Should acknowledge command")))
     
     ;; Test command with validation
     (testing "Invalid commands are rejected"
@@ -171,8 +191,8 @@
             result (send-command-and-wait invalid-cmd)]
         (is (not= :timeout result) "Should process validation within timeout")
         (when (not= :timeout result)
-          (is (= :error (:type result)) "Should return error for invalid command")
-          (is (re-find #"range|constraint|validation" (str (:message result)))
+          (is (= "error" (get result "type")) "Should return error for invalid command")
+          (is (re-find #"range|constraint|validation" (str (get result "message")))
               "Error should mention validation failure"))))))
 
 (deftest ^:integration test-transit-message-flow
@@ -186,7 +206,7 @@
         (let [command (cmd-fn)
               result (send-command-and-wait command)]
           (is (not= :timeout result) (str desc " should not timeout"))
-          (is (contains? result :type) (str desc " should have response type")))))))
+          (is (contains? result "type") (str desc " should have response type")))))))
 
 (deftest ^:integration test-concurrent-commands
   (testing "Subprocess handles concurrent commands correctly"
@@ -205,7 +225,7 @@
       ;; Check all commands were processed
       (is (= num-commands (count results)) "All commands should return results")
       (is (not-any? #(= :timeout %) results) "No commands should timeout")
-      (is (every? #(contains? % :type) (remove #(= :timeout %) results))
+      (is (every? #(contains? % "type") (remove #(= :timeout %) results))
           "All results should have a type"))))
 
 (deftest ^:integration test-error-handling
@@ -215,14 +235,14 @@
           result (send-command-and-wait malformed)]
       (is (not= :timeout result) "Should handle malformed command")
       (when (not= :timeout result)
-        (is (= :error (:type result)) "Should return error")))
+        (is (= "error" (get result "type")) "Should return error")))
     
     ;; Test subprocess recovery after error
     (testing "Subprocess continues working after error"
       (let [valid-cmd (cmd/ping)
             result (send-command-and-wait valid-cmd)]
         (is (not= :timeout result) "Should still process commands after error")
-        (is (= :pong (:type result)) "Should respond correctly")))))
+        (is (= "pong" (get result "type")) "Should respond correctly")))))
 
 ;; =============================================================================
 ;; Performance Tests

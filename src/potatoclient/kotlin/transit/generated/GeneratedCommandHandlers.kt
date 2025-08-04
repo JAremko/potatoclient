@@ -25,7 +25,7 @@ import cmd.System.JonSharedCmdSystem
  * This file is auto-generated from protobuf definitions.
  * DO NOT EDIT - regenerate with: bb generate-kotlin-handlers.clj
  * 
- * Generated on: Sun Aug 03 17:07:09 CEST 2025
+ * Generated on: Mon Aug 04 08:09:39 CEST 2025
  */
 object GeneratedCommandHandlers {
     
@@ -45,7 +45,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null || key == "protocol-version" || key == "protocolVersion") continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "osd" -> builder.setOsd(buildOsd(value as Map<*, *>))
                 "ping" -> builder.setPing(buildPing(value as Map<*, *>))
                 "system" -> builder.setSystem(buildSystem(value as Map<*, *>))
@@ -124,7 +124,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "show-default-screen" -> builder.setShowDefaultScreen(buildOsdShowDefaultScreen(value as Map<*, *>))
                 "show-lrf-measure-screen" -> builder.setShowLrfMeasureScreen(buildOsdShowLrfMeasureScreen(value as Map<*, *>))
                 "show-lrf-result-screen" -> builder.setShowLrfResultScreen(buildOsdShowLrfResultScreen(value as Map<*, *>))
@@ -149,7 +149,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShowDefaultScreen")
             }
@@ -168,7 +168,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShowLRFMeasureScreen")
             }
@@ -187,7 +187,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShowLRFResultScreen")
             }
@@ -206,7 +206,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShowLRFResultSimplifiedScreen")
             }
@@ -225,7 +225,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnableHeatOSD")
             }
@@ -244,7 +244,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DisableHeatOSD")
             }
@@ -263,7 +263,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnableDayOSD")
             }
@@ -282,7 +282,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DisableDayOSD")
             }
@@ -301,7 +301,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Ping")
             }
@@ -320,7 +320,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "geodesic-mode-disable" -> builder.setGeodesicModeDisable(buildSystemGeodesicModeDisable(value as Map<*, *>))
                 "start-all" -> builder.setStartAll(buildSystemStartAll(value as Map<*, *>))
                 "geodesic-mode-enable" -> builder.setGeodesicModeEnable(buildSystemGeodesicModeEnable(value as Map<*, *>))
@@ -350,7 +350,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DisableGeodesicMode")
             }
@@ -369,7 +369,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StartALl")
             }
@@ -388,7 +388,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnableGeodesicMode")
             }
@@ -407,7 +407,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "loc" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -434,7 +434,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for UnmarkRecImportant")
             }
@@ -453,7 +453,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StopRec")
             }
@@ -472,7 +472,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Reboot")
             }
@@ -491,7 +491,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StartRec")
             }
@@ -510,7 +510,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for PowerOff")
             }
@@ -529,7 +529,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetConfigs")
             }
@@ -548,7 +548,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StopALl")
             }
@@ -567,7 +567,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnterTransport")
             }
@@ -586,7 +586,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for MarkRecImportant")
             }
@@ -605,7 +605,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Noop")
             }
@@ -624,7 +624,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "vampire-mode-enable" -> builder.setVampireModeEnable(buildCvVampireModeEnable(value as Map<*, *>))
                 "vampire-mode-disable" -> builder.setVampireModeDisable(buildCvVampireModeDisable(value as Map<*, *>))
                 "dump-stop" -> builder.setDumpStop(buildCvDumpStop(value as Map<*, *>))
@@ -650,7 +650,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for VampireModeEnable")
             }
@@ -669,7 +669,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for VampireModeDisable")
             }
@@ -688,7 +688,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DumpStop")
             }
@@ -707,7 +707,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StabilizationModeDisable")
             }
@@ -726,7 +726,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "channel" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -754,7 +754,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "channel" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -784,7 +784,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DumpStart")
             }
@@ -803,7 +803,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StopTrack")
             }
@@ -822,7 +822,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for StabilizationModeEnable")
             }
@@ -841,7 +841,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "start" -> builder.setStart(buildGpsStart(value as Map<*, *>))
                 "stop" -> builder.setStop(buildGpsStop(value as Map<*, *>))
                 "set-manual-position" -> builder.setSetManualPosition(buildGpsSetManualPosition(value as Map<*, *>))
@@ -863,7 +863,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -882,7 +882,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -901,7 +901,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "latitude" -> builder.setLatitude(convertFloat(value))
                 "longitude" -> builder.setLongitude(convertFloat(value))
                 "altitude" -> builder.setAltitude(convertFloat(value))
@@ -922,7 +922,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "flag" -> builder.setFlag(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetUseManualPosition")
             }
@@ -941,7 +941,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -960,7 +960,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target-designator-off" -> builder.setTargetDesignatorOff(buildLrfTargetDesignatorOff(value as Map<*, *>))
                 "target-designator-on-mode-b" -> builder.setTargetDesignatorOnModeB(buildLrfTargetDesignatorOnModeB(value as Map<*, *>))
                 "disable-fog-mode" -> builder.setDisableFogMode(buildLrfDisableFogMode(value as Map<*, *>))
@@ -992,7 +992,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for TargetDesignatorOff")
             }
@@ -1011,7 +1011,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for TargetDesignatorOnModeB")
             }
@@ -1030,7 +1030,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DisableFogMode")
             }
@@ -1049,7 +1049,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "mode" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -1076,7 +1076,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for RefineOff")
             }
@@ -1095,7 +1095,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanOff")
             }
@@ -1114,7 +1114,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for RefineOn")
             }
@@ -1133,7 +1133,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -1152,7 +1152,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Measure")
             }
@@ -1171,7 +1171,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanOn")
             }
@@ -1190,7 +1190,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -1209,7 +1209,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for NewSession")
             }
@@ -1228,7 +1228,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -1247,7 +1247,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnableFogMode")
             }
@@ -1266,7 +1266,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for TargetDesignatorOnModeA")
             }
@@ -1285,7 +1285,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "start" -> builder.setStart(buildDayCamGlassHeaterStart(value as Map<*, *>))
                 "stop" -> builder.setStop(buildDayCamGlassHeaterStop(value as Map<*, *>))
                 "turn-on" -> builder.setTurnOn(buildDayCamGlassHeaterTurnOn(value as Map<*, *>))
@@ -1307,7 +1307,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -1326,7 +1326,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -1345,7 +1345,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for TurnOn")
             }
@@ -1364,7 +1364,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for TurnOff")
             }
@@ -1383,7 +1383,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -1402,7 +1402,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "zoom" -> builder.setZoom(buildDayCameraZoom(value as Map<*, *>))
                 "set-infra-red-filter" -> builder.setSetInfraRedFilter(buildDayCameraSetInfraRedFilter(value as Map<*, *>))
                 "set-clahe-level" -> builder.setSetClaheLevel(buildDayCameraSetClaheLevel(value as Map<*, *>))
@@ -1436,7 +1436,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "prev-zoom-table-pos" -> builder.setPrevZoomTablePos(buildDayCameraZoomPrevZoomTablePos(value as Map<*, *>))
                 "offset" -> builder.setOffset(buildDayCameraZoomOffset(value as Map<*, *>))
                 "move" -> builder.setMove(buildDayCameraZoomMove(value as Map<*, *>))
@@ -1462,7 +1462,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for PrevZoomTablePos")
             }
@@ -1481,7 +1481,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "offset-value" -> builder.setOffsetValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Offset")
             }
@@ -1500,7 +1500,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target-value" -> builder.setTargetValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Move")
@@ -1520,7 +1520,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetZoom")
             }
@@ -1539,7 +1539,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for NextZoomTablePos")
             }
@@ -1558,7 +1558,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetValue")
             }
@@ -1577,7 +1577,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetZoomTableValue")
             }
@@ -1596,7 +1596,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Halt")
             }
@@ -1615,7 +1615,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SaveToTable")
             }
@@ -1634,7 +1634,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetInfraRedFilter")
             }
@@ -1653,7 +1653,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetClaheLevel")
             }
@@ -1672,7 +1672,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for PrevFxMode")
             }
@@ -1691,7 +1691,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -1710,7 +1710,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for HaltAll")
             }
@@ -1729,7 +1729,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetDigitalZoomLevel")
             }
@@ -1748,7 +1748,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -1767,7 +1767,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Photo")
             }
@@ -1786,7 +1786,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -1805,7 +1805,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set-value" -> builder.setSetValue(buildDayCameraFocusSetValue(value as Map<*, *>))
                 "move" -> builder.setMove(buildDayCameraFocusMove(value as Map<*, *>))
                 "halt" -> builder.setHalt(buildDayCameraFocusHalt(value as Map<*, *>))
@@ -1828,7 +1828,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetValue")
             }
@@ -1847,7 +1847,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target-value" -> builder.setTargetValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Move")
@@ -1867,7 +1867,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Halt")
             }
@@ -1886,7 +1886,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "offset-value" -> builder.setOffsetValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Offset")
             }
@@ -1905,7 +1905,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetFocus")
             }
@@ -1924,7 +1924,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SaveToTableFocus")
             }
@@ -1943,7 +1943,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "mode" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -1970,7 +1970,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetIris")
             }
@@ -1989,7 +1989,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for RefreshFxMode")
             }
@@ -2008,7 +2008,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetAutoIris")
             }
@@ -2027,7 +2027,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for NextFxMode")
             }
@@ -2046,7 +2046,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShiftClaheLevel")
             }
@@ -2065,7 +2065,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set-dde-level" -> builder.setSetDdeLevel(buildHeatCameraSetDdeLevel(value as Map<*, *>))
                 "set-calib-mode" -> builder.setSetCalibMode(buildHeatCameraSetCalibMode(value as Map<*, *>))
                 "zoom" -> builder.setZoom(buildHeatCameraZoom(value as Map<*, *>))
@@ -2113,7 +2113,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetDDELevel")
             }
@@ -2132,7 +2132,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetCalibMode")
             }
@@ -2151,7 +2151,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set-zoom-table-value" -> builder.setSetZoomTableValue(buildHeatCameraZoomSetZoomTableValue(value as Map<*, *>))
                 "next-zoom-table-pos" -> builder.setNextZoomTablePos(buildHeatCameraZoomNextZoomTablePos(value as Map<*, *>))
                 "prev-zoom-table-pos" -> builder.setPrevZoomTablePos(buildHeatCameraZoomPrevZoomTablePos(value as Map<*, *>))
@@ -2171,7 +2171,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetZoomTableValue")
             }
@@ -2190,7 +2190,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for NextZoomTablePos")
             }
@@ -2209,7 +2209,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for PrevZoomTablePos")
             }
@@ -2228,7 +2228,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -2255,7 +2255,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShiftDDE")
             }
@@ -2274,7 +2274,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -2301,7 +2301,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetClaheLevel")
             }
@@ -2320,7 +2320,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for DisableDDE")
             }
@@ -2339,7 +2339,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for PrevFxMode")
             }
@@ -2358,7 +2358,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -2377,7 +2377,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for FocusStepMinus")
             }
@@ -2396,7 +2396,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetDigitalZoomLevel")
             }
@@ -2415,7 +2415,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for EnableDDE")
             }
@@ -2434,7 +2434,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for FocusStop")
             }
@@ -2453,7 +2453,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -2472,7 +2472,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetZoom")
             }
@@ -2491,7 +2491,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ZoomOut")
             }
@@ -2510,7 +2510,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Photo")
             }
@@ -2529,7 +2529,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ZoomIn")
             }
@@ -2548,7 +2548,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -2567,7 +2567,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for FocusStepPlus")
             }
@@ -2586,7 +2586,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "mode" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -2613,7 +2613,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for RefreshFxMode")
             }
@@ -2632,7 +2632,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for FocusOut")
             }
@@ -2651,7 +2651,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetAutoFocus")
             }
@@ -2670,7 +2670,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ZoomStop")
             }
@@ -2689,7 +2689,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SaveToTable")
             }
@@ -2708,7 +2708,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for NextFxMode")
             }
@@ -2727,7 +2727,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Calibrate")
             }
@@ -2746,7 +2746,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShiftClaheLevel")
             }
@@ -2765,7 +2765,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for FocusIn")
             }
@@ -2784,7 +2784,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "refine-target" -> builder.setRefineTarget(buildLiraRefineTarget(value as Map<*, *>))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Root")
             }
@@ -2802,7 +2802,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target" -> builder.setTarget(buildLiraRefineTargetTarget(value as Map<*, *>))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Refine_target")
             }
@@ -2820,7 +2820,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "uuid-part4" -> builder.setUuidPart4(convertInt(value))
                 "uuid-part2" -> builder.setUuidPart2(convertInt(value))
                 "target-altitude" -> builder.setTargetAltitude(convertDouble(value))
@@ -2849,7 +2849,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "day" -> builder.setDay(buildLrfCalibDay(value as Map<*, *>))
                 "heat" -> builder.setHeat(buildLrfCalibHeat(value as Map<*, *>))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Root")
@@ -2868,7 +2868,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set" -> builder.setSet(buildLrfCalibDaySet(value as Map<*, *>))
                 "save" -> builder.setSave(buildLrfCalibDaySave(value as Map<*, *>))
                 "reset" -> builder.setReset(buildLrfCalibDayReset(value as Map<*, *>))
@@ -2889,7 +2889,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "x" -> builder.setX(convertInt(value))
                 "y" -> builder.setY(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetOffsets")
@@ -2909,7 +2909,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SaveOffsets")
             }
@@ -2928,7 +2928,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetOffsets")
             }
@@ -2947,7 +2947,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "x" -> builder.setX(convertInt(value))
                 "y" -> builder.setY(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShiftOffsetsBy")
@@ -2967,7 +2967,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set" -> builder.setSet(buildLrfCalibHeatSet(value as Map<*, *>))
                 "save" -> builder.setSave(buildLrfCalibHeatSave(value as Map<*, *>))
                 "reset" -> builder.setReset(buildLrfCalibHeatReset(value as Map<*, *>))
@@ -2988,7 +2988,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "x" -> builder.setX(convertInt(value))
                 "y" -> builder.setY(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetOffsets")
@@ -3008,7 +3008,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SaveOffsets")
             }
@@ -3027,7 +3027,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ResetOffsets")
             }
@@ -3046,7 +3046,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "x" -> builder.setX(convertInt(value))
                 "y" -> builder.setY(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ShiftOffsetsBy")
@@ -3066,7 +3066,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "rotate-to-gps" -> builder.setRotateToGps(buildRotaryRotateToGps(value as Map<*, *>))
                 "scan-pause" -> builder.setScanPause(buildRotaryScanPause(value as Map<*, *>))
                 "rotate-to-ndc" -> builder.setRotateToNdc(buildRotaryRotateToNdc(value as Map<*, *>))
@@ -3107,7 +3107,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "latitude" -> builder.setLatitude(convertFloat(value))
                 "longitude" -> builder.setLongitude(convertFloat(value))
                 "altitude" -> builder.setAltitude(convertFloat(value))
@@ -3128,7 +3128,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanPause")
             }
@@ -3147,7 +3147,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "channel" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -3176,7 +3176,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanStart")
             }
@@ -3195,7 +3195,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetPlatformAzimuth")
             }
@@ -3214,7 +3214,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanStop")
             }
@@ -3233,7 +3233,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -3252,7 +3252,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -3271,7 +3271,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "latitude" -> builder.setLatitude(convertFloat(value))
                 "longitude" -> builder.setLongitude(convertFloat(value))
                 "altitude" -> builder.setAltitude(convertFloat(value))
@@ -3292,7 +3292,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanNext")
             }
@@ -3311,7 +3311,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetPlatformBank")
             }
@@ -3330,7 +3330,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -3349,7 +3349,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "flag" -> builder.setFlag(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for setUseRotaryAsCompass")
             }
@@ -3368,7 +3368,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanPrev")
             }
@@ -3387,7 +3387,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "index" -> builder.setIndex(convertInt(value))
                 "DayZoomTableValue" -> builder.setDayZoomTableValue(convertInt(value))
                 "HeatZoomTableValue" -> builder.setHeatZoomTableValue(convertInt(value))
@@ -3412,7 +3412,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetPlatformElevation")
             }
@@ -3431,7 +3431,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "index" -> builder.setIndex(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanSelectNode")
             }
@@ -3450,7 +3450,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Halt")
             }
@@ -3469,7 +3469,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "index" -> builder.setIndex(convertInt(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanDeleteNode")
             }
@@ -3488,7 +3488,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "azimuth" -> builder.setAzimuth(buildRotaryAxisAzimuth(value as Map<*, *>))
                 "elevation" -> builder.setElevation(buildRotaryAxisElevation(value as Map<*, *>))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Axis")
@@ -3507,7 +3507,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set-value" -> builder.setSetValue(buildRotaryAxisAzimuthSetValue(value as Map<*, *>))
                 "rotate-to" -> builder.setRotateTo(buildRotaryAxisAzimuthRotateTo(value as Map<*, *>))
                 "rotate" -> builder.setRotate(buildRotaryAxisAzimuthRotate(value as Map<*, *>))
@@ -3530,7 +3530,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 "direction" -> {
                     // WARNING: Could not determine enum class from type-ref
@@ -3558,7 +3558,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target-value" -> builder.setTargetValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 "direction" -> {
@@ -3587,7 +3587,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "speed" -> builder.setSpeed(convertFloat(value))
                 "direction" -> {
                     // WARNING: Could not determine enum class from type-ref
@@ -3615,7 +3615,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 "direction" -> {
@@ -3644,7 +3644,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 "direction" -> {
                     // WARNING: Could not determine enum class from type-ref
@@ -3672,7 +3672,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for HaltAzimuth")
             }
@@ -3691,7 +3691,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "set-value" -> builder.setSetValue(buildRotaryAxisElevationSetValue(value as Map<*, *>))
                 "rotate-to" -> builder.setRotateTo(buildRotaryAxisElevationRotateTo(value as Map<*, *>))
                 "rotate" -> builder.setRotate(buildRotaryAxisElevationRotate(value as Map<*, *>))
@@ -3714,7 +3714,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetElevationValue")
             }
@@ -3733,7 +3733,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "target-value" -> builder.setTargetValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for RotateElevationTo")
@@ -3753,7 +3753,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "speed" -> builder.setSpeed(convertFloat(value))
                 "direction" -> {
                     // WARNING: Could not determine enum class from type-ref
@@ -3781,7 +3781,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 "speed" -> builder.setSpeed(convertFloat(value))
                 "direction" -> {
@@ -3810,7 +3810,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 "direction" -> {
                     // WARNING: Could not determine enum class from type-ref
@@ -3838,7 +3838,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for HaltElevation")
             }
@@ -3857,7 +3857,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanUnpause")
             }
@@ -3876,7 +3876,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "mode" -> {
                     // WARNING: Could not determine enum class from type-ref
                     val enumValue = when (value) {
@@ -3903,7 +3903,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for ScanRefreshNodeList")
             }
@@ -3922,7 +3922,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "index" -> builder.setIndex(convertInt(value))
                 "DayZoomTableValue" -> builder.setDayZoomTableValue(convertInt(value))
                 "HeatZoomTableValue" -> builder.setHeatZoomTableValue(convertInt(value))
@@ -3947,7 +3947,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "calibrate-cencel" -> builder.setCalibrateCencel(buildCompassCalibrateCencel(value as Map<*, *>))
                 "start" -> builder.setStart(buildCompassStart(value as Map<*, *>))
                 "set-offset-angle-elevation" -> builder.setSetOffsetAngleElevation(buildCompassSetOffsetAngleElevation(value as Map<*, *>))
@@ -3975,7 +3975,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for CalibrateCencel")
             }
@@ -3994,7 +3994,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Start")
             }
@@ -4013,7 +4013,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetOffsetAngleElevation")
             }
@@ -4032,7 +4032,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Stop")
             }
@@ -4051,7 +4051,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for CalibrateNext")
             }
@@ -4070,7 +4070,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for GetMeteo")
             }
@@ -4089,7 +4089,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "flag" -> builder.setFlag(convertBoolean(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetUseRotaryPosition")
             }
@@ -4108,7 +4108,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetMagneticDeclination")
             }
@@ -4127,7 +4127,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for CalibrateStartShort")
             }
@@ -4146,7 +4146,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for CalibrateStartLong")
             }
@@ -4165,7 +4165,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
                 "value" -> builder.setValue(convertFloat(value))
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for SetOffsetAngleAzimuth")
             }
@@ -4184,7 +4184,7 @@ object GeneratedCommandHandlers {
         for ((key, value) in data) {
             if (value == null) continue
             
-            when (key.toString()) {
+            when (keyToString(key)) {
 
                 else -> LoggingUtils.log("WARN", "Unknown field \$key for Frozen")
             }
@@ -7115,6 +7115,13 @@ object GeneratedCommandHandlers {
 
 
     // Utility conversion functions
+    private fun keyToString(key: Any?): String = when (key) {
+        is String -> key
+        is com.cognitect.transit.Keyword -> key.name
+        null -> "null"
+        else -> key.toString()
+    }
+    
     private fun convertInt(value: Any): Int = when (value) {
         is Int -> value
         is Number -> value.toInt()

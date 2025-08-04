@@ -56,8 +56,17 @@ class TransitCommunicator(
         // Create Transit writer with MessagePack format and custom handlers
         writer = createWriter(framedOutput, writeHandlers)
 
-        // Create Transit reader with MessagePack format
-        reader = TransitFactory.reader(TransitFactory.Format.MSGPACK, framedInput)
+        // Create Transit reader with MessagePack format and custom handlers
+        val readHandlers = mapOf(
+            "kw" to com.cognitect.transit.ReadHandler<Any, Any> { rep ->
+                TransitFactory.keyword(rep.toString())
+            },
+            "enum" to com.cognitect.transit.ReadHandler<Any, Any> { rep ->
+                TransitFactory.keyword(rep.toString())
+            }
+        )
+        reader = TransitFactory.reader(TransitFactory.Format.MSGPACK, framedInput, 
+                                      TransitFactory.readHandlerMap(readHandlers))
 
         // Start reader coroutine
         scope.launch {

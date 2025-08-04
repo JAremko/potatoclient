@@ -52,11 +52,11 @@ class CommandSubprocess(
                     val msg = transitComm.readMessage()
                     if (msg != null) {
                         // Use Transit keys for access
-                        val msgType = msg[TransitKeys.MSG_TYPE] as? String
-                        when (msgType) {
-                            MessageType.COMMAND.key -> handleCommand(msg)
-                            MessageType.CONTROL.key -> handleControl(msg)
-                            else -> messageProtocol.sendWarn("Unknown message type: $msgType")
+                        val msgTypeValue = msg[TransitKeys.MSG_TYPE]
+                        when {
+                            msgTypeValue == MessageType.COMMAND.key || msgTypeValue == MessageType.COMMAND.keyword -> handleCommand(msg)
+                            msgTypeValue == MessageType.CONTROL.key || msgTypeValue == MessageType.CONTROL.keyword -> handleControl(msg)
+                            else -> messageProtocol.sendWarn("Unknown message type: $msgTypeValue")
                         }
                         totalReceived.incrementAndGet()
                     }
@@ -66,11 +66,11 @@ class CommandSubprocess(
 
     private suspend fun handleCommand(msg: Map<*, *>) {
         val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *> ?: return
-        val msgId = msg[TransitKeys.MSG_ID] as? String ?: ""
+        val msgId = (msg[TransitKeys.MSG_ID] ?: msg["msg-id"]) as? String ?: ""
 
         try {
             // The new architecture expects command data directly in payload
-            // Build command using generated handlers
+            // Build command using generated handlers (now handles keywords properly)
             val cmd = GeneratedCommandHandlers.buildCommand(payload)
             
             wsClient.send(cmd.toByteArray())
@@ -330,12 +330,20 @@ suspend fun runTestMode(
         try {
             val msg = transitComm.readMessage() ?: break
             
-            val msgType = msg[TransitKeys.MSG_TYPE] as? String
-            if (msgType == MessageType.COMMAND.key) {
-                val payload = msg[TransitKeys.PAYLOAD]
+            val msgTypeValue = msg[TransitKeys.MSG_TYPE]
+            
+            // Check if it's a command message
+            val isCommand = when (msgTypeValue) {
+                is String -> msgTypeValue == MessageType.COMMAND.key
+                is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.COMMAND.keyword
+                else -> false
+            }
+            
+            if (isCommand) {
+                val payload = msg[TransitKeys.PAYLOAD] ?: msg["payload"]
                 
                 if (payload is Map<*, *>) {
-                    // Build protobuf from Transit command
+                    // Build protobuf from Transit command (now handles keywords properly)
                     val proto = GeneratedCommandHandlers.buildCommand(payload)
                     
                     if (proto != null) {
@@ -347,11 +355,21 @@ suspend fun runTestMode(
                 } else {
                     messageProtocol.sendError("Invalid command payload")
                 }
-            } else if (msgType == MessageType.CONTROL.key) {
-                val action = (msg[TransitKeys.PAYLOAD] as? Map<*, *>)?.get("action")
-                if (action == "shutdown") {
-                    messageProtocol.sendStatus("shutting-down")
-                    break
+            } else {
+                // Check if it's a control message
+                val isControl = when (msgTypeValue) {
+                    is String -> msgTypeValue == MessageType.CONTROL.key
+                    is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.CONTROL.keyword
+                    else -> false
+                }
+                
+                if (isControl) {
+                    val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *>
+                    val action = payload?.get(TransitKeys.ACTION) ?: payload?.get("action")
+                    if (action == "shutdown") {
+                        messageProtocol.sendStatus("shutting-down")
+                        break
+                    }
                 }
             }
         } catch (e: Exception) {
