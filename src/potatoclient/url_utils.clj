@@ -83,13 +83,13 @@
       ;; Empty string
       (str/blank? cleaned)
       nil
-      
+
       ;; Already just a domain/IP (no protocol, no path)
       (and (not (str/includes? cleaned "://"))
            (not (str/includes? cleaned "/"))
            (valid-domain-or-ip? cleaned))
       cleaned
-      
+
       ;; Has protocol - extract the host part
       (str/includes? cleaned "://")
       (when-let [without-protocol (second (str/split cleaned #"://" 2))]
@@ -104,13 +104,13 @@
                             (first (str/split without-query #"[:/]")))]
             (when (and host-part (valid-domain-or-ip? host-part))
               host-part))))
-      
+
       ;; Has path but no protocol - take everything before first /
       (str/includes? cleaned "/")
       (let [host-part (first (str/split cleaned #"/"))]
         (when (valid-domain-or-ip? host-part)
           host-part))
-      
+
       ;; Doesn't match any pattern
       :else nil)))
 

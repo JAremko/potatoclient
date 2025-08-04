@@ -18,7 +18,7 @@
           process (.start pb)
           reader (io/reader (.getInputStream process))
           output (atom [])]
-      
+
       ;; Read for 2 seconds
       (let [start (System/currentTimeMillis)]
         (while (< (- (System/currentTimeMillis) start) 2000)
@@ -27,8 +27,8 @@
               (println "OUTPUT:" line)
               (swap! output conj line)))
           (Thread/sleep 10)))
-      
+
       (.destroyForcibly process)
-      
+
       (println "Total lines:" (count @output))
       (is (pos? (count @output)) "Should produce some output"))))

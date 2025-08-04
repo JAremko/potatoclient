@@ -1,6 +1,7 @@
 package potatoclient.kotlin
 
 import potatoclient.java.transit.EventType
+import potatoclient.kotlin.events.CommandBuilder
 import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.GestureConfig
 import potatoclient.kotlin.gestures.GestureEvent
@@ -8,7 +9,6 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
-import potatoclient.kotlin.events.CommandBuilder
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -80,20 +80,22 @@ class MouseEventHandler(
             when {
                 e.wheelRotation < 0 -> {
                     // Wheel up = zoom in
-                    val command = if (streamType == StreamType.HEAT) {
-                        CommandBuilder.heatCameraNextZoom()
-                    } else {
-                        CommandBuilder.dayCameraNextZoom()
-                    }
+                    val command =
+                        if (streamType == StreamType.HEAT) {
+                            CommandBuilder.heatCameraNextZoom()
+                        } else {
+                            CommandBuilder.dayCameraNextZoom()
+                        }
                     callback.sendCommand(command)
                 }
                 e.wheelRotation > 0 -> {
                     // Wheel down = zoom out
-                    val command = if (streamType == StreamType.HEAT) {
-                        CommandBuilder.heatCameraPrevZoom()
-                    } else {
-                        CommandBuilder.dayCameraPrevZoom()
-                    }
+                    val command =
+                        if (streamType == StreamType.HEAT) {
+                            CommandBuilder.heatCameraPrevZoom()
+                        } else {
+                            CommandBuilder.dayCameraPrevZoom()
+                        }
                     callback.sendCommand(command)
                 }
             }

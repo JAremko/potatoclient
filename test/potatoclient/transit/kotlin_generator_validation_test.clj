@@ -26,9 +26,9 @@
 (defn start-test-processor []
   "Start the Kotlin test command processor"
   (let [classpath (str/join ":" ["src/kotlin/build/libs/potatoclient-kotlin.jar"
-                                  "test/kotlin/build/libs/test-kotlin.jar"])
+                                 "test/kotlin/build/libs/test-kotlin.jar"])
         process (process/start-process
-                  ["java" "-cp" classpath 
+                  ["java" "-cp" classpath
                    "potatoclient.kotlin.transit.TestCommandProcessor"]
                   {:dir (System/getProperty "user.dir")})]
     {:process process
@@ -43,7 +43,7 @@
         writer (transit-core/make-writer baos)]
     (transit-core/write-message! writer command baos)
     ;; Send as base64 (since stdin is text-based)
-    (let [base64 (.encodeToString (java.util.Base64/getEncoder) 
+    (let [base64 (.encodeToString (java.util.Base64/getEncoder)
                                   (.toByteArray baos))]
       (.println stdin base64)
       (.flush stdin)
@@ -72,7 +72,7 @@
 (def command-generators
   "Map of command type to [generator-schema builder-fn]"
   {:ping [[:map] (fn [_] (cmd/ping))]
-   
+
    :cv-start-track-ndc
    [[:map
      [:channel [:enum :heat :day]]
@@ -80,27 +80,27 @@
      [:y [:and double? [:>= -1.0] [:<= 1.0]]]
      [:frame-timestamp {:optional true} pos-int?]]
     (fn [g] (cmd/cv-start-track-ndc (:channel g) (:x g) (:y g) (:frame-timestamp g)))]
-   
+
    :rotary-goto
    [[:map
      [:azimuth [:double {:min 0.0 :max 360.0}]]
      [:elevation [:double {:min -30.0 :max 90.0}]]]
     (fn [g] (cmd/rotary-goto g))]
-   
+
    :rotary-set-velocity
    [[:map
      [:azimuth-speed [:and double? [:>= 0.0]]]
      [:elevation-speed [:and double? [:>= 0.0]]]
      [:azimuth-direction [:enum :clockwise :counter-clockwise]]
      [:elevation-direction [:enum :clockwise :counter-clockwise]]]
-    (fn [g] (cmd/rotary-set-velocity 
+    (fn [g] (cmd/rotary-set-velocity
               (:azimuth-speed g) (:elevation-speed g)
               (:azimuth-direction g) (:elevation-direction g)))]
-   
+
    :heat-camera-palette
    [[:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic]
     (fn [g] (cmd/heat-camera-palette g))]
-   
+
    :set-localization
    [[:enum :en :uk]
     (fn [g] (cmd/set-localization g))]})
@@ -116,8 +116,8 @@
       (doseq [cmd-fn [cmd/ping cmd/noop cmd/frozen]]
         (let [command (cmd-fn)
               result (send-command-get-result *test-processor* command)]
-          (is (:success result) 
-              (str "Command should validate: " (keys command) 
+          (is (:success result)
+              (str "Command should validate: " (keys command)
                    "\nError: " (:error result)))
           (when (:success result)
             (is (:proto result) "Should have protobuf JSON")))))))
@@ -127,20 +127,20 @@
     (when *test-processor*
       (doseq [[cmd-type [schema builder-fn]] command-generators]
         (testing (str "Command type: " cmd-type)
-          (let [samples (try 
-                         (mg/sample schema {:size 10})
-                         (catch Exception e
-                           (println "Failed to generate for" cmd-type ":" (.getMessage e))
-                           []))]
+          (let [samples (try
+                          (mg/sample schema {:size 10})
+                          (catch Exception e
+                            (println "Failed to generate for" cmd-type ":" (.getMessage e))
+                            []))]
             (doseq [generated samples]
               (let [command (builder-fn generated)
                     result (send-command-get-result *test-processor* command)]
                 (is (:success result)
                     (str "Generated " cmd-type " should validate.\n"
                          "Generated: " generated "\n"
-                         "Command: " command "\n" 
+                         "Command: " command "\n"
                          "Error: " (:error result)))
-                
+
                 ;; Additional validation when successful
                 (when (:success result)
                   ;; Check protobuf was created
@@ -153,18 +153,18 @@
     (when *test-processor*
       ;; Test that valid generated values pass
       (let [valid-goto (mg/generate [:map
-                                    [:azimuth [:double {:min 0.0 :max 360.0}]]
-                                    [:elevation [:double {:min -30.0 :max 90.0}]]])
+                                     [:azimuth [:double {:min 0.0 :max 360.0}]]
+                                     [:elevation [:double {:min -30.0 :max 90.0}]]])
             command (cmd/rotary-goto valid-goto)
             result (send-command-get-result *test-processor* command)]
         (is (:success result) "Valid values should pass"))
-      
+
       ;; Test edge cases that should pass
       (doseq [azimuth [0.0 180.0 359.9]
               elevation [-30.0 0.0 90.0]]
         (let [command (cmd/rotary-goto {:azimuth azimuth :elevation elevation})
               result (send-command-get-result *test-processor* command)]
-          (is (:success result) 
+          (is (:success result)
               (str "Edge case should pass: az=" azimuth " el=" elevation)))))))
 
 (deftest test-high-volume-generation
@@ -174,8 +174,8 @@
         ;; Generate and test many commands
         (doseq [[cmd-type [schema builder-fn]] command-generators
                 :let [samples (try
-                               (mg/sample schema {:size 50})
-                               (catch Exception e []))]
+                                (mg/sample schema {:size 50})
+                                (catch Exception e []))]
                 generated samples]
           (try
             (let [command (builder-fn generated)
@@ -194,7 +194,7 @@
                      {:type cmd-type
                       :generated generated
                       :error (.getMessage e)}))))
-        
+
         ;; Report results
         (let [{:keys [success failure errors]} @results]
           (println "Generator validation results:")
@@ -204,9 +204,9 @@
             (println "  First 5 errors:")
             (doseq [err (take 5 errors)]
               (println "   " err)))
-          
+
           ;; All generated commands should validate
-          (is (zero? failure) 
+          (is (zero? failure)
               (str failure " commands failed validation")))))))
 
 (deftest test-transit-keyword-preservation
@@ -221,7 +221,7 @@
         ))))
 
 (deftest test-protobuf-equality
-  (testing "Protobuf objects are equal after binary roundtrip"  
+  (testing "Protobuf objects are equal after binary roundtrip"
     (when *test-processor*
       ;; The TestCommandProcessor should report if protos are equal
       (let [command (cmd/rotary-goto {:azimuth 45.0 :elevation 30.0})
@@ -229,5 +229,5 @@
         (is (:success result))
         ;; If the processor provides equality info
         (when (contains? result :proto-equals)
-          (is (:proto-equals result) 
+          (is (:proto-equals result)
               "Protobuf should equal itself after roundtrip"))))))

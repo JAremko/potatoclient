@@ -20,23 +20,23 @@
              [:azimuth [:double {:min 0.0 :max 360.0}]]
              [:elevation [:double {:min -30.0 :max 90.0}]]]
     :builder (fn [data] (cmd/rotary-goto data))}
-   
+
    :cv-start-track
    {:schema [:map
              [:channel [:enum :heat :day]]
              [:x [:and double? [:>= -1.0] [:<= 1.0]]]
              [:y [:and double? [:>= -1.0] [:<= 1.0]]]
              [:frame-timestamp {:optional true} pos-int?]]
-    :builder (fn [data] (cmd/cv-start-track-ndc 
+    :builder (fn [data] (cmd/cv-start-track-ndc
                           (:channel data)
                           (:x data)
                           (:y data)
                           (:frame-timestamp data)))}
-   
+
    :heat-palette
    {:schema [:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic]
     :builder (fn [data] (cmd/heat-camera-palette data))}
-   
+
    :localization
    {:schema [:enum :en :uk]
     :builder (fn [data] (cmd/set-localization data))}})
@@ -53,26 +53,26 @@
               (let [command (builder generated)
                     ;; Send to Kotlin for validation
                     result (test-utils/validate-command-with-kotlin command)]
-                
+
                 ;; Core assertions
                 (is (:success result)
                     (str "Command should validate.\n"
                          "Generated: " generated "\n"
                          "Command: " command "\n"
                          "Error: " (:error result)))
-                
+
                 ;; When successful, verify additional properties
                 (when (:success result)
                   ;; Proto was created
                   (is (:proto-json result) "Should have protobuf JSON")
-                  
+
                   ;; Binary size is reasonable
                   (is (pos? (:binary-size result 0)) "Should have binary data")
-                  
+
                   ;; Java equals works after roundtrip
-                  (is (:proto-equals result) 
+                  (is (:proto-equals result)
                       "Protobuf should equal itself after binary roundtrip")
-                  
+
                   ;; Hash codes match
                   (is (= (:original-hash result) (:roundtrip-hash result))
                       "Hash codes should match after roundtrip"))))))))))
@@ -83,16 +83,16 @@
     (doseq [azimuth [0.0 0.0001 179.9999 359.9999]]
       (let [command (cmd/rotary-goto {:azimuth azimuth :elevation 0.0})
             result (test-utils/validate-command-with-kotlin command)]
-        (is (:success result) 
+        (is (:success result)
             (str "Azimuth " azimuth " should be valid"))))
-    
+
     ;; Test elevation boundaries  
     (doseq [elevation [-30.0 -29.9999 0.0 89.9999 90.0]]
       (let [command (cmd/rotary-goto {:azimuth 180.0 :elevation elevation})
             result (test-utils/validate-command-with-kotlin command)]
         (is (:success result)
             (str "Elevation " elevation " should be valid"))))
-    
+
     ;; Test NDC boundaries
     (doseq [coord [-1.0 -0.9999 0.0 0.9999 1.0]]
       (let [command (cmd/cv-start-track-ndc :heat coord coord)
@@ -107,7 +107,7 @@
           result (test-utils/validate-command-with-kotlin command)]
       (is (not (:success result)) "Azimuth > 360 should fail")
       (is (re-find #"azimuth" (:error result "")) "Error should mention azimuth"))
-    
+
     ;; Test invalid elevation
     (let [command {:rotary {:goto {:azimuth 180.0 :elevation -45.0}}}
           result (test-utils/validate-command-with-kotlin command)]
@@ -140,7 +140,7 @@
                        {:type cmd-type
                         :generated generated
                         :error (.getMessage e)}))))))
-      
+
       ;; Report results
       (let [{:keys [success failure errors]} @results]
         (println "\nHigh volume test results:")
@@ -150,7 +150,7 @@
           (println "  Sample errors:")
           (doseq [err errors]
             (println "   " err)))
-        
+
         ;; Assert all should pass
-        (is (zero? failure) 
+        (is (zero? failure)
             (str failure " commands failed validation"))))))

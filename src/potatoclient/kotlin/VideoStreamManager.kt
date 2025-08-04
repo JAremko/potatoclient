@@ -381,7 +381,7 @@ class VideoStreamManager(
             messageProtocol.sendEvent(
                 EventType.WINDOW,
                 mapOf(
-                    MessageKeys.TYPE to EventType.CLOSE.keyword,  // Use keyword
+                    MessageKeys.TYPE to EventType.CLOSE.keyword, // Use keyword
                     MessageKeys.STREAM_ID to streamId,
                 ),
             )

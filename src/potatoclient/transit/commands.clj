@@ -144,9 +144,9 @@
   [azimuth-speed elevation-speed azimuth-direction elevation-direction]
   [number? number? keyword? keyword? => map?]
   {:rotary {:set-velocity {:azimuth-speed azimuth-speed
-                          :elevation-speed elevation-speed
-                          :azimuth-direction azimuth-direction
-                          :elevation-direction elevation-direction}}})
+                           :elevation-speed elevation-speed
+                           :azimuth-direction azimuth-direction
+                           :elevation-direction elevation-direction}}})
 
 ;; ============================================================================
 ;; Computer Vision Commands
@@ -157,9 +157,9 @@
   [channel ndc-x ndc-y frame-timestamp]
   [keyword? number? number? (? int?) => map?]
   {:cv {:start-track-ndc {:channel channel
-                         :x ndc-x
-                         :y ndc-y
-                         :frame-time frame-timestamp}}})
+                          :x ndc-x
+                          :y ndc-y
+                          :frame-time frame-timestamp}}})
 
 ;; ============================================================================
 ;; Day Camera Commands
@@ -212,13 +212,13 @@
   [[:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic] => map?]
   ;; Map palette names to indices (assuming an index-based system)
   (let [palette-index (case palette
-                       :white-hot 0
-                       :black-hot 1
-                       :rainbow 2
-                       :ironbow 3
-                       :lava 4
-                       :arctic 5
-                       0)]
+                        :white-hot 0
+                        :black-hot 1
+                        :rainbow 2
+                        :ironbow 3
+                        :lava 4
+                        :arctic 5
+                        0)]
     {:heat-camera {:set-color-palette {:index palette-index}}}))
 
 (>defn heat-camera-photo

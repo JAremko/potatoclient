@@ -16,14 +16,14 @@
                "msg-id" "test-123"
                "timestamp" 1234567890
                "payload" {"state" {"gps" {"latitude" 37.7749
-                                         "longitude" -122.4194
-                                         "altitude" 52.0
-                                         "fix-type" "3d"
-                                         "use-manual" false}}}}]
-      
+                                          "longitude" -122.4194
+                                          "altitude" 52.0
+                                          "fix-type" "3d"
+                                          "use-manual" false}}}}]
+
       ;; Handle the state update
       (app-db/handle-state-update msg)
-      
+
       ;; Verify GPS state was updated
       (let [gps-state (app-db/get-subsystem-state :gps)]
         (is (= 37.7749 (:latitude gps-state)))
@@ -38,14 +38,14 @@
                "msg-id" "test-456"
                "timestamp" 1234567890
                "payload" {"state" {"rotary" {"azimuth" 45.0
-                                            "elevation" -10.0
-                                            "azimuth-speed" 2.5
-                                            "elevation-speed" 0.0
-                                            "is-moving" true
-                                            "mode" "auto"}}}}]
-      
+                                             "elevation" -10.0
+                                             "azimuth-speed" 2.5
+                                             "elevation-speed" 0.0
+                                             "is-moving" true
+                                             "mode" "auto"}}}}]
+
       (app-db/handle-state-update msg)
-      
+
       (let [rotary-state (app-db/get-subsystem-state :rotary)]
         (is (= 45.0 (:azimuth rotary-state)))
         (is (= -10.0 (:elevation rotary-state)))
@@ -60,17 +60,17 @@
                "msg-id" "test-789"
                "timestamp" 1234567890
                "payload" {"state" {"camera-day" {"zoom-pos" 4.5
-                                                "auto-focus" true}
-                                  "camera-heat" {"zoom-pos" 2.0
-                                                "auto-focus" false}}}}]
-      
+                                                 "auto-focus" true}
+                                   "camera-heat" {"zoom-pos" 2.0
+                                                  "auto-focus" false}}}}]
+
       (app-db/handle-state-update msg)
-      
+
       ;; Check day camera
       (let [day-cam (app-db/get-subsystem-state :camera-day)]
         (is (= 4.5 (:zoom day-cam)))
         (is (= :auto (:focus-mode day-cam))))
-      
+
       ;; Check heat camera
       (let [heat-cam (app-db/get-subsystem-state :camera-heat)]
         (is (= 2.0 (:zoom heat-cam)))
@@ -82,12 +82,12 @@
                "msg-id" "test-999"
                "timestamp" 1234567890
                "payload" {"state" {"system" {"rec-enabled" true
-                                            "tracking" true
-                                            "cpu-temperature" 65.5
-                                            "loc" "uk"}}}}]
-      
+                                             "tracking" true
+                                             "cpu-temperature" 65.5
+                                             "loc" "uk"}}}}]
+
       (app-db/handle-state-update msg)
-      
+
       (let [sys-state (app-db/get-subsystem-state :system)]
         (is (= true (:recording sys-state)))
         (is (= true (:tracking sys-state)))
@@ -100,15 +100,15 @@
                "msg-id" "test-multi"
                "timestamp" 1234567890
                "payload" {"state" {"gps" {"latitude" 40.7128
-                                         "longitude" -74.0060}
-                                  "compass" {"azimuth" 180.0
-                                            "elevation" 0.0
-                                            "bank" 0.0
-                                            "calibrating" false}
-                                  "lrf" {"target" {"distance-3b" 1234.5}}}}}]
-      
+                                          "longitude" -74.0060}
+                                   "compass" {"azimuth" 180.0
+                                              "elevation" 0.0
+                                              "bank" 0.0
+                                              "calibrating" false}
+                                   "lrf" {"target" {"distance-3b" 1234.5}}}}}]
+
       (app-db/handle-state-update msg)
-      
+
       ;; Verify all subsystems were updated
       (let [gps (app-db/get-subsystem-state :gps)
             compass (app-db/get-subsystem-state :compass)
@@ -125,15 +125,15 @@
     ;; First set some initial state
     (app-db/update-subsystem! :gps {:latitude 10.0 :longitude 20.0})
     (app-db/update-subsystem! :compass {:heading 90.0})
-    
+
     ;; Now update only GPS
     (let [msg {"msg-type" "state-update"
                "msg-id" "test-partial"
                "timestamp" 1234567890
                "payload" {"state" {"gps" {"latitude" 15.0}}}}]
-      
+
       (app-db/handle-state-update msg)
-      
+
       ;; GPS should be updated
       (is (= 15.0 (get-in @app-db/app-db [:server-state :gps :latitude])))
       ;; But compass should remain unchanged
@@ -145,7 +145,7 @@
                "msg-id" "test-empty"
                "timestamp" 1234567890
                "payload" {"state" {}}}]
-      
+
       ;; Should not throw
       (is (nil? (app-db/handle-state-update msg))))))
 
@@ -155,7 +155,7 @@
                "msg-id" "test-missing"
                "timestamp" 1234567890
                "payload" {}}]
-      
+
       ;; Should not throw
       (is (nil? (app-db/handle-state-update msg))))))
 

@@ -23,22 +23,22 @@
   (let [temp-file (write-transit-to-temp-file command)]
     (try
       ;; Run the Kotlin validator
-      (let [result (shell/sh "java" 
-                            "-cp" "src/kotlin/build/libs/potatoclient-kotlin.jar:test/kotlin/build/libs/test-kotlin.jar"
-                            "potatoclient.kotlin.transit.MalliPayloadValidator"
-                            (.getAbsolutePath temp-file))]
+      (let [result (shell/sh "java"
+                             "-cp" "src/kotlin/build/libs/potatoclient-kotlin.jar:test/kotlin/build/libs/test-kotlin.jar"
+                             "potatoclient.kotlin.transit.MalliPayloadValidator"
+                             (.getAbsolutePath temp-file))]
         (if (= 0 (:exit result))
           ;; Parse JSON output
           (try
             (json/read-str (:out result) :key-fn keyword)
             (catch Exception e
               {:success false
-               :error (str "Failed to parse JSON: " (.getMessage e) 
-                          "\nOutput: " (:out result))}))
+               :error (str "Failed to parse JSON: " (.getMessage e)
+                           "\nOutput: " (:out result))}))
           {:success false
            :error (str "Kotlin process failed with exit code " (:exit result)
-                      "\nStderr: " (:err result)
-                      "\nStdout: " (:out result))}))
+                       "\nStderr: " (:err result)
+                       "\nStdout: " (:out result))}))
       (finally
         (.delete temp-file)))))
 
@@ -55,13 +55,13 @@
               writer (transit-core/make-writer out)]
           (transit-core/write-message! writer command out)
           (.close out)
-          
+
           ;; Run through TestCommandProcessor
           (let [result (shell/sh "java"
-                                "-cp" "src/kotlin/build/libs/potatoclient-kotlin.jar:test/kotlin/build/libs/test-kotlin.jar"
-                                "potatoclient.kotlin.transit.TestCommandProcessorKt"
-                                "--validate"
-                                (.getAbsolutePath cmd-file))]
+                                 "-cp" "src/kotlin/build/libs/potatoclient-kotlin.jar:test/kotlin/build/libs/test-kotlin.jar"
+                                 "potatoclient.kotlin.transit.TestCommandProcessorKt"
+                                 "--validate"
+                                 (.getAbsolutePath cmd-file))]
             (swap! results conj
                    (if (= 0 (:exit result))
                      (try
@@ -73,8 +73,8 @@
                           :error (str "JSON parse error: " (.getMessage e))}))
                      {:command command
                       :success false
-                      :error (str "Exit code: " (:exit result) 
-                                 "\nStderr: " (:err result))})))))
+                      :error (str "Exit code: " (:exit result)
+                                  "\nStderr: " (:err result))})))))
       @results
       (finally
         ;; Clean up temp directory

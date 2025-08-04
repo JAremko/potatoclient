@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import potatoclient.java.transit.MessageType
+import potatoclient.kotlin.TestModeWebSocketStub
 import potatoclient.kotlin.transit.generated.GeneratedCommandHandlers
 import java.net.URI
 import java.net.http.HttpClient
@@ -23,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import potatoclient.kotlin.TestModeWebSocketStub
 
 /**
  * Simplified Command subprocess without protovalidate
@@ -72,7 +72,7 @@ class CommandSubprocess(
             // The new architecture expects command data directly in payload
             // Build command using generated handlers (now handles keywords properly)
             val cmd = GeneratedCommandHandlers.buildCommand(payload)
-            
+
             wsClient.send(cmd.toByteArray())
             totalSent.incrementAndGet()
 
@@ -278,7 +278,7 @@ fun main(args: Array<String>) {
 
     try {
         val isTestMode = args.contains("--test-mode")
-        
+
         if (!isTestMode && args.isEmpty()) {
             logError("Usage: CommandSubprocess <websocket-url> [--test-mode]")
             System.exit(1)
@@ -319,33 +319,34 @@ fun main(args: Array<String>) {
  */
 suspend fun runTestMode(
     transitComm: TransitCommunicator,
-    messageProtocol: TransitMessageProtocol
+    messageProtocol: TransitMessageProtocol,
 ) = coroutineScope {
     val testStub = TestModeWebSocketStub(transitComm)
-    
+
     messageProtocol.sendStatus("test-mode-ready")
-    
+
     // Handle incoming Transit messages
     while (isActive) {
         try {
             val msg = transitComm.readMessage() ?: break
-            
+
             val msgTypeValue = msg[TransitKeys.MSG_TYPE]
-            
+
             // Check if it's a command message
-            val isCommand = when (msgTypeValue) {
-                is String -> msgTypeValue == MessageType.COMMAND.key
-                is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.COMMAND.keyword
-                else -> false
-            }
-            
+            val isCommand =
+                when (msgTypeValue) {
+                    is String -> msgTypeValue == MessageType.COMMAND.key
+                    is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.COMMAND.keyword
+                    else -> false
+                }
+
             if (isCommand) {
                 val payload = msg[TransitKeys.PAYLOAD] ?: msg["payload"]
-                
+
                 if (payload is Map<*, *>) {
                     // Build protobuf from Transit command (now handles keywords properly)
                     val proto = GeneratedCommandHandlers.buildCommand(payload)
-                    
+
                     if (proto != null) {
                         // Handle command through test stub
                         testStub.handleCommand(proto)
@@ -357,12 +358,13 @@ suspend fun runTestMode(
                 }
             } else {
                 // Check if it's a control message
-                val isControl = when (msgTypeValue) {
-                    is String -> msgTypeValue == MessageType.CONTROL.key
-                    is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.CONTROL.keyword
-                    else -> false
-                }
-                
+                val isControl =
+                    when (msgTypeValue) {
+                        is String -> msgTypeValue == MessageType.CONTROL.key
+                        is com.cognitect.transit.Keyword -> msgTypeValue == MessageType.CONTROL.keyword
+                        else -> false
+                    }
+
                 if (isControl) {
                     val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *>
                     val action = payload?.get(TransitKeys.ACTION) ?: payload?.get("action")
@@ -376,6 +378,6 @@ suspend fun runTestMode(
             messageProtocol.sendException("Error processing message", e)
         }
     }
-    
+
     messageProtocol.sendStatus("test-mode-stopped")
 }

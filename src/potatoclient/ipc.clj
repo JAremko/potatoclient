@@ -113,7 +113,7 @@
             transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
         (when (and subprocess-launcher transit-core nested-command)
           (let [command-msg (@transit-core :command nested-command)]
-            (@subprocess-launcher :command command-msg)
+            (@subprocess-launcher :cmd command-msg)
             (logging/log-debug
               {:id ::forwarded-command
                :data {:stream stream-key
@@ -134,7 +134,7 @@
           (let [command-msg (@transit-core :command
                                            (merge {:action action}
                                                   (dissoc payload :action :process)))]
-            (@subprocess-launcher :command command-msg)
+            (@subprocess-launcher :cmd command-msg)
             (logging/log-debug
               {:id ::forwarded-command
                :data {:stream stream-key

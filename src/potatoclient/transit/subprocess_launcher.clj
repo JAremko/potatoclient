@@ -323,15 +323,15 @@
   "Start the command subprocess that converts Transit commands to protobuf."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (start-subprocess :cmd url domain 
-                   (create-message-router app-db/handle-command-response)))
+  (start-subprocess :cmd url domain
+                    (create-message-router app-db/handle-command-response)))
 
 (>defn start-state-subprocess
   "Start the state subprocess that converts protobuf state to Transit."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (start-subprocess :state url domain 
-                   (create-message-router app-db/handle-state-update)))
+  (start-subprocess :state url domain
+                    (create-message-router app-db/handle-state-update)))
 
 (>defn stop-all-subprocesses
   "Stop all running subprocesses."

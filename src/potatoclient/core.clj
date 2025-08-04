@@ -121,7 +121,7 @@
                                   (try
                 ;; Create ping command message
                                     (let [ping-msg (@create-message :command (@ping-cmd))]
-                                      (@send-message :command ping-msg))
+                                      (@send-message :cmd ping-msg))
                                     (catch Exception e
                                       (logging/log-debug {:msg "Failed to send ping" :error (.getMessage e)})))))
                               300  ; initial delay

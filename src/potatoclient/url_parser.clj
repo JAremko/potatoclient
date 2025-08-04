@@ -145,23 +145,23 @@
     ;; Full URL
     [:INPUT [:URL _ [:AUTHORITY host & _] & _]]
     (extract-host host)
-    
+
     ;; Host with port and maybe trailing slash
     [:INPUT [:HOST_PORT_MAYBE_PATH host & _]]
     (extract-host host)
-    
+
     ;; IPv6 bracketed
     [:INPUT [:IPV6_BRACKETED _ [:IPV6 addr] _]]
     (when (valid-ipv6? addr) addr)
-    
+
     ;; Just host
     [:INPUT host]
     (extract-host host)
-    
+
     ;; Empty
     [:INPUT [:EMPTY]]
     nil
-    
+
     :else nil))
 
 ;; -----------------------------------------------------------------------------
@@ -185,9 +185,9 @@
                    (every? valid-octet? parts))
             ;; Valid IPv4, reconstruct as IPv4 node
             [:INPUT [:IPV4 [:OCTET (nth parts 0)] "."
-                          [:OCTET (nth parts 1)] "."
-                          [:OCTET (nth parts 2)] "."
-                          [:OCTET (nth parts 3)]]]
+                     [:OCTET (nth parts 1)] "."
+                     [:OCTET (nth parts 2)] "."
+                     [:OCTET (nth parts 3)]]]
             ;; Invalid IPv4 format
             (url-grammar "!invalid!"))
           ;; Not numeric, keep as domain

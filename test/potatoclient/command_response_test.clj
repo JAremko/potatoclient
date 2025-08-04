@@ -15,12 +15,12 @@
                "msg-id" "test-123"
                "timestamp" 1234567890
                "payload" {"status" "sent"
-                         "proto-type" "cmd.JonSharedCmd$Root"
-                         "size" 42}}]
-      
+                          "proto-type" "cmd.JonSharedCmd$Root"
+                          "size" 42}}]
+
       ;; Handle the response
       (app-db/handle-command-response msg)
-      
+
       ;; Verify stats were updated
       (let [stats (app-db/get-validation-state)]
         (is (= 1 (get-in stats [:stats :total-commands-sent])))))))
@@ -30,15 +30,15 @@
     ;; First set the process as running
     (app-db/set-process-state! :cmd-proc 12345 :running)
     (is (app-db/process-running? :cmd-proc))
-    
+
     (let [msg {"msg-type" "response"
                "msg-id" "test-456"
                "timestamp" 1234567890
                "payload" {"status" "stopped"}}]
-      
+
       ;; Handle the response
       (app-db/handle-command-response msg)
-      
+
       ;; Verify process state was updated
       (is (not (app-db/process-running? :cmd-proc)))
       (is (= :stopped (get-in @app-db/app-db [:app-state :processes :cmd-proc :status]))))))
@@ -49,18 +49,18 @@
     (let [ping-time 1234567000
           pong-time 1234567100
           msg-id "ping-789"]
-      
+
       ;; Simulate sending a ping
       (swap! app-db/app-db assoc-in [:app-state :ping-timestamps msg-id] ping-time)
-      
+
       (let [msg {"msg-type" "response"
                  "msg-id" msg-id
                  "timestamp" pong-time
                  "payload" {"status" "pong"}}]
-        
+
         ;; Handle the response
         (app-db/handle-command-response msg)
-        
+
         ;; Verify latency was calculated (100ms)
         (is (= 100 (get-in @app-db/app-db [:app-state :connection :latency-ms])))
         ;; Verify ping timestamp was cleaned up
@@ -72,9 +72,9 @@
                "msg-id" "test-ack"
                "timestamp" 1234567890
                "payload" {"status" "ack"
-                         "command" "rotary-goto"
-                         "commandId" 42}}]
-      
+                          "command" "rotary-goto"
+                          "commandId" 42}}]
+
       ;; Just verify it doesn't throw - logging is the main action
       (is (nil? (app-db/handle-command-response msg))))))
 
@@ -84,8 +84,8 @@
                "msg-id" "test-unknown"
                "timestamp" 1234567890
                "payload" {"status" "unknown-status"
-                         "data" "some-data"}}]
-      
+                          "data" "some-data"}}]
+
       ;; Should not throw
       (is (nil? (app-db/handle-command-response msg))))))
 
@@ -94,7 +94,7 @@
     (let [msg {"msg-type" "response"
                "msg-id" "test-no-payload"
                "timestamp" 1234567890}]
-      
+
       ;; Should not throw
       (is (nil? (app-db/handle-command-response msg))))))
 
@@ -107,7 +107,7 @@
                  "timestamp" 1234567890
                  "payload" {"status" "sent"}}]
         (app-db/handle-command-response msg)))
-    
+
     ;; Verify counter incremented correctly
     (let [stats (app-db/get-validation-state)]
       (is (= 5 (get-in stats [:stats :total-commands-sent]))))))

@@ -12,7 +12,7 @@
     ;; Create piped streams so we control stdin
     (let [subprocess-stdin (PipedInputStream.)
           our-output (PipedOutputStream. subprocess-stdin)
-          
+
           java-exe (if-let [java-home (System/getProperty "java.home")]
                      (str java-home "/bin/java")
                      "java")
@@ -24,13 +24,13 @@
           pb (ProcessBuilder. ^java.util.List cmd)
           _ (.redirectInput pb ProcessBuilder$Redirect/from subprocess-stdin)
           process (.start pb)]
-      
+
       (try
         ;; Set up reading from subprocess
         (let [subprocess-output (.getInputStream process)
               subprocess-error (.getErrorStream process)
               messages (atom [])]
-          
+
           ;; Start error reader
           (future
             (with-open [reader (io/reader subprocess-error)]
@@ -38,7 +38,7 @@
                 (when-let [line (.readLine reader)]
                   (println "STDERR:" line)
                   (recur)))))
-          
+
           ;; Start output reader in a separate thread
           (let [reader-future
                 (future
@@ -47,29 +47,29 @@
                           reader (transit-core/make-reader framed-input)]
                       (dotimes [_ 10]  ; Try to read up to 10 messages
                         (when-let [msg (try
-                                        (transit-core/read-message reader)
-                                        (catch Exception e
-                                          (println "Read error:" (.getMessage e))
-                                          nil))]
+                                         (transit-core/read-message reader)
+                                         (catch Exception e
+                                           (println "Read error:" (.getMessage e))
+                                           nil))]
                           (println "Received:" (:msg-type msg) "-" (get-in msg [:payload :status]))
                           (swap! messages conj msg))))
                     (catch Exception e
                       (println "Reader exception:" (.getMessage e)))))]
-            
+
             ;; Give subprocess time to start
             (Thread/sleep 500)
-            
+
             ;; Now send a command to unblock the subprocess
             (let [framed-output (framed-io/make-framed-output-stream our-output)
                   writer (transit-core/make-writer framed-output)]
               (println "Sending ping command...")
               (transit-core/write-message! writer
-                                          (transit-core/create-message :command (cmd/ping))
-                                          our-output))
-            
+                                           (transit-core/create-message :command (cmd/ping))
+                                           our-output))
+
             ;; Wait a bit for processing
             (Thread/sleep 1000)
-            
+
             ;; Check results
             (let [msgs @messages]
               (println "Total messages received:" (count msgs))
@@ -78,7 +78,7 @@
                   "Should receive test-mode-ready")
               (is (some #(= "pong" (get-in % [:payload :type])) msgs)
                   "Should receive pong response"))))
-        
+
         (finally
           (.close our-output)
           (.destroyForcibly process))))))

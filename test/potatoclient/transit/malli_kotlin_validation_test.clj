@@ -32,8 +32,8 @@
 
 (defn compile-kotlin-validator! []
   "Compile the Kotlin validator if needed"
-  (let [result (shell/sh "make" "compile-kotlin-tests" 
-                        :dir (System/getProperty "user.dir"))]
+  (let [result (shell/sh "make" "compile-kotlin-tests"
+                         :dir (System/getProperty "user.dir"))]
     (when (not= 0 (:exit result))
       (throw (ex-info "Failed to compile Kotlin tests" result)))))
 
@@ -41,19 +41,19 @@
   "Run command through Kotlin validation and return result"
   ;; First ensure Kotlin is compiled
   (compile-kotlin-validator!)
-  
+
   ;; Create a temp file with the Transit command
   (let [temp-file (File/createTempFile "malli-test-" ".transit")
         _ (transit-core/write-transit-to-file command-map (.getPath temp-file))
-        
+
         ;; Run Kotlin validator
         result (shell/sh "java" "-cp" "test/kotlin/build/libs/test-all.jar"
-                        kotlin-validator-class
-                        (.getPath temp-file))]
-    
+                         kotlin-validator-class
+                         (.getPath temp-file))]
+
     ;; Clean up
     (.delete temp-file)
-    
+
     ;; Parse result
     (if (= 0 (:exit result))
       (json/read-str (:out result) :key-fn keyword)
@@ -83,11 +83,11 @@
                 command (cmd/rotary-goto (:azimuth sample) (:elevation sample))
                 ;; Validate through Kotlin
                 result (run-kotlin-validation command)]
-            
+
             ;; Check success
-            (is (:success result) 
+            (is (:success result)
                 (str "Command should validate: " command "\nError: " (:error result)))
-            
+
             ;; Check constraints were respected
             (when (:success result)
               (let [proto-data (:proto result)]
@@ -102,14 +102,14 @@
                       {:channel :heat :x 0.0 :y 0.0}
                       {:channel :day :x -0.999 :y 0.999}]]
       (doseq [params edge-cases]
-        (let [command (cmd/cv-start-track-ndc 
-                        (:channel params) 
-                        (:x params) 
+        (let [command (cmd/cv-start-track-ndc
+                        (:channel params)
+                        (:x params)
                         (:y params))
               result (run-kotlin-validation command)]
-          (is (:success result) 
+          (is (:success result)
               (str "Edge case should validate: " params)))))
-    
+
     ;; Now test with generated values
     (let [samples (generate-constrained-samples cv-specs/start-track-ndc 10)]
       (doseq [sample samples]
@@ -130,10 +130,10 @@
               result (run-kotlin-validation command)]
           (is (:success result)
               (str "Palette " palette " should be valid")))))
-    
+
     ;; Test with generated enum values
-    (let [samples (generate-constrained-samples 
-                    [:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic] 
+    (let [samples (generate-constrained-samples
+                    [:enum :white-hot :black-hot :rainbow :ironbow :lava :arctic]
                     10)]
       (doseq [palette samples]
         (let [command (cmd/heat-camera-palette palette)
@@ -142,36 +142,34 @@
 
 (deftest test-protobuf-equality-after-roundtrip
   (testing "Protobuf equality is maintained through roundtrip"
-    (let [test-commands [
-           (cmd/ping)
-           (cmd/rotary-goto 180.0 45.0)
-           (cmd/cv-start-track-ndc :heat 0.5 0.5)
-           (cmd/heat-camera-palette :rainbow)]]
-      
+    (let [test-commands [(cmd/ping)
+                         (cmd/rotary-goto 180.0 45.0)
+                         (cmd/cv-start-track-ndc :heat 0.5 0.5)
+                         (cmd/heat-camera-palette :rainbow)]]
+
       (doseq [command test-commands]
         (let [;; Send through Kotlin for full roundtrip
               result (run-kotlin-validation command)]
-          
+
           (when (:success result)
             ;; Kotlin should return both original and roundtripped proto
             (is (= (:original-hash result) (:roundtrip-hash result))
                 "Protobuf hash should match after roundtrip")
-            
+
             ;; Check that extracted Transit matches original structure
             (is (= (keys command) (keys (:extracted result)))
                 "Command structure should be preserved")))))))
 
 (deftest test-constraint-violations-detected
   (testing "Invalid values are properly rejected"
-    (let [invalid-cases [
-           ;; Azimuth > 360
-           #(cmd/rotary-goto 400.0 45.0)
+    (let [invalid-cases [;; Azimuth > 360
+                         #(cmd/rotary-goto 400.0 45.0)
            ;; Elevation < -30  
-           #(cmd/rotary-goto 180.0 -45.0)
+                         #(cmd/rotary-goto 180.0 -45.0)
            ;; Invalid enum (this should fail at Clojure level with Guardrails)
            ;; #(cmd/heat-camera-palette :invalid-palette)
-           ]]
-      
+                         ]]
+
       (doseq [invalid-fn invalid-cases]
         ;; Some might fail at command creation, others at validation
         (try
@@ -188,16 +186,16 @@
     (let [;; Generate lots of samples to find edge cases
           goto-samples (generate-constrained-samples rotary-specs/goto 100)
           cv-samples (generate-constrained-samples cv-specs/start-track-ndc 100)
-          
+
           failures (atom [])]
-      
+
       ;; Test goto commands
       (doseq [sample goto-samples]
         (let [command (cmd/rotary-goto (:azimuth sample) (:elevation sample))
               result (run-kotlin-validation command)]
           (when-not (:success result)
             (swap! failures conj {:type :goto :sample sample :error (:error result)}))))
-      
+
       ;; Test CV commands  
       (doseq [sample cv-samples]
         (let [command (cmd/cv-start-track-ndc
@@ -207,15 +205,15 @@
               result (run-kotlin-validation command)]
           (when-not (:success result)
             (swap! failures conj {:type :cv :sample sample :error (:error result)}))))
-      
+
       ;; Report results
       (let [failure-count (count @failures)]
         (when (pos? failure-count)
           (println "Failures found:" failure-count)
           (doseq [f (take 5 @failures)]
             (println "  " f)))
-        
-        (is (zero? failure-count) 
+
+        (is (zero? failure-count)
             (str failure-count " commands failed validation"))))))
 
 ;; =============================================================================
@@ -304,5 +302,5 @@ object MalliPayloadValidator {
 
 ;; Write the validator if needed
 (when-not (.exists (File. "test/kotlin/potatoclient/kotlin/transit/MalliPayloadValidator.kt"))
-  (spit "test/kotlin/potatoclient/kotlin/transit/MalliPayloadValidator.kt" 
+  (spit "test/kotlin/potatoclient/kotlin/transit/MalliPayloadValidator.kt"
         kotlin-validator-source))

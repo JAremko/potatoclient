@@ -240,13 +240,13 @@
                        (let [stream-processes (app-db/get-all-stream-processes)
                              ;; Transform keys from :heat-video/:day-video to :heat/:day
                              transformed-processes (reduce-kv (fn [m k v]
-                                                               (let [stream-key (case k
-                                                                                 :heat-video :heat
-                                                                                 :day-video :day
-                                                                                 k)]
-                                                                 (assoc m stream-key v)))
-                                                             {}
-                                                             stream-processes)]
+                                                                (let [stream-key (case k
+                                                                                   :heat-video :heat
+                                                                                   :day-video :day
+                                                                                   k)]
+                                                                  (assoc m stream-key v)))
+                                                              {}
+                                                              stream-processes)]
                          (when (seq transformed-processes)
                            (process/cleanup-all-processes transformed-processes)))
                        ;; Stop Transit subprocesses

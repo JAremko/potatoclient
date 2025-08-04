@@ -46,9 +46,9 @@
   This is used during pan gestures to control platform movement.
   The speed is calculated based on zoom level and gesture delta."
   [azimuth-speed elevation-speed azimuth-direction elevation-direction]
-  [number? number? [:enum :clockwise :counter-clockwise] 
+  [number? number? [:enum :clockwise :counter-clockwise]
    [:enum :clockwise :counter-clockwise] => map?]
-  (commands/rotary-set-velocity azimuth-speed elevation-speed 
+  (commands/rotary-set-velocity azimuth-speed elevation-speed
                                 azimuth-direction elevation-direction))
 
 (>defn build-rotary-halt-command
@@ -78,19 +78,19 @@
   
   This function maps gesture types to their corresponding commands,
   similar to the TypeScript InteractionHandler.handleInteraction()"
-  [{:keys [gesture-type stream-type ndc-x ndc-y ndc-delta-x ndc-delta-y 
+  [{:keys [gesture-type stream-type ndc-x ndc-y ndc-delta-x ndc-delta-y
            frame-timestamp] :as gesture-event}]
   [::specs/gesture-event => (? map?)]
   (case gesture-type
-    :tap 
+    :tap
     (build-rotate-to-ndc-command stream-type ndc-x ndc-y)
-    
+
     :doubletap
     (build-cv-track-command stream-type ndc-x ndc-y frame-timestamp)
-    
+
     :panstart
     nil ; Pan start just updates state, no command needed
-    
+
     :panmove
     ;; Calculate speeds based on current zoom and deltas
     (let [camera-key (if (= stream-type :heat) :camera-heat :camera-day)
@@ -101,13 +101,13 @@
           az-direction (if (pos? ndc-delta-x) :clockwise :counter-clockwise)
           el-direction (if (pos? ndc-delta-y) :clockwise :counter-clockwise)]
       (build-rotary-velocity-command az-speed el-speed az-direction el-direction))
-    
+
     :panstop
     (build-rotary-halt-command)
-    
+
     :swipe
     nil ; Swipes could trigger UI actions, not platform commands
-    
+
     ;; Unknown gesture type
     (do
       (logging/log-warn {:msg "Unknown gesture type" :type gesture-type})
@@ -159,10 +159,10 @@
   
   Used during pan gestures to control platform movement speed."
   [azimuth-speed elevation-speed azimuth-direction elevation-direction]
-  [number? number? [:enum :clockwise :counter-clockwise] 
+  [number? number? [:enum :clockwise :counter-clockwise]
    [:enum :clockwise :counter-clockwise] => boolean?]
-  (let [command (build-rotary-velocity-command azimuth-speed elevation-speed 
-                                                azimuth-direction elevation-direction)]
+  (let [command (build-rotary-velocity-command azimuth-speed elevation-speed
+                                               azimuth-direction elevation-direction)]
     (subprocess/send-message :cmd
                              (transit-core/create-message :command command))))
 

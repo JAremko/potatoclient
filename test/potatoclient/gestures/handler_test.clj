@@ -21,7 +21,7 @@
 
 ;; Mock the subprocess/send-message to capture commands
 (defn mock-send-message [subprocess-type message]
-  (when (= subprocess-type :command)
+  (when (= subprocess-type :cmd)
     (swap! *captured-commands* conj (:payload message))))
 
 ;; Test data

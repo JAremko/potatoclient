@@ -363,16 +363,16 @@
      :data {:msg-type (get msg "msg-type")
             :payload (get msg "payload")}
      :msg "Received command response from subprocess"})
-  
+
   ;; Extract response payload (Transit uses string keys)
   (when-let [payload (get msg "payload")]
-    (let [status (get payload "status")
+    (let [status (or (get payload "status") (:status payload))
           msg-id (get msg "msg-id")
           timestamp (get msg "timestamp")]
-      
+
       (case status
         ;; Command successfully sent to server
-        "sent"
+        :sent
         (do
           (log/log-info
             {:id ::command-sent
@@ -381,11 +381,11 @@
                     :size (get payload "size")}
              :msg "Command sent to server"})
           ;; Could update UI to show command was sent
-          (swap! app-db update-in [:validation :stats :total-commands-sent] 
+          (swap! app-db update-in [:validation :stats :total-commands-sent]
                  (fnil inc 0)))
-        
+
         ;; Subprocess stopped
-        "stopped"
+        :stopped
         (do
           (log/log-info
             {:id ::subprocess-stopped
@@ -393,7 +393,7 @@
              :msg "Command subprocess stopped"})
           ;; Update process state
           (set-process-state! :cmd-proc nil :stopped))
-        
+
         ;; Ping response (pong)
         "pong"
         (do
@@ -407,16 +407,16 @@
             (let [latency (- timestamp sent-time)]
               (set-connection-state! true nil latency)
               (swap! app-db update-in [:app-state :ping-timestamps] dissoc msg-id))))
-        
+
         ;; Command acknowledged
-        "ack"
+        :ack
         (log/log-info
           {:id ::command-ack
            :data {:msg-id msg-id
                   :command (get payload "command")
                   :command-id (get payload "commandId")}
            :msg "Command acknowledged by server"})
-        
+
         ;; Default/unknown status
         (log/log-warn
           {:id ::unknown-response-status
@@ -434,81 +434,81 @@
      :data {:msg-type (get msg "msg-type")
             :payload (get msg "payload")}
      :msg "Received state update from subprocess"})
-  
+
   ;; Extract state from payload (Transit uses string keys)
   (when-let [state-data (get-in msg ["payload" "state"])]
     ;; Map protobuf state keys to app-db keys
-    (let [state-update 
+    (let [state-update
           (cond-> {}
             ;; System state
             (contains? state-data "system")
             (assoc :system (let [sys (get state-data "system")]
-                            {:battery-level (get sys "battery-level" 0)
-                             :localization (or (get sys "loc") "en")
-                             :recording (boolean (get sys "rec-enabled"))
-                             :temperature-c (or (get sys "cpu-temperature") 20.0)
-                             :tracking (boolean (get sys "tracking"))}))
-            
+                             {:battery-level (get sys "battery-level" 0)
+                              :localization (or (get sys "loc") "en")
+                              :recording (boolean (get sys "rec-enabled"))
+                              :temperature-c (or (get sys "cpu-temperature") 20.0)
+                              :tracking (boolean (get sys "tracking"))}))
+
             ;; GPS state
             (contains? state-data "gps")
             (assoc :gps (let [gps (get state-data "gps")]
-                         {:latitude (or (get gps "latitude") 0.0)
-                          :longitude (or (get gps "longitude") 0.0)
-                          :altitude (or (get gps "altitude") 0.0)
-                          :fix-type (or (get gps "fix-type") "none")
-                          :use-manual (boolean (get gps "use-manual"))}))
-            
+                          {:latitude (or (get gps "latitude") 0.0)
+                           :longitude (or (get gps "longitude") 0.0)
+                           :altitude (or (get gps "altitude") 0.0)
+                           :fix-type (or (get gps "fix-type") "none")
+                           :use-manual (boolean (get gps "use-manual"))}))
+
             ;; Compass state
             (contains? state-data "compass")
             (assoc :compass (let [comp (get state-data "compass")]
-                             {:heading (or (get comp "azimuth") 0.0)
-                              :pitch (or (get comp "elevation") 0.0)
-                              :roll (or (get comp "bank") 0.0)
-                              :calibrated (not (boolean (get comp "calibrating")))}))
-            
+                              {:heading (or (get comp "azimuth") 0.0)
+                               :pitch (or (get comp "elevation") 0.0)
+                               :roll (or (get comp "bank") 0.0)
+                               :calibrated (not (boolean (get comp "calibrating")))}))
+
             ;; Rotary platform state
             (contains? state-data "rotary")
             (assoc :rotary (let [rot (get state-data "rotary")]
-                            {:azimuth (or (get rot "azimuth") 0.0)
-                             :elevation (or (get rot "elevation") 0.0)
-                             :azimuth-velocity (or (get rot "azimuth-speed") 0.0)
-                             :elevation-velocity (or (get rot "elevation-speed") 0.0)
-                             :moving (boolean (get rot "is-moving"))
-                             :mode (keyword (or (get rot "mode") "manual"))}))
-            
+                             {:azimuth (or (get rot "azimuth") 0.0)
+                              :elevation (or (get rot "elevation") 0.0)
+                              :azimuth-velocity (or (get rot "azimuth-speed") 0.0)
+                              :elevation-velocity (or (get rot "elevation-speed") 0.0)
+                              :moving (boolean (get rot "is-moving"))
+                              :mode (keyword (or (get rot "mode") "manual"))}))
+
             ;; Day camera state
             (contains? state-data "camera-day")
             (assoc :camera-day (let [cam (get state-data "camera-day")]
-                                {:zoom (or (get cam "zoom-pos") 1.0)
-                                 :focus-mode (if (get cam "auto-focus") :auto :manual)
-                                 :brightness 50 ; Not in protobuf
-                                 :contrast 50   ; Not in protobuf
-                                 :recording false})) ; From system state
-            
-            ;; Heat camera state
-            (contains? state-data "camera-heat")
-            (assoc :camera-heat (let [cam (get state-data "camera-heat")]
                                  {:zoom (or (get cam "zoom-pos") 1.0)
-                                  :palette :white-hot ; Map from filter field
+                                  :focus-mode (if (get cam "auto-focus") :auto :manual)
                                   :brightness 50 ; Not in protobuf
                                   :contrast 50   ; Not in protobuf
                                   :recording false})) ; From system state
-            
+
+            ;; Heat camera state
+            (contains? state-data "camera-heat")
+            (assoc :camera-heat (let [cam (get state-data "camera-heat")]
+                                  {:zoom (or (get cam "zoom-pos") 1.0)
+                                   :palette :white-hot ; Map from filter field
+                                   :brightness 50 ; Not in protobuf
+                                   :contrast 50   ; Not in protobuf
+                                   :recording false})) ; From system state
+
             ;; LRF state
             (contains? state-data "lrf")
             (assoc :lrf (let [lrf (get state-data "lrf")
-                             target (get lrf "target")]
-                         {:distance (if target
-                                     (or (get target "distance-3b") 0.0)
-                                     0.0)
-                          :scan-mode "single" ; Not clearly in protobuf
-                          :target-locked (boolean target)})))]
-      
+                              target (get lrf "target")]
+                          {:distance (if target
+                                       (or (get target "distance-3b") 0.0)
+                                       0.0)
+                           :scan-mode "single" ; Not clearly in protobuf
+                           :target-locked (boolean target)})))]
+
       ;; Update server state in app-db
       (update-server-state! state-update)
-      
+
       ;; Update rate metrics
-      (update-rate-metrics! 
+      (update-rate-metrics!
         (get-in @app-db [:rate-limits :current-rate] 0.0)
         false)))
   nil)

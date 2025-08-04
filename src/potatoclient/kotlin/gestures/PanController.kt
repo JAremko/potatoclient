@@ -13,7 +13,7 @@ enum class StreamType {
     HEAT,
     DAY,
     ;
-    
+
     fun toKeyword(): String = name.lowercase().replace("_", "-")
 }
 

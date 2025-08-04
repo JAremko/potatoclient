@@ -21,34 +21,34 @@
    [:root :ping] "cmd.JonSharedCmd$Root"
    [:root :noop] "cmd.JonSharedCmd$Root"
    [:root :frozen] "cmd.JonSharedCmd$Root"
-   
+
    ;; System commands
    [:root :set-gps-manual] "cmd.JonSharedCmd$Root"
    [:root :set-recording] "cmd.JonSharedCmd$Root"
    [:root :set-localization] "cmd.JonSharedCmd$Root"
-   
+
    ;; Rotary platform - note the nested structure
    [:rotary-platform :goto] "cmd.JonSharedCmdRotaryPlatform$Root"
    [:rotary-platform :start] "cmd.JonSharedCmdRotaryPlatform$Root"
    [:rotary-platform :stop] "cmd.JonSharedCmdRotaryPlatform$Root"
    [:rotary-platform :halt] "cmd.JonSharedCmdRotaryPlatform$Root"
    [:rotary-platform :set-velocity] "cmd.JonSharedCmdRotaryPlatform$Root"
-   
+
    ;; Heat camera
    [:heat-camera :zoom] "cmd.JonSharedCmdHeatCamera$Root"
    [:heat-camera :calibrate] "cmd.JonSharedCmdHeatCamera$Root"
    [:heat-camera :palette] "cmd.JonSharedCmdHeatCamera$Root"
    [:heat-camera :photo] "cmd.JonSharedCmdHeatCamera$Root"
-   
+
    ;; Day camera
    [:day-camera :zoom] "cmd.JonSharedCmdDayCamera$Root"
    [:day-camera :focus] "cmd.JonSharedCmdDayCamera$Root"
    [:day-camera :photo] "cmd.JonSharedCmdDayCamera$Root"
-   
+
    ;; CV commands
    [:cv :start-track-ndc] "cmd.JonSharedCmdCv$Root"
    [:cv :stop-track] "cmd.JonSharedCmdCv$Root"
-   
+
    ;; LRF calibration - channel specific
    [:lrf-calib :day :set] "cmd.JonSharedCmdLrfCalib$Root"
    [:lrf-calib :day :save] "cmd.JonSharedCmdLrfCalib$Root"
@@ -102,12 +102,12 @@
                    :heat-camera (keyword "cmd.HeatCamera" (name (second type-path)))
                    :day-camera (keyword "cmd.DayCamera" (name (second type-path)))
                    :cv (keyword "cmd.Cv" (name (second type-path)))
-                   :lrf-calib (keyword "cmd.LrfCalib" 
-                                       (str (name (second type-path)) "-" 
+                   :lrf-calib (keyword "cmd.LrfCalib"
+                                       (str (name (second type-path)) "-"
                                             (name (nth type-path 2))))
-                   (throw (ex-info "Unknown command category" 
+                   (throw (ex-info "Unknown command category"
                                    {:category (first type-path)})))]
-    
+
     ;; Validate with Guardrails/Malli in development
     (when-let [spec (specs/get-spec spec-key)]
       (when-not (m/validate spec command-map {:registry (specs/proto-registry)})
@@ -115,9 +115,9 @@
                         {:command command-map
                          :type-path type-path
                          :spec spec-key
-                         :errors (m/explain spec command-map 
-                                           {:registry (specs/proto-registry)})}))))
-    
+                         :errors (m/explain spec command-map
+                                            {:registry (specs/proto-registry)})}))))
+
     ;; Attach metadata and create Transit message
     (let [metadata-command (attach-proto-metadata command-map type-path)]
       {:msg-type "command"
@@ -173,19 +173,19 @@
 (comment
   ;; The beauty is we can send ANY protobuf structure
   ;; The metadata tells Kotlin which class to use
-  
+
   ;; Simple commands
   (ping)
-  
+
   ;; Commands with the same field names but different types
   ;; Both have "start" but map to different Java classes
   (send-command {:start {}} [:rotary-platform :start])
   (send-command {:start {}} [:video-recording :start])
-  
+
   ;; Deeply nested structures
   (send-command {:day {:offsets {:set {:x-offset 10 :y-offset -5}}}}
                 [:lrf-calib :day :offsets :set])
-  
+
   ;; The Kotlin side receives the metadata and knows exactly
   ;; which protobuf class to instantiate!
   )

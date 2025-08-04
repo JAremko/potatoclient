@@ -19,7 +19,7 @@
           process (.start pb)
           error-reader (io/reader (.getErrorStream process))
           input-reader (io/reader (.getInputStream process))]
-      
+
       ;; Read any immediate output
       (println "=== Reading subprocess output ===")
       (future
@@ -27,19 +27,19 @@
           (when-let [line (.readLine error-reader)]
             (println "STDERR:" line)
             (recur))))
-      
-      (future  
+
+      (future
         (loop []
           (when-let [line (.readLine input-reader)]
             (println "STDOUT:" line)
             (recur))))
-      
+
       ;; Give it time to start
       (Thread/sleep 2000)
-      
+
       ;; Check if process is still alive
       (is (.isAlive process) "Process should be running")
-      
+
       ;; Clean up
       (.destroyForcibly process)
       (is true "Test completed"))))

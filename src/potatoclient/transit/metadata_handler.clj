@@ -160,30 +160,29 @@
 (comment
   ;; Original approach with metadata
   (let [command {:goto {:azimuth 180.0 :elevation 45.0}}
-        with-meta (with-meta command 
-                            {:proto-type "cmd.JonSharedCmdRotaryPlatform$Root"
-                             :proto-path [:rotary-platform :goto]})
+        with-meta (with-meta command
+                    {:proto-type "cmd.JonSharedCmdRotaryPlatform$Root"
+                     :proto-path [:rotary-platform :goto]})
         encoded (encode-with-metadata with-meta)
         decoded (decode-with-metadata encoded)]
     (println "Original:" command)
     (println "With meta:" with-meta)
     (println "Decoded:" decoded)
     (println "Decoded meta:" (meta decoded)))
-  
+
   ;; Type-tagged approach (more explicit)
   (let [command {:goto {:azimuth 180.0 :elevation 45.0}}
-        wrapped (wrap-with-type command 
-                               "cmd.JonSharedCmdRotaryPlatform$Root"
-                               [:rotary-platform :goto])
+        wrapped (wrap-with-type command
+                                "cmd.JonSharedCmdRotaryPlatform$Root"
+                                [:rotary-platform :goto])
         encoded (encode-with-metadata wrapped)
         decoded (decode-with-metadata encoded)]
     (println "Wrapped:" wrapped)
     (println "Unwrapped:" (unwrap-typed-command decoded)))
-  
+
   ;; Full message for Kotlin
   (let [msg (create-command-message
-             {:goto {:azimuth 90.0 :elevation 30.0}}
-             "cmd.JonSharedCmdRotaryPlatform$Root"
-             [:rotary-platform :goto])]
-    (println "Full message:" msg))
-  )
+              {:goto {:azimuth 90.0 :elevation 30.0}}
+              "cmd.JonSharedCmdRotaryPlatform$Root"
+              [:rotary-platform :goto])]
+    (println "Full message:" msg)))

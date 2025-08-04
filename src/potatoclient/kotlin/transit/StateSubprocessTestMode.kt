@@ -16,20 +16,23 @@ import java.io.DataInputStream
  */
 suspend fun runStateTestMode(
     transitComm: TransitCommunicator,
-    messageProtocol: TransitMessageProtocol
+    messageProtocol: TransitMessageProtocol,
 ) = coroutineScope {
-    
     messageProtocol.sendStatus("test-mode-ready")
-    
+
     // Create a minimal StateSubprocess-like handler
-    val totalReceived = java.util.concurrent.atomic.AtomicInteger(0)
-    val totalSent = java.util.concurrent.atomic.AtomicInteger(0)
-    
+    val totalReceived =
+        java.util.concurrent.atomic
+            .AtomicInteger(0)
+    val totalSent =
+        java.util.concurrent.atomic
+            .AtomicInteger(0)
+
     // Read protobuf from stdin
     launch {
         logInfo("State test mode: reading protobuf from stdin")
         val dataInput = DataInputStream(System.`in`)
-        
+
         while (isActive) {
             try {
                 // Read length-prefixed protobuf
@@ -37,13 +40,13 @@ suspend fun runStateTestMode(
                 if (length > 0 && length < 1024 * 1024) { // Max 1MB
                     val protoBytes = ByteArray(length)
                     dataInput.readFully(protoBytes)
-                    
+
                     totalReceived.incrementAndGet()
-                    
+
                     // Parse and send via Transit
                     try {
                         val protoState = JonSharedData.JonGUIState.parseFrom(protoBytes)
-                        
+
                         // Wrap in map and send
                         val stateMap = mapOf<String, Any>("state" to protoState)
                         transitComm.sendMessageDirect(
@@ -52,7 +55,7 @@ suspend fun runStateTestMode(
                                 stateMap,
                             ),
                         )
-                        
+
                         totalSent.incrementAndGet()
                     } catch (e: Exception) {
                         logError("Failed to parse protobuf state", e)
@@ -65,7 +68,7 @@ suspend fun runStateTestMode(
             }
         }
     }
-    
+
     // Handle control messages
     launch {
         while (isActive) {
@@ -75,7 +78,7 @@ suspend fun runStateTestMode(
                 if (msgType == MessageType.CONTROL.key) {
                     val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *>
                     val action = payload?.get(TransitKeys.ACTION) as? String
-                    
+
                     when (action) {
                         "shutdown" -> {
                             transitComm.sendMessage(
@@ -88,12 +91,13 @@ suspend fun runStateTestMode(
                             break
                         }
                         "get-stats" -> {
-                            val stats = mapOf(
-                                "received" to totalReceived.get(),
-                                "sent" to totalSent.get(),
-                                "ws-connected" to false,
-                                "test-mode" to true
-                            )
+                            val stats =
+                                mapOf(
+                                    "received" to totalReceived.get(),
+                                    "sent" to totalSent.get(),
+                                    "ws-connected" to false,
+                                    "test-mode" to true,
+                                )
                             transitComm.sendMessage(
                                 messageProtocol.createMessage(
                                     MessageType.METRIC,

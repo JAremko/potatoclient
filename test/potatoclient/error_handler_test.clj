@@ -15,17 +15,17 @@
     ;; First set connection as active
     (app-db/set-connection-state! true "wss://example.com" 50)
     (is (app-db/connected?))
-    
+
     (let [msg {"msg-type" "error"
                "msg-id" "error-123"
                "timestamp" 1234567890
                "payload" {"type" "websocket-error"
-                         "message" "Connection refused"
-                         "process" "command"}}]
-      
+                          "message" "Connection refused"
+                          "process" "command"}}]
+
       ;; Handle the error
       (error-handler/handle-subprocess-error msg)
-      
+
       ;; Verify connection state was updated
       (is (not (app-db/connected?))))))
 
@@ -35,12 +35,12 @@
                "msg-id" "error-456"
                "timestamp" 1234567890
                "payload" {"type" "command-error"
-                         "message" "Invalid command structure"
-                         "stackTrace" "at line 42..."}}]
-      
+                          "message" "Invalid command structure"
+                          "stackTrace" "at line 42..."}}]
+
       ;; Handle the error
       (error-handler/handle-subprocess-error msg)
-      
+
       ;; Verify validation error was added
       (let [errors (get-in @app-db/app-db [:validation :errors])]
         (is (= 1 (count errors)))
@@ -52,12 +52,12 @@
                "msg-id" "error-789"
                "timestamp" 1234567890
                "payload" {"type" "state-parse-error"
-                         "message" "Malformed protobuf"}}]
-      
+                          "message" "Malformed protobuf"}}]
+
       ;; Handle multiple errors
       (dotimes [_ 3]
         (error-handler/handle-subprocess-error msg))
-      
+
       ;; Verify counter was incremented
       (is (= 3 (get-in @app-db/app-db [:validation :stats :state-parse-errors]))))))
 
@@ -67,10 +67,10 @@
                "msg-id" "error-fatal"
                "timestamp" 1234567890
                "payload" {"type" "subprocess-error"
-                         "message" "FATAL: Out of memory"
-                         "process" "state"
-                         "stackTrace" "java.lang.OutOfMemoryError..."}}]
-      
+                          "message" "FATAL: Out of memory"
+                          "process" "state"
+                          "stackTrace" "java.lang.OutOfMemoryError..."}}]
+
       ;; Just verify it doesn't throw
       (is (nil? (error-handler/handle-subprocess-error msg))))))
 
@@ -80,8 +80,8 @@
                "msg-id" "error-unknown"
                "timestamp" 1234567890
                "payload" {"type" "unknown-error-type"
-                         "message" "Something went wrong"}}]
-      
+                          "message" "Something went wrong"}}]
+
       ;; Should not throw
       (is (nil? (error-handler/handle-subprocess-error msg))))))
 
@@ -91,15 +91,15 @@
                "msg-id" "val-error-123"
                "timestamp" 1234567890
                "payload" {"source" "buf-validate"
-                         "subsystem" "rotary"
-                         "errors" [{"field" "azimuth"
-                                   "message" "Value must be between 0 and 360"}
-                                  {"field" "speed"
-                                   "message" "Speed cannot be negative"}]}}]
-      
+                          "subsystem" "rotary"
+                          "errors" [{"field" "azimuth"
+                                     "message" "Value must be between 0 and 360"}
+                                    {"field" "speed"
+                                     "message" "Speed cannot be negative"}]}}]
+
       ;; Handle the validation error
       (error-handler/handle-validation-error msg)
-      
+
       ;; Verify errors were stored
       (let [errors (get-in @app-db/app-db [:validation :errors])]
         (is (= 1 (count errors)))
@@ -114,9 +114,9 @@
                      "msg-id" "test-routing"
                      "timestamp" 1234567890
                      "payload" {"type" "transit-error"
-                               "message" "Transit decode failed"
-                               "process" "command"}}]
-      
+                                "message" "Transit decode failed"
+                                "process" "command"}}]
+
       ;; Main entry point
       (is (nil? (error-handler/handle-error-message error-msg))))))
 

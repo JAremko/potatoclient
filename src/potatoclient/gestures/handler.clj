@@ -14,7 +14,7 @@
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
-    (subprocess/send-message :command
+    (subprocess/send-message :cmd
                              (transit-core/create-message :command
                                                           (commands/rotary-goto-ndc channel ndc-x ndc-y))))
   nil)
@@ -25,7 +25,7 @@
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Double-tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
-    (subprocess/send-message :command
+    (subprocess/send-message :cmd
                              (transit-core/create-message :command
                                                           (commands/cv-start-track-ndc channel ndc-x ndc-y frame-timestamp))))
   nil)
@@ -59,7 +59,7 @@
             ;; Determine rotation directions based on delta signs
             az-direction (if (pos? ndc-delta-x) :clockwise :counter-clockwise)
             el-direction (if (pos? ndc-delta-y) :clockwise :counter-clockwise)]
-        (subprocess/send-message :command
+        (subprocess/send-message :cmd
                                  (transit-core/create-message :command
                                                               (commands/rotary-set-velocity az-speed el-speed az-direction el-direction)))
         (app-db/update-in-app-db! [:gestures :pan :last-update] now))))

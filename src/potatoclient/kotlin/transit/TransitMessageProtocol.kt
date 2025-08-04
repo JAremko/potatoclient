@@ -218,7 +218,7 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.EVENT,
                     mapOf(
-                        MessageKeys.TYPE to eventType.keyword,  // Use keyword instead of enum
+                        MessageKeys.TYPE to eventType.keyword, // Use keyword instead of enum
                         MessageKeys.PROCESS to processType,
                     ) + data,
                 )
@@ -313,7 +313,7 @@ class TransitMessageProtocol(
             val commandMsg =
                 createMessage(
                     MessageType.COMMAND,
-                    command  // Command is already in the correct nested format
+                    command, // Command is already in the correct nested format
                 )
             kotlinx.coroutines.GlobalScope.launch {
                 transitComm.sendMessage(commandMsg)
