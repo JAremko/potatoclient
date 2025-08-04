@@ -95,7 +95,7 @@
         app-env (get-appimage-environment)
         jvm-args (build-jvm-args app-env)
         main-class (case subprocess-type
-                     :command "potatoclient.kotlin.transit.CommandSubprocessKt"
+                     :cmd "potatoclient.kotlin.transit.CommandSubprocessKt"
                      :state "potatoclient.kotlin.transit.StateSubprocessKt")
         cmd (vec (concat [java-exe "-cp" classpath]
                          jvm-args
@@ -323,7 +323,7 @@
   "Start the command subprocess that converts Transit commands to protobuf."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (start-subprocess :command url domain 
+  (start-subprocess :cmd url domain 
                    (create-message-router app-db/handle-command-response)))
 
 (>defn start-state-subprocess

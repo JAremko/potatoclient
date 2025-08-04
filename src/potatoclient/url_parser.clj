@@ -94,8 +94,8 @@
   [addr]
   [string? => boolean?]
   ;; Basic check - proper IPv6 validation is complex
-  (and (str/includes? addr ":")
-       (re-matches #"^[0-9a-fA-F:]+$" addr)))
+  (boolean (and (str/includes? addr ":")
+                (re-matches #"^[0-9a-fA-F:]+$" addr))))
 
 ;; -----------------------------------------------------------------------------
 ;; AST Processing with core.match
@@ -135,7 +135,7 @@
     [:IPV6 addr] (when (valid-ipv6? addr) addr)
     [:IPV6_BRACKETED _ [:IPV6 addr] _] (when (valid-ipv6? addr) addr)
     [:DOMAIN & _] (process-domain node)
-    :else nil))
+    _ nil))
 
 (>defn- extract-host-from-ast
   "Extract host (domain or IP) from parsed AST"

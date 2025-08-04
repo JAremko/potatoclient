@@ -33,8 +33,12 @@
   [frame]
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)] => :potatoclient.ui-specs/window-state]
-  {:bounds (.getBounds frame)
-   :extended-state (.getExtendedState frame)})
+  (let [^java.awt.Rectangle bounds (.getBounds frame)]
+    {:bounds {:x (.x bounds)
+              :y (.y bounds)
+              :width (.width bounds)
+              :height (.height bounds)}
+     :extended-state (.getExtendedState frame)}))
 
 (>defn restore-window-state!
   "Restore window state to a frame."
@@ -45,7 +49,8 @@
    => [:fn {:error/message "must be a JFrame"}
        #(instance? JFrame %)]]
   (doto frame
-    (.setBounds (:bounds state))
+    (.setBounds (when-let [{:keys [x y width height]} (:bounds state)]
+                  (java.awt.Rectangle. x y width height)))
     (.setExtendedState (:extended-state state))))
 
 (>defn- reload-frame!
@@ -232,9 +237,18 @@
                                              :url-history (config/get-url-history)}]
                          (config/save-config! current-config))
                        ;; Stop video stream processes
-                       (let [stream-processes (app-db/get-all-stream-processes)]
-                         (when (seq stream-processes)
-                           (process/cleanup-all-processes stream-processes)))
+                       (let [stream-processes (app-db/get-all-stream-processes)
+                             ;; Transform keys from :heat-video/:day-video to :heat/:day
+                             transformed-processes (reduce-kv (fn [m k v]
+                                                               (let [stream-key (case k
+                                                                                 :heat-video :heat
+                                                                                 :day-video :day
+                                                                                 k)]
+                                                                 (assoc m stream-key v)))
+                                                             {}
+                                                             stream-processes)]
+                         (when (seq transformed-processes)
+                           (process/cleanup-all-processes transformed-processes)))
                        ;; Stop Transit subprocesses
                        (launcher/stop-all-subprocesses)
                        (logging/shutdown!)

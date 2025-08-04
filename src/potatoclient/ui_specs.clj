@@ -355,14 +355,17 @@
   "Map representing a running stream process"
   [:map
    [:process any?]  ; Java Process object
-   [:output-reader any?]
-   [:error-reader any?]
-   [:stream-key stream-key]
-   [:latch any?]])  ; CountDownLatch
+   [:writer fn?]    ; Function to write Transit messages
+   [:input-stream any?]  ; InputStream
+   [:output-stream any?] ; OutputStream  
+   [:stderr-reader any?] ; BufferedReader
+   [:message-handler fn?] ; Message handler function
+   [:stream-id string?]   ; Stream identifier
+   [:state any?]])        ; Atom containing process state
 
 (def process-command
   "Command to send to a process"
-  string?)
+  map?)
 
 (def future-instance
   "Java Future instance"
@@ -392,13 +395,14 @@
   "Transit subprocess"
   [:map
    [:subprocess-type subprocess-type]
-   [:jar-path string?]
-   [:main-class string?]
-   [:process any?]
-   [:in-chan any?]
-   [:out-chan any?]
-   [:error-handler [:=> [:cat any?] any?]]
-   [:stream-context {:optional true} map?]])
+   [:process any?]              ; Java Process object
+   [:url string?]               ; WebSocket URL
+   [:input-stream any?]         ; InputStream
+   [:output-stream any?]        ; OutputStream
+   [:error-stream any?]         ; ErrorStream
+   [:write-fn fn?]              ; Function to write messages
+   [:message-handler fn?]       ; Message handler function
+   [:state any?]])
 
 ;; -----------------------------------------------------------------------------
 ;; Schema Registry
