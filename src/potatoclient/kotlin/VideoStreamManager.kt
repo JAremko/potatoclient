@@ -319,11 +319,9 @@ class VideoStreamManager(
     }
 
     override fun sendCommand(command: Map<String, Any>) {
-        // Send command as a request message to be forwarded to command subprocess
-        messageProtocol.sendRequest(
-            command["action"] as String,
-            command["params"] as? Map<String, Any> ?: emptyMap(),
-        )
+        // Send command directly to main process to be forwarded to command subprocess
+        // The command is already in the new nested format from CommandBuilder
+        messageProtocol.sendCommand(command)
     }
 
     // FrameDataProvider implementation
@@ -383,7 +381,7 @@ class VideoStreamManager(
             messageProtocol.sendEvent(
                 EventType.WINDOW,
                 mapOf(
-                    MessageKeys.TYPE to EventType.CLOSE,
+                    MessageKeys.TYPE to EventType.CLOSE.keyword,  // Use keyword
                     MessageKeys.STREAM_ID to streamId,
                 ),
             )

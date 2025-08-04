@@ -218,7 +218,7 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.EVENT,
                     mapOf(
-                        MessageKeys.TYPE to eventType,
+                        MessageKeys.TYPE to eventType.keyword,  // Use keyword instead of enum
                         MessageKeys.PROCESS to processType,
                     ) + data,
                 )
@@ -302,6 +302,24 @@ class TransitMessageProtocol(
             }
         } catch (e: Exception) {
             logError("Failed to send request $action: ${e.message}")
+        }
+    }
+
+    /**
+     * Send a command message (for video stream commands in new nested format)
+     */
+    fun sendCommand(command: Map<String, Any>) {
+        try {
+            val commandMsg =
+                createMessage(
+                    MessageType.COMMAND,
+                    command  // Command is already in the correct nested format
+                )
+            kotlinx.coroutines.GlobalScope.launch {
+                transitComm.sendMessage(commandMsg)
+            }
+        } catch (e: Exception) {
+            logError("Failed to send command: ${e.message}")
         }
     }
 
