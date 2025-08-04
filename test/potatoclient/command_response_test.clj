@@ -14,7 +14,7 @@
     (let [msg {"msg-type" "response"
                "msg-id" "test-123"
                "timestamp" 1234567890
-               "payload" {"status" "sent"
+               "payload" {"status" :sent
                           "proto-type" "cmd.JonSharedCmd$Root"
                           "size" 42}}]
 
@@ -34,7 +34,7 @@
     (let [msg {"msg-type" "response"
                "msg-id" "test-456"
                "timestamp" 1234567890
-               "payload" {"status" "stopped"}}]
+               "payload" {"status" :stopped}}]
 
       ;; Handle the response
       (app-db/handle-command-response msg)
@@ -71,7 +71,7 @@
     (let [msg {"msg-type" "response"
                "msg-id" "test-ack"
                "timestamp" 1234567890
-               "payload" {"status" "ack"
+               "payload" {"status" :ack
                           "command" "rotary-goto"
                           "commandId" 42}}]
 
@@ -105,7 +105,7 @@
       (let [msg {"msg-type" "response"
                  "msg-id" (str "test-" i)
                  "timestamp" 1234567890
-                 "payload" {"status" "sent"}}]
+                 "payload" {"status" :sent}}]
         (app-db/handle-command-response msg)))
 
     ;; Verify counter incremented correctly
