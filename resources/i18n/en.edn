@@ -66,6 +66,8 @@
  :startup-server-url "Server URL:"
  :startup-button-connect "Connect"
  :startup-button-cancel "Cancel"
+ :startup-valid-formats "Valid formats"
+ :startup-invalid-url "Invalid URL"
  
  ;; Configuration
  :config-server-address "Server Address"
@@ -106,4 +108,17 @@
  :log-viewer-column-version "Version"
  :log-viewer-column-created "Created"
  :log-viewer-column-size "Size"
- :log-viewer-file-title "Log: "}
+ :log-viewer-file-title "Log: "
+ 
+ ;; URL validation errors
+ :url-error-empty "Please enter a server address"
+ :url-error-invalid-format "Invalid server address format"
+ 
+ ;; URL examples
+ :url-example-domain "example.com"
+ :url-example-subdomain "app.example.com"
+ :url-example-ip "192.168.1.100"
+ :url-example-ipv6 "[2001:db8::1]"
+ :url-example-https "https://example.com"
+ :url-example-wss "wss://example.com:8080/ws"
+ :url-example-localhost "localhost"}

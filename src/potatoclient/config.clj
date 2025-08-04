@@ -190,7 +190,7 @@
   []
   [=> :potatoclient.ui-specs/url-history]
   (let [config (load-config)]
-    (or (:url-history config) #{})))
+    (or (:url-history config) [])))
 
 (>defn get-recent-urls
   "Get up to 10 most recent unique URLs as a vector, sorted by timestamp (newest first)"
@@ -215,8 +215,8 @@
     ;; Try to get domain from most recent URL in history
     (if-let [recent-url (get-most-recent-url)]
       (extract-domain* recent-url)
-      ;; Fallback to legacy domain field, no default
-      (:domain config ""))))
+      ;; Fallback to legacy domain field, or use localhost
+      (or (:domain config) "localhost"))))
 
 (>defn add-url-to-history
   "Add a URL to the history with current timestamp, maintaining max 10 unique URLs"
@@ -226,12 +226,12 @@
     (let [config (load-config)
           current-history (get-url-history)
           ;; Remove any existing entry for this URL
-          filtered-history (into #{} (remove #(= (:url %) url) current-history))
-          ;; Add new entry with current timestamp
-          new-entry {:url url :timestamp (Date.)}
+          filtered-history (vec (remove #(= (:url %) url) current-history))
+          ;; Add new entry with current timestamp (as milliseconds)
+          new-entry {:url url :timestamp (.getTime (Date.))}
           new-history (conj filtered-history new-entry)
           ;; Keep only the 10 most recent URLs by timestamp
           sorted-history (sort-by :timestamp #(compare %2 %1) new-history)
-          trimmed-history (into #{} (take 10 sorted-history))]
+          trimmed-history (vec (take 10 sorted-history))]
       (save-config! (assoc config :url-history trimmed-history))
       nil)))

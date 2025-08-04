@@ -49,11 +49,11 @@
 ;; -----------------------------------------------------------------------------
 
 (def url
-  "WebSocket URL for video streams"
+  "URL entered by user - any non-blank string"
   [:and
    string?
-   [:fn {:error/message "must start with ws:// or wss://"}
-    #(re-matches #"wss?://.*" %)]])
+   [:fn {:error/message "must not be blank"}
+    #(not (str/blank? %))]])
 
 (def config-key
   "Valid configuration keys"
@@ -191,6 +191,22 @@
   "AWT Color"
   [:fn {:error/message "must be a Color"}
    #(instance? Color %)])
+
+;; -----------------------------------------------------------------------------
+;; Internationalization Schemas
+;; -----------------------------------------------------------------------------
+
+(def translation-key
+  "Key for translation lookup"
+  keyword?)
+
+(def translation-args
+  "Arguments for translation string formatting"
+  [:sequential any?])
+
+(def translations-map
+  "Map of locale to translation strings"
+  [:map-of locale-code [:map-of keyword? string?]])
 
 ;; -----------------------------------------------------------------------------
 ;; Transit Message Validation
@@ -335,6 +351,31 @@
    [:status process-state]
    [:error {:optional true} string?]])
 
+(def stream-process-map
+  "Map representing a running stream process"
+  [:map
+   [:process any?]  ; Java Process object
+   [:output-reader any?]
+   [:error-reader any?]
+   [:stream-key stream-key]
+   [:latch any?]])  ; CountDownLatch
+
+(def process-command
+  "Command to send to a process"
+  string?)
+
+(def future-instance
+  "Java Future instance"
+  [:fn {:error/message "must be a Future"}
+   #(instance? java.util.concurrent.Future %)])
+
+(def window-state
+  "Window state information"
+  [:map
+   [:bounds {:optional true} window-bounds]
+   [:extended-state {:optional true} int?]
+   [:divider-locations {:optional true} [:sequential int?]]])
+
 (def app-state
   "Full app state"
   [:map
@@ -373,6 +414,10 @@
           ::stream-key stream-key
           ::stream-type stream-type
           ::stream-process stream-process
+          ::stream-process-map stream-process-map
+          ::process-command process-command
+          ::future-instance future-instance
+          ::window-state window-state
           ::transit-subprocess transit-subprocess
           ::speed-config speed-config
           ::config config
@@ -382,6 +427,15 @@
           ::swipe-direction swipe-direction
           ::window-bounds window-bounds
           ::icon icon
+          ::file file
+          ::jframe jframe
+          ::jpanel jpanel
+          ::jtextfield jtextfield
+          ::jmenu jmenu
+          ::jmenubar jmenubar
+          ::action action
+          ::color color
+          ::rectangle rectangle
           ::command-message command-message
           ::response-message response-message
           ::request-payload request-payload
@@ -403,7 +457,10 @@
           ::aspect-ratio aspect-ratio
           ::url url
           ::url-history url-history
-          ::config-key config-key}))
+          ::config-key config-key
+          ::translation-key translation-key
+          ::translation-args translation-args
+          ::translations-map translations-map}))
 
 ;; Set as default registry so qualified keywords work
 (mr/set-default-registry! registry)

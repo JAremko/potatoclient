@@ -10,46 +10,12 @@
             [potatoclient.ui-specs :as specs]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
+            [potatoclient.url-parser :as url-parser]
             [seesaw.action :as action]
             [seesaw.border :as border]
             [seesaw.core :as seesaw]
             [seesaw.mig :as mig])
   (:import (javax.swing JFrame JPanel)))
-
-(>defn- extract-domain
-  "Extract domain/IP from various URL formats.
-  Handles: domain.com, http://domain.com, wss://domain.com:8080/path?query, IP addresses, etc."
-  [input]
-  [string? => string?]
-  (let [cleaned (str/trim input)]
-    ;; If it's already just a domain/IP (no protocol, no path), return as-is
-    (if (and (not (str/includes? cleaned "://"))
-             (not (re-find #"[/?#&:]" cleaned)))
-      cleaned
-      ;; Otherwise extract the domain/IP part
-      (let [;; Remove protocol if present
-            after-protocol (if-let [idx (str/index-of cleaned "://")]
-                             (subs cleaned (+ idx 3))
-                             cleaned)
-            ;; Take everything up to the first separator (excluding port)
-            domain (if-let [sep-idx (some #(str/index-of after-protocol %)
-                                          ["/" "?" "#" "&"])]
-                     (subs after-protocol 0 sep-idx)
-                     after-protocol)
-            ;; Remove port if present
-            domain (if-let [port-idx (str/index-of domain ":")]
-                     (subs domain 0 port-idx)
-                     domain)]
-        ;; Return the extracted domain or original if extraction failed
-        (if (str/blank? domain)
-          cleaned
-          domain)))))
-
-(>defn- validate-domain
-  "Validate if the input is a valid domain name or IP address using Malli spec."
-  [domain]
-  [string? => boolean?]
-  (m/validate specs/domain domain))
 
 (>defn- reload-dialog!
   "Reload the dialog with new theme/locale."
@@ -165,23 +131,18 @@
                          :name (i18n/tr :startup-button-connect)
                          :handler (fn [_]
                                     (let [text (str (seesaw/value url-combobox))
-                                          extracted (extract-domain text)]
-                                      (if (validate-domain extracted)
+                                          validation (url-parser/validate-url-input text)]
+                                      (if (:valid validation)
                                         (do
                                           (config/add-url-to-history text)
-                                          (state/set-domain! extracted)
+                                          (state/set-domain! (:domain validation))
                                           (seesaw/dispose! @dialog)
                                           (callback :connect))
                                         (seesaw/alert @dialog
-                                                      (if (str/blank? extracted)
-                                                        "Please enter a valid domain or IP address"
-                                                        (str "Invalid domain/IP: " extracted "\n\n"
-                                                             "Valid formats:\n"
-                                                             "• domain.com\n"
-                                                             "• sub.domain.com\n"
-                                                             "• 192.168.1.100\n"
-                                                             "• wss://domain.com:8080/path"))
-                                                      :title "Invalid URL"
+                                                      (str (:error validation) "\n\n"
+                                                           (i18n/tr :startup-valid-formats) ":\n"
+                                                           "• " (str/join "\n• " (url-parser/get-example-formats)))
+                                                      :title (i18n/tr :startup-invalid-url)
                                                       :type :error)))))
         cancel-action (action/action
                         :name (i18n/tr :startup-button-cancel)

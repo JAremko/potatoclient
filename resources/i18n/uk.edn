@@ -66,6 +66,8 @@
  :startup-server-url "URL сервера:"
  :startup-button-connect "Підключити"
  :startup-button-cancel "Скасувати"
+ :startup-valid-formats "Допустимі формати"
+ :startup-invalid-url "Невірна URL"
  
  ;; Configuration
  :config-server-address "Адреса сервера"
@@ -106,4 +108,17 @@
  :log-viewer-column-version "Версія"
  :log-viewer-column-created "Створено"
  :log-viewer-column-size "Розмір"
- :log-viewer-file-title "Журнал: "}
+ :log-viewer-file-title "Журнал: "
+ 
+ ;; URL validation errors
+ :url-error-empty "Будь ласка, введіть адресу сервера"
+ :url-error-invalid-format "Невірний формат адреси сервера"
+ 
+ ;; URL examples
+ :url-example-domain "example.com"
+ :url-example-subdomain "app.example.com"
+ :url-example-ip "192.168.1.100"
+ :url-example-ipv6 "[2001:db8::1]"
+ :url-example-https "https://example.com"
+ :url-example-wss "wss://example.com:8080/ws"
+ :url-example-localhost "localhost"}
