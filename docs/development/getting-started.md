@@ -42,7 +42,7 @@ This guide will help you set up and run PotatoClient for development.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/potatoclient.git
+   git clone https://github.com/JAremko/potatoclient.git
    cd potatoclient
    ```
 

@@ -5,8 +5,7 @@
 #
 # For detailed project documentation, see:
 # - CLAUDE.md - Main developer guide
-# - .claude/kotlin-subprocess.md - Kotlin architecture details
-# - .claude/protobuf-command-system.md - Command system documentation
+# - docs/ - Comprehensive documentation directory
 #
 # Default target shows help
 .DEFAULT_GOAL := help
@@ -43,8 +42,9 @@ help: ## Show all available commands with detailed descriptions
 	@echo ""
 	@echo "DOCUMENTATION:"
 	@echo "  - Project guide: CLAUDE.md"
-	@echo "  - Kotlin subprocess: .claude/kotlin-subprocess.md"
-	@echo "  - Command system: .claude/protobuf-command-system.md"
+	@echo "  - Architecture docs: docs/architecture/"
+	@echo "  - Development guides: docs/development/"
+	@echo "  - Tool documentation: docs/tools/"
 	@echo "  - Custom lint reports: bb scripts/lint-report.bb --help"
 	@echo ""
 	@echo "For detailed documentation, see CLAUDE.md"

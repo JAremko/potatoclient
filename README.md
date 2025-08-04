@@ -26,7 +26,7 @@ For comprehensive documentation, see the [docs/](docs/) directory:
 
 ```bash
 # Clone and setup
-git clone https://github.com/your-org/potatoclient.git
+git clone https://github.com/JAremko/potatoclient.git
 cd potatoclient
 
 # Development mode with validation
@@ -188,7 +188,7 @@ Release builds:
 
 ## 📄 License
 
-[Your License Here]
+See [LICENSE](LICENSE) file for details.
 
 ## 🔗 Links
 

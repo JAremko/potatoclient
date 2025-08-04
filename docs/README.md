@@ -14,9 +14,11 @@ Core system architecture and design decisions
 ### [Development](./development/)
 Development guides and best practices
 - [Getting Started](./development/getting-started.md) - Quick start guide
-- [Development Workflow](./development/workflow.md) - Day-to-day development
 - [Code Standards](./development/code-standards.md) - Guardrails, Malli, and conventions
+<!-- TODO: Create these files
+- [Development Workflow](./development/workflow.md) - Day-to-day development
 - [Testing Guide](./development/testing.md) - Testing strategies and tools
+-->
 
 ### [Tools](./tools/)
 Documentation for development tools
@@ -34,16 +36,18 @@ How-to guides for common tasks
 
 ### [Reference](./reference/)
 API and configuration reference
-- [Configuration](./reference/configuration.md) - Config file format and options
 - [Build Targets](./reference/build-targets.md) - Makefile targets reference
+<!-- TODO: Create these files
+- [Configuration](./reference/configuration.md) - Config file format and options
 - [Message Types](./reference/message-types.md) - Transit message specifications
 - [Keyboard Shortcuts](./reference/keyboard-shortcuts.md) - UI shortcuts
+-->
 
 ## 🎯 Key Principles
 
 1. **Clean Architecture** - No backward compatibility, clean implementations only
 2. **Keywords Everywhere** - All data uses keywords (except log message text)
-3. **Guardrails Required** - All functions use `>defn` or `>defn-` (never raw `defn`)
+3. **Guardrails Usage** - Functions use `>defn` or `>defn-` (23 exceptions in transit layer)
 4. **Transit Protocol** - All IPC uses Transit/MessagePack
 5. **Protobuf Isolation** - Complete isolation in Kotlin subprocesses
 
@@ -52,7 +56,6 @@ API and configuration reference
 - **Start Here**: [Getting Started](./development/getting-started.md)
 - **Architecture**: [System Overview](./architecture/system-overview.md)
 - **Contributing**: [Code Standards](./development/code-standards.md)
-- **Testing**: [Testing Guide](./development/testing.md)
 
 ## 📝 Document Status
 

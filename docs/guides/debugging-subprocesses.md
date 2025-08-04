@@ -336,6 +336,8 @@ make dev
 
 ## See Also
 
-- [Kotlin Subprocess Architecture](../architecture/kotlin-subprocess.md)
 - [Transit Protocol](../architecture/transit-protocol.md)
+<!-- TODO: Create this file
+- [Kotlin Subprocess Architecture](../architecture/kotlin-subprocess.md)
+-->
 - [Mock Video Stream Tool](../tools/mock-video-stream.md)

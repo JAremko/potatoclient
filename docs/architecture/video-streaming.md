@@ -199,7 +199,7 @@ appsrc → h264parse → decoder → videoconvert → autovideosink
 
 Decoder selection priority:
 1. NVIDIA (nvh264dec)
-2. Intel QSV (qsvh264dec)
+2. Intel Media SDK (msdkh264dec)
 3. VA-API (vaapih264dec)
 4. Software (avdec_h264)
 

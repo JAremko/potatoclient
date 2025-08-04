@@ -249,5 +249,5 @@ bb validate-translations
 
 ## See Also
 
-- [i18n.clj](https://github.com/your-org/potatoclient/blob/main/src/potatoclient/i18n.clj)
+- [i18n.clj](https://github.com/JAremko/potatoclient/blob/main/src/potatoclient/i18n.clj)
 - [Localization Best Practices](https://www.w3.org/International/questions/qa-i18n)

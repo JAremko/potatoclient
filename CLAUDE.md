@@ -24,7 +24,7 @@ All detailed documentation is organized in the `docs/` directory:
 
 1. **Clean Architecture** - No backward compatibility, clean implementations only
 2. **Keywords Everywhere** - All data uses keywords (except log message text)
-3. **Guardrails Usage** - Most functions use `>defn`/`>defn-` (see exceptions below)
+3. **Guardrails Usage** - Functions use `>defn`/`>defn-` (23 exceptions in transit layer for performance)
 4. **Transit Protocol** - All IPC uses Transit/MessagePack
 5. **Protobuf Isolation** - Complete isolation in Kotlin subprocesses
 
