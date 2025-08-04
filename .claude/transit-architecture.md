@@ -164,6 +164,45 @@ Transit automatically converts between string keys and keywords:
 8. UI components react to state changes
 ```
 
+### State Integration with App-DB
+
+The state handling system is fully integrated with the re-frame-style app-db:
+
+#### Message Handler (`app_db.clj`)
+```clojure
+(>defn handle-state-update
+  "Handle state update messages from state subprocess"
+  [msg]
+  [map? => nil?]
+  ;; Extract state from payload (Transit uses string keys)
+  (when-let [state-data (get-in msg ["payload" "state"])]
+    ;; Map protobuf state keys to app-db keys
+    (let [state-update 
+          (cond-> {}
+            ;; System state
+            (contains? state-data "system")
+            (assoc :system (map-system-state (get state-data "system")))
+            ;; GPS state
+            (contains? state-data "gps")
+            (assoc :gps (map-gps-state (get state-data "gps")))
+            ;; ... other subsystems
+            )]
+      ;; Update server state in app-db
+      (update-server-state! state-update))))
+```
+
+#### Key Mapping Considerations
+- **Transit String Keys**: Messages from Kotlin use string keys, not keywords
+- **Protobuf → App-DB Mapping**: State fields are mapped to match existing app-db structure
+- **Type Conversions**: Booleans, enums, and numbers are properly converted
+- **Defaults**: Missing fields get sensible defaults to prevent nil errors
+
+#### Testing
+Comprehensive tests ensure state integration works correctly:
+- `app_db_state_test.clj` - Tests all subsystem state updates
+- `state_roundtrip_test.clj` - Tests protobuf → Transit conversion
+- `state_e2e_test.clj` - End-to-end subprocess communication tests
+
 ## Keyword Usage Examples
 
 ### Clojure Side

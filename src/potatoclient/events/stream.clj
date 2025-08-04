@@ -4,9 +4,9 @@
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [potatoclient.logging :as logging]
     [potatoclient.process :as process]
-    [potatoclient.ui-specs]
     [potatoclient.state :as state]
-    [potatoclient.transit.app-db :as app-db]))
+    [potatoclient.transit.app-db :as app-db]
+    [potatoclient.ui-specs]))
 
 (def mouse-button-names
   "Mapping of mouse button numbers to human-readable names"
@@ -196,9 +196,10 @@
           (logging/log-info {:msg (str "Double-click detected at NDC (" ndcX ", " ndcY ") "
                                        "with frame timestamp: " frameTimestamp
                                        " on " (name stream-id) " channel")})
-          ;; TODO: Implement CV tracking in Transit architecture
-          ;; In the new architecture, we would send a CV tracking command via Transit
-          (logging/log-warn {:msg "CV tracking not yet implemented in Transit architecture"}))))
+          ;; CV tracking is now handled by gesture system
+          ;; Double-tap gestures are detected in VideoStreamManager and sent as gesture events
+          ;; The gesture handler (gestures.handler/handle-double-tap-gesture) sends the cv-start-track-ndc command
+          (logging/log-debug {:msg "Double-click detected - should be handled as double-tap gesture"}))))
     nil))
 
 (>defn handle-window-event

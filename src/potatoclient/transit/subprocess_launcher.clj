@@ -10,7 +10,8 @@
             [potatoclient.ui-specs :as specs]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.framed-io :as framed-io])
+            [potatoclient.transit.framed-io :as framed-io]
+            [potatoclient.transit.error-handler :as error-handler])
   (:import (java.io InputStream OutputStream)
            (java.lang Process ProcessBuilder)
            (java.util List Map)))
@@ -306,17 +307,31 @@
        :msg (str "Stopped " (name subprocess-type) " subprocess")}))
   nil)
 
+(>defn- create-message-router
+  "Create a message router that dispatches based on message type"
+  [primary-handler]
+  [fn? => fn?]
+  (fn [msg]
+    (let [msg-type (get msg "msg-type")]
+      (case msg-type
+        "error" (error-handler/handle-error-message msg)
+        "validation-error" (error-handler/handle-validation-error msg)
+        ;; Default to primary handler for expected message types
+        (primary-handler msg)))))
+
 (>defn start-command-subprocess
   "Start the command subprocess that converts Transit commands to protobuf."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (start-subprocess :command url domain app-db/handle-command-response))
+  (start-subprocess :command url domain 
+                   (create-message-router app-db/handle-command-response)))
 
 (>defn start-state-subprocess
   "Start the state subprocess that converts protobuf state to Transit."
   [url domain]
   [string? string? => ::specs/transit-subprocess]
-  (start-subprocess :state url domain app-db/handle-state-update))
+  (start-subprocess :state url domain 
+                   (create-message-router app-db/handle-state-update)))
 
 (>defn stop-all-subprocesses
   "Stop all running subprocesses."

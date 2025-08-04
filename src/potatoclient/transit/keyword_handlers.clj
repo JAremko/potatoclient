@@ -3,8 +3,8 @@
   
   This implements the keyword-based type system where all enum values
   are automatically converted to keywords, except for designated text fields."
-  (:require [cognitect.transit :as transit]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [cognitect.transit :as transit]))
 
 ;; Message types that can contain preserved text
 (def text-preserving-message-types

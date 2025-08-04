@@ -2,11 +2,11 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.gestures.config :as config :refer [calculate-rotation-speeds]]
             [potatoclient.logging :as logging]
-            [potatoclient.ui-specs :as specs]
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.subprocess-launcher :as subprocess]))
+            [potatoclient.transit.subprocess-launcher :as subprocess]
+            [potatoclient.ui-specs :as specs]))
 
 (>defn handle-tap-gesture
   "Handle single tap gesture - rotate camera to NDC position"

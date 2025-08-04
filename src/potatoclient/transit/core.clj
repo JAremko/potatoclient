@@ -5,8 +5,7 @@
             [potatoclient.logging :as log]
             [potatoclient.transit.keyword-handlers :as kw-handlers])
   (:import [java.io OutputStream InputStream ByteArrayOutputStream ByteArrayInputStream]
-           [cognitect.transit Writer Reader]
-           [clojure.lang Keyword]))
+           [cognitect.transit Writer Reader]))
 
 ;; Custom write handlers for domain types
 (def ^{:doc "Custom Transit write handlers for domain types"}

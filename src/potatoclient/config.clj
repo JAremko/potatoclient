@@ -6,8 +6,8 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
-            [potatoclient.ui-specs :as specs]
-            [potatoclient.theme :as theme])
+            [potatoclient.theme :as theme]
+            [potatoclient.ui-specs :as specs])
   (:import (java.io File)
            (java.util Date)))
 
