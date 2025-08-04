@@ -1,79 +1,51 @@
 # PotatoClient
 
-High-performance multi-process video streaming client with dual H.264 WebSocket streams. Uses Transit-based IPC to isolate protobuf handling in Kotlin subprocesses, ensuring clean separation of concerns and type safety.
+High-performance multi-process video streaming client with dual H.264 WebSocket streams. Built with clean architecture principles using Clojure for UI and Kotlin for system integration.
 
-## Features
+## 📚 Documentation
 
-- Dual video streams: Heat (900x720) and Day (1920x1080)
-- Hardware-accelerated H.264 decoding with automatic fallback
-- Zero-allocation video streaming on the hot path
-- Transit-based IPC for all subprocess communication
-- Complete protobuf isolation in Kotlin subprocesses
-- Individual subprocess logging in development mode
-- Cross-platform: Windows, macOS, Linux
-- Dark/Light themes (Sol Dark, Sol Light, Dark, Hi-Dark)
-- Multilingual: English, Ukrainian
-- Smart logging: file logging in dev, console-only in production
-- Comprehensive runtime validation with Malli and Guardrails
-- Optimized Kotlin implementation for video processing
+**Start Here**: [Getting Started Guide](docs/development/getting-started.md)
 
-## Quick Start
+For comprehensive documentation, see the [docs/](docs/) directory:
+- [Architecture Overview](docs/architecture/system-overview.md)
+- [Development Guides](docs/development/)
+- [API Reference](docs/reference/)
+
+## ✨ Features
+
+- **Dual Video Streams**: Heat (900×720) and Day (1920×1080) cameras
+- **Hardware Acceleration**: Automatic GPU decoder selection
+- **Zero-Allocation**: Optimized video pipeline
+- **Multi-Process**: Clean separation of concerns
+- **Type-Safe IPC**: Transit protocol with Malli validation
+- **Cross-Platform**: Windows, macOS, Linux
+- **Themes**: Sol Dark, Sol Light, Dark, Hi-Dark
+- **i18n**: English and Ukrainian
+
+## 🚀 Quick Start
 
 ```bash
-# Build and run
-make build
-make run
+# Clone and setup
+git clone https://github.com/your-org/potatoclient.git
+cd potatoclient
 
-# Development
-make dev          # With GStreamer debug
-make dev-reflect  # With reflection warnings
-make nrepl        # REPL on port 7888
+# Development mode with validation
+make dev
+
+# REPL development
+make nrepl
 ```
 
-## Requirements
+## 📋 Requirements
 
-- Java 17+ with `--enable-native-access=ALL-UNNAMED`
-- GStreamer 1.0+ with H.264 support
-- Hardware decoder: NVIDIA (nvh264dec), Intel QSV, VA-API, or VideoToolbox
-- Kotlin 2.2.0 (bundled for builds)
+- **Java 17+** with `--enable-native-access=ALL-UNNAMED`
+- **Clojure CLI tools**
+- **GStreamer 1.0+** with H.264 support
+- **Hardware Decoder** (optional): NVIDIA, Intel QSV, or VA-API
 
-**Note**: SSL certificate validation is currently disabled for all builds as this is an internal application. This will be configurable in future releases.
+See [Getting Started](docs/development/getting-started.md) for detailed setup.
 
-## Configuration
-
-Settings stored in platform-specific locations:
-- Linux: `~/.config/potatoclient/potatoclient-config.edn`
-- macOS: `~/Library/Application Support/PotatoClient/`
-- Windows: `%LOCALAPPDATA%\PotatoClient\`
-
-```clojure
-{:theme :sol-dark     ; :sol-dark, :sol-light, :dark, :hi-dark
- :domain "sych.local" ; WebSocket server
- :locale :english}    ; :english or :ukrainian
-```
-
-## Performance
-
-PotatoClient is optimized for high-performance video streaming:
-
-### Zero-Allocation Streaming
-- **Lock-free buffer pools** for video frames
-- **Pre-allocated objects** for event handling
-- **Direct ByteBuffers** for optimal native interop
-- **Fast path optimization** for single-fragment WebSocket messages
-
-### Hardware Acceleration
-- **Automatic decoder selection** (NVIDIA > Intel QSV > VA-API > Software)
-- **Direct pipeline** without unnecessary color conversions
-- **Try-lock patterns** to avoid blocking the video pipeline
-
-### Kotlin Optimizations
-- **Inline functions** for hot path code (where applicable)
-- **Volatile fields** for lock-free status checks
-- **Thread-local storage** for event objects
-- **Pre-calculated values** to avoid repeated computations
-
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌─────────────────┐     Transit/IPC    ┌──────────────────┐
@@ -81,220 +53,146 @@ PotatoClient is optimized for high-performance video streaming:
 │   (Clojure)     │                    │    (Kotlin)      │
 │  - UI (Swing)   │                    │ - Protobuf       │
 │  - State Mgmt   │                    │ - WebSocket      │
-│  - Transit IPC  │                    └──────────────────┘
-│  - No Protobuf  │     Transit/IPC    ┌──────────────────┐
-└─────────────────┘ ←────────────────→ │ State Process    │
-         ↑                             │    (Kotlin)      │
-         │                             │ - Protobuf       │
-         │         Transit/IPC         │ - Debouncing     │
-         ├────────────────────────────→└──────────────────┘
-         │                             ┌──────────────────┐
-         └────────────────────────────→│ Video Stream 1   │
+└─────────────────┘                    └──────────────────┘
+         ↑                             
+         │         Transit/IPC         ┌──────────────────┐
+         ├────────────────────────────→│ State Process    │
+         │                             │    (Kotlin)      │
+         │                             │ - State Updates  │
+         │                             └──────────────────┘
+         │         Transit/IPC         
+         └────────────────────────────→┌──────────────────┐
+                                       │ Video Streams    │
                                        │    (Kotlin)      │
-                   Transit/IPC         │ - H.264/GStreamer│
-         └────────────────────────────→│ - Zero-alloc     │
-                                       └──────────────────┘
-                                       ┌──────────────────┐
-                                       │ Video Stream 2   │
+                                       │ - H.264 Decode   │
+                                       │ - Gestures       │
                                        └──────────────────┘
 ```
 
-**Key Architecture Principles:**
-- **Protobuf Isolation**: All protobuf handling is isolated in Kotlin subprocesses
-- **Transit Protocol**: All IPC uses Transit/MessagePack for type safety
-- **Clean Separation**: Main process never touches protobuf directly
-- **Unified Communication**: All subprocesses use the same Transit message protocol
-- **Minimal Specs**: Only essential UI and video stream specs maintained
-- **Keywords Everywhere**: All data uses keywords (except log/error text)
-- **Graceful Shutdown**: All subprocesses automatically terminate when main process exits
+**Key Principles**:
+- **Protobuf Isolation**: All protobuf handling in Kotlin
+- **Keywords Everywhere**: Data uses keywords (except logs)
+- **Clean Architecture**: No backward compatibility
+- **Type Safety**: Guardrails and Malli validation
 
-### Command System
+See [Architecture Docs](docs/architecture/) for details.
 
-PotatoClient uses Transit-based command routing with static code generation:
+## 🛠️ Development
 
-- **Transit Commands**: Commands created as nested keyword maps in Clojure
-- **Generated Handlers**: Static Kotlin code automatically converts between Transit and protobuf
-- **Zero Configuration**: New commands work automatically when protos change
-- **Natural Disambiguation**: Common commands like `:start` work correctly based on context
-- **Keywords Everywhere**: All parameters use keywords (`:heat`, `:day`, `:en`, `:uk`)
-
-```clojure
-;; Commands are sent as nested Transit maps with consistent keywords
-(require '[potatoclient.transit.commands :as cmd])
-
-;; Send ping command
-(cmd/send-command! {:ping {}})
-
-;; Platform control - note keywords for all parameters
-(cmd/send-command! {:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.5}}})
-
-;; Recording control - split for clarity
-(cmd/send-command! {:system {:start-rec {}}})  ; Start recording
-(cmd/send-command! {:system {:stop-rec {}}})   ; Stop recording
-
-;; Common commands disambiguated by parent context
-(cmd/send-command! {:gps {:start {}}})      ; → JonSharedCmdGps.Start
-(cmd/send-command! {:lrf {:start {}}})      ; → JonSharedCmdLrf.Start
-(cmd/send-command! {:rotary {:start {}}})   ; → JonSharedCmdRotary.Start
-```
-
-**Transit Message Types:**
-- `command` - Control commands to server
-- `state-update` - Full state updates from server
-- `state-partial` - Partial state updates
-- `log` - Subprocess logging messages
-- `error` - Error reports with stack traces
-- `metric` - Performance metrics
-- `event` - UI events (navigation, window, frame, gesture)
-- `status` - Process lifecycle status
-- `request` - Subprocess requests to main process
-- `response` - Command acknowledgments
-
-## Development
+### Common Commands
 
 ```bash
-# Build tasks
-make clean        # Clean all artifacts (including Kotlin classes)
-make proto        # Generate protobuf classes (cleans old bindings first)
-make compile-kotlin # Compile Kotlin sources
-make build        # Build JAR with all dependencies
+# Build and test
+make build        # Build JAR
+make test         # Run tests
+make lint         # Code quality checks
 
-# Testing
-make test         # Run tests with automatic logging
-make test-summary # View latest test results
-make coverage     # Generate test coverage report
-make lint         # Run all linters with filtered reports
-
-# Release builds
-make release      # Build optimized release JAR
-make build-windows  # .exe installer
-make build-macos    # .dmg bundle
-make build-linux    # AppImage
+# Development
+make dev          # Run with validation
+make nrepl        # REPL on port 7888
+make help         # All commands
 ```
 
-### Testing Infrastructure
+### Code Standards
 
-- **Automated Test Logging**: All test runs saved to `logs/test-runs/` with timestamps
-- **Coverage Reports**: HTML/XML coverage reports via jacoco (`make coverage`)
-- **WebSocket Stubbing**: Fast, deterministic tests without real servers
-- **Property-Based Testing**: Comprehensive validation with Malli generators
-- **Test Analysis**: Automatic log compaction and failure extraction
+Most functions use Guardrails for validation:
+```clojure
+(>defn process-data
+  [data options]
+  [map? map? => map?]
+  (merge data options))
+```
 
-The project includes a comprehensive test suite with protobuf validation:
+See [Code Standards](docs/development/code-standards.md) for guidelines.
+
+## 📖 Command System
+
+Commands use nested keyword maps:
+```clojure
+;; Platform control
+(cmd/send-command! {:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.5}}})
+
+;; Recording
+(cmd/send-command! {:system {:start-rec {}}})
+
+;; Camera zoom
+(cmd/send-command! {:heat-camera {:next-zoom-table-pos {}}})
+```
+
+See [Command System](docs/architecture/command-system.md) for details.
+
+## 🧪 Testing
 
 ```bash
 # Run all tests
 make test
 
-# Run specific test categories
-clojure -M:test -n potatoclient.cmd.comprehensive-command-test
-clojure -M:test -n potatoclient.cmd.generator-test
-clojure -M:test -n potatoclient.cmd.validation-safety-test
+# View test summary
+make test-summary
+
+# Coverage report
+make test-coverage
 ```
 
-The test suite includes:
-- Comprehensive command validation tests
-- Property-based testing with Malli generators
-- Transit communication integration tests
-- WebSocket stubbing for deterministic testing
+Tests include:
+- Unit tests with Malli validation
+- Integration tests with mock subprocesses
+- Property-based testing
+- Mock video stream tool
 
-### Build Types
+## 📝 Configuration
 
-PotatoClient has two distinct build types:
-
-**Development Build** (`make build`, `make dev`):
-- Guardrails validation enabled for all functions
-- Full logging to console and `./logs/potatoclient-{version}-{timestamp}.log`
-- Individual subprocess log files in `./logs/{subprocess}-{timestamp}.log`
-- All log levels: DEBUG, INFO, WARN, ERROR
-- Shows `[DEVELOPMENT]` in window title
-- SSL certificate validation disabled (for internal use)
-- Console output: `"Running DEVELOPMENT build - Guardrails validation enabled"`
-
-**Release Build** (`make release`):
-- No Guardrails overhead - completely removed from bytecode
-- Minimal logging: only WARN/ERROR to platform-specific locations
-- No subprocess file logging
-- AOT compilation with direct linking
-- Optimized for performance
-- Shows `[RELEASE]` in window title
-- SSL certificate validation disabled (for internal use)
-- Console output: `"Running RELEASE build"`
-- Self-contained: Release JARs automatically detect they're release builds
-
-### Runtime Validation
-
-PotatoClient uses [Guardrails](https://github.com/fulcrologic/guardrails) with [Malli](https://github.com/metosin/malli) for comprehensive runtime validation:
-
-- **Guardrails**: Function spec validation with `>defn` and `>defn-`
-- **Automatic in Dev**: Validation enabled automatically in development
-- **Zero overhead in Release**: Guardrails completely removed from bytecode
-- **Better error messages**: Human-readable validation errors with precise specs
-- **Centralized schemas**: Essential UI schemas in `potatoclient.ui-specs`
-
-#### Function Development
-
-All functions must use Guardrails:
+Settings in platform-specific locations:
+- **Linux**: `~/.config/potatoclient/`
+- **macOS**: `~/Library/Application Support/PotatoClient/`
+- **Windows**: `%LOCALAPPDATA%\PotatoClient\`
 
 ```clojure
-(require '[com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]])
-
-;; Public function with validation
-(>defn process-data
-  [data options]
-  [map? map? => map?]  ; specs for args and return
-  (merge data options))
-
-;; Private function
-(>defn- validate-input
-  [input]
-  [string? => boolean?]
-  (not (clojure.string/blank? input)))
+{:theme :sol-dark
+ :domain "sych.local"
+ :locale :english}
 ```
 
-### Logging System
+## 🔧 Tools
 
-PotatoClient uses [Telemere](https://github.com/taoensso/telemere) for high-performance logging:
+Development tools in `tools/`:
+- [Proto Explorer](docs/tools/proto-explorer.md) - Protobuf → Malli specs
+- [Mock Video Stream](docs/tools/mock-video-stream.md) - Testing tool
+- [Guardrails Check](docs/tools/guardrails-check.md) - Find unspecced functions
 
-**Development Mode**:
-- Logs all levels (DEBUG, INFO, WARN, ERROR) to console
-- Main process log: `./logs/potatoclient-{version}-{timestamp}.log`
-- Subprocess logs: `./logs/{subprocess-name}-{timestamp}.log`
-  - `command-subprocess-{timestamp}.log`
-  - `state-subprocess-{timestamp}.log`
-  - `video-stream-heat-{timestamp}.log`
-  - `video-stream-day-{timestamp}.log`
-- Automatic log rotation (keeps last 10 files per subprocess)
-- All subprocess logs also sent to main process via Transit
+## 📦 Releases
 
-**Production Mode**:
-- Only critical messages (WARN, ERROR) to platform-specific locations:
-  - Linux: `~/.local/share/potatoclient/logs/`
-  - macOS: `~/Library/Application Support/PotatoClient/logs/`
-  - Windows: `%LOCALAPPDATA%\PotatoClient\logs\`
-- No subprocess file logging
-- Zero performance overhead from debug logging
-
-**Checking Logs**:
 ```bash
-# Development: Check all logs
-ls -la ./logs/
-tail -f ./logs/*.log
+# Optimized release build
+make release
 
-# Production: Check platform-specific location
-# Linux example:
-tail -f ~/.local/share/potatoclient/logs/*.log
+# Platform packages
+make build-linux    # AppImage
+make build-windows  # .exe installer
+make build-macos    # .dmg bundle
 ```
 
-## Developer Documentation
+Release builds:
+- No validation overhead
+- Minimal logging
+- AOT compilation
+- Platform installers
 
-For detailed implementation information, see:
+## 🤝 Contributing
 
-- **[CLAUDE.md](CLAUDE.md)** - Complete developer guide with architecture details
-- **[TODO_KOTLIN_CMD_INTEGRATION.md](TODO_KOTLIN_CMD_INTEGRATION.md)** - Static code generation implementation status
-- **[.claude/transit-architecture.md](.claude/transit-architecture.md)** - Transit IPC implementation
-- **[.claude/transit-quick-reference.md](.claude/transit-quick-reference.md)** - Quick reference for Transit commands
-- **[.claude/kotlin-subprocess.md](.claude/kotlin-subprocess.md)** - Kotlin subprocess details
-- **[.claude/protobuf-command-system.md](.claude/protobuf-command-system.md)** - Command system design
-- **[.claude/subprocess-communication-plan.md](.claude/subprocess-communication-plan.md)** - Unified subprocess architecture
-- **[.claude/linting-guide.md](.claude/linting-guide.md)** - Code quality and linting tools
+1. Read [Code Standards](docs/development/code-standards.md)
+2. Use Guardrails for new functions
+3. Add tests for new features
+4. Update relevant documentation
+5. Run `make lint` before committing
+
+## 📄 License
+
+[Your License Here]
+
+## 🔗 Links
+
+- [Full Documentation](docs/)
+- [Architecture Guide](docs/architecture/system-overview.md)
+- [Getting Started](docs/development/getting-started.md)
+- [AI Context (CLAUDE.md)](CLAUDE.md)

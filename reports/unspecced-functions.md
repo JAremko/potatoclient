@@ -1,8 +1,8 @@
 # Guardrails Check Report
 
 ## Summary
-- Total unspecced functions: 19
-- Namespaces with issues: 3
+- Total unspecced functions: 23
+- Namespaces with issues: 4
 
 ## Functions Without Guardrails
 
@@ -10,16 +10,8 @@
 - start!
 - stop!
 
-### specs.transit-messages
-- create-gesture-event
-- create-window-close-event
-- development-mode?
-- log-validation-error
-- validate-and-log
-- validate-message
-- validate-message-structure
-- validate-message-type
-- validate-subprocess-contract
+### transit.command-sender
+- attach-proto-metadata
 
 ### transit.keyword-handlers
 - convert-enums-to-keywords
@@ -30,4 +22,18 @@
 - read-from-kotlin
 - should-keywordize?
 - write-for-kotlin
+
+### transit.metadata-handler
+- create-command-message
+- decode-with-metadata
+- embed-metadata
+- encode-with-metadata
+- extract-metadata
+- prepare-for-kotlin
+- read-handlers
+- reader
+- unwrap-typed-command
+- wrap-with-type
+- write-handlers
+- writer
 
