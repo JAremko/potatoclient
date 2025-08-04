@@ -123,38 +123,45 @@
 ;; Event handlers
 (>defn- handle-window-closed
   "Handle window closed event - terminate the associated process."
-  [stream-key]
-  [:potatoclient.ui-specs/stream-key => nil?]
-  (logging/log-stream-event stream-key :window-closed
-                            {:message "Stream window closed by X button"})
-  (logging/log-info {:msg (str "Attempting to get stream process for " stream-key)})
+  [stream-id]
+  [string? => nil?]
+  ;; Convert stream-id (e.g., "heat-video") to stream-key (e.g., :heat)
+  (let [stream-key (case stream-id
+                     "heat-video" :heat
+                     "day-video" :day
+                     ;; Default case - try to parse it
+                     (keyword (first (clojure.string/split stream-id #"-"))))]
+    (logging/log-stream-event stream-key :window-closed
+                              {:message "Stream window closed by X button"
+                               :stream-id stream-id})
+    (logging/log-info {:msg (str "Attempting to get stream process for " stream-key " (stream-id: " stream-id ")")})
 
-  ;; Get the full stream process map from app-db instead of the simplified state
-  (if-let [stream (app-db/get-stream-process stream-key)]
-    (do
-      (logging/log-info {:msg (str "Found stream process for " stream-key ", sending shutdown command")})
-      (future
-        (try
-          ;; Send shutdown control message and stop the stream
-          (logging/log-info {:msg (str "Sending shutdown control message to " stream-key)})
-          (let [cmd-result (process/send-control stream {:action "shutdown"})]
-            (logging/log-info {:msg (str "Shutdown control result for " stream-key ": " cmd-result)}))
-          (Thread/sleep 100)
+    ;; Get the full stream process map from app-db instead of the simplified state
+    (if-let [stream (app-db/get-stream-process stream-key)]
+      (do
+        (logging/log-info {:msg (str "Found stream process for " stream-key ", sending shutdown command")})
+        (future
+          (try
+            ;; Send shutdown control message and stop the stream
+            (logging/log-info {:msg (str "Sending shutdown control message to " stream-key)})
+            (let [cmd-result (process/send-control stream {:action "shutdown"})]
+              (logging/log-info {:msg (str "Shutdown control result for " stream-key ": " cmd-result)}))
+            (Thread/sleep 100)
 
-          (logging/log-info {:msg (str "Stopping stream process for " stream-key)})
-          (let [stop-result (process/stop-stream stream)]
-            (logging/log-info {:msg (str "Stop stream result for " stream-key ": " stop-result)}))
+            (logging/log-info {:msg (str "Stopping stream process for " stream-key)})
+            (let [stop-result (process/stop-stream stream)]
+              (logging/log-info {:msg (str "Stop stream result for " stream-key ": " stop-result)}))
 
-          (logging/log-info {:msg (str "Clearing stream state for " stream-key)})
-          (state/clear-stream! stream-key)
-          (app-db/remove-stream-process! stream-key)
-          (logging/log-info {:msg (str "Successfully terminated " stream-key " stream via X button")})
-          (catch Exception e
-            (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))})))))
-    ;; Check if stream was already stopped
-    (if-let [state-info (state/get-stream stream-key)]
-      (logging/log-info {:msg (str "Stream " stream-key " already being stopped, state: " state-info)})
-      (logging/log-info {:msg (str "Stream " stream-key " already stopped/removed")})))
+            (logging/log-info {:msg (str "Clearing stream state for " stream-key)})
+            (state/clear-stream! stream-key)
+            (app-db/remove-stream-process! stream-key)
+            (logging/log-info {:msg (str "Successfully terminated " stream-key " stream via X button")})
+            (catch Exception e
+              (logging/log-error {:msg (str "Error terminating " (name stream-key) " stream: " (.getMessage e))})))))
+      ;; Check if stream was already stopped
+      (if-let [state-info (state/get-stream stream-key)]
+        (logging/log-info {:msg (str "Stream " stream-key " already being stopped, state: " state-info)})
+        (logging/log-info {:msg (str "Stream " stream-key " already stopped/removed")}))))
   nil)
 
 (>defn handle-response-event
@@ -173,7 +180,12 @@
   ;; Handle specific response types
   (when (= (:action msg) "window-closed")
     (logging/log-info {:msg (str "Window close detected for " (name stream-key))})
-    (handle-window-closed stream-key))
+    ;; For response events, we already have the stream-key, convert to stream-id
+    (let [stream-id (case stream-key
+                      :heat "heat-video"
+                      :day "day-video"
+                      (str (name stream-key) "-video"))]
+      (handle-window-closed stream-id)))
   nil)
 
 (>defn handle-navigation-event
@@ -214,7 +226,7 @@
                                :message (str "Window event: " window-type)
                                :data msg})
     ;; Check if this is a window close event
-    (when (= window-type "close")
+    (when (= window-type :close)
       (logging/log-info {:msg (str "Window close event detected for " (name stream-id))})
       (handle-window-closed stream-id))
     nil))

@@ -163,6 +163,10 @@
   (b/compile-clj {:basis (get-basis)
                   :src-dirs ["src"]
                   :class-dir class-dir
+                  :ns-compile (fn [sym]
+                                (not (contains? #{'potatoclient.reports
+                                                  'potatoclient.instrumentation}
+                                                sym)))
                   :compile-opts {:elide-meta [:doc :file :line :added]
                                  :direct-linking true}})
   (b/uber {:class-dir class-dir
