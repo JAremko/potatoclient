@@ -15,7 +15,8 @@
             [potatoclient.process :as process]
             [clojure.data.json :as json]
             [clojure.string :as str])
-  (:import [java.io ByteArrayOutputStream ByteArrayInputStream]))
+  (:import [java.io ByteArrayOutputStream ByteArrayInputStream]
+           [java.lang ProcessBuilder]))
 
 ;; =============================================================================
 ;; Test Infrastructure
@@ -27,13 +28,13 @@
   "Start the Kotlin test command processor"
   (let [classpath (str/join ":" ["src/kotlin/build/libs/potatoclient-kotlin.jar"
                                  "test/kotlin/build/libs/test-kotlin.jar"])
-        process (process/start-process
-                  ["java" "-cp" classpath
-                   "potatoclient.kotlin.transit.TestCommandProcessor"]
-                  {:dir (System/getProperty "user.dir")})]
+        pb (ProcessBuilder. ["java" "-cp" classpath
+                             "potatoclient.kotlin.transit.TestCommandProcessor"])
+        _ (.directory pb (clojure.java.io/file (System/getProperty "user.dir")))
+        process (.start pb)]
     {:process process
-     :stdin (:stdin process)
-     :stdout (:stdout process)}))
+     :stdin (clojure.java.io/writer (.getOutputStream process))
+     :stdout (clojure.java.io/reader (.getInputStream process))}))
 
 (defn send-command-get-result [processor command]
   "Send command to Kotlin processor and get JSON result"

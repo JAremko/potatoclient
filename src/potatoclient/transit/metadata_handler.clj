@@ -3,8 +3,8 @@
   
   Since Transit doesn't preserve Clojure metadata, we embed the metadata
   as part of the message structure using a special key."
-  (:require [cognitect.transit :as transit]
-            [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [cognitect.transit :as transit])
   (:import [com.cognitect.transit WriteHandler ReadHandler]
            [java.io ByteArrayOutputStream ByteArrayInputStream]))
 

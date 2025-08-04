@@ -8,7 +8,7 @@
            (java.lang Process ProcessBuilder)
            (java.util.concurrent TimeUnit)
            (ser JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataMeteo
-                JonSharedDataGps$JonGuiDataGps JonSharedDataRotary$JonGuiDataRotaryPlatform)))
+                JonSharedDataGps$JonGuiDataGps JonSharedDataRotary$JonGuiDataRotary)))
 
 ;; Test helpers
 (defn- start-state-subprocess-test-mode
@@ -139,11 +139,11 @@
                 (let [gps (get state "gps")]
                   (is (= 40.7128 (get gps "latitude")))
                   (is (= -74.0060 (get gps "longitude")))
-                  (is (= 10.0 (get gps "altitude")))))))
+                  (is (= 10.0 (get gps "altitude"))))))))
 
-          (finally
-            (.destroy process)
-            (is (.waitFor process 2 TimeUnit/SECONDS)))))))
+        (finally
+          (.destroy process)
+          (is (.waitFor process 2 TimeUnit/SECONDS))))))
 
   (deftest test-state-subprocess-rate-limiting
     (testing "State subprocess respects rate limiting"
@@ -196,7 +196,7 @@
                         (.setLatitude 51.5074)
                         (.setLongitude -0.1278)
                         .build)
-                rotary (-> (JonSharedDataRotary$JonGuiDataRotaryPlatform/newBuilder)
+                rotary (-> (JonSharedDataRotary$JonGuiDataRotary/newBuilder)
                            (.setAzimuth 45.0)
                            (.setElevation 30.0)
                            .build)

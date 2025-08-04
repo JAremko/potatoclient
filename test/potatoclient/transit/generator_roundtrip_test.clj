@@ -10,7 +10,7 @@
             [potatoclient.transit.commands :as cmd]
             [potatoclient.transit.core :as transit]
             [potatoclient.transit.subprocess-launcher :as subprocess]
-            [potatoclient.process :as process]
+            [clojure.java.shell :as shell]
             [clojure.java.io :as io]
             [clojure.string :as str])
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream]
@@ -29,8 +29,8 @@
   []
   (when-not (.exists (io/file test-command-processor-path))
     (println "Building test command processor...")
-    (let [result (process/sh ["make" "build-test-processor"]
-                             {:dir (System/getProperty "user.dir")})]
+    (let [result (shell/sh "make" "build-test-processor"
+                           :dir (System/getProperty "user.dir"))]
       (when (not= 0 (:exit result))
         (throw (ex-info "Failed to build test processor" result))))))
 
@@ -57,8 +57,9 @@
     (.write stdin (str (.toByteArray out) "\n"))
     (.flush stdin)
     ;; Read response
-    (let [response (.readLine stdout)]
-      (transit/read-string response))))
+    (let [response (.readLine stdout)
+          reader (transit/make-reader (ByteArrayInputStream. (.getBytes response)))]
+      (transit/read-message reader))))
 
 ;; =============================================================================
 ;; Generator Helpers

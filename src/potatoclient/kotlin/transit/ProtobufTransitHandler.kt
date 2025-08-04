@@ -1,8 +1,12 @@
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.Keyword
 import com.cognitect.transit.ReadHandler
+import com.cognitect.transit.Reader
+import com.cognitect.transit.Symbol
 import com.cognitect.transit.TransitFactory
 import com.cognitect.transit.WriteHandler
+import com.cognitect.transit.Writer
 import com.google.protobuf.Message
 import java.lang.reflect.Method
 

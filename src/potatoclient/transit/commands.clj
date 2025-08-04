@@ -77,7 +77,7 @@
 
 (>defn set-compass-unit
   "Set compass unit (degrees or mils) - Note: may need mapping to actual command"
-  [unit]
+  [_unit]
   [[:enum :degrees :mils] => map?]
   ;; Note: Couldn't find specific compass unit command in keyword tree
   ;; This might need to be mapped to a different command

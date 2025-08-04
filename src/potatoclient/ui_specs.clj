@@ -1,9 +1,9 @@
 (ns potatoclient.ui-specs
   "Essential UI and video stream specs for PotatoClient.
    This replaces the legacy specs.clj with only the schemas actually in use."
-  (:require [malli.core :as m]
-            [malli.registry :as mr]
-            [clojure.string :as str])
+  (:require [clojure.string :as str]
+            [malli.core :as m]
+            [malli.registry :as mr])
   (:import (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
            (java.awt Rectangle Color)))

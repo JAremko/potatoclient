@@ -13,11 +13,12 @@
             [malli.generator :as mg]
             [potatoclient.transit.commands :as cmd]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.specs.cmd :as cmd-specs]
-            [potatoclient.specs.cmd.CV :as cv-specs]
-            [potatoclient.specs.cmd.RotaryPlatform :as rotary-specs]
-            [potatoclient.specs.cmd.DayCamera :as day-specs]
-            [potatoclient.specs.cmd.HeatCamera :as heat-specs]
+            ;; TODO: These specs are not on classpath currently
+            ;; [potatoclient.specs.cmd :as cmd-specs]
+            ;; [potatoclient.specs.cmd.CV :as cv-specs]
+            ;; [potatoclient.specs.cmd.RotaryPlatform :as rotary-specs]
+            ;; [potatoclient.specs.cmd.DayCamera :as day-specs]
+            ;; [potatoclient.specs.cmd.HeatCamera :as heat-specs]
             [clojure.java.shell :as shell]
             [clojure.string :as str]
             [clojure.data.json :as json])
@@ -44,7 +45,9 @@
 
   ;; Create a temp file with the Transit command
   (let [temp-file (File/createTempFile "malli-test-" ".transit")
-        _ (transit-core/write-transit-to-file command-map (.getPath temp-file))
+        _ (with-open [out (clojure.java.io/output-stream temp-file)]
+            (let [writer (transit-core/make-writer out)]
+              (transit-core/write-message! writer command-map out)))
 
         ;; Run Kotlin validator
         result (shell/sh "java" "-cp" "test/kotlin/build/libs/test-all.jar"

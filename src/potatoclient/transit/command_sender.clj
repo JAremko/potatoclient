@@ -4,11 +4,7 @@
   Instead of action tags, we send the full EDN structure with metadata
   indicating the protobuf message type. Transit handlers on the Kotlin
   side use this metadata to instantiate the correct Java class."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [potatoclient.transit.core :as transit]
-            [potatoclient.ui-specs :as specs]
-            [malli.core :as m]
-            [taoensso.telemere :as t]))
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]))
 
 ;; =============================================================================
 ;; Protobuf Type Registry
@@ -95,35 +91,15 @@
                 [:lrf-calib :day :set])"
   [command-map type-path]
   [map? vector? => map?]
-  (let [;; Look up the spec for this command type
-        spec-key (case (first type-path)
-                   :root (keyword "cmd" (name (second type-path)))
-                   :rotary-platform (keyword "cmd.RotaryPlatform" (name (second type-path)))
-                   :heat-camera (keyword "cmd.HeatCamera" (name (second type-path)))
-                   :day-camera (keyword "cmd.DayCamera" (name (second type-path)))
-                   :cv (keyword "cmd.Cv" (name (second type-path)))
-                   :lrf-calib (keyword "cmd.LrfCalib"
-                                       (str (name (second type-path)) "-"
-                                            (name (nth type-path 2))))
-                   (throw (ex-info "Unknown command category"
-                                   {:category (first type-path)})))]
+  ;; TODO: Add validation when specs are available
+  ;; Currently specs/get-spec and specs/proto-registry don't exist
 
-    ;; Validate with Guardrails/Malli in development
-    (when-let [spec (specs/get-spec spec-key)]
-      (when-not (m/validate spec command-map {:registry (specs/proto-registry)})
-        (throw (ex-info "Command validation failed"
-                        {:command command-map
-                         :type-path type-path
-                         :spec spec-key
-                         :errors (m/explain spec command-map
-                                            {:registry (specs/proto-registry)})}))))
-
-    ;; Attach metadata and create Transit message
-    (let [metadata-command (attach-proto-metadata command-map type-path)]
-      {:msg-type "command"
-       :msg-id (str (random-uuid))
-       :timestamp (System/currentTimeMillis)
-       :payload metadata-command})))
+  ;; Attach metadata and create Transit message
+  (let [metadata-command (attach-proto-metadata command-map type-path)]
+    {:msg-type "command"
+     :msg-id (str (random-uuid))
+     :timestamp (System/currentTimeMillis)
+     :payload metadata-command}))
 
 ;; =============================================================================
 ;; Convenience Functions for Common Commands

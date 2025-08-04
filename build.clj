@@ -81,11 +81,22 @@
             :javac-opts ["--release" "17"]})
   (println "Java enum compilation successful"))
 
+(defn compile-java-utils [_]
+  (println "Compiling Java utility classes...")
+  ;; Compile the video utilities like NDCConverter
+  (b/javac {:src-dirs ["src/java/potatoclient/video"]
+            :class-dir class-dir
+            :basis (get-basis)
+            :javac-opts ["--release" "17"]})
+  (println "Java utility compilation successful"))
+
 (defn compile-all [_]
   ;; Compile Java protobuf first as Kotlin Transit classes depend on protobuf
   (compile-java-proto nil)
   ;; Compile Java enums that both Clojure and Kotlin use
   (compile-java-enums nil)
+  ;; Compile Java utility classes
+  (compile-java-utils nil)
   (compile-kotlin nil))
 
 (defn compile-kotlin-tests [_]
@@ -155,9 +166,10 @@
                :target-dir class-dir})
   ;; Create release marker file
   (spit (io/file class-dir "RELEASE") "true")
-  ;; Compile in correct order: Java proto first, then enums, then Kotlin
+  ;; Compile in correct order: Java proto first, then enums, utils, then Kotlin
   (compile-java-proto nil)
   (compile-java-enums nil)
+  (compile-java-utils nil)
   (compile-kotlin nil)
   ;; Compile with release optimizations
   (b/compile-clj {:basis (get-basis)

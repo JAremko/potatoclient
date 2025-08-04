@@ -1,7 +1,7 @@
 (ns potatoclient.url-parser
   "URL parsing using Instaparse grammar and core.match for robust extraction"
-  (:require [clojure.string :as str]
-            [clojure.core.match :refer [match]]
+  (:require [clojure.core.match :refer [match]]
+            [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [instaparse.core :as insta]
             [potatoclient.i18n :as i18n]))

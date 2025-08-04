@@ -4,7 +4,7 @@
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.framed-io :as framed-io]
             [clojure.java.io :as io])
-  (:import [java.lang ProcessBuilder]
+  (:import [java.lang ProcessBuilder ProcessBuilder$Redirect]
            [java.io PipedInputStream PipedOutputStream]))
 
 (deftest test-subprocess-with-proper-io

@@ -5,11 +5,10 @@
   gesture and navigation events from video streams into appropriate commands.
   Modeled after the TypeScript command builders in examples/frontend/ts/cmd/cmdSender/"
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [potatoclient.logging :as logging]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.subprocess-launcher :as subprocess]
-            [potatoclient.transit.app-db :as app-db]
-            [potatoclient.logging :as logging]
             [potatoclient.ui-specs :as specs]))
 
 ;; ============================================================================
@@ -79,7 +78,7 @@
   This function maps gesture types to their corresponding commands,
   similar to the TypeScript InteractionHandler.handleInteraction()"
   [{:keys [gesture-type stream-type ndc-x ndc-y ndc-delta-x ndc-delta-y
-           frame-timestamp] :as gesture-event}]
+           frame-timestamp]}]
   [::specs/gesture-event => (? map?)]
   (case gesture-type
     :tap
@@ -93,9 +92,7 @@
 
     :panmove
     ;; Calculate speeds based on current zoom and deltas
-    (let [camera-key (if (= stream-type :heat) :camera-heat :camera-day)
-          zoom-value (app-db/get-in-app-db [camera-key :zoom] 1.0)
-          ;; This would use the speed calculation logic
+    (let [;; This would use the speed calculation logic based on zoom
           az-speed (Math/abs ndc-delta-x)
           el-speed (Math/abs ndc-delta-y)
           az-direction (if (pos? ndc-delta-x) :clockwise :counter-clockwise)
@@ -184,7 +181,7 @@
   "Convert a navigation (mouse) event into a command if applicable.
   
   Most navigation events are for UI feedback, but some may trigger commands."
-  [{:keys [nav-type button click-count ndc-x ndc-y] :as nav-event}]
+  [{:keys [nav-type button click-count ndc-x ndc-y]}]
   [map? => (? map?)]
   ;; Currently navigation events are mostly for UI feedback
   ;; Double-clicks are handled as gestures instead
@@ -198,7 +195,7 @@
   "Process window events and determine if any action is needed.
   
   Most window events are informational, but close events need handling."
-  [{:keys [type stream-id] :as window-event}]
+  [{:keys [type stream-id]}]
   [map? => (? keyword?)]
   (case type
     :close :terminate-stream

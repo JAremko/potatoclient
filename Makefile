@@ -111,6 +111,12 @@ compile-java-enums: ## Compile Java enum source files
 	@echo "Compiling Java enum sources..."
 	clojure -T:build compile-java-enums
 
+# Compile Java utility sources
+.PHONY: compile-java-utils
+compile-java-utils: ## Compile Java utility source files (NDCConverter, etc.)
+	@echo "Compiling Java utility sources..."
+	clojure -T:build compile-java-utils
+
 # Build target
 .PHONY: build
 build: ensure-compiled ## Build the project (creates JAR file)
@@ -119,7 +125,7 @@ build: ensure-compiled ## Build the project (creates JAR file)
 
 # Build with forced proto regeneration
 .PHONY: build-clean
-build-clean: proto compile-java-proto compile-java-enums compile-kotlin ## Build with forced proto regeneration
+build-clean: proto compile-java-proto compile-java-enums compile-java-utils compile-kotlin ## Build with forced proto regeneration
 	@echo "Building project with clean proto..."
 	clojure -T:build uber
 
@@ -157,7 +163,7 @@ clean: clean-proto clean-cache ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: proto compile-java-proto compile-java-enums compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
+nrepl: proto compile-java-proto compile-java-enums compile-java-utils compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ EDN state validation enabled"
@@ -257,7 +263,7 @@ report-unspecced: ## Check which functions need Guardrails specs - mandatory for
 
 # Validate Action Registry
 .PHONY: validate-actions
-validate-actions: compile-java-proto compile-java-enums ## Validate Action Registry against protobuf structure
+validate-actions: compile-java-proto compile-java-enums compile-java-utils ## Validate Action Registry against protobuf structure
 	@echo "Validating Action Registry..."
 	@echo "  • Compares registered actions with proto commands"
 	@echo "  • Identifies missing or extra actions"
@@ -298,6 +304,8 @@ ensure-compiled: clean-app ## Compile only if sources changed (smart compilation
 	fi
 	@echo "Compiling Java enum classes..."
 	@$(MAKE) compile-java-enums
+	@echo "Compiling Java utility classes..."
+	@$(MAKE) compile-java-utils
 	@echo "Recompiling Kotlin classes to ensure fresh code..."
 	@$(MAKE) compile-kotlin
 	@echo "All required files are compiled."
@@ -320,7 +328,7 @@ dev: ensure-compiled ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs,
 
 # Development with clean rebuild
 .PHONY: dev-clean
-dev-clean: clean-cache proto compile-java-proto compile-java-enums compile-kotlin ## Development with forced clean rebuild (regenerates everything)
+dev-clean: clean-cache proto compile-java-proto compile-java-enums compile-java-utils compile-kotlin ## Development with forced clean rebuild (regenerates everything)
 	@echo "Running development version with clean rebuild..."
 	@$(MAKE) dev
 
