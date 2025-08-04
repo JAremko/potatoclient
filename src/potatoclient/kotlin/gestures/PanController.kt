@@ -12,6 +12,9 @@ import kotlin.math.sqrt
 enum class StreamType {
     HEAT,
     DAY,
+    ;
+    
+    fun toKeyword(): String = name.lowercase().replace("_", "-")
 }
 
 enum class RotaryDirection {
