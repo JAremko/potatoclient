@@ -349,22 +349,26 @@
 
 (defn generate-namespace
   "Generate complete namespace."
-  [ns-name imports enums messages type-lookup]
-  (let [template (load-template-string "namespace.clj")
-        
-        enums-code (when (seq enums)
-                    (str/join "\n\n" (map generate-enum-def enums)))
-        
-        ;; Sort messages so nested messages come before their parents
-        sorted-messages (sort-by 
+  ([ns-name imports enums messages type-lookup]
+   (generate-namespace ns-name imports enums messages type-lookup []))
+  ([ns-name imports enums messages type-lookup require-specs]
+   (let [template (if (seq require-specs)
+                    (load-template-string "namespace-with-requires.clj")
+                    (load-template-string "namespace.clj"))
+         
+         enums-code (when (seq enums)
+                      (str/join "\n\n" (map generate-enum-def enums)))
+         
+         ;; Sort messages so nested messages come before their parents
+         sorted-messages (sort-by 
                          (fn [msg]
                            ;; Count the depth (number of $ in java-class)
                            (count (filter #(= \$ %) (:java-class msg))))
                          #(compare %2 %1) ;; Reverse sort - deepest first
                          messages)
-        
-        ;; Generate forward declarations for all builder and parser functions
-        forward-decls (when (seq sorted-messages)
+         
+         ;; Generate forward declarations for all builder and parser functions
+         forward-decls (when (seq sorted-messages)
                        (str ";; Forward declarations\n"
                             (str/join "\n" 
                                      (concat
@@ -379,32 +383,40 @@
                                             :when (seq (:oneofs msg))]
                                         (str "(declare parse-" (str/replace (str/lower-case (:proto-name msg)) #"_" "-") "-payload)"))))
                             "\n"))
-        
-        ;; Generate all message builders/parsers first, then all oneofs
-        ;; This avoids forward reference issues
-        all-builders (for [msg sorted-messages]
+         
+         ;; Generate all message builders/parsers first, then all oneofs
+         ;; This avoids forward reference issues
+         all-builders (for [msg sorted-messages]
                        (generate-builder msg type-lookup))
-        all-parsers (for [msg sorted-messages]
+         all-parsers (for [msg sorted-messages]
                       (generate-parser msg type-lookup))
-        all-oneof-builders (for [msg sorted-messages
+         all-oneof-builders (for [msg sorted-messages
                                  oneof (:oneofs msg)]
                              (generate-oneof-builder msg oneof type-lookup))
-        all-oneof-parsers (for [msg sorted-messages
+         all-oneof-parsers (for [msg sorted-messages
                                 oneof (:oneofs msg)]
                             (generate-oneof-parser msg oneof type-lookup))
-        
-        messages-code (when (seq sorted-messages)
+         
+         messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
                                 (concat all-builders 
                                         all-parsers
                                         all-oneof-builders
                                         all-oneof-parsers)))
-        
-        replacements {"NAMESPACE-PLACEHOLDER" ns-name
+         
+         ;; Generate require clause if needed
+         require-clause (when (seq require-specs)
+                        (str "(:require\n   "
+                             (str/join "\n   " 
+                                      (map pr-str require-specs))
+                             ")\n  "))
+         
+         replacements {"NAMESPACE-PLACEHOLDER" ns-name
+                     "REQUIRE-PLACEHOLDER" (or require-clause "")
                      "IMPORTS-PLACEHOLDER" (generate-imports imports)
                      "ENUMS-PLACEHOLDER" (or enums-code ";; No enums")
                      "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages"))}]
-    (replace-in-template template replacements)))
+    (replace-in-template template replacements))))
 
 ;; =============================================================================
 ;; Main Code Generation

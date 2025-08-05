@@ -5,6 +5,7 @@
    :package "cmd.Compass",
    :java-package nil,
    :java-outer-classname "JonSharedCmdCompass",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -218,6 +219,7 @@
    :package "cmd.Gps",
    :java-package nil,
    :java-outer-classname "JonSharedCmdGps",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -330,6 +332,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataTypes",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-meteo,
@@ -755,6 +758,7 @@
    :package "cmd.Lrf",
    :java-package nil,
    :java-outer-classname "JonSharedCmdLrf",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,
@@ -991,6 +995,7 @@
    :package "cmd.DayCamera",
    :java-package nil,
    :java-outer-classname "JonSharedCmdDayCamera",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :set-value,
@@ -1528,6 +1533,7 @@
    :package "cmd.HeatCamera",
    :java-package nil,
    :java-outer-classname "JonSharedCmdHeatCamera",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,
@@ -2119,6 +2125,7 @@
    :package "cmd.RotaryPlatform",
    :java-package nil,
    :java-outer-classname "JonSharedCmdRotary",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,
@@ -3040,6 +3047,7 @@
    :package "cmd.OSD",
    :java-package nil,
    :java-outer-classname "JonSharedCmdOsd",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -3173,6 +3181,7 @@
    :package "cmd.Lrf_calib",
    :java-package nil,
    :java-outer-classname "JonSharedCmdLrfAlign",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -3296,6 +3305,7 @@
    :package "cmd.System",
    :java-package nil,
    :java-outer-classname "JonSharedCmdSystem",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,
@@ -3503,6 +3513,7 @@
    :package "cmd.CV",
    :java-package nil,
    :java-outer-classname "JonSharedCmdCv",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,
@@ -3685,6 +3696,7 @@
    :package "cmd.DayCamGlassHeater",
    :java-package nil,
    :java-outer-classname "JonSharedCmdDayCamGlassHeater",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -3780,6 +3792,7 @@
    :package "cmd.Lira",
    :java-package nil,
    :java-outer-classname "JonSharedCmdLira",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :root,
@@ -3891,6 +3904,20 @@
    :package "cmd",
    :java-package nil,
    :java-outer-classname "JonSharedCmd",
+   :dependencies
+   ["jon_shared_cmd_compass.proto"
+    "jon_shared_cmd_gps.proto"
+    "jon_shared_cmd_lrf.proto"
+    "jon_shared_cmd_day_camera.proto"
+    "jon_shared_cmd_heat_camera.proto"
+    "jon_shared_cmd_rotary.proto"
+    "jon_shared_cmd_osd.proto"
+    "jon_shared_cmd_lrf_align.proto"
+    "jon_shared_cmd_system.proto"
+    "jon_shared_cmd_cv.proto"
+    "jon_shared_cmd_day_cam_glass_heater.proto"
+    "jon_shared_cmd_lira.proto"
+    "jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :root,

@@ -220,6 +220,8 @@
      :package (:package file)
      :java-package (:java-package context)
      :java-outer-classname (:java-outer-classname context)
+     :dependencies (vec (remove #(= % "buf/validate/validate.proto") 
+                                (:dependency file [])))  ;; Filter out buf/validate
      :messages (mapv #(message->edn % context [])
                      (get file :messageType []))
      :enums (mapv #(enum->edn % context [])

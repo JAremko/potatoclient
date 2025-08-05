@@ -5,6 +5,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataTypes",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-meteo,
@@ -430,6 +431,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataTime",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-time,
@@ -468,6 +470,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataSystem",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-system,
@@ -614,6 +617,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataLrf",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-lrf,
@@ -829,6 +833,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataGps",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-gps,
@@ -891,6 +896,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataCompass",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-compass,
@@ -947,6 +953,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataCompassCalibration",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-compass-calibration,
@@ -999,6 +1006,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataRotary",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-rotary,
@@ -1164,6 +1172,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataCameraDay",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-camera-day,
@@ -1244,6 +1253,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataCameraHeat",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-camera-heat,
@@ -1326,6 +1336,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataRecOsd",
+   :dependencies ["jon_shared_data_types.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-data-rec-osd,
@@ -1382,6 +1393,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataDayCamGlassHeater",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-day-cam-glass-heater,
@@ -1409,6 +1421,7 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedDataActualSpaceTime",
+   :dependencies [],
    :messages
    [{:type :message,
      :name :jon-gui-data-actual-space-time,
@@ -1466,6 +1479,20 @@
    :package "ser",
    :java-package nil,
    :java-outer-classname "JonSharedData",
+   :dependencies
+   ["jon_shared_data_types.proto"
+    "jon_shared_data_time.proto"
+    "jon_shared_data_system.proto"
+    "jon_shared_data_lrf.proto"
+    "jon_shared_data_gps.proto"
+    "jon_shared_data_compass.proto"
+    "jon_shared_data_compass_calibration.proto"
+    "jon_shared_data_rotary.proto"
+    "jon_shared_data_camera_day.proto"
+    "jon_shared_data_camera_heat.proto"
+    "jon_shared_data_rec_osd.proto"
+    "jon_shared_data_day_cam_glass_heater.proto"
+    "jon_shared_data_actual_space_time.proto"],
    :messages
    [{:type :message,
      :name :jon-gui-state,

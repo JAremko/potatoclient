@@ -34,11 +34,11 @@
                     :output-dir "generated"
                     :namespace-prefix "potatoclient.proto"}}
   
-  :gen-ns {:exec-fn generator.main/generate
-           :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
-                       :output-dir "generated-ns"
-                       :namespace-prefix "potatoclient.proto"
-                       :namespace-mode :separated}}
+  :gen-single {:exec-fn generator.main/generate
+               :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
+                           :output-dir "generated-single"
+                           :namespace-prefix "potatoclient.proto"
+                           :namespace-mode :single}}
   
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.5"}}
           :ns-default build}

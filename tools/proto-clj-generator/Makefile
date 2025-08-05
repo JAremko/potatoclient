@@ -18,14 +18,14 @@ compile-proto: ## Compile protobuf Java classes locally
 	@clojure -T:build compile-java-proto
 
 .PHONY: generate
-generate: ## Generate Clojure converters from JSON descriptors (single file mode)
-	@echo "Generating Clojure protobuf converters (single file mode)..."
+generate: ## Generate Clojure converters with namespace separation (default)
+	@echo "Generating Clojure protobuf converters (namespace separation)..."
 	@clojure -X:gen
 
-.PHONY: generate-ns
-generate-ns: ## Generate Clojure converters with namespace separation
-	@echo "Generating Clojure protobuf converters (namespace separation mode)..."
-	@clojure -X:gen-ns
+.PHONY: generate-single
+generate-single: ## Generate Clojure converters in single file mode (legacy)
+	@echo "Generating Clojure protobuf converters (single file mode)..."
+	@clojure -X:gen-single
 
 .PHONY: lint-generated
 lint-generated: generate ## Lint the generated code

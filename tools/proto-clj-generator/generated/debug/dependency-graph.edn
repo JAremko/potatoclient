@@ -1,0 +1,83 @@
+{:nodes
+ #{"jon_shared_cmd_gps.proto"
+   "jon_shared_data_camera_day.proto"
+   "jon_shared_cmd_compass.proto"
+   "jon_shared_cmd.proto"
+   "jon_shared_data_system.proto"
+   "jon_shared_data_types.proto"
+   "jon_shared_cmd_cv.proto"
+   "jon_shared_data_rec_osd.proto"
+   "jon_shared_data_camera_heat.proto"
+   "jon_shared_cmd_lrf.proto"
+   "jon_shared_data_compass_calibration.proto"
+   "jon_shared_data_gps.proto"
+   "jon_shared_data.proto"
+   "jon_shared_cmd_system.proto"
+   "jon_shared_data_rotary.proto"
+   "jon_shared_cmd_day_cam_glass_heater.proto"
+   "jon_shared_data_lrf.proto"
+   "jon_shared_cmd_osd.proto"
+   "jon_shared_cmd_day_camera.proto"
+   "jon_shared_cmd_rotary.proto"
+   "jon_shared_data_compass.proto"
+   "jon_shared_data_day_cam_glass_heater.proto"
+   "jon_shared_data_actual_space_time.proto"
+   "jon_shared_data_time.proto"
+   "jon_shared_cmd_lira.proto"
+   "jon_shared_cmd_heat_camera.proto"
+   "jon_shared_cmd_lrf_align.proto"},
+ :edges
+ {"jon_shared_cmd_gps.proto" #{},
+  "jon_shared_data_camera_day.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_compass.proto" #{},
+  "jon_shared_cmd.proto"
+  #{"jon_shared_cmd_gps.proto"
+    "jon_shared_cmd_compass.proto"
+    "jon_shared_data_types.proto"
+    "jon_shared_cmd_cv.proto"
+    "jon_shared_cmd_lrf.proto"
+    "jon_shared_cmd_system.proto"
+    "jon_shared_cmd_day_cam_glass_heater.proto"
+    "jon_shared_cmd_osd.proto"
+    "jon_shared_cmd_day_camera.proto"
+    "jon_shared_cmd_rotary.proto"
+    "jon_shared_cmd_lira.proto"
+    "jon_shared_cmd_heat_camera.proto"
+    "jon_shared_cmd_lrf_align.proto"},
+  "jon_shared_data_system.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_types.proto" #{},
+  "jon_shared_cmd_cv.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_rec_osd.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_camera_heat.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_lrf.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_compass_calibration.proto"
+  #{"jon_shared_data_types.proto"},
+  "jon_shared_data_gps.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data.proto"
+  #{"jon_shared_data_camera_day.proto"
+    "jon_shared_data_system.proto"
+    "jon_shared_data_types.proto"
+    "jon_shared_data_rec_osd.proto"
+    "jon_shared_data_camera_heat.proto"
+    "jon_shared_data_compass_calibration.proto"
+    "jon_shared_data_gps.proto"
+    "jon_shared_data_rotary.proto"
+    "jon_shared_data_lrf.proto"
+    "jon_shared_data_compass.proto"
+    "jon_shared_data_day_cam_glass_heater.proto"
+    "jon_shared_data_actual_space_time.proto"
+    "jon_shared_data_time.proto"},
+  "jon_shared_cmd_system.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_rotary.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_day_cam_glass_heater.proto" #{},
+  "jon_shared_data_lrf.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_osd.proto" #{},
+  "jon_shared_cmd_day_camera.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_rotary.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_data_compass.proto" #{},
+  "jon_shared_data_day_cam_glass_heater.proto" #{},
+  "jon_shared_data_actual_space_time.proto" #{},
+  "jon_shared_data_time.proto" #{},
+  "jon_shared_cmd_lira.proto" #{},
+  "jon_shared_cmd_heat_camera.proto" #{"jon_shared_data_types.proto"},
+  "jon_shared_cmd_lrf_align.proto" #{}}}

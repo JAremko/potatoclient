@@ -3,6 +3,7 @@
   (:require [generator.backend :as backend]
             [generator.frontend :as frontend]
             [generator.frontend-namespaced :as frontend-ns]
+            [generator.dependency-graph :as dep-graph]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [taoensso.timbre :as log]
@@ -22,11 +23,11 @@
 (defn generate-all
   "Generate Clojure code using Specter backend and template-based frontend.
   Options:
-  - :namespace-mode - :single (default, one file per domain) or :separated (one file per package)
+  - :namespace-mode - :separated (default, one file per package) or :single (one file per domain)
   - :debug? - Write debug EDN files (default true)
   - :line-width - Line width for formatting (default 80)"
   [{:keys [input-dir output-dir namespace-prefix namespace-mode debug? line-width]
-    :or {namespace-mode :single
+    :or {namespace-mode :separated  ;; Default to separated namespaces
          debug? true
          line-width 80}}]
   (try
@@ -44,7 +45,11 @@
         (log/info "Writing EDN representation for debugging...")
         (write-edn-debug (:command backend-output) output-dir "command-edn.edn")
         (write-edn-debug (:state backend-output) output-dir "state-edn.edn")
-        (write-edn-debug (:type-lookup backend-output) output-dir "type-lookup.edn"))
+        (write-edn-debug (:type-lookup backend-output) output-dir "type-lookup.edn")
+        ;; Also write dependency graph if using separated mode
+        (when (= namespace-mode :separated)
+          (let [enriched (dep-graph/analyze-dependencies backend-output namespace-prefix)]
+            (write-edn-debug (:dependency-graph enriched) output-dir "dependency-graph.edn"))))
       
       ;; Step 3: Generate Clojure code using Frontend
       (log/info "Frontend: Generating Clojure code from EDN...")
@@ -52,7 +57,9 @@
       
       (if (= namespace-mode :separated)
         ;; Use namespaced frontend for separated mode
-        (let [generated (frontend-ns/generate-from-backend backend-output namespace-prefix)]
+        (let [;; Analyze dependencies and enrich backend output
+              enriched-backend-output (dep-graph/analyze-dependencies backend-output namespace-prefix)
+              generated (frontend-ns/generate-from-backend enriched-backend-output namespace-prefix)]
           (log/info "Formatting and writing generated code...")
           (let [format-opts {:indents cljfmt/default-indents
                            :alias-map {}}

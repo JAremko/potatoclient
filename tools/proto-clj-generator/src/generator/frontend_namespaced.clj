@@ -92,7 +92,7 @@
 
 (defn generate-namespace-file
   "Generate a single namespace file for a package."
-  [package-data ns-prefix type-lookup]
+  [package-data ns-prefix type-lookup dependencies]
   (let [{:keys [messages enums package]} package-data
         ns-name (str ns-prefix "." (package->namespace package))
         imports (collect-all-imports messages enums type-lookup package ns-prefix)
@@ -100,8 +100,10 @@
         java-imports (distinct 
                       (concat
                        (map :java-class messages)
-                       (map :java-class enums)))]
-    (frontend/generate-namespace ns-name java-imports enums messages type-lookup)))
+                       (map :java-class enums)))
+        ;; Get dependency-based requires from our analysis
+        require-specs (get dependencies package [])]
+    (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs)))
 
 ;; =============================================================================
 ;; Main API
@@ -111,17 +113,25 @@
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output with namespace separation."
-  [{:keys [command state type-lookup] :as backend-output} ns-prefix]
+  [{:keys [command state type-lookup dependency-graph] :as backend-output} ns-prefix]
   (let [;; Group all files by package
         all-files (concat (:files command) (:files state))
         grouped (group-by-package all-files)
+        
+        ;; Build dependencies map from backend output
+        ;; Map package -> require specs
+        dependencies (reduce (fn [acc file]
+                              (assoc acc (:package file) 
+                                     (get file :clj-requires [])))
+                            {}
+                            all-files)
         
         ;; Generate a file for each package
         generated-files
         (reduce-kv
          (fn [acc ns-key package-data]
            (let [file-path (package->file-path (:package package-data))
-                 content (generate-namespace-file package-data ns-prefix type-lookup)]
+                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies)]
              (assoc acc file-path content)))
          {}
          grouped)]
@@ -164,5 +174,5 @@
                      (str/join "\n" (map #(str "   " (pr-str %)) requires))
                      "))\n\n"
                      ";; Re-export all public functions from sub-namespaces\n"
-                     ";; This maintains backward compatibility\n")]
+                     ";; This supports testing without needing to know the internal namespace structure\n")]
     template))
