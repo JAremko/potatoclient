@@ -46,16 +46,55 @@
 (defn generate-field-setter
   "Generate setter code for a single field."
   [field]
-  (let [template (if (:repeated? field)
-                   (load-template-string "field-setter-repeated.clj")
-                   (load-template-string "field-setter.clj"))
+  (let [is-message? (get-in field [:type :message])
+        is-enum? (and (not (:repeated? field))
+                     (get-in field [:type :enum]))
         field-name-pascal (csk/->PascalCase (:proto-name field))
-        replacements {"FIELD-KEY" (str (:name field))
-                     "FIELD-NAME" field-name-pascal
-                     "METHOD-NAME" (if (:repeated? field)
-                                    (str ".addAll" field-name-pascal)
-                                    (str ".set" field-name-pascal))}]
-    (replace-in-template template replacements)))
+        field-key (str (:name field))
+        
+        ;; For message types, we need to build them; for enums, convert from keywords
+        value-expr (cond
+                    is-message?
+                    (let [type-ref (get-in field [:type :message :type-ref])
+                          ;; Extract the message name from the type reference
+                          message-name (when type-ref
+                                        (-> type-ref
+                                            (str/replace #"^\." "")
+                                            (str/split #"\.")
+                                            last
+                                            csk/->kebab-case))]
+                      (str "(build-" message-name " (get m " field-key "))"))
+                    
+                    is-enum?
+                    (let [enum-type (get-in field [:type :enum :type-ref])
+                          ;; Extract the enum name from the type reference
+                          enum-name (if enum-type
+                                     (-> enum-type
+                                         (str/replace #"^\." "")
+                                         (str/split #"\.")
+                                         last
+                                         csk/->kebab-case)
+                                     "unknown-enum")]
+                      (str "(get " enum-name "-values (get m " field-key "))"))
+                    
+                    :else
+                    (str "(get m " field-key ")"))
+        
+        template (if (:repeated? field)
+                   (load-template-string "field-setter-repeated.clj")
+                   ;; For non-repeated fields, use inline template
+                   (str "(when (contains? m " field-key ")\n"
+                        "  (." (if (:repeated? field)
+                               (str "addAll" field-name-pascal)
+                               (str "set" field-name-pascal))
+                        " builder " value-expr "))"))]
+    
+    (if (:repeated? field)
+      (replace-in-template template 
+                          {"FIELD-KEY" field-key
+                           "FIELD-NAME" field-name-pascal
+                           "METHOD-NAME" (str ".addAll" field-name-pascal)})
+      template)))
 
 (defn generate-field-getter
   "Generate getter code for a single field."
@@ -73,8 +112,20 @@
         field-name-pascal (csk/->PascalCase (:proto-name field))
         getter-expr (str ".get" field-name-pascal)
         
-        ;; For enums, we need to convert to keywords
-        value-expr (if is-enum?
+        ;; For messages, we need to parse them; for enums, convert to keywords
+        value-expr (cond
+                    is-message?
+                    (let [type-ref (get-in field [:type :message :type-ref])
+                          ;; Extract the message name from the type reference
+                          message-name (when type-ref
+                                        (-> type-ref
+                                            (str/replace #"^\." "")
+                                            (str/split #"\.")
+                                            last
+                                            csk/->kebab-case))]
+                      (str "(parse-" message-name " (" getter-expr " proto))"))
+                    
+                    is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
                           ;; Extract the enum name from the type reference
                           enum-name (if enum-type
@@ -85,6 +136,8 @@
                                          csk/->kebab-case)
                                      "unknown-enum")]
                       (str "(get " enum-name "-keywords (" getter-expr " proto))"))
+                    
+                    :else
                     (str "(" getter-expr " proto)"))
         
         template (if (:repeated? field)
@@ -99,9 +152,7 @@
                      "METHOD-NAME" (if (:repeated? field)
                                     "true" 
                                     (str ".has" field-name-pascal))
-                     "GETTER-NAME" (if (or is-message? (:repeated? field))
-                                    getter-expr
-                                    value-expr)}]
+                     "GETTER-NAME" value-expr}]
     (replace-in-template template replacements)))
 
 ;; =============================================================================

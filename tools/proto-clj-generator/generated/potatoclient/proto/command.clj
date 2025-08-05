@@ -1054,7 +1054,7 @@
   (let [builder (cmd.Lrf.JonSharedCmdLrf$SetScanMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get m :mode)))
+      (.setMode builder (get jon-gui-data-lrf-scan-modes-values (get m :mode))))
 
     (.build builder)))
 
@@ -1168,7 +1168,7 @@
   (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get m :mode)))
+      (.setMode builder (get jon-gui-data-fx-mode-day-values (get m :mode))))
 
     (.build builder)))
 
@@ -1335,7 +1335,7 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get m :mode)))
+      (.setMode builder (get jon-gui-data-fx-mode-heat-values (get m :mode))))
 
     (.build builder)))
 
@@ -1544,7 +1544,7 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-      (.setValue builder (get m :value)))
+      (.setValue builder (get jon-gui-data-video-channel-heat-agc-modes-values (get m :value))))
 
     (.build builder)))
 
@@ -1554,7 +1554,7 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-      (.setValue builder (get m :value)))
+      (.setValue builder (get jon-gui-data-video-channel-heat-filters-values (get m :value))))
 
     (.build builder)))
 
@@ -1633,9 +1633,9 @@
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Axis/newBuilder)]
     ;; Set regular fields
     (when (contains? m :azimuth)
-      (.setAzimuth builder (get m :azimuth)))
+      (.setAzimuth builder (build-azimuth (get m :azimuth))))
     (when (contains? m :elevation)
-      (.setElevation builder (get m :elevation)))
+      (.setElevation builder (build-elevation (get m :elevation))))
 
     (.build builder)))
 
@@ -1645,7 +1645,7 @@
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get m :mode)))
+      (.setMode builder (get jon-gui-data-rotary-mode-values (get m :mode))))
 
     (.build builder)))
 
@@ -1657,7 +1657,7 @@
     (when (contains? m :value)
       (.setValue builder (get m :value)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1671,7 +1671,7 @@
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1683,7 +1683,7 @@
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1695,7 +1695,7 @@
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1731,7 +1731,7 @@
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1743,7 +1743,7 @@
     (when (contains? m :value)
       (.setValue builder (get m :value)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1757,7 +1757,7 @@
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -1769,7 +1769,7 @@
     (when (contains? m :value)
       (.setValue builder (get m :value)))
     (when (contains? m :direction)
-      (.setDirection builder (get m :direction)))
+      (.setDirection builder (get jon-gui-data-rotary-direction-values (get m :direction))))
 
     (.build builder)))
 
@@ -2022,7 +2022,7 @@
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-      (.setChannel builder (get m :channel)))
+      (.setChannel builder (get jon-gui-data-video-channel-values (get m :channel))))
     (when (contains? m :x)
       (.setX builder (get m :x)))
     (when (contains? m :y)
@@ -2254,7 +2254,7 @@
   (let [builder (cmd.System.JonSharedCmdSystem$SetLocalization/newBuilder)]
     ;; Set regular fields
     (when (contains? m :loc)
-      (.setLoc builder (get m :loc)))
+      (.setLoc builder (get jon-gui-data-system-localizations-values (get m :loc))))
 
     (.build builder)))
 
@@ -2316,7 +2316,7 @@
   (let [builder (cmd.CV.JonSharedCmdCv$SetAutoFocus/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-      (.setChannel builder (get m :channel)))
+      (.setChannel builder (get jon-gui-data-video-channel-values (get m :channel))))
     (when (contains? m :value)
       (.setValue builder (get m :value)))
 
@@ -2328,7 +2328,7 @@
   (let [builder (cmd.CV.JonSharedCmdCv$StartTrackNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-      (.setChannel builder (get m :channel)))
+      (.setChannel builder (get jon-gui-data-video-channel-values (get m :channel))))
     (when (contains? m :x)
       (.setX builder (get m :x)))
     (when (contains? m :y)
@@ -2406,7 +2406,7 @@
   (let [builder (cmd.Lira.JonSharedCmdLira$Refine_target/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target)
-      (.setTarget builder (get m :target)))
+      (.setTarget builder (build-jon-gui-data-lira-target (get m :target))))
 
     (.build builder)))
 
@@ -2454,7 +2454,7 @@
     (when (contains? m :from-cv-subsystem)
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
-      (.setClientType builder (get m :client-type)))
+      (.setClientType builder (get jon-gui-data-client-type-values (get m :client-type))))
 
     ;; Handle oneof: payload
     (when-let [payload-field (first (filter (fn [[k v]] (#{:day-camera :heat-camera :gps :compass :lrf :lrf-calib :rotary :osd :ping :noop :frozen :system :cv :day-cam-glass-heater :lira} k)) m))]
@@ -3099,8 +3099,8 @@
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Axis proto]
   (cond-> {}
     ;; Regular fields
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))))
+    (.hasAzimuth proto) (assoc :azimuth (parse-azimuth (.getAzimuth proto)))
+    (.hasElevation proto) (assoc :elevation (parse-elevation (.getElevation proto)))))
 
 (defn parse-set-mode
   "Parse a SetMode protobuf message to a map."
@@ -3639,7 +3639,7 @@
   [^cmd.Lira.JonSharedCmdLira$Refine_target proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTarget proto) (assoc :target (.getTarget proto))))
+    (.hasTarget proto) (assoc :target (parse-jon-gui-data-lira-target (.getTarget proto)))))
 
 (defn parse-jon-gui-data-lira-target
   "Parse a JonGuiDataLiraTarget protobuf message to a map."
