@@ -1,7 +1,5 @@
-(defn PARSE-FN-NAME-PAYLOAD
-  "Parse the oneof payload from a PROTO-NAME."
+(defn ONEOF-PARSE-FN-NAME
+  "Parse the oneof payload from PROTO-NAME."
   [^JAVA-CLASS proto]
-  (case (.GET-ONEOF-CASE proto)
-    CASE-CLAUSES
-    ;; Default case - no payload set
-    {}))
+  (cond
+    ONEOF-CASES))

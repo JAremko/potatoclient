@@ -50,12 +50,28 @@
    :enums sp/ALL])
 
 ;; =============================================================================
+;; Value Conversion
+;; =============================================================================
+
+(defn keywordize-value
+  "Convert protobuf constant values to keywords."
+  [v]
+  (cond
+    (and (string? v) (re-matches #"[A-Z][A-Z0-9_]*" v))
+    (csk/->kebab-case-keyword v)
+    
+    (keyword? v) v
+    
+    :else v))
+
+;; =============================================================================
 ;; Type Resolution
 ;; =============================================================================
 
 (def proto-type-mapping
   "Mapping from protobuf types to our intermediate representation."
-  {:double   {:scalar :double}
+  {;; Direct keyword mapping (for already processed data)
+   :double   {:scalar :double}
    :float    {:scalar :float}
    :int32    {:scalar :int32}
    :int64    {:scalar :int64}
@@ -69,23 +85,40 @@
    :sfixed64 {:scalar :sfixed64}
    :bool     {:scalar :bool}
    :string   {:scalar :string}
-   :bytes    {:scalar :bytes}})
+   :bytes    {:scalar :bytes}
+   ;; String to keyword mapping (from JSON)
+   :type-double   {:scalar :double}
+   :type-float    {:scalar :float}
+   :type-int32    {:scalar :int32}
+   :type-int64    {:scalar :int64}
+   :type-uint32   {:scalar :uint32}
+   :type-uint64   {:scalar :uint64}
+   :type-sint32   {:scalar :sint32}
+   :type-sint64   {:scalar :sint64}
+   :type-fixed32  {:scalar :fixed32}
+   :type-fixed64  {:scalar :fixed64}
+   :type-sfixed32 {:scalar :sfixed32}
+   :type-sfixed64 {:scalar :sfixed64}
+   :type-bool     {:scalar :bool}
+   :type-string   {:scalar :string}
+   :type-bytes    {:scalar :bytes}})
 
 (defn resolve-field-type
   "Resolve a field's type to our intermediate representation."
   [{:keys [type typeName] :as field}]
-  (cond
-    (contains? proto-type-mapping type)
-    (proto-type-mapping type)
-    
-    (= type :enum)
-    {:enum {:type-ref typeName}}
-    
-    (= type :message)
-    {:message {:type-ref typeName}}
-    
-    :else
-    {:unknown {:proto-type type}}))
+  (let [type-kw (if (keyword? type) type (keywordize-value type))]
+    (cond
+      (contains? proto-type-mapping type-kw)
+      (proto-type-mapping type-kw)
+      
+      (or (= type-kw :enum) (= type-kw :type-enum))
+      {:enum {:type-ref typeName}}
+      
+      (or (= type-kw :message) (= type-kw :type-message))
+      {:message {:type-ref typeName}}
+      
+      :else
+      {:unknown {:proto-type type-kw}})))
 
 ;; =============================================================================
 ;; Java Class Name Generation
@@ -105,16 +138,6 @@
 ;; =============================================================================
 ;; EDN Conversion using Specter
 ;; =============================================================================
-
-(defn keywordize-value
-  "Convert protobuf constant values to keywords."
-  [v]
-  (cond
-    (and (string? v) (re-matches #"[A-Z][A-Z0-9_]*" v))
-    (csk/->kebab-case-keyword v)
-    
-    (keyword? v) v
-    :else v))
 
 (defn field->edn
   "Convert a protobuf field to EDN representation."
@@ -171,7 +194,11 @@
    :proto-name (:name enum)
    :java-class (generate-java-class-name context (:name enum) parent-names)
    :values (mapv (fn [v] 
-                   {:name (csk/->kebab-case-keyword (:name v))
+                   {:name (-> (:name v)
+                             ;; Pre-process to handle special cases like 1D, 2D, 3D
+                             (str/replace #"_(\d+)D" "_$1d")
+                             (str/replace #"_(\d+)H" "_$1h")
+                             (csk/->kebab-case-keyword))
                     :proto-name (:name v)
                     :number (:number v)})
                  (:value enum))})
@@ -179,9 +206,15 @@
 (defn file->edn
   "Convert a protobuf file descriptor to EDN."
   [file]
-  (let [context {:package (:package file)
-                 :java-package (sp/select-first [:options :java-package] file)
-                 :java-outer-classname (sp/select-first [:options :java-outer-classname] file)}]
+  (let [;; If no explicit Java outer classname, derive from filename
+        default-outer-class (when-let [filename (:name file)]
+                             (-> filename
+                                 (str/replace #"\.proto$" "")
+                                 (csk/->PascalCase)))
+        context {:package (:package file)
+                 :java-package (sp/select-first [:options :javaPackage] file)
+                 :java-outer-classname (or (sp/select-first [:options :javaOuterClassname] file)
+                                          default-outer-class)}]
     {:type :file
      :name (:name file)
      :package (:package file)
@@ -285,7 +318,10 @@
            (count (sp/select ALL-FILES (load-json-descriptor descriptor-path))) 
            "files")
   (let [descriptor (load-json-descriptor descriptor-path)
-        files (sp/select ALL-FILES descriptor)]
+        ;; Filter out internal protobuf packages before processing
+        files (->> (sp/select ALL-FILES descriptor)
+                  (remove #(contains? #{"google.protobuf" "buf.validate"} 
+                                     (:package %))))]
     {:type :descriptor-set
      :files (mapv file->edn files)}))
 

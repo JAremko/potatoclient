@@ -1,2082 +1,395 @@
 (ns potatoclient.proto.command
   "Generated protobuf functions."
   (:import
-   [buf.validate.Validate
-    cmd.CV.Cv
-    cmd.Cmd
-    cmd.Compass.Compass
-    cmd.DayCamGlassHeater.DayCamGlassHeater
-    cmd.DayCamera.DayCamera
-    cmd.Gps.Gps
-    cmd.HeatCamera.HeatCamera
-    cmd.Lira.Lira
-    cmd.Lrf.Lrf
-    cmd.Lrf_calib.LrfCalib
-    cmd.OSD.Osd
-    cmd.RotaryPlatform.RotaryPlatform
-    cmd.System.System
-    google.protobuf.Protobuf
-    ser.Ser]))
+   cmd.CV.JonSharedCmdCv
+   cmd.Compass.JonSharedCmdCompass
+   cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater
+   cmd.DayCamera.JonSharedCmdDayCamera
+   cmd.Gps.JonSharedCmdGps
+   cmd.HeatCamera.JonSharedCmdHeatCamera
+   cmd.JonSharedCmd
+   cmd.Lira.JonSharedCmdLira
+   cmd.Lrf.JonSharedCmdLrf
+   cmd.Lrf_calib.JonSharedCmdLrfAlign
+   cmd.OSD.JonSharedCmdOsd
+   cmd.RotaryPlatform.JonSharedCmdRotary
+   cmd.System.JonSharedCmdSystem
+   ser.JonSharedDataTypes))
 
 ;; =============================================================================
 ;; Enums
 ;; =============================================================================
 
-;; Enum: Edition
-(def edition-values
-  "Keyword to Java enum mapping for Edition."
-  {:edition-unknown google.protobuf.Protobuf$Edition/EDITION_UNKNOWN
-   :edition-legacy google.protobuf.Protobuf$Edition/EDITION_LEGACY
-   :edition-proto-2 google.protobuf.Protobuf$Edition/EDITION_PROTO_2
-   :edition-proto-3 google.protobuf.Protobuf$Edition/EDITION_PROTO_3
-   :edition-2023 google.protobuf.Protobuf$Edition/EDITION_2023
-   :edition-2024 google.protobuf.Protobuf$Edition/EDITION_2024
-   :edition-1-test-only google.protobuf.Protobuf$Edition/EDITION_1_TEST_ONLY
-   :edition-2-test-only google.protobuf.Protobuf$Edition/EDITION_2_TEST_ONLY
-   :edition-99997-test-only google.protobuf.Protobuf$Edition/EDITION_99997_TEST_ONLY
-   :edition-99998-test-only google.protobuf.Protobuf$Edition/EDITION_99998_TEST_ONLY
-   :edition-99999-test-only google.protobuf.Protobuf$Edition/EDITION_99999_TEST_ONLY
-   :edition-max google.protobuf.Protobuf$Edition/EDITION_MAX})
-
-(def edition-keywords
-  "Java enum to keyword mapping for Edition."
-  {google.protobuf.Protobuf$Edition/EDITION_UNKNOWN :edition-unknown
-   google.protobuf.Protobuf$Edition/EDITION_LEGACY :edition-legacy
-   google.protobuf.Protobuf$Edition/EDITION_PROTO_2 :edition-proto-2
-   google.protobuf.Protobuf$Edition/EDITION_PROTO_3 :edition-proto-3
-   google.protobuf.Protobuf$Edition/EDITION_2023 :edition-2023
-   google.protobuf.Protobuf$Edition/EDITION_2024 :edition-2024
-   google.protobuf.Protobuf$Edition/EDITION_1_TEST_ONLY :edition-1-test-only
-   google.protobuf.Protobuf$Edition/EDITION_2_TEST_ONLY :edition-2-test-only
-   google.protobuf.Protobuf$Edition/EDITION_99997_TEST_ONLY :edition-99997-test-only
-   google.protobuf.Protobuf$Edition/EDITION_99998_TEST_ONLY :edition-99998-test-only
-   google.protobuf.Protobuf$Edition/EDITION_99999_TEST_ONLY :edition-99999-test-only
-   google.protobuf.Protobuf$Edition/EDITION_MAX :edition-max})
-
-;; Enum: SymbolVisibility
-(def symbol-visibility-values
-  "Keyword to Java enum mapping for SymbolVisibility."
-  {:visibility-unset google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_UNSET
-   :visibility-local google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_LOCAL
-   :visibility-export google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_EXPORT})
-
-(def symbol-visibility-keywords
-  "Java enum to keyword mapping for SymbolVisibility."
-  {google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_UNSET :visibility-unset
-   google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_LOCAL :visibility-local
-   google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_EXPORT :visibility-export})
-
-;; Enum: Ignore
-(def ignore-values
-  "Keyword to Java enum mapping for Ignore."
-  {:ignore-unspecified buf.validate.Validate$Ignore/IGNORE_UNSPECIFIED
-   :ignore-if-zero-value buf.validate.Validate$Ignore/IGNORE_IF_ZERO_VALUE
-   :ignore-always buf.validate.Validate$Ignore/IGNORE_ALWAYS})
-
-(def ignore-keywords
-  "Java enum to keyword mapping for Ignore."
-  {buf.validate.Validate$Ignore/IGNORE_UNSPECIFIED :ignore-unspecified
-   buf.validate.Validate$Ignore/IGNORE_IF_ZERO_VALUE :ignore-if-zero-value
-   buf.validate.Validate$Ignore/IGNORE_ALWAYS :ignore-always})
-
-;; Enum: KnownRegex
-(def known-regex-values
-  "Keyword to Java enum mapping for KnownRegex."
-  {:known-regex-unspecified buf.validate.Validate$KnownRegex/KNOWN_REGEX_UNSPECIFIED
-   :known-regex-http-header-name buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_NAME
-   :known-regex-http-header-value buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_VALUE})
-
-(def known-regex-keywords
-  "Java enum to keyword mapping for KnownRegex."
-  {buf.validate.Validate$KnownRegex/KNOWN_REGEX_UNSPECIFIED :known-regex-unspecified
-   buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_NAME :known-regex-http-header-name
-   buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_VALUE :known-regex-http-header-value})
-
 ;; Enum: JonGuiDataVideoChannelHeatFilters
 (def jon-gui-data-video-channel-heat-filters-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatFilters."
-  {:jon-gui-data-video-channel-heat-filter-unspecified ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED
-   :jon-gui-data-video-channel-heat-filter-hot-white ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
-   :jon-gui-data-video-channel-heat-filter-hot-black ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
-   :jon-gui-data-video-channel-heat-filter-sepia ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
-   :jon-gui-data-video-channel-heat-filter-sepia-inverse ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE})
+  {:jon-gui-data-video-channel-heat-filter-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-filter-hot-white ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
+   :jon-gui-data-video-channel-heat-filter-hot-black ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
+   :jon-gui-data-video-channel-heat-filter-sepia ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
+   :jon-gui-data-video-channel-heat-filter-sepia-inverse ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE})
 
 (def jon-gui-data-video-channel-heat-filters-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannelHeatFilters."
-  {ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED :jon-gui-data-video-channel-heat-filter-unspecified
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE :jon-gui-data-video-channel-heat-filter-hot-white
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK :jon-gui-data-video-channel-heat-filter-hot-black
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA :jon-gui-data-video-channel-heat-filter-sepia
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE :jon-gui-data-video-channel-heat-filter-sepia-inverse})
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED :jon-gui-data-video-channel-heat-filter-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE :jon-gui-data-video-channel-heat-filter-hot-white
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK :jon-gui-data-video-channel-heat-filter-hot-black
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA :jon-gui-data-video-channel-heat-filter-sepia
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE :jon-gui-data-video-channel-heat-filter-sepia-inverse})
 
 ;; Enum: JonGuiDataVideoChannelHeatAGCModes
 (def jon-gui-data-video-channel-heat-agc-modes-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatAGCModes."
-  {:jon-gui-data-video-channel-heat-agc-mode-unspecified ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED
-   :jon-gui-data-video-channel-heat-agc-mode-1 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
-   :jon-gui-data-video-channel-heat-agc-mode-2 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
-   :jon-gui-data-video-channel-heat-agc-mode-3 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3})
+  {:jon-gui-data-video-channel-heat-agc-mode-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-agc-mode-1 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
+   :jon-gui-data-video-channel-heat-agc-mode-2 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
+   :jon-gui-data-video-channel-heat-agc-mode-3 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3})
 
 (def jon-gui-data-video-channel-heat-agc-modes-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannelHeatAGCModes."
-  {ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED :jon-gui-data-video-channel-heat-agc-mode-unspecified
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1 :jon-gui-data-video-channel-heat-agc-mode-1
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2 :jon-gui-data-video-channel-heat-agc-mode-2
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3 :jon-gui-data-video-channel-heat-agc-mode-3})
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED :jon-gui-data-video-channel-heat-agc-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1 :jon-gui-data-video-channel-heat-agc-mode-1
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2 :jon-gui-data-video-channel-heat-agc-mode-2
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3 :jon-gui-data-video-channel-heat-agc-mode-3})
 
 ;; Enum: JonGuiDataGpsUnits
 (def jon-gui-data-gps-units-values
   "Keyword to Java enum mapping for JonGuiDataGpsUnits."
-  {:jon-gui-data-gps-units-unspecified ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
-   :jon-gui-data-gps-units-decimal-degrees ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
-   :jon-gui-data-gps-units-degrees-minutes-seconds ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
-   :jon-gui-data-gps-units-degrees-decimal-minutes ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES})
+  {:jon-gui-data-gps-units-unspecified ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
+   :jon-gui-data-gps-units-decimal-degrees ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
+   :jon-gui-data-gps-units-degrees-minutes-seconds ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
+   :jon-gui-data-gps-units-degrees-decimal-minutes ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES})
 
 (def jon-gui-data-gps-units-keywords
   "Java enum to keyword mapping for JonGuiDataGpsUnits."
-  {ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED :jon-gui-data-gps-units-unspecified
-   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES :jon-gui-data-gps-units-decimal-degrees
-   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS :jon-gui-data-gps-units-degrees-minutes-seconds
-   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES :jon-gui-data-gps-units-degrees-decimal-minutes})
+  {ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED :jon-gui-data-gps-units-unspecified
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES :jon-gui-data-gps-units-decimal-degrees
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS :jon-gui-data-gps-units-degrees-minutes-seconds
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES :jon-gui-data-gps-units-degrees-decimal-minutes})
 
 ;; Enum: JonGuiDataGpsFixType
 (def jon-gui-data-gps-fix-type-values
   "Keyword to Java enum mapping for JonGuiDataGpsFixType."
-  {:jon-gui-data-gps-fix-type-unspecified ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
-   :jon-gui-data-gps-fix-type-none ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
-   :jon-gui-data-gps-fix-type-1-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1_D
-   :jon-gui-data-gps-fix-type-2-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2_D
-   :jon-gui-data-gps-fix-type-3-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3_D
-   :jon-gui-data-gps-fix-type-manual ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL})
+  {:jon-gui-data-gps-fix-type-unspecified ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
+   :jon-gui-data-gps-fix-type-none ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
+   :jon-gui-data-gps-fix-type-1d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D
+   :jon-gui-data-gps-fix-type-2d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D
+   :jon-gui-data-gps-fix-type-3d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D
+   :jon-gui-data-gps-fix-type-manual ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL})
 
 (def jon-gui-data-gps-fix-type-keywords
   "Java enum to keyword mapping for JonGuiDataGpsFixType."
-  {ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED :jon-gui-data-gps-fix-type-unspecified
-   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE :jon-gui-data-gps-fix-type-none
-   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1_D :jon-gui-data-gps-fix-type-1-d
-   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2_D :jon-gui-data-gps-fix-type-2-d
-   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3_D :jon-gui-data-gps-fix-type-3-d
-   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL :jon-gui-data-gps-fix-type-manual})
+  {ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED :jon-gui-data-gps-fix-type-unspecified
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE :jon-gui-data-gps-fix-type-none
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D :jon-gui-data-gps-fix-type-1d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D :jon-gui-data-gps-fix-type-2d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D :jon-gui-data-gps-fix-type-3d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL :jon-gui-data-gps-fix-type-manual})
 
 ;; Enum: JonGuiDataCompassUnits
 (def jon-gui-data-compass-units-values
   "Keyword to Java enum mapping for JonGuiDataCompassUnits."
-  {:jon-gui-data-compass-units-unspecified ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
-   :jon-gui-data-compass-units-degrees ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES
-   :jon-gui-data-compass-units-mils ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS
-   :jon-gui-data-compass-units-grad ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD
-   :jon-gui-data-compass-units-mrad ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD})
+  {:jon-gui-data-compass-units-unspecified ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
+   :jon-gui-data-compass-units-degrees ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES
+   :jon-gui-data-compass-units-mils ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS
+   :jon-gui-data-compass-units-grad ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD
+   :jon-gui-data-compass-units-mrad ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD})
 
 (def jon-gui-data-compass-units-keywords
   "Java enum to keyword mapping for JonGuiDataCompassUnits."
-  {ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED :jon-gui-data-compass-units-unspecified
-   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES :jon-gui-data-compass-units-degrees
-   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS :jon-gui-data-compass-units-mils
-   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD :jon-gui-data-compass-units-grad
-   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD :jon-gui-data-compass-units-mrad})
+  {ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED :jon-gui-data-compass-units-unspecified
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES :jon-gui-data-compass-units-degrees
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS :jon-gui-data-compass-units-mils
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD :jon-gui-data-compass-units-grad
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD :jon-gui-data-compass-units-mrad})
 
 ;; Enum: JonGuiDataAccumulatorStateIdx
 (def jon-gui-data-accumulator-state-idx-values
   "Keyword to Java enum mapping for JonGuiDataAccumulatorStateIdx."
-  {:jon-gui-data-accumulator-state-unspecified ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
-   :jon-gui-data-accumulator-state-unknown ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
-   :jon-gui-data-accumulator-state-empty ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
-   :jon-gui-data-accumulator-state-1 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1
-   :jon-gui-data-accumulator-state-2 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2
-   :jon-gui-data-accumulator-state-3 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3
-   :jon-gui-data-accumulator-state-4 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4
-   :jon-gui-data-accumulator-state-5 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5
-   :jon-gui-data-accumulator-state-6 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6
-   :jon-gui-data-accumulator-state-full ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL
-   :jon-gui-data-accumulator-state-charging ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING})
+  {:jon-gui-data-accumulator-state-unspecified ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
+   :jon-gui-data-accumulator-state-unknown ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
+   :jon-gui-data-accumulator-state-empty ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
+   :jon-gui-data-accumulator-state-1 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1
+   :jon-gui-data-accumulator-state-2 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2
+   :jon-gui-data-accumulator-state-3 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3
+   :jon-gui-data-accumulator-state-4 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4
+   :jon-gui-data-accumulator-state-5 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5
+   :jon-gui-data-accumulator-state-6 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6
+   :jon-gui-data-accumulator-state-full ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL
+   :jon-gui-data-accumulator-state-charging ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING})
 
 (def jon-gui-data-accumulator-state-idx-keywords
   "Java enum to keyword mapping for JonGuiDataAccumulatorStateIdx."
-  {ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED :jon-gui-data-accumulator-state-unspecified
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN :jon-gui-data-accumulator-state-unknown
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY :jon-gui-data-accumulator-state-empty
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1 :jon-gui-data-accumulator-state-1
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2 :jon-gui-data-accumulator-state-2
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3 :jon-gui-data-accumulator-state-3
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4 :jon-gui-data-accumulator-state-4
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5 :jon-gui-data-accumulator-state-5
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6 :jon-gui-data-accumulator-state-6
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL :jon-gui-data-accumulator-state-full
-   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING :jon-gui-data-accumulator-state-charging})
+  {ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED :jon-gui-data-accumulator-state-unspecified
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN :jon-gui-data-accumulator-state-unknown
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY :jon-gui-data-accumulator-state-empty
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1 :jon-gui-data-accumulator-state-1
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2 :jon-gui-data-accumulator-state-2
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3 :jon-gui-data-accumulator-state-3
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4 :jon-gui-data-accumulator-state-4
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5 :jon-gui-data-accumulator-state-5
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6 :jon-gui-data-accumulator-state-6
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL :jon-gui-data-accumulator-state-full
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING :jon-gui-data-accumulator-state-charging})
 
 ;; Enum: JonGuiDataTimeFormats
 (def jon-gui-data-time-formats-values
   "Keyword to Java enum mapping for JonGuiDataTimeFormats."
-  {:jon-gui-data-time-format-unspecified ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
-   :jon-gui-data-time-format-h-m-s ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S
-   :jon-gui-data-time-format-y-m-d-h-m-s ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_M_D_H_M_S})
+  {:jon-gui-data-time-format-unspecified ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
+   :jon-gui-data-time-format-h-m-s ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S
+   :jon-gui-data-time-format-y-m-d-h-m-s ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S})
 
 (def jon-gui-data-time-formats-keywords
   "Java enum to keyword mapping for JonGuiDataTimeFormats."
-  {ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED :jon-gui-data-time-format-unspecified
-   ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S :jon-gui-data-time-format-h-m-s
-   ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_M_D_H_M_S :jon-gui-data-time-format-y-m-d-h-m-s})
+  {ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED :jon-gui-data-time-format-unspecified
+   ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S :jon-gui-data-time-format-h-m-s
+   ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S :jon-gui-data-time-format-y-m-d-h-m-s})
 
 ;; Enum: JonGuiDataRotaryDirection
 (def jon-gui-data-rotary-direction-values
   "Keyword to Java enum mapping for JonGuiDataRotaryDirection."
-  {:jon-gui-data-rotary-direction-unspecified ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
-   :jon-gui-data-rotary-direction-clockwise ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
-   :jon-gui-data-rotary-direction-counter-clockwise ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE})
+  {:jon-gui-data-rotary-direction-unspecified ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
+   :jon-gui-data-rotary-direction-clockwise ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+   :jon-gui-data-rotary-direction-counter-clockwise ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE})
 
 (def jon-gui-data-rotary-direction-keywords
   "Java enum to keyword mapping for JonGuiDataRotaryDirection."
-  {ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED :jon-gui-data-rotary-direction-unspecified
-   ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE :jon-gui-data-rotary-direction-clockwise
-   ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE :jon-gui-data-rotary-direction-counter-clockwise})
+  {ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED :jon-gui-data-rotary-direction-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE :jon-gui-data-rotary-direction-clockwise
+   ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE :jon-gui-data-rotary-direction-counter-clockwise})
 
 ;; Enum: JonGuiDataLrfScanModes
 (def jon-gui-data-lrf-scan-modes-values
   "Keyword to Java enum mapping for JonGuiDataLrfScanModes."
-  {:jon-gui-data-lrf-scan-mode-unspecified ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
-   :jon-gui-data-lrf-scan-mode-1-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-4-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-10-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-20-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-100-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-200-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS})
+  {:jon-gui-data-lrf-scan-mode-unspecified ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS})
 
 (def jon-gui-data-lrf-scan-modes-keywords
   "Java enum to keyword mapping for JonGuiDataLrfScanModes."
-  {ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED :jon-gui-data-lrf-scan-mode-unspecified
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-1-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-4-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-10-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-20-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-100-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-200-hz-continuous})
+  {ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED :jon-gui-data-lrf-scan-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-200-hz-continuous})
 
 ;; Enum: JonGuiDatatLrfLaserPointerModes
 (def jon-gui-datat-lrf-laser-pointer-modes-values
   "Keyword to Java enum mapping for JonGuiDatatLrfLaserPointerModes."
-  {:jon-gui-data-lrf-laser-pointer-mode-unspecified ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
-   :jon-gui-data-lrf-laser-pointer-mode-off ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
-   :jon-gui-data-lrf-laser-pointer-mode-on-1 ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
-   :jon-gui-data-lrf-laser-pointer-mode-on-2 ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2})
+  {:jon-gui-data-lrf-laser-pointer-mode-unspecified ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-laser-pointer-mode-off ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
+   :jon-gui-data-lrf-laser-pointer-mode-on-1 ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
+   :jon-gui-data-lrf-laser-pointer-mode-on-2 ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2})
 
 (def jon-gui-datat-lrf-laser-pointer-modes-keywords
   "Java enum to keyword mapping for JonGuiDatatLrfLaserPointerModes."
-  {ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED :jon-gui-data-lrf-laser-pointer-mode-unspecified
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF :jon-gui-data-lrf-laser-pointer-mode-off
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1 :jon-gui-data-lrf-laser-pointer-mode-on-1
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2 :jon-gui-data-lrf-laser-pointer-mode-on-2})
+  {ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED :jon-gui-data-lrf-laser-pointer-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF :jon-gui-data-lrf-laser-pointer-mode-off
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1 :jon-gui-data-lrf-laser-pointer-mode-on-1
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2 :jon-gui-data-lrf-laser-pointer-mode-on-2})
 
 ;; Enum: JonGuiDataCompassCalibrateStatus
 (def jon-gui-data-compass-calibrate-status-values
   "Keyword to Java enum mapping for JonGuiDataCompassCalibrateStatus."
-  {:jon-gui-data-compass-calibrate-status-unspecified ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
-   :jon-gui-data-compass-calibrate-status-not-calibrating ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
-   :jon-gui-data-compass-calibrate-status-calibrating-short ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
-   :jon-gui-data-compass-calibrate-status-calibrating-long ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
-   :jon-gui-data-compass-calibrate-status-finished ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
-   :jon-gui-data-compass-calibrate-status-error ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR})
+  {:jon-gui-data-compass-calibrate-status-unspecified ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
+   :jon-gui-data-compass-calibrate-status-not-calibrating ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+   :jon-gui-data-compass-calibrate-status-calibrating-short ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
+   :jon-gui-data-compass-calibrate-status-calibrating-long ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
+   :jon-gui-data-compass-calibrate-status-finished ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
+   :jon-gui-data-compass-calibrate-status-error ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR})
 
 (def jon-gui-data-compass-calibrate-status-keywords
   "Java enum to keyword mapping for JonGuiDataCompassCalibrateStatus."
-  {ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED :jon-gui-data-compass-calibrate-status-unspecified
-   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING :jon-gui-data-compass-calibrate-status-not-calibrating
-   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT :jon-gui-data-compass-calibrate-status-calibrating-short
-   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG :jon-gui-data-compass-calibrate-status-calibrating-long
-   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED :jon-gui-data-compass-calibrate-status-finished
-   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR :jon-gui-data-compass-calibrate-status-error})
+  {ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED :jon-gui-data-compass-calibrate-status-unspecified
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING :jon-gui-data-compass-calibrate-status-not-calibrating
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT :jon-gui-data-compass-calibrate-status-calibrating-short
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG :jon-gui-data-compass-calibrate-status-calibrating-long
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED :jon-gui-data-compass-calibrate-status-finished
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR :jon-gui-data-compass-calibrate-status-error})
 
 ;; Enum: JonGuiDataRotaryMode
 (def jon-gui-data-rotary-mode-values
   "Keyword to Java enum mapping for JonGuiDataRotaryMode."
-  {:jon-gui-data-rotary-mode-unspecified ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
-   :jon-gui-data-rotary-mode-initialization ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
-   :jon-gui-data-rotary-mode-speed ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
-   :jon-gui-data-rotary-mode-position ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
-   :jon-gui-data-rotary-mode-stabilization ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
-   :jon-gui-data-rotary-mode-targeting ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
-   :jon-gui-data-rotary-mode-video-tracker ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER})
+  {:jon-gui-data-rotary-mode-unspecified ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
+   :jon-gui-data-rotary-mode-initialization ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+   :jon-gui-data-rotary-mode-speed ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
+   :jon-gui-data-rotary-mode-position ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
+   :jon-gui-data-rotary-mode-stabilization ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+   :jon-gui-data-rotary-mode-targeting ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
+   :jon-gui-data-rotary-mode-video-tracker ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER})
 
 (def jon-gui-data-rotary-mode-keywords
   "Java enum to keyword mapping for JonGuiDataRotaryMode."
-  {ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED :jon-gui-data-rotary-mode-unspecified
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION :jon-gui-data-rotary-mode-initialization
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED :jon-gui-data-rotary-mode-speed
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION :jon-gui-data-rotary-mode-position
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION :jon-gui-data-rotary-mode-stabilization
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING :jon-gui-data-rotary-mode-targeting
-   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER :jon-gui-data-rotary-mode-video-tracker})
+  {ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED :jon-gui-data-rotary-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION :jon-gui-data-rotary-mode-initialization
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED :jon-gui-data-rotary-mode-speed
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION :jon-gui-data-rotary-mode-position
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION :jon-gui-data-rotary-mode-stabilization
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING :jon-gui-data-rotary-mode-targeting
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER :jon-gui-data-rotary-mode-video-tracker})
 
 ;; Enum: JonGuiDataVideoChannel
 (def jon-gui-data-video-channel-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannel."
-  {:jon-gui-data-video-channel-unspecified ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
-   :jon-gui-data-video-channel-heat ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-   :jon-gui-data-video-channel-day ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY})
+  {:jon-gui-data-video-channel-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
+   :jon-gui-data-video-channel-heat ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+   :jon-gui-data-video-channel-day ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY})
 
 (def jon-gui-data-video-channel-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannel."
-  {ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED :jon-gui-data-video-channel-unspecified
-   ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT :jon-gui-data-video-channel-heat
-   ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY :jon-gui-data-video-channel-day})
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED :jon-gui-data-video-channel-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT :jon-gui-data-video-channel-heat
+   ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY :jon-gui-data-video-channel-day})
 
 ;; Enum: JonGuiDataRecOsdScreen
 (def jon-gui-data-rec-osd-screen-values
   "Keyword to Java enum mapping for JonGuiDataRecOsdScreen."
-  {:jon-gui-data-rec-osd-screen-unspecified ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
-   :jon-gui-data-rec-osd-screen-main ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN
-   :jon-gui-data-rec-osd-screen-lrf-measure ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
-   :jon-gui-data-rec-osd-screen-lrf-result ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
-   :jon-gui-data-rec-osd-screen-lrf-result-simplified ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED})
+  {:jon-gui-data-rec-osd-screen-unspecified ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
+   :jon-gui-data-rec-osd-screen-main ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN
+   :jon-gui-data-rec-osd-screen-lrf-measure ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
+   :jon-gui-data-rec-osd-screen-lrf-result ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
+   :jon-gui-data-rec-osd-screen-lrf-result-simplified ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED})
 
 (def jon-gui-data-rec-osd-screen-keywords
   "Java enum to keyword mapping for JonGuiDataRecOsdScreen."
-  {ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED :jon-gui-data-rec-osd-screen-unspecified
-   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN :jon-gui-data-rec-osd-screen-main
-   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE :jon-gui-data-rec-osd-screen-lrf-measure
-   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT :jon-gui-data-rec-osd-screen-lrf-result
-   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED :jon-gui-data-rec-osd-screen-lrf-result-simplified})
+  {ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED :jon-gui-data-rec-osd-screen-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN :jon-gui-data-rec-osd-screen-main
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE :jon-gui-data-rec-osd-screen-lrf-measure
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT :jon-gui-data-rec-osd-screen-lrf-result
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED :jon-gui-data-rec-osd-screen-lrf-result-simplified})
 
 ;; Enum: JonGuiDataFxModeDay
 (def jon-gui-data-fx-mode-day-values
   "Keyword to Java enum mapping for JonGuiDataFxModeDay."
-  {:jon-gui-data-fx-mode-day-default ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
-   :jon-gui-data-fx-mode-day-a ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
-   :jon-gui-data-fx-mode-day-b ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
-   :jon-gui-data-fx-mode-day-c ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
-   :jon-gui-data-fx-mode-day-d ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
-   :jon-gui-data-fx-mode-day-e ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
-   :jon-gui-data-fx-mode-day-f ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F})
+  {:jon-gui-data-fx-mode-day-default ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   :jon-gui-data-fx-mode-day-a ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
+   :jon-gui-data-fx-mode-day-b ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
+   :jon-gui-data-fx-mode-day-c ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
+   :jon-gui-data-fx-mode-day-d ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
+   :jon-gui-data-fx-mode-day-e ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
+   :jon-gui-data-fx-mode-day-f ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F})
 
 (def jon-gui-data-fx-mode-day-keywords
   "Java enum to keyword mapping for JonGuiDataFxModeDay."
-  {ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT :jon-gui-data-fx-mode-day-default
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A :jon-gui-data-fx-mode-day-a
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B :jon-gui-data-fx-mode-day-b
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C :jon-gui-data-fx-mode-day-c
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D :jon-gui-data-fx-mode-day-d
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E :jon-gui-data-fx-mode-day-e
-   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F :jon-gui-data-fx-mode-day-f})
+  {ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT :jon-gui-data-fx-mode-day-default
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A :jon-gui-data-fx-mode-day-a
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B :jon-gui-data-fx-mode-day-b
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C :jon-gui-data-fx-mode-day-c
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D :jon-gui-data-fx-mode-day-d
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E :jon-gui-data-fx-mode-day-e
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F :jon-gui-data-fx-mode-day-f})
 
 ;; Enum: JonGuiDataFxModeHeat
 (def jon-gui-data-fx-mode-heat-values
   "Keyword to Java enum mapping for JonGuiDataFxModeHeat."
-  {:jon-gui-data-fx-mode-heat-default ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
-   :jon-gui-data-fx-mode-heat-a ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
-   :jon-gui-data-fx-mode-heat-b ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
-   :jon-gui-data-fx-mode-heat-c ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
-   :jon-gui-data-fx-mode-heat-d ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
-   :jon-gui-data-fx-mode-heat-e ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
-   :jon-gui-data-fx-mode-heat-f ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F})
+  {:jon-gui-data-fx-mode-heat-default ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   :jon-gui-data-fx-mode-heat-a ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
+   :jon-gui-data-fx-mode-heat-b ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
+   :jon-gui-data-fx-mode-heat-c ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
+   :jon-gui-data-fx-mode-heat-d ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
+   :jon-gui-data-fx-mode-heat-e ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
+   :jon-gui-data-fx-mode-heat-f ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F})
 
 (def jon-gui-data-fx-mode-heat-keywords
   "Java enum to keyword mapping for JonGuiDataFxModeHeat."
-  {ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT :jon-gui-data-fx-mode-heat-default
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A :jon-gui-data-fx-mode-heat-a
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B :jon-gui-data-fx-mode-heat-b
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C :jon-gui-data-fx-mode-heat-c
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D :jon-gui-data-fx-mode-heat-d
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E :jon-gui-data-fx-mode-heat-e
-   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F :jon-gui-data-fx-mode-heat-f})
+  {ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT :jon-gui-data-fx-mode-heat-default
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A :jon-gui-data-fx-mode-heat-a
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B :jon-gui-data-fx-mode-heat-b
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C :jon-gui-data-fx-mode-heat-c
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D :jon-gui-data-fx-mode-heat-d
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E :jon-gui-data-fx-mode-heat-e
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F :jon-gui-data-fx-mode-heat-f})
 
 ;; Enum: JonGuiDataSystemLocalizations
 (def jon-gui-data-system-localizations-values
   "Keyword to Java enum mapping for JonGuiDataSystemLocalizations."
-  {:jon-gui-data-system-localization-unspecified ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED
-   :jon-gui-data-system-localization-en ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
-   :jon-gui-data-system-localization-ua ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
-   :jon-gui-data-system-localization-ar ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
-   :jon-gui-data-system-localization-cs ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS})
+  {:jon-gui-data-system-localization-unspecified ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED
+   :jon-gui-data-system-localization-en ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
+   :jon-gui-data-system-localization-ua ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+   :jon-gui-data-system-localization-ar ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+   :jon-gui-data-system-localization-cs ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS})
 
 (def jon-gui-data-system-localizations-keywords
   "Java enum to keyword mapping for JonGuiDataSystemLocalizations."
-  {ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED :jon-gui-data-system-localization-unspecified
-   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN :jon-gui-data-system-localization-en
-   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA :jon-gui-data-system-localization-ua
-   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR :jon-gui-data-system-localization-ar
-   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS :jon-gui-data-system-localization-cs})
+  {ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED :jon-gui-data-system-localization-unspecified
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN :jon-gui-data-system-localization-en
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA :jon-gui-data-system-localization-ua
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR :jon-gui-data-system-localization-ar
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS :jon-gui-data-system-localization-cs})
 
 ;; Enum: JonGuiDataClientType
 (def jon-gui-data-client-type-values
   "Keyword to Java enum mapping for JonGuiDataClientType."
-  {:jon-gui-data-client-type-unspecified ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
-   :jon-gui-data-client-type-internal-cv ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
-   :jon-gui-data-client-type-local-network ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   :jon-gui-data-client-type-certificate-protected ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
-   :jon-gui-data-client-type-lira ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA})
+  {:jon-gui-data-client-type-unspecified ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+   :jon-gui-data-client-type-internal-cv ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   :jon-gui-data-client-type-local-network ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   :jon-gui-data-client-type-certificate-protected ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   :jon-gui-data-client-type-lira ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA})
 
 (def jon-gui-data-client-type-keywords
   "Java enum to keyword mapping for JonGuiDataClientType."
-  {ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED :jon-gui-data-client-type-unspecified
-   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV :jon-gui-data-client-type-internal-cv
-   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK :jon-gui-data-client-type-local-network
-   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED :jon-gui-data-client-type-certificate-protected
-   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA :jon-gui-data-client-type-lira})
+  {ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED :jon-gui-data-client-type-unspecified
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV :jon-gui-data-client-type-internal-cv
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK :jon-gui-data-client-type-local-network
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED :jon-gui-data-client-type-certificate-protected
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA :jon-gui-data-client-type-lira})
 
 ;; =============================================================================
 ;; Builders and Parsers
 ;; =============================================================================
 
-(defn build-file-descriptor-set
-  "Build a FileDescriptorSet protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FileDescriptorSet/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :file)
-      (.addAllFile builder (get m :file)))
-
-    (.build builder)))
-
-(defn parse-file-descriptor-set
-  "Parse a FileDescriptorSet protobuf message to a map."
-  [^google.protobuf.Protobuf$FileDescriptorSet proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :file (vec (.getFileList proto)))))
-
-(defn build-file-descriptor-proto
-  "Build a FileDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FileDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :package)
-      (.setPackage builder (get m :package)))
-    (when (contains? m :dependency)
-      (.addAllDependency builder (get m :dependency)))
-    (when (contains? m :public-dependency)
-      (.addAllPublicDependency builder (get m :public-dependency)))
-    (when (contains? m :weak-dependency)
-      (.addAllWeakDependency builder (get m :weak-dependency)))
-    (when (contains? m :option-dependency)
-      (.addAllOptionDependency builder (get m :option-dependency)))
-    (when (contains? m :message-type)
-      (.addAllMessageType builder (get m :message-type)))
-    (when (contains? m :enum-type)
-      (.addAllEnumType builder (get m :enum-type)))
-    (when (contains? m :service)
-      (.addAllService builder (get m :service)))
-    (when (contains? m :extension)
-      (.addAllExtension builder (get m :extension)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-    (when (contains? m :source-code-info)
-      (.setSourceCodeInfo builder (get m :source-code-info)))
-    (when (contains? m :syntax)
-      (.setSyntax builder (get m :syntax)))
-    (when (contains? m :edition)
-      (.setEdition builder (get m :edition)))
-
-    (.build builder)))
-
-(defn parse-file-descriptor-proto
-  "Parse a FileDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$FileDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasPackage proto) (assoc :package (.getPackage proto))
-    true (assoc :dependency (vec (.getDependencyList proto)))
-    true (assoc :public-dependency (vec (.getPublicDependencyList proto)))
-    true (assoc :weak-dependency (vec (.getWeakDependencyList proto)))
-    true (assoc :option-dependency (vec (.getOptionDependencyList proto)))
-    true (assoc :message-type (vec (.getMessageTypeList proto)))
-    true (assoc :enum-type (vec (.getEnumTypeList proto)))
-    true (assoc :service (vec (.getServiceList proto)))
-    true (assoc :extension (vec (.getExtensionList proto)))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasSourceCodeInfo proto) (assoc :source-code-info (.getSourceCodeInfo proto))
-    (.hasSyntax proto) (assoc :syntax (.getSyntax proto))
-    (.hasEdition proto) (assoc :edition (.getEdition proto))))
-
-(defn build-descriptor-proto
-  "Build a DescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$DescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :field)
-      (.addAllField builder (get m :field)))
-    (when (contains? m :extension)
-      (.addAllExtension builder (get m :extension)))
-    (when (contains? m :nested-type)
-      (.addAllNestedType builder (get m :nested-type)))
-    (when (contains? m :enum-type)
-      (.addAllEnumType builder (get m :enum-type)))
-    (when (contains? m :extension-range)
-      (.addAllExtensionRange builder (get m :extension-range)))
-    (when (contains? m :oneof-decl)
-      (.addAllOneofDecl builder (get m :oneof-decl)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-    (when (contains? m :reserved-range)
-      (.addAllReservedRange builder (get m :reserved-range)))
-    (when (contains? m :reserved-name)
-      (.addAllReservedName builder (get m :reserved-name)))
-    (when (contains? m :visibility)
-      (.setVisibility builder (get m :visibility)))
-
-    (.build builder)))
-
-(defn parse-descriptor-proto
-  "Parse a DescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$DescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    true (assoc :field (vec (.getFieldList proto)))
-    true (assoc :extension (vec (.getExtensionList proto)))
-    true (assoc :nested-type (vec (.getNestedTypeList proto)))
-    true (assoc :enum-type (vec (.getEnumTypeList proto)))
-    true (assoc :extension-range (vec (.getExtensionRangeList proto)))
-    true (assoc :oneof-decl (vec (.getOneofDeclList proto)))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    true (assoc :reserved-range (vec (.getReservedRangeList proto)))
-    true (assoc :reserved-name (vec (.getReservedNameList proto)))
-    (.hasVisibility proto) (assoc :visibility (.getVisibility proto))))
-
-(defn build-extension-range-options
-  "Build a ExtensionRangeOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$ExtensionRangeOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-    (when (contains? m :declaration)
-      (.addAllDeclaration builder (get m :declaration)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :verification)
-      (.setVerification builder (get m :verification)))
-
-    (.build builder)))
-
-(defn parse-extension-range-options
-  "Parse a ExtensionRangeOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$ExtensionRangeOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))
-    true (assoc :declaration (vec (.getDeclarationList proto)))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasVerification proto) (assoc :verification (.getVerification proto))))
-
-(defn build-field-descriptor-proto
-  "Build a FieldDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FieldDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :number)
-      (.setNumber builder (get m :number)))
-    (when (contains? m :label)
-      (.setLabel builder (get m :label)))
-    (when (contains? m :type)
-      (.setType builder (get m :type)))
-    (when (contains? m :type-name)
-      (.setTypeName builder (get m :type-name)))
-    (when (contains? m :extendee)
-      (.setExtendee builder (get m :extendee)))
-    (when (contains? m :default-value)
-      (.setDefaultValue builder (get m :default-value)))
-    (when (contains? m :oneof-index)
-      (.setOneofIndex builder (get m :oneof-index)))
-    (when (contains? m :json-name)
-      (.setJsonName builder (get m :json-name)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-    (when (contains? m :proto-3-optional)
-      (.setProto3Optional builder (get m :proto-3-optional)))
-
-    (.build builder)))
-
-(defn parse-field-descriptor-proto
-  "Parse a FieldDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$FieldDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasNumber proto) (assoc :number (.getNumber proto))
-    (.hasLabel proto) (assoc :label (.getLabel proto))
-    (.hasType proto) (assoc :type (.getType proto))
-    (.hasTypeName proto) (assoc :type-name (.getTypeName proto))
-    (.hasExtendee proto) (assoc :extendee (.getExtendee proto))
-    (.hasDefaultValue proto) (assoc :default-value (.getDefaultValue proto))
-    (.hasOneofIndex proto) (assoc :oneof-index (.getOneofIndex proto))
-    (.hasJsonName proto) (assoc :json-name (.getJsonName proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasProto3Optional proto) (assoc :proto-3-optional (.getProto3Optional proto))))
-
-(defn build-oneof-descriptor-proto
-  "Build a OneofDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$OneofDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-
-    (.build builder)))
-
-(defn parse-oneof-descriptor-proto
-  "Parse a OneofDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$OneofDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))))
-
-(defn build-enum-descriptor-proto
-  "Build a EnumDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$EnumDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :value)
-      (.addAllValue builder (get m :value)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-    (when (contains? m :reserved-range)
-      (.addAllReservedRange builder (get m :reserved-range)))
-    (when (contains? m :reserved-name)
-      (.addAllReservedName builder (get m :reserved-name)))
-    (when (contains? m :visibility)
-      (.setVisibility builder (get m :visibility)))
-
-    (.build builder)))
-
-(defn parse-enum-descriptor-proto
-  "Parse a EnumDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$EnumDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    true (assoc :value (vec (.getValueList proto)))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    true (assoc :reserved-range (vec (.getReservedRangeList proto)))
-    true (assoc :reserved-name (vec (.getReservedNameList proto)))
-    (.hasVisibility proto) (assoc :visibility (.getVisibility proto))))
-
-(defn build-enum-value-descriptor-proto
-  "Build a EnumValueDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$EnumValueDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :number)
-      (.setNumber builder (get m :number)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-
-    (.build builder)))
-
-(defn parse-enum-value-descriptor-proto
-  "Parse a EnumValueDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$EnumValueDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasNumber proto) (assoc :number (.getNumber proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))))
-
-(defn build-service-descriptor-proto
-  "Build a ServiceDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$ServiceDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :method)
-      (.addAllMethod builder (get m :method)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-
-    (.build builder)))
-
-(defn parse-service-descriptor-proto
-  "Parse a ServiceDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$ServiceDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    true (assoc :method (vec (.getMethodList proto)))
-    (.hasOptions proto) (assoc :options (.getOptions proto))))
-
-(defn build-method-descriptor-proto
-  "Build a MethodDescriptorProto protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$MethodDescriptorProto/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.setName builder (get m :name)))
-    (when (contains? m :input-type)
-      (.setInputType builder (get m :input-type)))
-    (when (contains? m :output-type)
-      (.setOutputType builder (get m :output-type)))
-    (when (contains? m :options)
-      (.setOptions builder (get m :options)))
-    (when (contains? m :client-streaming)
-      (.setClientStreaming builder (get m :client-streaming)))
-    (when (contains? m :server-streaming)
-      (.setServerStreaming builder (get m :server-streaming)))
-
-    (.build builder)))
-
-(defn parse-method-descriptor-proto
-  "Parse a MethodDescriptorProto protobuf message to a map."
-  [^google.protobuf.Protobuf$MethodDescriptorProto proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasInputType proto) (assoc :input-type (.getInputType proto))
-    (.hasOutputType proto) (assoc :output-type (.getOutputType proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasClientStreaming proto) (assoc :client-streaming (.getClientStreaming proto))
-    (.hasServerStreaming proto) (assoc :server-streaming (.getServerStreaming proto))))
-
-(defn build-file-options
-  "Build a FileOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FileOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :java-package)
-      (.setJavaPackage builder (get m :java-package)))
-    (when (contains? m :java-outer-classname)
-      (.setJavaOuterClassname builder (get m :java-outer-classname)))
-    (when (contains? m :java-multiple-files)
-      (.setJavaMultipleFiles builder (get m :java-multiple-files)))
-    (when (contains? m :java-generate-equals-and-hash)
-      (.setJavaGenerateEqualsAndHash builder (get m :java-generate-equals-and-hash)))
-    (when (contains? m :java-string-check-utf-8)
-      (.setJavaStringCheckUtf8 builder (get m :java-string-check-utf-8)))
-    (when (contains? m :optimize-for)
-      (.setOptimizeFor builder (get m :optimize-for)))
-    (when (contains? m :go-package)
-      (.setGoPackage builder (get m :go-package)))
-    (when (contains? m :cc-generic-services)
-      (.setCcGenericServices builder (get m :cc-generic-services)))
-    (when (contains? m :java-generic-services)
-      (.setJavaGenericServices builder (get m :java-generic-services)))
-    (when (contains? m :py-generic-services)
-      (.setPyGenericServices builder (get m :py-generic-services)))
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :cc-enable-arenas)
-      (.setCcEnableArenas builder (get m :cc-enable-arenas)))
-    (when (contains? m :objc-class-prefix)
-      (.setObjcClassPrefix builder (get m :objc-class-prefix)))
-    (when (contains? m :csharp-namespace)
-      (.setCsharpNamespace builder (get m :csharp-namespace)))
-    (when (contains? m :swift-prefix)
-      (.setSwiftPrefix builder (get m :swift-prefix)))
-    (when (contains? m :php-class-prefix)
-      (.setPhpClassPrefix builder (get m :php-class-prefix)))
-    (when (contains? m :php-namespace)
-      (.setPhpNamespace builder (get m :php-namespace)))
-    (when (contains? m :php-metadata-namespace)
-      (.setPhpMetadataNamespace builder (get m :php-metadata-namespace)))
-    (when (contains? m :ruby-package)
-      (.setRubyPackage builder (get m :ruby-package)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-file-options
-  "Parse a FileOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$FileOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasJavaPackage proto) (assoc :java-package (.getJavaPackage proto))
-    (.hasJavaOuterClassname proto) (assoc :java-outer-classname (.getJavaOuterClassname proto))
-    (.hasJavaMultipleFiles proto) (assoc :java-multiple-files (.getJavaMultipleFiles proto))
-    (.hasJavaGenerateEqualsAndHash proto) (assoc :java-generate-equals-and-hash (.getJavaGenerateEqualsAndHash proto))
-    (.hasJavaStringCheckUtf8 proto) (assoc :java-string-check-utf-8 (.getJavaStringCheckUtf8 proto))
-    (.hasOptimizeFor proto) (assoc :optimize-for (.getOptimizeFor proto))
-    (.hasGoPackage proto) (assoc :go-package (.getGoPackage proto))
-    (.hasCcGenericServices proto) (assoc :cc-generic-services (.getCcGenericServices proto))
-    (.hasJavaGenericServices proto) (assoc :java-generic-services (.getJavaGenericServices proto))
-    (.hasPyGenericServices proto) (assoc :py-generic-services (.getPyGenericServices proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasCcEnableArenas proto) (assoc :cc-enable-arenas (.getCcEnableArenas proto))
-    (.hasObjcClassPrefix proto) (assoc :objc-class-prefix (.getObjcClassPrefix proto))
-    (.hasCsharpNamespace proto) (assoc :csharp-namespace (.getCsharpNamespace proto))
-    (.hasSwiftPrefix proto) (assoc :swift-prefix (.getSwiftPrefix proto))
-    (.hasPhpClassPrefix proto) (assoc :php-class-prefix (.getPhpClassPrefix proto))
-    (.hasPhpNamespace proto) (assoc :php-namespace (.getPhpNamespace proto))
-    (.hasPhpMetadataNamespace proto) (assoc :php-metadata-namespace (.getPhpMetadataNamespace proto))
-    (.hasRubyPackage proto) (assoc :ruby-package (.getRubyPackage proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-message-options
-  "Build a MessageOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$MessageOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :message-set-wire-format)
-      (.setMessageSetWireFormat builder (get m :message-set-wire-format)))
-    (when (contains? m :no-standard-descriptor-accessor)
-      (.setNoStandardDescriptorAccessor builder (get m :no-standard-descriptor-accessor)))
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :map-entry)
-      (.setMapEntry builder (get m :map-entry)))
-    (when (contains? m :deprecated-legacy-json-field-conflicts)
-      (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-message-options
-  "Parse a MessageOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$MessageOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasMessageSetWireFormat proto) (assoc :message-set-wire-format (.getMessageSetWireFormat proto))
-    (.hasNoStandardDescriptorAccessor proto) (assoc :no-standard-descriptor-accessor (.getNoStandardDescriptorAccessor proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasMapEntry proto) (assoc :map-entry (.getMapEntry proto))
-    (.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-field-options
-  "Build a FieldOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FieldOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :ctype)
-      (.setCtype builder (get m :ctype)))
-    (when (contains? m :packed)
-      (.setPacked builder (get m :packed)))
-    (when (contains? m :jstype)
-      (.setJstype builder (get m :jstype)))
-    (when (contains? m :lazy)
-      (.setLazy builder (get m :lazy)))
-    (when (contains? m :unverified-lazy)
-      (.setUnverifiedLazy builder (get m :unverified-lazy)))
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :weak)
-      (.setWeak builder (get m :weak)))
-    (when (contains? m :debug-redact)
-      (.setDebugRedact builder (get m :debug-redact)))
-    (when (contains? m :retention)
-      (.setRetention builder (get m :retention)))
-    (when (contains? m :targets)
-      (.addAllTargets builder (get m :targets)))
-    (when (contains? m :edition-defaults)
-      (.addAllEditionDefaults builder (get m :edition-defaults)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :feature-support)
-      (.setFeatureSupport builder (get m :feature-support)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-field-options
-  "Parse a FieldOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$FieldOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasCtype proto) (assoc :ctype (.getCtype proto))
-    (.hasPacked proto) (assoc :packed (.getPacked proto))
-    (.hasJstype proto) (assoc :jstype (.getJstype proto))
-    (.hasLazy proto) (assoc :lazy (.getLazy proto))
-    (.hasUnverifiedLazy proto) (assoc :unverified-lazy (.getUnverifiedLazy proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasWeak proto) (assoc :weak (.getWeak proto))
-    (.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto))
-    (.hasRetention proto) (assoc :retention (.getRetention proto))
-    true (assoc :targets (vec (.getTargetsList proto)))
-    true (assoc :edition-defaults (vec (.getEditionDefaultsList proto)))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-oneof-options
-  "Build a OneofOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$OneofOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-oneof-options
-  "Parse a OneofOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$OneofOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-enum-options
-  "Build a EnumOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$EnumOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :allow-alias)
-      (.setAllowAlias builder (get m :allow-alias)))
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :deprecated-legacy-json-field-conflicts)
-      (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-enum-options
-  "Parse a EnumOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$EnumOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasAllowAlias proto) (assoc :allow-alias (.getAllowAlias proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-enum-value-options
-  "Build a EnumValueOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$EnumValueOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :debug-redact)
-      (.setDebugRedact builder (get m :debug-redact)))
-    (when (contains? m :feature-support)
-      (.setFeatureSupport builder (get m :feature-support)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-enum-value-options
-  "Parse a EnumValueOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$EnumValueOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto))
-    (.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-service-options
-  "Build a ServiceOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$ServiceOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-service-options
-  "Parse a ServiceOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$ServiceOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-method-options
-  "Build a MethodOptions protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$MethodOptions/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :deprecated)
-      (.setDeprecated builder (get m :deprecated)))
-    (when (contains? m :idempotency-level)
-      (.setIdempotencyLevel builder (get m :idempotency-level)))
-    (when (contains? m :features)
-      (.setFeatures builder (get m :features)))
-    (when (contains? m :uninterpreted-option)
-      (.addAllUninterpretedOption builder (get m :uninterpreted-option)))
-
-    (.build builder)))
-
-(defn parse-method-options
-  "Parse a MethodOptions protobuf message to a map."
-  [^google.protobuf.Protobuf$MethodOptions proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasIdempotencyLevel proto) (assoc :idempotency-level (.getIdempotencyLevel proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    true (assoc :uninterpreted-option (vec (.getUninterpretedOptionList proto)))))
-
-(defn build-uninterpreted-option
-  "Build a UninterpretedOption protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$UninterpretedOption/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :name)
-      (.addAllName builder (get m :name)))
-    (when (contains? m :identifier-value)
-      (.setIdentifierValue builder (get m :identifier-value)))
-    (when (contains? m :positive-int-value)
-      (.setPositiveIntValue builder (get m :positive-int-value)))
-    (when (contains? m :negative-int-value)
-      (.setNegativeIntValue builder (get m :negative-int-value)))
-    (when (contains? m :double-value)
-      (.setDoubleValue builder (get m :double-value)))
-    (when (contains? m :string-value)
-      (.setStringValue builder (get m :string-value)))
-    (when (contains? m :aggregate-value)
-      (.setAggregateValue builder (get m :aggregate-value)))
-
-    (.build builder)))
-
-(defn parse-uninterpreted-option
-  "Parse a UninterpretedOption protobuf message to a map."
-  [^google.protobuf.Protobuf$UninterpretedOption proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :name (vec (.getNameList proto)))
-    (.hasIdentifierValue proto) (assoc :identifier-value (.getIdentifierValue proto))
-    (.hasPositiveIntValue proto) (assoc :positive-int-value (.getPositiveIntValue proto))
-    (.hasNegativeIntValue proto) (assoc :negative-int-value (.getNegativeIntValue proto))
-    (.hasDoubleValue proto) (assoc :double-value (.getDoubleValue proto))
-    (.hasStringValue proto) (assoc :string-value (.getStringValue proto))
-    (.hasAggregateValue proto) (assoc :aggregate-value (.getAggregateValue proto))))
-
-(defn build-feature-set
-  "Build a FeatureSet protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FeatureSet/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :field-presence)
-      (.setFieldPresence builder (get m :field-presence)))
-    (when (contains? m :enum-type)
-      (.setEnumType builder (get m :enum-type)))
-    (when (contains? m :repeated-field-encoding)
-      (.setRepeatedFieldEncoding builder (get m :repeated-field-encoding)))
-    (when (contains? m :utf-8-validation)
-      (.setUtf8Validation builder (get m :utf-8-validation)))
-    (when (contains? m :message-encoding)
-      (.setMessageEncoding builder (get m :message-encoding)))
-    (when (contains? m :json-format)
-      (.setJsonFormat builder (get m :json-format)))
-    (when (contains? m :enforce-naming-style)
-      (.setEnforceNamingStyle builder (get m :enforce-naming-style)))
-    (when (contains? m :default-symbol-visibility)
-      (.setDefaultSymbolVisibility builder (get m :default-symbol-visibility)))
-
-    (.build builder)))
-
-(defn parse-feature-set
-  "Parse a FeatureSet protobuf message to a map."
-  [^google.protobuf.Protobuf$FeatureSet proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasFieldPresence proto) (assoc :field-presence (.getFieldPresence proto))
-    (.hasEnumType proto) (assoc :enum-type (.getEnumType proto))
-    (.hasRepeatedFieldEncoding proto) (assoc :repeated-field-encoding (.getRepeatedFieldEncoding proto))
-    (.hasUtf8Validation proto) (assoc :utf-8-validation (.getUtf8Validation proto))
-    (.hasMessageEncoding proto) (assoc :message-encoding (.getMessageEncoding proto))
-    (.hasJsonFormat proto) (assoc :json-format (.getJsonFormat proto))
-    (.hasEnforceNamingStyle proto) (assoc :enforce-naming-style (.getEnforceNamingStyle proto))
-    (.hasDefaultSymbolVisibility proto) (assoc :default-symbol-visibility (.getDefaultSymbolVisibility proto))))
-
-(defn build-feature-set-defaults
-  "Build a FeatureSetDefaults protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$FeatureSetDefaults/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :defaults)
-      (.addAllDefaults builder (get m :defaults)))
-    (when (contains? m :minimum-edition)
-      (.setMinimumEdition builder (get m :minimum-edition)))
-    (when (contains? m :maximum-edition)
-      (.setMaximumEdition builder (get m :maximum-edition)))
-
-    (.build builder)))
-
-(defn parse-feature-set-defaults
-  "Parse a FeatureSetDefaults protobuf message to a map."
-  [^google.protobuf.Protobuf$FeatureSetDefaults proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :defaults (vec (.getDefaultsList proto)))
-    (.hasMinimumEdition proto) (assoc :minimum-edition (.getMinimumEdition proto))
-    (.hasMaximumEdition proto) (assoc :maximum-edition (.getMaximumEdition proto))))
-
-(defn build-source-code-info
-  "Build a SourceCodeInfo protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$SourceCodeInfo/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :location)
-      (.addAllLocation builder (get m :location)))
-
-    (.build builder)))
-
-(defn parse-source-code-info
-  "Parse a SourceCodeInfo protobuf message to a map."
-  [^google.protobuf.Protobuf$SourceCodeInfo proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :location (vec (.getLocationList proto)))))
-
-(defn build-generated-code-info
-  "Build a GeneratedCodeInfo protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$GeneratedCodeInfo/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :annotation)
-      (.addAllAnnotation builder (get m :annotation)))
-
-    (.build builder)))
-
-(defn parse-generated-code-info
-  "Parse a GeneratedCodeInfo protobuf message to a map."
-  [^google.protobuf.Protobuf$GeneratedCodeInfo proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :annotation (vec (.getAnnotationList proto)))))
-
-(defn build-duration
-  "Build a Duration protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$Duration/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :seconds)
-      (.setSeconds builder (get m :seconds)))
-    (when (contains? m :nanos)
-      (.setNanos builder (get m :nanos)))
-
-    (.build builder)))
-
-(defn parse-duration
-  "Parse a Duration protobuf message to a map."
-  [^google.protobuf.Protobuf$Duration proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasSeconds proto) (assoc :seconds (.getSeconds proto))
-    (.hasNanos proto) (assoc :nanos (.getNanos proto))))
-
-(defn build-timestamp
-  "Build a Timestamp protobuf message from a map."
-  [m]
-  (let [builder (google.protobuf.Protobuf$Timestamp/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :seconds)
-      (.setSeconds builder (get m :seconds)))
-    (when (contains? m :nanos)
-      (.setNanos builder (get m :nanos)))
-
-    (.build builder)))
-
-(defn parse-timestamp
-  "Parse a Timestamp protobuf message to a map."
-  [^google.protobuf.Protobuf$Timestamp proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasSeconds proto) (assoc :seconds (.getSeconds proto))
-    (.hasNanos proto) (assoc :nanos (.getNanos proto))))
-
-(defn build-rule
-  "Build a Rule protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Rule/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :id)
-      (.setId builder (get m :id)))
-    (when (contains? m :message)
-      (.setMessage builder (get m :message)))
-    (when (contains? m :expression)
-      (.setExpression builder (get m :expression)))
-
-    (.build builder)))
-
-(defn parse-rule
-  "Parse a Rule protobuf message to a map."
-  [^buf.validate.Validate$Rule proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasId proto) (assoc :id (.getId proto))
-    (.hasMessage proto) (assoc :message (.getMessage proto))
-    (.hasExpression proto) (assoc :expression (.getExpression proto))))
-
-(defn build-message-rules
-  "Build a MessageRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$MessageRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :cel)
-      (.addAllCel builder (get m :cel)))
-    (when (contains? m :oneof)
-      (.addAllOneof builder (get m :oneof)))
-
-    (.build builder)))
-
-(defn parse-message-rules
-  "Parse a MessageRules protobuf message to a map."
-  [^buf.validate.Validate$MessageRules proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :cel (vec (.getCelList proto)))
-    true (assoc :oneof (vec (.getOneofList proto)))))
-
-(defn build-message-oneof-rule
-  "Build a MessageOneofRule protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$MessageOneofRule/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :fields)
-      (.addAllFields builder (get m :fields)))
-    (when (contains? m :required)
-      (.setRequired builder (get m :required)))
-
-    (.build builder)))
-
-(defn parse-message-oneof-rule
-  "Parse a MessageOneofRule protobuf message to a map."
-  [^buf.validate.Validate$MessageOneofRule proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :fields (vec (.getFieldsList proto)))
-    (.hasRequired proto) (assoc :required (.getRequired proto))))
-
-(defn build-oneof-rules
-  "Build a OneofRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$OneofRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :required)
-      (.setRequired builder (get m :required)))
-
-    (.build builder)))
-
-(defn parse-oneof-rules
-  "Parse a OneofRules protobuf message to a map."
-  [^buf.validate.Validate$OneofRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasRequired proto) (assoc :required (.getRequired proto))))
-
-(defn build-field-rules
-  "Build a FieldRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$FieldRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :cel)
-      (.addAllCel builder (get m :cel)))
-    (when (contains? m :required)
-      (.setRequired builder (get m :required)))
-    (when (contains? m :ignore)
-      (.setIgnore builder (get m :ignore)))
-
-    (.build builder)))
-
-(defn parse-field-rules
-  "Parse a FieldRules protobuf message to a map."
-  [^buf.validate.Validate$FieldRules proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :cel (vec (.getCelList proto)))
-    (.hasRequired proto) (assoc :required (.getRequired proto))
-    (.hasIgnore proto) (assoc :ignore (.getIgnore proto))
-
-    ;; Oneof payload
-    true (merge (parse-field-rules-payload proto))))
-
-(defn build-predefined-rules
-  "Build a PredefinedRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$PredefinedRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :cel)
-      (.addAllCel builder (get m :cel)))
-
-    (.build builder)))
-
-(defn parse-predefined-rules
-  "Parse a PredefinedRules protobuf message to a map."
-  [^buf.validate.Validate$PredefinedRules proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :cel (vec (.getCelList proto)))))
-
-(defn build-float-rules
-  "Build a FloatRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$FloatRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :finite)
-      (.setFinite builder (get m :finite)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-float-rules
-  "Parse a FloatRules protobuf message to a map."
-  [^buf.validate.Validate$FloatRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    (.hasFinite proto) (assoc :finite (.getFinite proto))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-float-rules-payload proto))))
-
-(defn build-double-rules
-  "Build a DoubleRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$DoubleRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :finite)
-      (.setFinite builder (get m :finite)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-double-rules
-  "Parse a DoubleRules protobuf message to a map."
-  [^buf.validate.Validate$DoubleRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    (.hasFinite proto) (assoc :finite (.getFinite proto))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-double-rules-payload proto))))
-
-(defn build-int-32-rules
-  "Build a Int32Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Int32Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-int-32-rules
-  "Parse a Int32Rules protobuf message to a map."
-  [^buf.validate.Validate$Int32Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-int-32-rules-payload proto))))
-
-(defn build-int-64-rules
-  "Build a Int64Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Int64Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-int-64-rules
-  "Parse a Int64Rules protobuf message to a map."
-  [^buf.validate.Validate$Int64Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-int-64-rules-payload proto))))
-
-(defn build-u-int-32-rules
-  "Build a UInt32Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$UInt32Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-u-int-32-rules
-  "Parse a UInt32Rules protobuf message to a map."
-  [^buf.validate.Validate$UInt32Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-u-int-32-rules-payload proto))))
-
-(defn build-u-int-64-rules
-  "Build a UInt64Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$UInt64Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-u-int-64-rules
-  "Parse a UInt64Rules protobuf message to a map."
-  [^buf.validate.Validate$UInt64Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-u-int-64-rules-payload proto))))
-
-(defn build-s-int-32-rules
-  "Build a SInt32Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$SInt32Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-s-int-32-rules
-  "Parse a SInt32Rules protobuf message to a map."
-  [^buf.validate.Validate$SInt32Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-s-int-32-rules-payload proto))))
-
-(defn build-s-int-64-rules
-  "Build a SInt64Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$SInt64Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-s-int-64-rules
-  "Parse a SInt64Rules protobuf message to a map."
-  [^buf.validate.Validate$SInt64Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-s-int-64-rules-payload proto))))
-
-(defn build-fixed-32-rules
-  "Build a Fixed32Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Fixed32Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-fixed-32-rules
-  "Parse a Fixed32Rules protobuf message to a map."
-  [^buf.validate.Validate$Fixed32Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-fixed-32-rules-payload proto))))
-
-(defn build-fixed-64-rules
-  "Build a Fixed64Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Fixed64Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-fixed-64-rules
-  "Parse a Fixed64Rules protobuf message to a map."
-  [^buf.validate.Validate$Fixed64Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-fixed-64-rules-payload proto))))
-
-(defn build-s-fixed-32-rules
-  "Build a SFixed32Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$SFixed32Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-s-fixed-32-rules
-  "Parse a SFixed32Rules protobuf message to a map."
-  [^buf.validate.Validate$SFixed32Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-s-fixed-32-rules-payload proto))))
-
-(defn build-s-fixed-64-rules
-  "Build a SFixed64Rules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$SFixed64Rules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-s-fixed-64-rules
-  "Parse a SFixed64Rules protobuf message to a map."
-  [^buf.validate.Validate$SFixed64Rules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-s-fixed-64-rules-payload proto))))
-
-(defn build-bool-rules
-  "Build a BoolRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$BoolRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-bool-rules
-  "Parse a BoolRules protobuf message to a map."
-  [^buf.validate.Validate$BoolRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :example (vec (.getExampleList proto)))))
-
-(defn build-string-rules
-  "Build a StringRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$StringRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :len)
-      (.setLen builder (get m :len)))
-    (when (contains? m :min-len)
-      (.setMinLen builder (get m :min-len)))
-    (when (contains? m :max-len)
-      (.setMaxLen builder (get m :max-len)))
-    (when (contains? m :len-bytes)
-      (.setLenBytes builder (get m :len-bytes)))
-    (when (contains? m :min-bytes)
-      (.setMinBytes builder (get m :min-bytes)))
-    (when (contains? m :max-bytes)
-      (.setMaxBytes builder (get m :max-bytes)))
-    (when (contains? m :pattern)
-      (.setPattern builder (get m :pattern)))
-    (when (contains? m :prefix)
-      (.setPrefix builder (get m :prefix)))
-    (when (contains? m :suffix)
-      (.setSuffix builder (get m :suffix)))
-    (when (contains? m :contains)
-      (.setContains builder (get m :contains)))
-    (when (contains? m :not-contains)
-      (.setNotContains builder (get m :not-contains)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :strict)
-      (.setStrict builder (get m :strict)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-string-rules
-  "Parse a StringRules protobuf message to a map."
-  [^buf.validate.Validate$StringRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasLen proto) (assoc :len (.getLen proto))
-    (.hasMinLen proto) (assoc :min-len (.getMinLen proto))
-    (.hasMaxLen proto) (assoc :max-len (.getMaxLen proto))
-    (.hasLenBytes proto) (assoc :len-bytes (.getLenBytes proto))
-    (.hasMinBytes proto) (assoc :min-bytes (.getMinBytes proto))
-    (.hasMaxBytes proto) (assoc :max-bytes (.getMaxBytes proto))
-    (.hasPattern proto) (assoc :pattern (.getPattern proto))
-    (.hasPrefix proto) (assoc :prefix (.getPrefix proto))
-    (.hasSuffix proto) (assoc :suffix (.getSuffix proto))
-    (.hasContains proto) (assoc :contains (.getContains proto))
-    (.hasNotContains proto) (assoc :not-contains (.getNotContains proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    (.hasStrict proto) (assoc :strict (.getStrict proto))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-string-rules-payload proto))))
-
-(defn build-bytes-rules
-  "Build a BytesRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$BytesRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :len)
-      (.setLen builder (get m :len)))
-    (when (contains? m :min-len)
-      (.setMinLen builder (get m :min-len)))
-    (when (contains? m :max-len)
-      (.setMaxLen builder (get m :max-len)))
-    (when (contains? m :pattern)
-      (.setPattern builder (get m :pattern)))
-    (when (contains? m :prefix)
-      (.setPrefix builder (get m :prefix)))
-    (when (contains? m :suffix)
-      (.setSuffix builder (get m :suffix)))
-    (when (contains? m :contains)
-      (.setContains builder (get m :contains)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-bytes-rules
-  "Parse a BytesRules protobuf message to a map."
-  [^buf.validate.Validate$BytesRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasLen proto) (assoc :len (.getLen proto))
-    (.hasMinLen proto) (assoc :min-len (.getMinLen proto))
-    (.hasMaxLen proto) (assoc :max-len (.getMaxLen proto))
-    (.hasPattern proto) (assoc :pattern (.getPattern proto))
-    (.hasPrefix proto) (assoc :prefix (.getPrefix proto))
-    (.hasSuffix proto) (assoc :suffix (.getSuffix proto))
-    (.hasContains proto) (assoc :contains (.getContains proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-bytes-rules-payload proto))))
-
-(defn build-enum-rules
-  "Build a EnumRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$EnumRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :defined-only)
-      (.setDefinedOnly builder (get m :defined-only)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-enum-rules
-  "Parse a EnumRules protobuf message to a map."
-  [^buf.validate.Validate$EnumRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasDefinedOnly proto) (assoc :defined-only (.getDefinedOnly proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))))
-
-(defn build-repeated-rules
-  "Build a RepeatedRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$RepeatedRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :min-items)
-      (.setMinItems builder (get m :min-items)))
-    (when (contains? m :max-items)
-      (.setMaxItems builder (get m :max-items)))
-    (when (contains? m :unique)
-      (.setUnique builder (get m :unique)))
-    (when (contains? m :items)
-      (.setItems builder (get m :items)))
-
-    (.build builder)))
-
-(defn parse-repeated-rules
-  "Parse a RepeatedRules protobuf message to a map."
-  [^buf.validate.Validate$RepeatedRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasMinItems proto) (assoc :min-items (.getMinItems proto))
-    (.hasMaxItems proto) (assoc :max-items (.getMaxItems proto))
-    (.hasUnique proto) (assoc :unique (.getUnique proto))
-    (.hasItems proto) (assoc :items (.getItems proto))))
-
-(defn build-map-rules
-  "Build a MapRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$MapRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :min-pairs)
-      (.setMinPairs builder (get m :min-pairs)))
-    (when (contains? m :max-pairs)
-      (.setMaxPairs builder (get m :max-pairs)))
-    (when (contains? m :keys)
-      (.setKeys builder (get m :keys)))
-    (when (contains? m :values)
-      (.setValues builder (get m :values)))
-
-    (.build builder)))
-
-(defn parse-map-rules
-  "Parse a MapRules protobuf message to a map."
-  [^buf.validate.Validate$MapRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasMinPairs proto) (assoc :min-pairs (.getMinPairs proto))
-    (.hasMaxPairs proto) (assoc :max-pairs (.getMaxPairs proto))
-    (.hasKeys proto) (assoc :keys (.getKeys proto))
-    (.hasValues proto) (assoc :values (.getValues proto))))
-
-(defn build-any-rules
-  "Build a AnyRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$AnyRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-
-    (.build builder)))
-
-(defn parse-any-rules
-  "Parse a AnyRules protobuf message to a map."
-  [^buf.validate.Validate$AnyRules proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))))
-
-(defn build-duration-rules
-  "Build a DurationRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$DurationRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :in)
-      (.addAllIn builder (get m :in)))
-    (when (contains? m :not-in)
-      (.addAllNotIn builder (get m :not-in)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-duration-rules
-  "Parse a DurationRules protobuf message to a map."
-  [^buf.validate.Validate$DurationRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    true (assoc :in (vec (.getInList proto)))
-    true (assoc :not-in (vec (.getNotInList proto)))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-duration-rules-payload proto))))
-
-(defn build-timestamp-rules
-  "Build a TimestampRules protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$TimestampRules/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :const)
-      (.setConst builder (get m :const)))
-    (when (contains? m :within)
-      (.setWithin builder (get m :within)))
-    (when (contains? m :example)
-      (.addAllExample builder (get m :example)))
-
-    (.build builder)))
-
-(defn parse-timestamp-rules
-  "Parse a TimestampRules protobuf message to a map."
-  [^buf.validate.Validate$TimestampRules proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasWithin proto) (assoc :within (.getWithin proto))
-    true (assoc :example (vec (.getExampleList proto)))
-
-    ;; Oneof payload
-    true (merge (parse-timestamp-rules-payload proto))))
-
-(defn build-violations
-  "Build a Violations protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Violations/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :violations)
-      (.addAllViolations builder (get m :violations)))
-
-    (.build builder)))
-
-(defn parse-violations
-  "Parse a Violations protobuf message to a map."
-  [^buf.validate.Validate$Violations proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :violations (vec (.getViolationsList proto)))))
-
-(defn build-violation
-  "Build a Violation protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$Violation/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :field)
-      (.setField builder (get m :field)))
-    (when (contains? m :rule)
-      (.setRule builder (get m :rule)))
-    (when (contains? m :rule-id)
-      (.setRuleId builder (get m :rule-id)))
-    (when (contains? m :message)
-      (.setMessage builder (get m :message)))
-    (when (contains? m :for-key)
-      (.setForKey builder (get m :for-key)))
-
-    (.build builder)))
-
-(defn parse-violation
-  "Parse a Violation protobuf message to a map."
-  [^buf.validate.Validate$Violation proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasField proto) (assoc :field (.getField proto))
-    (.hasRule proto) (assoc :rule (.getRule proto))
-    (.hasRuleId proto) (assoc :rule-id (.getRuleId proto))
-    (.hasMessage proto) (assoc :message (.getMessage proto))
-    (.hasForKey proto) (assoc :for-key (.getForKey proto))))
-
-(defn build-field-path
-  "Build a FieldPath protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$FieldPath/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :elements)
-      (.addAllElements builder (get m :elements)))
-
-    (.build builder)))
-
-(defn parse-field-path
-  "Parse a FieldPath protobuf message to a map."
-  [^buf.validate.Validate$FieldPath proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :elements (vec (.getElementsList proto)))))
-
-(defn build-field-path-element
-  "Build a FieldPathElement protobuf message from a map."
-  [m]
-  (let [builder (buf.validate.Validate$FieldPathElement/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :field-number)
-      (.setFieldNumber builder (get m :field-number)))
-    (when (contains? m :field-name)
-      (.setFieldName builder (get m :field-name)))
-    (when (contains? m :field-type)
-      (.setFieldType builder (get m :field-type)))
-    (when (contains? m :key-type)
-      (.setKeyType builder (get m :key-type)))
-    (when (contains? m :value-type)
-      (.setValueType builder (get m :value-type)))
-
-    (.build builder)))
-
-(defn parse-field-path-element
-  "Parse a FieldPathElement protobuf message to a map."
-  [^buf.validate.Validate$FieldPathElement proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasFieldNumber proto) (assoc :field-number (.getFieldNumber proto))
-    (.hasFieldName proto) (assoc :field-name (.getFieldName proto))
-    (.hasFieldType proto) (assoc :field-type (.getFieldType proto))
-    (.hasKeyType proto) (assoc :key-type (.getKeyType proto))
-    (.hasValueType proto) (assoc :value-type (.getValueType proto))
-
-    ;; Oneof payload
-    true (merge (parse-field-path-element-payload proto))))
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :set-magnetic-declination (.setSetMagneticDeclination builder (build-set-magnetic-declination value))
+    :set-offset-angle-azimuth (.setSetOffsetAngleAzimuth builder (build-set-offset-angle-azimuth value))
+    :set-offset-angle-elevation (.setSetOffsetAngleElevation builder (build-set-offset-angle-elevation value))
+    :set-use-rotary-position (.setSetUseRotaryPosition builder (build-set-use-rotary-position value))
+    :start-calibrate-long (.setStartCalibrateLong builder (build-calibrate-start-long value))
+    :start-calibrate-short (.setStartCalibrateShort builder (build-calibrate-start-short value))
+    :calibrate-next (.setCalibrateNext builder (build-calibrate-next value))
+    :calibrate-cencel (.setCalibrateCencel builder (build-calibrate-cencel value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.Compass.JonSharedCmdCompass$Root proto]
+  (cond
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasSetMagneticDeclination proto) {:set-magnetic-declination (parse-set-magnetic-declination (.getSetMagneticDeclination proto))}
+    (.hasSetOffsetAngleAzimuth proto) {:set-offset-angle-azimuth (parse-set-offset-angle-azimuth (.getSetOffsetAngleAzimuth proto))}
+    (.hasSetOffsetAngleElevation proto) {:set-offset-angle-elevation (parse-set-offset-angle-elevation (.getSetOffsetAngleElevation proto))}
+    (.hasSetUseRotaryPosition proto) {:set-use-rotary-position (parse-set-use-rotary-position (.getSetUseRotaryPosition proto))}
+    (.hasStartCalibrateLong proto) {:start-calibrate-long (parse-calibrate-start-long (.getStartCalibrateLong proto))}
+    (.hasStartCalibrateShort proto) {:start-calibrate-short (parse-calibrate-start-short (.getStartCalibrateShort proto))}
+    (.hasCalibrateNext proto) {:calibrate-next (parse-calibrate-next (.getCalibrateNext proto))}
+    (.hasCalibrateCencel proto) {:calibrate-cencel (parse-calibrate-cencel (.getCalibrateCencel proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$Root/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start :stop :set-magnetic-declination :set-offset-angle-azimuth :set-offset-angle-elevation :set-use-rotary-position :start-calibrate-long :start-calibrate-short :calibrate-next :calibrate-cencel :get-meteo} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Compass.Compass$Root proto]
+  [^cmd.Compass.JonSharedCmdCompass$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -2085,103 +398,103 @@
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$Start/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.Compass.Compass$Start proto]
+  [^cmd.Compass.JonSharedCmdCompass$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$Stop/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.Compass.Compass$Stop proto]
+  [^cmd.Compass.JonSharedCmdCompass$Stop proto]
   (cond-> {}))
 
 (defn build-next
   "Build a Next protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$Next/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$Next/newBuilder)]
 
     (.build builder)))
 
 (defn parse-next
   "Parse a Next protobuf message to a map."
-  [^cmd.Compass.Compass$Next proto]
+  [^cmd.Compass.JonSharedCmdCompass$Next proto]
   (cond-> {}))
 
 (defn build-calibrate-start-long
   "Build a CalibrateStartLong protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$CalibrateStartLong/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateStartLong/newBuilder)]
 
     (.build builder)))
 
 (defn parse-calibrate-start-long
   "Parse a CalibrateStartLong protobuf message to a map."
-  [^cmd.Compass.Compass$CalibrateStartLong proto]
+  [^cmd.Compass.JonSharedCmdCompass$CalibrateStartLong proto]
   (cond-> {}))
 
 (defn build-calibrate-start-short
   "Build a CalibrateStartShort protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$CalibrateStartShort/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateStartShort/newBuilder)]
 
     (.build builder)))
 
 (defn parse-calibrate-start-short
   "Parse a CalibrateStartShort protobuf message to a map."
-  [^cmd.Compass.Compass$CalibrateStartShort proto]
+  [^cmd.Compass.JonSharedCmdCompass$CalibrateStartShort proto]
   (cond-> {}))
 
 (defn build-calibrate-next
   "Build a CalibrateNext protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$CalibrateNext/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateNext/newBuilder)]
 
     (.build builder)))
 
 (defn parse-calibrate-next
   "Parse a CalibrateNext protobuf message to a map."
-  [^cmd.Compass.Compass$CalibrateNext proto]
+  [^cmd.Compass.JonSharedCmdCompass$CalibrateNext proto]
   (cond-> {}))
 
 (defn build-calibrate-cencel
   "Build a CalibrateCencel protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$CalibrateCencel/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateCencel/newBuilder)]
 
     (.build builder)))
 
 (defn parse-calibrate-cencel
   "Parse a CalibrateCencel protobuf message to a map."
-  [^cmd.Compass.Compass$CalibrateCencel proto]
+  [^cmd.Compass.JonSharedCmdCompass$CalibrateCencel proto]
   (cond-> {}))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$GetMeteo/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.Compass.Compass$GetMeteo proto]
+  [^cmd.Compass.JonSharedCmdCompass$GetMeteo proto]
   (cond-> {}))
 
 (defn build-set-magnetic-declination
   "Build a SetMagneticDeclination protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$SetMagneticDeclination/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2190,7 +503,7 @@
 
 (defn parse-set-magnetic-declination
   "Parse a SetMagneticDeclination protobuf message to a map."
-  [^cmd.Compass.Compass$SetMagneticDeclination proto]
+  [^cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2198,7 +511,7 @@
 (defn build-set-offset-angle-azimuth
   "Build a SetOffsetAngleAzimuth protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$SetOffsetAngleAzimuth/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2207,7 +520,7 @@
 
 (defn parse-set-offset-angle-azimuth
   "Parse a SetOffsetAngleAzimuth protobuf message to a map."
-  [^cmd.Compass.Compass$SetOffsetAngleAzimuth proto]
+  [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2215,7 +528,7 @@
 (defn build-set-offset-angle-elevation
   "Build a SetOffsetAngleElevation protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$SetOffsetAngleElevation/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2224,7 +537,7 @@
 
 (defn parse-set-offset-angle-elevation
   "Parse a SetOffsetAngleElevation protobuf message to a map."
-  [^cmd.Compass.Compass$SetOffsetAngleElevation proto]
+  [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2232,7 +545,7 @@
 (defn build-set-use-rotary-position
   "Build a SetUseRotaryPosition protobuf message from a map."
   [m]
-  (let [builder (cmd.Compass.Compass$SetUseRotaryPosition/newBuilder)]
+  (let [builder (cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
       (.setFlag builder (get m :flag)))
@@ -2241,21 +554,45 @@
 
 (defn parse-set-use-rotary-position
   "Parse a SetUseRotaryPosition protobuf message to a map."
-  [^cmd.Compass.Compass$SetUseRotaryPosition proto]
+  [^cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition proto]
   (cond-> {}
     ;; Regular fields
     (.hasFlag proto) (assoc :flag (.getFlag proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :set-manual-position (.setSetManualPosition builder (build-set-manual-position value))
+    :set-use-manual-position (.setSetUseManualPosition builder (build-set-use-manual-position value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.Gps.JonSharedCmdGps$Root proto]
+  (cond
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasSetManualPosition proto) {:set-manual-position (parse-set-manual-position (.getSetManualPosition proto))}
+    (.hasSetUseManualPosition proto) {:set-use-manual-position (parse-set-use-manual-position (.getSetUseManualPosition proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$Root/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start :stop :set-manual-position :set-use-manual-position :get-meteo} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Gps.Gps$Root proto]
+  [^cmd.Gps.JonSharedCmdGps$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -2264,43 +601,43 @@
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$Start/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.Gps.Gps$Start proto]
+  [^cmd.Gps.JonSharedCmdGps$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$Stop/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.Gps.Gps$Stop proto]
+  [^cmd.Gps.JonSharedCmdGps$Stop proto]
   (cond-> {}))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$GetMeteo/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.Gps.Gps$GetMeteo proto]
+  [^cmd.Gps.JonSharedCmdGps$GetMeteo proto]
   (cond-> {}))
 
 (defn build-set-use-manual-position
   "Build a SetUseManualPosition protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$SetUseManualPosition/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$SetUseManualPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
       (.setFlag builder (get m :flag)))
@@ -2309,7 +646,7 @@
 
 (defn parse-set-use-manual-position
   "Parse a SetUseManualPosition protobuf message to a map."
-  [^cmd.Gps.Gps$SetUseManualPosition proto]
+  [^cmd.Gps.JonSharedCmdGps$SetUseManualPosition proto]
   (cond-> {}
     ;; Regular fields
     (.hasFlag proto) (assoc :flag (.getFlag proto))))
@@ -2317,7 +654,7 @@
 (defn build-set-manual-position
   "Build a SetManualPosition protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.Gps$SetManualPosition/newBuilder)]
+  (let [builder (cmd.Gps.JonSharedCmdGps$SetManualPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
       (.setLatitude builder (get m :latitude)))
@@ -2330,7 +667,7 @@
 
 (defn parse-set-manual-position
   "Parse a SetManualPosition protobuf message to a map."
-  [^cmd.Gps.Gps$SetManualPosition proto]
+  [^cmd.Gps.JonSharedCmdGps$SetManualPosition proto]
   (cond-> {}
     ;; Regular fields
     (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
@@ -2340,7 +677,7 @@
 (defn build-jon-gui-data-meteo
   "Build a JonGuiDataMeteo protobuf message from a map."
   [m]
-  (let [builder (ser.Ser$JonGuiDataMeteo/newBuilder)]
+  (let [builder (ser.JonSharedDataTypes$JonGuiDataMeteo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :temperature)
       (.setTemperature builder (get m :temperature)))
@@ -2353,23 +690,67 @@
 
 (defn parse-jon-gui-data-meteo
   "Parse a JonGuiDataMeteo protobuf message to a map."
-  [^ser.Ser$JonGuiDataMeteo proto]
+  [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
   (cond-> {}
     ;; Regular fields
     (.hasTemperature proto) (assoc :temperature (.getTemperature proto))
     (.hasHumidity proto) (assoc :humidity (.getHumidity proto))
     (.hasPressure proto) (assoc :pressure (.getPressure proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :measure (.setMeasure builder (build-measure value))
+    :scan-on (.setScanOn builder (build-scan-on value))
+    :scan-off (.setScanOff builder (build-scan-off value))
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :target-designator-off (.setTargetDesignatorOff builder (build-target-designator-off value))
+    :target-designator-on-mode-a (.setTargetDesignatorOnModeA builder (build-target-designator-on-mode-a value))
+    :target-designator-on-mode-b (.setTargetDesignatorOnModeB builder (build-target-designator-on-mode-b value))
+    :enable-fog-mode (.setEnableFogMode builder (build-enable-fog-mode value))
+    :disable-fog-mode (.setDisableFogMode builder (build-disable-fog-mode value))
+    :set-scan-mode (.setSetScanMode builder (build-set-scan-mode value))
+    :new-session (.setNewSession builder (build-new-session value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    :refine-on (.setRefineOn builder (build-refine-on value))
+    :refine-off (.setRefineOff builder (build-refine-off value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.Lrf.JonSharedCmdLrf$Root proto]
+  (cond
+    (.hasMeasure proto) {:measure (parse-measure (.getMeasure proto))}
+    (.hasScanOn proto) {:scan-on (parse-scan-on (.getScanOn proto))}
+    (.hasScanOff proto) {:scan-off (parse-scan-off (.getScanOff proto))}
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasTargetDesignatorOff proto) {:target-designator-off (parse-target-designator-off (.getTargetDesignatorOff proto))}
+    (.hasTargetDesignatorOnModeA proto) {:target-designator-on-mode-a (parse-target-designator-on-mode-a (.getTargetDesignatorOnModeA proto))}
+    (.hasTargetDesignatorOnModeB proto) {:target-designator-on-mode-b (parse-target-designator-on-mode-b (.getTargetDesignatorOnModeB proto))}
+    (.hasEnableFogMode proto) {:enable-fog-mode (parse-enable-fog-mode (.getEnableFogMode proto))}
+    (.hasDisableFogMode proto) {:disable-fog-mode (parse-disable-fog-mode (.getDisableFogMode proto))}
+    (.hasSetScanMode proto) {:set-scan-mode (parse-set-scan-mode (.getSetScanMode proto))}
+    (.hasNewSession proto) {:new-session (parse-new-session (.getNewSession proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    (.hasRefineOn proto) {:refine-on (parse-refine-on (.getRefineOn proto))}
+    (.hasRefineOff proto) {:refine-off (parse-refine-off (.getRefineOff proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$Root/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:measure :scan-on :scan-off :start :stop :target-designator-off :target-designator-on-mode-a :target-designator-on-mode-b :enable-fog-mode :disable-fog-mode :set-scan-mode :new-session :get-meteo :refine-on :refine-off} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Lrf.Lrf$Root proto]
+  [^cmd.Lrf.JonSharedCmdLrf$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -2378,163 +759,163 @@
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$GetMeteo/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.Lrf.Lrf$GetMeteo proto]
+  [^cmd.Lrf.JonSharedCmdLrf$GetMeteo proto]
   (cond-> {}))
 
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$Start/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.Lrf.Lrf$Start proto]
+  [^cmd.Lrf.JonSharedCmdLrf$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$Stop/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.Lrf.Lrf$Stop proto]
+  [^cmd.Lrf.JonSharedCmdLrf$Stop proto]
   (cond-> {}))
 
 (defn build-measure
   "Build a Measure protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$Measure/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$Measure/newBuilder)]
 
     (.build builder)))
 
 (defn parse-measure
   "Parse a Measure protobuf message to a map."
-  [^cmd.Lrf.Lrf$Measure proto]
+  [^cmd.Lrf.JonSharedCmdLrf$Measure proto]
   (cond-> {}))
 
 (defn build-scan-on
   "Build a ScanOn protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$ScanOn/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$ScanOn/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-on
   "Parse a ScanOn protobuf message to a map."
-  [^cmd.Lrf.Lrf$ScanOn proto]
+  [^cmd.Lrf.JonSharedCmdLrf$ScanOn proto]
   (cond-> {}))
 
 (defn build-scan-off
   "Build a ScanOff protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$ScanOff/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$ScanOff/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-off
   "Parse a ScanOff protobuf message to a map."
-  [^cmd.Lrf.Lrf$ScanOff proto]
+  [^cmd.Lrf.JonSharedCmdLrf$ScanOff proto]
   (cond-> {}))
 
 (defn build-refine-off
   "Build a RefineOff protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$RefineOff/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$RefineOff/newBuilder)]
 
     (.build builder)))
 
 (defn parse-refine-off
   "Parse a RefineOff protobuf message to a map."
-  [^cmd.Lrf.Lrf$RefineOff proto]
+  [^cmd.Lrf.JonSharedCmdLrf$RefineOff proto]
   (cond-> {}))
 
 (defn build-refine-on
   "Build a RefineOn protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$RefineOn/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$RefineOn/newBuilder)]
 
     (.build builder)))
 
 (defn parse-refine-on
   "Parse a RefineOn protobuf message to a map."
-  [^cmd.Lrf.Lrf$RefineOn proto]
+  [^cmd.Lrf.JonSharedCmdLrf$RefineOn proto]
   (cond-> {}))
 
 (defn build-target-designator-off
   "Build a TargetDesignatorOff protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$TargetDesignatorOff/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff/newBuilder)]
 
     (.build builder)))
 
 (defn parse-target-designator-off
   "Parse a TargetDesignatorOff protobuf message to a map."
-  [^cmd.Lrf.Lrf$TargetDesignatorOff proto]
+  [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff proto]
   (cond-> {}))
 
 (defn build-target-designator-on-mode-a
   "Build a TargetDesignatorOnModeA protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$TargetDesignatorOnModeA/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA/newBuilder)]
 
     (.build builder)))
 
 (defn parse-target-designator-on-mode-a
   "Parse a TargetDesignatorOnModeA protobuf message to a map."
-  [^cmd.Lrf.Lrf$TargetDesignatorOnModeA proto]
+  [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA proto]
   (cond-> {}))
 
 (defn build-target-designator-on-mode-b
   "Build a TargetDesignatorOnModeB protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$TargetDesignatorOnModeB/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB/newBuilder)]
 
     (.build builder)))
 
 (defn parse-target-designator-on-mode-b
   "Parse a TargetDesignatorOnModeB protobuf message to a map."
-  [^cmd.Lrf.Lrf$TargetDesignatorOnModeB proto]
+  [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB proto]
   (cond-> {}))
 
 (defn build-enable-fog-mode
   "Build a EnableFogMode protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$EnableFogMode/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$EnableFogMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enable-fog-mode
   "Parse a EnableFogMode protobuf message to a map."
-  [^cmd.Lrf.Lrf$EnableFogMode proto]
+  [^cmd.Lrf.JonSharedCmdLrf$EnableFogMode proto]
   (cond-> {}))
 
 (defn build-disable-fog-mode
   "Build a DisableFogMode protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$DisableFogMode/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$DisableFogMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-disable-fog-mode
   "Parse a DisableFogMode protobuf message to a map."
-  [^cmd.Lrf.Lrf$DisableFogMode proto]
+  [^cmd.Lrf.JonSharedCmdLrf$DisableFogMode proto]
   (cond-> {}))
 
 (defn build-set-scan-mode
   "Build a SetScanMode protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$SetScanMode/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$SetScanMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
       (.setMode builder (get m :mode)))
@@ -2543,7 +924,7 @@
 
 (defn parse-set-scan-mode
   "Parse a SetScanMode protobuf message to a map."
-  [^cmd.Lrf.Lrf$SetScanMode proto]
+  [^cmd.Lrf.JonSharedCmdLrf$SetScanMode proto]
   (cond-> {}
     ;; Regular fields
     (.hasMode proto) (assoc :mode (.getMode proto))))
@@ -2551,19 +932,19 @@
 (defn build-new-session
   "Build a NewSession protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf.Lrf$NewSession/newBuilder)]
+  (let [builder (cmd.Lrf.JonSharedCmdLrf$NewSession/newBuilder)]
 
     (.build builder)))
 
 (defn parse-new-session
   "Parse a NewSession protobuf message to a map."
-  [^cmd.Lrf.Lrf$NewSession proto]
+  [^cmd.Lrf.JonSharedCmdLrf$NewSession proto]
   (cond-> {}))
 
 (defn build-set-value
   "Build a SetValue protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetValue/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2572,7 +953,7 @@
 
 (defn parse-set-value
   "Parse a SetValue protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetValue proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2580,7 +961,7 @@
 (defn build-move
   "Build a Move protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Move/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Move/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
       (.setTargetValue builder (get m :target-value)))
@@ -2591,7 +972,7 @@
 
 (defn parse-move
   "Parse a Move protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Move proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Move proto]
   (cond-> {}
     ;; Regular fields
     (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
@@ -2600,7 +981,7 @@
 (defn build-offset
   "Build a Offset protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Offset/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Offset/newBuilder)]
     ;; Set regular fields
     (when (contains? m :offset-value)
       (.setOffsetValue builder (get m :offset-value)))
@@ -2609,7 +990,7 @@
 
 (defn parse-offset
   "Parse a Offset protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Offset proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Offset proto]
   (cond-> {}
     ;; Regular fields
     (.hasOffsetValue proto) (assoc :offset-value (.getOffsetValue proto))))
@@ -2617,7 +998,7 @@
 (defn build-set-clahe-level
   "Build a SetClaheLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetClaheLevel/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2626,7 +1007,7 @@
 
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetClaheLevel proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetClaheLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2634,7 +1015,7 @@
 (defn build-shift-clahe-level
   "Build a ShiftClaheLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$ShiftClaheLevel/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$ShiftClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2643,21 +1024,69 @@
 
 (defn parse-shift-clahe-level
   "Parse a ShiftClaheLevel protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$ShiftClaheLevel proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$ShiftClaheLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :focus (.setFocus builder (build-focus value))
+    :zoom (.setZoom builder (build-zoom value))
+    :set-iris (.setSetIris builder (build-set-iris value))
+    :set-infra-red-filter (.setSetInfraRedFilter builder (build-set-infra-red-filter value))
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :photo (.setPhoto builder (build-photo value))
+    :set-auto-iris (.setSetAutoIris builder (build-set-auto-iris value))
+    :halt-all (.setHaltAll builder (build-halt-all value))
+    :set-fx-mode (.setSetFxMode builder (build-set-fx-mode value))
+    :next-fx-mode (.setNextFxMode builder (build-next-fx-mode value))
+    :prev-fx-mode (.setPrevFxMode builder (build-prev-fx-mode value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    :refresh-fx-mode (.setRefreshFxMode builder (build-refresh-fx-mode value))
+    :set-digital-zoom-level (.setSetDigitalZoomLevel builder (build-set-digital-zoom-level value))
+    :set-clahe-level (.setSetClaheLevel builder (build-set-clahe-level value))
+    :shift-clahe-level (.setShiftClaheLevel builder (build-shift-clahe-level value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Root proto]
+  (cond
+    (.hasFocus proto) {:focus (parse-focus (.getFocus proto))}
+    (.hasZoom proto) {:zoom (parse-zoom (.getZoom proto))}
+    (.hasSetIris proto) {:set-iris (parse-set-iris (.getSetIris proto))}
+    (.hasSetInfraRedFilter proto) {:set-infra-red-filter (parse-set-infra-red-filter (.getSetInfraRedFilter proto))}
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasPhoto proto) {:photo (parse-photo (.getPhoto proto))}
+    (.hasSetAutoIris proto) {:set-auto-iris (parse-set-auto-iris (.getSetAutoIris proto))}
+    (.hasHaltAll proto) {:halt-all (parse-halt-all (.getHaltAll proto))}
+    (.hasSetFxMode proto) {:set-fx-mode (parse-set-fx-mode (.getSetFxMode proto))}
+    (.hasNextFxMode proto) {:next-fx-mode (parse-next-fx-mode (.getNextFxMode proto))}
+    (.hasPrevFxMode proto) {:prev-fx-mode (parse-prev-fx-mode (.getPrevFxMode proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    (.hasRefreshFxMode proto) {:refresh-fx-mode (parse-refresh-fx-mode (.getRefreshFxMode proto))}
+    (.hasSetDigitalZoomLevel proto) {:set-digital-zoom-level (parse-set-digital-zoom-level (.getSetDigitalZoomLevel proto))}
+    (.hasSetClaheLevel proto) {:set-clahe-level (parse-set-clahe-level (.getSetClaheLevel proto))}
+    (.hasShiftClaheLevel proto) {:shift-clahe-level (parse-shift-clahe-level (.getShiftClaheLevel proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Root/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:focus :zoom :set-iris :set-infra-red-filter :start :stop :photo :set-auto-iris :halt-all :set-fx-mode :next-fx-mode :prev-fx-mode :get-meteo :refresh-fx-mode :set-digital-zoom-level :set-clahe-level :shift-clahe-level} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Root proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -2666,67 +1095,67 @@
 (defn build-get-pos
   "Build a GetPos protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$GetPos/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$GetPos/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-pos
   "Parse a GetPos protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$GetPos proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$GetPos proto]
   (cond-> {}))
 
 (defn build-next-fx-mode
   "Build a NextFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$NextFxMode/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$NextFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-next-fx-mode
   "Parse a NextFxMode protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$NextFxMode proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$NextFxMode proto]
   (cond-> {}))
 
 (defn build-prev-fx-mode
   "Build a PrevFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$PrevFxMode/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$PrevFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-prev-fx-mode
   "Parse a PrevFxMode protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$PrevFxMode proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$PrevFxMode proto]
   (cond-> {}))
 
 (defn build-refresh-fx-mode
   "Build a RefreshFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$RefreshFxMode/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$RefreshFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-refresh-fx-mode
   "Parse a RefreshFxMode protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$RefreshFxMode proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$RefreshFxMode proto]
   (cond-> {}))
 
 (defn build-halt-all
   "Build a HaltAll protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$HaltAll/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$HaltAll/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt-all
   "Parse a HaltAll protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$HaltAll proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$HaltAll proto]
   (cond-> {}))
 
 (defn build-set-fx-mode
   "Build a SetFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetFxMode/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
       (.setMode builder (get m :mode)))
@@ -2735,7 +1164,7 @@
 
 (defn parse-set-fx-mode
   "Parse a SetFxMode protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetFxMode proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode proto]
   (cond-> {}
     ;; Regular fields
     (.hasMode proto) (assoc :mode (.getMode proto))))
@@ -2743,7 +1172,7 @@
 (defn build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetDigitalZoomLevel/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetDigitalZoomLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2752,36 +1181,94 @@
 
 (defn parse-set-digital-zoom-level
   "Parse a SetDigitalZoomLevel protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetDigitalZoomLevel proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetDigitalZoomLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
 
+(defn build-focus-payload
+  "Build the oneof payload for Focus."
+  [builder [field-key value]]
+  (case field-key
+    :set-value (.setSetValue builder (build-set-value value))
+    :move (.setMove builder (build-move value))
+    :halt (.setHalt builder (build-halt value))
+    :offset (.setOffset builder (build-offset value))
+    :reset-focus (.setResetFocus builder (build-reset-focus value))
+    :save-to-table-focus (.setSaveToTableFocus builder (build-save-to-table-focus value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-focus-payload
+  "Parse the oneof payload from Focus."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Focus proto]
+  (cond
+    (.hasSetValue proto) {:set-value (parse-set-value (.getSetValue proto))}
+    (.hasMove proto) {:move (parse-move (.getMove proto))}
+    (.hasHalt proto) {:halt (parse-halt (.getHalt proto))}
+    (.hasOffset proto) {:offset (parse-offset (.getOffset proto))}
+    (.hasResetFocus proto) {:reset-focus (parse-reset-focus (.getResetFocus proto))}
+    (.hasSaveToTableFocus proto) {:save-to-table-focus (parse-save-to-table-focus (.getSaveToTableFocus proto))}))
+
 (defn build-focus
   "Build a Focus protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Focus/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Focus/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-value :move :halt :offset :reset-focus :save-to-table-focus} k)) m))]
+      (build-focus-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-focus
   "Parse a Focus protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Focus proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Focus proto]
   (cond-> {}
 
 ;; Oneof payload
     true (merge (parse-focus-payload proto))))
 
+(defn build-zoom-payload
+  "Build the oneof payload for Zoom."
+  [builder [field-key value]]
+  (case field-key
+    :set-value (.setSetValue builder (build-set-value value))
+    :move (.setMove builder (build-move value))
+    :halt (.setHalt builder (build-halt value))
+    :set-zoom-table-value (.setSetZoomTableValue builder (build-set-zoom-table-value value))
+    :next-zoom-table-pos (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
+    :prev-zoom-table-pos (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
+    :offset (.setOffset builder (build-offset value))
+    :reset-zoom (.setResetZoom builder (build-reset-zoom value))
+    :save-to-table (.setSaveToTable builder (build-save-to-table value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-zoom-payload
+  "Parse the oneof payload from Zoom."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Zoom proto]
+  (cond
+    (.hasSetValue proto) {:set-value (parse-set-value (.getSetValue proto))}
+    (.hasMove proto) {:move (parse-move (.getMove proto))}
+    (.hasHalt proto) {:halt (parse-halt (.getHalt proto))}
+    (.hasSetZoomTableValue proto) {:set-zoom-table-value (parse-set-zoom-table-value (.getSetZoomTableValue proto))}
+    (.hasNextZoomTablePos proto) {:next-zoom-table-pos (parse-next-zoom-table-pos (.getNextZoomTablePos proto))}
+    (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos (parse-prev-zoom-table-pos (.getPrevZoomTablePos proto))}
+    (.hasOffset proto) {:offset (parse-offset (.getOffset proto))}
+    (.hasResetZoom proto) {:reset-zoom (parse-reset-zoom (.getResetZoom proto))}
+    (.hasSaveToTable proto) {:save-to-table (parse-save-to-table (.getSaveToTable proto))}))
+
 (defn build-zoom
   "Build a Zoom protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Zoom/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Zoom/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-value :move :halt :set-zoom-table-value :next-zoom-table-pos :prev-zoom-table-pos :offset :reset-zoom :save-to-table} k)) m))]
+      (build-zoom-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-zoom
   "Parse a Zoom protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Zoom proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Zoom proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -2790,31 +1277,31 @@
 (defn build-next-zoom-table-pos
   "Build a NextZoomTablePos protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$NextZoomTablePos/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$NextZoomTablePos/newBuilder)]
 
     (.build builder)))
 
 (defn parse-next-zoom-table-pos
   "Parse a NextZoomTablePos protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$NextZoomTablePos proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$NextZoomTablePos proto]
   (cond-> {}))
 
 (defn build-prev-zoom-table-pos
   "Build a PrevZoomTablePos protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$PrevZoomTablePos/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$PrevZoomTablePos/newBuilder)]
 
     (.build builder)))
 
 (defn parse-prev-zoom-table-pos
   "Parse a PrevZoomTablePos protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$PrevZoomTablePos proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$PrevZoomTablePos proto]
   (cond-> {}))
 
 (defn build-set-iris
   "Build a SetIris protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetIris/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetIris/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2823,7 +1310,7 @@
 
 (defn parse-set-iris
   "Parse a SetIris protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetIris proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetIris proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2831,7 +1318,7 @@
 (defn build-set-infra-red-filter
   "Build a SetInfraRedFilter protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetInfraRedFilter/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetInfraRedFilter/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2840,7 +1327,7 @@
 
 (defn parse-set-infra-red-filter
   "Parse a SetInfraRedFilter protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetInfraRedFilter proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetInfraRedFilter proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2848,7 +1335,7 @@
 (defn build-set-auto-iris
   "Build a SetAutoIris protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetAutoIris/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetAutoIris/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2857,7 +1344,7 @@
 
 (defn parse-set-auto-iris
   "Parse a SetAutoIris protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetAutoIris proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetAutoIris proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2865,7 +1352,7 @@
 (defn build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SetZoomTableValue/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -2874,7 +1361,7 @@
 
 (defn parse-set-zoom-table-value
   "Parse a SetZoomTableValue protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SetZoomTableValue proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SetZoomTableValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -2882,121 +1369,197 @@
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Stop/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Stop proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Stop proto]
   (cond-> {}))
 
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Start/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Start proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Start proto]
   (cond-> {}))
 
 (defn build-photo
   "Build a Photo protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Photo/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Photo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-photo
   "Parse a Photo protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Photo proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Photo proto]
   (cond-> {}))
 
 (defn build-halt
   "Build a Halt protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$Halt/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Halt/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$Halt proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Halt proto]
   (cond-> {}))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$GetMeteo/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$GetMeteo proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$GetMeteo proto]
   (cond-> {}))
 
 (defn build-reset-zoom
   "Build a ResetZoom protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$ResetZoom/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$ResetZoom/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reset-zoom
   "Parse a ResetZoom protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$ResetZoom proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$ResetZoom proto]
   (cond-> {}))
 
 (defn build-reset-focus
   "Build a ResetFocus protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$ResetFocus/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$ResetFocus/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reset-focus
   "Parse a ResetFocus protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$ResetFocus proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$ResetFocus proto]
   (cond-> {}))
 
 (defn build-save-to-table
   "Build a SaveToTable protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SaveToTable/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SaveToTable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-save-to-table
   "Parse a SaveToTable protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SaveToTable proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SaveToTable proto]
   (cond-> {}))
 
 (defn build-save-to-table-focus
   "Build a SaveToTableFocus protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamera.DayCamera$SaveToTableFocus/newBuilder)]
+  (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SaveToTableFocus/newBuilder)]
 
     (.build builder)))
 
 (defn parse-save-to-table-focus
   "Parse a SaveToTableFocus protobuf message to a map."
-  [^cmd.DayCamera.DayCamera$SaveToTableFocus proto]
+  [^cmd.DayCamera.JonSharedCmdDayCamera$SaveToTableFocus proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :zoom (.setZoom builder (build-zoom value))
+    :set-agc (.setSetAgc builder (build-set-agc value))
+    :set-filter (.setSetFilter builder (build-set-filters value))
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :photo (.setPhoto builder (build-photo value))
+    :zoom-in (.setZoomIn builder (build-zoom-in value))
+    :zoom-out (.setZoomOut builder (build-zoom-out value))
+    :zoom-stop (.setZoomStop builder (build-zoom-stop value))
+    :focus-in (.setFocusIn builder (build-focus-in value))
+    :focus-out (.setFocusOut builder (build-focus-out value))
+    :focus-stop (.setFocusStop builder (build-focus-stop value))
+    :calibrate (.setCalibrate builder (build-calibrate value))
+    :set-dde-level (.setSetDdeLevel builder (build-set-dde-level value))
+    :enable-dde (.setEnableDde builder (build-enable-dde value))
+    :disable-dde (.setDisableDde builder (build-disable-dde value))
+    :set-auto-focus (.setSetAutoFocus builder (build-set-auto-focus value))
+    :focus-step-plus (.setFocusStepPlus builder (build-focus-step-plus value))
+    :focus-step-minus (.setFocusStepMinus builder (build-focus-step-minus value))
+    :set-fx-mode (.setSetFxMode builder (build-set-fx-mode value))
+    :next-fx-mode (.setNextFxMode builder (build-next-fx-mode value))
+    :prev-fx-mode (.setPrevFxMode builder (build-prev-fx-mode value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    :shift-dde (.setShiftDde builder (build-shift-dde value))
+    :refresh-fx-mode (.setRefreshFxMode builder (build-refresh-fx-mode value))
+    :reset-zoom (.setResetZoom builder (build-reset-zoom value))
+    :save-to-table (.setSaveToTable builder (build-save-to-table value))
+    :set-calib-mode (.setSetCalibMode builder (build-set-calib-mode value))
+    :set-digital-zoom-level (.setSetDigitalZoomLevel builder (build-set-digital-zoom-level value))
+    :set-clahe-level (.setSetClaheLevel builder (build-set-clahe-level value))
+    :shift-clahe-level (.setShiftClaheLevel builder (build-shift-clahe-level value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
+  (cond
+    (.hasZoom proto) {:zoom (parse-zoom (.getZoom proto))}
+    (.hasSetAgc proto) {:set-agc (parse-set-agc (.getSetAgc proto))}
+    (.hasSetFilter proto) {:set-filter (parse-set-filters (.getSetFilter proto))}
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasPhoto proto) {:photo (parse-photo (.getPhoto proto))}
+    (.hasZoomIn proto) {:zoom-in (parse-zoom-in (.getZoomIn proto))}
+    (.hasZoomOut proto) {:zoom-out (parse-zoom-out (.getZoomOut proto))}
+    (.hasZoomStop proto) {:zoom-stop (parse-zoom-stop (.getZoomStop proto))}
+    (.hasFocusIn proto) {:focus-in (parse-focus-in (.getFocusIn proto))}
+    (.hasFocusOut proto) {:focus-out (parse-focus-out (.getFocusOut proto))}
+    (.hasFocusStop proto) {:focus-stop (parse-focus-stop (.getFocusStop proto))}
+    (.hasCalibrate proto) {:calibrate (parse-calibrate (.getCalibrate proto))}
+    (.hasSetDdeLevel proto) {:set-dde-level (parse-set-dde-level (.getSetDdeLevel proto))}
+    (.hasEnableDde proto) {:enable-dde (parse-enable-dde (.getEnableDde proto))}
+    (.hasDisableDde proto) {:disable-dde (parse-disable-dde (.getDisableDde proto))}
+    (.hasSetAutoFocus proto) {:set-auto-focus (parse-set-auto-focus (.getSetAutoFocus proto))}
+    (.hasFocusStepPlus proto) {:focus-step-plus (parse-focus-step-plus (.getFocusStepPlus proto))}
+    (.hasFocusStepMinus proto) {:focus-step-minus (parse-focus-step-minus (.getFocusStepMinus proto))}
+    (.hasSetFxMode proto) {:set-fx-mode (parse-set-fx-mode (.getSetFxMode proto))}
+    (.hasNextFxMode proto) {:next-fx-mode (parse-next-fx-mode (.getNextFxMode proto))}
+    (.hasPrevFxMode proto) {:prev-fx-mode (parse-prev-fx-mode (.getPrevFxMode proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    (.hasShiftDde proto) {:shift-dde (parse-shift-dde (.getShiftDde proto))}
+    (.hasRefreshFxMode proto) {:refresh-fx-mode (parse-refresh-fx-mode (.getRefreshFxMode proto))}
+    (.hasResetZoom proto) {:reset-zoom (parse-reset-zoom (.getResetZoom proto))}
+    (.hasSaveToTable proto) {:save-to-table (parse-save-to-table (.getSaveToTable proto))}
+    (.hasSetCalibMode proto) {:set-calib-mode (parse-set-calib-mode (.getSetCalibMode proto))}
+    (.hasSetDigitalZoomLevel proto) {:set-digital-zoom-level (parse-set-digital-zoom-level (.getSetDigitalZoomLevel proto))}
+    (.hasSetClaheLevel proto) {:set-clahe-level (parse-set-clahe-level (.getSetClaheLevel proto))}
+    (.hasShiftClaheLevel proto) {:shift-clahe-level (parse-shift-clahe-level (.getShiftClaheLevel proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Root/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:zoom :set-agc :set-filter :start :stop :photo :zoom-in :zoom-out :zoom-stop :focus-in :focus-out :focus-stop :calibrate :set-dde-level :enable-dde :disable-dde :set-auto-focus :focus-step-plus :focus-step-minus :set-fx-mode :next-fx-mode :prev-fx-mode :get-meteo :shift-dde :refresh-fx-mode :reset-zoom :save-to-table :set-calib-mode :set-digital-zoom-level :set-clahe-level :shift-clahe-level} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Root proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -3005,7 +1568,7 @@
 (defn build-set-fx-mode
   "Build a SetFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetFxMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
       (.setMode builder (get m :mode)))
@@ -3014,7 +1577,7 @@
 
 (defn parse-set-fx-mode
   "Parse a SetFxMode protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetFxMode proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
   (cond-> {}
     ;; Regular fields
     (.hasMode proto) (assoc :mode (.getMode proto))))
@@ -3022,7 +1585,7 @@
 (defn build-set-clahe-level
   "Build a SetClaheLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetClaheLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3031,7 +1594,7 @@
 
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetClaheLevel proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3039,7 +1602,7 @@
 (defn build-shift-clahe-level
   "Build a ShiftClaheLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ShiftClaheLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3048,7 +1611,7 @@
 
 (defn parse-shift-clahe-level
   "Parse a ShiftClaheLevel protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ShiftClaheLevel proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3056,67 +1619,67 @@
 (defn build-next-fx-mode
   "Build a NextFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$NextFxMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-next-fx-mode
   "Parse a NextFxMode protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$NextFxMode proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode proto]
   (cond-> {}))
 
 (defn build-prev-fx-mode
   "Build a PrevFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$PrevFxMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-prev-fx-mode
   "Parse a PrevFxMode protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$PrevFxMode proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode proto]
   (cond-> {}))
 
 (defn build-refresh-fx-mode
   "Build a RefreshFxMode protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$RefreshFxMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-refresh-fx-mode
   "Parse a RefreshFxMode protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$RefreshFxMode proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode proto]
   (cond-> {}))
 
 (defn build-enable-dde
   "Build a EnableDDE protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$EnableDDE/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enable-dde
   "Parse a EnableDDE protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$EnableDDE proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE proto]
   (cond-> {}))
 
 (defn build-disable-dde
   "Build a DisableDDE protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$DisableDDE/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE/newBuilder)]
 
     (.build builder)))
 
 (defn parse-disable-dde
   "Parse a DisableDDE protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$DisableDDE proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE proto]
   (cond-> {}))
 
 (defn build-set-value
   "Build a SetValue protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetValue/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3125,7 +1688,7 @@
 
 (defn parse-set-value
   "Parse a SetValue protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetValue proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3133,7 +1696,7 @@
 (defn build-set-dde-level
   "Build a SetDDELevel protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetDDELevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3142,7 +1705,7 @@
 
 (defn parse-set-dde-level
   "Parse a SetDDELevel protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetDDELevel proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3150,7 +1713,7 @@
 (defn build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetDigitalZoomLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3159,7 +1722,7 @@
 
 (defn parse-set-digital-zoom-level
   "Parse a SetDigitalZoomLevel protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetDigitalZoomLevel proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3167,7 +1730,7 @@
 (defn build-shift-dde
   "Build a ShiftDDE protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ShiftDDE/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3176,7 +1739,7 @@
 
 (defn parse-shift-dde
   "Parse a ShiftDDE protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ShiftDDE proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3184,121 +1747,141 @@
 (defn build-zoom-in
   "Build a ZoomIn protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ZoomIn/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn/newBuilder)]
 
     (.build builder)))
 
 (defn parse-zoom-in
   "Parse a ZoomIn protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ZoomIn proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn proto]
   (cond-> {}))
 
 (defn build-zoom-out
   "Build a ZoomOut protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ZoomOut/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut/newBuilder)]
 
     (.build builder)))
 
 (defn parse-zoom-out
   "Parse a ZoomOut protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ZoomOut proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut proto]
   (cond-> {}))
 
 (defn build-zoom-stop
   "Build a ZoomStop protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ZoomStop/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-zoom-stop
   "Parse a ZoomStop protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ZoomStop proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop proto]
   (cond-> {}))
 
 (defn build-focus-in
   "Build a FocusIn protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$FocusIn/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn/newBuilder)]
 
     (.build builder)))
 
 (defn parse-focus-in
   "Parse a FocusIn protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$FocusIn proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn proto]
   (cond-> {}))
 
 (defn build-focus-out
   "Build a FocusOut protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$FocusOut/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut/newBuilder)]
 
     (.build builder)))
 
 (defn parse-focus-out
   "Parse a FocusOut protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$FocusOut proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut proto]
   (cond-> {}))
 
 (defn build-focus-stop
   "Build a FocusStop protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$FocusStop/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-focus-stop
   "Parse a FocusStop protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$FocusStop proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop proto]
   (cond-> {}))
 
 (defn build-focus-step-plus
   "Build a FocusStepPlus protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$FocusStepPlus/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
 
     (.build builder)))
 
 (defn parse-focus-step-plus
   "Parse a FocusStepPlus protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$FocusStepPlus proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus proto]
   (cond-> {}))
 
 (defn build-focus-step-minus
   "Build a FocusStepMinus protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$FocusStepMinus/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
 
     (.build builder)))
 
 (defn parse-focus-step-minus
   "Parse a FocusStepMinus protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$FocusStepMinus proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus proto]
   (cond-> {}))
 
 (defn build-calibrate
   "Build a Calibrate protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Calibrate/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate/newBuilder)]
 
     (.build builder)))
 
 (defn parse-calibrate
   "Parse a Calibrate protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Calibrate proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate proto]
   (cond-> {}))
+
+(defn build-zoom-payload
+  "Build the oneof payload for Zoom."
+  [builder [field-key value]]
+  (case field-key
+    :set-zoom-table-value (.setSetZoomTableValue builder (build-set-zoom-table-value value))
+    :next-zoom-table-pos (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
+    :prev-zoom-table-pos (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-zoom-payload
+  "Parse the oneof payload from Zoom."
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
+  (cond
+    (.hasSetZoomTableValue proto) {:set-zoom-table-value (parse-set-zoom-table-value (.getSetZoomTableValue proto))}
+    (.hasNextZoomTablePos proto) {:next-zoom-table-pos (parse-next-zoom-table-pos (.getNextZoomTablePos proto))}
+    (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos (parse-prev-zoom-table-pos (.getPrevZoomTablePos proto))}))
 
 (defn build-zoom
   "Build a Zoom protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Zoom/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-zoom-table-value :next-zoom-table-pos :prev-zoom-table-pos} k)) m))]
+      (build-zoom-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-zoom
   "Parse a Zoom protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Zoom proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -3307,43 +1890,43 @@
 (defn build-next-zoom-table-pos
   "Build a NextZoomTablePos protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$NextZoomTablePos/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
 
     (.build builder)))
 
 (defn parse-next-zoom-table-pos
   "Parse a NextZoomTablePos protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$NextZoomTablePos proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos proto]
   (cond-> {}))
 
 (defn build-prev-zoom-table-pos
   "Build a PrevZoomTablePos protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$PrevZoomTablePos/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
 
     (.build builder)))
 
 (defn parse-prev-zoom-table-pos
   "Parse a PrevZoomTablePos protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$PrevZoomTablePos proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos proto]
   (cond-> {}))
 
 (defn build-set-calib-mode
   "Build a SetCalibMode protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetCalibMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-set-calib-mode
   "Parse a SetCalibMode protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetCalibMode proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode proto]
   (cond-> {}))
 
 (defn build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetZoomTableValue/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3352,7 +1935,7 @@
 
 (defn parse-set-zoom-table-value
   "Parse a SetZoomTableValue protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetZoomTableValue proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3360,7 +1943,7 @@
 (defn build-set-agc
   "Build a SetAGC protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetAGC/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3369,7 +1952,7 @@
 
 (defn parse-set-agc
   "Parse a SetAGC protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetAGC proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3377,7 +1960,7 @@
 (defn build-set-filters
   "Build a SetFilters protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetFilters/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3386,7 +1969,7 @@
 
 (defn parse-set-filters
   "Parse a SetFilters protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetFilters proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3394,67 +1977,67 @@
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Start/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Start proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Stop/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Stop proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Stop proto]
   (cond-> {}))
 
 (defn build-halt
   "Build a Halt protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Halt/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Halt/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Halt proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Halt proto]
   (cond-> {}))
 
 (defn build-photo
   "Build a Photo protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$Photo/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Photo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-photo
   "Parse a Photo protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$Photo proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Photo proto]
   (cond-> {}))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$GetMeteo/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$GetMeteo proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo proto]
   (cond-> {}))
 
 (defn build-set-auto-focus
   "Build a SetAutoFocus protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SetAutoFocus/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3463,7 +2046,7 @@
 
 (defn parse-set-auto-focus
   "Parse a SetAutoFocus protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SetAutoFocus proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3471,37 +2054,99 @@
 (defn build-reset-zoom
   "Build a ResetZoom protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$ResetZoom/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reset-zoom
   "Parse a ResetZoom protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$ResetZoom proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom proto]
   (cond-> {}))
 
 (defn build-save-to-table
   "Build a SaveToTable protobuf message from a map."
   [m]
-  (let [builder (cmd.HeatCamera.HeatCamera$SaveToTable/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-save-to-table
   "Parse a SaveToTable protobuf message to a map."
-  [^cmd.HeatCamera.HeatCamera$SaveToTable proto]
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :axis (.setAxis builder (build-axis value))
+    :set-platform-azimuth (.setSetPlatformAzimuth builder (build-set-platform-azimuth value))
+    :set-platform-elevation (.setSetPlatformElevation builder (build-set-platform-elevation value))
+    :set-platform-bank (.setSetPlatformBank builder (build-set-platform-bank value))
+    :halt (.setHalt builder (build-halt value))
+    :set-use-rotary-as-compass (.setSetUseRotaryAsCompass builder (build-set-use-rotary-as-compass value))
+    :rotate-to-gps (.setRotateToGps builder (build-rotate-to-gps value))
+    :set-origin-gps (.setSetOriginGps builder (build-set-origin-gps value))
+    :set-mode (.setSetMode builder (build-set-mode value))
+    :rotate-to-ndc (.setRotateToNdc builder (build-rotate-to-ndc value))
+    :scan-start (.setScanStart builder (build-scan-start value))
+    :scan-stop (.setScanStop builder (build-scan-stop value))
+    :scan-pause (.setScanPause builder (build-scan-pause value))
+    :scan-unpause (.setScanUnpause builder (build-scan-unpause value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    :scan-prev (.setScanPrev builder (build-scan-prev value))
+    :scan-next (.setScanNext builder (build-scan-next value))
+    :scan-refresh-node-list (.setScanRefreshNodeList builder (build-scan-refresh-node-list value))
+    :scan-select-node (.setScanSelectNode builder (build-scan-select-node value))
+    :scan-delete-node (.setScanDeleteNode builder (build-scan-delete-node value))
+    :scan-update-node (.setScanUpdateNode builder (build-scan-update-node value))
+    :scan-add-node (.setScanAddNode builder (build-scan-add-node value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
+  (cond
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasAxis proto) {:axis (parse-axis (.getAxis proto))}
+    (.hasSetPlatformAzimuth proto) {:set-platform-azimuth (parse-set-platform-azimuth (.getSetPlatformAzimuth proto))}
+    (.hasSetPlatformElevation proto) {:set-platform-elevation (parse-set-platform-elevation (.getSetPlatformElevation proto))}
+    (.hasSetPlatformBank proto) {:set-platform-bank (parse-set-platform-bank (.getSetPlatformBank proto))}
+    (.hasHalt proto) {:halt (parse-halt (.getHalt proto))}
+    (.hasSetUseRotaryAsCompass proto) {:set-use-rotary-as-compass (parse-set-use-rotary-as-compass (.getSetUseRotaryAsCompass proto))}
+    (.hasRotateToGps proto) {:rotate-to-gps (parse-rotate-to-gps (.getRotateToGps proto))}
+    (.hasSetOriginGps proto) {:set-origin-gps (parse-set-origin-gps (.getSetOriginGps proto))}
+    (.hasSetMode proto) {:set-mode (parse-set-mode (.getSetMode proto))}
+    (.hasRotateToNdc proto) {:rotate-to-ndc (parse-rotate-to-ndc (.getRotateToNdc proto))}
+    (.hasScanStart proto) {:scan-start (parse-scan-start (.getScanStart proto))}
+    (.hasScanStop proto) {:scan-stop (parse-scan-stop (.getScanStop proto))}
+    (.hasScanPause proto) {:scan-pause (parse-scan-pause (.getScanPause proto))}
+    (.hasScanUnpause proto) {:scan-unpause (parse-scan-unpause (.getScanUnpause proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    (.hasScanPrev proto) {:scan-prev (parse-scan-prev (.getScanPrev proto))}
+    (.hasScanNext proto) {:scan-next (parse-scan-next (.getScanNext proto))}
+    (.hasScanRefreshNodeList proto) {:scan-refresh-node-list (parse-scan-refresh-node-list (.getScanRefreshNodeList proto))}
+    (.hasScanSelectNode proto) {:scan-select-node (parse-scan-select-node (.getScanSelectNode proto))}
+    (.hasScanDeleteNode proto) {:scan-delete-node (parse-scan-delete-node (.getScanDeleteNode proto))}
+    (.hasScanUpdateNode proto) {:scan-update-node (parse-scan-update-node (.getScanUpdateNode proto))}
+    (.hasScanAddNode proto) {:scan-add-node (parse-scan-add-node (.getScanAddNode proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Root/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start :stop :axis :set-platform-azimuth :set-platform-elevation :set-platform-bank :halt :set-use-rotary-as-compass :rotate-to-gps :set-origin-gps :set-mode :rotate-to-ndc :scan-start :scan-stop :scan-pause :scan-unpause :get-meteo :scan-prev :scan-next :scan-refresh-node-list :scan-select-node :scan-delete-node :scan-update-node :scan-add-node} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Root proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -3510,7 +2155,7 @@
 (defn build-axis
   "Build a Axis protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Axis/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Axis/newBuilder)]
     ;; Set regular fields
     (when (contains? m :azimuth)
       (.setAzimuth builder (get m :azimuth)))
@@ -3521,7 +2166,7 @@
 
 (defn parse-axis
   "Parse a Axis protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Axis proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Axis proto]
   (cond-> {}
     ;; Regular fields
     (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
@@ -3530,7 +2175,7 @@
 (defn build-set-mode
   "Build a SetMode protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetMode/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
       (.setMode builder (get m :mode)))
@@ -3539,7 +2184,7 @@
 
 (defn parse-set-mode
   "Parse a SetMode protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetMode proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetMode proto]
   (cond-> {}
     ;; Regular fields
     (.hasMode proto) (assoc :mode (.getMode proto))))
@@ -3547,7 +2192,7 @@
 (defn build-set-azimuth-value
   "Build a SetAzimuthValue protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetAzimuthValue/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3558,7 +2203,7 @@
 
 (defn parse-set-azimuth-value
   "Parse a SetAzimuthValue protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetAzimuthValue proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))
@@ -3567,7 +2212,7 @@
 (defn build-rotate-azimuth-to
   "Build a RotateAzimuthTo protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthTo/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
       (.setTargetValue builder (get m :target-value)))
@@ -3580,7 +2225,7 @@
 
 (defn parse-rotate-azimuth-to
   "Parse a RotateAzimuthTo protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthTo proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo proto]
   (cond-> {}
     ;; Regular fields
     (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
@@ -3590,7 +2235,7 @@
 (defn build-rotate-azimuth
   "Build a RotateAzimuth protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuth/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
@@ -3601,7 +2246,7 @@
 
 (defn parse-rotate-azimuth
   "Parse a RotateAzimuth protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuth proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth proto]
   (cond-> {}
     ;; Regular fields
     (.hasSpeed proto) (assoc :speed (.getSpeed proto))
@@ -3610,7 +2255,7 @@
 (defn build-rotate-elevation
   "Build a RotateElevation protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevation/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :speed)
       (.setSpeed builder (get m :speed)))
@@ -3621,7 +2266,7 @@
 
 (defn parse-rotate-elevation
   "Parse a RotateElevation protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateElevation proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation proto]
   (cond-> {}
     ;; Regular fields
     (.hasSpeed proto) (assoc :speed (.getSpeed proto))
@@ -3630,7 +2275,7 @@
 (defn build-set-elevation-value
   "Build a SetElevationValue protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetElevationValue/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3639,7 +2284,7 @@
 
 (defn parse-set-elevation-value
   "Parse a SetElevationValue protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetElevationValue proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3647,7 +2292,7 @@
 (defn build-rotate-elevation-to
   "Build a RotateElevationTo protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationTo/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
       (.setTargetValue builder (get m :target-value)))
@@ -3658,7 +2303,7 @@
 
 (defn parse-rotate-elevation-to
   "Parse a RotateElevationTo protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationTo proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo proto]
   (cond-> {}
     ;; Regular fields
     (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
@@ -3667,7 +2312,7 @@
 (defn build-rotate-elevation-relative
   "Build a RotateElevationRelative protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelative/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3680,7 +2325,7 @@
 
 (defn parse-rotate-elevation-relative
   "Parse a RotateElevationRelative protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelative proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))
@@ -3690,7 +2335,7 @@
 (defn build-rotate-elevation-relative-set
   "Build a RotateElevationRelativeSet protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelativeSet/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3701,7 +2346,7 @@
 
 (defn parse-rotate-elevation-relative-set
   "Parse a RotateElevationRelativeSet protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelativeSet proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))
@@ -3710,7 +2355,7 @@
 (defn build-rotate-azimuth-relative
   "Build a RotateAzimuthRelative protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelative/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3723,7 +2368,7 @@
 
 (defn parse-rotate-azimuth-relative
   "Parse a RotateAzimuthRelative protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelative proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))
@@ -3733,7 +2378,7 @@
 (defn build-rotate-azimuth-relative-set
   "Build a RotateAzimuthRelativeSet protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelativeSet/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3744,7 +2389,7 @@
 
 (defn parse-rotate-azimuth-relative-set
   "Parse a RotateAzimuthRelativeSet protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelativeSet proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))
@@ -3753,7 +2398,7 @@
 (defn build-set-platform-azimuth
   "Build a SetPlatformAzimuth protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformAzimuth/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3762,7 +2407,7 @@
 
 (defn parse-set-platform-azimuth
   "Parse a SetPlatformAzimuth protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformAzimuth proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3770,7 +2415,7 @@
 (defn build-set-platform-elevation
   "Build a SetPlatformElevation protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformElevation/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3779,7 +2424,7 @@
 
 (defn parse-set-platform-elevation
   "Parse a SetPlatformElevation protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformElevation proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3787,7 +2432,7 @@
 (defn build-set-platform-bank
   "Build a SetPlatformBank protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformBank/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder (get m :value)))
@@ -3796,7 +2441,7 @@
 
 (defn parse-set-platform-bank
   "Parse a SetPlatformBank protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformBank proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank proto]
   (cond-> {}
     ;; Regular fields
     (.hasValue proto) (assoc :value (.getValue proto))))
@@ -3804,25 +2449,51 @@
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$GetMeteo/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$GetMeteo proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo proto]
   (cond-> {}))
+
+(defn build-azimuth-payload
+  "Build the oneof payload for Azimuth."
+  [builder [field-key value]]
+  (case field-key
+    :set-value (.setSetValue builder (build-set-azimuth-value value))
+    :rotate-to (.setRotateTo builder (build-rotate-azimuth-to value))
+    :rotate (.setRotate builder (build-rotate-azimuth value))
+    :relative (.setRelative builder (build-rotate-azimuth-relative value))
+    :relative-set (.setRelativeSet builder (build-rotate-azimuth-relative-set value))
+    :halt (.setHalt builder (build-halt-azimuth value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-azimuth-payload
+  "Parse the oneof payload from Azimuth."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
+  (cond
+    (.hasSetValue proto) {:set-value (parse-set-azimuth-value (.getSetValue proto))}
+    (.hasRotateTo proto) {:rotate-to (parse-rotate-azimuth-to (.getRotateTo proto))}
+    (.hasRotate proto) {:rotate (parse-rotate-azimuth (.getRotate proto))}
+    (.hasRelative proto) {:relative (parse-rotate-azimuth-relative (.getRelative proto))}
+    (.hasRelativeSet proto) {:relative-set (parse-rotate-azimuth-relative-set (.getRelativeSet proto))}
+    (.hasHalt proto) {:halt (parse-halt-azimuth (.getHalt proto))}))
 
 (defn build-azimuth
   "Build a Azimuth protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Azimuth/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-value :rotate-to :rotate :relative :relative-set :halt} k)) m))]
+      (build-azimuth-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-azimuth
   "Parse a Azimuth protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Azimuth proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -3831,151 +2502,151 @@
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Start/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Start proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Stop/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Stop proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Stop proto]
   (cond-> {}))
 
 (defn build-halt
   "Build a Halt protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Halt/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Halt/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Halt proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Halt proto]
   (cond-> {}))
 
 (defn build-scan-start
   "Build a ScanStart protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanStart/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-start
   "Parse a ScanStart protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanStart proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart proto]
   (cond-> {}))
 
 (defn build-scan-stop
   "Build a ScanStop protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanStop/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-stop
   "Parse a ScanStop protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanStop proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop proto]
   (cond-> {}))
 
 (defn build-scan-pause
   "Build a ScanPause protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanPause/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-pause
   "Parse a ScanPause protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanPause proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause proto]
   (cond-> {}))
 
 (defn build-scan-unpause
   "Build a ScanUnpause protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanUnpause/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-unpause
   "Parse a ScanUnpause protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanUnpause proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause proto]
   (cond-> {}))
 
 (defn build-halt-azimuth
   "Build a HaltAzimuth protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$HaltAzimuth/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt-azimuth
   "Parse a HaltAzimuth protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$HaltAzimuth proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth proto]
   (cond-> {}))
 
 (defn build-halt-elevation
   "Build a HaltElevation protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$HaltElevation/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation/newBuilder)]
 
     (.build builder)))
 
 (defn parse-halt-elevation
   "Parse a HaltElevation protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$HaltElevation proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation proto]
   (cond-> {}))
 
 (defn build-scan-prev
   "Build a ScanPrev protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanPrev/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-prev
   "Parse a ScanPrev protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanPrev proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev proto]
   (cond-> {}))
 
 (defn build-scan-next
   "Build a ScanNext protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanNext/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-next
   "Parse a ScanNext protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanNext proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext proto]
   (cond-> {}))
 
 (defn build-scan-refresh-node-list
   "Build a ScanRefreshNodeList protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanRefreshNodeList/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList/newBuilder)]
 
     (.build builder)))
 
 (defn parse-scan-refresh-node-list
   "Parse a ScanRefreshNodeList protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanRefreshNodeList proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList proto]
   (cond-> {}))
 
 (defn build-scan-select-node
   "Build a ScanSelectNode protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanSelectNode/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
       (.setIndex builder (get m :index)))
@@ -3984,7 +2655,7 @@
 
 (defn parse-scan-select-node
   "Parse a ScanSelectNode protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanSelectNode proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode proto]
   (cond-> {}
     ;; Regular fields
     (.hasIndex proto) (assoc :index (.getIndex proto))))
@@ -3992,7 +2663,7 @@
 (defn build-scan-delete-node
   "Build a ScanDeleteNode protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanDeleteNode/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
       (.setIndex builder (get m :index)))
@@ -4001,7 +2672,7 @@
 
 (defn parse-scan-delete-node
   "Parse a ScanDeleteNode protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanDeleteNode proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode proto]
   (cond-> {}
     ;; Regular fields
     (.hasIndex proto) (assoc :index (.getIndex proto))))
@@ -4009,7 +2680,7 @@
 (defn build-scan-update-node
   "Build a ScanUpdateNode protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanUpdateNode/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
       (.setIndex builder (get m :index)))
@@ -4030,7 +2701,7 @@
 
 (defn parse-scan-update-node
   "Parse a ScanUpdateNode protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanUpdateNode proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode proto]
   (cond-> {}
     ;; Regular fields
     (.hasIndex proto) (assoc :index (.getIndex proto))
@@ -4044,7 +2715,7 @@
 (defn build-scan-add-node
   "Build a ScanAddNode protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanAddNode/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
       (.setIndex builder (get m :index)))
@@ -4065,7 +2736,7 @@
 
 (defn parse-scan-add-node
   "Parse a ScanAddNode protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$ScanAddNode proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode proto]
   (cond-> {}
     ;; Regular fields
     (.hasIndex proto) (assoc :index (.getIndex proto))
@@ -4076,16 +2747,42 @@
     (.hasLinger proto) (assoc :linger (.getLinger proto))
     (.hasSpeed proto) (assoc :speed (.getSpeed proto))))
 
+(defn build-elevation-payload
+  "Build the oneof payload for Elevation."
+  [builder [field-key value]]
+  (case field-key
+    :set-value (.setSetValue builder (build-set-elevation-value value))
+    :rotate-to (.setRotateTo builder (build-rotate-elevation-to value))
+    :rotate (.setRotate builder (build-rotate-elevation value))
+    :relative (.setRelative builder (build-rotate-elevation-relative value))
+    :relative-set (.setRelativeSet builder (build-rotate-elevation-relative-set value))
+    :halt (.setHalt builder (build-halt-elevation value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-elevation-payload
+  "Parse the oneof payload from Elevation."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
+  (cond
+    (.hasSetValue proto) {:set-value (parse-set-elevation-value (.getSetValue proto))}
+    (.hasRotateTo proto) {:rotate-to (parse-rotate-elevation-to (.getRotateTo proto))}
+    (.hasRotate proto) {:rotate (parse-rotate-elevation (.getRotate proto))}
+    (.hasRelative proto) {:relative (parse-rotate-elevation-relative (.getRelative proto))}
+    (.hasRelativeSet proto) {:relative-set (parse-rotate-elevation-relative-set (.getRelativeSet proto))}
+    (.hasHalt proto) {:halt (parse-halt-elevation (.getHalt proto))}))
+
 (defn build-elevation
   "Build a Elevation protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$Elevation/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Elevation/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-value :rotate-to :rotate :relative :relative-set :halt} k)) m))]
+      (build-elevation-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-elevation
   "Parse a Elevation protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$Elevation proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4094,7 +2791,7 @@
 (defn build-set-use-rotary-as-compass
   "Build a setUseRotaryAsCompass protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$setUseRotaryAsCompass/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
       (.setFlag builder (get m :flag)))
@@ -4103,7 +2800,7 @@
 
 (defn parse-set-use-rotary-as-compass
   "Parse a setUseRotaryAsCompass protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$setUseRotaryAsCompass proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass proto]
   (cond-> {}
     ;; Regular fields
     (.hasFlag proto) (assoc :flag (.getFlag proto))))
@@ -4111,7 +2808,7 @@
 (defn build-rotate-to-gps
   "Build a RotateToGPS protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateToGPS/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
       (.setLatitude builder (get m :latitude)))
@@ -4124,7 +2821,7 @@
 
 (defn parse-rotate-to-gps
   "Parse a RotateToGPS protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateToGPS proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS proto]
   (cond-> {}
     ;; Regular fields
     (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
@@ -4134,7 +2831,7 @@
 (defn build-set-origin-gps
   "Build a SetOriginGPS protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetOriginGPS/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
       (.setLatitude builder (get m :latitude)))
@@ -4147,7 +2844,7 @@
 
 (defn parse-set-origin-gps
   "Parse a SetOriginGPS protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$SetOriginGPS proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS proto]
   (cond-> {}
     ;; Regular fields
     (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
@@ -4157,7 +2854,7 @@
 (defn build-rotate-to-ndc
   "Build a RotateToNDC protobuf message from a map."
   [m]
-  (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateToNDC/newBuilder)]
+  (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
       (.setChannel builder (get m :channel)))
@@ -4170,23 +2867,53 @@
 
 (defn parse-rotate-to-ndc
   "Parse a RotateToNDC protobuf message to a map."
-  [^cmd.RotaryPlatform.RotaryPlatform$RotateToNDC proto]
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC proto]
   (cond-> {}
     ;; Regular fields
     (.hasChannel proto) (assoc :channel (.getChannel proto))
     (.hasX proto) (assoc :x (.getX proto))
     (.hasY proto) (assoc :y (.getY proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :show-default-screen (.setShowDefaultScreen builder (build-show-default-screen value))
+    :show-lrf-measure-screen (.setShowLrfMeasureScreen builder (build-show-lrf-measure-screen value))
+    :show-lrf-result-screen (.setShowLrfResultScreen builder (build-show-lrf-result-screen value))
+    :show-lrf-result-simplified-screen (.setShowLrfResultSimplifiedScreen builder (build-show-lrf-result-simplified-screen value))
+    :enable-heat-osd (.setEnableHeatOsd builder (build-enable-heat-osd value))
+    :disable-heat-osd (.setDisableHeatOsd builder (build-disable-heat-osd value))
+    :enable-day-osd (.setEnableDayOsd builder (build-enable-day-osd value))
+    :disable-day-osd (.setDisableDayOsd builder (build-disable-day-osd value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.OSD.JonSharedCmdOsd$Root proto]
+  (cond
+    (.hasShowDefaultScreen proto) {:show-default-screen (parse-show-default-screen (.getShowDefaultScreen proto))}
+    (.hasShowLrfMeasureScreen proto) {:show-lrf-measure-screen (parse-show-lrf-measure-screen (.getShowLrfMeasureScreen proto))}
+    (.hasShowLrfResultScreen proto) {:show-lrf-result-screen (parse-show-lrf-result-screen (.getShowLrfResultScreen proto))}
+    (.hasShowLrfResultSimplifiedScreen proto) {:show-lrf-result-simplified-screen (parse-show-lrf-result-simplified-screen (.getShowLrfResultSimplifiedScreen proto))}
+    (.hasEnableHeatOsd proto) {:enable-heat-osd (parse-enable-heat-osd (.getEnableHeatOsd proto))}
+    (.hasDisableHeatOsd proto) {:disable-heat-osd (parse-disable-heat-osd (.getDisableHeatOsd proto))}
+    (.hasEnableDayOsd proto) {:enable-day-osd (parse-enable-day-osd (.getEnableDayOsd proto))}
+    (.hasDisableDayOsd proto) {:disable-day-osd (parse-disable-day-osd (.getDisableDayOsd proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$Root/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:show-default-screen :show-lrf-measure-screen :show-lrf-result-screen :show-lrf-result-simplified-screen :enable-heat-osd :disable-heat-osd :enable-day-osd :disable-day-osd} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.OSD.Osd$Root proto]
+  [^cmd.OSD.JonSharedCmdOsd$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4195,124 +2922,164 @@
 (defn build-show-default-screen
   "Build a ShowDefaultScreen protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$ShowDefaultScreen/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen/newBuilder)]
 
     (.build builder)))
 
 (defn parse-show-default-screen
   "Parse a ShowDefaultScreen protobuf message to a map."
-  [^cmd.OSD.Osd$ShowDefaultScreen proto]
+  [^cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen proto]
   (cond-> {}))
 
 (defn build-show-lrf-measure-screen
   "Build a ShowLRFMeasureScreen protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$ShowLRFMeasureScreen/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen/newBuilder)]
 
     (.build builder)))
 
 (defn parse-show-lrf-measure-screen
   "Parse a ShowLRFMeasureScreen protobuf message to a map."
-  [^cmd.OSD.Osd$ShowLRFMeasureScreen proto]
+  [^cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen proto]
   (cond-> {}))
 
 (defn build-show-lrf-result-screen
   "Build a ShowLRFResultScreen protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$ShowLRFResultScreen/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen/newBuilder)]
 
     (.build builder)))
 
 (defn parse-show-lrf-result-screen
   "Parse a ShowLRFResultScreen protobuf message to a map."
-  [^cmd.OSD.Osd$ShowLRFResultScreen proto]
+  [^cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen proto]
   (cond-> {}))
 
 (defn build-show-lrf-result-simplified-screen
   "Build a ShowLRFResultSimplifiedScreen protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$ShowLRFResultSimplifiedScreen/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen/newBuilder)]
 
     (.build builder)))
 
 (defn parse-show-lrf-result-simplified-screen
   "Parse a ShowLRFResultSimplifiedScreen protobuf message to a map."
-  [^cmd.OSD.Osd$ShowLRFResultSimplifiedScreen proto]
+  [^cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen proto]
   (cond-> {}))
 
 (defn build-enable-heat-osd
   "Build a EnableHeatOSD protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$EnableHeatOSD/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$EnableHeatOSD/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enable-heat-osd
   "Parse a EnableHeatOSD protobuf message to a map."
-  [^cmd.OSD.Osd$EnableHeatOSD proto]
+  [^cmd.OSD.JonSharedCmdOsd$EnableHeatOSD proto]
   (cond-> {}))
 
 (defn build-disable-heat-osd
   "Build a DisableHeatOSD protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$DisableHeatOSD/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$DisableHeatOSD/newBuilder)]
 
     (.build builder)))
 
 (defn parse-disable-heat-osd
   "Parse a DisableHeatOSD protobuf message to a map."
-  [^cmd.OSD.Osd$DisableHeatOSD proto]
+  [^cmd.OSD.JonSharedCmdOsd$DisableHeatOSD proto]
   (cond-> {}))
 
 (defn build-enable-day-osd
   "Build a EnableDayOSD protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$EnableDayOSD/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$EnableDayOSD/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enable-day-osd
   "Parse a EnableDayOSD protobuf message to a map."
-  [^cmd.OSD.Osd$EnableDayOSD proto]
+  [^cmd.OSD.JonSharedCmdOsd$EnableDayOSD proto]
   (cond-> {}))
 
 (defn build-disable-day-osd
   "Build a DisableDayOSD protobuf message from a map."
   [m]
-  (let [builder (cmd.OSD.Osd$DisableDayOSD/newBuilder)]
+  (let [builder (cmd.OSD.JonSharedCmdOsd$DisableDayOSD/newBuilder)]
 
     (.build builder)))
 
 (defn parse-disable-day-osd
   "Parse a DisableDayOSD protobuf message to a map."
-  [^cmd.OSD.Osd$DisableDayOSD proto]
+  [^cmd.OSD.JonSharedCmdOsd$DisableDayOSD proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :day (.setDay builder (build-offsets value))
+    :heat (.setHeat builder (build-offsets value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":channel"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
+  (cond
+    (.hasDay proto) {:day (parse-offsets (.getDay proto))}
+    (.hasHeat proto) {:heat (parse-offsets (.getHeat proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$Root/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Root/newBuilder)]
 
+;; Handle oneof: channel
+    (when-let [channel-field (first (filter (fn [[k v]] (#{:day :heat} k)) m))]
+      (build-root-payload builder channel-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$Root proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
   (cond-> {}
 
 ;; Oneof payload
     true (merge (parse-root-payload proto))))
 
+(defn build-offsets-payload
+  "Build the oneof payload for Offsets."
+  [builder [field-key value]]
+  (case field-key
+    :set (.setSet builder (build-set-offsets value))
+    :save (.setSave builder (build-save-offsets value))
+    :reset (.setReset builder (build-reset-offsets value))
+    :shift (.setShift builder (build-shift-offsets-by value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-offsets-payload
+  "Parse the oneof payload from Offsets."
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
+  (cond
+    (.hasSet proto) {:set (parse-set-offsets (.getSet proto))}
+    (.hasSave proto) {:save (parse-save-offsets (.getSave proto))}
+    (.hasReset proto) {:reset (parse-reset-offsets (.getReset proto))}
+    (.hasShift proto) {:shift (parse-shift-offsets-by (.getShift proto))}))
+
 (defn build-offsets
   "Build a Offsets protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$Offsets/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set :save :reset :shift} k)) m))]
+      (build-offsets-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-offsets
   "Parse a Offsets protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$Offsets proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4321,7 +3088,7 @@
 (defn build-set-offsets
   "Build a SetOffsets protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$SetOffsets/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets/newBuilder)]
     ;; Set regular fields
     (when (contains? m :x)
       (.setX builder (get m :x)))
@@ -4332,7 +3099,7 @@
 
 (defn parse-set-offsets
   "Parse a SetOffsets protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$SetOffsets proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets proto]
   (cond-> {}
     ;; Regular fields
     (.hasX proto) (assoc :x (.getX proto))
@@ -4341,7 +3108,7 @@
 (defn build-shift-offsets-by
   "Build a ShiftOffsetsBy protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$ShiftOffsetsBy/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy/newBuilder)]
     ;; Set regular fields
     (when (contains? m :x)
       (.setX builder (get m :x)))
@@ -4352,7 +3119,7 @@
 
 (defn parse-shift-offsets-by
   "Parse a ShiftOffsetsBy protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$ShiftOffsetsBy proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy proto]
   (cond-> {}
     ;; Regular fields
     (.hasX proto) (assoc :x (.getX proto))
@@ -4361,37 +3128,77 @@
 (defn build-reset-offsets
   "Build a ResetOffsets protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$ResetOffsets/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reset-offsets
   "Parse a ResetOffsets protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$ResetOffsets proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets proto]
   (cond-> {}))
 
 (defn build-save-offsets
   "Build a SaveOffsets protobuf message from a map."
   [m]
-  (let [builder (cmd.Lrf_calib.LrfCalib$SaveOffsets/newBuilder)]
+  (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets/newBuilder)]
 
     (.build builder)))
 
 (defn parse-save-offsets
   "Parse a SaveOffsets protobuf message to a map."
-  [^cmd.Lrf_calib.LrfCalib$SaveOffsets proto]
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :start-all (.setStartAll builder (build-start-a-ll value))
+    :stop-all (.setStopAll builder (build-stop-a-ll value))
+    :reboot (.setReboot builder (build-reboot value))
+    :power-off (.setPowerOff builder (build-power-off value))
+    :localization (.setLocalization builder (build-set-localization value))
+    :reset-configs (.setResetConfigs builder (build-reset-configs value))
+    :start-rec (.setStartRec builder (build-start-rec value))
+    :stop-rec (.setStopRec builder (build-stop-rec value))
+    :mark-rec-important (.setMarkRecImportant builder (build-mark-rec-important value))
+    :unmark-rec-important (.setUnmarkRecImportant builder (build-unmark-rec-important value))
+    :enter-transport (.setEnterTransport builder (build-enter-transport value))
+    :geodesic-mode-enable (.setGeodesicModeEnable builder (build-enable-geodesic-mode value))
+    :geodesic-mode-disable (.setGeodesicModeDisable builder (build-disable-geodesic-mode value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.System.JonSharedCmdSystem$Root proto]
+  (cond
+    (.hasStartAll proto) {:start-all (parse-start-a-ll (.getStartAll proto))}
+    (.hasStopAll proto) {:stop-all (parse-stop-a-ll (.getStopAll proto))}
+    (.hasReboot proto) {:reboot (parse-reboot (.getReboot proto))}
+    (.hasPowerOff proto) {:power-off (parse-power-off (.getPowerOff proto))}
+    (.hasLocalization proto) {:localization (parse-set-localization (.getLocalization proto))}
+    (.hasResetConfigs proto) {:reset-configs (parse-reset-configs (.getResetConfigs proto))}
+    (.hasStartRec proto) {:start-rec (parse-start-rec (.getStartRec proto))}
+    (.hasStopRec proto) {:stop-rec (parse-stop-rec (.getStopRec proto))}
+    (.hasMarkRecImportant proto) {:mark-rec-important (parse-mark-rec-important (.getMarkRecImportant proto))}
+    (.hasUnmarkRecImportant proto) {:unmark-rec-important (parse-unmark-rec-important (.getUnmarkRecImportant proto))}
+    (.hasEnterTransport proto) {:enter-transport (parse-enter-transport (.getEnterTransport proto))}
+    (.hasGeodesicModeEnable proto) {:geodesic-mode-enable (parse-enable-geodesic-mode (.getGeodesicModeEnable proto))}
+    (.hasGeodesicModeDisable proto) {:geodesic-mode-disable (parse-disable-geodesic-mode (.getGeodesicModeDisable proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$Root/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start-all :stop-all :reboot :power-off :localization :reset-configs :start-rec :stop-rec :mark-rec-important :unmark-rec-important :enter-transport :geodesic-mode-enable :geodesic-mode-disable} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.System.System$Root proto]
+  [^cmd.System.JonSharedCmdSystem$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4400,151 +3207,151 @@
 (defn build-start-a-ll
   "Build a StartALl protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$StartALl/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$StartALl/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start-a-ll
   "Parse a StartALl protobuf message to a map."
-  [^cmd.System.System$StartALl proto]
+  [^cmd.System.JonSharedCmdSystem$StartALl proto]
   (cond-> {}))
 
 (defn build-stop-a-ll
   "Build a StopALl protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$StopALl/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$StopALl/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop-a-ll
   "Parse a StopALl protobuf message to a map."
-  [^cmd.System.System$StopALl proto]
+  [^cmd.System.JonSharedCmdSystem$StopALl proto]
   (cond-> {}))
 
 (defn build-reboot
   "Build a Reboot protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$Reboot/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$Reboot/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reboot
   "Parse a Reboot protobuf message to a map."
-  [^cmd.System.System$Reboot proto]
+  [^cmd.System.JonSharedCmdSystem$Reboot proto]
   (cond-> {}))
 
 (defn build-power-off
   "Build a PowerOff protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$PowerOff/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$PowerOff/newBuilder)]
 
     (.build builder)))
 
 (defn parse-power-off
   "Parse a PowerOff protobuf message to a map."
-  [^cmd.System.System$PowerOff proto]
+  [^cmd.System.JonSharedCmdSystem$PowerOff proto]
   (cond-> {}))
 
 (defn build-reset-configs
   "Build a ResetConfigs protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$ResetConfigs/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$ResetConfigs/newBuilder)]
 
     (.build builder)))
 
 (defn parse-reset-configs
   "Parse a ResetConfigs protobuf message to a map."
-  [^cmd.System.System$ResetConfigs proto]
+  [^cmd.System.JonSharedCmdSystem$ResetConfigs proto]
   (cond-> {}))
 
 (defn build-start-rec
   "Build a StartRec protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$StartRec/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$StartRec/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start-rec
   "Parse a StartRec protobuf message to a map."
-  [^cmd.System.System$StartRec proto]
+  [^cmd.System.JonSharedCmdSystem$StartRec proto]
   (cond-> {}))
 
 (defn build-stop-rec
   "Build a StopRec protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$StopRec/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$StopRec/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop-rec
   "Parse a StopRec protobuf message to a map."
-  [^cmd.System.System$StopRec proto]
+  [^cmd.System.JonSharedCmdSystem$StopRec proto]
   (cond-> {}))
 
 (defn build-mark-rec-important
   "Build a MarkRecImportant protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$MarkRecImportant/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$MarkRecImportant/newBuilder)]
 
     (.build builder)))
 
 (defn parse-mark-rec-important
   "Parse a MarkRecImportant protobuf message to a map."
-  [^cmd.System.System$MarkRecImportant proto]
+  [^cmd.System.JonSharedCmdSystem$MarkRecImportant proto]
   (cond-> {}))
 
 (defn build-unmark-rec-important
   "Build a UnmarkRecImportant protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$UnmarkRecImportant/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$UnmarkRecImportant/newBuilder)]
 
     (.build builder)))
 
 (defn parse-unmark-rec-important
   "Parse a UnmarkRecImportant protobuf message to a map."
-  [^cmd.System.System$UnmarkRecImportant proto]
+  [^cmd.System.JonSharedCmdSystem$UnmarkRecImportant proto]
   (cond-> {}))
 
 (defn build-enter-transport
   "Build a EnterTransport protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$EnterTransport/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$EnterTransport/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enter-transport
   "Parse a EnterTransport protobuf message to a map."
-  [^cmd.System.System$EnterTransport proto]
+  [^cmd.System.JonSharedCmdSystem$EnterTransport proto]
   (cond-> {}))
 
 (defn build-enable-geodesic-mode
   "Build a EnableGeodesicMode protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$EnableGeodesicMode/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$EnableGeodesicMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-enable-geodesic-mode
   "Parse a EnableGeodesicMode protobuf message to a map."
-  [^cmd.System.System$EnableGeodesicMode proto]
+  [^cmd.System.JonSharedCmdSystem$EnableGeodesicMode proto]
   (cond-> {}))
 
 (defn build-disable-geodesic-mode
   "Build a DisableGeodesicMode protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$DisableGeodesicMode/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$DisableGeodesicMode/newBuilder)]
 
     (.build builder)))
 
 (defn parse-disable-geodesic-mode
   "Parse a DisableGeodesicMode protobuf message to a map."
-  [^cmd.System.System$DisableGeodesicMode proto]
+  [^cmd.System.JonSharedCmdSystem$DisableGeodesicMode proto]
   (cond-> {}))
 
 (defn build-set-localization
   "Build a SetLocalization protobuf message from a map."
   [m]
-  (let [builder (cmd.System.System$SetLocalization/newBuilder)]
+  (let [builder (cmd.System.JonSharedCmdSystem$SetLocalization/newBuilder)]
     ;; Set regular fields
     (when (contains? m :loc)
       (.setLoc builder (get m :loc)))
@@ -4553,21 +3360,53 @@
 
 (defn parse-set-localization
   "Parse a SetLocalization protobuf message to a map."
-  [^cmd.System.System$SetLocalization proto]
+  [^cmd.System.JonSharedCmdSystem$SetLocalization proto]
   (cond-> {}
     ;; Regular fields
     (.hasLoc proto) (assoc :loc (.getLoc proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :set-auto-focus (.setSetAutoFocus builder (build-set-auto-focus value))
+    :start-track-ndc (.setStartTrackNdc builder (build-start-track-ndc value))
+    :stop-track (.setStopTrack builder (build-stop-track value))
+    :vampire-mode-enable (.setVampireModeEnable builder (build-vampire-mode-enable value))
+    :vampire-mode-disable (.setVampireModeDisable builder (build-vampire-mode-disable value))
+    :stabilization-mode-enable (.setStabilizationModeEnable builder (build-stabilization-mode-enable value))
+    :stabilization-mode-disable (.setStabilizationModeDisable builder (build-stabilization-mode-disable value))
+    :dump-start (.setDumpStart builder (build-dump-start value))
+    :dump-stop (.setDumpStop builder (build-dump-stop value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.CV.JonSharedCmdCv$Root proto]
+  (cond
+    (.hasSetAutoFocus proto) {:set-auto-focus (parse-set-auto-focus (.getSetAutoFocus proto))}
+    (.hasStartTrackNdc proto) {:start-track-ndc (parse-start-track-ndc (.getStartTrackNdc proto))}
+    (.hasStopTrack proto) {:stop-track (parse-stop-track (.getStopTrack proto))}
+    (.hasVampireModeEnable proto) {:vampire-mode-enable (parse-vampire-mode-enable (.getVampireModeEnable proto))}
+    (.hasVampireModeDisable proto) {:vampire-mode-disable (parse-vampire-mode-disable (.getVampireModeDisable proto))}
+    (.hasStabilizationModeEnable proto) {:stabilization-mode-enable (parse-stabilization-mode-enable (.getStabilizationModeEnable proto))}
+    (.hasStabilizationModeDisable proto) {:stabilization-mode-disable (parse-stabilization-mode-disable (.getStabilizationModeDisable proto))}
+    (.hasDumpStart proto) {:dump-start (parse-dump-start (.getDumpStart proto))}
+    (.hasDumpStop proto) {:dump-stop (parse-dump-stop (.getDumpStop proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$Root/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-auto-focus :start-track-ndc :stop-track :vampire-mode-enable :vampire-mode-disable :stabilization-mode-enable :stabilization-mode-disable :dump-start :dump-stop} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.CV.Cv$Root proto]
+  [^cmd.CV.JonSharedCmdCv$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4576,79 +3415,79 @@
 (defn build-vampire-mode-enable
   "Build a VampireModeEnable protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$VampireModeEnable/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$VampireModeEnable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-vampire-mode-enable
   "Parse a VampireModeEnable protobuf message to a map."
-  [^cmd.CV.Cv$VampireModeEnable proto]
+  [^cmd.CV.JonSharedCmdCv$VampireModeEnable proto]
   (cond-> {}))
 
 (defn build-dump-start
   "Build a DumpStart protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$DumpStart/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$DumpStart/newBuilder)]
 
     (.build builder)))
 
 (defn parse-dump-start
   "Parse a DumpStart protobuf message to a map."
-  [^cmd.CV.Cv$DumpStart proto]
+  [^cmd.CV.JonSharedCmdCv$DumpStart proto]
   (cond-> {}))
 
 (defn build-dump-stop
   "Build a DumpStop protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$DumpStop/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$DumpStop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-dump-stop
   "Parse a DumpStop protobuf message to a map."
-  [^cmd.CV.Cv$DumpStop proto]
+  [^cmd.CV.JonSharedCmdCv$DumpStop proto]
   (cond-> {}))
 
 (defn build-vampire-mode-disable
   "Build a VampireModeDisable protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$VampireModeDisable/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$VampireModeDisable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-vampire-mode-disable
   "Parse a VampireModeDisable protobuf message to a map."
-  [^cmd.CV.Cv$VampireModeDisable proto]
+  [^cmd.CV.JonSharedCmdCv$VampireModeDisable proto]
   (cond-> {}))
 
 (defn build-stabilization-mode-enable
   "Build a StabilizationModeEnable protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$StabilizationModeEnable/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$StabilizationModeEnable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stabilization-mode-enable
   "Parse a StabilizationModeEnable protobuf message to a map."
-  [^cmd.CV.Cv$StabilizationModeEnable proto]
+  [^cmd.CV.JonSharedCmdCv$StabilizationModeEnable proto]
   (cond-> {}))
 
 (defn build-stabilization-mode-disable
   "Build a StabilizationModeDisable protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$StabilizationModeDisable/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$StabilizationModeDisable/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stabilization-mode-disable
   "Parse a StabilizationModeDisable protobuf message to a map."
-  [^cmd.CV.Cv$StabilizationModeDisable proto]
+  [^cmd.CV.JonSharedCmdCv$StabilizationModeDisable proto]
   (cond-> {}))
 
 (defn build-set-auto-focus
   "Build a SetAutoFocus protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$SetAutoFocus/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$SetAutoFocus/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
       (.setChannel builder (get m :channel)))
@@ -4659,7 +3498,7 @@
 
 (defn parse-set-auto-focus
   "Parse a SetAutoFocus protobuf message to a map."
-  [^cmd.CV.Cv$SetAutoFocus proto]
+  [^cmd.CV.JonSharedCmdCv$SetAutoFocus proto]
   (cond-> {}
     ;; Regular fields
     (.hasChannel proto) (assoc :channel (.getChannel proto))
@@ -4668,7 +3507,7 @@
 (defn build-start-track-ndc
   "Build a StartTrackNDC protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$StartTrackNDC/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$StartTrackNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
       (.setChannel builder (get m :channel)))
@@ -4683,7 +3522,7 @@
 
 (defn parse-start-track-ndc
   "Parse a StartTrackNDC protobuf message to a map."
-  [^cmd.CV.Cv$StartTrackNDC proto]
+  [^cmd.CV.JonSharedCmdCv$StartTrackNDC proto]
   (cond-> {}
     ;; Regular fields
     (.hasChannel proto) (assoc :channel (.getChannel proto))
@@ -4694,25 +3533,49 @@
 (defn build-stop-track
   "Build a StopTrack protobuf message from a map."
   [m]
-  (let [builder (cmd.CV.Cv$StopTrack/newBuilder)]
+  (let [builder (cmd.CV.JonSharedCmdCv$StopTrack/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop-track
   "Parse a StopTrack protobuf message to a map."
-  [^cmd.CV.Cv$StopTrack proto]
+  [^cmd.CV.JonSharedCmdCv$StopTrack proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :turn-on (.setTurnOn builder (build-turn-on value))
+    :turn-off (.setTurnOff builder (build-turn-off value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
+  (cond
+    (.hasStart proto) {:start (parse-start (.getStart proto))}
+    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+    (.hasTurnOn proto) {:turn-on (parse-turn-on (.getTurnOn proto))}
+    (.hasTurnOff proto) {:turn-off (parse-turn-off (.getTurnOff proto))}
+    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$Root/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start :stop :turn-on :turn-off :get-meteo} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$Root proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4721,73 +3584,89 @@
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$Start/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start/newBuilder)]
 
     (.build builder)))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$Start proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start proto]
   (cond-> {}))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$Stop/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$Stop proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop proto]
   (cond-> {}))
 
 (defn build-turn-on
   "Build a TurnOn protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$TurnOn/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn/newBuilder)]
 
     (.build builder)))
 
 (defn parse-turn-on
   "Parse a TurnOn protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$TurnOn proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn proto]
   (cond-> {}))
 
 (defn build-turn-off
   "Build a TurnOff protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$TurnOff/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff/newBuilder)]
 
     (.build builder)))
 
 (defn parse-turn-off
   "Parse a TurnOff protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$TurnOff proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff proto]
   (cond-> {}))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  (let [builder (cmd.DayCamGlassHeater.DayCamGlassHeater$GetMeteo/newBuilder)]
+  (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo/newBuilder)]
 
     (.build builder)))
 
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
-  [^cmd.DayCamGlassHeater.DayCamGlassHeater$GetMeteo proto]
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo proto]
   (cond-> {}))
+
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :refine-target (.setRefineTarget builder (build-refine-target value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.Lira.JonSharedCmdLira$Root proto]
+  (cond
+    (.hasRefineTarget proto) {:refine-target (parse-refine-target (.getRefineTarget proto))}))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Lira.Lira$Root/newBuilder)]
+  (let [builder (cmd.Lira.JonSharedCmdLira$Root/newBuilder)]
 
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:refine-target} k)) m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Lira.Lira$Root proto]
+  [^cmd.Lira.JonSharedCmdLira$Root proto]
   (cond-> {}
 
 ;; Oneof payload
@@ -4796,7 +3675,7 @@
 (defn build-refine-target
   "Build a Refine_target protobuf message from a map."
   [m]
-  (let [builder (cmd.Lira.Lira$Refine_target/newBuilder)]
+  (let [builder (cmd.Lira.JonSharedCmdLira$Refine_target/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target)
       (.setTarget builder (get m :target)))
@@ -4805,7 +3684,7 @@
 
 (defn parse-refine-target
   "Parse a Refine_target protobuf message to a map."
-  [^cmd.Lira.Lira$Refine_target proto]
+  [^cmd.Lira.JonSharedCmdLira$Refine_target proto]
   (cond-> {}
     ;; Regular fields
     (.hasTarget proto) (assoc :target (.getTarget proto))))
@@ -4813,7 +3692,7 @@
 (defn build-jon-gui-data-lira-target
   "Build a JonGuiDataLiraTarget protobuf message from a map."
   [m]
-  (let [builder (cmd.Lira.Lira$JonGuiDataLiraTarget/newBuilder)]
+  (let [builder (cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget/newBuilder)]
     ;; Set regular fields
     (when (contains? m :timestamp)
       (.setTimestamp builder (get m :timestamp)))
@@ -4842,7 +3721,7 @@
 
 (defn parse-jon-gui-data-lira-target
   "Parse a JonGuiDataLiraTarget protobuf message to a map."
-  [^cmd.Lira.Lira$JonGuiDataLiraTarget proto]
+  [^cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget proto]
   (cond-> {}
     ;; Regular fields
     (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))
@@ -4857,10 +3736,51 @@
     (.hasUuidPart3 proto) (assoc :uuid-part-3 (.getUuidPart3 proto))
     (.hasUuidPart4 proto) (assoc :uuid-part-4 (.getUuidPart4 proto))))
 
+(defn build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  (case field-key
+    :day-camera (.setDayCamera builder (build-root value))
+    :heat-camera (.setHeatCamera builder (build-root value))
+    :gps (.setGps builder (build-root value))
+    :compass (.setCompass builder (build-root value))
+    :lrf (.setLrf builder (build-root value))
+    :lrf-calib (.setLrfCalib builder (build-root value))
+    :rotary (.setRotary builder (build-root value))
+    :osd (.setOsd builder (build-root value))
+    :ping (.setPing builder (build-ping value))
+    :noop (.setNoop builder (build-noop value))
+    :frozen (.setFrozen builder (build-frozen value))
+    :system (.setSystem builder (build-root value))
+    :cv (.setCv builder (build-root value))
+    :day-cam-glass-heater (.setDayCamGlassHeater builder (build-root value))
+    :lira (.setLira builder (build-root value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":payload"}))))
+
+(defn parse-root-payload
+  "Parse the oneof payload from Root."
+  [^cmd.JonSharedCmd$Root proto]
+  (cond
+    (.hasDayCamera proto) {:day-camera (parse-root (.getDayCamera proto))}
+    (.hasHeatCamera proto) {:heat-camera (parse-root (.getHeatCamera proto))}
+    (.hasGps proto) {:gps (parse-root (.getGps proto))}
+    (.hasCompass proto) {:compass (parse-root (.getCompass proto))}
+    (.hasLrf proto) {:lrf (parse-root (.getLrf proto))}
+    (.hasLrfCalib proto) {:lrf-calib (parse-root (.getLrfCalib proto))}
+    (.hasRotary proto) {:rotary (parse-root (.getRotary proto))}
+    (.hasOsd proto) {:osd (parse-root (.getOsd proto))}
+    (.hasPing proto) {:ping (parse-ping (.getPing proto))}
+    (.hasNoop proto) {:noop (parse-noop (.getNoop proto))}
+    (.hasFrozen proto) {:frozen (parse-frozen (.getFrozen proto))}
+    (.hasSystem proto) {:system (parse-root (.getSystem proto))}
+    (.hasCv proto) {:cv (parse-root (.getCv proto))}
+    (.hasDayCamGlassHeater proto) {:day-cam-glass-heater (parse-root (.getDayCamGlassHeater proto))}
+    (.hasLira proto) {:lira (parse-root (.getLira proto))}))
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
-  (let [builder (cmd.Cmd$Root/newBuilder)]
+  (let [builder (cmd.JonSharedCmd$Root/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
       (.setProtocolVersion builder (get m :protocol-version)))
@@ -4873,11 +3793,14 @@
     (when (contains? m :client-type)
       (.setClientType builder (get m :client-type)))
 
+    ;; Handle oneof: payload
+    (when-let [payload-field (first (filter (fn [[k v]] (#{:day-camera :heat-camera :gps :compass :lrf :lrf-calib :rotary :osd :ping :noop :frozen :system :cv :day-cam-glass-heater :lira} k)) m))]
+      (build-root-payload builder payload-field))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
-  [^cmd.Cmd$Root proto]
+  [^cmd.JonSharedCmd$Root proto]
   (cond-> {}
     ;; Regular fields
     (.hasProtocolVersion proto) (assoc :protocol-version (.getProtocolVersion proto))
@@ -4892,35 +3815,35 @@
 (defn build-ping
   "Build a Ping protobuf message from a map."
   [m]
-  (let [builder (cmd.Cmd$Ping/newBuilder)]
+  (let [builder (cmd.JonSharedCmd$Ping/newBuilder)]
 
     (.build builder)))
 
 (defn parse-ping
   "Parse a Ping protobuf message to a map."
-  [^cmd.Cmd$Ping proto]
+  [^cmd.JonSharedCmd$Ping proto]
   (cond-> {}))
 
 (defn build-noop
   "Build a Noop protobuf message from a map."
   [m]
-  (let [builder (cmd.Cmd$Noop/newBuilder)]
+  (let [builder (cmd.JonSharedCmd$Noop/newBuilder)]
 
     (.build builder)))
 
 (defn parse-noop
   "Parse a Noop protobuf message to a map."
-  [^cmd.Cmd$Noop proto]
+  [^cmd.JonSharedCmd$Noop proto]
   (cond-> {}))
 
 (defn build-frozen
   "Build a Frozen protobuf message from a map."
   [m]
-  (let [builder (cmd.Cmd$Frozen/newBuilder)]
+  (let [builder (cmd.JonSharedCmd$Frozen/newBuilder)]
 
     (.build builder)))
 
 (defn parse-frozen
   "Parse a Frozen protobuf message to a map."
-  [^cmd.Cmd$Frozen proto]
+  [^cmd.JonSharedCmd$Frozen proto]
   (cond-> {}))

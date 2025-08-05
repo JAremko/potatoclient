@@ -1,6 +1,6 @@
-(defn BUILD-FN-NAME-PAYLOAD
-  "Set the oneof payload field."
-  [builder [field-key field-value]]
+(defn ONEOF-BUILD-FN-NAME
+  "Build the oneof payload for PROTO-NAME."
+  [builder [field-key value]]
   (case field-key
-    CASE-CLAUSES
-    (throw (ex-info "Unknown payload field" {:field field-key}))))
+    ONEOF-CASES
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof "ONEOF-NAME"}))))

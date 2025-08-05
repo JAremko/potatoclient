@@ -8,8 +8,9 @@
             [potatoclient.proto.command :as cmd-gen]
             [potatoclient.proto.state :as state-gen]
             [test-utils.diff :as diff])
-  (:import [cmd JonSharedCmd JonSharedCmd$Root JonSharedCmd$Root$PayloadCase]
-           [ser JonSharedData JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType]))
+  (:import [cmd.Cmd JonSharedCmd JonSharedCmd$Root JonSharedCmd$Root$PayloadCase]
+           [ser.Ser JonSharedData JonSharedData$JonGUIState]
+           [ser.JonSharedDataTypes JonSharedDataTypes JonSharedDataTypes$JonGuiDataClientType]))
 
 ;; First, let's define the Malli schemas that match our protobuf structures
 ;; These would normally be generated, but for testing we'll define them manually
@@ -48,12 +49,13 @@
            :stop-rec system-stop-rec-schema}])
 
 ;; Client type enum values that match the protobuf
+;; For now, use keywords instead of enum values
 (def client-type-enum
   [:enum
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA])
+   :jon-gui-data-client-type-internal-cv
+   :jon-gui-data-client-type-local-network
+   :jon-gui-data-client-type-certificate-protected
+   :jon-gui-data-client-type-lira])
 
 (def command-root-schema
   [:and

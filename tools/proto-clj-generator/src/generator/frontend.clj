@@ -81,13 +81,13 @@
   [value enum]
   (str (pr-str (:name value)) " " 
        (:java-class enum) "/" 
-       (csk/->SCREAMING_SNAKE_CASE (:proto-name value))))
+       (:proto-name value)))
 
 (defn generate-enum-reverse-entry
   "Generate a single reverse enum entry."
   [value enum]
   (str (:java-class enum) "/" 
-       (csk/->SCREAMING_SNAKE_CASE (:proto-name value))
+       (:proto-name value)
        " " (pr-str (:name value))))
 
 (defn generate-enum-def
@@ -114,7 +114,6 @@
   [message type-lookup]
   (let [template (load-template-string "builder.clj")
         regular-fields (remove :oneof-index (:fields message))
-        oneof-fields (filter :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
         
         regular-field-setters (when (seq regular-fields)
@@ -122,19 +121,25 @@
                                     (str/join "\n    " 
                                              (map generate-field-setter regular-fields))))
         
-        oneof-payload (when (seq oneof-fields)
-                       (str "\n    ;; Set oneof payload\n"
-                            "    (when-let [payload (first (filter (fn [[k v]] (#{" 
-                            (str/join " " (map #(pr-str (:name %)) oneof-fields))
-                            "} k)) m))]\n"
-                            "      (build-" (csk/->kebab-case (:proto-name message)) 
-                            "-payload builder payload))"))
+        ;; Generate oneof handling for each oneof
+        oneof-payloads (when (seq (:oneofs message))
+                        (str/join "\n" 
+                                 (map (fn [oneof]
+                                       (let [oneof-field-names (map :name (:fields oneof))
+                                             var-name (str (name (:name oneof)) "-field")]
+                                         (str "\n    ;; Handle oneof: " (:proto-name oneof) "\n"
+                                              "    (when-let [" var-name " (first (filter (fn [[k v]] (#{"
+                                              (str/join " " (map pr-str oneof-field-names))
+                                              "} k)) m))]\n"
+                                              "      (build-" (csk/->kebab-case (:proto-name message))
+                                              "-payload builder " var-name "))")))
+                                      (:oneofs message))))
         
         replacements {"BUILD-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
                      "JAVA-CLASS" (:java-class message)
                      "REGULAR-FIELDS" (or regular-field-setters "")
-                     "ONEOF-PAYLOAD" (or oneof-payload "")}]
+                     "ONEOF-PAYLOAD" (or oneof-payloads "")}]
     (replace-in-template template replacements)))
 
 (defn generate-parser
@@ -163,6 +168,81 @@
     (replace-in-template template replacements)))
 
 ;; =============================================================================
+;; Oneof Generation
+;; =============================================================================
+
+(defn generate-oneof-builder-case
+  "Generate a single case for oneof builder."
+  [field message type-lookup]
+  (let [field-type (:type field)
+        type-ref (or (get-in field-type [:message :type-ref])
+                     (get-in field-type [:enum :type-ref]))
+        builder-fn (when (and type-ref (get-in field-type [:message]))
+                    (let [canonical-ref (str/replace type-ref #"^\." "")
+                          type-def (get type-lookup canonical-ref)]
+                      (when (and type-def (= :message (:type type-def)))
+                        (str "build-" (name (:name type-def))))))]
+    (str (pr-str (:name field)) " "
+         "(." (str "set" (csk/->PascalCase (:proto-name field))) " builder "
+         (if builder-fn
+           (str "(" builder-fn " value)")
+           "value") ")")))
+
+(defn generate-oneof-parser-case
+  "Generate a single case for oneof parser."
+  [field message type-lookup]
+  (let [field-type (:type field)
+        type-ref (or (get-in field-type [:message :type-ref])
+                     (get-in field-type [:enum :type-ref]))
+        parser-fn (when (and type-ref (get-in field-type [:message]))
+                   (let [canonical-ref (str/replace type-ref #"^\." "")
+                         type-def (get type-lookup canonical-ref)]
+                     (when (and type-def (= :message (:type type-def)))
+                       (str "parse-" (name (:name type-def))))))]
+    (str "(." (str "has" (csk/->PascalCase (:proto-name field))) " proto) "
+         "{" (pr-str (:name field)) " "
+         (if parser-fn
+           (str "(" parser-fn " (." (str "get" (csk/->PascalCase (:proto-name field))) " proto))")
+           (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)"))
+         "}")))
+
+(defn generate-oneof-builder
+  "Generate oneof builder function."
+  [message oneof type-lookup]
+  (let [template (load-template-string "oneof-builder.clj")
+        fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
+        ;; Use fields from the oneof structure itself
+        oneof-fields (:fields oneof)
+        
+        cases (str/join "\n    " 
+                       (map #(generate-oneof-builder-case % message type-lookup) 
+                            oneof-fields))
+        
+        replacements {"ONEOF-BUILD-FN-NAME" fn-name
+                     "PROTO-NAME" (:proto-name message)
+                     "ONEOF-NAME" (pr-str (:name oneof))
+                     "ONEOF-CASES" cases}]
+    (replace-in-template template replacements)))
+
+(defn generate-oneof-parser
+  "Generate oneof parser function."
+  [message oneof type-lookup]
+  (let [template (load-template-string "oneof-parser.clj")
+        fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
+        ;; Use fields from the oneof structure itself
+        oneof-fields (:fields oneof)
+        
+        cases (str/join "\n    " 
+                       (map #(generate-oneof-parser-case % message type-lookup) 
+                            oneof-fields))
+        
+        replacements {"ONEOF-PARSE-FN-NAME" fn-name
+                     "PROTO-NAME" (:proto-name message)
+                     "JAVA-CLASS" (:java-class message)
+                     "ONEOF-CASES" cases}]
+    (replace-in-template template replacements)))
+
+;; =============================================================================
 ;; Namespace Generation
 ;; =============================================================================
 
@@ -170,8 +250,9 @@
   "Generate import statement."
   [imports]
   (if (seq imports)
-    (str "[" (str/join "\n   " imports) "]")
-    "[]"))
+    ;; Each import needs to be on its own line without brackets
+    (str/join "\n   " imports)
+    ""))
 
 (defn generate-namespace
   "Generate complete namespace."
@@ -184,15 +265,15 @@
         messages-code (when (seq messages)
                        (str/join "\n\n" 
                                 (mapcat (fn [msg]
-                                         (filter some?
-                                                [(generate-builder msg type-lookup)
-                                                 (when (seq (:oneofs msg))
-                                                   ;; TODO: Generate oneof builder
-                                                   nil)
-                                                 (generate-parser msg type-lookup)
-                                                 (when (seq (:oneofs msg))
-                                                   ;; TODO: Generate oneof parser
-                                                   nil)]))
+                                         (concat 
+                                          ;; Generate oneofs first (they're called by builders/parsers)
+                                          (for [oneof (:oneofs msg)]
+                                            (generate-oneof-builder msg oneof type-lookup))
+                                          (for [oneof (:oneofs msg)]
+                                            (generate-oneof-parser msg oneof type-lookup))
+                                          ;; Then generate the message builder and parser
+                                          [(generate-builder msg type-lookup)
+                                           (generate-parser msg type-lookup)]))
                                        messages)))
         
         replacements {"NAMESPACE-PLACEHOLDER" ns-name
@@ -211,14 +292,24 @@
   (let [all-classes (sp/select [:files sp/ALL 
                                (sp/multi-path :messages :enums) 
                                sp/ALL :java-class]
-                              edn-data)]
-    (->> all-classes
-         (map #(str/replace % #"\$.*" ""))  ; Remove inner class part
-         (remove #(or (empty? %)
-                     (str/starts-with? % "com.google.protobuf.")
-                     (str/starts-with? % "build.buf.validate.")))
+                              edn-data)
+        ;; Extract just the outer class for imports
+        outer-classes (->> all-classes
+                          (map (fn [class-name]
+                                (if (str/includes? class-name "$")
+                                  ;; Get the outer class before the $
+                                  (subs class-name 0 (str/index-of class-name "$"))
+                                  class-name)))
+                          ;; Remove special imports that we'll add manually
+                          (remove #(or (empty? %)
+                                      (str/starts-with? % "google.protobuf.")
+                                      (str/starts-with? % "buf.validate.")))
+                          distinct
+                          sort)]
+    ;; Add special imports that are always needed
+    (->> (concat outer-classes)
          distinct
-         sort)))
+         vec)))
 
 (defn generate-code
   "Generate complete Clojure code from EDN data."
