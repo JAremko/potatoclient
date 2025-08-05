@@ -60,16 +60,48 @@
 (defn generate-field-getter
   "Generate getter code for a single field."
   [field]
-  (let [template (if (:repeated? field)
-                   (load-template-string "field-getter-repeated.clj")
-                   (load-template-string "field-getter.clj"))
+  (let [;; Check if this is a message type (which might have has methods)
+        is-message? (and (not (:repeated? field))
+                        (get-in field [:type :message]))
+        ;; Check if this is an enum type
+        is-enum? (and (not (:repeated? field))
+                     (get-in field [:type :enum]))
+        ;; For proto3, scalar fields don't have has methods
+        ;; We'll use a simple heuristic: if it's not a message type, just get the value
+        use-has-method? is-message?
+        
         field-name-pascal (csk/->PascalCase (:proto-name field))
+        getter-expr (str ".get" field-name-pascal)
+        
+        ;; For enums, we need to convert to keywords
+        value-expr (if is-enum?
+                    (let [enum-type (get-in field [:type :enum :type-ref])
+                          ;; Extract the enum name from the type reference
+                          enum-name (if enum-type
+                                     (-> enum-type
+                                         (str/replace #"^\." "")
+                                         (str/split #"\.")
+                                         last
+                                         csk/->kebab-case)
+                                     "unknown-enum")]
+                      (str "(get " enum-name "-keywords (" getter-expr " proto))"))
+                    (str "(" getter-expr " proto)"))
+        
+        template (if (:repeated? field)
+                   (load-template-string "field-getter-repeated.clj")
+                   (if use-has-method?
+                     (load-template-string "field-getter.clj")
+                     ;; For scalar fields, use a simpler template with true condition
+                     (str "true (assoc FIELD-KEY " value-expr ")")))
+        
         replacements {"FIELD-KEY" (str (:name field))
                      "FIELD-NAME" field-name-pascal
                      "METHOD-NAME" (if (:repeated? field)
                                     "true" 
                                     (str ".has" field-name-pascal))
-                     "GETTER-NAME" (str ".get" field-name-pascal)}]
+                     "GETTER-NAME" (if (or is-message? (:repeated? field))
+                                    getter-expr
+                                    value-expr)}]
     (replace-in-template template replacements)))
 
 ;; =============================================================================
@@ -145,9 +177,17 @@
 (defn generate-parser
   "Generate parser function for a message."
   [message type-lookup]
-  (let [template (load-template-string "parser.clj")
-        regular-fields (remove :oneof-index (:fields message))
+  (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
+        has-fields? (or (seq regular-fields) (seq (:oneofs message)))
+        
+        ;; For empty messages, use a simpler template
+        template (if has-fields?
+                   (load-template-string "parser.clj")
+                   (str "(defn " fn-name "\n"
+                        "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
+                        "  [^" (:java-class message) " proto]\n"
+                        "  {})"))
         
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
@@ -165,7 +205,9 @@
                      "JAVA-CLASS" (:java-class message)
                      "REGULAR-FIELDS" (or field-getters "")
                      "ONEOF-PAYLOAD" (or oneof-payload "")}]
-    (replace-in-template template replacements)))
+    (if has-fields?
+      (replace-in-template template replacements)
+      template)))
 
 ;; =============================================================================
 ;; Oneof Generation
@@ -262,24 +304,55 @@
         enums-code (when (seq enums)
                     (str/join "\n\n" (map generate-enum-def enums)))
         
-        messages-code (when (seq messages)
+        ;; Sort messages so nested messages come before their parents
+        sorted-messages (sort-by 
+                         (fn [msg]
+                           ;; Count the depth (number of $ in java-class)
+                           (count (filter #(= \$ %) (:java-class msg))))
+                         #(compare %2 %1) ;; Reverse sort - deepest first
+                         messages)
+        
+        ;; Generate forward declarations for all builder and parser functions
+        forward-decls (when (seq sorted-messages)
+                       (str ";; Forward declarations\n"
+                            (str/join "\n" 
+                                     (concat
+                                      (for [msg sorted-messages]
+                                        (str "(declare build-" (name (:name msg)) ")"))
+                                      (for [msg sorted-messages]
+                                        (str "(declare parse-" (name (:name msg)) ")"))
+                                      (for [msg sorted-messages
+                                            :when (seq (:oneofs msg))]
+                                        (str "(declare build-" (str/replace (str/lower-case (:proto-name msg)) #"_" "-") "-payload)"))
+                                      (for [msg sorted-messages
+                                            :when (seq (:oneofs msg))]
+                                        (str "(declare parse-" (str/replace (str/lower-case (:proto-name msg)) #"_" "-") "-payload)"))))
+                            "\n"))
+        
+        ;; Generate all message builders/parsers first, then all oneofs
+        ;; This avoids forward reference issues
+        all-builders (for [msg sorted-messages]
+                       (generate-builder msg type-lookup))
+        all-parsers (for [msg sorted-messages]
+                      (generate-parser msg type-lookup))
+        all-oneof-builders (for [msg sorted-messages
+                                 oneof (:oneofs msg)]
+                             (generate-oneof-builder msg oneof type-lookup))
+        all-oneof-parsers (for [msg sorted-messages
+                                oneof (:oneofs msg)]
+                            (generate-oneof-parser msg oneof type-lookup))
+        
+        messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
-                                (mapcat (fn [msg]
-                                         (concat 
-                                          ;; Generate oneofs first (they're called by builders/parsers)
-                                          (for [oneof (:oneofs msg)]
-                                            (generate-oneof-builder msg oneof type-lookup))
-                                          (for [oneof (:oneofs msg)]
-                                            (generate-oneof-parser msg oneof type-lookup))
-                                          ;; Then generate the message builder and parser
-                                          [(generate-builder msg type-lookup)
-                                           (generate-parser msg type-lookup)]))
-                                       messages)))
+                                (concat all-builders 
+                                        all-parsers
+                                        all-oneof-builders
+                                        all-oneof-parsers)))
         
         replacements {"NAMESPACE-PLACEHOLDER" ns-name
                      "IMPORTS-PLACEHOLDER" (generate-imports imports)
                      "ENUMS-PLACEHOLDER" (or enums-code ";; No enums")
-                     "BUILDERS-AND-PARSERS-PLACEHOLDER" (or messages-code ";; No messages")}]
+                     "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages"))}]
     (replace-in-template template replacements)))
 
 ;; =============================================================================
@@ -289,10 +362,28 @@
 (defn collect-imports
   "Collect all Java imports needed."
   [edn-data]
-  (let [all-classes (sp/select [:files sp/ALL 
-                               (sp/multi-path :messages :enums) 
-                               sp/ALL :java-class]
-                              edn-data)
+  (let [;; Helper to collect all messages recursively
+        collect-all-messages (fn collect [msg]
+                              (cons msg 
+                                    (when (:nested-types msg)
+                                      (mapcat collect (:nested-types msg)))))
+        ;; Helper to collect all enums from messages recursively
+        collect-enums-from-message (fn collect-enums [msg]
+                                     (concat (:enums msg [])
+                                            (when (:nested-types msg)
+                                              (mapcat collect-enums (:nested-types msg)))))
+        ;; Collect all messages
+        all-messages (->> edn-data
+                         :files
+                         (mapcat :messages)
+                         (mapcat collect-all-messages))
+        ;; Collect all Java classes from messages and their enums
+        message-classes (map :java-class all-messages)
+        top-level-enum-classes (sp/select [:files sp/ALL :enums sp/ALL :java-class] edn-data)
+        nested-enum-classes (->> all-messages
+                                (mapcat collect-enums-from-message)
+                                (map :java-class))
+        all-classes (concat message-classes top-level-enum-classes nested-enum-classes)
         ;; Extract just the outer class for imports
         outer-classes (->> all-classes
                           (map (fn [class-name]
@@ -315,9 +406,28 @@
   "Generate complete Clojure code from EDN data."
   [{:keys [ns-name edn-data type-lookup]}]
   (let [imports (collect-imports edn-data)
-        messages (sp/select [:files sp/ALL :messages sp/ALL] edn-data)
-        enums (sp/select [:files sp/ALL :enums sp/ALL] edn-data)]
-    (generate-namespace ns-name imports enums messages type-lookup)))
+        ;; Helper to collect all messages recursively
+        collect-all-messages (fn collect [msg]
+                              (cons msg 
+                                    (when (:nested-types msg)
+                                      (mapcat collect (:nested-types msg)))))
+        ;; Collect all messages including nested ones
+        all-messages (->> edn-data
+                         :files
+                         (mapcat :messages)
+                         (mapcat collect-all-messages))
+        _ (println "Found" (count all-messages) "total messages")
+        ;; Helper to collect all enums from messages recursively
+        collect-enums-from-message (fn collect-enums [msg]
+                                     (concat (:enums msg [])
+                                            (when (:nested-types msg)
+                                              (mapcat collect-enums (:nested-types msg)))))
+        ;; Collect all enums (top-level and nested in messages)
+        all-enums (concat 
+                   (sp/select [:files sp/ALL :enums sp/ALL] edn-data)
+                   (->> all-messages
+                        (mapcat collect-enums-from-message)))]
+    (generate-namespace ns-name imports all-enums all-messages type-lookup)))
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output."

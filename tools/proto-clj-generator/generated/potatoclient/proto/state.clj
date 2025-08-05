@@ -344,6 +344,42 @@
 ;; Builders and Parsers
 ;; =============================================================================
 
+;; Forward declarations
+(declare build-jon-gui-data-meteo)
+(declare build-jon-gui-data-time)
+(declare build-jon-gui-data-system)
+(declare build-jon-gui-data-lrf)
+(declare build-jon-gui-data-target)
+(declare build-rgb-color)
+(declare build-jon-gui-data-gps)
+(declare build-jon-gui-data-compass)
+(declare build-jon-gui-data-compass-calibration)
+(declare build-jon-gui-data-rotary)
+(declare build-scan-node)
+(declare build-jon-gui-data-camera-day)
+(declare build-jon-gui-data-camera-heat)
+(declare build-jon-gui-data-rec-osd)
+(declare build-jon-gui-data-day-cam-glass-heater)
+(declare build-jon-gui-data-actual-space-time)
+(declare build-jon-gui-state)
+(declare parse-jon-gui-data-meteo)
+(declare parse-jon-gui-data-time)
+(declare parse-jon-gui-data-system)
+(declare parse-jon-gui-data-lrf)
+(declare parse-jon-gui-data-target)
+(declare parse-rgb-color)
+(declare parse-jon-gui-data-gps)
+(declare parse-jon-gui-data-compass)
+(declare parse-jon-gui-data-compass-calibration)
+(declare parse-jon-gui-data-rotary)
+(declare parse-scan-node)
+(declare parse-jon-gui-data-camera-day)
+(declare parse-jon-gui-data-camera-heat)
+(declare parse-jon-gui-data-rec-osd)
+(declare parse-jon-gui-data-day-cam-glass-heater)
+(declare parse-jon-gui-data-actual-space-time)
+(declare parse-jon-gui-state)
+
 (defn build-jon-gui-data-meteo
   "Build a JonGuiDataMeteo protobuf message from a map."
   [m]
@@ -357,15 +393,6 @@
       (.setPressure builder (get m :pressure)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-meteo
-  "Parse a JonGuiDataMeteo protobuf message to a map."
-  [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasTemperature proto) (assoc :temperature (.getTemperature proto))
-    (.hasHumidity proto) (assoc :humidity (.getHumidity proto))
-    (.hasPressure proto) (assoc :pressure (.getPressure proto))))
 
 (defn build-jon-gui-data-time
   "Build a JonGuiDataTime protobuf message from a map."
@@ -382,16 +409,6 @@
       (.setUseManualTime builder (get m :use-manual-time)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-time
-  "Parse a JonGuiDataTime protobuf message to a map."
-  [^ser.JonSharedDataTime$JonGuiDataTime proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))
-    (.hasManualTimestamp proto) (assoc :manual-timestamp (.getManualTimestamp proto))
-    (.hasZoneId proto) (assoc :zone-id (.getZoneId proto))
-    (.hasUseManualTime proto) (assoc :use-manual-time (.getUseManualTime proto))))
 
 (defn build-jon-gui-data-system
   "Build a JonGuiDataSystem protobuf message from a map."
@@ -445,34 +462,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-system
-  "Parse a JonGuiDataSystem protobuf message to a map."
-  [^ser.JonSharedDataSystem$JonGuiDataSystem proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasCpuTemperature proto) (assoc :cpu-temperature (.getCpuTemperature proto))
-    (.hasGpuTemperature proto) (assoc :gpu-temperature (.getGpuTemperature proto))
-    (.hasGpuLoad proto) (assoc :gpu-load (.getGpuLoad proto))
-    (.hasCpuLoad proto) (assoc :cpu-load (.getCpuLoad proto))
-    (.hasPowerConsumption proto) (assoc :power-consumption (.getPowerConsumption proto))
-    (.hasLoc proto) (assoc :loc (.getLoc proto))
-    (.hasCurVideoRecDirYear proto) (assoc :cur-video-rec-dir-year (.getCurVideoRecDirYear proto))
-    (.hasCurVideoRecDirMonth proto) (assoc :cur-video-rec-dir-month (.getCurVideoRecDirMonth proto))
-    (.hasCurVideoRecDirDay proto) (assoc :cur-video-rec-dir-day (.getCurVideoRecDirDay proto))
-    (.hasCurVideoRecDirHour proto) (assoc :cur-video-rec-dir-hour (.getCurVideoRecDirHour proto))
-    (.hasCurVideoRecDirMinute proto) (assoc :cur-video-rec-dir-minute (.getCurVideoRecDirMinute proto))
-    (.hasCurVideoRecDirSecond proto) (assoc :cur-video-rec-dir-second (.getCurVideoRecDirSecond proto))
-    (.hasRecEnabled proto) (assoc :rec-enabled (.getRecEnabled proto))
-    (.hasImportantRecEnabled proto) (assoc :important-rec-enabled (.getImportantRecEnabled proto))
-    (.hasLowDiskSpace proto) (assoc :low-disk-space (.getLowDiskSpace proto))
-    (.hasNoDiskSpace proto) (assoc :no-disk-space (.getNoDiskSpace proto))
-    (.hasDiskSpace proto) (assoc :disk-space (.getDiskSpace proto))
-    (.hasTracking proto) (assoc :tracking (.getTracking proto))
-    (.hasVampireMode proto) (assoc :vampire-mode (.getVampireMode proto))
-    (.hasStabilizationMode proto) (assoc :stabilization-mode (.getStabilizationMode proto))
-    (.hasGeodesicMode proto) (assoc :geodesic-mode (.getGeodesicMode proto))
-    (.hasCvDumping proto) (assoc :cv-dumping (.getCvDumping proto))))
-
 (defn build-jon-gui-data-lrf
   "Build a JonGuiDataLrf protobuf message from a map."
   [m]
@@ -494,19 +483,6 @@
       (.setIsRefining builder (get m :is-refining)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-lrf
-  "Parse a JonGuiDataLrf protobuf message to a map."
-  [^ser.JonSharedDataLrf$JonGuiDataLrf proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasIsScanning proto) (assoc :is-scanning (.getIsScanning proto))
-    (.hasIsMeasuring proto) (assoc :is-measuring (.getIsMeasuring proto))
-    (.hasMeasureId proto) (assoc :measure-id (.getMeasureId proto))
-    (.hasTarget proto) (assoc :target (.getTarget proto))
-    (.hasPointerMode proto) (assoc :pointer-mode (.getPointerMode proto))
-    (.hasFogModeEnabled proto) (assoc :fog-mode-enabled (.getFogModeEnabled proto))
-    (.hasIsRefining proto) (assoc :is-refining (.getIsRefining proto))))
 
 (defn build-jon-gui-data-target
   "Build a JonGuiDataTarget protobuf message from a map."
@@ -558,33 +534,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-target
-  "Parse a JonGuiDataTarget protobuf message to a map."
-  [^ser.JonSharedDataLrf$JonGuiDataTarget proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))
-    (.hasTargetLongitude proto) (assoc :target-longitude (.getTargetLongitude proto))
-    (.hasTargetLatitude proto) (assoc :target-latitude (.getTargetLatitude proto))
-    (.hasTargetAltitude proto) (assoc :target-altitude (.getTargetAltitude proto))
-    (.hasObserverLongitude proto) (assoc :observer-longitude (.getObserverLongitude proto))
-    (.hasObserverLatitude proto) (assoc :observer-latitude (.getObserverLatitude proto))
-    (.hasObserverAltitude proto) (assoc :observer-altitude (.getObserverAltitude proto))
-    (.hasObserverAzimuth proto) (assoc :observer-azimuth (.getObserverAzimuth proto))
-    (.hasObserverElevation proto) (assoc :observer-elevation (.getObserverElevation proto))
-    (.hasObserverBank proto) (assoc :observer-bank (.getObserverBank proto))
-    (.hasDistance2d proto) (assoc :distance-2d (.getDistance2d proto))
-    (.hasDistance3b proto) (assoc :distance-3b (.getDistance3b proto))
-    (.hasObserverFixType proto) (assoc :observer-fix-type (.getObserverFixType proto))
-    (.hasSessionId proto) (assoc :session-id (.getSessionId proto))
-    (.hasTargetId proto) (assoc :target-id (.getTargetId proto))
-    (.hasTargetColor proto) (assoc :target-color (.getTargetColor proto))
-    (.hasType proto) (assoc :type (.getType proto))
-    (.hasUuidPart1 proto) (assoc :uuid-part-1 (.getUuidPart1 proto))
-    (.hasUuidPart2 proto) (assoc :uuid-part-2 (.getUuidPart2 proto))
-    (.hasUuidPart3 proto) (assoc :uuid-part-3 (.getUuidPart3 proto))
-    (.hasUuidPart4 proto) (assoc :uuid-part-4 (.getUuidPart4 proto))))
-
 (defn build-rgb-color
   "Build a RgbColor protobuf message from a map."
   [m]
@@ -598,15 +547,6 @@
       (.setBlue builder (get m :blue)))
 
     (.build builder)))
-
-(defn parse-rgb-color
-  "Parse a RgbColor protobuf message to a map."
-  [^ser.JonSharedDataLrf$RgbColor proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasRed proto) (assoc :red (.getRed proto))
-    (.hasGreen proto) (assoc :green (.getGreen proto))
-    (.hasBlue proto) (assoc :blue (.getBlue proto))))
 
 (defn build-jon-gui-data-gps
   "Build a JonGuiDataGps protobuf message from a map."
@@ -632,20 +572,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-gps
-  "Parse a JonGuiDataGps protobuf message to a map."
-  [^ser.JonSharedDataGps$JonGuiDataGps proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
-    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
-    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
-    (.hasManualLongitude proto) (assoc :manual-longitude (.getManualLongitude proto))
-    (.hasManualLatitude proto) (assoc :manual-latitude (.getManualLatitude proto))
-    (.hasManualAltitude proto) (assoc :manual-altitude (.getManualAltitude proto))
-    (.hasFixType proto) (assoc :fix-type (.getFixType proto))
-    (.hasUseManual proto) (assoc :use-manual (.getUseManual proto))))
-
 (defn build-jon-gui-data-compass
   "Build a JonGuiDataCompass protobuf message from a map."
   [m]
@@ -668,19 +594,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-compass
-  "Parse a JonGuiDataCompass protobuf message to a map."
-  [^ser.JonSharedDataCompass$JonGuiDataCompass proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasBank proto) (assoc :bank (.getBank proto))
-    (.hasOffsetAzimuth proto) (assoc :offset-azimuth (.getOffsetAzimuth proto))
-    (.hasOffsetElevation proto) (assoc :offset-elevation (.getOffsetElevation proto))
-    (.hasMagneticDeclination proto) (assoc :magnetic-declination (.getMagneticDeclination proto))
-    (.hasCalibrating proto) (assoc :calibrating (.getCalibrating proto))))
-
 (defn build-jon-gui-data-compass-calibration
   "Build a JonGuiDataCompassCalibration protobuf message from a map."
   [m]
@@ -700,18 +613,6 @@
       (.setStatus builder (get m :status)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-compass-calibration
-  "Parse a JonGuiDataCompassCalibration protobuf message to a map."
-  [^ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasStage proto) (assoc :stage (.getStage proto))
-    (.hasFinalStage proto) (assoc :final-stage (.getFinalStage proto))
-    (.hasTargetAzimuth proto) (assoc :target-azimuth (.getTargetAzimuth proto))
-    (.hasTargetElevation proto) (assoc :target-elevation (.getTargetElevation proto))
-    (.hasTargetBank proto) (assoc :target-bank (.getTargetBank proto))
-    (.hasStatus proto) (assoc :status (.getStatus proto))))
 
 (defn build-jon-gui-data-rotary
   "Build a JonGuiDataRotary protobuf message from a map."
@@ -755,29 +656,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-rotary
-  "Parse a JonGuiDataRotary protobuf message to a map."
-  [^ser.JonSharedDataRotary$JonGuiDataRotary proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasAzimuthSpeed proto) (assoc :azimuth-speed (.getAzimuthSpeed proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasElevationSpeed proto) (assoc :elevation-speed (.getElevationSpeed proto))
-    (.hasPlatformAzimuth proto) (assoc :platform-azimuth (.getPlatformAzimuth proto))
-    (.hasPlatformElevation proto) (assoc :platform-elevation (.getPlatformElevation proto))
-    (.hasPlatformBank proto) (assoc :platform-bank (.getPlatformBank proto))
-    (.hasIsMoving proto) (assoc :is-moving (.getIsMoving proto))
-    (.hasMode proto) (assoc :mode (.getMode proto))
-    (.hasIsScanning proto) (assoc :is-scanning (.getIsScanning proto))
-    (.hasIsScanningPaused proto) (assoc :is-scanning-paused (.getIsScanningPaused proto))
-    (.hasUseRotaryAsCompass proto) (assoc :use-rotary-as-compass (.getUseRotaryAsCompass proto))
-    (.hasScanTarget proto) (assoc :scan-target (.getScanTarget proto))
-    (.hasScanTargetMax proto) (assoc :scan-target-max (.getScanTargetMax proto))
-    (.hasSunAzimuth proto) (assoc :sun-azimuth (.getSunAzimuth proto))
-    (.hasSunElevation proto) (assoc :sun-elevation (.getSunElevation proto))
-    (.hasCurrentScanNode proto) (assoc :current-scan-node (.getCurrentScanNode proto))))
-
 (defn build-scan-node
   "Build a ScanNode protobuf message from a map."
   [m]
@@ -799,19 +677,6 @@
       (.setSpeed builder (get m :speed)))
 
     (.build builder)))
-
-(defn parse-scan-node
-  "Parse a ScanNode protobuf message to a map."
-  [^ser.JonSharedDataRotary$ScanNode proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasIndex proto) (assoc :index (.getIndex proto))
-    (.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
-    (.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasLinger proto) (assoc :linger (.getLinger proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))))
 
 (defn build-jon-gui-data-camera-day
   "Build a JonGuiDataCameraDay protobuf message from a map."
@@ -843,23 +708,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-camera-day
-  "Parse a JonGuiDataCameraDay protobuf message to a map."
-  [^ser.JonSharedDataCameraDay$JonGuiDataCameraDay proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasFocusPos proto) (assoc :focus-pos (.getFocusPos proto))
-    (.hasZoomPos proto) (assoc :zoom-pos (.getZoomPos proto))
-    (.hasIrisPos proto) (assoc :iris-pos (.getIrisPos proto))
-    (.hasInfraredFilter proto) (assoc :infrared-filter (.getInfraredFilter proto))
-    (.hasZoomTablePos proto) (assoc :zoom-table-pos (.getZoomTablePos proto))
-    (.hasZoomTablePosMax proto) (assoc :zoom-table-pos-max (.getZoomTablePosMax proto))
-    (.hasFxMode proto) (assoc :fx-mode (.getFxMode proto))
-    (.hasAutoFocus proto) (assoc :auto-focus (.getAutoFocus proto))
-    (.hasAutoIris proto) (assoc :auto-iris (.getAutoIris proto))
-    (.hasDigitalZoomLevel proto) (assoc :digital-zoom-level (.getDigitalZoomLevel proto))
-    (.hasClaheLevel proto) (assoc :clahe-level (.getClaheLevel proto))))
-
 (defn build-jon-gui-data-camera-heat
   "Build a JonGuiDataCameraHeat protobuf message from a map."
   [m]
@@ -890,23 +738,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-camera-heat
-  "Parse a JonGuiDataCameraHeat protobuf message to a map."
-  [^ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasZoomPos proto) (assoc :zoom-pos (.getZoomPos proto))
-    (.hasAgcMode proto) (assoc :agc-mode (.getAgcMode proto))
-    (.hasFilter proto) (assoc :filter (.getFilter proto))
-    (.hasAutoFocus proto) (assoc :auto-focus (.getAutoFocus proto))
-    (.hasZoomTablePos proto) (assoc :zoom-table-pos (.getZoomTablePos proto))
-    (.hasZoomTablePosMax proto) (assoc :zoom-table-pos-max (.getZoomTablePosMax proto))
-    (.hasDdeLevel proto) (assoc :dde-level (.getDdeLevel proto))
-    (.hasDdeEnabled proto) (assoc :dde-enabled (.getDdeEnabled proto))
-    (.hasFxMode proto) (assoc :fx-mode (.getFxMode proto))
-    (.hasDigitalZoomLevel proto) (assoc :digital-zoom-level (.getDigitalZoomLevel proto))
-    (.hasClaheLevel proto) (assoc :clahe-level (.getClaheLevel proto))))
-
 (defn build-jon-gui-data-rec-osd
   "Build a JonGuiDataRecOsd protobuf message from a map."
   [m]
@@ -929,19 +760,6 @@
 
     (.build builder)))
 
-(defn parse-jon-gui-data-rec-osd
-  "Parse a JonGuiDataRecOsd protobuf message to a map."
-  [^ser.JonSharedDataRecOsd$JonGuiDataRecOsd proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasScreen proto) (assoc :screen (.getScreen proto))
-    (.hasHeatOsdEnabled proto) (assoc :heat-osd-enabled (.getHeatOsdEnabled proto))
-    (.hasDayOsdEnabled proto) (assoc :day-osd-enabled (.getDayOsdEnabled proto))
-    (.hasHeatCrosshairOffsetHorizontal proto) (assoc :heat-crosshair-offset-horizontal (.getHeatCrosshairOffsetHorizontal proto))
-    (.hasHeatCrosshairOffsetVertical proto) (assoc :heat-crosshair-offset-vertical (.getHeatCrosshairOffsetVertical proto))
-    (.hasDayCrosshairOffsetHorizontal proto) (assoc :day-crosshair-offset-horizontal (.getDayCrosshairOffsetHorizontal proto))
-    (.hasDayCrosshairOffsetVertical proto) (assoc :day-crosshair-offset-vertical (.getDayCrosshairOffsetVertical proto))))
-
 (defn build-jon-gui-data-day-cam-glass-heater
   "Build a JonGuiDataDayCamGlassHeater protobuf message from a map."
   [m]
@@ -953,14 +771,6 @@
       (.setStatus builder (get m :status)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-day-cam-glass-heater
-  "Parse a JonGuiDataDayCamGlassHeater protobuf message to a map."
-  [^ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasTemperature proto) (assoc :temperature (.getTemperature proto))
-    (.hasStatus proto) (assoc :status (.getStatus proto))))
 
 (defn build-jon-gui-data-actual-space-time
   "Build a JonGuiDataActualSpaceTime protobuf message from a map."
@@ -983,19 +793,6 @@
       (.setTimestamp builder (get m :timestamp)))
 
     (.build builder)))
-
-(defn parse-jon-gui-data-actual-space-time
-  "Parse a JonGuiDataActualSpaceTime protobuf message to a map."
-  [^ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime proto]
-  (cond-> {}
-    ;; Regular fields
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasBank proto) (assoc :bank (.getBank proto))
-    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
-    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
-    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
-    (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))))
 
 (defn build-jon-gui-state
   "Build a JonGUIState protobuf message from a map."
@@ -1033,12 +830,251 @@
 
     (.build builder)))
 
+(defn parse-jon-gui-data-meteo
+  "Parse a JonGuiDataMeteo protobuf message to a map."
+  [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :temperature (.getTemperature proto))
+    true (assoc :humidity (.getHumidity proto))
+    true (assoc :pressure (.getPressure proto))))
+
+(defn parse-jon-gui-data-time
+  "Parse a JonGuiDataTime protobuf message to a map."
+  [^ser.JonSharedDataTime$JonGuiDataTime proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :timestamp (.getTimestamp proto))
+    true (assoc :manual-timestamp (.getManualTimestamp proto))
+    true (assoc :zone-id (.getZoneId proto))
+    true (assoc :use-manual-time (.getUseManualTime proto))))
+
+(defn parse-jon-gui-data-system
+  "Parse a JonGuiDataSystem protobuf message to a map."
+  [^ser.JonSharedDataSystem$JonGuiDataSystem proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :cpu-temperature (.getCpuTemperature proto))
+    true (assoc :gpu-temperature (.getGpuTemperature proto))
+    true (assoc :gpu-load (.getGpuLoad proto))
+    true (assoc :cpu-load (.getCpuLoad proto))
+    true (assoc :power-consumption (.getPowerConsumption proto))
+    true (assoc :loc (get jon-gui-data-system-localizations-keywords (.getLoc proto)))
+    true (assoc :cur-video-rec-dir-year (.getCurVideoRecDirYear proto))
+    true (assoc :cur-video-rec-dir-month (.getCurVideoRecDirMonth proto))
+    true (assoc :cur-video-rec-dir-day (.getCurVideoRecDirDay proto))
+    true (assoc :cur-video-rec-dir-hour (.getCurVideoRecDirHour proto))
+    true (assoc :cur-video-rec-dir-minute (.getCurVideoRecDirMinute proto))
+    true (assoc :cur-video-rec-dir-second (.getCurVideoRecDirSecond proto))
+    true (assoc :rec-enabled (.getRecEnabled proto))
+    true (assoc :important-rec-enabled (.getImportantRecEnabled proto))
+    true (assoc :low-disk-space (.getLowDiskSpace proto))
+    true (assoc :no-disk-space (.getNoDiskSpace proto))
+    true (assoc :disk-space (.getDiskSpace proto))
+    true (assoc :tracking (.getTracking proto))
+    true (assoc :vampire-mode (.getVampireMode proto))
+    true (assoc :stabilization-mode (.getStabilizationMode proto))
+    true (assoc :geodesic-mode (.getGeodesicMode proto))
+    true (assoc :cv-dumping (.getCvDumping proto))))
+
+(defn parse-jon-gui-data-lrf
+  "Parse a JonGuiDataLrf protobuf message to a map."
+  [^ser.JonSharedDataLrf$JonGuiDataLrf proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :is-scanning (.getIsScanning proto))
+    true (assoc :is-measuring (.getIsMeasuring proto))
+    true (assoc :measure-id (.getMeasureId proto))
+    (.hasTarget proto) (assoc :target (.getTarget proto))
+    true (assoc :pointer-mode (get jon-gui-datat-lrf-laser-pointer-modes-keywords (.getPointerMode proto)))
+    true (assoc :fog-mode-enabled (.getFogModeEnabled proto))
+    true (assoc :is-refining (.getIsRefining proto))))
+
+(defn parse-jon-gui-data-target
+  "Parse a JonGuiDataTarget protobuf message to a map."
+  [^ser.JonSharedDataLrf$JonGuiDataTarget proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :timestamp (.getTimestamp proto))
+    true (assoc :target-longitude (.getTargetLongitude proto))
+    true (assoc :target-latitude (.getTargetLatitude proto))
+    true (assoc :target-altitude (.getTargetAltitude proto))
+    true (assoc :observer-longitude (.getObserverLongitude proto))
+    true (assoc :observer-latitude (.getObserverLatitude proto))
+    true (assoc :observer-altitude (.getObserverAltitude proto))
+    true (assoc :observer-azimuth (.getObserverAzimuth proto))
+    true (assoc :observer-elevation (.getObserverElevation proto))
+    true (assoc :observer-bank (.getObserverBank proto))
+    true (assoc :distance-2d (.getDistance2d proto))
+    true (assoc :distance-3b (.getDistance3b proto))
+    true (assoc :observer-fix-type (get jon-gui-data-gps-fix-type-keywords (.getObserverFixType proto)))
+    true (assoc :session-id (.getSessionId proto))
+    true (assoc :target-id (.getTargetId proto))
+    (.hasTargetColor proto) (assoc :target-color (.getTargetColor proto))
+    true (assoc :type (.getType proto))
+    true (assoc :uuid-part-1 (.getUuidPart1 proto))
+    true (assoc :uuid-part-2 (.getUuidPart2 proto))
+    true (assoc :uuid-part-3 (.getUuidPart3 proto))
+    true (assoc :uuid-part-4 (.getUuidPart4 proto))))
+
+(defn parse-rgb-color
+  "Parse a RgbColor protobuf message to a map."
+  [^ser.JonSharedDataLrf$RgbColor proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :red (.getRed proto))
+    true (assoc :green (.getGreen proto))
+    true (assoc :blue (.getBlue proto))))
+
+(defn parse-jon-gui-data-gps
+  "Parse a JonGuiDataGps protobuf message to a map."
+  [^ser.JonSharedDataGps$JonGuiDataGps proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :longitude (.getLongitude proto))
+    true (assoc :latitude (.getLatitude proto))
+    true (assoc :altitude (.getAltitude proto))
+    true (assoc :manual-longitude (.getManualLongitude proto))
+    true (assoc :manual-latitude (.getManualLatitude proto))
+    true (assoc :manual-altitude (.getManualAltitude proto))
+    true (assoc :fix-type (get jon-gui-data-gps-fix-type-keywords (.getFixType proto)))
+    true (assoc :use-manual (.getUseManual proto))))
+
+(defn parse-jon-gui-data-compass
+  "Parse a JonGuiDataCompass protobuf message to a map."
+  [^ser.JonSharedDataCompass$JonGuiDataCompass proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :azimuth (.getAzimuth proto))
+    true (assoc :elevation (.getElevation proto))
+    true (assoc :bank (.getBank proto))
+    true (assoc :offset-azimuth (.getOffsetAzimuth proto))
+    true (assoc :offset-elevation (.getOffsetElevation proto))
+    true (assoc :magnetic-declination (.getMagneticDeclination proto))
+    true (assoc :calibrating (.getCalibrating proto))))
+
+(defn parse-jon-gui-data-compass-calibration
+  "Parse a JonGuiDataCompassCalibration protobuf message to a map."
+  [^ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :stage (.getStage proto))
+    true (assoc :final-stage (.getFinalStage proto))
+    true (assoc :target-azimuth (.getTargetAzimuth proto))
+    true (assoc :target-elevation (.getTargetElevation proto))
+    true (assoc :target-bank (.getTargetBank proto))
+    true (assoc :status (get jon-gui-data-compass-calibrate-status-keywords (.getStatus proto)))))
+
+(defn parse-jon-gui-data-rotary
+  "Parse a JonGuiDataRotary protobuf message to a map."
+  [^ser.JonSharedDataRotary$JonGuiDataRotary proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :azimuth (.getAzimuth proto))
+    true (assoc :azimuth-speed (.getAzimuthSpeed proto))
+    true (assoc :elevation (.getElevation proto))
+    true (assoc :elevation-speed (.getElevationSpeed proto))
+    true (assoc :platform-azimuth (.getPlatformAzimuth proto))
+    true (assoc :platform-elevation (.getPlatformElevation proto))
+    true (assoc :platform-bank (.getPlatformBank proto))
+    true (assoc :is-moving (.getIsMoving proto))
+    true (assoc :mode (get jon-gui-data-rotary-mode-keywords (.getMode proto)))
+    true (assoc :is-scanning (.getIsScanning proto))
+    true (assoc :is-scanning-paused (.getIsScanningPaused proto))
+    true (assoc :use-rotary-as-compass (.getUseRotaryAsCompass proto))
+    true (assoc :scan-target (.getScanTarget proto))
+    true (assoc :scan-target-max (.getScanTargetMax proto))
+    true (assoc :sun-azimuth (.getSunAzimuth proto))
+    true (assoc :sun-elevation (.getSunElevation proto))
+    (.hasCurrentScanNode proto) (assoc :current-scan-node (.getCurrentScanNode proto))))
+
+(defn parse-scan-node
+  "Parse a ScanNode protobuf message to a map."
+  [^ser.JonSharedDataRotary$ScanNode proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :index (.getIndex proto))
+    true (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
+    true (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
+    true (assoc :azimuth (.getAzimuth proto))
+    true (assoc :elevation (.getElevation proto))
+    true (assoc :linger (.getLinger proto))
+    true (assoc :speed (.getSpeed proto))))
+
+(defn parse-jon-gui-data-camera-day
+  "Parse a JonGuiDataCameraDay protobuf message to a map."
+  [^ser.JonSharedDataCameraDay$JonGuiDataCameraDay proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :focus-pos (.getFocusPos proto))
+    true (assoc :zoom-pos (.getZoomPos proto))
+    true (assoc :iris-pos (.getIrisPos proto))
+    true (assoc :infrared-filter (.getInfraredFilter proto))
+    true (assoc :zoom-table-pos (.getZoomTablePos proto))
+    true (assoc :zoom-table-pos-max (.getZoomTablePosMax proto))
+    true (assoc :fx-mode (get jon-gui-data-fx-mode-day-keywords (.getFxMode proto)))
+    true (assoc :auto-focus (.getAutoFocus proto))
+    true (assoc :auto-iris (.getAutoIris proto))
+    true (assoc :digital-zoom-level (.getDigitalZoomLevel proto))
+    true (assoc :clahe-level (.getClaheLevel proto))))
+
+(defn parse-jon-gui-data-camera-heat
+  "Parse a JonGuiDataCameraHeat protobuf message to a map."
+  [^ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :zoom-pos (.getZoomPos proto))
+    true (assoc :agc-mode (get jon-gui-data-video-channel-heat-agc-modes-keywords (.getAgcMode proto)))
+    true (assoc :filter (get jon-gui-data-video-channel-heat-filters-keywords (.getFilter proto)))
+    true (assoc :auto-focus (.getAutoFocus proto))
+    true (assoc :zoom-table-pos (.getZoomTablePos proto))
+    true (assoc :zoom-table-pos-max (.getZoomTablePosMax proto))
+    true (assoc :dde-level (.getDdeLevel proto))
+    true (assoc :dde-enabled (.getDdeEnabled proto))
+    true (assoc :fx-mode (get jon-gui-data-fx-mode-heat-keywords (.getFxMode proto)))
+    true (assoc :digital-zoom-level (.getDigitalZoomLevel proto))
+    true (assoc :clahe-level (.getClaheLevel proto))))
+
+(defn parse-jon-gui-data-rec-osd
+  "Parse a JonGuiDataRecOsd protobuf message to a map."
+  [^ser.JonSharedDataRecOsd$JonGuiDataRecOsd proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :screen (get jon-gui-data-rec-osd-screen-keywords (.getScreen proto)))
+    true (assoc :heat-osd-enabled (.getHeatOsdEnabled proto))
+    true (assoc :day-osd-enabled (.getDayOsdEnabled proto))
+    true (assoc :heat-crosshair-offset-horizontal (.getHeatCrosshairOffsetHorizontal proto))
+    true (assoc :heat-crosshair-offset-vertical (.getHeatCrosshairOffsetVertical proto))
+    true (assoc :day-crosshair-offset-horizontal (.getDayCrosshairOffsetHorizontal proto))
+    true (assoc :day-crosshair-offset-vertical (.getDayCrosshairOffsetVertical proto))))
+
+(defn parse-jon-gui-data-day-cam-glass-heater
+  "Parse a JonGuiDataDayCamGlassHeater protobuf message to a map."
+  [^ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :temperature (.getTemperature proto))
+    true (assoc :status (.getStatus proto))))
+
+(defn parse-jon-gui-data-actual-space-time
+  "Parse a JonGuiDataActualSpaceTime protobuf message to a map."
+  [^ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime proto]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :azimuth (.getAzimuth proto))
+    true (assoc :elevation (.getElevation proto))
+    true (assoc :bank (.getBank proto))
+    true (assoc :latitude (.getLatitude proto))
+    true (assoc :longitude (.getLongitude proto))
+    true (assoc :altitude (.getAltitude proto))
+    true (assoc :timestamp (.getTimestamp proto))))
+
 (defn parse-jon-gui-state
   "Parse a JonGUIState protobuf message to a map."
   [^ser.JonSharedData$JonGUIState proto]
   (cond-> {}
     ;; Regular fields
-    (.hasProtocolVersion proto) (assoc :protocol-version (.getProtocolVersion proto))
+    true (assoc :protocol-version (.getProtocolVersion proto))
     (.hasSystem proto) (assoc :system (.getSystem proto))
     (.hasMeteoInternal proto) (assoc :meteo-internal (.getMeteoInternal proto))
     (.hasLrf proto) (assoc :lrf (.getLrf proto))

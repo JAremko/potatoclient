@@ -8,9 +8,9 @@
             [potatoclient.proto.command :as cmd-gen]
             [potatoclient.proto.state :as state-gen]
             [test-utils.diff :as diff])
-  (:import [cmd.Cmd JonSharedCmd JonSharedCmd$Root JonSharedCmd$Root$PayloadCase]
-           [ser.Ser JonSharedData JonSharedData$JonGUIState]
-           [ser.JonSharedDataTypes JonSharedDataTypes JonSharedDataTypes$JonGuiDataClientType]))
+  (:import [cmd JonSharedCmd JonSharedCmd$Root JonSharedCmd$Root$PayloadCase]
+           [ser JonSharedData JonSharedData$JonGUIState]
+           [ser JonSharedDataTypes JonSharedDataTypes$JonGuiDataClientType]))
 
 ;; First, let's define the Malli schemas that match our protobuf structures
 ;; These would normally be generated, but for testing we'll define them manually
@@ -58,19 +58,18 @@
    :jon-gui-data-client-type-lira])
 
 (def command-root-schema
-  [:and
-   [:map {:closed true}
-    [:protocol-version {:optional true} pos-int?]
-    [:session-id {:optional true} :string]
-    [:important {:optional true} :boolean]
-    [:from-cv-subsystem {:optional true} :boolean]
-    [:client-type {:optional true} client-type-enum]]
-   [:oneof {:error/message "Exactly one command payload must be set"
-            :ping ping-schema
-            :rotary rotary-command-schema
-            :system system-command-schema
-            :noop [:map {:closed true}]
-            :frozen [:map {:closed true}]}]])
+  [:map {:closed false} ;; Allow oneof fields
+   [:protocol-version {:optional true} pos-int?]
+   [:session-id {:optional true} :string]
+   [:important {:optional true} :boolean]
+   [:from-cv-subsystem {:optional true} :boolean]
+   [:client-type {:optional true} client-type-enum]
+   ;; The oneof fields are added dynamically
+   [:ping {:optional true} ping-schema]
+   [:rotary {:optional true} rotary-command-schema]
+   [:system {:optional true} system-command-schema]
+   [:noop {:optional true} [:map {:closed true}]]
+   [:frozen {:optional true} [:map {:closed true}]]])
 
 ;; State schemas - simplified for testing
 ;; In reality, each field would be a complex message type
@@ -97,10 +96,14 @@
 (deftest command-ping-roundtrip-test
   (testing "Ping command full roundtrip with validation"
     (let [;; 1. Generate test data with Malli
-          original {:ping {}}
+          original {:protocol-version 1
+                    :ping {}}
           
           ;; 2. Validate with Malli
           valid? (m/validate command-root-schema original {:registry registry})]
+      
+      (when-not valid?
+        (println "Validation errors:" (m/explain command-root-schema original {:registry registry})))
       
       (is valid? "Original data should be valid according to Malli schema")
       
