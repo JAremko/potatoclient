@@ -1,7 +1,24 @@
 # TODO: Fix All Tests - No Skipping Allowed! 🚫
 
+**Last Updated**: 2025-08-05
+
 ## Goal
 Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no skipping. Every test must work with the current architecture.
+
+## Session Progress Tracking
+
+### Session 1 (2025-08-05):
+- ✅ Fixed ProcessBuilder$Redirect compilation error in working_subprocess_test.clj
+- ✅ Added Kotlin test compilation/execution to Makefile
+- ✅ Identified test timeout issue (subprocess stdin handling)
+- ✅ Discovered Transit keyword violation in Kotlin code
+- ✅ Analyzed all Kotlin tests - found they reference obsolete architecture
+- ✅ Investigated tools (transit-test-generator, mock-video-stream)
+- 🔄 Started fixing TransitMessageProtocol to use keywords
+
+### Tools Status:
+- **transit-test-generator**: ✅ Uses keywords correctly, ready to use for test generation
+- **mock-video-stream**: ✅ Uses keywords correctly, can simulate server for integration tests
 
 ## Status Overview
 - [ ] Remove 5 disabled test files (4 .skip, 1 .disabled)
@@ -187,6 +204,49 @@ Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no
 - [ ] Test execution time < 2 minutes
 - [ ] Kotlin tests are included in test runs
 
+## Testing Tools Available
+
+### 1. transit-test-generator (tools/transit-test-generator)
+**Purpose**: Generate and validate Transit command messages using Malli specs
+**Status**: ✅ Ready to use - follows keyword architecture correctly
+
+**How it helps with testing**:
+- Generate valid Transit messages for all command types
+- Validate messages conform to specs
+- Test Transit roundtrip encoding/decoding
+- Create comprehensive test datasets
+
+**Usage for our tests**:
+```bash
+# Generate test commands
+cd tools/transit-test-generator
+make build
+java -jar target/transit-test-generator-*.jar generate --command ping --format transit
+
+# Validate our fixed Kotlin output
+java -jar target/transit-test-generator-*.jar validate --input-file message.transit
+```
+
+### 2. mock-video-stream (tools/mock-video-stream)
+**Purpose**: Simulate PotatoClient's video streaming server without hardware
+**Status**: ✅ Ready to use - follows keyword architecture correctly
+
+**How it helps with testing**:
+- Provides WebSocket endpoints for integration tests
+- Simulates command handling and state updates
+- Can run test scenarios
+- No hardware dependencies
+
+**Usage for our tests**:
+```bash
+# Start mock server for integration tests
+cd tools/mock-video-stream
+make start-server  # Runs on localhost:8080
+
+# Run test scenarios
+make scenario SCENARIO=rapid-commands
+```
+
 ## Progress Summary (as of current analysis)
 
 ### ✅ Completed:
@@ -208,13 +268,39 @@ Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no
 4. Fix gesture test failures
 5. Analyze and either fix or delete the 5 disabled tests
 
+## Current Work In Progress
+
+### 🔄 Fixing Transit Keyword Issue (CRITICAL)
+**File**: `src/potatoclient/kotlin/transit/TransitMessageProtocol.kt`
+**Issue**: Using `MessageKeys` (strings) instead of `TransitKeys` (keywords)
+**Progress**: Started converting createMessage() function
+**TODO**: 
+- [ ] Finish updating all MessageKeys references to TransitKeys
+- [ ] Update TransitKeys.kt if missing any keys
+- [ ] Test with transit-test-generator tool
+- [ ] Verify working_subprocess_test.clj passes
+
 ## Next Steps
 
-1. Fix the Transit keyword issue first (it's an architecture violation)
-2. Delete obsolete Kotlin tests
-3. Fix gesture test failures  
-4. Write new tests that match current architecture
-5. Ensure CI runs all tests
+1. **Complete Transit keyword fix** (architecture violation - highest priority)
+   - Use transit-test-generator to validate fixed messages
+   
+2. **Delete obsolete Kotlin tests**
+   - All 15 active test files reference non-existent classes
+   - Keep the .skip files for reference when writing new tests
+   
+3. **Write new Kotlin tests using tools**
+   - Use transit-test-generator for message generation
+   - Use mock-video-stream for integration tests
+   - Focus on testing GeneratedHandlers architecture
+   
+4. **Fix gesture test failures** (32 failures)
+   - Investigate root cause
+   - May be related to Transit keyword issue
+   
+5. **Ensure CI runs all tests**
+   - Verify Kotlin tests execute in CI
+   - Add test summary reporting
 
 ---
 

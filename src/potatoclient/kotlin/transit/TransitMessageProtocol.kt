@@ -3,7 +3,6 @@ package potatoclient.kotlin.transit
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import potatoclient.java.transit.EventType
-import potatoclient.java.transit.MessageKeys
 import potatoclient.java.transit.MessageType
 import potatoclient.kotlin.transit.logDebug
 import potatoclient.kotlin.transit.logError
@@ -329,15 +328,15 @@ class TransitMessageProtocol(
     fun createMessage(
         msgType: MessageType,
         payload: Map<String, Any>,
-    ): Map<String, Any> =
+    ): Map<Any, Any> =
         mapOf(
-            MessageKeys.MSG_TYPE to msgType.key,
-            MessageKeys.MSG_ID to
+            TransitKeys.MSG_TYPE to msgType.key,
+            TransitKeys.MSG_ID to
                 java.util.UUID
                     .randomUUID()
                     .toString(),
-            MessageKeys.TIMESTAMP to System.currentTimeMillis(),
-            MessageKeys.PAYLOAD to payload,
+            TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+            TransitKeys.PAYLOAD to payload,
         )
 
     /**
@@ -359,8 +358,8 @@ class MessageBuilder(
     ) = protocol.createMessage(
         MessageType.COMMAND,
         mapOf(
-            MessageKeys.ACTION to action,
-            MessageKeys.PARAMS to params,
+            TransitKeys.ACTION to action,
+            TransitKeys.PARAMS to params,
         ),
     )
 
