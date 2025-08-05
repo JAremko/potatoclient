@@ -22,6 +22,11 @@ generate: ## Generate Clojure converters from JSON descriptors
 	@echo "Generating Clojure protobuf converters..."
 	@clojure -X:gen
 
+.PHONY: lint-generated
+lint-generated: generate ## Lint the generated code
+	@echo "Linting generated code..."
+	@cd ../.. && clj-kondo --lint tools/proto-clj-generator/generated/potatoclient/proto
+
 .PHONY: test
 test: compile-proto ## Run all tests (compiles proto classes first)
 	@echo "Running tests..."

@@ -1,0 +1,1 @@
+(METHOD-NAME proto) (assoc FIELD-KEY (GETTER-NAME proto))

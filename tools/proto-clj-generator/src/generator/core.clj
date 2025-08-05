@@ -5,7 +5,8 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [taoensso.timbre :as log]
-            [clojure.pprint :as pp]))
+            [clojure.pprint :as pp]
+            [cljfmt.core :as cljfmt]))
 
 (defn write-edn-debug
   "Write EDN intermediate representation for debugging."
@@ -41,28 +42,35 @@
       (log/info "Frontend: Generating Clojure code from EDN...")
       (let [generated (frontend/generate-from-backend backend-output namespace-prefix)]
         
-        ;; Step 4: Write generated code
-        (log/info "Writing generated code...")
-        (.mkdirs (io/file output-dir namespace-prefix))
-        
-        (let [ns-path (str/replace namespace-prefix #"\." "/")
-              cmd-file (io/file output-dir 
-                               (str ns-path "/command.clj"))
-              state-file (io/file output-dir 
-                                 (str ns-path "/state.clj"))]
+        ;; Step 4: Format generated code
+        (log/info "Formatting generated code...")
+        (let [format-opts {:indents cljfmt/default-indents
+                          :alias-map {}}
+              formatted-command (cljfmt/reformat-string (:command generated) format-opts)
+              formatted-state (cljfmt/reformat-string (:state generated) format-opts)]
           
-          (.mkdirs (.getParentFile cmd-file))
-          (.mkdirs (.getParentFile state-file))
+          ;; Step 5: Write generated code
+          (log/info "Writing generated code...")
+          (.mkdirs (io/file output-dir namespace-prefix))
           
-          (spit cmd-file (:command generated))
-          (spit state-file (:state generated))
-          
-          (log/info "Generated" (.getPath cmd-file))
-          (log/info "Generated" (.getPath state-file))
-          
-          {:success true
-           :files [(str cmd-file) (str state-file)]
-           :backend-output backend-output})))
+          (let [ns-path (str/replace namespace-prefix #"\." "/")
+                cmd-file (io/file output-dir 
+                                 (str ns-path "/command.clj"))
+                state-file (io/file output-dir 
+                                   (str ns-path "/state.clj"))]
+            
+            (.mkdirs (.getParentFile cmd-file))
+            (.mkdirs (.getParentFile state-file))
+            
+            (spit cmd-file formatted-command)
+            (spit state-file formatted-state)
+            
+            (log/info "Generated" (.getPath cmd-file))
+            (log/info "Generated" (.getPath state-file))
+            
+            {:success true
+             :files [(str cmd-file) (str state-file)]
+             :backend-output backend-output}))))
     
     (catch Exception e
       (log/error e "Code generation failed")

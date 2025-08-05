@@ -1,6 +1,6 @@
 (ns generator.frontend
-  "Frontend for the proto-clj-generator using rewrite-clj templates.
-  Generates Clojure code from the EDN intermediate representation."
+  "Frontend using rewrite-clj for AST-based code generation.
+  Uses templates as base and manipulates them via rewrite-clj."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [camel-snake-kebab.core :as csk]
@@ -14,269 +14,364 @@
 ;; =============================================================================
 
 (defn load-template
-  "Load a template file from resources."
+  "Load a template file from resources as a zipper."
   [template-name]
   (if-let [resource (io/resource (str "templates/" template-name))]
-    (slurp resource)
+    (z/of-string (slurp resource))
     (throw (ex-info "Template not found" {:template template-name}))))
 
-(defn templates
-  "Load templates on demand."
-  []
-  {:namespace (load-template "namespace.clj")
-   :builder (load-template "builder.clj")
-   :oneof-builder (load-template "oneof-builder.clj")
-   :parser (load-template "parser.clj")
-   :oneof-parser (load-template "oneof-parser.clj")})
+;; =============================================================================
+;; AST Navigation and Manipulation
+;; =============================================================================
 
-;; =============================================================================
-;; Template Helpers
-;; =============================================================================
+(defn find-and-replace
+  "Find a symbol and replace it with a new value, preserving location context."
+  [zloc sym-name replacement]
+  (loop [loc zloc]
+    (cond
+      (z/end? loc) zloc
+      
+      (and (= :token (z/tag loc))
+           (symbol? (z/sexpr loc))
+           (= (str (z/sexpr loc)) (str sym-name)))
+      (-> loc
+          (z/replace replacement)
+          z/up
+          (or zloc))
+      
+      :else (recur (z/next loc)))))
+
+(defn find-and-replace-string
+  "Find a string node and replace its content."
+  [zloc string-content replacement]
+  (loop [loc zloc]
+    (cond
+      (z/end? loc) zloc
+      
+      (and (string? (z/sexpr loc))
+           (str/includes? (z/sexpr loc) string-content))
+      (let [current-string (z/sexpr loc)
+            new-string (str/replace current-string string-content replacement)]
+        (-> loc
+            (z/replace (n/string-node new-string))
+            z/up
+            (or zloc)))
+      
+      :else (recur (z/next loc)))))
+
+(defn find-and-replace-all
+  "Replace all occurrences of a pattern."
+  [zloc pattern replacement-fn]
+  (loop [loc zloc
+         changed? false]
+    (cond
+      (z/end? loc) (if changed? (z/of-node (z/root loc)) zloc)
+      
+      (pattern loc)
+      (let [new-loc (z/replace loc (replacement-fn loc))]
+        (recur (z/next new-loc) true))
+      
+      :else (recur (z/next loc) changed?))))
 
 ;; =============================================================================
 ;; Code Generation Helpers
 ;; =============================================================================
 
-(defn field-java-setter
-  "Generate Java setter method name for a field."
-  [field]
-  (str "set" (csk/->PascalCase (:proto-name field))))
-
-(defn field-java-getter
-  "Generate Java getter method name for a field."
-  [field]
-  (str "get" (csk/->PascalCase (:proto-name field))))
-
-(defn resolve-builder-name
-  "Resolve the builder function name for a type reference."
-  [type-ref type-lookup]
+(defn resolve-type-name
+  "Resolve a type reference to a builder/parser name."
+  [type-ref type-lookup prefix]
   (when type-ref
     (let [canonical-ref (str/replace type-ref #"^\." "")
           type-def (get type-lookup canonical-ref)]
-      (if type-def
-        (str "build-" (name (:name type-def)))
-        (throw (ex-info "Cannot resolve type reference for builder"
-                        {:type-ref type-ref
-                         :canonical-ref canonical-ref
-                         :available-types (keys type-lookup)}))))))
-
-(defn resolve-parser-name
-  "Resolve the parser function name for a type reference."
-  [type-ref type-lookup]
-  (when type-ref
-    (let [canonical-ref (str/replace type-ref #"^\." "")
-          type-def (get type-lookup canonical-ref)]
-      (if type-def
-        (str "parse-" (name (:name type-def)))
-        (throw (ex-info "Cannot resolve type reference for parser"
-                        {:type-ref type-ref
-                         :canonical-ref canonical-ref
-                         :available-types (keys type-lookup)}))))))
+      (when type-def
+        (str prefix (name (:name type-def)))))))
 
 ;; =============================================================================
 ;; Field Generation
 ;; =============================================================================
 
-(defn generate-field-setter
-  "Generate code for setting a single field."
-  [field indent]
-  (let [spaces (apply str (repeat indent " "))]
-    (str spaces "(when (contains? m " (:name field) ")\n"
-         spaces "  (." (field-java-setter field) " builder (get m " (:name field) ")))")))
-
-(defn generate-field-getter
-  "Generate code for getting a single field value."
+(defn generate-field-setter-node
+  "Generate AST node for setting a single field."
   [field]
-  (str "(." (str "has" (csk/->PascalCase (:proto-name field))) " proto) "
-       "(assoc " (:name field) " (." (field-java-getter field) " proto))"))
+  (n/list-node
+   [(n/token-node 'when)
+    (n/whitespace-node " ")
+    (n/list-node
+     [(n/token-node 'contains?)
+      (n/whitespace-node " ")
+      (n/token-node 'm)
+      (n/whitespace-node " ")
+      (n/keyword-node (:name field))])
+    (n/newline-node "\n")
+    (n/whitespace-node "      ")
+    (n/list-node
+     [(n/token-node (symbol (str ".set" (csk/->PascalCase (:proto-name field)))))
+      (n/whitespace-node " ")
+      (n/token-node 'builder)
+      (n/whitespace-node " ")
+      (n/list-node
+       [(n/token-node 'get)
+        (n/whitespace-node " ")
+        (n/token-node 'm)
+        (n/whitespace-node " ")
+        (n/keyword-node (:name field))])])]))
 
-(defn generate-regular-fields-setter
-  "Generate setters for regular fields."
-  [fields]
-  (if (seq fields)
-    (str ";; Set regular fields\n    "
-         (str/join "\n    " (map #(generate-field-setter % 0) fields)))
-    ""))
-
-(defn generate-regular-fields-getter
-  "Generate getters for regular fields."
-  [fields]
-  (if (seq fields)
-    (str ";; Regular fields\n    "
-         (str/join "\n    " (map generate-field-getter fields)))
-    ""))
-
-;; =============================================================================
-;; Oneof Generation
-;; =============================================================================
-
-(defn generate-oneof-case
-  "Generate a case clause for a oneof field."
-  [field type-lookup]
-  (let [field-type (get-in field [:type :message :type-ref])
-        builder-name (when field-type
-                      (resolve-builder-name field-type type-lookup))]
-    (if (and (get-in field [:type :message])
-             builder-name)
-      ;; Message type - need to build it
-      (str "    " (:name field) " (." 
-           (field-java-setter field) " builder (" 
-           builder-name " field-value))")
-      ;; Scalar type - set directly
-      (str "    " (:name field) " (." 
-           (field-java-setter field) " builder field-value)"))))
-
-(defn generate-oneof-parser-case
-  "Generate a case clause for parsing a oneof field."
-  [field type-lookup]
-  (let [field-type (get-in field [:type :message :type-ref])
-        parser-name (when field-type
-                     (resolve-parser-name field-type type-lookup))]
-    (if (and (get-in field [:type :message])
-             parser-name)
-      ;; Message type - need to parse it
-      (str "    " (csk/->SCREAMING_SNAKE_CASE (:proto-name field))
-           " {" (:name field) " (" parser-name " (." 
-           (field-java-getter field) " proto))}")
-      ;; Scalar type - get directly
-      (str "    " (csk/->SCREAMING_SNAKE_CASE (:proto-name field))
-           " {" (:name field) " (." 
-           (field-java-getter field) " proto)}"))))
-
-(defn generate-oneof-payload-setter
-  "Generate the oneof payload setter code."
-  [message oneof-fields]
-  (if (seq oneof-fields)
-    (str "\n    ;; Set oneof payload\n"
-         "    (when-let [payload (first (filter (fn [[k v]] (#{" 
-         (str/join " " (map :name oneof-fields))
-         "} k)) m))]\n"
-         "      (build-" (csk/->kebab-case (:proto-name message)) 
-         "-payload builder payload))")
-    ""))
-
-(defn generate-oneof-payload-getter
-  "Generate the oneof payload getter code."
-  [message]
-  (if (seq (:oneofs message))
-    (str "\n    ;; Oneof payload\n"
-         "    true (merge (parse-" (csk/->kebab-case (:proto-name message))
-         "-payload proto))")
-    ""))
-
-;; =============================================================================
-;; Builder and Parser Generation
-;; =============================================================================
-
-(defn generate-builder
-  "Generate a builder function for a message using template."
-  [message type-lookup]
-  (let [regular-fields (remove :oneof-index (:fields message))
-        oneof-fields (filter :oneof-index (:fields message))
-        fn-name (str "build-" (name (:name message)))
-        builder-template (:builder (templates))]
-    (-> builder-template
-        (str/replace "BUILD-FN-NAME" fn-name)
-        (str/replace "PROTO-NAME" (:proto-name message))
-        (str/replace "JAVA-CLASS" (:java-class message))
-        (str/replace "REGULAR-FIELDS" (generate-regular-fields-setter regular-fields))
-        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-setter message oneof-fields)))))
-
-(defn generate-oneof-builder
-  "Generate the oneof payload builder for a message using template."
-  [message type-lookup]
-  (when (seq (:oneofs message))
-    (let [oneof-fields (mapcat :fields (:oneofs message))
-          case-clauses (str/join "\n" 
-                               (map #(generate-oneof-case % type-lookup) 
-                                   oneof-fields))
-          fn-name (str "build-" (name (:name message)))
-          template (:oneof-builder (templates))]
-      (str "\n" (-> template
-                    (str/replace "BUILD-FN-NAME-PAYLOAD" (str fn-name "-payload"))
-                    (str/replace "CASE-CLAUSES" case-clauses))))))
-
-(defn generate-parser
-  "Generate a parser function for a message using template."
-  [message type-lookup]
-  (let [regular-fields (remove :oneof-index (:fields message))
-        fn-name (str "parse-" (name (:name message)))
-        parser-template (:parser (templates))]
-    (-> parser-template
-        (str/replace "PARSE-FN-NAME" fn-name)
-        (str/replace "PROTO-NAME" (:proto-name message))
-        (str/replace "JAVA-CLASS" (:java-class message))
-        (str/replace "REGULAR-FIELDS" (generate-regular-fields-getter regular-fields))
-        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-getter message)))))
-
-(defn generate-oneof-parser
-  "Generate the oneof payload parser for a message using template."
-  [message type-lookup]
-  (when (seq (:oneofs message))
-    (let [oneof (first (:oneofs message))
-          oneof-fields (:fields oneof)
-          case-clauses (str/join "\n"
-                               (map #(generate-oneof-parser-case % type-lookup) 
-                                   oneof-fields))
-          fn-name (str "parse-" (name (:name message)))
-          oneof-getter (str "get" (csk/->PascalCase (:proto-name oneof)) "Case")
-          template (:oneof-parser (templates))]
-      (str "\n" (-> template
-                     (str/replace "PARSE-FN-NAME-PAYLOAD" (str fn-name "-payload"))
-                     (str/replace "PROTO-NAME" (:proto-name message))
-                     (str/replace "JAVA-CLASS" (:java-class message))
-                     (str/replace "GET-ONEOF-CASE" oneof-getter)
-                     (str/replace "CASE-CLAUSES" case-clauses))))))
+(defn generate-field-getter-node
+  "Generate AST node for getting a single field value."
+  [field]
+  (n/list-node
+   [(n/token-node (symbol (str ".has" (csk/->PascalCase (:proto-name field)))))
+    (n/whitespace-node " ")
+    (n/token-node 'proto)
+    (n/whitespace-node " ")
+    (n/list-node
+     [(n/token-node 'assoc)
+      (n/whitespace-node " ")
+      (n/keyword-node (:name field))
+      (n/whitespace-node " ")
+      (n/list-node
+       [(n/token-node (symbol (str ".get" (csk/->PascalCase (:proto-name field)))))
+        (n/whitespace-node " ")
+        (n/token-node 'proto)])]]))
 
 ;; =============================================================================
 ;; Enum Generation
 ;; =============================================================================
 
-(defn generate-enum-value-map
-  "Generate the enum value mapping."
-  [enum]
-  (str "{" (str/join "\n   "
-                    (map (fn [value]
-                          (str (:name value) " " (:java-class enum) "/" 
-                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))))
-                        (:values enum)))
-       "}"))
+(defn generate-enum-value-entry
+  "Generate a single enum value entry node."
+  [value enum]
+  [(n/keyword-node (:name value))
+   (n/whitespace-node " ")
+   (n/token-node (symbol (str (:java-class enum) "/" 
+                             (csk/->SCREAMING_SNAKE_CASE (:proto-name value)))))])
 
-(defn generate-enum-reverse-map
-  "Generate the reverse enum mapping (Java -> keyword)."
-  [enum]
-  (str "{" (str/join "\n   "
-                    (map (fn [value]
-                          (str (:java-class enum) "/" 
-                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))
-                               " " (:name value)))
-                        (:values enum)))
-       "}"))
+(defn generate-enum-reverse-entry
+  "Generate a single reverse enum entry node."
+  [value enum]
+  [(n/token-node (symbol (str (:java-class enum) "/" 
+                             (csk/->SCREAMING_SNAKE_CASE (:proto-name value)))))
+   (n/whitespace-node " ")
+   (n/keyword-node (:name value))])
 
-(defn generate-enum
-  "Generate enum mappings."
-  [enum]
-  (when (:proto-name enum)
-    (str ";; Enum: " (:proto-name enum) "\n"
-         "(def " (csk/->kebab-case (:proto-name enum)) "-values\n"
-         "  \"Keyword to Java enum mapping for " (:proto-name enum) ".\"\n"
-         "  " (generate-enum-value-map enum) ")\n\n"
-         "(def " (csk/->kebab-case (:proto-name enum)) "-keywords\n"
-         "  \"Java enum to keyword mapping for " (:proto-name enum) ".\"\n"
-         "  " (generate-enum-reverse-map enum) ")\n")))
+(defn generate-enum-map-node
+  "Generate enum map node."
+  [enum entry-fn]
+  (n/map-node
+   (into []
+         (comp (map #(entry-fn % enum))
+               (interpose [(n/newline-node "\n") (n/whitespace-node "   ")])
+               cat)
+         (:values enum))))
 
 ;; =============================================================================
-;; Import Generation
+;; Template Manipulation Functions
+;; =============================================================================
+
+(defn process-builder-template
+  "Process builder template with actual values."
+  [template message type-lookup]
+  (let [regular-fields (remove :oneof-index (:fields message))
+        oneof-fields (filter :oneof-index (:fields message))
+        fn-name (str "build-" (name (:name message)))]
+    (-> template
+        ;; Replace function name
+        (find-and-replace 'BUILD-FN-NAME (symbol fn-name))
+        ;; Replace docstring
+        (find-and-replace-string "PROTO-NAME" (:proto-name message))
+        ;; Replace Java class
+        (find-and-replace 'JAVA-CLASS (symbol (:java-class message)))
+        ;; Replace regular fields
+        (find-and-replace 
+         'REGULAR-FIELDS
+         (if (seq regular-fields)
+           (n/forms-node
+            (cons (n/comment-node ";; Set regular fields")
+                  (interpose (n/newline-node "\n    ")
+                           (map generate-field-setter-node regular-fields))))
+           (n/comment-node ";; No regular fields")))
+        ;; Replace oneof payload
+        (find-and-replace
+         'ONEOF-PAYLOAD
+         (if (seq oneof-fields)
+           (n/forms-node
+            [(n/newline-node "\n")
+             (n/whitespace-node "    ")
+             (n/comment-node ";; Set oneof payload")
+             (n/newline-node "\n")
+             (n/whitespace-node "    ")
+             (n/list-node
+              [(n/token-node 'when-let)
+               (n/whitespace-node " ")
+               (n/vector-node
+                [(n/token-node 'payload)
+                 (n/whitespace-node " ")
+                 (n/list-node
+                  [(n/token-node 'first)
+                   (n/whitespace-node " ")
+                   (n/list-node
+                    [(n/token-node 'filter)
+                     (n/whitespace-node " ")
+                     (n/list-node
+                      [(n/token-node 'fn)
+                       (n/whitespace-node " ")
+                       (n/vector-node
+                        [(n/vector-node
+                          [(n/token-node 'k)
+                           (n/whitespace-node " ")
+                           (n/token-node 'v)])])
+                       (n/whitespace-node " ")
+                       (n/list-node
+                        [(n/set-node
+                          (interpose (n/whitespace-node " ")
+                                   (map #(n/keyword-node (:name %)) oneof-fields)))
+                         (n/whitespace-node " ")
+                         (n/token-node 'k)])])
+                     (n/whitespace-node " ")
+                     (n/token-node 'm)])])])
+               (n/newline-node "\n")
+               (n/whitespace-node "      ")
+               (n/list-node
+                [(n/token-node (symbol (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")))
+                 (n/whitespace-node " ")
+                 (n/token-node 'builder)
+                 (n/whitespace-node " ")
+                 (n/token-node 'payload)])])])
+           (n/comment-node ""))))))
+
+(defn process-parser-template
+  "Process parser template with actual values."
+  [template message type-lookup]
+  (let [regular-fields (remove :oneof-index (:fields message))
+        fn-name (str "parse-" (name (:name message)))]
+    (-> template
+        ;; Replace function name
+        (find-and-replace 'PARSE-FN-NAME (symbol fn-name))
+        ;; Replace docstring
+        (find-and-replace-string "PROTO-NAME" (:proto-name message))
+        ;; Replace Java class
+        (find-and-replace 'JAVA-CLASS (symbol (:java-class message)))
+        ;; Replace regular fields
+        (find-and-replace
+         'REGULAR-FIELDS
+         (if (seq regular-fields)
+           (n/forms-node
+            (cons (n/comment-node ";; Regular fields")
+                  (interpose (n/newline-node "\n    ")
+                           (map generate-field-getter-node regular-fields))))
+           (n/comment-node ";; No fields")))
+        ;; Replace oneof payload
+        (find-and-replace
+         'ONEOF-PAYLOAD
+         (if (seq (:oneofs message))
+           (n/forms-node
+            [(n/newline-node "\n")
+             (n/whitespace-node "    ")
+             (n/comment-node ";; Oneof payload")
+             (n/newline-node "\n")
+             (n/whitespace-node "    ")
+             (n/token-node 'true)
+             (n/whitespace-node " ")
+             (n/list-node
+              [(n/token-node 'merge)
+               (n/whitespace-node " ")
+               (n/list-node
+                [(n/token-node (symbol (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")))
+                 (n/whitespace-node " ")
+                 (n/token-node 'proto)])])])
+           (n/comment-node ""))))))
+
+(defn process-enum-template
+  "Generate enum definitions."
+  [enum]
+  (let [values-name (str (csk/->kebab-case (:proto-name enum)) "-values")
+        keywords-name (str (csk/->kebab-case (:proto-name enum)) "-keywords")]
+    (n/forms-node
+     [(n/comment-node (str ";; Enum: " (:proto-name enum)))
+      (n/newline-node "\n")
+      (n/list-node
+       [(n/token-node 'def)
+        (n/whitespace-node " ")
+        (n/token-node (symbol values-name))
+        (n/newline-node "\n")
+        (n/whitespace-node "  ")
+        (n/string-node (str "Keyword to Java enum mapping for " (:proto-name enum) "."))
+        (n/newline-node "\n")
+        (n/whitespace-node "  ")
+        (generate-enum-map-node enum generate-enum-value-entry)])
+      (n/newline-node "\n")
+      (n/newline-node "\n")
+      (n/list-node
+       [(n/token-node 'def)
+        (n/whitespace-node " ")
+        (n/token-node (symbol keywords-name))
+        (n/newline-node "\n")
+        (n/whitespace-node "  ")
+        (n/string-node (str "Java enum to keyword mapping for " (:proto-name enum) "."))
+        (n/newline-node "\n")
+        (n/whitespace-node "  ")
+        (generate-enum-map-node enum generate-enum-reverse-entry)])])))
+
+;; =============================================================================
+;; Namespace Generation
+;; =============================================================================
+
+(defn process-namespace-template
+  "Process namespace template with actual values."
+  [template ns-name imports enums messages type-lookup]
+  (-> template
+      ;; Replace namespace
+      (find-and-replace 'NAMESPACE-PLACEHOLDER (symbol ns-name))
+      ;; Replace imports
+      (find-and-replace
+       'IMPORTS-PLACEHOLDER
+       (if (seq imports)
+         (n/vector-node
+          (interpose (n/newline-node "\n   ")
+                    (map #(n/token-node (symbol %)) imports)))
+         (n/vector-node [])))
+      ;; Replace enums
+      (find-and-replace
+       'ENUMS-PLACEHOLDER
+       (if (seq enums)
+         (n/forms-node
+          (interpose (n/newline-node "\n\n")
+                    (map process-enum-template enums)))
+         (n/comment-node ";; No enums")))
+      ;; Replace builders and parsers
+      (find-and-replace
+       'BUILDERS-AND-PARSERS-PLACEHOLDER
+       (if (seq messages)
+         (n/forms-node
+          (interpose (n/newline-node "\n\n")
+                    (mapcat (fn [msg]
+                             (filter some?
+                                    [(-> (load-template "builder.clj")
+                                         (process-builder-template msg type-lookup)
+                                         z/root)
+                                     (when (seq (:oneofs msg))
+                                       ;; TODO: Process oneof builder template
+                                       nil)
+                                     (-> (load-template "parser.clj")
+                                         (process-parser-template msg type-lookup)
+                                         z/root)
+                                     (when (seq (:oneofs msg))
+                                       ;; TODO: Process oneof parser template
+                                       nil)]))
+                           messages)))
+         (n/comment-node ";; No messages")))))
+
+;; =============================================================================
+;; Main Code Generation
 ;; =============================================================================
 
 (defn collect-imports
-  "Collect all Java imports needed using Specter."
+  "Collect all Java imports needed."
   [edn-data]
   (let [all-classes (sp/select [:files sp/ALL 
                                (sp/multi-path :messages :enums) 
                                sp/ALL :java-class]
                               edn-data)]
-    (println "Found java classes:" (take 5 all-classes))
     (->> all-classes
          (map #(str/replace % #"\$.*" ""))  ; Remove inner class part
          (remove #(or (empty? %)
@@ -285,44 +380,17 @@
          distinct
          sort)))
 
-(defn format-imports
-  "Format imports for the namespace declaration."
-  [imports]
-  (str/join "\n" (map #(str "   " %) imports)))
-
-;; =============================================================================
-;; Main Code Generation
-;; =============================================================================
-
 (defn generate-code
-  "Generate complete Clojure code from EDN data using templates."
+  "Generate complete Clojure code from EDN data using rewrite-clj."
   [{:keys [ns-name edn-data type-lookup]}]
   (let [imports (collect-imports edn-data)
         messages (sp/select [:files sp/ALL :messages sp/ALL] edn-data)
         enums (sp/select [:files sp/ALL :enums sp/ALL] edn-data)
-        
-        ;; Generate all enums
-        enum-code (str/join "\n" (map generate-enum enums))
-        
-        ;; Generate all builders and parsers
-        builder-parser-code (str/join "\n" 
-                                    (mapcat (fn [msg]
-                                             (concat
-                                              [(generate-builder msg type-lookup)]
-                                              (when (seq (:oneofs msg))
-                                                [(generate-oneof-builder msg type-lookup)])
-                                              [(generate-parser msg type-lookup)]
-                                              (when (seq (:oneofs msg))
-                                                [(generate-oneof-parser msg type-lookup)])))
-                                           messages))
-        
-        ns-file (:namespace (templates))]
-    
-    (-> ns-file
-        (str/replace "NAMESPACE-PLACEHOLDER" ns-name)
-        (str/replace "IMPORTS-PLACEHOLDER" (format-imports imports))
-        (str/replace "ENUMS-PLACEHOLDER" enum-code)
-        (str/replace "BUILDERS-AND-PARSERS-PLACEHOLDER" builder-parser-code))))
+        template (load-template "namespace.clj")]
+    (-> template
+        (process-namespace-template ns-name imports enums messages type-lookup)
+        z/root
+        n/string)))
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output."
