@@ -110,3 +110,7 @@ $RECYCLE.BIN/
 /.ktlint/ktlint
 /.detekt/
 /reports/
+
+# Tools
+/tools/kotlin-*/
+/tools/protoc-*/
