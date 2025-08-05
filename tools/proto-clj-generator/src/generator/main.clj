@@ -1,8 +1,6 @@
 (ns generator.main
   "CLI entry point for the proto-clj-generator."
-  (:require [generator.parser] ;; Ensure all namespaces are loaded
-            [generator.templates]
-            [generator.core :as core]
+  (:require [generator.core :as core]
             [clojure.java.io :as io]
             [taoensso.timbre :as log]))
 

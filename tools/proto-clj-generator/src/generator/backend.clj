@@ -1,108 +1,89 @@
 (ns generator.backend
-  "Backend parser that converts protobuf JSON descriptors to EDN intermediate representation."
-  (:require [cheshire.core :as json]
-            [clojure.java.io :as io]
+  "Backend for the proto-clj-generator using Specter.
+  Parses protobuf JSON descriptors into EDN intermediate representation."
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.walk :as walk]
+            [cheshire.core :as json]
             [camel-snake-kebab.core :as csk]
+            [com.rpl.specter :as sp]
             [taoensso.timbre :as log]))
 
 ;; =============================================================================
-;; JSON Descriptor Parsing
+;; Specter Paths
 ;; =============================================================================
 
-(defn proto-constant?
-  "Check if a string looks like a protobuf constant."
-  [s]
-  (and (string? s)
-       (or (re-matches #"^TYPE_[A-Z0-9_]+$" s)
-           (re-matches #"^LABEL_[A-Z_]+$" s))))
+(def ALL-FILES 
+  "Path to all files in a descriptor set"
+  [:file sp/ALL])
 
-(defn normalize-proto-constant
-  "Convert protobuf constant to keyword."
-  [s]
-  (-> s
-      (str/replace #"^TYPE_" "")
-      (str/replace #"^LABEL_" "")
-      str/lower-case
-      (str/replace #"_" "-")
-      keyword))
+(def ALL-MESSAGES
+  "Path to all messages in files"
+  [ALL-FILES :message-type sp/ALL])
 
-(defn keywordize-keys
-  "Custom key function for Cheshire that converts keys to kebab-case keywords."
-  [k]
-  (csk/->kebab-case-keyword k))
+(def ALL-ENUMS
+  "Path to all enums in files"
+  [ALL-FILES :enum-type sp/ALL])
 
-(defn convert-value
-  "Convert protobuf constants to keywords."
-  [v]
-  (cond
-    (proto-constant? v) (normalize-proto-constant v)
-    (string? v) v
-    :else v))
+(def ALL-FIELDS
+  "Path to all fields in a message"
+  [:field sp/ALL])
 
-(defn process-values
-  "Walk the data structure and convert proto constants to keywords."
-  [data]
-  (walk/prewalk
-    (fn [x]
-      (cond
-        (map? x)
-        (reduce-kv
-          (fn [m k v]
-            (assoc m k (convert-value v)))
-          {}
-          x)
-        :else x))
-    data))
+(def NESTED-MESSAGES
+  "Recursive path to all messages including nested ones"
+  (sp/recursive-path [] p
+    (sp/if-path seq?
+      [sp/ALL (sp/multi-path
+                sp/STAY
+                [:nested-types p])]
+      sp/STAY)))
 
-(defn load-json-descriptor
-  "Load and parse a JSON descriptor file."
-  [path]
-  (with-open [reader (io/reader path)]
-    (let [json-string (slurp reader)
-          data (json/parse-string json-string keywordize-keys)]
-      (process-values data))))
+(def ALL-MESSAGES-WITH-CONTEXT
+  "Path that collects package context while traversing messages"
+  [ALL-FILES 
+   (sp/collect-one (sp/multi-path :package :java-package :java-outer-classname))
+   :messages NESTED-MESSAGES])
+
+(def ALL-ENUMS-WITH-CONTEXT  
+  "Path that collects package context while traversing enums"
+  [ALL-FILES
+   (sp/collect-one (sp/multi-path :package :java-package :java-outer-classname))
+   :enums sp/ALL])
 
 ;; =============================================================================
 ;; Type Resolution
 ;; =============================================================================
 
 (def proto-type-mapping
-  "Map protobuf types to our intermediate representation."
+  "Mapping from protobuf types to our intermediate representation."
   {:double   {:scalar :double}
    :float    {:scalar :float}
-   :int64    {:scalar :int64}
-   :uint64   {:scalar :uint64}
    :int32    {:scalar :int32}
-   :fixed64  {:scalar :fixed64}
-   :fixed32  {:scalar :fixed32}
-   :bool     {:scalar :bool}
-   :string   {:scalar :string}
-   :bytes    {:scalar :bytes}
+   :int64    {:scalar :int64}
    :uint32   {:scalar :uint32}
+   :uint64   {:scalar :uint64}
+   :sint32   {:scalar :sint32}
+   :sint64   {:scalar :sint64}
+   :fixed32  {:scalar :fixed32}
+   :fixed64  {:scalar :fixed64}
    :sfixed32 {:scalar :sfixed32}
    :sfixed64 {:scalar :sfixed64}
-   :sint32   {:scalar :sint32}
-   :sint64   {:scalar :sint64}})
+   :bool     {:scalar :bool}
+   :string   {:scalar :string}
+   :bytes    {:scalar :bytes}})
 
 (defn resolve-field-type
   "Resolve a field's type to our intermediate representation."
-  [{:keys [type type-name] :as field}]
+  [{:keys [type typeName] :as field}]
   (cond
-    ;; Scalar types
     (contains? proto-type-mapping type)
     (proto-type-mapping type)
     
-    ;; Enum type
     (= type :enum)
-    {:enum {:type-ref type-name}}
+    {:enum {:type-ref typeName}}
     
-    ;; Message type
     (= type :message)
-    {:message {:type-ref type-name}}
+    {:message {:type-ref typeName}}
     
-    ;; Unknown
     :else
     {:unknown {:proto-type type}}))
 
@@ -112,30 +93,28 @@
 
 (defn generate-java-class-name
   "Generate the full Java class name for a message or enum."
-  [{:keys [package java-package java-outer-classname name]}]
+  [{:keys [package java-package java-outer-classname]} type-name parent-names]
+  (let [pkg (or java-package package)
+        outer-class (or java-outer-classname 
+                       (csk/->PascalCase (last (str/split package #"\."))))
+        nested-path (if (seq parent-names)
+                     (str "$" (str/join "$" parent-names) "$" type-name)
+                     (str "$" type-name))]
+    (str pkg "." outer-class nested-path)))
+
+;; =============================================================================
+;; EDN Conversion using Specter
+;; =============================================================================
+
+(defn keywordize-value
+  "Convert protobuf constant values to keywords."
+  [v]
   (cond
-    ;; Special handling for google.protobuf
-    (= package "google.protobuf")
-    (str "com.google.protobuf." name)
+    (and (string? v) (re-matches #"[A-Z][A-Z0-9_]*" v))
+    (csk/->kebab-case-keyword v)
     
-    ;; Special handling for buf.validate
-    (= package "buf.validate")
-    (str "build.buf.validate." name)
-    
-    ;; Regular messages with outer classname
-    java-outer-classname
-    (str (or java-package package) "." java-outer-classname "$" name)
-    
-    ;; Regular messages without outer classname
-    :else
-    (str (or java-package package) "." name)))
-
-;; =============================================================================
-;; EDN Intermediate Representation Generation
-;; =============================================================================
-
-;; Forward declarations
-(declare message->edn enum->edn)
+    (keyword? v) v
+    :else v))
 
 (defn field->edn
   "Convert a protobuf field to EDN representation."
@@ -146,186 +125,170 @@
               :type (resolve-field-type field)}]
     (cond-> base
       (:label field)
-      (assoc :label (:label field))
+      (assoc :label (keywordize-value (:label field)))
       
-      (= (:label field) :repeated)
+      (= (keywordize-value (:label field)) :label-repeated)
       (assoc :repeated? true)
       
-      (= (:label field) :optional)
+      (= (keywordize-value (:label field)) :label-optional)
       (assoc :optional? true)
       
-      (some? (:oneof-index field))
-      (assoc :oneof-index (:oneof-index field))
+      (some? (:oneofIndex field))
+      (assoc :oneof-index (:oneofIndex field))
       
-      (:default-value field)
-      (assoc :default-value (:default-value field)))))
-
-(defn oneof->edn
-  "Convert a oneof declaration to EDN representation."
-  [oneof-decl oneof-index fields]
-  {:name (csk/->kebab-case-keyword (:name oneof-decl))
-   :proto-name (:name oneof-decl)
-   :index oneof-index
-   :fields (vec (filter #(= (:oneof-index %) oneof-index) fields))})
+      (:defaultValue field)
+      (assoc :default-value (:defaultValue field)))))
 
 (defn message->edn
   "Convert a protobuf message to EDN representation."
-  [message context]
-  (let [fields (mapv field->edn (:field message))
-        oneofs (when (:oneof-decl message)
-                 (vec (map-indexed 
-                       (fn [idx oneof-decl]
-                         (oneof->edn oneof-decl idx fields))
-                       (:oneof-decl message))))]
+  [message context parent-names]
+  (let [fields (sp/select [:field sp/ALL] message)
+        oneof-decls (sp/select [:oneofDecl sp/ALL] message)
+        java-class (generate-java-class-name context (:name message) parent-names)]
+    
     {:type :message
      :name (csk/->kebab-case-keyword (:name message))
      :proto-name (:name message)
-     :java-class (generate-java-class-name 
-                  (merge context {:name (:name message)}))
-     :fields (vec (remove :oneof-index fields))
-     :oneofs (or oneofs [])
-     :nested-types (vec (concat
-                         (map #(message->edn % context) 
-                              (:nested-type message []))
-                         (map #(enum->edn % context) 
-                              (:enum-type message []))))}))
+     :java-class java-class
+     :fields (mapv field->edn 
+                   (remove #(some? (:oneofIndex %)) fields))
+     :oneofs (vec (map-indexed 
+                   (fn [idx oneof-decl]
+                     {:name (csk/->kebab-case-keyword (:name oneof-decl))
+                      :proto-name (:name oneof-decl)
+                      :index idx
+                      :fields (mapv field->edn
+                                   (filter #(= (:oneofIndex %) idx) fields))})
+                   oneof-decls))
+     :nested-types (vec (map #(message->edn % context (conj parent-names (:name message)))
+                            (get message :nestedType [])))}))
 
 (defn enum->edn
   "Convert a protobuf enum to EDN representation."
-  [enum-type context]
+  [enum context parent-names]
   {:type :enum
-   :name (csk/->kebab-case-keyword (:name enum-type))
-   :proto-name (:name enum-type)
-   :java-class (generate-java-class-name 
-                (merge context {:name (:name enum-type)}))
-   :values (vec (map (fn [v]
-                      {:name (csk/->kebab-case-keyword (:name v))
-                       :proto-name (:name v)
-                       :number (:number v)})
-                    (:value enum-type)))})
+   :name (csk/->kebab-case-keyword (:name enum))
+   :proto-name (:name enum)
+   :java-class (generate-java-class-name context (:name enum) parent-names)
+   :values (mapv (fn [v] 
+                   {:name (csk/->kebab-case-keyword (:name v))
+                    :proto-name (:name v)
+                    :number (:number v)})
+                 (:value enum))})
 
 (defn file->edn
-  "Convert a protobuf file descriptor to EDN representation."
-  [file-desc]
-  (let [package (:package file-desc)
-        java-package (get-in file-desc [:options :java-package])
-        java-outer-classname (get-in file-desc [:options :java-outer-classname])
-        
-        ;; Derive outer classname from filename if not specified
-        default-outer-classname 
-        (when-not java-outer-classname
-          (let [base-name (-> (:name file-desc)
-                             (str/split #"/")
-                             last
-                             (str/replace #"\.proto$" ""))]
-            (csk/->PascalCase base-name)))
-        
-        context {:package package
-                 :java-package java-package
-                 :java-outer-classname (or java-outer-classname 
-                                          default-outer-classname)}]
-    
+  "Convert a protobuf file descriptor to EDN."
+  [file]
+  (let [context {:package (:package file)
+                 :java-package (sp/select-first [:options :java-package] file)
+                 :java-outer-classname (sp/select-first [:options :java-outer-classname] file)}]
     {:type :file
-     :name (:name file-desc)
-     :package package
-     :java-package java-package
+     :name (:name file)
+     :package (:package file)
+     :java-package (:java-package context)
      :java-outer-classname (:java-outer-classname context)
-     :syntax (:syntax file-desc)
-     :dependencies (vec (:dependency file-desc []))
-     :messages (vec (map #(message->edn % context) 
-                        (:message-type file-desc [])))
-     :enums (vec (map #(enum->edn % context) 
-                     (:enum-type file-desc [])))
-     :services (vec (:service file-desc []))}))
+     :messages (mapv #(message->edn % context [])
+                     (get file :messageType []))
+     :enums (mapv #(enum->edn % context [])
+                 (get file :enumType []))}))
 
 ;; =============================================================================
-;; Message Lookup Building
+;; Type Lookup Building
 ;; =============================================================================
-
-(defn extract-all-types
-  "Recursively extract all types (messages and enums) from a type definition."
-  [type-def]
-  (let [current (if (= (:type type-def) :message)
-                  [(dissoc type-def :nested-types)]
-                  [type-def])
-        nested (when (= (:type type-def) :message)
-                 (mapcat extract-all-types (:nested-types type-def [])))]
-    (concat current nested)))
 
 (defn get-canonical-type-ref
-  "Get the canonical reference for a type based on its package and name."
+  "Get the canonical reference for a type."
   [type-def file-context parent-names]
   (let [package (:package file-context)
         proto-name (:proto-name type-def)]
     (if (seq parent-names)
-      ;; Nested type: package.Parent.Child
       (str package "." (str/join "." parent-names) "." proto-name)
-      ;; Top-level type: package.TypeName
       (str package "." proto-name))))
 
-(defn extract-all-types-with-refs
-  "Extract all types with their canonical references."
-  [types file-context parent-names]
-  (mapcat (fn [type-def]
-           (let [canonical-ref (get-canonical-type-ref type-def file-context parent-names)
-                 current [[canonical-ref type-def]]
-                 nested (when (= (:type type-def) :message)
-                         (extract-all-types-with-refs 
-                          (:nested-types type-def [])
-                          file-context
-                          (conj parent-names (:proto-name type-def))))]
-             (concat current nested)))
-         types))
+(defn collect-message-with-path
+  "Helper to collect messages with their parent path"
+  [parent-names msg]
+  (cons {:message msg :parent-names parent-names}
+        (mapcat #(collect-message-with-path 
+                  (conj parent-names (:proto-name msg)) 
+                  %)
+               (:nested-types msg []))))
+
+(defn collect-all-types
+  "Collect all types from EDN data with their canonical references using Specter."
+  [edn-data]
+  (let [;; Collect files with context
+        files-with-context (sp/select 
+                           [:files sp/ALL
+                            (sp/submap [:package :java-package :java-outer-classname :messages :enums])]
+                           edn-data)]
+    
+    (mapcat 
+     (fn [file]
+       (let [file-context (select-keys file [:package :java-package :java-outer-classname])]
+         (concat
+          ;; Process all messages (including nested)
+          (for [msg-info (mapcat #(collect-message-with-path [] %) (:messages file))
+                :let [msg (:message msg-info)
+                      parent-names (:parent-names msg-info)
+                      canonical (get-canonical-type-ref msg file-context parent-names)]]
+            [canonical msg])
+          
+          ;; Process enums
+          (for [enum (:enums file)
+                :let [canonical (get-canonical-type-ref enum file-context [])]]
+            [canonical enum]))))
+     files-with-context)))
 
 (defn build-type-lookup
-  "Build a lookup map of all types from the EDN representation.
-  Uses canonical type references as keys (e.g., 'cmd.System.Ping')."
+  "Build a lookup map using canonical type references."
   [edn-data]
-  (let [process-file (fn [file]
-                      (let [file-context {:package (:package file)}]
-                        (concat
-                         ;; Process messages with their canonical refs
-                         (extract-all-types-with-refs (:messages file) file-context [])
-                         ;; Process enums
-                         (map (fn [enum]
-                               [(get-canonical-type-ref enum file-context []) enum])
-                             (:enums file)))))
-        
-        type-pairs (if (= (:type edn-data) :file)
-                    (process-file edn-data)
-                    ;; For descriptor sets
-                    (mapcat process-file (:files edn-data)))]
-    
-    (into {} type-pairs)))
+  (into {} (vec (collect-all-types edn-data))))
+
+;; =============================================================================
+;; JSON Processing
+;; =============================================================================
+
+(defn process-json-value
+  "Process JSON values, converting string keywords to actual keywords."
+  [v]
+  (cond
+    (map? v) (into {} (map (fn [[k val]]
+                            [k (if (and (string? val) 
+                                       (or (re-matches #"[A-Z][A-Z0-9_]*" val)
+                                           (re-matches #"TYPE_[A-Z][A-Z0-9_]*" val)
+                                           (re-matches #"LABEL_[A-Z][A-Z0-9_]*" val)))
+                                (keywordize-value val)
+                                (process-json-value val))])
+                          v))
+    (vector? v) (mapv process-json-value v)
+    :else v))
+
+(defn load-json-descriptor
+  "Load and parse a JSON descriptor file."
+  [path]
+  (-> path
+      io/reader
+      (json/parse-stream true)
+      process-json-value))
 
 ;; =============================================================================
 ;; Main API
 ;; =============================================================================
 
 (defn parse-descriptor-set
-  "Parse a descriptor set JSON file to EDN intermediate representation."
-  [path]
-  (let [desc-set (load-json-descriptor path)
-        files (:file desc-set)]
-    (log/info "Parsing descriptor set with" (count files) "files")
+  "Parse a protobuf descriptor set JSON file into EDN representation."
+  [descriptor-path]
+  (log/info "Parsing descriptor set with" 
+           (count (sp/select ALL-FILES (load-json-descriptor descriptor-path))) 
+           "files")
+  (let [descriptor (load-json-descriptor descriptor-path)
+        files (sp/select ALL-FILES descriptor)]
     {:type :descriptor-set
      :files (mapv file->edn files)}))
 
-(defn parse-single-file
-  "Parse a single proto file descriptor to EDN intermediate representation."
-  [path]
-  (let [desc (load-json-descriptor path)]
-    (if (:file desc)
-      ;; It's a descriptor set, extract the relevant file
-      (let [filename (-> path io/file .getName (str/replace #"\.json$" ".proto"))
-            matching-file (or (first (filter #(= (:name %) filename) (:file desc)))
-                             (last (:file desc)))]
-        (file->edn matching-file))
-      ;; It's already a single file descriptor
-      (file->edn desc))))
-
-(defn process-descriptor-files
-  "Process descriptor files and return EDN representation with lookup."
+(defn parse-all-descriptors
+  "Parse both command and state descriptors, building a unified type lookup."
   [descriptor-dir]
   (let [cmd-file (io/file descriptor-dir "jon_shared_cmd.json")
         state-file (io/file descriptor-dir "jon_shared_data.json")]
@@ -340,18 +303,19 @@
     (let [cmd-edn (parse-descriptor-set (.getPath cmd-file))
           state-edn (parse-descriptor-set (.getPath state-file))
           
-          ;; Filter out google.protobuf and buf.validate from the command/state files
-          filter-files (fn [descriptor-set]
-                        (update descriptor-set :files
-                               (fn [files]
-                                 (vec (filter #(not (contains? #{"google.protobuf" "buf.validate"}
-                                                              (:package %)))
-                                            files)))))
+          ;; Filter internal packages from output
+          filter-internal (fn [descriptor-set]
+                           (sp/setval [ALL-FILES 
+                                      sp/ALL 
+                                      #(contains? #{"google.protobuf" "buf.validate"} 
+                                                 (:package %))]
+                                     sp/NONE
+                                     descriptor-set))
           
-          ;; Combine all types for lookup (including google.protobuf and buf.validate for references)
+          ;; Build type lookup from all files
           all-files (concat (:files cmd-edn) (:files state-edn))
           type-lookup (build-type-lookup {:type :combined :files all-files})]
       
-      {:command (filter-files cmd-edn)
-       :state (filter-files state-edn)
+      {:command (filter-internal cmd-edn)
+       :state (filter-internal state-edn)
        :type-lookup type-lookup})))
