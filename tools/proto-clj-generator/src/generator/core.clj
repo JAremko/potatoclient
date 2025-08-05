@@ -2,6 +2,7 @@
   "Core generator that orchestrates backend and frontend."
   (:require [generator.backend :as backend]
             [generator.frontend :as frontend]
+            [generator.frontend-namespaced :as frontend-ns]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [taoensso.timbre :as log]
@@ -18,9 +19,13 @@
     (log/info "Wrote EDN debug to" (.getPath file))))
 
 (defn generate-all
-  "Generate Clojure code using Specter backend and template-based frontend."
-  [{:keys [input-dir output-dir namespace-prefix debug?]
-    :or {debug? true}}]
+  "Generate Clojure code using Specter backend and template-based frontend.
+  Options:
+  - :namespace-mode - :single (default, one file per domain) or :separated (one file per package)
+  - :debug? - Write debug EDN files (default true)"
+  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug?]
+    :or {namespace-mode :single
+         debug? true}}]
   (try
     (log/info "Starting code generation")
     (log/info "Input directory:" input-dir)
@@ -40,37 +45,63 @@
       
       ;; Step 3: Generate Clojure code using Frontend
       (log/info "Frontend: Generating Clojure code from EDN...")
-      (let [generated (frontend/generate-from-backend backend-output namespace-prefix)]
-        
-        ;; Step 4: Format generated code
-        (log/info "Formatting generated code...")
-        (let [format-opts {:indents cljfmt/default-indents
-                          :alias-map {}}
-              formatted-command (cljfmt/reformat-string (:command generated) format-opts)
-              formatted-state (cljfmt/reformat-string (:state generated) format-opts)]
-          
-          ;; Step 5: Write generated code
-          (log/info "Writing generated code...")
-          (.mkdirs (io/file output-dir namespace-prefix))
-          
-          (let [ns-path (str/replace namespace-prefix #"\." "/")
-                cmd-file (io/file output-dir 
-                                 (str ns-path "/command.clj"))
-                state-file (io/file output-dir 
-                                   (str ns-path "/state.clj"))]
+      (log/info "Using namespace mode:" namespace-mode)
+      
+      (if (= namespace-mode :separated)
+        ;; Use namespaced frontend for separated mode
+        (let [generated (frontend-ns/generate-from-backend backend-output namespace-prefix)]
+          (log/info "Formatting and writing generated code...")
+          (let [format-opts {:indents cljfmt/default-indents
+                           :alias-map {}}
+                ns-path (str/replace namespace-prefix #"\." "/")
+                written-files (atom [])]
             
-            (.mkdirs (.getParentFile cmd-file))
-            (.mkdirs (.getParentFile state-file))
-            
-            (spit cmd-file formatted-command)
-            (spit state-file formatted-state)
-            
-            (log/info "Generated" (.getPath cmd-file))
-            (log/info "Generated" (.getPath state-file))
+            ;; Write each generated file
+            (doseq [[file-path content] generated]
+              (let [full-path (io/file output-dir ns-path file-path)
+                    formatted (cljfmt/reformat-string content format-opts)]
+                (.mkdirs (.getParentFile full-path))
+                (spit full-path formatted)
+                (log/info "Generated" (.getPath full-path))
+                (swap! written-files conj (str full-path))))
             
             {:success true
-             :files [(str cmd-file) (str state-file)]
-             :backend-output backend-output}))))
+             :files @written-files
+             :backend-output backend-output
+             :mode namespace-mode}))
+        
+        ;; Original single-file mode
+        (let [generated (frontend/generate-from-backend backend-output namespace-prefix)]
+          ;; Step 4: Format generated code
+          (log/info "Formatting generated code...")
+          (let [format-opts {:indents cljfmt/default-indents
+                            :alias-map {}}
+                formatted-command (cljfmt/reformat-string (:command generated) format-opts)
+                formatted-state (cljfmt/reformat-string (:state generated) format-opts)]
+            
+            ;; Step 5: Write generated code
+            (log/info "Writing generated code...")
+            (.mkdirs (io/file output-dir namespace-prefix))
+            
+            (let [ns-path (str/replace namespace-prefix #"\." "/")
+                  cmd-file (io/file output-dir 
+                                   (str ns-path "/command.clj"))
+                  state-file (io/file output-dir 
+                                     (str ns-path "/state.clj"))]
+              
+              (.mkdirs (.getParentFile cmd-file))
+              (.mkdirs (.getParentFile state-file))
+              
+              (spit cmd-file formatted-command)
+              (spit state-file formatted-state)
+              
+              (log/info "Generated" (.getPath cmd-file))
+              (log/info "Generated" (.getPath state-file))
+              
+              {:success true
+               :files [(str cmd-file) (str state-file)]
+               :backend-output backend-output
+               :mode namespace-mode})))))
     
     (catch Exception e
       (log/error e "Code generation failed")

@@ -5,7 +5,8 @@
             [proto-explorer.cli-jvm :as cli-jvm]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.tools.cli :as cli])
+            [clojure.tools.cli :as cli]
+            [clojure.java.shell :as shell])
   (:gen-class))
 
 (def cli-options
@@ -13,6 +14,9 @@
     :default "output/json-descriptors"]
    ["-o" "--output OUTPUT" "Output directory for generated specs"
     :default "../../shared/specs/protobuf"]
+   ["-w" "--width WIDTH" "Line width for formatting (default: 80)"
+    :default 80
+    :parse-fn #(Integer/parseInt %)]
    ["-v" "--verbose" "Verbose output"
     :default false]
    ["-h" "--help"]])
@@ -41,20 +45,32 @@
 
 (defn write-spec-file
   "Write a spec file for a package."
-  [output-dir package specs]
+  [output-dir package specs & {:keys [width] :or {width 80}}]
   (let [file-name (str (json-edn/snake->kebab package) "-specs.clj")
         file-path (io/file output-dir file-name)
-        content (spec-gen/generate-spec-file package specs)]
+        content (spec-gen/generate-spec-file package specs :width width)]
     (.mkdirs (.getParentFile file-path))
     (spit file-path content)
-    (println "Wrote:" (.getPath file-path))))
+    (println "Wrote:" (.getPath file-path))
+    ;; Run zprint with line width configuration
+    (try
+      (let [result (shell/sh "clojure" "-M:zprint" 
+                            (str "{:width " width "}") 
+                            "-w"
+                            (.getPath file-path))]
+        (if (= 0 (:exit result))
+          (println "Formatted:" (.getPath file-path) "with width" width)
+          (println "Warning: Failed to format" (.getPath file-path) "- " (:err result))))
+      (catch Exception e
+        (println "Warning: Could not format" (.getPath file-path) "- " (.getMessage e))))))
 
 (defn generate-all-specs
   "Generate specs from all JSON descriptors in input directory."
-  [{:keys [input output verbose]}]
+  [{:keys [input output verbose width]}]
   (println "Generating Malli specs from JSON descriptors...")
   (println "Input:" input)
   (println "Output:" output)
+  (println "Line width:" width)
   
   (let [input-dir (io/file input)
         json-files (filter #(str/ends-with? (.getName %) ".json")
@@ -77,7 +93,7 @@
       ;; Write spec files
       (println "\nWriting spec files...")
       (doseq [[package specs] merged-specs]
-        (write-spec-file output package specs))
+        (write-spec-file output package specs :width width))
       
       (println "\nDone!"))))
 

@@ -11,6 +11,7 @@
   - buf.validate annotations"
   (:require [clojure.string :as str]
             [clojure.walk :as walk]
+            [clojure.pprint :as pp]
             [proto-explorer.json-to-edn :as json-edn]
             [proto-explorer.buf-validate-extractor :as validate]
             [proto-explorer.constraints.metadata-enricher :as enricher]
@@ -235,10 +236,10 @@
   "Generate a namespace declaration for a spec file."
   [package]
   (let [ns-name (str "potatoclient.specs." (json-edn/snake->kebab package))]
-    `(~'ns ~(symbol ns-name)
-       ~"Generated Malli specs from protobuf descriptors"
-       (:require [malli.core :as m]
-                 [malli.generator :as mg]))))
+    (list 'ns (symbol ns-name)
+          "Generated Malli specs from protobuf descriptors"
+          '(:require [malli.core :as m]
+                     [malli.generator :as mg]))))
 
 (defn serialize-schema
   "Convert a schema to a serializable form, handling function objects."
@@ -270,13 +271,23 @@
 
 (defn generate-spec-file
   "Generate a complete spec file for a package."
-  [package schemas]
+  [package schemas & {:keys [width] :or {width 80}}]
   (let [ns-decl (generate-namespace-declaration package)
         schema-defs (map (fn [[k v]] (format-schema k v)) schemas)]
-    (str (pr-str ns-decl) "\n\n"
+    (str (with-out-str
+           (binding [pp/*print-right-margin* width
+                     pp/*print-miser-width* width]
+             (pp/pprint ns-decl)))
+         "\n"
          ";; Note: FUNCTION-PLACEHOLDER markers indicate where runtime functions are needed\n"
          ";; These will be replaced with actual implementations when loaded\n\n"
-         (str/join "\n\n" (map pr-str schema-defs)))))
+         (str/join "\n\n" 
+                   (map (fn [schema-def]
+                          (with-out-str
+                            (binding [pp/*print-right-margin* width
+                                      pp/*print-miser-width* width]
+                              (pp/pprint schema-def))))
+                        schema-defs)))))
 
 ;; =============================================================================
 ;; Example Usage
