@@ -167,6 +167,10 @@ All subprocesses support:
 - [ ] Create new tool: `tools/proto-clj-generator`
   - [ ] Set up project structure with deps.edn
   - [ ] Add dependencies: rewrite-clj, core.match, malli, cheshire
+  - [ ] Include custom oneof schema from `shared/specs/custom/potatoclient/specs/malli_oneof.clj`
+    - [ ] Add shared/specs to classpath
+    - [ ] Register custom :oneof schema type in Malli registry
+    - [ ] Use same oneof handling as proto-explorer for consistency
 - [ ] Parse JSON descriptors from proto-explorer
   - [ ] Read from `tools/proto-explorer/output/json-descriptors/`
   - [ ] Parse message types, fields, oneofs, enums
@@ -175,23 +179,24 @@ All subprocesses support:
   - [ ] Template for simple fields (string, int, float, etc.)
   - [ ] Template for message fields (nested objects)
   - [ ] Template for repeated fields (lists)
-  - [ ] Template for oneof fields (discriminated unions)
+  - [ ] Template for oneof fields using custom :oneof schema
   - [ ] Template for enum conversions
 - [ ] Implement code generation using templates
   - [ ] Generate builder functions (Clojure → Protobuf)
   - [ ] Generate parser functions (Protobuf → Clojure)
   - [ ] Generate macros for common patterns
   - [ ] Add proper imports and namespace declarations
+  - [ ] Generate Malli specs using custom :oneof for validation
 - [ ] Generate bidirectional converters for commands
   - [ ] Handle all command types from `jon_shared_cmd.proto`
-  - [ ] Support oneof payload selection
+  - [ ] Support oneof payload selection using custom schema
 - [ ] Generate bidirectional converters for state
   - [ ] Handle full state message from `jon_shared_data.proto`
   - [ ] Support all nested state components
 - [ ] Add roundtrip tests
   - [ ] Test every message type can roundtrip
   - [ ] Validate against existing Malli specs
-  - [ ] Property-based testing with generators
+  - [ ] Property-based testing with generators (including oneof generator)
 - [ ] Add buf.validate compliance testing
   - [ ] Ensure generated protobuf respects constraints
   - [ ] Test boundary conditions
