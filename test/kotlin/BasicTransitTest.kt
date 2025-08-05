@@ -2,6 +2,7 @@ package potatoclient.transit
 
 import org.junit.Test
 import org.junit.Assert.*
+import potatoclient.kotlin.transit.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 

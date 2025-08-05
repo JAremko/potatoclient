@@ -4,16 +4,11 @@
             [potatoclient.transit.core :as transit-core]
             [potatoclient.transit.framed-io :as framed-io]
             [clojure.java.io :as io])
-  (:import [java.lang ProcessBuilder ProcessBuilder$Redirect]
-           [java.io PipedInputStream PipedOutputStream]))
+  (:import [java.lang ProcessBuilder]))
 
 (deftest test-subprocess-with-proper-io
   (testing "Subprocess works when we provide proper stdin"
-    ;; Create piped streams so we control stdin
-    (let [subprocess-stdin (PipedInputStream.)
-          our-output (PipedOutputStream. subprocess-stdin)
-
-          java-exe (if-let [java-home (System/getProperty "java.home")]
+    (let [java-exe (if-let [java-home (System/getProperty "java.home")]
                      (str java-home "/bin/java")
                      "java")
           classpath (System/getProperty "java.class.path")
@@ -22,8 +17,8 @@
                "potatoclient.kotlin.transit.CommandSubprocessKt"
                "--test-mode"]
           pb (ProcessBuilder. ^java.util.List cmd)
-          _ (.redirectInput pb ProcessBuilder$Redirect/from subprocess-stdin)
-          process (.start pb)]
+          process (.start pb)
+          subprocess-stdin (.getOutputStream process)]
 
       (try
         ;; Set up reading from subprocess
@@ -60,12 +55,12 @@
             (Thread/sleep 500)
 
             ;; Now send a command to unblock the subprocess
-            (let [framed-output (framed-io/make-framed-output-stream our-output)
+            (let [framed-output (framed-io/make-framed-output-stream subprocess-stdin)
                   writer (transit-core/make-writer framed-output)]
               (println "Sending ping command...")
               (transit-core/write-message! writer
                                            (transit-core/create-message :command (cmd/ping))
-                                           our-output))
+                                           subprocess-stdin))
 
             ;; Wait a bit for processing
             (Thread/sleep 1000)
@@ -77,8 +72,8 @@
               (is (some #(= "test-mode-ready" (get-in % [:payload :status])) msgs)
                   "Should receive test-mode-ready")
               (is (some #(= "pong" (get-in % [:payload :type])) msgs)
-                  "Should receive pong response"))))
+                  "Should receive pong response")))))
 
         (finally
-          (.close our-output)
+          (.close subprocess-stdin)
           (.destroyForcibly process))))))

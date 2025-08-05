@@ -2,10 +2,12 @@ package potatoclient.transit
 
 import org.junit.Test
 import org.junit.Assert.*
+import potatoclient.kotlin.transit.*
 import ser.JonSharedData
 import ser.JonSharedDataTypes
 import ser.JonSharedDataRotary
 import ser.JonSharedDataDayCamera
+import ser.JonSharedDataHeatCamera
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.delay
 
