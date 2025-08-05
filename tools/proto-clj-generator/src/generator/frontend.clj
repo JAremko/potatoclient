@@ -33,16 +33,6 @@
 ;; Template Helpers
 ;; =============================================================================
 
-(defn replace-template-var
-  "Replace a template variable {{var}} with its value."
-  [template var-name value]
-  (str/replace template (str "{{" (name var-name) "}}") (str value)))
-
-(defn replace-template-vars
-  "Replace multiple template variables."
-  [template vars]
-  (reduce-kv replace-template-var template vars))
-
 ;; =============================================================================
 ;; Code Generation Helpers
 ;; =============================================================================
@@ -183,12 +173,14 @@
   [message type-lookup]
   (let [regular-fields (remove :oneof-index (:fields message))
         oneof-fields (filter :oneof-index (:fields message))
-        template-vars {:fn-name (csk/->kebab-case (:proto-name message))
-                      :proto-name (:proto-name message)
-                      :java-class (:java-class message)
-                      :regular-fields (generate-regular-fields-setter regular-fields)
-                      :oneof-payload (generate-oneof-payload-setter message oneof-fields)}]
-    (replace-template-vars (:builder (templates)) template-vars)))
+        fn-name (str "build-" (name (:name message)))
+        builder-template (:builder (templates))]
+    (-> builder-template
+        (str/replace "BUILD-FN-NAME" fn-name)
+        (str/replace "PROTO-NAME" (:proto-name message))
+        (str/replace "JAVA-CLASS" (:java-class message))
+        (str/replace "REGULAR-FIELDS" (generate-regular-fields-setter regular-fields))
+        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-setter message oneof-fields)))))
 
 (defn generate-oneof-builder
   "Generate the oneof payload builder for a message using template."
@@ -198,20 +190,24 @@
           case-clauses (str/join "\n" 
                                (map #(generate-oneof-case % type-lookup) 
                                    oneof-fields))
-          template-vars {:fn-name (csk/->kebab-case (:proto-name message))
-                        :case-clauses case-clauses}]
-      (str "\n" (replace-template-vars (:oneof-builder (templates)) template-vars)))))
+          fn-name (str "build-" (name (:name message)))
+          template (:oneof-builder (templates))]
+      (str "\n" (-> template
+                    (str/replace "BUILD-FN-NAME-PAYLOAD" (str fn-name "-payload"))
+                    (str/replace "CASE-CLAUSES" case-clauses))))))
 
 (defn generate-parser
   "Generate a parser function for a message using template."
   [message type-lookup]
   (let [regular-fields (remove :oneof-index (:fields message))
-        template-vars {:fn-name (csk/->kebab-case (:proto-name message))
-                      :proto-name (:proto-name message)
-                      :java-class (:java-class message)
-                      :regular-fields (generate-regular-fields-getter regular-fields)
-                      :oneof-payload (generate-oneof-payload-getter message)}]
-    (replace-template-vars (:parser (templates)) template-vars)))
+        fn-name (str "parse-" (name (:name message)))
+        parser-template (:parser (templates))]
+    (-> parser-template
+        (str/replace "PARSE-FN-NAME" fn-name)
+        (str/replace "PROTO-NAME" (:proto-name message))
+        (str/replace "JAVA-CLASS" (:java-class message))
+        (str/replace "REGULAR-FIELDS" (generate-regular-fields-getter regular-fields))
+        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-getter message)))))
 
 (defn generate-oneof-parser
   "Generate the oneof payload parser for a message using template."
@@ -222,12 +218,15 @@
           case-clauses (str/join "\n"
                                (map #(generate-oneof-parser-case % type-lookup) 
                                    oneof-fields))
-          template-vars {:fn-name (csk/->kebab-case (:proto-name message))
-                        :proto-name (:proto-name message)
-                        :java-class (:java-class message)
-                        :oneof-getter (csk/->PascalCase (:proto-name oneof))
-                        :case-clauses case-clauses}]
-      (str "\n" (replace-template-vars (:oneof-parser (templates)) template-vars)))))
+          fn-name (str "parse-" (name (:name message)))
+          oneof-getter (str "get" (csk/->PascalCase (:proto-name oneof)) "Case")
+          template (:oneof-parser (templates))]
+      (str "\n" (-> template
+                     (str/replace "PARSE-FN-NAME-PAYLOAD" (str fn-name "-payload"))
+                     (str/replace "PROTO-NAME" (:proto-name message))
+                     (str/replace "JAVA-CLASS" (:java-class message))
+                     (str/replace "GET-ONEOF-CASE" oneof-getter)
+                     (str/replace "CASE-CLAUSES" case-clauses))))))
 
 ;; =============================================================================
 ;; Enum Generation
@@ -238,8 +237,8 @@
   [enum]
   (str "{" (str/join "\n   "
                     (map (fn [value]
-                          (str (:name value) " " (:java-class enum) "$" 
-                               (:proto-name value)))
+                          (str (:name value) " " (:java-class enum) "/" 
+                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))))
                         (:values enum)))
        "}"))
 
@@ -248,7 +247,8 @@
   [enum]
   (str "{" (str/join "\n   "
                     (map (fn [value]
-                          (str (:java-class enum) "$" (:proto-name value)
+                          (str (:java-class enum) "/" 
+                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))
                                " " (:name value)))
                         (:values enum)))
        "}"))
