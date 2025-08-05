@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package test;
+
+import "buf/validate/validate.proto";
+
+// Test message with various field types
+message TestMessage {
+  // Primitive fields
+  string name = 1 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  int32 age = 2 [(buf.validate.field).int32 = {gte: 0, lte: 150}];
+  float score = 3 [(buf.validate.field).float = {gte: 0.0, lte: 100.0}];
+  bool active = 4;
+  
+  // Repeated field
+  repeated string tags = 5 [(buf.validate.field).repeated = {min_items: 0, max_items: 10}];
+  
+  // Optional field
+  optional string description = 6;
+  
+  // Nested message
+  Address address = 7;
+  
+  // Enum field
+  Status status = 8 [(buf.validate.field).enum = {defined_only: true}];
+  
+  // Oneof field
+  oneof contact {
+    option (buf.validate.oneof).required = true;
+    string email = 9 [(buf.validate.field).string.email = true];
+    string phone = 10 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+  }
+}
+
+message Address {
+  string street = 1;
+  string city = 2 [(buf.validate.field).string = {min_len: 1}];
+  string country = 3 [(buf.validate.field).string = {min_len: 2, max_len: 2}];
+  optional string postal_code = 4;
+}
+
+enum Status {
+  STATUS_UNKNOWN = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_INACTIVE = 2;
+  STATUS_SUSPENDED = 3;
+}
+
+// Command-style message with oneof
+message Command {
+  int32 version = 1 [(buf.validate.field).int32 = {const: 1}];
+  
+  oneof cmd {
+    option (buf.validate.oneof).required = true;
+    CreateUser create_user = 2;
+    UpdateUser update_user = 3;
+    DeleteUser delete_user = 4;
+  }
+}
+
+message CreateUser {
+  TestMessage user = 1 [(buf.validate.field).required = true];
+}
+
+message UpdateUser {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+  TestMessage user = 2 [(buf.validate.field).required = true];
+}
+
+message DeleteUser {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}

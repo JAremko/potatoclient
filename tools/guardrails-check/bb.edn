@@ -1,0 +1,32 @@
+{:paths ["src"]
+ 
+ :tasks
+ {:requires ([guardrails-check.cli :as cli])
+  
+  check {:doc "Check for functions without Guardrails (outputs EDN)"
+         :task (cli/check *command-line-args*)}
+  
+  report {:doc "Generate markdown report of functions without Guardrails"
+          :task (cli/report *command-line-args*)}
+  
+  stats {:doc "Show statistics about Guardrails usage"
+         :task (cli/stats *command-line-args*)}
+  
+  list {:doc "List namespaces with functions not using Guardrails"
+        :task (cli/list-namespaces *command-line-args*)}
+  
+  find {:doc "Find specific functions not using Guardrails"
+        :task (cli/find-function *command-line-args*)}
+  
+  help {:doc "Show available commands"
+        :override-builtin true
+        :task (do (println "Guardrails Check - Find functions not using Guardrails")
+                  (println)
+                  (println "Available commands:")
+                  (println "  check [src-dir]    - Check for functions without Guardrails (EDN output)")
+                  (println "  report [src-dir]   - Generate markdown report")
+                  (println "  stats [src-dir]    - Show statistics")
+                  (println "  list [src-dir]     - List affected namespaces")
+                  (println "  find <pattern> [src-dir] - Find specific functions")
+                  (println)
+                  (println "Default src-dir: src/potatoclient"))}}}

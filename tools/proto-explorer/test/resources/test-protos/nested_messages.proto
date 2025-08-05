@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package test.nested;
+
+// Test nested message structures
+message OuterMessage {
+  string outer_field = 1;
+  
+  // Nested message definition
+  message InnerMessage {
+    int32 inner_field = 1;
+    optional string inner_optional = 2;
+    
+    // Deeply nested
+    message DeepMessage {
+      bool deep_field = 1;
+    }
+    
+    DeepMessage deep = 3;
+  }
+  
+  InnerMessage inner = 2;
+  optional InnerMessage optional_inner = 3;
+  repeated InnerMessage repeated_inner = 4;
+  
+  // Nested enum
+  enum InnerEnum {
+    UNKNOWN = 0;
+    FIRST = 1;
+    SECOND = 2;
+  }
+  
+  InnerEnum inner_enum = 5;
+}
+
+// Message with complex nesting
+message ComplexNesting {
+  message Level1 {
+    message Level2 {
+      message Level3 {
+        string value = 1;
+      }
+      Level3 level3 = 1;
+    }
+    Level2 level2 = 1;
+  }
+  Level1 level1 = 1;
+}

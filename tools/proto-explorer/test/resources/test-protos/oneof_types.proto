@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package test.oneof;
+
+// Test message with oneof
+message OneofMessage {
+  // Regular field before oneof
+  int32 id = 1;
+  
+  // Simple oneof
+  oneof payload {
+    string text_payload = 2;
+    int32 number_payload = 3;
+    bool flag_payload = 4;
+  }
+  
+  // Regular field after oneof
+  string name = 5;
+  
+  // Another oneof
+  oneof result {
+    string success = 6;
+    int32 error_code = 7;
+    string error_message = 8;
+  }
+  
+  // Optional field
+  optional string description = 9;
+}
+
+// Message that is just a oneof (like Root messages)
+message OneofOnly {
+  oneof command {
+    PingCommand ping = 1;
+    EchoCommand echo = 2;
+    StatusCommand status = 3;
+  }
+}
+
+message PingCommand {
+  optional int64 timestamp = 1;
+}
+
+message EchoCommand {
+  string message = 1;
+  optional bool uppercase = 2;
+}
+
+message StatusCommand {
+  repeated string components = 1;
+}

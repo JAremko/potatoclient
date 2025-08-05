@@ -1,0 +1,81 @@
+# Proto Explorer .gitignore
+
+# Clojure/Java
+*.class
+*.jar
+target/
+.cpcache/
+.clj-kondo/.cache/
+
+# REPL
+.nrepl-port
+.socket-repl-port
+.rebl/
+.rebel_readline_history
+.lein-repl-history
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.calva/
+.lsp/
+.clj-kondo/.cache/
+
+# Generated files
+generated/
+reports/
+*.edn.tmp
+proto-cache/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Test output
+test-output/
+test-reports/
+.test-failures
+
+# Benchmarking
+bench-results/
+*.bench
+flamegraph*.svg
+profile-results/
+
+# Documentation
+docs/api/
+docs/codox/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+\#*\#
+.\#*
+
+# Build artifacts
+pom.xml
+pom.xml.asc
+
+# Proto parsing cache
+.proto-cache/
+parsed-schemas/
+
+# Performance profiling
+*.hprof
+*.jfr
+async-profiler/
+
+# Local configuration
+config.local.edn
+.env.local
+
+# Example outputs
+examples/output/

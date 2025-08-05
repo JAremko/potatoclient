@@ -1,0 +1,44 @@
+{:paths ["src" "resources"]
+ 
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/data.json {:mvn/version "2.4.0"}
+        org.clojure/tools.cli {:mvn/version "1.0.219"}
+        metosin/malli {:mvn/version "0.13.0"}
+        
+        ;; Transit dependencies (same as main app)
+        com.cognitect/transit-clj {:mvn/version "1.0.333"}
+        com.cognitect/transit-java {:mvn/version "1.0.371"}
+        
+        ;; MessagePack for Transit
+        org.msgpack/msgpack {:mvn/version "0.6.12"}
+        
+        ;; Logging
+        com.taoensso/telemere {:mvn/version "1.0.0-beta16"}}
+ 
+ :aliases
+ {:run {:extra-paths ["../../shared" "../../src/java"]
+        :main-opts ["-m" "mock-video-stream.cli"]}
+  
+  :test {:extra-paths ["test" "../../shared" "../../src/java" "../../target/classes"]
+         :extra-deps {io.github.cognitect-labs/test-runner 
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"]
+         :exec-fn cognitect.test-runner.api/test}
+  
+  :simple-test {:extra-paths ["test" "../../target/classes"]
+                :main-opts ["-m" "simple-test"]}
+  
+  :process {:extra-paths ["../../shared" "../../src/java"]
+            :main-opts ["-m" "mock-video-stream.process"]}
+  
+  :generate {:extra-paths ["../../shared" "../../src/java"]
+             :exec-fn mock-video-stream.scenarios/export-all-scenarios
+             :exec-args {:output-dir "./test-data"}}
+  
+  :repl {:extra-paths ["../../shared" "../../src/java"]
+         :extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}
+                      cider/cider-nrepl {:mvn/version "0.42.1"}}
+         :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+  
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.9.6"}}
+          :ns-default build}}}

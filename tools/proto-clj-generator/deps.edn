@@ -1,0 +1,33 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        rewrite-clj/rewrite-clj {:mvn/version "1.1.48"}
+        org.clojure/core.match {:mvn/version "1.1.0"}
+        metosin/malli {:mvn/version "0.16.4"}
+        cheshire/cheshire {:mvn/version "5.13.0"}
+        ;; For protobuf classes at generation time - matching protogen's protoc 25.1
+        com.google.protobuf/protobuf-java {:mvn/version "3.25.1"}
+        ;; For buf.validate validation - use a version compatible with protobuf 3.25.1
+        build.buf/protovalidate {:mvn/version "0.1.8"}
+        ;; For logging
+        org.slf4j/slf4j-simple {:mvn/version "2.0.13"}
+        com.taoensso/timbre {:mvn/version "6.5.0"}}
+ 
+ :aliases
+ {:dev {:extra-paths ["test" "resources" "generated"]
+        :extra-deps {io.github.cognitect-labs/test-runner 
+                     {:git/tag "v0.5.1" :git/sha "dfb30dd"}}}
+  
+  :test {:extra-paths ["test" "generated" "target/classes" "../../shared/specs/custom"]
+         :extra-deps {io.github.cognitect-labs/test-runner 
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :exec-fn cognitect.test-runner.api/test}
+  
+  :gen {:exec-fn generator.main/generate
+        :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
+                    :output-dir "generated"
+                    :namespace-prefix "potatoclient.proto"}}
+  
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.5"}}
+          :ns-default build}
+  
+  :compile {:exec-fn build/compile-all}}}

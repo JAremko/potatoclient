@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package test.buf.json;
+
+import "buf/validate/validate.proto";
+
+// Test message with various buf.validate annotations
+message Person {
+  // String with email validation
+  string email = 1 [
+    (buf.validate.field).string = {
+      email: true,
+      min_len: 5,
+      max_len: 100
+    }
+  ];
+  
+  // Integer with range constraint
+  int32 age = 2 [
+    (buf.validate.field).int32 = {
+      gte: 0,
+      lte: 120
+    }
+  ];
+  
+  // String with pattern and custom CEL
+  string username = 3 [
+    (buf.validate.field).string = {
+      pattern: "^[a-zA-Z0-9_]+$",
+      min_len: 3,
+      max_len: 20
+    },
+    (buf.validate.field).cel = {
+      id: "username.not.reserved",
+      message: "username cannot be a reserved word",
+      expression: "!(this in ['admin', 'root', 'system'])"
+    }
+  ];
+  
+  // Required field
+  string id = 4 [(buf.validate.field).required = true];
+  
+  // Repeated with constraints
+  repeated string tags = 5 [
+    (buf.validate.field).repeated = {
+      min_items: 1,
+      max_items: 10,
+      unique: true
+    }
+  ];
+  
+  // Oneof with constraint
+  oneof contact {
+    option (buf.validate.oneof).required = true;
+    
+    string phone = 6 [(buf.validate.field).string.pattern = "^\\+?[1-9]\\d{1,14}$"];
+    string alternative_email = 7 [(buf.validate.field).string.email = true];
+  }
+  
+  // Nested message
+  Address address = 8;
+  
+  // Map field
+  map<string, string> metadata = 9 [
+    (buf.validate.field).map = {
+      min_pairs: 0,
+      max_pairs: 20
+    }
+  ];
+}
+
+message Address {
+  string street = 1 [(buf.validate.field).string.min_len = 1];
+  string city = 2 [(buf.validate.field).string.min_len = 1];
+  string country = 3 [
+    (buf.validate.field).string = {
+      min_len: 2,
+      max_len: 2
+    }
+  ];
+  
+  // Message-level validation
+  option (buf.validate.message).cel = {
+    id: "address.complete",
+    message: "all address fields must be provided together",
+    expression: "(has(this.street) && has(this.city) && has(this.country)) || (!has(this.street) && !has(this.city) && !has(this.country))"
+  };
+}

@@ -1,0 +1,51 @@
+{:paths ["src" "../../shared/specs/protobuf" "../../shared/specs/custom"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        cheshire/cheshire {:mvn/version "5.12.0"}
+        metosin/malli {:mvn/version "0.13.0"}
+        org.clojure/core.match {:mvn/version "1.0.1"}
+        clj-fuzzy/clj-fuzzy {:mvn/version "0.4.1"}}
+ 
+ :tasks
+ {:requires ([proto-explorer.cli :as cli])
+  
+  find {:doc "Find specs by name (fuzzy matching)"
+        :task (cli/find-specs *command-line-args*)}
+  
+  spec {:doc "Get spec for exact message"
+        :task (cli/get-spec *command-line-args*)}
+  
+  example {:doc "Generate example data for a spec"
+           :task (cli/generate-example *command-line-args*)}
+  
+  examples {:doc "Generate multiple examples for a spec"
+            :task (cli/generate-examples *command-line-args*)}
+  
+  list {:doc "List all messages, optionally filtered by package"
+        :task (cli/list-messages *command-line-args*)}
+  
+  stats {:doc "Show statistics about loaded specs"
+         :task (cli/show-stats *command-line-args*)}
+  
+  java-class {:doc "Get Java class info for a protobuf message (SLOW - starts JVM!)"
+              :task (cli/java-class-info *command-line-args*)}
+  
+  java-fields {:doc "Get proto field to Java method mapping (SLOW - starts JVM!)"
+               :task (cli/java-field-mapping *command-line-args*)}
+  
+  java-builder {:doc "Get Java builder info for a protobuf message (SLOW - starts JVM!)"
+                :task (cli/java-builder-info *command-line-args*)}
+  
+  batch {:doc "Process batch queries from stdin"
+         :task (cli/batch-process *command-line-args*)}
+  
+  generate-proto-mapping {:doc "Generate proto type mapping from descriptors"
+                          :task (cli/generate-proto-type-mapping *command-line-args*)}
+  
+  generate-nested-mapping {:doc "Generate context-aware nested proto mapping"
+                           :task (cli/generate-nested-proto-mapping *command-line-args*)}
+  
+  generate-keyword-tree-cmd {:doc "Generate keyword-based proto tree for commands"
+                             :task (cli/generate-keyword-tree-cmd *command-line-args*)}
+  
+  generate-keyword-tree-state {:doc "Generate keyword-based proto tree for state"
+                               :task (cli/generate-keyword-tree-state *command-line-args*)}}}

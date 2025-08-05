@@ -106,9 +106,6 @@ $RECYCLE.BIN/
 /AppDir/
 /squashfs-root/
 
-# Tools
-/tools/
-
 # Linting tools
 /.ktlint/ktlint
 /.detekt/
