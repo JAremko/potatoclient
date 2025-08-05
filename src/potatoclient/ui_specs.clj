@@ -4,7 +4,8 @@
   (:require [clojure.string :as str]
             [malli.core :as m]
             [malli.util :as mu]
-            [malli.registry :as mr])
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
            (java.awt Rectangle Color)))
@@ -498,7 +499,8 @@
   "Registry of all UI specs for qualified keyword lookups"
   (merge (m/default-schemas)
          (mu/schemas)
-         {::theme-key theme-key
+         {:oneof oneof/-oneof-schema
+          ::theme-key theme-key
           ::locale locale
           ::locale-code locale-code
           ::domain domain
