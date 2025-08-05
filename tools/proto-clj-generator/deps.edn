@@ -4,10 +4,11 @@
         org.clojure/core.match {:mvn/version "1.1.0"}
         metosin/malli {:mvn/version "0.16.4"}
         cheshire/cheshire {:mvn/version "5.13.0"}
-        ;; For protobuf classes at generation time - matching protogen's protoc 25.1
-        com.google.protobuf/protobuf-java {:mvn/version "3.25.1"}
-        ;; For buf.validate validation - use a version compatible with protobuf 3.25.1
-        build.buf/protovalidate {:mvn/version "0.1.8"}
+        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
+        ;; For protobuf classes at generation time - using compatible version with protovalidate
+        com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
+        ;; For buf.validate validation - using latest available version
+        build.buf/protovalidate {:mvn/version "1.0.0-rc.4"}
         ;; For logging
         org.slf4j/slf4j-simple {:mvn/version "2.0.13"}
         com.taoensso/timbre {:mvn/version "6.5.0"}}
@@ -19,7 +20,9 @@
   
   :test {:extra-paths ["test" "generated" "target/classes" "../../shared/specs/custom"]
          :extra-deps {io.github.cognitect-labs/test-runner 
-                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}
+                      lambdaisland/deep-diff2 {:mvn/version "2.12.219"}
+                      org.clojure/tools.reader {:mvn/version "1.5.0"}}
          :exec-fn cognitect.test-runner.api/test}
   
   :gen {:exec-fn generator.main/generate

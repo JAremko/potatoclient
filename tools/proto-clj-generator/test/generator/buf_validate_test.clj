@@ -5,12 +5,32 @@
             [potatoclient.proto.state :as state-gen])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [ser JonSharedData JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType]
-           [build.buf.protovalidate Validator ValidationResult]
+           [build.buf.protovalidate Validator ValidatorFactory ValidationResult]
+           [build.buf.validate Violation]
            [build.buf.protovalidate.exceptions ValidationException]))
+
+(defn- violation->proto 
+  "Convert new API Violation to protobuf Violation for consistent access"
+  [violation]
+  (.toProto violation))
+
+(defn- field-path->string
+  "Convert FieldPath to string representation"
+  [field-path]
+  (let [elements (.getElementsList field-path)]
+    (if (empty? elements)
+      ""
+      (let [element (first elements)
+            element-str (str element)]
+        ;; Extract field_name from the element string representation
+        ;; Format is like: field_number: 1\nfield_name: "protocol_version"\nfield_type: TYPE_UINT32
+        (if-let [match (re-find #"field_name:\s*\"([^\"]+)\"" element-str)]
+          (second match)
+          element-str)))))
 
 (def validator 
   (try 
-    (Validator.)
+    (.build (ValidatorFactory/newBuilder))
     (catch Exception e
       (println "Failed to create Validator:" (.getMessage e))
       (println "Stack trace:" (.printStackTrace e))
@@ -42,7 +62,8 @@
                 "Protocol version 0 should fail validation")
             (when-not (.isSuccess result)
               (doseq [violation (.getViolations result)]
-                (println "Violation:" (.getMessage violation) "Field:" (.getFieldPath violation))))))))
+                (let [proto-violation (violation->proto violation)]
+                  (println "Violation:" (.getMessage proto-violation) "Field:" (field-path->string (.getField proto-violation))))))))))
     
     (testing "Command requires payload (oneof validation)"
       ;; Invalid case - no payload
@@ -56,7 +77,8 @@
           (when-not (.isSuccess result)
             (println "Missing payload violations:")
             (doseq [violation (.getViolations result)]
-              (println "  -" (.getMessage violation))))))))
+              (let [proto-violation (violation->proto violation)]
+                (println "  -" (.getMessage proto-violation)))))))))
 
 (deftest state-validation-rules
   (when validator
@@ -73,7 +95,8 @@
                 "Should fail due to missing required fields")
             (when-not (.isSuccess result)
               (let [violations (.getViolations result)
-                    messages (map #(.getMessage %) violations)]
+                    proto-violations (map violation->proto violations)
+                    messages (map #(.getMessage %) proto-violations)]
                 (is (some #(re-find #"required" %) messages)
                     "Should mention required fields")))))
         
@@ -86,7 +109,8 @@
                 "Protocol version 0 should fail validation")
             (when-not (.isSuccess result)
               (let [violations (.getViolations result)
-                    protocol-violations (filter #(re-find #"protocol_version" (.getFieldPath %)) violations)]
+                    proto-violations (map violation->proto violations)
+                    protocol-violations (filter #(re-find #"protocol_version" (field-path->string (.getField %))) proto-violations)]
                 (is (seq protocol-violations)
                     "Should have protocol_version violations")))))))))
 
@@ -100,8 +124,9 @@
             "Validation should fail")
         (when-not (.isSuccess result)
           (let [violations (.getViolations result)
-                messages (map #(.getMessage %) violations)
-                field-paths (map #(.getFieldPath %) violations)]
+                proto-violations (map violation->proto violations)
+                messages (map #(.getMessage %) proto-violations)
+                field-paths (map #(field-path->string (.getField %)) proto-violations)]
             (is (some #(re-find #"protocol_version" %) field-paths)
                 "Error should mention protocol_version field")
             (is (some #(or (re-find #"greater than" %)
@@ -137,7 +162,8 @@
           (is (not (.isSuccess result))
               "protocol_version = 0 should fail validation")
           (let [violations (.getViolations result)
-                protocol-violations (filter #(re-find #"protocol_version" (.getFieldPath %)) violations)]
+                proto-violations (map violation->proto violations)
+                protocol-violations (filter #(re-find #"protocol_version" (field-path->string (.getField %))) proto-violations)]
             (is (seq protocol-violations) "Should have protocol_version violation")
             (is (some #(re-find #"greater than 0" (.getMessage %)) protocol-violations)
                 "Should mention 'greater than 0' constraint")))
@@ -170,7 +196,8 @@
           (is (not (.isSuccess result))
               "UNSPECIFIED client_type should fail validation")
           (let [violations (.getViolations result)
-                client-violations (filter #(re-find #"client_type" (.getFieldPath %)) violations)]
+                proto-violations (map violation->proto violations)
+                client-violations (filter #(re-find #"client_type" (field-path->string (.getField %))) proto-violations)]
             (is (seq client-violations) "Should have client_type violation")
             (is (some #(re-find #"not.*in.*\[0\]" (.getMessage %)) client-violations)
                 "Should mention 'not in [0]' constraint")))

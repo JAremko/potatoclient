@@ -183,9 +183,9 @@
           (:field message)))
 
 (defn pascal-case
-  "Convert kebab-case to PascalCase for Java class names."
+  "Convert kebab-case or snake_case to PascalCase for Java class names."
   [s]
-  (->> (str/split (name s) #"-")
+  (->> (str/split (name s) #"[-_]")  ;; Split on both - and _
        (map str/capitalize)
        (str/join)))
 
@@ -221,10 +221,25 @@
 
 (defn analyze-message
   "Analyze a message for code generation, returning all needed info."
-  [message package java-package]
+  [message package java-package java-outer-classname]
   {:name (:name message)
    :kebab-name (normalize-key (:name message))
-   :java-class (str (or java-package package) "." (:name message))
+   :java-class (cond
+                ;; Special handling for google.protobuf messages
+                (= package "google.protobuf")
+                (str "com.google.protobuf." (:name message))
+                
+                ;; Special handling for buf.validate messages  
+                (= package "buf.validate")
+                (str "build.buf.validate." (:name message))
+                
+                ;; Regular messages with outer classname
+                java-outer-classname
+                (str (or java-package package) "." java-outer-classname "$" (:name message))
+                
+                ;; Regular messages without outer classname
+                :else
+                (str (or java-package package) "." (:name message)))
    :fields (map (fn [field]
                   {:name (:name field)
                    :kebab-name (normalize-key (:name field))
@@ -246,16 +261,38 @@
                 :name (:name oneof)
                 :kebab-name (normalize-key (:name oneof))
                 :fields (map (fn [field]
-                              (assoc field :kebab-name (normalize-key (:name field))))
+                              {:name (:name field)
+                               :kebab-name (normalize-key (:name field))
+                               :number (:number field)
+                               :type (field-type field)
+                               :proto-type (:type field)
+                               :type-name (:type-name field)
+                               :java-setter (field->java-setter field)
+                               :java-getter (field->java-getter field)})
                             (extract-oneof-fields message idx))})
              (:oneof-decl message))})
 
 (defn analyze-enum
   "Analyze an enum for code generation."
-  [enum-type package java-package]
+  [enum-type package java-package java-outer-classname]
   {:name (:name enum-type)
    :kebab-name (normalize-key (:name enum-type))
-   :java-class (str (or java-package package) "." (:name enum-type))
+   :java-class (cond
+                ;; Special handling for google.protobuf enums
+                (= package "google.protobuf")
+                (str "com.google.protobuf." (:name enum-type))
+                
+                ;; Special handling for buf.validate enums
+                (= package "buf.validate")
+                (str "build.buf.validate." (:name enum-type))
+                
+                ;; Regular enums with outer classname
+                java-outer-classname
+                (str (or java-package package) "." java-outer-classname "$" (:name enum-type))
+                
+                ;; Regular enums without outer classname
+                :else
+                (str (or java-package package) "." (:name enum-type)))
    :values (map (fn [value]
                   {:name (:name value)
                    :kebab-name (normalize-key (:name value))
@@ -266,12 +303,25 @@
   "Analyze an entire file descriptor for code generation."
   [file-desc]
   (let [package (extract-package-name file-desc)
-        java-package (extract-java-package file-desc)]
+        java-package (extract-java-package file-desc)
+        java-outer-classname (get-in file-desc [:options :java-outer-classname])
+        ;; If no outer classname is set, derive it from the filename
+        default-outer-classname (when-not java-outer-classname
+                                  (let [base-name (-> (:name file-desc)
+                                                     (str/split #"/")
+                                                     last
+                                                     (str/replace #"\.proto$" ""))]
+                                    ;; Convert snake_case to PascalCase
+                                    (->> (str/split base-name #"_")
+                                         (map str/capitalize)
+                                         str/join)))
+        effective-outer-classname (or java-outer-classname default-outer-classname)]
     {:package package
      :java-package java-package
-     :messages (map #(analyze-message % package java-package)
+     :java-outer-classname effective-outer-classname
+     :messages (map #(analyze-message % package java-package effective-outer-classname)
                    (extract-messages file-desc))
-     :enums (map #(analyze-enum % package java-package)
+     :enums (map #(analyze-enum % package java-package effective-outer-classname)
                 (extract-enums file-desc))}))
 
 ;; =============================================================================

@@ -3,7 +3,7 @@
   (:require [clojure.string :as str]))
 
 (defn pascal-case [s]
-  (->> (str/split (name s) #"-")
+  (->> (str/split (name s) #"[-_]")  ;; Split on both - and _
        (map str/capitalize)
        (str/join)))
 
@@ -33,7 +33,7 @@
                 "      (build-" (str/lower-case name) "-payload builder payload))\n"))
          "    (.build builder)))\n")))
 
-(defn generate-oneof-builder [{:keys [name oneofs]}]
+(defn generate-oneof-builder [{:keys [name oneofs]} message-lookup]
   (when (seq oneofs)
     (let [oneof-fields (:fields (first oneofs))]
       (str "\n(defn build-" (str/lower-case name) "-payload\n"
@@ -41,9 +41,45 @@
            "  [builder [field-key field-value]]\n"
            "  (case field-key\n"
            (str/join "\n"
-                    (map (fn [{:keys [kebab-name name]}]
-                           (str "    " kebab-name " (." 
-                                "set" (pascal-case name) " builder field-value)"))
+                    (map (fn [{:keys [kebab-name name type type-name]}]
+                           (if (= type :message)
+                             (let [;; Resolve the message type to get its kebab-name
+                                   type-name-clean (str/replace (or type-name "") #"^\." "")
+                                   ;; Find the target message by matching type name
+                                   target-msg (first (filter (fn [msg]
+                                                             (let [java-class (:java-class msg)]
+                                                               (cond
+                                                                 ;; Direct match on type name suffix
+                                                                 ;; e.g., "System.Root" matches "cmd.System.JonSharedCmdSystem$Root"
+                                                                 (and (str/includes? type-name-clean ".")
+                                                                      (str/includes? java-class "$"))
+                                                                 (let [type-parts (str/split type-name-clean #"\.")
+                                                                       type-pkg (first type-parts)
+                                                                       type-msg (last type-parts)
+                                                                       ;; Extract the outer class name from java class
+                                                                       ;; e.g., "cmd.System.JonSharedCmdSystem$Root" -> "JonSharedCmdSystem"
+                                                                       outer-class (-> (str/split java-class #"\.")
+                                                                                      last
+                                                                                      (str/split #"\$")
+                                                                                      first)]
+                                                                   (and (str/includes? java-class (str "." type-pkg "."))
+                                                                        (str/ends-with? java-class (str "$" type-msg))))
+                                                                 
+                                                                 ;; Match by exact message name at end
+                                                                 ;; e.g., "CalibrateStartLong" matches "cmd.Compass.JonSharedCmdCompass$CalibrateStartLong"
+                                                                 :else
+                                                                 (str/ends-with? java-class (str "$" (last (str/split type-name-clean #"\.")))))))
+                                                           (vals message-lookup)))
+                                   builder-name (if target-msg
+                                                 (clojure.core/name (:kebab-name target-msg))
+                                                 (do
+                                                   ;; Debug when we can't find the message
+                                                   (println "WARNING: No message found for" kebab-name "with type" type-name)
+                                                   (clojure.core/name kebab-name)))]
+                               (str "    " kebab-name " (." 
+                                    "set" (pascal-case name) " builder (build-" builder-name " field-value))"))
+                             (str "    " kebab-name " (." 
+                                  "set" (pascal-case name) " builder field-value)")))
                          oneof-fields))
            "\n    (throw (ex-info \"Unknown payload field\" {:field field-key}))))\n"))))
 
@@ -62,7 +98,7 @@
            (str "    (parse-" (str/lower-case name) "-payload proto)"))
          "))\n")))
 
-(defn generate-oneof-parser [{:keys [name oneofs]}]
+(defn generate-oneof-parser [{:keys [name oneofs]} message-lookup]
   (when (seq oneofs)
     (let [oneof-fields (:fields (first oneofs))]
       (str "\n(defn parse-" (str/lower-case name) "-payload\n"
@@ -70,13 +106,46 @@
            "  [proto]\n"
            "  (case (.getPayloadCase proto)\n"
            (str/join "\n"
-                    (map (fn [{:keys [kebab-name name]}]
-                           (str "    " (str/upper-case name) 
-                                " {" kebab-name " (.get" (pascal-case name) " proto)}"))
+                    (map (fn [{:keys [kebab-name name type type-name]}]
+                           (if (= type :message)
+                             (let [;; Resolve the message type to get its kebab-name
+                                   type-name-clean (str/replace (or type-name "") #"^\." "")
+                                   ;; Find the target message by matching type name
+                                   target-msg (first (filter (fn [msg]
+                                                             (let [java-class (:java-class msg)]
+                                                               (cond
+                                                                 ;; Direct match on type name suffix
+                                                                 ;; e.g., "System.Root" matches "cmd.System.JonSharedCmdSystem$Root"
+                                                                 (and (str/includes? type-name-clean ".")
+                                                                      (str/includes? java-class "$"))
+                                                                 (let [type-parts (str/split type-name-clean #"\.")
+                                                                       type-pkg (first type-parts)
+                                                                       type-msg (last type-parts)
+                                                                       ;; Extract the outer class name from java class
+                                                                       ;; e.g., "cmd.System.JonSharedCmdSystem$Root" -> "JonSharedCmdSystem"
+                                                                       outer-class (-> (str/split java-class #"\.")
+                                                                                      last
+                                                                                      (str/split #"\$")
+                                                                                      first)]
+                                                                   (and (str/includes? java-class (str "." type-pkg "."))
+                                                                        (str/ends-with? java-class (str "$" type-msg))))
+                                                                 
+                                                                 ;; Match by exact message name at end
+                                                                 ;; e.g., "CalibrateStartLong" matches "cmd.Compass.JonSharedCmdCompass$CalibrateStartLong"
+                                                                 :else
+                                                                 (str/ends-with? java-class (str "$" (last (str/split type-name-clean #"\.")))))))
+                                                           (vals message-lookup)))
+                                   parser-name (if target-msg
+                                                (clojure.core/name (:kebab-name target-msg))
+                                                (clojure.core/name kebab-name))]
+                               (str "    " (str/upper-case name) 
+                                    " {" kebab-name " (parse-" parser-name " (.get" (pascal-case name) " proto))}"))
+                             (str "    " (str/upper-case name) 
+                                  " {" kebab-name " (.get" (pascal-case name) " proto)}")))
                          oneof-fields))
            "\n    {}))\n"))))
 
-(defn generate-code [{:keys [ns-name messages enums imports outer-class]}]
+(defn generate-code [{:keys [ns-name messages enums imports message-lookup]}]
   (str "(ns " ns-name "\n"
        "  \"Generated protobuf conversion functions.\"\n"
        "  (:require [clojure.string :as str])\n"
@@ -107,8 +176,8 @@
                          (concat
                            [(generate-builder msg)]
                            (when (seq (:oneofs msg))
-                             [(generate-oneof-builder msg)])
+                             [(generate-oneof-builder msg message-lookup)])
                            [(generate-parser msg)]
                            (when (seq (:oneofs msg))
-                             [(generate-oneof-parser msg)])))
+                             [(generate-oneof-parser msg message-lookup)])))
                        messages))))
