@@ -7,7 +7,8 @@
             [clojure.string :as str]
             [taoensso.timbre :as log]
             [clojure.pprint :as pp]
-            [cljfmt.core :as cljfmt]))
+            [cljfmt.core :as cljfmt]
+            [zprint.core :as zp]))
 
 (defn write-edn-debug
   "Write EDN intermediate representation for debugging."
@@ -22,10 +23,12 @@
   "Generate Clojure code using Specter backend and template-based frontend.
   Options:
   - :namespace-mode - :single (default, one file per domain) or :separated (one file per package)
-  - :debug? - Write debug EDN files (default true)"
-  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug?]
+  - :debug? - Write debug EDN files (default true)
+  - :line-width - Line width for formatting (default 80)"
+  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug? line-width]
     :or {namespace-mode :single
-         debug? true}}]
+         debug? true
+         line-width 80}}]
   (try
     (log/info "Starting code generation")
     (log/info "Input directory:" input-dir)
@@ -53,13 +56,17 @@
           (log/info "Formatting and writing generated code...")
           (let [format-opts {:indents cljfmt/default-indents
                            :alias-map {}}
+                zprint-opts {:width line-width}
                 ns-path (str/replace namespace-prefix #"\." "/")
                 written-files (atom [])]
             
             ;; Write each generated file
             (doseq [[file-path content] generated]
               (let [full-path (io/file output-dir ns-path file-path)
-                    formatted (cljfmt/reformat-string content format-opts)]
+                    ;; Format with cljfmt first
+                    cljfmt-formatted (cljfmt/reformat-string content format-opts)
+                    ;; Then format with zprint for line width
+                    formatted (zp/zprint-file-str cljfmt-formatted (.getName full-path) zprint-opts)]
                 (.mkdirs (.getParentFile full-path))
                 (spit full-path formatted)
                 (log/info "Generated" (.getPath full-path))
@@ -76,8 +83,12 @@
           (log/info "Formatting generated code...")
           (let [format-opts {:indents cljfmt/default-indents
                             :alias-map {}}
-                formatted-command (cljfmt/reformat-string (:command generated) format-opts)
-                formatted-state (cljfmt/reformat-string (:state generated) format-opts)]
+                zprint-opts {:width line-width}
+                ;; Format with cljfmt first, then zprint for line width
+                cljfmt-command (cljfmt/reformat-string (:command generated) format-opts)
+                cljfmt-state (cljfmt/reformat-string (:state generated) format-opts)
+                formatted-command (zp/zprint-file-str cljfmt-command "command.clj" zprint-opts)
+                formatted-state (zp/zprint-file-str cljfmt-state "state.clj" zprint-opts)]
             
             ;; Step 5: Write generated code
             (log/info "Writing generated code...")
