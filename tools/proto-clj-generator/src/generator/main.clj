@@ -38,9 +38,10 @@
     (let [validated-config (validate-config config)
           result (core/generate-all validated-config)]
       (log/info "Generation completed successfully!")
-      (log/info "Generated files:")
-      (log/info "  Commands:" (.getPath (:command-file result)))
-      (log/info "  State:" (.getPath (:state-file result)))
+      (when (:files result)
+        (log/info "Generated files:")
+        (doseq [f (:files result)]
+          (log/info "  " f)))
       result)
     (catch Exception e
       (log/error e "Generation failed!")

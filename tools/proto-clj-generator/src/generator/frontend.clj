@@ -1,10 +1,11 @@
 (ns generator.frontend
-  "Frontend that generates Clojure code from EDN intermediate representation."
+  "Frontend for the proto-clj-generator.
+  Generates Clojure code from the EDN intermediate representation."
   (:require [clojure.string :as str]
             [camel-snake-kebab.core :as csk]))
 
 ;; =============================================================================
-;; Code Generation Helpers
+;; Helper Functions
 ;; =============================================================================
 
 (defn field-java-setter
@@ -18,40 +19,34 @@
   (str "get" (csk/->PascalCase (:proto-name field))))
 
 (defn resolve-builder-name
-  "Resolve the builder function name for a type reference."
+  "Resolve the builder function name for a type reference.
+  Throws if the type cannot be found."
   [type-ref type-lookup]
   (when type-ref
-    (let [;; Try multiple lookup strategies
-          type-key (csk/->kebab-case-keyword 
-                    (last (str/split type-ref #"\.")))
-          ;; Also try without leading dot
-          clean-ref (str/replace type-ref #"^\." "")
-          ;; Try the full reference
-          full-key (csk/->kebab-case-keyword clean-ref)]
-      (if-let [type-def (or (get type-lookup type-key)
-                           (get type-lookup full-key))]
+    (let [;; Normalize the type reference to be our canonical key
+          canonical-ref (str/replace type-ref #"^\." "")
+          type-def (get type-lookup canonical-ref)]
+      (if type-def
         (str "build-" (name (:name type-def)))
-        ;; Fallback to deriving from type reference
-        (str "build-" (csk/->kebab-case 
-                      (last (str/split type-ref #"\."))))))))
+        (throw (ex-info "Cannot resolve type reference for builder"
+                        {:type-ref type-ref
+                         :canonical-ref canonical-ref
+                         :available-types (keys type-lookup)}))))))
 
 (defn resolve-parser-name
-  "Resolve the parser function name for a type reference."
+  "Resolve the parser function name for a type reference.
+  Throws if the type cannot be found."
   [type-ref type-lookup]
   (when type-ref
-    (let [;; Try multiple lookup strategies
-          type-key (csk/->kebab-case-keyword 
-                    (last (str/split type-ref #"\.")))
-          ;; Also try without leading dot
-          clean-ref (str/replace type-ref #"^\." "")
-          ;; Try the full reference
-          full-key (csk/->kebab-case-keyword clean-ref)]
-      (if-let [type-def (or (get type-lookup type-key)
-                           (get type-lookup full-key))]
+    (let [;; Normalize the type reference to be our canonical key
+          canonical-ref (str/replace type-ref #"^\." "")
+          type-def (get type-lookup canonical-ref)]
+      (if type-def
         (str "parse-" (name (:name type-def)))
-        ;; Fallback to deriving from type reference
-        (str "parse-" (csk/->kebab-case 
-                      (last (str/split type-ref #"\."))))))))
+        (throw (ex-info "Cannot resolve type reference for parser"
+                        {:type-ref type-ref
+                         :canonical-ref canonical-ref
+                         :available-types (keys type-lookup)}))))))
 
 ;; =============================================================================
 ;; Builder Generation
@@ -83,11 +78,10 @@
 (defn generate-builder
   "Generate a builder function for a message."
   [message type-lookup]
-  (let [regular-fields (vec (:fields message))
-        has-oneof? (seq (:oneofs message))
-        oneof-fields (when has-oneof?
-                      (mapcat :fields (:oneofs message)))]
-    (str "(defn build-" (name (:name message)) "\n"
+  (let [regular-fields (remove :oneof-index (:fields message))
+        oneof-fields (filter :oneof-index (:fields message))
+        has-oneof? (seq oneof-fields)]
+    (str "(defn build-" (csk/->kebab-case (:proto-name message)) "\n"
          "  \"Build a " (:proto-name message) " protobuf message from a map.\"\n"
          "  [m]\n"
          "  (let [builder (" (:java-class message) "/newBuilder)]\n"
@@ -152,111 +146,129 @@
 (defn generate-parser
   "Generate a parser function for a message."
   [message type-lookup]
-  (let [regular-fields (vec (:fields message))
-        has-oneof? (seq (:oneofs message))]
-    (str "(defn parse-" (name (:name message)) "\n"
+  (let [regular-fields (remove :oneof-index (:fields message))
+        oneof-fields (filter :oneof-index (:fields message))
+        has-oneof? (seq oneof-fields)]
+    (str "(defn parse-" (csk/->kebab-case (:proto-name message)) "\n"
          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
          "  [^" (:java-class message) " proto]\n"
-         "  (merge\n"
-         "    {" (when (seq regular-fields)
-               (str/join "\n     "
-                        (map generate-field-getter regular-fields))) 
-         "}\n"
+         "  (cond-> {}\n"
+         
+         ;; Regular fields
+         (when (seq regular-fields)
+           (str "    ;; Regular fields\n"
+                (str/join "\n"
+                         (map (fn [field]
+                               (str "    (." (str "has" (csk/->PascalCase (:proto-name field)))
+                                    " proto) (assoc " (generate-field-getter field) ")"))
+                             regular-fields))
+                "\n"))
+         
+         ;; Oneof fields
          (when has-oneof?
-           (str "    (parse-" (csk/->kebab-case (:proto-name message)) 
-                "-payload proto)"))
-         "))\n")))
+           (let [oneof (first (:oneofs message))]
+             (str "    ;; Oneof payload\n"
+                  "    true (merge (parse-" (csk/->kebab-case (:proto-name message))
+                  "-payload proto))))\n")))
+         
+         (when-not has-oneof?
+           "))\n"))))
 
 (defn generate-oneof-parser
   "Generate the oneof payload parser for a message."
   [message type-lookup]
   (when (seq (:oneofs message))
-    (let [oneof-fields (mapcat :fields (:oneofs message))]
+    (let [oneof (first (:oneofs message))
+          oneof-fields (:fields oneof)]
       (str "\n(defn parse-" (csk/->kebab-case (:proto-name message)) "-payload\n"
-           "  \"Parse the oneof payload.\"\n"
-           "  [proto]\n"
-           "  (case (.getPayloadCase proto)\n"
+           "  \"Parse the oneof payload from a " (:proto-name message) ".\"\n"
+           "  [^" (:java-class message) " proto]\n"
+           "  (case (.get" (csk/->PascalCase (:proto-name oneof)) "Case proto)\n"
            (str/join "\n"
-                    (map #(generate-oneof-parser-case % type-lookup) 
-                         oneof-fields))
-           "\n    {}))\n"))))
+                    (map #(generate-oneof-parser-case % type-lookup) oneof-fields))
+           "\n    ;; Default case - no payload set\n"
+           "    {}))\n"))))
+
+;; =============================================================================
+;; Enum Generation
+;; =============================================================================
+
+(defn generate-enum-value-map
+  "Generate the enum value mapping."
+  [enum]
+  (str "{" (str/join "\n   "
+                    (map (fn [value]
+                          (str (:name value) " " (:java-class enum) "/" 
+                               (:proto-name value)))
+                        (:values enum)))
+       "}"))
+
+(defn generate-enum-reverse-map
+  "Generate the reverse enum mapping (Java -> keyword)."
+  [enum]
+  (str "{" (str/join "\n   "
+                    (map (fn [value]
+                          (str (:java-class enum) "/" (:proto-name value)
+                               " " (:name value)))
+                        (:values enum)))
+       "}"))
+
+(defn generate-enum
+  "Generate enum mappings."
+  [enum]
+  (str ";; Enum: " (:proto-name enum) "\n"
+       "(def " (csk/->kebab-case (:proto-name enum)) "-values\n"
+       "  \"Keyword to Java enum mapping for " (:proto-name enum) ".\"\n"
+       "  " (generate-enum-value-map enum) ")\n\n"
+       "(def " (csk/->kebab-case (:proto-name enum)) "-keywords\n"
+       "  \"Java enum to keyword mapping for " (:proto-name enum) ".\"\n"
+       "  " (generate-enum-reverse-map enum) ")\n"))
 
 ;; =============================================================================
 ;; Import Generation
 ;; =============================================================================
 
 (defn collect-imports
-  "Collect all Java imports needed from the EDN data."
+  "Collect all Java imports needed for the generated code."
   [edn-data]
-  (let [all-types (if (= (:type edn-data) :file)
-                    (concat (:messages edn-data) (:enums edn-data))
-                    ;; For descriptor sets
-                    (mapcat (fn [file]
-                             (concat (:messages file) (:enums file)))
-                           (:files edn-data)))
-        
-        ;; Group by package
-        by-package (group-by (fn [type-def]
-                              (let [java-class (:java-class type-def)
-                                    last-dot (.lastIndexOf java-class ".")]
-                                (if (pos? last-dot)
-                                  (subs java-class 0 last-dot)
-                                  "")))
-                            all-types)]
-    
-    ;; Convert to import format
-    (vec (for [[pkg types] by-package
-               :when (not= pkg "")]
-          (into [pkg] 
-                (map (fn [type-def]
-                      (let [java-class (:java-class type-def)
-                            last-dot (.lastIndexOf java-class ".")]
-                        (subs java-class (inc last-dot))))
-                    types))))))
+  (let [all-types (concat
+                   (mapcat (fn [file]
+                            (concat (:messages file) (:enums file)))
+                          (:files edn-data)))]
+    (->> all-types
+         (map :java-class)
+         (filter identity)
+         ;; Filter out internal protobuf packages
+         (remove #(or (str/starts-with? % "com.google.protobuf.")
+                     (str/starts-with? % "build.buf.validate.")))
+         distinct
+         sort)))
 
 ;; =============================================================================
-;; Full Code Generation
+;; Main Code Generation
 ;; =============================================================================
-
-(defn generate-declarations
-  "Generate forward declarations for all functions."
-  [messages]
-  (when (seq messages)
-    (let [all-fns (mapcat (fn [msg]
-                           (concat
-                            [(str "build-" (name (:name msg)))
-                             (str "parse-" (name (:name msg)))]
-                            (when (seq (:oneofs msg))
-                              [(str "build-" (csk/->kebab-case (:proto-name msg)) "-payload")
-                               (str "parse-" (csk/->kebab-case (:proto-name msg)) "-payload")])))
-                         messages)]
-      (str "(declare " (str/join " " all-fns) ")\n\n"))))
 
 (defn generate-code
-  "Generate complete Clojure code from EDN representation."
+  "Generate complete Clojure code from EDN data."
   [{:keys [ns-name edn-data type-lookup]}]
-  (let [messages (if (= (:type edn-data) :file)
-                   (:messages edn-data)
-                   ;; For descriptor sets, get messages from all files
-                   (mapcat :messages (:files edn-data)))
-        imports (collect-imports edn-data)]
-    
+  (let [imports (collect-imports edn-data)
+        messages (mapcat :messages (:files edn-data))
+        enums (mapcat :enums (:files edn-data))]
     (str "(ns " ns-name "\n"
-         "  \"Generated protobuf conversion functions.\"\n"
-         "  (:require [clojure.string :as str])\n"
-         (when (seq imports)
-           (str "  (:import\n"
-                (str/join "\n"
-                         (map (fn [import-group]
-                               (str "    [" (str/join " " import-group) "]"))
-                             imports))
-                ")"))
-         ")\n\n"
+         "  \"Generated protobuf functions.\"\n"
+         "  (:import\n"
+         (str/join "\n"
+                  (map #(str "   [" % "]") imports))
+         "))\n\n"
          
-         ";; Forward declarations\n"
-         (generate-declarations messages)
+         ";; =============================================================================\n"
+         ";; Enums\n"
+         ";; =============================================================================\n\n"
+         (str/join "\n" (map generate-enum enums))
          
-         ";; Message Converters\n"
+         "\n;; =============================================================================\n"
+         ";; Builders and Parsers\n"
+         ";; =============================================================================\n\n"
          (str/join "\n" 
                   (mapcat (fn [msg]
                            (concat

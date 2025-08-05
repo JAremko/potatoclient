@@ -252,41 +252,51 @@
                  (mapcat extract-all-types (:nested-types type-def [])))]
     (concat current nested)))
 
+(defn get-canonical-type-ref
+  "Get the canonical reference for a type based on its package and name."
+  [type-def file-context parent-names]
+  (let [package (:package file-context)
+        proto-name (:proto-name type-def)]
+    (if (seq parent-names)
+      ;; Nested type: package.Parent.Child
+      (str package "." (str/join "." parent-names) "." proto-name)
+      ;; Top-level type: package.TypeName
+      (str package "." proto-name))))
+
+(defn extract-all-types-with-refs
+  "Extract all types with their canonical references."
+  [types file-context parent-names]
+  (mapcat (fn [type-def]
+           (let [canonical-ref (get-canonical-type-ref type-def file-context parent-names)
+                 current [[canonical-ref type-def]]
+                 nested (when (= (:type type-def) :message)
+                         (extract-all-types-with-refs 
+                          (:nested-types type-def [])
+                          file-context
+                          (conj parent-names (:proto-name type-def))))]
+             (concat current nested)))
+         types))
+
 (defn build-type-lookup
   "Build a lookup map of all types from the EDN representation.
-  Creates multiple lookup keys for each type to handle different reference styles."
+  Uses canonical type references as keys (e.g., 'cmd.System.Ping')."
   [edn-data]
-  (let [all-types (if (= (:type edn-data) :file)
-                    (concat
-                     (mapcat extract-all-types (:messages edn-data))
-                     (:enums edn-data))
+  (let [process-file (fn [file]
+                      (let [file-context {:package (:package file)}]
+                        (concat
+                         ;; Process messages with their canonical refs
+                         (extract-all-types-with-refs (:messages file) file-context [])
+                         ;; Process enums
+                         (map (fn [enum]
+                               [(get-canonical-type-ref enum file-context []) enum])
+                             (:enums file)))))
+        
+        type-pairs (if (= (:type edn-data) :file)
+                    (process-file edn-data)
                     ;; For descriptor sets
-                    (mapcat (fn [file]
-                             (concat
-                              (mapcat extract-all-types (:messages file))
-                              (:enums file)))
-                           (:files edn-data)))]
-    ;; Create multiple lookup entries for each type
-    (reduce (fn [lookup type-def]
-             (let [kebab-name (:name type-def)
-                   proto-name (:proto-name type-def)
-                   java-class (:java-class type-def)]
-               (cond-> lookup
-                 ;; By kebab-case name
-                 kebab-name
-                 (assoc kebab-name type-def)
-                 
-                 ;; By proto name
-                 proto-name
-                 (assoc (csk/->kebab-case-keyword proto-name) type-def)
-                 
-                 ;; By simple class name (last part after $)
-                 (and java-class (str/includes? java-class "$"))
-                 (assoc (csk/->kebab-case-keyword 
-                         (last (str/split java-class #"\$"))) 
-                        type-def))))
-           {}
-           all-types)))
+                    (mapcat process-file (:files edn-data)))]
+    
+    (into {} type-pairs)))
 
 ;; =============================================================================
 ;; Main API

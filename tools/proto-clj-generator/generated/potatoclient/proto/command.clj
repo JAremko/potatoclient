@@ -1,33 +1,551 @@
 (ns potatoclient.proto.command
-  "Generated protobuf conversion functions."
-  (:require [clojure.string :as str])
+  "Generated protobuf functions."
   (:import
-    [cmd.Lira JonSharedCmdLira$Root JonSharedCmdLira$Refine_target JonSharedCmdLira$JonGuiDataLiraTarget]
-    [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Axis JonSharedCmdRotary$SetMode JonSharedCmdRotary$SetAzimuthValue JonSharedCmdRotary$RotateAzimuthTo JonSharedCmdRotary$RotateAzimuth JonSharedCmdRotary$RotateElevation JonSharedCmdRotary$SetElevationValue JonSharedCmdRotary$RotateElevationTo JonSharedCmdRotary$RotateElevationRelative JonSharedCmdRotary$RotateElevationRelativeSet JonSharedCmdRotary$RotateAzimuthRelative JonSharedCmdRotary$RotateAzimuthRelativeSet JonSharedCmdRotary$SetPlatformAzimuth JonSharedCmdRotary$SetPlatformElevation JonSharedCmdRotary$SetPlatformBank JonSharedCmdRotary$GetMeteo JonSharedCmdRotary$Azimuth JonSharedCmdRotary$Start JonSharedCmdRotary$Stop JonSharedCmdRotary$Halt JonSharedCmdRotary$ScanStart JonSharedCmdRotary$ScanStop JonSharedCmdRotary$ScanPause JonSharedCmdRotary$ScanUnpause JonSharedCmdRotary$HaltAzimuth JonSharedCmdRotary$HaltElevation JonSharedCmdRotary$ScanPrev JonSharedCmdRotary$ScanNext JonSharedCmdRotary$ScanRefreshNodeList JonSharedCmdRotary$ScanSelectNode JonSharedCmdRotary$ScanDeleteNode JonSharedCmdRotary$ScanUpdateNode JonSharedCmdRotary$ScanAddNode JonSharedCmdRotary$Elevation JonSharedCmdRotary$setUseRotaryAsCompass JonSharedCmdRotary$RotateToGPS JonSharedCmdRotary$SetOriginGPS JonSharedCmdRotary$RotateToNDC]
-    [cmd.System JonSharedCmdSystem$Root JonSharedCmdSystem$StartALl JonSharedCmdSystem$StopALl JonSharedCmdSystem$Reboot JonSharedCmdSystem$PowerOff JonSharedCmdSystem$ResetConfigs JonSharedCmdSystem$StartRec JonSharedCmdSystem$StopRec JonSharedCmdSystem$MarkRecImportant JonSharedCmdSystem$UnmarkRecImportant JonSharedCmdSystem$EnterTransport JonSharedCmdSystem$EnableGeodesicMode JonSharedCmdSystem$DisableGeodesicMode JonSharedCmdSystem$SetLocalization]
-    [cmd.Lrf_calib JonSharedCmdLrfAlign$Root JonSharedCmdLrfAlign$Offsets JonSharedCmdLrfAlign$SetOffsets JonSharedCmdLrfAlign$ShiftOffsetsBy JonSharedCmdLrfAlign$ResetOffsets JonSharedCmdLrfAlign$SaveOffsets]
-    [cmd.Gps JonSharedCmdGps$Root JonSharedCmdGps$Start JonSharedCmdGps$Stop JonSharedCmdGps$GetMeteo JonSharedCmdGps$SetUseManualPosition JonSharedCmdGps$SetManualPosition]
-    [cmd.HeatCamera JonSharedCmdHeatCamera$Root JonSharedCmdHeatCamera$SetFxMode JonSharedCmdHeatCamera$SetClaheLevel JonSharedCmdHeatCamera$ShiftClaheLevel JonSharedCmdHeatCamera$NextFxMode JonSharedCmdHeatCamera$PrevFxMode JonSharedCmdHeatCamera$RefreshFxMode JonSharedCmdHeatCamera$EnableDDE JonSharedCmdHeatCamera$DisableDDE JonSharedCmdHeatCamera$SetValue JonSharedCmdHeatCamera$SetDDELevel JonSharedCmdHeatCamera$SetDigitalZoomLevel JonSharedCmdHeatCamera$ShiftDDE JonSharedCmdHeatCamera$ZoomIn JonSharedCmdHeatCamera$ZoomOut JonSharedCmdHeatCamera$ZoomStop JonSharedCmdHeatCamera$FocusIn JonSharedCmdHeatCamera$FocusOut JonSharedCmdHeatCamera$FocusStop JonSharedCmdHeatCamera$FocusStepPlus JonSharedCmdHeatCamera$FocusStepMinus JonSharedCmdHeatCamera$Calibrate JonSharedCmdHeatCamera$Zoom JonSharedCmdHeatCamera$NextZoomTablePos JonSharedCmdHeatCamera$PrevZoomTablePos JonSharedCmdHeatCamera$SetCalibMode JonSharedCmdHeatCamera$SetZoomTableValue JonSharedCmdHeatCamera$SetAGC JonSharedCmdHeatCamera$SetFilters JonSharedCmdHeatCamera$Start JonSharedCmdHeatCamera$Stop JonSharedCmdHeatCamera$Halt JonSharedCmdHeatCamera$Photo JonSharedCmdHeatCamera$GetMeteo JonSharedCmdHeatCamera$SetAutoFocus JonSharedCmdHeatCamera$ResetZoom JonSharedCmdHeatCamera$SaveToTable]
-    [cmd.CV JonSharedCmdCv$Root JonSharedCmdCv$VampireModeEnable JonSharedCmdCv$DumpStart JonSharedCmdCv$DumpStop JonSharedCmdCv$VampireModeDisable JonSharedCmdCv$StabilizationModeEnable JonSharedCmdCv$StabilizationModeDisable JonSharedCmdCv$SetAutoFocus JonSharedCmdCv$StartTrackNDC JonSharedCmdCv$StopTrack]
-    [cmd.DayCamera JonSharedCmdDayCamera$SetValue JonSharedCmdDayCamera$Move JonSharedCmdDayCamera$Offset JonSharedCmdDayCamera$SetClaheLevel JonSharedCmdDayCamera$ShiftClaheLevel JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$GetPos JonSharedCmdDayCamera$NextFxMode JonSharedCmdDayCamera$PrevFxMode JonSharedCmdDayCamera$RefreshFxMode JonSharedCmdDayCamera$HaltAll JonSharedCmdDayCamera$SetFxMode JonSharedCmdDayCamera$SetDigitalZoomLevel JonSharedCmdDayCamera$Focus JonSharedCmdDayCamera$Zoom JonSharedCmdDayCamera$NextZoomTablePos JonSharedCmdDayCamera$PrevZoomTablePos JonSharedCmdDayCamera$SetIris JonSharedCmdDayCamera$SetInfraRedFilter JonSharedCmdDayCamera$SetAutoIris JonSharedCmdDayCamera$SetZoomTableValue JonSharedCmdDayCamera$Stop JonSharedCmdDayCamera$Start JonSharedCmdDayCamera$Photo JonSharedCmdDayCamera$Halt JonSharedCmdDayCamera$GetMeteo JonSharedCmdDayCamera$ResetZoom JonSharedCmdDayCamera$ResetFocus JonSharedCmdDayCamera$SaveToTable JonSharedCmdDayCamera$SaveToTableFocus]
-    [cmd.DayCamGlassHeater JonSharedCmdDayCamGlassHeater$Root JonSharedCmdDayCamGlassHeater$Start JonSharedCmdDayCamGlassHeater$Stop JonSharedCmdDayCamGlassHeater$TurnOn JonSharedCmdDayCamGlassHeater$TurnOff JonSharedCmdDayCamGlassHeater$GetMeteo]
-    [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]
-    [cmd.Lrf JonSharedCmdLrf$Root JonSharedCmdLrf$GetMeteo JonSharedCmdLrf$Start JonSharedCmdLrf$Stop JonSharedCmdLrf$Measure JonSharedCmdLrf$ScanOn JonSharedCmdLrf$ScanOff JonSharedCmdLrf$RefineOff JonSharedCmdLrf$RefineOn JonSharedCmdLrf$TargetDesignatorOff JonSharedCmdLrf$TargetDesignatorOnModeA JonSharedCmdLrf$TargetDesignatorOnModeB JonSharedCmdLrf$EnableFogMode JonSharedCmdLrf$DisableFogMode JonSharedCmdLrf$SetScanMode JonSharedCmdLrf$NewSession]
-    [cmd.Compass JonSharedCmdCompass$Root JonSharedCmdCompass$Start JonSharedCmdCompass$Stop JonSharedCmdCompass$Next JonSharedCmdCompass$CalibrateStartLong JonSharedCmdCompass$CalibrateStartShort JonSharedCmdCompass$CalibrateNext JonSharedCmdCompass$CalibrateCencel JonSharedCmdCompass$GetMeteo JonSharedCmdCompass$SetMagneticDeclination JonSharedCmdCompass$SetOffsetAngleAzimuth JonSharedCmdCompass$SetOffsetAngleElevation JonSharedCmdCompass$SetUseRotaryPosition]
-    [ser JonSharedDataTypes$JonGuiDataMeteo JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes JonSharedDataTypes$JonGuiDataGpsUnits JonSharedDataTypes$JonGuiDataGpsFixType JonSharedDataTypes$JonGuiDataCompassUnits JonSharedDataTypes$JonGuiDataAccumulatorStateIdx JonSharedDataTypes$JonGuiDataTimeFormats JonSharedDataTypes$JonGuiDataRotaryDirection JonSharedDataTypes$JonGuiDataLrfScanModes JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes JonSharedDataTypes$JonGuiDataCompassCalibrateStatus JonSharedDataTypes$JonGuiDataRotaryMode JonSharedDataTypes$JonGuiDataVideoChannel JonSharedDataTypes$JonGuiDataRecOsdScreen JonSharedDataTypes$JonGuiDataFxModeDay JonSharedDataTypes$JonGuiDataFxModeHeat JonSharedDataTypes$JonGuiDataSystemLocalizations JonSharedDataTypes$JonGuiDataClientType]
-    [cmd.OSD JonSharedCmdOsd$Root JonSharedCmdOsd$ShowDefaultScreen JonSharedCmdOsd$ShowLRFMeasureScreen JonSharedCmdOsd$ShowLRFResultScreen JonSharedCmdOsd$ShowLRFResultSimplifiedScreen JonSharedCmdOsd$EnableHeatOSD JonSharedCmdOsd$DisableHeatOSD JonSharedCmdOsd$EnableDayOSD JonSharedCmdOsd$DisableDayOSD]))
+   [cmd.CV.JonSharedCmdCv$DumpStart]
+   [cmd.CV.JonSharedCmdCv$DumpStop]
+   [cmd.CV.JonSharedCmdCv$Root]
+   [cmd.CV.JonSharedCmdCv$SetAutoFocus]
+   [cmd.CV.JonSharedCmdCv$StabilizationModeDisable]
+   [cmd.CV.JonSharedCmdCv$StabilizationModeEnable]
+   [cmd.CV.JonSharedCmdCv$StartTrackNDC]
+   [cmd.CV.JonSharedCmdCv$StopTrack]
+   [cmd.CV.JonSharedCmdCv$VampireModeDisable]
+   [cmd.CV.JonSharedCmdCv$VampireModeEnable]
+   [cmd.Compass.JonSharedCmdCompass$CalibrateCencel]
+   [cmd.Compass.JonSharedCmdCompass$CalibrateNext]
+   [cmd.Compass.JonSharedCmdCompass$CalibrateStartLong]
+   [cmd.Compass.JonSharedCmdCompass$CalibrateStartShort]
+   [cmd.Compass.JonSharedCmdCompass$GetMeteo]
+   [cmd.Compass.JonSharedCmdCompass$Next]
+   [cmd.Compass.JonSharedCmdCompass$Root]
+   [cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination]
+   [cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth]
+   [cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation]
+   [cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition]
+   [cmd.Compass.JonSharedCmdCompass$Start]
+   [cmd.Compass.JonSharedCmdCompass$Stop]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff]
+   [cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Focus]
+   [cmd.DayCamera.JonSharedCmdDayCamera$GetMeteo]
+   [cmd.DayCamera.JonSharedCmdDayCamera$GetPos]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Halt]
+   [cmd.DayCamera.JonSharedCmdDayCamera$HaltAll]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Move]
+   [cmd.DayCamera.JonSharedCmdDayCamera$NextFxMode]
+   [cmd.DayCamera.JonSharedCmdDayCamera$NextZoomTablePos]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Offset]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Photo]
+   [cmd.DayCamera.JonSharedCmdDayCamera$PrevFxMode]
+   [cmd.DayCamera.JonSharedCmdDayCamera$PrevZoomTablePos]
+   [cmd.DayCamera.JonSharedCmdDayCamera$RefreshFxMode]
+   [cmd.DayCamera.JonSharedCmdDayCamera$ResetFocus]
+   [cmd.DayCamera.JonSharedCmdDayCamera$ResetZoom]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Root]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SaveToTable]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SaveToTableFocus]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetAutoIris]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetClaheLevel]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetDigitalZoomLevel]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetInfraRedFilter]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetIris]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetValue]
+   [cmd.DayCamera.JonSharedCmdDayCamera$SetZoomTableValue]
+   [cmd.DayCamera.JonSharedCmdDayCamera$ShiftClaheLevel]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Start]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Stop]
+   [cmd.DayCamera.JonSharedCmdDayCamera$Zoom]
+   [cmd.Gps.JonSharedCmdGps$GetMeteo]
+   [cmd.Gps.JonSharedCmdGps$Root]
+   [cmd.Gps.JonSharedCmdGps$SetManualPosition]
+   [cmd.Gps.JonSharedCmdGps$SetUseManualPosition]
+   [cmd.Gps.JonSharedCmdGps$Start]
+   [cmd.Gps.JonSharedCmdGps$Stop]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Halt]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Photo]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Root]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Start]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Stop]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut]
+   [cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop]
+   [cmd.JonSharedCmd$Frozen]
+   [cmd.JonSharedCmd$Noop]
+   [cmd.JonSharedCmd$Ping]
+   [cmd.JonSharedCmd$Root]
+   [cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget]
+   [cmd.Lira.JonSharedCmdLira$Refine_target]
+   [cmd.Lira.JonSharedCmdLira$Root]
+   [cmd.Lrf.JonSharedCmdLrf$DisableFogMode]
+   [cmd.Lrf.JonSharedCmdLrf$EnableFogMode]
+   [cmd.Lrf.JonSharedCmdLrf$GetMeteo]
+   [cmd.Lrf.JonSharedCmdLrf$Measure]
+   [cmd.Lrf.JonSharedCmdLrf$NewSession]
+   [cmd.Lrf.JonSharedCmdLrf$RefineOff]
+   [cmd.Lrf.JonSharedCmdLrf$RefineOn]
+   [cmd.Lrf.JonSharedCmdLrf$Root]
+   [cmd.Lrf.JonSharedCmdLrf$ScanOff]
+   [cmd.Lrf.JonSharedCmdLrf$ScanOn]
+   [cmd.Lrf.JonSharedCmdLrf$SetScanMode]
+   [cmd.Lrf.JonSharedCmdLrf$Start]
+   [cmd.Lrf.JonSharedCmdLrf$Stop]
+   [cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff]
+   [cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA]
+   [cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$Root]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets]
+   [cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy]
+   [cmd.OSD.JonSharedCmdOsd$DisableDayOSD]
+   [cmd.OSD.JonSharedCmdOsd$DisableHeatOSD]
+   [cmd.OSD.JonSharedCmdOsd$EnableDayOSD]
+   [cmd.OSD.JonSharedCmdOsd$EnableHeatOSD]
+   [cmd.OSD.JonSharedCmdOsd$Root]
+   [cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen]
+   [cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen]
+   [cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen]
+   [cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Axis]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Elevation]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Halt]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Root]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetMode]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Start]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$Stop]
+   [cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass]
+   [cmd.System.JonSharedCmdSystem$DisableGeodesicMode]
+   [cmd.System.JonSharedCmdSystem$EnableGeodesicMode]
+   [cmd.System.JonSharedCmdSystem$EnterTransport]
+   [cmd.System.JonSharedCmdSystem$MarkRecImportant]
+   [cmd.System.JonSharedCmdSystem$PowerOff]
+   [cmd.System.JonSharedCmdSystem$Reboot]
+   [cmd.System.JonSharedCmdSystem$ResetConfigs]
+   [cmd.System.JonSharedCmdSystem$Root]
+   [cmd.System.JonSharedCmdSystem$SetLocalization]
+   [cmd.System.JonSharedCmdSystem$StartALl]
+   [cmd.System.JonSharedCmdSystem$StartRec]
+   [cmd.System.JonSharedCmdSystem$StopALl]
+   [cmd.System.JonSharedCmdSystem$StopRec]
+   [cmd.System.JonSharedCmdSystem$UnmarkRecImportant]
+   [ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx]
+   [ser.JonSharedDataTypes$JonGuiDataClientType]
+   [ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus]
+   [ser.JonSharedDataTypes$JonGuiDataCompassUnits]
+   [ser.JonSharedDataTypes$JonGuiDataFxModeDay]
+   [ser.JonSharedDataTypes$JonGuiDataFxModeHeat]
+   [ser.JonSharedDataTypes$JonGuiDataGpsFixType]
+   [ser.JonSharedDataTypes$JonGuiDataGpsUnits]
+   [ser.JonSharedDataTypes$JonGuiDataLrfScanModes]
+   [ser.JonSharedDataTypes$JonGuiDataMeteo]
+   [ser.JonSharedDataTypes$JonGuiDataRecOsdScreen]
+   [ser.JonSharedDataTypes$JonGuiDataRotaryDirection]
+   [ser.JonSharedDataTypes$JonGuiDataRotaryMode]
+   [ser.JonSharedDataTypes$JonGuiDataSystemLocalizations]
+   [ser.JonSharedDataTypes$JonGuiDataTimeFormats]
+   [ser.JonSharedDataTypes$JonGuiDataVideoChannel]
+   [ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes]
+   [ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters]
+   [ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes]))
 
-;; Forward declarations
-(declare build-root parse-root build-root-payload parse-root-payload build-start parse-start build-stop parse-stop build-next parse-next build-calibrate-start-long parse-calibrate-start-long build-calibrate-start-short parse-calibrate-start-short build-calibrate-next parse-calibrate-next build-calibrate-cencel parse-calibrate-cencel build-get-meteo parse-get-meteo build-set-magnetic-declination parse-set-magnetic-declination build-set-offset-angle-azimuth parse-set-offset-angle-azimuth build-set-offset-angle-elevation parse-set-offset-angle-elevation build-set-use-rotary-position parse-set-use-rotary-position build-root parse-root build-root-payload parse-root-payload build-start parse-start build-stop parse-stop build-get-meteo parse-get-meteo build-set-use-manual-position parse-set-use-manual-position build-set-manual-position parse-set-manual-position build-jon-gui-data-meteo parse-jon-gui-data-meteo build-root parse-root build-root-payload parse-root-payload build-get-meteo parse-get-meteo build-start parse-start build-stop parse-stop build-measure parse-measure build-scan-on parse-scan-on build-scan-off parse-scan-off build-refine-off parse-refine-off build-refine-on parse-refine-on build-target-designator-off parse-target-designator-off build-target-designator-on-mode-a parse-target-designator-on-mode-a build-target-designator-on-mode-b parse-target-designator-on-mode-b build-enable-fog-mode parse-enable-fog-mode build-disable-fog-mode parse-disable-fog-mode build-set-scan-mode parse-set-scan-mode build-new-session parse-new-session build-set-value parse-set-value build-move parse-move build-offset parse-offset build-set-clahe-level parse-set-clahe-level build-shift-clahe-level parse-shift-clahe-level build-root parse-root build-root-payload parse-root-payload build-get-pos parse-get-pos build-next-fx-mode parse-next-fx-mode build-prev-fx-mode parse-prev-fx-mode build-refresh-fx-mode parse-refresh-fx-mode build-halt-all parse-halt-all build-set-fx-mode parse-set-fx-mode build-set-digital-zoom-level parse-set-digital-zoom-level build-focus parse-focus build-focus-payload parse-focus-payload build-zoom parse-zoom build-zoom-payload parse-zoom-payload build-next-zoom-table-pos parse-next-zoom-table-pos build-prev-zoom-table-pos parse-prev-zoom-table-pos build-set-iris parse-set-iris build-set-infra-red-filter parse-set-infra-red-filter build-set-auto-iris parse-set-auto-iris build-set-zoom-table-value parse-set-zoom-table-value build-stop parse-stop build-start parse-start build-photo parse-photo build-halt parse-halt build-get-meteo parse-get-meteo build-reset-zoom parse-reset-zoom build-reset-focus parse-reset-focus build-save-to-table parse-save-to-table build-save-to-table-focus parse-save-to-table-focus build-root parse-root build-root-payload parse-root-payload build-set-fx-mode parse-set-fx-mode build-set-clahe-level parse-set-clahe-level build-shift-clahe-level parse-shift-clahe-level build-next-fx-mode parse-next-fx-mode build-prev-fx-mode parse-prev-fx-mode build-refresh-fx-mode parse-refresh-fx-mode build-enable-dde parse-enable-dde build-disable-dde parse-disable-dde build-set-value parse-set-value build-set-dde-level parse-set-dde-level build-set-digital-zoom-level parse-set-digital-zoom-level build-shift-dde parse-shift-dde build-zoom-in parse-zoom-in build-zoom-out parse-zoom-out build-zoom-stop parse-zoom-stop build-focus-in parse-focus-in build-focus-out parse-focus-out build-focus-stop parse-focus-stop build-focus-step-plus parse-focus-step-plus build-focus-step-minus parse-focus-step-minus build-calibrate parse-calibrate build-zoom parse-zoom build-zoom-payload parse-zoom-payload build-next-zoom-table-pos parse-next-zoom-table-pos build-prev-zoom-table-pos parse-prev-zoom-table-pos build-set-calib-mode parse-set-calib-mode build-set-zoom-table-value parse-set-zoom-table-value build-set-agc parse-set-agc build-set-filters parse-set-filters build-start parse-start build-stop parse-stop build-halt parse-halt build-photo parse-photo build-get-meteo parse-get-meteo build-set-auto-focus parse-set-auto-focus build-reset-zoom parse-reset-zoom build-save-to-table parse-save-to-table build-root parse-root build-root-payload parse-root-payload build-axis parse-axis build-set-mode parse-set-mode build-set-azimuth-value parse-set-azimuth-value build-rotate-azimuth-to parse-rotate-azimuth-to build-rotate-azimuth parse-rotate-azimuth build-rotate-elevation parse-rotate-elevation build-set-elevation-value parse-set-elevation-value build-rotate-elevation-to parse-rotate-elevation-to build-rotate-elevation-relative parse-rotate-elevation-relative build-rotate-elevation-relative-set parse-rotate-elevation-relative-set build-rotate-azimuth-relative parse-rotate-azimuth-relative build-rotate-azimuth-relative-set parse-rotate-azimuth-relative-set build-set-platform-azimuth parse-set-platform-azimuth build-set-platform-elevation parse-set-platform-elevation build-set-platform-bank parse-set-platform-bank build-get-meteo parse-get-meteo build-azimuth parse-azimuth build-azimuth-payload parse-azimuth-payload build-start parse-start build-stop parse-stop build-halt parse-halt build-scan-start parse-scan-start build-scan-stop parse-scan-stop build-scan-pause parse-scan-pause build-scan-unpause parse-scan-unpause build-halt-azimuth parse-halt-azimuth build-halt-elevation parse-halt-elevation build-scan-prev parse-scan-prev build-scan-next parse-scan-next build-scan-refresh-node-list parse-scan-refresh-node-list build-scan-select-node parse-scan-select-node build-scan-delete-node parse-scan-delete-node build-scan-update-node parse-scan-update-node build-scan-add-node parse-scan-add-node build-elevation parse-elevation build-elevation-payload parse-elevation-payload build-set-use-rotary-as-compass parse-set-use-rotary-as-compass build-rotate-to-gps parse-rotate-to-gps build-set-origin-gps parse-set-origin-gps build-rotate-to-ndc parse-rotate-to-ndc build-root parse-root build-root-payload parse-root-payload build-show-default-screen parse-show-default-screen build-show-lrf-measure-screen parse-show-lrf-measure-screen build-show-lrf-result-screen parse-show-lrf-result-screen build-show-lrf-result-simplified-screen parse-show-lrf-result-simplified-screen build-enable-heat-osd parse-enable-heat-osd build-disable-heat-osd parse-disable-heat-osd build-enable-day-osd parse-enable-day-osd build-disable-day-osd parse-disable-day-osd build-root parse-root build-root-payload parse-root-payload build-offsets parse-offsets build-offsets-payload parse-offsets-payload build-set-offsets parse-set-offsets build-shift-offsets-by parse-shift-offsets-by build-reset-offsets parse-reset-offsets build-save-offsets parse-save-offsets build-root parse-root build-root-payload parse-root-payload build-start-a-ll parse-start-a-ll build-stop-a-ll parse-stop-a-ll build-reboot parse-reboot build-power-off parse-power-off build-reset-configs parse-reset-configs build-start-rec parse-start-rec build-stop-rec parse-stop-rec build-mark-rec-important parse-mark-rec-important build-unmark-rec-important parse-unmark-rec-important build-enter-transport parse-enter-transport build-enable-geodesic-mode parse-enable-geodesic-mode build-disable-geodesic-mode parse-disable-geodesic-mode build-set-localization parse-set-localization build-root parse-root build-root-payload parse-root-payload build-vampire-mode-enable parse-vampire-mode-enable build-dump-start parse-dump-start build-dump-stop parse-dump-stop build-vampire-mode-disable parse-vampire-mode-disable build-stabilization-mode-enable parse-stabilization-mode-enable build-stabilization-mode-disable parse-stabilization-mode-disable build-set-auto-focus parse-set-auto-focus build-start-track-ndc parse-start-track-ndc build-stop-track parse-stop-track build-root parse-root build-root-payload parse-root-payload build-start parse-start build-stop parse-stop build-turn-on parse-turn-on build-turn-off parse-turn-off build-get-meteo parse-get-meteo build-root parse-root build-root-payload parse-root-payload build-refine-target parse-refine-target build-jon-gui-data-lira-target parse-jon-gui-data-lira-target build-root parse-root build-root-payload parse-root-payload build-ping parse-ping build-noop parse-noop build-frozen parse-frozen)
+;; =============================================================================
+;; Enums
+;; =============================================================================
 
-;; Message Converters
+;; Enum: JonGuiDataVideoChannelHeatFilters
+(def jon-gui-data-video-channel-heat-filters-values
+  "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatFilters."
+  {:jon-gui-data-video-channel-heat-filter-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-filter-hot-white ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
+   :jon-gui-data-video-channel-heat-filter-hot-black ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
+   :jon-gui-data-video-channel-heat-filter-sepia ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
+   :jon-gui-data-video-channel-heat-filter-sepia-inverse ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE})
+
+(def jon-gui-data-video-channel-heat-filters-keywords
+  "Java enum to keyword mapping for JonGuiDataVideoChannelHeatFilters."
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED :jon-gui-data-video-channel-heat-filter-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE :jon-gui-data-video-channel-heat-filter-hot-white
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK :jon-gui-data-video-channel-heat-filter-hot-black
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA :jon-gui-data-video-channel-heat-filter-sepia
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE :jon-gui-data-video-channel-heat-filter-sepia-inverse})
+
+;; Enum: JonGuiDataVideoChannelHeatAGCModes
+(def jon-gui-data-video-channel-heat-agc-modes-values
+  "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatAGCModes."
+  {:jon-gui-data-video-channel-heat-agc-mode-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-agc-mode-1 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
+   :jon-gui-data-video-channel-heat-agc-mode-2 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
+   :jon-gui-data-video-channel-heat-agc-mode-3 ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3})
+
+(def jon-gui-data-video-channel-heat-agc-modes-keywords
+  "Java enum to keyword mapping for JonGuiDataVideoChannelHeatAGCModes."
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED :jon-gui-data-video-channel-heat-agc-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1 :jon-gui-data-video-channel-heat-agc-mode-1
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2 :jon-gui-data-video-channel-heat-agc-mode-2
+   ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3 :jon-gui-data-video-channel-heat-agc-mode-3})
+
+;; Enum: JonGuiDataGpsUnits
+(def jon-gui-data-gps-units-values
+  "Keyword to Java enum mapping for JonGuiDataGpsUnits."
+  {:jon-gui-data-gps-units-unspecified ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
+   :jon-gui-data-gps-units-decimal-degrees ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
+   :jon-gui-data-gps-units-degrees-minutes-seconds ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
+   :jon-gui-data-gps-units-degrees-decimal-minutes ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES})
+
+(def jon-gui-data-gps-units-keywords
+  "Java enum to keyword mapping for JonGuiDataGpsUnits."
+  {ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED :jon-gui-data-gps-units-unspecified
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES :jon-gui-data-gps-units-decimal-degrees
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS :jon-gui-data-gps-units-degrees-minutes-seconds
+   ser.JonSharedDataTypes$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES :jon-gui-data-gps-units-degrees-decimal-minutes})
+
+;; Enum: JonGuiDataGpsFixType
+(def jon-gui-data-gps-fix-type-values
+  "Keyword to Java enum mapping for JonGuiDataGpsFixType."
+  {:jon-gui-data-gps-fix-type-unspecified ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
+   :jon-gui-data-gps-fix-type-none ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
+   :jon-gui-data-gps-fix-type-1-d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D
+   :jon-gui-data-gps-fix-type-2-d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D
+   :jon-gui-data-gps-fix-type-3-d ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D
+   :jon-gui-data-gps-fix-type-manual ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL})
+
+(def jon-gui-data-gps-fix-type-keywords
+  "Java enum to keyword mapping for JonGuiDataGpsFixType."
+  {ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED :jon-gui-data-gps-fix-type-unspecified
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE :jon-gui-data-gps-fix-type-none
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D :jon-gui-data-gps-fix-type-1-d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D :jon-gui-data-gps-fix-type-2-d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D :jon-gui-data-gps-fix-type-3-d
+   ser.JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL :jon-gui-data-gps-fix-type-manual})
+
+;; Enum: JonGuiDataCompassUnits
+(def jon-gui-data-compass-units-values
+  "Keyword to Java enum mapping for JonGuiDataCompassUnits."
+  {:jon-gui-data-compass-units-unspecified ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
+   :jon-gui-data-compass-units-degrees ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES
+   :jon-gui-data-compass-units-mils ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS
+   :jon-gui-data-compass-units-grad ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD
+   :jon-gui-data-compass-units-mrad ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD})
+
+(def jon-gui-data-compass-units-keywords
+  "Java enum to keyword mapping for JonGuiDataCompassUnits."
+  {ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED :jon-gui-data-compass-units-unspecified
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES :jon-gui-data-compass-units-degrees
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS :jon-gui-data-compass-units-mils
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD :jon-gui-data-compass-units-grad
+   ser.JonSharedDataTypes$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD :jon-gui-data-compass-units-mrad})
+
+;; Enum: JonGuiDataAccumulatorStateIdx
+(def jon-gui-data-accumulator-state-idx-values
+  "Keyword to Java enum mapping for JonGuiDataAccumulatorStateIdx."
+  {:jon-gui-data-accumulator-state-unspecified ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
+   :jon-gui-data-accumulator-state-unknown ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
+   :jon-gui-data-accumulator-state-empty ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
+   :jon-gui-data-accumulator-state-1 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1
+   :jon-gui-data-accumulator-state-2 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2
+   :jon-gui-data-accumulator-state-3 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3
+   :jon-gui-data-accumulator-state-4 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4
+   :jon-gui-data-accumulator-state-5 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5
+   :jon-gui-data-accumulator-state-6 ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6
+   :jon-gui-data-accumulator-state-full ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL
+   :jon-gui-data-accumulator-state-charging ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING})
+
+(def jon-gui-data-accumulator-state-idx-keywords
+  "Java enum to keyword mapping for JonGuiDataAccumulatorStateIdx."
+  {ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED :jon-gui-data-accumulator-state-unspecified
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN :jon-gui-data-accumulator-state-unknown
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY :jon-gui-data-accumulator-state-empty
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1 :jon-gui-data-accumulator-state-1
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2 :jon-gui-data-accumulator-state-2
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3 :jon-gui-data-accumulator-state-3
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4 :jon-gui-data-accumulator-state-4
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5 :jon-gui-data-accumulator-state-5
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6 :jon-gui-data-accumulator-state-6
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL :jon-gui-data-accumulator-state-full
+   ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING :jon-gui-data-accumulator-state-charging})
+
+;; Enum: JonGuiDataTimeFormats
+(def jon-gui-data-time-formats-values
+  "Keyword to Java enum mapping for JonGuiDataTimeFormats."
+  {:jon-gui-data-time-format-unspecified ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
+   :jon-gui-data-time-format-h-m-s ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S
+   :jon-gui-data-time-format-y-m-d-h-m-s ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S})
+
+(def jon-gui-data-time-formats-keywords
+  "Java enum to keyword mapping for JonGuiDataTimeFormats."
+  {ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED :jon-gui-data-time-format-unspecified
+   ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S :jon-gui-data-time-format-h-m-s
+   ser.JonSharedDataTypes$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S :jon-gui-data-time-format-y-m-d-h-m-s})
+
+;; Enum: JonGuiDataRotaryDirection
+(def jon-gui-data-rotary-direction-values
+  "Keyword to Java enum mapping for JonGuiDataRotaryDirection."
+  {:jon-gui-data-rotary-direction-unspecified ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
+   :jon-gui-data-rotary-direction-clockwise ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+   :jon-gui-data-rotary-direction-counter-clockwise ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE})
+
+(def jon-gui-data-rotary-direction-keywords
+  "Java enum to keyword mapping for JonGuiDataRotaryDirection."
+  {ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED :jon-gui-data-rotary-direction-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE :jon-gui-data-rotary-direction-clockwise
+   ser.JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE :jon-gui-data-rotary-direction-counter-clockwise})
+
+;; Enum: JonGuiDataLrfScanModes
+(def jon-gui-data-lrf-scan-modes-values
+  "Keyword to Java enum mapping for JonGuiDataLrfScanModes."
+  {:jon-gui-data-lrf-scan-mode-unspecified ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS})
+
+(def jon-gui-data-lrf-scan-modes-keywords
+  "Java enum to keyword mapping for JonGuiDataLrfScanModes."
+  {ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED :jon-gui-data-lrf-scan-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   ser.JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-200-hz-continuous})
+
+;; Enum: JonGuiDatatLrfLaserPointerModes
+(def jon-gui-datat-lrf-laser-pointer-modes-values
+  "Keyword to Java enum mapping for JonGuiDatatLrfLaserPointerModes."
+  {:jon-gui-data-lrf-laser-pointer-mode-unspecified ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-laser-pointer-mode-off ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
+   :jon-gui-data-lrf-laser-pointer-mode-on-1 ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
+   :jon-gui-data-lrf-laser-pointer-mode-on-2 ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2})
+
+(def jon-gui-datat-lrf-laser-pointer-modes-keywords
+  "Java enum to keyword mapping for JonGuiDatatLrfLaserPointerModes."
+  {ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED :jon-gui-data-lrf-laser-pointer-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF :jon-gui-data-lrf-laser-pointer-mode-off
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1 :jon-gui-data-lrf-laser-pointer-mode-on-1
+   ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2 :jon-gui-data-lrf-laser-pointer-mode-on-2})
+
+;; Enum: JonGuiDataCompassCalibrateStatus
+(def jon-gui-data-compass-calibrate-status-values
+  "Keyword to Java enum mapping for JonGuiDataCompassCalibrateStatus."
+  {:jon-gui-data-compass-calibrate-status-unspecified ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
+   :jon-gui-data-compass-calibrate-status-not-calibrating ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+   :jon-gui-data-compass-calibrate-status-calibrating-short ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
+   :jon-gui-data-compass-calibrate-status-calibrating-long ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
+   :jon-gui-data-compass-calibrate-status-finished ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
+   :jon-gui-data-compass-calibrate-status-error ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR})
+
+(def jon-gui-data-compass-calibrate-status-keywords
+  "Java enum to keyword mapping for JonGuiDataCompassCalibrateStatus."
+  {ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED :jon-gui-data-compass-calibrate-status-unspecified
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING :jon-gui-data-compass-calibrate-status-not-calibrating
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT :jon-gui-data-compass-calibrate-status-calibrating-short
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG :jon-gui-data-compass-calibrate-status-calibrating-long
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED :jon-gui-data-compass-calibrate-status-finished
+   ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR :jon-gui-data-compass-calibrate-status-error})
+
+;; Enum: JonGuiDataRotaryMode
+(def jon-gui-data-rotary-mode-values
+  "Keyword to Java enum mapping for JonGuiDataRotaryMode."
+  {:jon-gui-data-rotary-mode-unspecified ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
+   :jon-gui-data-rotary-mode-initialization ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+   :jon-gui-data-rotary-mode-speed ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
+   :jon-gui-data-rotary-mode-position ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
+   :jon-gui-data-rotary-mode-stabilization ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+   :jon-gui-data-rotary-mode-targeting ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
+   :jon-gui-data-rotary-mode-video-tracker ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER})
+
+(def jon-gui-data-rotary-mode-keywords
+  "Java enum to keyword mapping for JonGuiDataRotaryMode."
+  {ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED :jon-gui-data-rotary-mode-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION :jon-gui-data-rotary-mode-initialization
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED :jon-gui-data-rotary-mode-speed
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION :jon-gui-data-rotary-mode-position
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION :jon-gui-data-rotary-mode-stabilization
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING :jon-gui-data-rotary-mode-targeting
+   ser.JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER :jon-gui-data-rotary-mode-video-tracker})
+
+;; Enum: JonGuiDataVideoChannel
+(def jon-gui-data-video-channel-values
+  "Keyword to Java enum mapping for JonGuiDataVideoChannel."
+  {:jon-gui-data-video-channel-unspecified ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
+   :jon-gui-data-video-channel-heat ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+   :jon-gui-data-video-channel-day ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY})
+
+(def jon-gui-data-video-channel-keywords
+  "Java enum to keyword mapping for JonGuiDataVideoChannel."
+  {ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED :jon-gui-data-video-channel-unspecified
+   ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT :jon-gui-data-video-channel-heat
+   ser.JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY :jon-gui-data-video-channel-day})
+
+;; Enum: JonGuiDataRecOsdScreen
+(def jon-gui-data-rec-osd-screen-values
+  "Keyword to Java enum mapping for JonGuiDataRecOsdScreen."
+  {:jon-gui-data-rec-osd-screen-unspecified ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
+   :jon-gui-data-rec-osd-screen-main ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN
+   :jon-gui-data-rec-osd-screen-lrf-measure ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
+   :jon-gui-data-rec-osd-screen-lrf-result ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
+   :jon-gui-data-rec-osd-screen-lrf-result-simplified ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED})
+
+(def jon-gui-data-rec-osd-screen-keywords
+  "Java enum to keyword mapping for JonGuiDataRecOsdScreen."
+  {ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED :jon-gui-data-rec-osd-screen-unspecified
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN :jon-gui-data-rec-osd-screen-main
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE :jon-gui-data-rec-osd-screen-lrf-measure
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT :jon-gui-data-rec-osd-screen-lrf-result
+   ser.JonSharedDataTypes$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED :jon-gui-data-rec-osd-screen-lrf-result-simplified})
+
+;; Enum: JonGuiDataFxModeDay
+(def jon-gui-data-fx-mode-day-values
+  "Keyword to Java enum mapping for JonGuiDataFxModeDay."
+  {:jon-gui-data-fx-mode-day-default ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   :jon-gui-data-fx-mode-day-a ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
+   :jon-gui-data-fx-mode-day-b ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
+   :jon-gui-data-fx-mode-day-c ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
+   :jon-gui-data-fx-mode-day-d ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
+   :jon-gui-data-fx-mode-day-e ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
+   :jon-gui-data-fx-mode-day-f ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F})
+
+(def jon-gui-data-fx-mode-day-keywords
+  "Java enum to keyword mapping for JonGuiDataFxModeDay."
+  {ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT :jon-gui-data-fx-mode-day-default
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A :jon-gui-data-fx-mode-day-a
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B :jon-gui-data-fx-mode-day-b
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C :jon-gui-data-fx-mode-day-c
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D :jon-gui-data-fx-mode-day-d
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E :jon-gui-data-fx-mode-day-e
+   ser.JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F :jon-gui-data-fx-mode-day-f})
+
+;; Enum: JonGuiDataFxModeHeat
+(def jon-gui-data-fx-mode-heat-values
+  "Keyword to Java enum mapping for JonGuiDataFxModeHeat."
+  {:jon-gui-data-fx-mode-heat-default ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   :jon-gui-data-fx-mode-heat-a ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
+   :jon-gui-data-fx-mode-heat-b ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
+   :jon-gui-data-fx-mode-heat-c ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
+   :jon-gui-data-fx-mode-heat-d ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
+   :jon-gui-data-fx-mode-heat-e ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
+   :jon-gui-data-fx-mode-heat-f ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F})
+
+(def jon-gui-data-fx-mode-heat-keywords
+  "Java enum to keyword mapping for JonGuiDataFxModeHeat."
+  {ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT :jon-gui-data-fx-mode-heat-default
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A :jon-gui-data-fx-mode-heat-a
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B :jon-gui-data-fx-mode-heat-b
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C :jon-gui-data-fx-mode-heat-c
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D :jon-gui-data-fx-mode-heat-d
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E :jon-gui-data-fx-mode-heat-e
+   ser.JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F :jon-gui-data-fx-mode-heat-f})
+
+;; Enum: JonGuiDataSystemLocalizations
+(def jon-gui-data-system-localizations-values
+  "Keyword to Java enum mapping for JonGuiDataSystemLocalizations."
+  {:jon-gui-data-system-localization-unspecified ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED
+   :jon-gui-data-system-localization-en ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
+   :jon-gui-data-system-localization-ua ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+   :jon-gui-data-system-localization-ar ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+   :jon-gui-data-system-localization-cs ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS})
+
+(def jon-gui-data-system-localizations-keywords
+  "Java enum to keyword mapping for JonGuiDataSystemLocalizations."
+  {ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED :jon-gui-data-system-localization-unspecified
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN :jon-gui-data-system-localization-en
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA :jon-gui-data-system-localization-ua
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR :jon-gui-data-system-localization-ar
+   ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS :jon-gui-data-system-localization-cs})
+
+;; Enum: JonGuiDataClientType
+(def jon-gui-data-client-type-values
+  "Keyword to Java enum mapping for JonGuiDataClientType."
+  {:jon-gui-data-client-type-unspecified ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+   :jon-gui-data-client-type-internal-cv ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   :jon-gui-data-client-type-local-network ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   :jon-gui-data-client-type-certificate-protected ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   :jon-gui-data-client-type-lira ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA})
+
+(def jon-gui-data-client-type-keywords
+  "Java enum to keyword mapping for JonGuiDataClientType."
+  {ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED :jon-gui-data-client-type-unspecified
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV :jon-gui-data-client-type-internal-cv
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK :jon-gui-data-client-type-local-network
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED :jon-gui-data-client-type-certificate-protected
+   ser.JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA :jon-gui-data-client-type-lira})
+
+;; =============================================================================
+;; Builders and Parsers
+;; =============================================================================
+
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Compass.JonSharedCmdCompass$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:start :stop :set-magnetic-declination :set-offset-angle-azimuth :set-offset-angle-elevation :set-use-rotary-position :start-calibrate-long :start-calibrate-short :calibrate-next :calibrate-cencel :get-meteo} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -51,15 +569,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.Compass.JonSharedCmdCompass$Root proto]
+  (case (.getCmdCase proto)
     START {:start (parse-start (.getStart proto))}
     STOP {:stop (parse-stop (.getStop proto))}
     SET_MAGNETIC_DECLINATION {:set-magnetic-declination (parse-set-magnetic-declination (.getSetMagneticDeclination proto))}
@@ -71,6 +588,7 @@
     CALIBRATE_NEXT {:calibrate-next (parse-calibrate-next (.getCalibrateNext proto))}
     CALIBRATE_CENCEL {:calibrate-cencel (parse-calibrate-cencel (.getCalibrateCencel proto))}
     GET_METEO {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-start
@@ -82,8 +600,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -95,8 +612,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-next
@@ -108,8 +624,7 @@
 (defn parse-next
   "Parse a Next protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$Next proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-calibrate-start-long
@@ -121,8 +636,7 @@
 (defn parse-calibrate-start-long
   "Parse a CalibrateStartLong protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$CalibrateStartLong proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-calibrate-start-short
@@ -134,8 +648,7 @@
 (defn parse-calibrate-start-short
   "Parse a CalibrateStartShort protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$CalibrateStartShort proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-calibrate-next
@@ -147,8 +660,7 @@
 (defn parse-calibrate-next
   "Parse a CalibrateNext protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$CalibrateNext proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-calibrate-cencel
@@ -160,8 +672,7 @@
 (defn parse-calibrate-cencel
   "Parse a CalibrateCencel protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$CalibrateCencel proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-get-meteo
@@ -173,8 +684,7 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-magnetic-declination
@@ -189,8 +699,9 @@
 (defn parse-set-magnetic-declination
   "Parse a SetMagneticDeclination protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-offset-angle-azimuth
@@ -205,8 +716,9 @@
 (defn parse-set-offset-angle-azimuth
   "Parse a SetOffsetAngleAzimuth protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-offset-angle-elevation
@@ -221,8 +733,9 @@
 (defn parse-set-offset-angle-elevation
   "Parse a SetOffsetAngleElevation protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-use-rotary-position
@@ -237,17 +750,15 @@
 (defn parse-set-use-rotary-position
   "Parse a SetUseRotaryPosition protobuf message to a map."
   [^cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition proto]
-  (merge
-    {:flag (.getFlag proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasFlag proto) (assoc :flag (.getFlag proto))
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Gps.JonSharedCmdGps$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:start :stop :set-manual-position :set-use-manual-position :get-meteo} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -265,20 +776,20 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.Gps.JonSharedCmdGps$Root proto]
+  (case (.getCmdCase proto)
     START {:start (parse-start (.getStart proto))}
     STOP {:stop (parse-stop (.getStop proto))}
     SET_MANUAL_POSITION {:set-manual-position (parse-set-manual-position (.getSetManualPosition proto))}
     SET_USE_MANUAL_POSITION {:set-use-manual-position (parse-set-use-manual-position (.getSetUseManualPosition proto))}
     GET_METEO {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-start
@@ -290,8 +801,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -303,8 +813,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-get-meteo
@@ -316,8 +825,7 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-use-manual-position
@@ -332,8 +840,9 @@
 (defn parse-set-use-manual-position
   "Parse a SetUseManualPosition protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$SetUseManualPosition proto]
-  (merge
-    {:flag (.getFlag proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasFlag proto) (assoc :flag (.getFlag proto))
 ))
 
 (defn build-set-manual-position
@@ -352,10 +861,11 @@
 (defn parse-set-manual-position
   "Parse a SetManualPosition protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$SetManualPosition proto]
-  (merge
-    {:latitude (.getLatitude proto)
-     :longitude (.getLongitude proto)
-     :altitude (.getAltitude proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
+    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
+    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
 ))
 
 (defn build-jon-gui-data-meteo
@@ -374,19 +884,17 @@
 (defn parse-jon-gui-data-meteo
   "Parse a JonGuiDataMeteo protobuf message to a map."
   [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-  (merge
-    {:temperature (.getTemperature proto)
-     :humidity (.getHumidity proto)
-     :pressure (.getPressure proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTemperature proto) (assoc :temperature (.getTemperature proto))
+    (.hasHumidity proto) (assoc :humidity (.getHumidity proto))
+    (.hasPressure proto) (assoc :pressure (.getPressure proto))
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Lrf.JonSharedCmdLrf$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:measure :scan-on :scan-off :start :stop :target-designator-off :target-designator-on-mode-a :target-designator-on-mode-b :enable-fog-mode :disable-fog-mode :set-scan-mode :new-session :get-meteo :refine-on :refine-off} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -414,15 +922,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.Lrf.JonSharedCmdLrf$Root proto]
+  (case (.getCmdCase proto)
     MEASURE {:measure (parse-measure (.getMeasure proto))}
     SCAN_ON {:scan-on (parse-scan-on (.getScanOn proto))}
     SCAN_OFF {:scan-off (parse-scan-off (.getScanOff proto))}
@@ -438,6 +945,7 @@
     GET_METEO {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
     REFINE_ON {:refine-on (parse-refine-on (.getRefineOn proto))}
     REFINE_OFF {:refine-off (parse-refine-off (.getRefineOff proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-get-meteo
@@ -449,8 +957,7 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-start
@@ -462,8 +969,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -475,8 +981,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-measure
@@ -488,8 +993,7 @@
 (defn parse-measure
   "Parse a Measure protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$Measure proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-on
@@ -501,8 +1005,7 @@
 (defn parse-scan-on
   "Parse a ScanOn protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$ScanOn proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-off
@@ -514,8 +1017,7 @@
 (defn parse-scan-off
   "Parse a ScanOff protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$ScanOff proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-refine-off
@@ -527,8 +1029,7 @@
 (defn parse-refine-off
   "Parse a RefineOff protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$RefineOff proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-refine-on
@@ -540,8 +1041,7 @@
 (defn parse-refine-on
   "Parse a RefineOn protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$RefineOn proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-target-designator-off
@@ -553,8 +1053,7 @@
 (defn parse-target-designator-off
   "Parse a TargetDesignatorOff protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-target-designator-on-mode-a
@@ -566,8 +1065,7 @@
 (defn parse-target-designator-on-mode-a
   "Parse a TargetDesignatorOnModeA protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-target-designator-on-mode-b
@@ -579,8 +1077,7 @@
 (defn parse-target-designator-on-mode-b
   "Parse a TargetDesignatorOnModeB protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enable-fog-mode
@@ -592,8 +1089,7 @@
 (defn parse-enable-fog-mode
   "Parse a EnableFogMode protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$EnableFogMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-disable-fog-mode
@@ -605,8 +1101,7 @@
 (defn parse-disable-fog-mode
   "Parse a DisableFogMode protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$DisableFogMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-scan-mode
@@ -621,8 +1116,9 @@
 (defn parse-set-scan-mode
   "Parse a SetScanMode protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$SetScanMode proto]
-  (merge
-    {:mode (.getMode proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasMode proto) (assoc :mode (.getMode proto))
 ))
 
 (defn build-new-session
@@ -634,8 +1130,7 @@
 (defn parse-new-session
   "Parse a NewSession protobuf message to a map."
   [^cmd.Lrf.JonSharedCmdLrf$NewSession proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-value
@@ -650,8 +1145,9 @@
 (defn parse-set-value
   "Parse a SetValue protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetValue proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-move
@@ -668,9 +1164,10 @@
 (defn parse-move
   "Parse a Move protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Move proto]
-  (merge
-    {:target-value (.getTargetValue proto)
-     :speed (.getSpeed proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
 ))
 
 (defn build-offset
@@ -685,8 +1182,9 @@
 (defn parse-offset
   "Parse a Offset protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Offset proto]
-  (merge
-    {:offset-value (.getOffsetValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasOffsetValue proto) (assoc :offset-value (.getOffsetValue proto))
 ))
 
 (defn build-set-clahe-level
@@ -701,8 +1199,9 @@
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetClaheLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-shift-clahe-level
@@ -717,17 +1216,15 @@
 (defn parse-shift-clahe-level
   "Parse a ShiftClaheLevel protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$ShiftClaheLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:focus :zoom :set-iris :set-infra-red-filter :start :stop :photo :set-auto-iris :halt-all :set-fx-mode :next-fx-mode :prev-fx-mode :get-meteo :refresh-fx-mode :set-digital-zoom-level :set-clahe-level :shift-clahe-level} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -757,15 +1254,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Root proto]
+  (case (.getCmdCase proto)
     FOCUS {:focus (parse-focus (.getFocus proto))}
     ZOOM {:zoom (parse-zoom (.getZoom proto))}
     SET_IRIS {:set-iris (parse-set-iris (.getSetIris proto))}
@@ -783,6 +1279,7 @@
     SET_DIGITAL_ZOOM_LEVEL {:set-digital-zoom-level (parse-set-digital-zoom-level (.getSetDigitalZoomLevel proto))}
     SET_CLAHE_LEVEL {:set-clahe-level (parse-set-clahe-level (.getSetClaheLevel proto))}
     SHIFT_CLAHE_LEVEL {:shift-clahe-level (parse-shift-clahe-level (.getShiftClaheLevel proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-get-pos
@@ -794,8 +1291,7 @@
 (defn parse-get-pos
   "Parse a GetPos protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$GetPos proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-next-fx-mode
@@ -807,8 +1303,7 @@
 (defn parse-next-fx-mode
   "Parse a NextFxMode protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$NextFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-prev-fx-mode
@@ -820,8 +1315,7 @@
 (defn parse-prev-fx-mode
   "Parse a PrevFxMode protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$PrevFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-refresh-fx-mode
@@ -833,8 +1327,7 @@
 (defn parse-refresh-fx-mode
   "Parse a RefreshFxMode protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$RefreshFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt-all
@@ -846,8 +1339,7 @@
 (defn parse-halt-all
   "Parse a HaltAll protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$HaltAll proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-fx-mode
@@ -862,8 +1354,9 @@
 (defn parse-set-fx-mode
   "Parse a SetFxMode protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode proto]
-  (merge
-    {:mode (.getMode proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasMode proto) (assoc :mode (.getMode proto))
 ))
 
 (defn build-set-digital-zoom-level
@@ -878,17 +1371,15 @@
 (defn parse-set-digital-zoom-level
   "Parse a SetDigitalZoomLevel protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetDigitalZoomLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-focus
   "Build a Focus protobuf message from a map."
   [m]
   (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Focus/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-value :move :halt :offset :reset-focus :save-to-table-focus} k)) m))]
-      (build-focus-payload builder payload))
     (.build builder)))
 
 
@@ -907,30 +1398,27 @@
 (defn parse-focus
   "Parse a Focus protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Focus proto]
-  (merge
-    {}
-    (parse-focus-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-focus-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Focus."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Focus proto]
+  (case (.getCmdCase proto)
     SET_VALUE {:set-value (parse-set-value (.getSetValue proto))}
     MOVE {:move (parse-move (.getMove proto))}
     HALT {:halt (parse-halt (.getHalt proto))}
     OFFSET {:offset (parse-offset (.getOffset proto))}
     RESET_FOCUS {:reset-focus (parse-reset-focus (.getResetFocus proto))}
     SAVE_TO_TABLE_FOCUS {:save-to-table-focus (parse-save-to-table-focus (.getSaveToTableFocus proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-zoom
   "Build a Zoom protobuf message from a map."
   [m]
   (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$Zoom/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-value :move :halt :set-zoom-table-value :next-zoom-table-pos :prev-zoom-table-pos :offset :reset-zoom :save-to-table} k)) m))]
-      (build-zoom-payload builder payload))
     (.build builder)))
 
 
@@ -952,15 +1440,14 @@
 (defn parse-zoom
   "Parse a Zoom protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Zoom proto]
-  (merge
-    {}
-    (parse-zoom-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-zoom-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Zoom."
+  [^cmd.DayCamera.JonSharedCmdDayCamera$Zoom proto]
+  (case (.getCmdCase proto)
     SET_VALUE {:set-value (parse-set-value (.getSetValue proto))}
     MOVE {:move (parse-move (.getMove proto))}
     HALT {:halt (parse-halt (.getHalt proto))}
@@ -970,6 +1457,7 @@
     OFFSET {:offset (parse-offset (.getOffset proto))}
     RESET_ZOOM {:reset-zoom (parse-reset-zoom (.getResetZoom proto))}
     SAVE_TO_TABLE {:save-to-table (parse-save-to-table (.getSaveToTable proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-next-zoom-table-pos
@@ -981,8 +1469,7 @@
 (defn parse-next-zoom-table-pos
   "Parse a NextZoomTablePos protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$NextZoomTablePos proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-prev-zoom-table-pos
@@ -994,8 +1481,7 @@
 (defn parse-prev-zoom-table-pos
   "Parse a PrevZoomTablePos protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$PrevZoomTablePos proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-iris
@@ -1010,8 +1496,9 @@
 (defn parse-set-iris
   "Parse a SetIris protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetIris proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-infra-red-filter
@@ -1026,8 +1513,9 @@
 (defn parse-set-infra-red-filter
   "Parse a SetInfraRedFilter protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetInfraRedFilter proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-auto-iris
@@ -1042,8 +1530,9 @@
 (defn parse-set-auto-iris
   "Parse a SetAutoIris protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetAutoIris proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-zoom-table-value
@@ -1058,8 +1547,9 @@
 (defn parse-set-zoom-table-value
   "Parse a SetZoomTableValue protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SetZoomTableValue proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-stop
@@ -1071,8 +1561,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-start
@@ -1084,8 +1573,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-photo
@@ -1097,8 +1585,7 @@
 (defn parse-photo
   "Parse a Photo protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Photo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt
@@ -1110,8 +1597,7 @@
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$Halt proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-get-meteo
@@ -1123,8 +1609,7 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-reset-zoom
@@ -1136,8 +1621,7 @@
 (defn parse-reset-zoom
   "Parse a ResetZoom protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$ResetZoom proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-reset-focus
@@ -1149,8 +1633,7 @@
 (defn parse-reset-focus
   "Parse a ResetFocus protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$ResetFocus proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-save-to-table
@@ -1162,8 +1645,7 @@
 (defn parse-save-to-table
   "Parse a SaveToTable protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SaveToTable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-save-to-table-focus
@@ -1175,17 +1657,13 @@
 (defn parse-save-to-table-focus
   "Parse a SaveToTableFocus protobuf message to a map."
   [^cmd.DayCamera.JonSharedCmdDayCamera$SaveToTableFocus proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:zoom :set-agc :set-filter :start :stop :photo :zoom-in :zoom-out :zoom-stop :focus-in :focus-out :focus-stop :calibrate :set-dde-level :enable-dde :disable-dde :set-auto-focus :focus-step-plus :focus-step-minus :set-fx-mode :next-fx-mode :prev-fx-mode :get-meteo :shift-dde :refresh-fx-mode :reset-zoom :save-to-table :set-calib-mode :set-digital-zoom-level :set-clahe-level :shift-clahe-level} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -1229,15 +1707,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
+  (case (.getCmdCase proto)
     ZOOM {:zoom (parse-zoom (.getZoom proto))}
     SET_AGC {:set-agc (parse-set-agc (.getSetAgc proto))}
     SET_FILTER {:set-filter (parse-set-filters (.getSetFilter proto))}
@@ -1269,6 +1746,7 @@
     SET_DIGITAL_ZOOM_LEVEL {:set-digital-zoom-level (parse-set-digital-zoom-level (.getSetDigitalZoomLevel proto))}
     SET_CLAHE_LEVEL {:set-clahe-level (parse-set-clahe-level (.getSetClaheLevel proto))}
     SHIFT_CLAHE_LEVEL {:shift-clahe-level (parse-shift-clahe-level (.getShiftClaheLevel proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-set-fx-mode
@@ -1283,8 +1761,9 @@
 (defn parse-set-fx-mode
   "Parse a SetFxMode protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
-  (merge
-    {:mode (.getMode proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasMode proto) (assoc :mode (.getMode proto))
 ))
 
 (defn build-set-clahe-level
@@ -1299,8 +1778,9 @@
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-shift-clahe-level
@@ -1315,8 +1795,9 @@
 (defn parse-shift-clahe-level
   "Parse a ShiftClaheLevel protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-next-fx-mode
@@ -1328,8 +1809,7 @@
 (defn parse-next-fx-mode
   "Parse a NextFxMode protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-prev-fx-mode
@@ -1341,8 +1821,7 @@
 (defn parse-prev-fx-mode
   "Parse a PrevFxMode protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-refresh-fx-mode
@@ -1354,8 +1833,7 @@
 (defn parse-refresh-fx-mode
   "Parse a RefreshFxMode protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enable-dde
@@ -1367,8 +1845,7 @@
 (defn parse-enable-dde
   "Parse a EnableDDE protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-disable-dde
@@ -1380,8 +1857,7 @@
 (defn parse-disable-dde
   "Parse a DisableDDE protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-value
@@ -1396,8 +1872,9 @@
 (defn parse-set-value
   "Parse a SetValue protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-dde-level
@@ -1412,8 +1889,9 @@
 (defn parse-set-dde-level
   "Parse a SetDDELevel protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-digital-zoom-level
@@ -1428,8 +1906,9 @@
 (defn parse-set-digital-zoom-level
   "Parse a SetDigitalZoomLevel protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-shift-dde
@@ -1444,8 +1923,9 @@
 (defn parse-shift-dde
   "Parse a ShiftDDE protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-zoom-in
@@ -1457,8 +1937,7 @@
 (defn parse-zoom-in
   "Parse a ZoomIn protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-zoom-out
@@ -1470,8 +1949,7 @@
 (defn parse-zoom-out
   "Parse a ZoomOut protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-zoom-stop
@@ -1483,8 +1961,7 @@
 (defn parse-zoom-stop
   "Parse a ZoomStop protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-focus-in
@@ -1496,8 +1973,7 @@
 (defn parse-focus-in
   "Parse a FocusIn protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-focus-out
@@ -1509,8 +1985,7 @@
 (defn parse-focus-out
   "Parse a FocusOut protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-focus-stop
@@ -1522,8 +1997,7 @@
 (defn parse-focus-stop
   "Parse a FocusStop protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-focus-step-plus
@@ -1535,8 +2009,7 @@
 (defn parse-focus-step-plus
   "Parse a FocusStepPlus protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-focus-step-minus
@@ -1548,8 +2021,7 @@
 (defn parse-focus-step-minus
   "Parse a FocusStepMinus protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-calibrate
@@ -1561,17 +2033,13 @@
 (defn parse-calibrate
   "Parse a Calibrate protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-zoom
   "Build a Zoom protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-zoom-table-value :next-zoom-table-pos :prev-zoom-table-pos} k)) m))]
-      (build-zoom-payload builder payload))
     (.build builder)))
 
 
@@ -1587,18 +2055,18 @@
 (defn parse-zoom
   "Parse a Zoom protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-  (merge
-    {}
-    (parse-zoom-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-zoom-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Zoom."
+  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
+  (case (.getCmdCase proto)
     SET_ZOOM_TABLE_VALUE {:set-zoom-table-value (parse-set-zoom-table-value (.getSetZoomTableValue proto))}
     NEXT_ZOOM_TABLE_POS {:next-zoom-table-pos (parse-next-zoom-table-pos (.getNextZoomTablePos proto))}
     PREV_ZOOM_TABLE_POS {:prev-zoom-table-pos (parse-prev-zoom-table-pos (.getPrevZoomTablePos proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-next-zoom-table-pos
@@ -1610,8 +2078,7 @@
 (defn parse-next-zoom-table-pos
   "Parse a NextZoomTablePos protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-prev-zoom-table-pos
@@ -1623,8 +2090,7 @@
 (defn parse-prev-zoom-table-pos
   "Parse a PrevZoomTablePos protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-calib-mode
@@ -1636,8 +2102,7 @@
 (defn parse-set-calib-mode
   "Parse a SetCalibMode protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-zoom-table-value
@@ -1652,8 +2117,9 @@
 (defn parse-set-zoom-table-value
   "Parse a SetZoomTableValue protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-agc
@@ -1668,8 +2134,9 @@
 (defn parse-set-agc
   "Parse a SetAGC protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-filters
@@ -1684,8 +2151,9 @@
 (defn parse-set-filters
   "Parse a SetFilters protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-start
@@ -1697,8 +2165,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -1710,8 +2177,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt
@@ -1723,8 +2189,7 @@
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Halt proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-photo
@@ -1736,8 +2201,7 @@
 (defn parse-photo
   "Parse a Photo protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Photo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-get-meteo
@@ -1749,8 +2213,7 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-auto-focus
@@ -1765,8 +2228,9 @@
 (defn parse-set-auto-focus
   "Parse a SetAutoFocus protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-reset-zoom
@@ -1778,8 +2242,7 @@
 (defn parse-reset-zoom
   "Parse a ResetZoom protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-save-to-table
@@ -1791,17 +2254,13 @@
 (defn parse-save-to-table
   "Parse a SaveToTable protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:start :stop :axis :set-platform-azimuth :set-platform-elevation :set-platform-bank :halt :set-use-rotary-as-compass :rotate-to-gps :set-origin-gps :set-mode :rotate-to-ndc :scan-start :scan-stop :scan-pause :scan-unpause :get-meteo :scan-prev :scan-next :scan-refresh-node-list :scan-select-node :scan-delete-node :scan-update-node :scan-add-node} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -1838,15 +2297,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
+  (case (.getCmdCase proto)
     START {:start (parse-start (.getStart proto))}
     STOP {:stop (parse-stop (.getStop proto))}
     AXIS {:axis (parse-axis (.getAxis proto))}
@@ -1871,6 +2329,7 @@
     SCAN_DELETE_NODE {:scan-delete-node (parse-scan-delete-node (.getScanDeleteNode proto))}
     SCAN_UPDATE_NODE {:scan-update-node (parse-scan-update-node (.getScanUpdateNode proto))}
     SCAN_ADD_NODE {:scan-add-node (parse-scan-add-node (.getScanAddNode proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-axis
@@ -1887,9 +2346,10 @@
 (defn parse-axis
   "Parse a Axis protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Axis proto]
-  (merge
-    {:azimuth (.getAzimuth proto)
-     :elevation (.getElevation proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
+    (.hasElevation proto) (assoc :elevation (.getElevation proto))
 ))
 
 (defn build-set-mode
@@ -1904,8 +2364,9 @@
 (defn parse-set-mode
   "Parse a SetMode protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetMode proto]
-  (merge
-    {:mode (.getMode proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasMode proto) (assoc :mode (.getMode proto))
 ))
 
 (defn build-set-azimuth-value
@@ -1922,9 +2383,10 @@
 (defn parse-set-azimuth-value
   "Parse a SetAzimuthValue protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue proto]
-  (merge
-    {:value (.getValue proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-azimuth-to
@@ -1943,10 +2405,11 @@
 (defn parse-rotate-azimuth-to
   "Parse a RotateAzimuthTo protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo proto]
-  (merge
-    {:target-value (.getTargetValue proto)
-     :speed (.getSpeed proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-azimuth
@@ -1963,9 +2426,10 @@
 (defn parse-rotate-azimuth
   "Parse a RotateAzimuth protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth proto]
-  (merge
-    {:speed (.getSpeed proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-elevation
@@ -1982,9 +2446,10 @@
 (defn parse-rotate-elevation
   "Parse a RotateElevation protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation proto]
-  (merge
-    {:speed (.getSpeed proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-set-elevation-value
@@ -1999,8 +2464,9 @@
 (defn parse-set-elevation-value
   "Parse a SetElevationValue protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-rotate-elevation-to
@@ -2017,9 +2483,10 @@
 (defn parse-rotate-elevation-to
   "Parse a RotateElevationTo protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo proto]
-  (merge
-    {:target-value (.getTargetValue proto)
-     :speed (.getSpeed proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
 ))
 
 (defn build-rotate-elevation-relative
@@ -2038,10 +2505,11 @@
 (defn parse-rotate-elevation-relative
   "Parse a RotateElevationRelative protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative proto]
-  (merge
-    {:value (.getValue proto)
-     :speed (.getSpeed proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-elevation-relative-set
@@ -2058,9 +2526,10 @@
 (defn parse-rotate-elevation-relative-set
   "Parse a RotateElevationRelativeSet protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet proto]
-  (merge
-    {:value (.getValue proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-azimuth-relative
@@ -2079,10 +2548,11 @@
 (defn parse-rotate-azimuth-relative
   "Parse a RotateAzimuthRelative protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative proto]
-  (merge
-    {:value (.getValue proto)
-     :speed (.getSpeed proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-rotate-azimuth-relative-set
@@ -2099,9 +2569,10 @@
 (defn parse-rotate-azimuth-relative-set
   "Parse a RotateAzimuthRelativeSet protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet proto]
-  (merge
-    {:value (.getValue proto)
-     :direction (.getDirection proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
+    (.hasDirection proto) (assoc :direction (.getDirection proto))
 ))
 
 (defn build-set-platform-azimuth
@@ -2116,8 +2587,9 @@
 (defn parse-set-platform-azimuth
   "Parse a SetPlatformAzimuth protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-platform-elevation
@@ -2132,8 +2604,9 @@
 (defn parse-set-platform-elevation
   "Parse a SetPlatformElevation protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-set-platform-bank
@@ -2148,8 +2621,9 @@
 (defn parse-set-platform-bank
   "Parse a SetPlatformBank protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank proto]
-  (merge
-    {:value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-get-meteo
@@ -2161,17 +2635,13 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-azimuth
   "Build a Azimuth protobuf message from a map."
   [m]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-value :rotate-to :rotate :relative :relative-set :halt} k)) m))]
-      (build-azimuth-payload builder payload))
     (.build builder)))
 
 
@@ -2190,21 +2660,21 @@
 (defn parse-azimuth
   "Parse a Azimuth protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
-  (merge
-    {}
-    (parse-azimuth-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-azimuth-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Azimuth."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
+  (case (.getCmdCase proto)
     SET_VALUE {:set-value (parse-set-azimuth-value (.getSetValue proto))}
     ROTATE_TO {:rotate-to (parse-rotate-azimuth-to (.getRotateTo proto))}
     ROTATE {:rotate (parse-rotate-azimuth (.getRotate proto))}
     RELATIVE {:relative (parse-rotate-azimuth-relative (.getRelative proto))}
     RELATIVE_SET {:relative-set (parse-rotate-azimuth-relative-set (.getRelativeSet proto))}
     HALT {:halt (parse-halt-azimuth (.getHalt proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-start
@@ -2216,8 +2686,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -2229,8 +2698,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt
@@ -2242,8 +2710,7 @@
 (defn parse-halt
   "Parse a Halt protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Halt proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-start
@@ -2255,8 +2722,7 @@
 (defn parse-scan-start
   "Parse a ScanStart protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-stop
@@ -2268,8 +2734,7 @@
 (defn parse-scan-stop
   "Parse a ScanStop protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-pause
@@ -2281,8 +2746,7 @@
 (defn parse-scan-pause
   "Parse a ScanPause protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-unpause
@@ -2294,8 +2758,7 @@
 (defn parse-scan-unpause
   "Parse a ScanUnpause protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt-azimuth
@@ -2307,8 +2770,7 @@
 (defn parse-halt-azimuth
   "Parse a HaltAzimuth protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-halt-elevation
@@ -2320,8 +2782,7 @@
 (defn parse-halt-elevation
   "Parse a HaltElevation protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-prev
@@ -2333,8 +2794,7 @@
 (defn parse-scan-prev
   "Parse a ScanPrev protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-next
@@ -2346,8 +2806,7 @@
 (defn parse-scan-next
   "Parse a ScanNext protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-refresh-node-list
@@ -2359,8 +2818,7 @@
 (defn parse-scan-refresh-node-list
   "Parse a ScanRefreshNodeList protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-scan-select-node
@@ -2375,8 +2833,9 @@
 (defn parse-scan-select-node
   "Parse a ScanSelectNode protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode proto]
-  (merge
-    {:index (.getIndex proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasIndex proto) (assoc :index (.getIndex proto))
 ))
 
 (defn build-scan-delete-node
@@ -2391,8 +2850,9 @@
 (defn parse-scan-delete-node
   "Parse a ScanDeleteNode protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode proto]
-  (merge
-    {:index (.getIndex proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasIndex proto) (assoc :index (.getIndex proto))
 ))
 
 (defn build-scan-update-node
@@ -2419,14 +2879,15 @@
 (defn parse-scan-update-node
   "Parse a ScanUpdateNode protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode proto]
-  (merge
-    {:index (.getIndex proto)
-     :day-zoom-table-value (.getDayZoomTableValue proto)
-     :heat-zoom-table-value (.getHeatZoomTableValue proto)
-     :azimuth (.getAzimuth proto)
-     :elevation (.getElevation proto)
-     :linger (.getLinger proto)
-     :speed (.getSpeed proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasIndex proto) (assoc :index (.getIndex proto))
+    (.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
+    (.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
+    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
+    (.hasElevation proto) (assoc :elevation (.getElevation proto))
+    (.hasLinger proto) (assoc :linger (.getLinger proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
 ))
 
 (defn build-scan-add-node
@@ -2453,23 +2914,21 @@
 (defn parse-scan-add-node
   "Parse a ScanAddNode protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode proto]
-  (merge
-    {:index (.getIndex proto)
-     :day-zoom-table-value (.getDayZoomTableValue proto)
-     :heat-zoom-table-value (.getHeatZoomTableValue proto)
-     :azimuth (.getAzimuth proto)
-     :elevation (.getElevation proto)
-     :linger (.getLinger proto)
-     :speed (.getSpeed proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasIndex proto) (assoc :index (.getIndex proto))
+    (.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
+    (.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
+    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
+    (.hasElevation proto) (assoc :elevation (.getElevation proto))
+    (.hasLinger proto) (assoc :linger (.getLinger proto))
+    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
 ))
 
 (defn build-elevation
   "Build a Elevation protobuf message from a map."
   [m]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Elevation/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-value :rotate-to :rotate :relative :relative-set :halt} k)) m))]
-      (build-elevation-payload builder payload))
     (.build builder)))
 
 
@@ -2488,21 +2947,21 @@
 (defn parse-elevation
   "Parse a Elevation protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
-  (merge
-    {}
-    (parse-elevation-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-elevation-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Elevation."
+  [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
+  (case (.getCmdCase proto)
     SET_VALUE {:set-value (parse-set-elevation-value (.getSetValue proto))}
     ROTATE_TO {:rotate-to (parse-rotate-elevation-to (.getRotateTo proto))}
     ROTATE {:rotate (parse-rotate-elevation (.getRotate proto))}
     RELATIVE {:relative (parse-rotate-elevation-relative (.getRelative proto))}
     RELATIVE_SET {:relative-set (parse-rotate-elevation-relative-set (.getRelativeSet proto))}
     HALT {:halt (parse-halt-elevation (.getHalt proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-set-use-rotary-as-compass
@@ -2517,8 +2976,9 @@
 (defn parse-set-use-rotary-as-compass
   "Parse a setUseRotaryAsCompass protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass proto]
-  (merge
-    {:flag (.getFlag proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasFlag proto) (assoc :flag (.getFlag proto))
 ))
 
 (defn build-rotate-to-gps
@@ -2537,10 +2997,11 @@
 (defn parse-rotate-to-gps
   "Parse a RotateToGPS protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS proto]
-  (merge
-    {:latitude (.getLatitude proto)
-     :longitude (.getLongitude proto)
-     :altitude (.getAltitude proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
+    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
+    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
 ))
 
 (defn build-set-origin-gps
@@ -2559,10 +3020,11 @@
 (defn parse-set-origin-gps
   "Parse a SetOriginGPS protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS proto]
-  (merge
-    {:latitude (.getLatitude proto)
-     :longitude (.getLongitude proto)
-     :altitude (.getAltitude proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
+    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
+    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
 ))
 
 (defn build-rotate-to-ndc
@@ -2581,19 +3043,17 @@
 (defn parse-rotate-to-ndc
   "Parse a RotateToNDC protobuf message to a map."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC proto]
-  (merge
-    {:channel (.getChannel proto)
-     :x (.getX proto)
-     :y (.getY proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasChannel proto) (assoc :channel (.getChannel proto))
+    (.hasX proto) (assoc :x (.getX proto))
+    (.hasY proto) (assoc :y (.getY proto))
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.OSD.JonSharedCmdOsd$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:show-default-screen :show-lrf-measure-screen :show-lrf-result-screen :show-lrf-result-simplified-screen :enable-heat-osd :disable-heat-osd :enable-day-osd :disable-day-osd} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -2614,15 +3074,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.OSD.JonSharedCmdOsd$Root proto]
+  (case (.getCmdCase proto)
     SHOW_DEFAULT_SCREEN {:show-default-screen (parse-show-default-screen (.getShowDefaultScreen proto))}
     SHOW_LRF_MEASURE_SCREEN {:show-lrf-measure-screen (parse-show-lrf-measure-screen (.getShowLrfMeasureScreen proto))}
     SHOW_LRF_RESULT_SCREEN {:show-lrf-result-screen (parse-show-lrf-result-screen (.getShowLrfResultScreen proto))}
@@ -2631,6 +3090,7 @@
     DISABLE_HEAT_OSD {:disable-heat-osd (parse-disable-heat-osd (.getDisableHeatOsd proto))}
     ENABLE_DAY_OSD {:enable-day-osd (parse-enable-day-osd (.getEnableDayOsd proto))}
     DISABLE_DAY_OSD {:disable-day-osd (parse-disable-day-osd (.getDisableDayOsd proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-show-default-screen
@@ -2642,8 +3102,7 @@
 (defn parse-show-default-screen
   "Parse a ShowDefaultScreen protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-show-lrf-measure-screen
@@ -2655,8 +3114,7 @@
 (defn parse-show-lrf-measure-screen
   "Parse a ShowLRFMeasureScreen protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-show-lrf-result-screen
@@ -2668,8 +3126,7 @@
 (defn parse-show-lrf-result-screen
   "Parse a ShowLRFResultScreen protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-show-lrf-result-simplified-screen
@@ -2681,8 +3138,7 @@
 (defn parse-show-lrf-result-simplified-screen
   "Parse a ShowLRFResultSimplifiedScreen protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enable-heat-osd
@@ -2694,8 +3150,7 @@
 (defn parse-enable-heat-osd
   "Parse a EnableHeatOSD protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$EnableHeatOSD proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-disable-heat-osd
@@ -2707,8 +3162,7 @@
 (defn parse-disable-heat-osd
   "Parse a DisableHeatOSD protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$DisableHeatOSD proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enable-day-osd
@@ -2720,8 +3174,7 @@
 (defn parse-enable-day-osd
   "Parse a EnableDayOSD protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$EnableDayOSD proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-disable-day-osd
@@ -2733,17 +3186,13 @@
 (defn parse-disable-day-osd
   "Parse a DisableDayOSD protobuf message to a map."
   [^cmd.OSD.JonSharedCmdOsd$DisableDayOSD proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:day :heat} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -2758,26 +3207,23 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
+  (case (.getChannelCase proto)
     DAY {:day (parse-offsets (.getDay proto))}
     HEAT {:heat (parse-offsets (.getHeat proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-offsets
   "Build a Offsets protobuf message from a map."
   [m]
   (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set :save :reset :shift} k)) m))]
-      (build-offsets-payload builder payload))
     (.build builder)))
 
 
@@ -2794,19 +3240,19 @@
 (defn parse-offsets
   "Parse a Offsets protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
-  (merge
-    {}
-    (parse-offsets-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-offsets-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Offsets."
+  [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
+  (case (.getCmdCase proto)
     SET {:set (parse-set-offsets (.getSet proto))}
     SAVE {:save (parse-save-offsets (.getSave proto))}
     RESET {:reset (parse-reset-offsets (.getReset proto))}
     SHIFT {:shift (parse-shift-offsets-by (.getShift proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-set-offsets
@@ -2823,9 +3269,10 @@
 (defn parse-set-offsets
   "Parse a SetOffsets protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets proto]
-  (merge
-    {:x (.getX proto)
-     :y (.getY proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasX proto) (assoc :x (.getX proto))
+    (.hasY proto) (assoc :y (.getY proto))
 ))
 
 (defn build-shift-offsets-by
@@ -2842,9 +3289,10 @@
 (defn parse-shift-offsets-by
   "Parse a ShiftOffsetsBy protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy proto]
-  (merge
-    {:x (.getX proto)
-     :y (.getY proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasX proto) (assoc :x (.getX proto))
+    (.hasY proto) (assoc :y (.getY proto))
 ))
 
 (defn build-reset-offsets
@@ -2856,8 +3304,7 @@
 (defn parse-reset-offsets
   "Parse a ResetOffsets protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-save-offsets
@@ -2869,17 +3316,13 @@
 (defn parse-save-offsets
   "Parse a SaveOffsets protobuf message to a map."
   [^cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.System.JonSharedCmdSystem$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:start-all :stop-all :reboot :power-off :localization :reset-configs :start-rec :stop-rec :mark-rec-important :unmark-rec-important :enter-transport :geodesic-mode-enable :geodesic-mode-disable} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -2905,15 +3348,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.System.JonSharedCmdSystem$Root proto]
+  (case (.getCmdCase proto)
     START_ALL {:start-all (parse-start-a-ll (.getStartAll proto))}
     STOP_ALL {:stop-all (parse-stop-a-ll (.getStopAll proto))}
     REBOOT {:reboot (parse-reboot (.getReboot proto))}
@@ -2927,6 +3369,7 @@
     ENTER_TRANSPORT {:enter-transport (parse-enter-transport (.getEnterTransport proto))}
     GEODESIC_MODE_ENABLE {:geodesic-mode-enable (parse-enable-geodesic-mode (.getGeodesicModeEnable proto))}
     GEODESIC_MODE_DISABLE {:geodesic-mode-disable (parse-disable-geodesic-mode (.getGeodesicModeDisable proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-start-a-ll
@@ -2938,8 +3381,7 @@
 (defn parse-start-a-ll
   "Parse a StartALl protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$StartALl proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop-a-ll
@@ -2951,8 +3393,7 @@
 (defn parse-stop-a-ll
   "Parse a StopALl protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$StopALl proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-reboot
@@ -2964,8 +3405,7 @@
 (defn parse-reboot
   "Parse a Reboot protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$Reboot proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-power-off
@@ -2977,8 +3417,7 @@
 (defn parse-power-off
   "Parse a PowerOff protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$PowerOff proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-reset-configs
@@ -2990,8 +3429,7 @@
 (defn parse-reset-configs
   "Parse a ResetConfigs protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$ResetConfigs proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-start-rec
@@ -3003,8 +3441,7 @@
 (defn parse-start-rec
   "Parse a StartRec protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$StartRec proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop-rec
@@ -3016,8 +3453,7 @@
 (defn parse-stop-rec
   "Parse a StopRec protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$StopRec proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-mark-rec-important
@@ -3029,8 +3465,7 @@
 (defn parse-mark-rec-important
   "Parse a MarkRecImportant protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$MarkRecImportant proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-unmark-rec-important
@@ -3042,8 +3477,7 @@
 (defn parse-unmark-rec-important
   "Parse a UnmarkRecImportant protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$UnmarkRecImportant proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enter-transport
@@ -3055,8 +3489,7 @@
 (defn parse-enter-transport
   "Parse a EnterTransport protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$EnterTransport proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-enable-geodesic-mode
@@ -3068,8 +3501,7 @@
 (defn parse-enable-geodesic-mode
   "Parse a EnableGeodesicMode protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$EnableGeodesicMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-disable-geodesic-mode
@@ -3081,8 +3513,7 @@
 (defn parse-disable-geodesic-mode
   "Parse a DisableGeodesicMode protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$DisableGeodesicMode proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-localization
@@ -3097,17 +3528,15 @@
 (defn parse-set-localization
   "Parse a SetLocalization protobuf message to a map."
   [^cmd.System.JonSharedCmdSystem$SetLocalization proto]
-  (merge
-    {:loc (.getLoc proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasLoc proto) (assoc :loc (.getLoc proto))
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.CV.JonSharedCmdCv$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:set-auto-focus :start-track-ndc :stop-track :vampire-mode-enable :vampire-mode-disable :stabilization-mode-enable :stabilization-mode-disable :dump-start :dump-stop} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -3129,15 +3558,14 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.CV.JonSharedCmdCv$Root proto]
+  (case (.getCmdCase proto)
     SET_AUTO_FOCUS {:set-auto-focus (parse-set-auto-focus (.getSetAutoFocus proto))}
     START_TRACK_NDC {:start-track-ndc (parse-start-track-ndc (.getStartTrackNdc proto))}
     STOP_TRACK {:stop-track (parse-stop-track (.getStopTrack proto))}
@@ -3147,6 +3575,7 @@
     STABILIZATION_MODE_DISABLE {:stabilization-mode-disable (parse-stabilization-mode-disable (.getStabilizationModeDisable proto))}
     DUMP_START {:dump-start (parse-dump-start (.getDumpStart proto))}
     DUMP_STOP {:dump-stop (parse-dump-stop (.getDumpStop proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-vampire-mode-enable
@@ -3158,8 +3587,7 @@
 (defn parse-vampire-mode-enable
   "Parse a VampireModeEnable protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$VampireModeEnable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-dump-start
@@ -3171,8 +3599,7 @@
 (defn parse-dump-start
   "Parse a DumpStart protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$DumpStart proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-dump-stop
@@ -3184,8 +3611,7 @@
 (defn parse-dump-stop
   "Parse a DumpStop protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$DumpStop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-vampire-mode-disable
@@ -3197,8 +3623,7 @@
 (defn parse-vampire-mode-disable
   "Parse a VampireModeDisable protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$VampireModeDisable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stabilization-mode-enable
@@ -3210,8 +3635,7 @@
 (defn parse-stabilization-mode-enable
   "Parse a StabilizationModeEnable protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$StabilizationModeEnable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stabilization-mode-disable
@@ -3223,8 +3647,7 @@
 (defn parse-stabilization-mode-disable
   "Parse a StabilizationModeDisable protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$StabilizationModeDisable proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-set-auto-focus
@@ -3241,9 +3664,10 @@
 (defn parse-set-auto-focus
   "Parse a SetAutoFocus protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$SetAutoFocus proto]
-  (merge
-    {:channel (.getChannel proto)
-     :value (.getValue proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasChannel proto) (assoc :channel (.getChannel proto))
+    (.hasValue proto) (assoc :value (.getValue proto))
 ))
 
 (defn build-start-track-ndc
@@ -3264,11 +3688,12 @@
 (defn parse-start-track-ndc
   "Parse a StartTrackNDC protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$StartTrackNDC proto]
-  (merge
-    {:channel (.getChannel proto)
-     :x (.getX proto)
-     :y (.getY proto)
-     :frame-time (.getFrameTime proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasChannel proto) (assoc :channel (.getChannel proto))
+    (.hasX proto) (assoc :x (.getX proto))
+    (.hasY proto) (assoc :y (.getY proto))
+    (.hasFrameTime proto) (assoc :frame-time (.getFrameTime proto))
 ))
 
 (defn build-stop-track
@@ -3280,17 +3705,13 @@
 (defn parse-stop-track
   "Parse a StopTrack protobuf message to a map."
   [^cmd.CV.JonSharedCmdCv$StopTrack proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:start :stop :turn-on :turn-off :get-meteo} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -3308,20 +3729,20 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
+  (case (.getCmdCase proto)
     START {:start (parse-start (.getStart proto))}
     STOP {:stop (parse-stop (.getStop proto))}
     TURN_ON {:turn-on (parse-turn-on (.getTurnOn proto))}
     TURN_OFF {:turn-off (parse-turn-off (.getTurnOff proto))}
     GET_METEO {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-start
@@ -3333,8 +3754,7 @@
 (defn parse-start
   "Parse a Start protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-stop
@@ -3346,8 +3766,7 @@
 (defn parse-stop
   "Parse a Stop protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-turn-on
@@ -3359,8 +3778,7 @@
 (defn parse-turn-on
   "Parse a TurnOn protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-turn-off
@@ -3372,8 +3790,7 @@
 (defn parse-turn-off
   "Parse a TurnOff protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-get-meteo
@@ -3385,17 +3802,13 @@
 (defn parse-get-meteo
   "Parse a GetMeteo protobuf message to a map."
   [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-root
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Lira.JonSharedCmdLira$Root/newBuilder)]
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:refine-target} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -3409,16 +3822,16 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Lira.JonSharedCmdLira$Root proto]
-  (merge
-    {}
-    (parse-root-payload proto)))
+  (cond-> {}
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
-  (case (.getPayloadCase proto)
+  "Parse the oneof payload from a Root."
+  [^cmd.Lira.JonSharedCmdLira$Root proto]
+  (case (.getCmdCase proto)
     REFINE_TARGET {:refine-target (parse-refine-target (.getRefineTarget proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-refine-target
@@ -3433,8 +3846,9 @@
 (defn parse-refine-target
   "Parse a Refine_target protobuf message to a map."
   [^cmd.Lira.JonSharedCmdLira$Refine_target proto]
-  (merge
-    {:target (.getTarget proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTarget proto) (assoc :target (.getTarget proto))
 ))
 
 (defn build-jon-gui-data-lira-target
@@ -3469,18 +3883,19 @@
 (defn parse-jon-gui-data-lira-target
   "Parse a JonGuiDataLiraTarget protobuf message to a map."
   [^cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget proto]
-  (merge
-    {:timestamp (.getTimestamp proto)
-     :target-longitude (.getTargetLongitude proto)
-     :target-latitude (.getTargetLatitude proto)
-     :target-altitude (.getTargetAltitude proto)
-     :target-azimuth (.getTargetAzimuth proto)
-     :target-elevation (.getTargetElevation proto)
-     :distance (.getDistance proto)
-     :uuid-part-1 (.getUuidPart1 proto)
-     :uuid-part-2 (.getUuidPart2 proto)
-     :uuid-part-3 (.getUuidPart3 proto)
-     :uuid-part-4 (.getUuidPart4 proto)}
+  (cond-> {}
+    ;; Regular fields
+    (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))
+    (.hasTargetLongitude proto) (assoc :target-longitude (.getTargetLongitude proto))
+    (.hasTargetLatitude proto) (assoc :target-latitude (.getTargetLatitude proto))
+    (.hasTargetAltitude proto) (assoc :target-altitude (.getTargetAltitude proto))
+    (.hasTargetAzimuth proto) (assoc :target-azimuth (.getTargetAzimuth proto))
+    (.hasTargetElevation proto) (assoc :target-elevation (.getTargetElevation proto))
+    (.hasDistance proto) (assoc :distance (.getDistance proto))
+    (.hasUuidPart1 proto) (assoc :uuid-part-1 (.getUuidPart1 proto))
+    (.hasUuidPart2 proto) (assoc :uuid-part-2 (.getUuidPart2 proto))
+    (.hasUuidPart3 proto) (assoc :uuid-part-3 (.getUuidPart3 proto))
+    (.hasUuidPart4 proto) (assoc :uuid-part-4 (.getUuidPart4 proto))
 ))
 
 (defn build-root
@@ -3498,9 +3913,6 @@
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
       (.setClientType builder (get m :client-type)))
-    ;; Set oneof payload
-    (when-let [payload (first (filter (fn [[k v]] (#{:day-camera :heat-camera :gps :compass :lrf :lrf-calib :rotary :osd :ping :noop :frozen :system :cv :day-cam-glass-heater :lira} k)) m))]
-      (build-root-payload builder payload))
     (.build builder)))
 
 
@@ -3528,18 +3940,19 @@
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.JonSharedCmd$Root proto]
-  (merge
-    {:protocol-version (.getProtocolVersion proto)
-     :session-id (.getSessionId proto)
-     :important (.getImportant proto)
-     :from-cv-subsystem (.getFromCvSubsystem proto)
-     :client-type (.getClientType proto)}
-    (parse-root-payload proto)))
+  (cond-> {}
+    ;; Regular fields
+    (.hasProtocolVersion proto) (assoc :protocol-version (.getProtocolVersion proto))
+    (.hasSessionId proto) (assoc :session-id (.getSessionId proto))
+    (.hasImportant proto) (assoc :important (.getImportant proto))
+    (.hasFromCvSubsystem proto) (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
+    (.hasClientType proto) (assoc :client-type (.getClientType proto))
+))
 
 
 (defn parse-root-payload
-  "Parse the oneof payload."
-  [proto]
+  "Parse the oneof payload from a Root."
+  [^cmd.JonSharedCmd$Root proto]
   (case (.getPayloadCase proto)
     DAY_CAMERA {:day-camera (parse-root (.getDayCamera proto))}
     HEAT_CAMERA {:heat-camera (parse-root (.getHeatCamera proto))}
@@ -3556,6 +3969,7 @@
     CV {:cv (parse-root (.getCv proto))}
     DAY_CAM_GLASS_HEATER {:day-cam-glass-heater (parse-root (.getDayCamGlassHeater proto))}
     LIRA {:lira (parse-root (.getLira proto))}
+    ;; Default case - no payload set
     {}))
 
 (defn build-ping
@@ -3567,8 +3981,7 @@
 (defn parse-ping
   "Parse a Ping protobuf message to a map."
   [^cmd.JonSharedCmd$Ping proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-noop
@@ -3580,8 +3993,7 @@
 (defn parse-noop
   "Parse a Noop protobuf message to a map."
   [^cmd.JonSharedCmd$Noop proto]
-  (merge
-    {}
+  (cond-> {}
 ))
 
 (defn build-frozen
@@ -3593,6 +4005,5 @@
 (defn parse-frozen
   "Parse a Frozen protobuf message to a map."
   [^cmd.JonSharedCmd$Frozen proto]
-  (merge
-    {}
+  (cond-> {}
 ))
