@@ -94,28 +94,35 @@
   (when validator
     (testing "Validation provides meaningful error messages"
       (let [invalid-cmd {:protocol-version 0 :ping {}}
-            proto (cmd-gen/build-root invalid-cmd)]
-        (let [result (.validate validator proto)]
-          (is (not (.isSuccess result))
-              "Validation should fail")
-          (when-not (.isSuccess result)
-            (let [violations (.getViolations result)
-                  messages (map #(.getMessage %) violations)
-                  field-paths (map #(.getFieldPath %) violations)]
-              (is (some #(re-find #"protocol_version" %) field-paths)
-                  "Error should mention protocol_version field")
-              (is (some #(or (re-find #"greater than" %)
-                            (re-find #"gt" %)
-                            (re-find #">" %)) messages)
-                  "Error should mention the constraint")))))))
+            proto (cmd-gen/build-root invalid-cmd)
+            result (.validate validator proto)]
+        (is (not (.isSuccess result))
+            "Validation should fail")
+        (when-not (.isSuccess result)
+          (let [violations (.getViolations result)
+                messages (map #(.getMessage %) violations)
+                field-paths (map #(.getFieldPath %) violations)]
+            (is (some #(re-find #"protocol_version" %) field-paths)
+                "Error should mention protocol_version field")
+            (is (some #(or (re-find #"greater than" %)
+                          (re-find #"gt" %)
+                          (re-find #">" %)) messages)
+                "Error should mention the constraint")))))))
 
 ;; Test without validator - just protobuf constraints
 (deftest protobuf-built-in-validation
-  (testing "Protobuf enforces basic type constraints"
-    ;; Negative protocol version - protobuf uint32 can't be negative
-    (is (thrown? Exception
-                 (cmd-gen/build-root {:protocol-version -1 :ping {}}))
-        "Negative protocol version should fail at build time")))
+  (testing "Protobuf allows setting negative values on uint32 (wraps around)"
+    ;; Java protobuf doesn't enforce uint32 non-negative at build time
+    ;; Negative values wrap around to large positive values
+    (let [cmd (cmd-gen/build-root {:protocol-version -1 
+                                   :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                                   :ping {}})
+          protocol-version (.getProtocolVersion cmd)]
+      (is (instance? JonSharedCmd$Root cmd))
+      ;; Java protobuf returns the value as-is (as a signed int)
+      ;; The wrapping to unsigned happens at serialization time
+      (is (= -1 protocol-version) 
+          "Java API returns negative value as-is"))))
 
 (deftest specific-validation-constraints
   (when validator
@@ -165,7 +172,7 @@
           (let [violations (.getViolations result)
                 client-violations (filter #(re-find #"client_type" (.getFieldPath %)) violations)]
             (is (seq client-violations) "Should have client_type violation")
-            (is (some #(re-find #"not.*in.*\\[0\\]" (.getMessage %)) client-violations)
+            (is (some #(re-find #"not.*in.*\[0\]" (.getMessage %)) client-violations)
                 "Should mention 'not in [0]' constraint")))
         
         ;; Test valid enum values
