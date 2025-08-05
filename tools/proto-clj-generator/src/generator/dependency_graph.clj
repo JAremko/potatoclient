@@ -17,7 +17,8 @@
       (str/replace #"\.proto$" "")
       (str/replace #"jon_shared_" "")
       ;; Handle special cases first
-      (str/replace #"^data_" "ser.")
+      ;; ALL data_* files map to "ser" namespace (consolidated)
+      (str/replace #"^data_.*$" "ser")
       (str/replace #"^cmd_" "cmd.")
       ;; Convert remaining underscores to dots
       (str/replace #"_" "."))) ; then back to dots
@@ -107,11 +108,14 @@
   "Convert proto dependencies to Clojure require specs.
   Returns a vector of require specs like [potatoclient.proto.ser.types :as types]"
   [proto-file deps ns-prefix]
-  (let [deps-namespaces (map proto-file->namespace deps)]
-    (vec (for [dep-ns deps-namespaces
+  (let [current-ns (proto-file->namespace proto-file)
+        deps-namespaces (map proto-file->namespace deps)
+        ;; Filter out self-dependencies (same namespace)
+        external-deps (remove #(= % current-ns) deps-namespaces)]
+    (vec (for [dep-ns external-deps
                :let [full-ns (str ns-prefix "." dep-ns)
                      ;; Generate a meaningful alias from the namespace
-                     alias (if (= dep-ns "ser.types")
+                     alias (if (= dep-ns "ser")
                             "types"  ;; Special case for common types
                             (last (str/split dep-ns #"\.")))]]
            [(symbol full-ns) :as (symbol alias)]))))

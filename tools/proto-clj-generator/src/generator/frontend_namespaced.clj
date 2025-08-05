@@ -92,7 +92,7 @@
 
 (defn generate-namespace-file
   "Generate a single namespace file for a package."
-  [package-data ns-prefix type-lookup dependencies]
+  [package-data ns-prefix type-lookup dependencies ns-key]
   (let [{:keys [messages enums package]} package-data
         ns-name (str ns-prefix "." (package->namespace package))
         imports (collect-all-imports messages enums type-lookup package ns-prefix)
@@ -101,8 +101,8 @@
                       (concat
                        (map :java-class messages)
                        (map :java-class enums)))
-        ;; Get dependency-based requires from our analysis
-        require-specs (get dependencies package [])]
+        ;; Get dependency-based requires from our analysis using ns-key
+        require-specs (get dependencies ns-key [])]
     (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs)))
 
 ;; =============================================================================
@@ -119,19 +119,26 @@
         grouped (group-by-package all-files)
         
         ;; Build dependencies map from backend output
-        ;; Map package -> require specs
-        dependencies (reduce (fn [acc file]
-                              (assoc acc (:package file) 
-                                     (get file :clj-requires [])))
+        ;; Aggregate dependencies by target namespace, not original package
+        dependencies (reduce (fn [acc ns-key]
+                              (let [files-in-ns (filter #(= (package->namespace (:package %)) ns-key) all-files)
+                                    all-requires (mapcat #(get % :clj-requires []) files-in-ns)
+                                    ;; Remove duplicates and filter out self-references
+                                    unique-requires (->> all-requires
+                                                        distinct
+                                                        (remove #(= (str (first %)) 
+                                                                   (str ns-prefix "." ns-key)))
+                                                        vec)]
+                                (assoc acc ns-key unique-requires)))
                             {}
-                            all-files)
+                            (keys grouped))
         
         ;; Generate a file for each package
         generated-files
         (reduce-kv
          (fn [acc ns-key package-data]
            (let [file-path (package->file-path (:package package-data))
-                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies)]
+                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies ns-key)]
              (assoc acc file-path content)))
          {}
          grouped)]

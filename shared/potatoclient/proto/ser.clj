@@ -1,18 +1,5 @@
 (ns potatoclient.proto.ser
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types]
-            [potatoclient.proto.ser.time :as time]
-            [potatoclient.proto.ser.system :as system]
-            [potatoclient.proto.ser.lrf :as lrf]
-            [potatoclient.proto.ser.gps :as gps]
-            [potatoclient.proto.ser.compass :as compass]
-            [potatoclient.proto.ser.compass.calibration :as calibration]
-            [potatoclient.proto.ser.rotary :as rotary]
-            [potatoclient.proto.ser.camera.day :as day]
-            [potatoclient.proto.ser.camera.heat :as heat]
-            [potatoclient.proto.ser.rec.osd :as osd]
-            [potatoclient.proto.ser.day.cam.glass.heater :as heater]
-            [potatoclient.proto.ser.actual.space.time :as time])
   (:import
     ser.JonSharedDataTypes$JonGuiDataMeteo
     ser.JonSharedDataTime$JonGuiDataTime

@@ -1,6 +1,6 @@
 (ns potatoclient.proto.cmd.system
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types])
+  (:require [potatoclient.proto.ser :as types])
   (:import cmd.System.JonSharedCmdSystem$Root
            cmd.System.JonSharedCmdSystem$StartALl
            cmd.System.JonSharedCmdSystem$StopALl
@@ -155,7 +155,8 @@
     ;; Set regular fields
     (when (contains? m :loc)
       (.setLoc builder
-               (get jon-gui-data-system-localizations-values (get m :loc))))
+               (get types/jon-gui-data-system-localizations-values
+                    (get m :loc))))
     (.build builder)))
 
 (defn parse-root
@@ -231,7 +232,8 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :loc
-           (get jon-gui-data-system-localizations-keywords (.getLoc proto)))))
+           (get types/jon-gui-data-system-localizations-keywords
+                (.getLoc proto)))))
 
 (defn build-root-payload
   "Build the oneof payload for Root."

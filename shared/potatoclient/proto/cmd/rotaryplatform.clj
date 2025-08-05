@@ -1,6 +1,6 @@
 (ns potatoclient.proto.cmd.rotaryplatform
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types])
+  (:require [potatoclient.proto.ser :as types])
   (:import
     cmd.RotaryPlatform.JonSharedCmdRotary$Root
     cmd.RotaryPlatform.JonSharedCmdRotary$Axis
@@ -177,7 +177,8 @@
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-rotary-mode-values (get m :mode))))
+      (.setMode builder
+                (get types/jon-gui-data-rotary-mode-values (get m :mode))))
     (.build builder)))
 
 (defn build-set-azimuth-value
@@ -189,7 +190,7 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -204,7 +205,7 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -217,7 +218,7 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -230,7 +231,7 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -265,7 +266,7 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -279,7 +280,7 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -294,7 +295,7 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -308,7 +309,7 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get jon-gui-data-rotary-direction-values
+                     (get types/jon-gui-data-rotary-direction-values
                           (get m :direction))))
     (.build builder)))
 
@@ -535,7 +536,8 @@
     ;; Set regular fields
     (when (contains? m :channel)
       (.setChannel builder
-                   (get jon-gui-data-video-channel-values (get m :channel))))
+                   (get types/jon-gui-data-video-channel-values
+                        (get m :channel))))
     (when (contains? m :x) (.setX builder (get m :x)))
     (when (contains? m :y) (.setY builder (get m :y)))
     (.build builder)))
@@ -562,7 +564,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :mode
-           (get jon-gui-data-rotary-mode-keywords (.getMode proto)))))
+           (get types/jon-gui-data-rotary-mode-keywords (.getMode proto)))))
 
 (defn parse-set-azimuth-value
   "Parse a SetAzimuthValue protobuf message to a map."
@@ -571,7 +573,8 @@
     ;; Regular fields
     true (assoc :value (.getValue proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-azimuth-to
   "Parse a RotateAzimuthTo protobuf message to a map."
@@ -581,7 +584,8 @@
     true (assoc :target-value (.getTargetValue proto))
     true (assoc :speed (.getSpeed proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-azimuth
   "Parse a RotateAzimuth protobuf message to a map."
@@ -590,7 +594,8 @@
     ;; Regular fields
     true (assoc :speed (.getSpeed proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-elevation
   "Parse a RotateElevation protobuf message to a map."
@@ -599,7 +604,8 @@
     ;; Regular fields
     true (assoc :speed (.getSpeed proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-set-elevation-value
   "Parse a SetElevationValue protobuf message to a map."
@@ -624,7 +630,8 @@
     true (assoc :value (.getValue proto))
     true (assoc :speed (.getSpeed proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-elevation-relative-set
   "Parse a RotateElevationRelativeSet protobuf message to a map."
@@ -633,7 +640,8 @@
     ;; Regular fields
     true (assoc :value (.getValue proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-azimuth-relative
   "Parse a RotateAzimuthRelative protobuf message to a map."
@@ -643,7 +651,8 @@
     true (assoc :value (.getValue proto))
     true (assoc :speed (.getSpeed proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-rotate-azimuth-relative-set
   "Parse a RotateAzimuthRelativeSet protobuf message to a map."
@@ -652,7 +661,8 @@
     ;; Regular fields
     true (assoc :value (.getValue proto))
     true (assoc :direction
-           (get jon-gui-data-rotary-direction-keywords (.getDirection proto)))))
+           (get types/jon-gui-data-rotary-direction-keywords
+                (.getDirection proto)))))
 
 (defn parse-set-platform-azimuth
   "Parse a SetPlatformAzimuth protobuf message to a map."
@@ -825,7 +835,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :channel
-           (get jon-gui-data-video-channel-keywords (.getChannel proto)))
+           (get types/jon-gui-data-video-channel-keywords (.getChannel proto)))
     true (assoc :x (.getX proto))
     true (assoc :y (.getY proto))))
 

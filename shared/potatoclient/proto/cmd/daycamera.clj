@@ -1,6 +1,6 @@
 (ns potatoclient.proto.cmd.daycamera
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types])
+  (:require [potatoclient.proto.ser :as types])
   (:import cmd.DayCamera.JonSharedCmdDayCamera$SetValue
            cmd.DayCamera.JonSharedCmdDayCamera$Move
            cmd.DayCamera.JonSharedCmdDayCamera$Offset
@@ -208,7 +208,8 @@
   (let [builder (cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-fx-mode-day-values (get m :mode))))
+      (.setMode builder
+                (get types/jon-gui-data-fx-mode-day-values (get m :mode))))
     (.build builder)))
 
 (defn build-set-digital-zoom-level
@@ -426,7 +427,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :mode
-           (get jon-gui-data-fx-mode-day-keywords (.getMode proto)))))
+           (get types/jon-gui-data-fx-mode-day-keywords (.getMode proto)))))
 
 (defn parse-set-digital-zoom-level
   "Parse a SetDigitalZoomLevel protobuf message to a map."

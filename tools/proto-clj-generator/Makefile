@@ -30,7 +30,7 @@ generate-single: ## Generate Clojure converters in single file mode (legacy)
 .PHONY: lint-generated
 lint-generated: generate ## Lint the generated code
 	@echo "Linting generated code..."
-	@cd ../.. && clj-kondo --lint tools/proto-clj-generator/generated/potatoclient/proto
+	@cd ../.. && clj-kondo --lint shared/potatoclient/proto
 
 .PHONY: test
 test: compile-proto ## Run all tests (compiles proto classes first)
@@ -62,6 +62,7 @@ clean: ## Clean generated files
 	@echo "Cleaning..."
 	@rm -rf proto-classes/
 	@rm -rf generated/
+	@rm -rf /home/jare/git/potatoclient/shared/potatoclient/proto/
 
 .PHONY: all
 all: clean compile-proto generate test ## Build everything and run tests

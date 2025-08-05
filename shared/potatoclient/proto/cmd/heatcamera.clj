@@ -1,6 +1,6 @@
 (ns potatoclient.proto.cmd.heatcamera
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types])
+  (:require [potatoclient.proto.ser :as types])
   (:import
     cmd.HeatCamera.JonSharedCmdHeatCamera$Root
     cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
@@ -159,7 +159,8 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-fx-mode-heat-values (get m :mode))))
+      (.setMode builder
+                (get types/jon-gui-data-fx-mode-heat-values (get m :mode))))
     (.build builder)))
 
 (defn build-set-clahe-level
@@ -351,7 +352,7 @@
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder
-                 (get jon-gui-data-video-channel-heat-agc-modes-values
+                 (get types/jon-gui-data-video-channel-heat-agc-modes-values
                       (get m :value))))
     (.build builder)))
 
@@ -362,7 +363,7 @@
     ;; Set regular fields
     (when (contains? m :value)
       (.setValue builder
-                 (get jon-gui-data-video-channel-heat-filters-values
+                 (get types/jon-gui-data-video-channel-heat-filters-values
                       (get m :value))))
     (.build builder)))
 
@@ -429,7 +430,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :mode
-           (get jon-gui-data-fx-mode-heat-keywords (.getMode proto)))))
+           (get types/jon-gui-data-fx-mode-heat-keywords (.getMode proto)))))
 
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
@@ -578,7 +579,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :value
-           (get jon-gui-data-video-channel-heat-agc-modes-keywords
+           (get types/jon-gui-data-video-channel-heat-agc-modes-keywords
                 (.getValue proto)))))
 
 (defn parse-set-filters
@@ -587,7 +588,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :value
-           (get jon-gui-data-video-channel-heat-filters-keywords
+           (get types/jon-gui-data-video-channel-heat-filters-keywords
                 (.getValue proto)))))
 
 (defn parse-start

@@ -7,7 +7,8 @@
             [com.rpl.specter :as sp]
             [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]
-            [rewrite-clj.node :as n]))
+            [rewrite-clj.node :as n]
+            [generator.type-resolution :as type-res]))
 
 ;; =============================================================================
 ;; Template Loading
@@ -45,7 +46,7 @@
 
 (defn generate-field-setter
   "Generate setter code for a single field."
-  [field]
+  [field current-package type-lookup]
   (let [is-message? (get-in field [:type :message])
         is-enum? (and (not (:repeated? field))
                      (get-in field [:type :enum]))
@@ -67,15 +68,10 @@
                     
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          ;; Extract the enum name from the type reference
-                          enum-name (if enum-type
-                                     (-> enum-type
-                                         (str/replace #"^\." "")
-                                         (str/split #"\.")
-                                         last
-                                         csk/->kebab-case)
-                                     "unknown-enum")]
-                      (str "(get " enum-name "-values (get m " field-key "))"))
+                          enum-ref (type-res/resolve-enum-reference 
+                                   enum-type current-package type-lookup)
+                          qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                      (str "(get " qualified-ref " (get m " field-key "))"))
                     
                     :else
                     (str "(get m " field-key ")"))
@@ -98,7 +94,7 @@
 
 (defn generate-field-getter
   "Generate getter code for a single field."
-  [field]
+  [field current-package type-lookup]
   (let [;; Check if this is a message type (which might have has methods)
         is-message? (and (not (:repeated? field))
                         (get-in field [:type :message]))
@@ -127,15 +123,10 @@
                     
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          ;; Extract the enum name from the type reference
-                          enum-name (if enum-type
-                                     (-> enum-type
-                                         (str/replace #"^\." "")
-                                         (str/split #"\.")
-                                         last
-                                         csk/->kebab-case)
-                                     "unknown-enum")]
-                      (str "(get " enum-name "-keywords (" getter-expr " proto))"))
+                          enum-ref (type-res/resolve-enum-keyword-map 
+                                   enum-type current-package type-lookup)
+                          qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                      (str "(get " qualified-ref " (" getter-expr " proto))"))
                     
                     :else
                     (str "(" getter-expr " proto)"))
@@ -194,7 +185,7 @@
 
 (defn generate-builder
   "Generate builder function for a message."
-  [message type-lookup]
+  [message type-lookup current-package]
   (let [template (load-template-string "builder.clj")
         regular-fields (remove :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
@@ -202,7 +193,8 @@
         regular-field-setters (when (seq regular-fields)
                                (str ";; Set regular fields\n    "
                                     (str/join "\n    " 
-                                             (map generate-field-setter regular-fields))))
+                                             (map #(generate-field-setter % current-package type-lookup) 
+                                                  regular-fields))))
         
         ;; Generate oneof handling for each oneof
         oneof-payloads (when (seq (:oneofs message))
@@ -227,7 +219,7 @@
 
 (defn generate-parser
   "Generate parser function for a message."
-  [message type-lookup]
+  [message type-lookup current-package]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
         has-fields? (or (seq regular-fields) (seq (:oneofs message)))
@@ -243,7 +235,8 @@
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
                             (str/join "\n    "
-                                     (map generate-field-getter regular-fields))))
+                                     (map #(generate-field-getter % current-package type-lookup) 
+                                          regular-fields))))
         
         oneof-payload (when (seq (:oneofs message))
                        (str "\n    ;; Oneof payload\n"
@@ -266,49 +259,62 @@
 
 (defn generate-oneof-builder-case
   "Generate a single case for oneof builder."
-  [field message type-lookup]
+  [field message type-lookup current-package]
   (let [field-type (:type field)
         type-ref (or (get-in field-type [:message :type-ref])
                      (get-in field-type [:enum :type-ref]))
+        is-enum? (get-in field-type [:enum])
         builder-fn (when (and type-ref (get-in field-type [:message]))
                     (let [canonical-ref (str/replace type-ref #"^\." "")
                           type-def (get type-lookup canonical-ref)]
                       (when (and type-def (= :message (:type type-def)))
-                        (str "build-" (name (:name type-def))))))]
+                        (str "build-" (name (:name type-def))))))
+        value-expr (cond
+                    builder-fn (str "(" builder-fn " value)")
+                    is-enum? (let [enum-ref (type-res/resolve-enum-reference 
+                                           type-ref current-package type-lookup)
+                                  qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                              (str "(get " qualified-ref " value)"))
+                    :else "value")]
     (str (pr-str (:name field)) " "
          "(." (str "set" (csk/->PascalCase (:proto-name field))) " builder "
-         (if builder-fn
-           (str "(" builder-fn " value)")
-           "value") ")")))
+         value-expr ")")))
 
 (defn generate-oneof-parser-case
   "Generate a single case for oneof parser."
-  [field message type-lookup]
+  [field message type-lookup current-package]
   (let [field-type (:type field)
         type-ref (or (get-in field-type [:message :type-ref])
                      (get-in field-type [:enum :type-ref]))
+        is-enum? (get-in field-type [:enum])
         parser-fn (when (and type-ref (get-in field-type [:message]))
                    (let [canonical-ref (str/replace type-ref #"^\." "")
                          type-def (get type-lookup canonical-ref)]
                      (when (and type-def (= :message (:type type-def)))
-                       (str "parse-" (name (:name type-def))))))]
+                       (str "parse-" (name (:name type-def))))))
+        getter-expr (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)")
+        value-expr (cond
+                    parser-fn (str "(" parser-fn " " getter-expr ")")
+                    is-enum? (let [enum-ref (type-res/resolve-enum-keyword-map 
+                                           type-ref current-package type-lookup)
+                                  qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                              (str "(get " qualified-ref " " getter-expr ")"))
+                    :else getter-expr)]
     (str "(." (str "has" (csk/->PascalCase (:proto-name field))) " proto) "
          "{" (pr-str (:name field)) " "
-         (if parser-fn
-           (str "(" parser-fn " (." (str "get" (csk/->PascalCase (:proto-name field))) " proto))")
-           (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)"))
+         value-expr
          "}")))
 
 (defn generate-oneof-builder
   "Generate oneof builder function."
-  [message oneof type-lookup]
+  [message oneof type-lookup current-package]
   (let [template (load-template-string "oneof-builder.clj")
         fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
         
         cases (str/join "\n    " 
-                       (map #(generate-oneof-builder-case % message type-lookup) 
+                       (map #(generate-oneof-builder-case % message type-lookup current-package) 
                             oneof-fields))
         
         replacements {"ONEOF-BUILD-FN-NAME" fn-name
@@ -319,14 +325,14 @@
 
 (defn generate-oneof-parser
   "Generate oneof parser function."
-  [message oneof type-lookup]
+  [message oneof type-lookup current-package]
   (let [template (load-template-string "oneof-parser.clj")
         fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
         
         cases (str/join "\n    " 
-                       (map #(generate-oneof-parser-case % message type-lookup) 
+                       (map #(generate-oneof-parser-case % message type-lookup current-package) 
                             oneof-fields))
         
         replacements {"ONEOF-PARSE-FN-NAME" fn-name
@@ -355,6 +361,19 @@
    (let [template (if (seq require-specs)
                     (load-template-string "namespace-with-requires.clj")
                     (load-template-string "namespace.clj"))
+         
+         ;; Extract current package from namespace name
+         ;; e.g. "potatoclient.proto.cmd.rotaryplatform" -> "cmd.RotaryPlatform"
+         current-package (when (str/includes? ns-name ".")
+                          (let [parts (str/split ns-name #"\.")
+                                ;; Skip the namespace prefix parts
+                                package-parts (drop-while #(not (#{"cmd" "ser"} %)) parts)]
+                            (when (seq package-parts)
+                              ;; Convert last part to PascalCase for proto package
+                              (if (= 1 (count package-parts))
+                                (first package-parts)
+                                (str (first package-parts) "." 
+                                     (csk/->PascalCase (last package-parts)))))))
          
          enums-code (when (seq enums)
                       (str/join "\n\n" (map generate-enum-def enums)))
@@ -387,15 +406,15 @@
          ;; Generate all message builders/parsers first, then all oneofs
          ;; This avoids forward reference issues
          all-builders (for [msg sorted-messages]
-                       (generate-builder msg type-lookup))
+                       (generate-builder msg type-lookup current-package))
          all-parsers (for [msg sorted-messages]
-                      (generate-parser msg type-lookup))
+                      (generate-parser msg type-lookup current-package))
          all-oneof-builders (for [msg sorted-messages
                                  oneof (:oneofs msg)]
-                             (generate-oneof-builder msg oneof type-lookup))
+                             (generate-oneof-builder msg oneof type-lookup current-package))
          all-oneof-parsers (for [msg sorted-messages
                                 oneof (:oneofs msg)]
-                            (generate-oneof-parser msg oneof type-lookup))
+                            (generate-oneof-parser msg oneof type-lookup current-package))
          
          messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 

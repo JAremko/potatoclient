@@ -1,6 +1,6 @@
 (ns potatoclient.proto.cmd.lrf
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser.types :as types])
+  (:require [potatoclient.proto.ser :as types])
   (:import cmd.Lrf.JonSharedCmdLrf$Root
            cmd.Lrf.JonSharedCmdLrf$GetMeteo
            cmd.Lrf.JonSharedCmdLrf$Start
@@ -161,7 +161,8 @@
   (let [builder (cmd.Lrf.JonSharedCmdLrf$SetScanMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-lrf-scan-modes-values (get m :mode))))
+      (.setMode builder
+                (get types/jon-gui-data-lrf-scan-modes-values (get m :mode))))
     (.build builder)))
 
 (defn build-new-session
@@ -248,7 +249,7 @@
   (cond-> {}
     ;; Regular fields
     true (assoc :mode
-           (get jon-gui-data-lrf-scan-modes-keywords (.getMode proto)))))
+           (get types/jon-gui-data-lrf-scan-modes-keywords (.getMode proto)))))
 
 (defn parse-new-session
   "Parse a NewSession protobuf message to a map."

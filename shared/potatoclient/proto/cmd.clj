@@ -12,7 +12,7 @@
             [potatoclient.proto.cmd.cv :as cv]
             [potatoclient.proto.cmd.day.cam.glass.heater :as heater]
             [potatoclient.proto.cmd.lira :as lira]
-            [potatoclient.proto.ser.types :as types])
+            [potatoclient.proto.ser :as types])
   (:import cmd.JonSharedCmd$Root
            cmd.JonSharedCmd$Ping
            cmd.JonSharedCmd$Noop
@@ -53,7 +53,7 @@
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
       (.setClientType builder
-                      (get jon-gui-data-client-type-values
+                      (get types/jon-gui-data-client-type-values
                            (get m :client-type))))
     ;; Handle oneof: payload
     (when-let [payload-field
@@ -91,7 +91,7 @@
     true (assoc :important (.getImportant proto))
     true (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
     true (assoc :client-type
-           (get jon-gui-data-client-type-keywords (.getClientType proto)))
+           (get types/jon-gui-data-client-type-keywords (.getClientType proto)))
     ;; Oneof payload
     true (merge (parse-root-payload proto))))
 

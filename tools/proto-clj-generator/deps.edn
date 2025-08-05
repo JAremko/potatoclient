@@ -31,7 +31,7 @@
   
   :gen {:exec-fn generator.main/generate
         :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
-                    :output-dir "generated"
+                    :output-dir "/home/jare/git/potatoclient/shared"
                     :namespace-prefix "potatoclient.proto"}}
   
   :gen-single {:exec-fn generator.main/generate
