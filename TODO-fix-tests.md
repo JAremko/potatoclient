@@ -34,6 +34,7 @@ Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no
 - ✅ Fixed handler tests to use new nested command format
 - ✅ Fixed integration tests (8 tests, 39 assertions) - ALL PASS!
 - ✅ Fixed CRITICAL spec validation issue - gesture-event spec was missing required fields!
+- ✅ Redesigned gesture specs to use specific `:or` specs (simpler approach without :merge)
 
 ### Tools Status:
 - **transit-test-generator**: ✅ Uses keywords correctly, ready to use for test generation

@@ -3,6 +3,7 @@
    This replaces the legacy specs.clj with only the schemas actually in use."
   (:require [clojure.string :as str]
             [malli.core :as m]
+            [malli.util :as mu]
             [malli.registry :as mr])
   (:import (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
@@ -123,27 +124,105 @@
   "Swipe gesture directions"
   [:enum :up :down :left :right])
 
-(def gesture-event
-  "Gesture event from video stream - must match shared/specs/video/stream.clj"
-  [:map
+;; Specific gesture event types (defined fully without merge)
+(def tap-gesture-event
+  "Tap gesture event"
+  [:map {:closed true}
    [:type [:= :gesture]]
-   [:gesture-type gesture-type]
    [:timestamp int?]
    [:canvas-width pos-int?]
    [:canvas-height pos-int?]
    [:aspect-ratio number?]
    [:stream-type stream-type]
-   [:x {:optional true} int?]
-   [:y {:optional true} int?]
-   [:ndc-x {:optional true} number?]
-   [:ndc-y {:optional true} number?]
-   [:delta-x {:optional true} int?]
-   [:delta-y {:optional true} int?]
-   [:ndc-delta-x {:optional true} number?]
-   [:ndc-delta-y {:optional true} number?]
-   [:direction {:optional true} swipe-direction]
+   [:gesture-type [:= :tap]]
+   [:x int?]
+   [:y int?]
+   [:ndc-x number?]
+   [:ndc-y number?]])
+
+(def double-tap-gesture-event
+  "Double tap gesture event with optional frame timing"
+  [:map {:closed true}
+   [:type [:= :gesture]]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
+   [:stream-type stream-type]
+   [:gesture-type [:= :doubletap]]
+   [:x int?]
+   [:y int?]
+   [:ndc-x number?]
+   [:ndc-y number?]
    [:frame-timestamp {:optional true} int?]
    [:frame-duration {:optional true} int?]])
+
+(def pan-start-gesture-event
+  "Pan start gesture event"
+  [:map {:closed true}
+   [:type [:= :gesture]]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
+   [:stream-type stream-type]
+   [:gesture-type [:= :panstart]]
+   [:x int?]
+   [:y int?]
+   [:ndc-x number?]
+   [:ndc-y number?]])
+
+(def pan-move-gesture-event
+  "Pan move gesture event with delta values"
+  [:map {:closed true}
+   [:type [:= :gesture]]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
+   [:stream-type stream-type]
+   [:gesture-type [:= :panmove]]
+   [:x int?]
+   [:y int?]
+   [:delta-x int?]
+   [:delta-y int?]
+   [:ndc-delta-x number?]
+   [:ndc-delta-y number?]])
+
+(def pan-stop-gesture-event
+  "Pan stop gesture event"
+  [:map {:closed true}
+   [:type [:= :gesture]]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
+   [:stream-type stream-type]
+   [:gesture-type [:= :panstop]]
+   [:x int?]
+   [:y int?]])
+
+(def swipe-gesture-event
+  "Swipe gesture event (future use)"
+  [:map {:closed true}
+   [:type [:= :gesture]]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
+   [:stream-type stream-type]
+   [:gesture-type [:= :swipe]]
+   [:direction swipe-direction]])
+
+(def gesture-event
+  "Gesture event from video stream - precise spec using :or"
+  [:or
+   tap-gesture-event
+   double-tap-gesture-event
+   pan-start-gesture-event
+   pan-move-gesture-event
+   pan-stop-gesture-event
+   swipe-gesture-event])
 
 ;; -----------------------------------------------------------------------------
 ;; UI Component Schemas
@@ -418,6 +497,7 @@
 (def registry
   "Registry of all UI specs for qualified keyword lookups"
   (merge (m/default-schemas)
+         (mu/schemas)
          {::theme-key theme-key
           ::locale locale
           ::locale-code locale-code
@@ -433,6 +513,12 @@
           ::speed-config speed-config
           ::config config
           ::app-state app-state
+          ::tap-gesture-event tap-gesture-event
+          ::double-tap-gesture-event double-tap-gesture-event
+          ::pan-start-gesture-event pan-start-gesture-event
+          ::pan-move-gesture-event pan-move-gesture-event
+          ::pan-stop-gesture-event pan-stop-gesture-event
+          ::swipe-gesture-event swipe-gesture-event
           ::gesture-event gesture-event
           ::gesture-type gesture-type
           ::swipe-direction swipe-direction
