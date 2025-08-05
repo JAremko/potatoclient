@@ -58,10 +58,11 @@
         ;; Verify command was generated
         (is (= 1 (count @*captured-commands*)))
         (let [cmd (first @*captured-commands*)]
-          (is (= "rotary-goto-ndc" (:action cmd)))
-          (is (= "heat" (get-in cmd [:params :channel])))
-          (is (= 0.0 (get-in cmd [:params :x])))
-          (is (= 0.0 (get-in cmd [:params :y]))))))))
+          (is (contains? cmd :rotary))
+          (is (contains? (:rotary cmd) :goto-ndc))
+          (is (= :heat (get-in cmd [:rotary :goto-ndc :channel])))
+          (is (= 0.0 (get-in cmd [:rotary :goto-ndc :x])))
+          (is (= 0.0 (get-in cmd [:rotary :goto-ndc :y]))))))))
 
 (deftest test-complete-pan-flow
   (testing "Complete pan gesture flow with multiple updates"
@@ -107,9 +108,10 @@
         ;; Should have velocity command
         (is (>= (count @*captured-commands*) 1))
         (let [cmd (last @*captured-commands*)]
-          (is (= "rotary-set-velocity" (:action cmd)))
-          (is (number? (get-in cmd [:params :azimuth-speed])))
-          (is (number? (get-in cmd [:params :elevation-speed]))))
+          (is (contains? cmd :rotary))
+          (is (contains? (:rotary cmd) :set-velocity))
+          (is (number? (get-in cmd [:rotary :set-velocity :azimuth-speed])))
+          (is (number? (get-in cmd [:rotary :set-velocity :elevation-speed]))))
 
         ;; Pan stop
         (reset! *captured-commands* [])
@@ -127,7 +129,9 @@
 
         ;; Should have halt command
         (is (= 1 (count @*captured-commands*)))
-        (is (= "rotary-halt" (:action (first @*captured-commands*))))
+        (let [cmd (first @*captured-commands*)]
+          (is (contains? cmd :rotary))
+          (is (contains? (:rotary cmd) :halt)))
 
         ;; Pan state should be inactive
         (is (false? (app-db/get-in-app-db [:gestures :pan :active])))))))
@@ -154,8 +158,9 @@
 
         (is (= 1 (count @*captured-commands*)))
         (let [cmd (first @*captured-commands*)]
-          (is (= "cv-start-track-ndc" (:action cmd)))
-          (is (= 1234567000 (get-in cmd [:params :frame-timestamp]))))))))
+          (is (contains? cmd :cv))
+          (is (contains? (:cv cmd) :start-track-ndc))
+          (is (= 1234567000 (get-in cmd [:cv :start-track-ndc :frame-time]))))))))
 
 (deftest test-gesture-validation
   (testing "Gesture events are validated against specs"
@@ -184,19 +189,18 @@
 (deftest test-forward-command-request
   (testing "Forward command requests from video stream"
     (with-redefs [potatoclient.transit.subprocess-launcher/send-message mock-send-message]
-      (let [command {:action "rotary-halt"
-                     :params {}}]
+      (let [command {:rotary {:halt {}}}]
 
         ;; Simulate request from video stream
         (ipc/dispatch-message :heat {:msg-type :request
                                      :payload {:action "forward-command"
-                                               :command {:action "rotary-halt"
-                                                         :params {}}}})
+                                               :command command}})
 
         ;; Command should be forwarded
         (is (= 1 (count @*captured-commands*)))
         (let [forwarded (first @*captured-commands*)]
-          (is (= "rotary-halt" (:action forwarded))))))))
+          (is (contains? forwarded :rotary))
+          (is (contains? (:rotary forwarded) :halt)))))))
 
 (deftest test-gesture-config-loading
   (testing "Gesture configuration is properly loaded"
@@ -228,7 +232,7 @@
                                    :ndc-y 0.5})
 
       (let [heat-cmd (last @*captured-commands*)]
-        (is (= "heat" (get-in heat-cmd [:params :channel]))))
+        (is (= :heat (get-in heat-cmd [:rotary :goto-ndc :channel]))))
 
       ;; Day camera tap
       (handler/handle-tap-gesture {:type :gesture
@@ -242,7 +246,7 @@
                                    :ndc-y -0.5})
 
       (let [day-cmd (last @*captured-commands*)]
-        (is (= "day" (get-in day-cmd [:params :channel])))))))
+        (is (= :day (get-in day-cmd [:rotary :goto-ndc :channel])))))))
 
 (deftest test-pan-speed-by-zoom
   (testing "Pan speed varies by zoom level"
@@ -275,7 +279,7 @@
                                         :ndc-delta-y 0.0})
 
       (let [heat-cmd (last @*captured-commands*)
-            heat-speed (get-in heat-cmd [:params :azimuth-speed])
+            heat-speed (get-in heat-cmd [:rotary :set-velocity :azimuth-speed])
             heat-zoom (app-db/get-in-app-db [:camera-heat :zoom])]
         (is (= 1.0 heat-zoom) "Heat zoom should be 1.0")
 
@@ -314,7 +318,7 @@
                                           :ndc-delta-y 0.0})
 
         (let [day-cmd (last @*captured-commands*)
-              day-speed (get-in day-cmd [:params :azimuth-speed])
+              day-speed (get-in day-cmd [:rotary :set-velocity :azimuth-speed])
               day-zoom (app-db/get-in-app-db [:camera-day :zoom])]
           (is (= 3.0 day-zoom) "Day zoom should be 3.0")
 

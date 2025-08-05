@@ -124,19 +124,26 @@
   [:enum :up :down :left :right])
 
 (def gesture-event
-  "Gesture event from video stream"
+  "Gesture event from video stream - must match shared/specs/video/stream.clj"
   [:map
+   [:type [:= :gesture]]
    [:gesture-type gesture-type]
+   [:timestamp int?]
+   [:canvas-width pos-int?]
+   [:canvas-height pos-int?]
+   [:aspect-ratio number?]
    [:stream-type stream-type]
-   [:canvas-width {:optional true} pos-int?]
-   [:canvas-height {:optional true} pos-int?]
-   [:aspect-ratio {:optional true} aspect-ratio]
+   [:x {:optional true} int?]
+   [:y {:optional true} int?]
    [:ndc-x {:optional true} number?]
    [:ndc-y {:optional true} number?]
+   [:delta-x {:optional true} int?]
+   [:delta-y {:optional true} int?]
    [:ndc-delta-x {:optional true} number?]
    [:ndc-delta-y {:optional true} number?]
    [:direction {:optional true} swipe-direction]
-   [:frame-timestamp {:optional true} int?]])
+   [:frame-timestamp {:optional true} int?]
+   [:frame-duration {:optional true} int?]])
 
 ;; -----------------------------------------------------------------------------
 ;; UI Component Schemas
