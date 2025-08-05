@@ -29,6 +29,10 @@ Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no
 - ✅ Fixed MouseEventHandler to use keywords for event data
 - ✅ Deleted all obsolete Kotlin test files (15 files referencing old architecture)
 - ✅ Fixed working_subprocess_test - now passes with keyword fix!
+- ✅ Fixed NDCConverter.java compilation - already in build process
+- ✅ Fixed gesture handler tests (8 tests, 50 assertions) - ALL PASS!
+- ✅ Fixed handler tests to use new nested command format
+- 🔄 Working on integration tests - 13 failures remaining
 
 ### Tools Status:
 - **transit-test-generator**: ✅ Uses keywords correctly, ready to use for test generation
@@ -274,9 +278,10 @@ make scenario SCENARIO=rapid-commands
 
 ### 🔴 Remaining Issues:
 1. **Test suite timeout** - Tests still time out after 2 minutes
-2. **32 gesture-related test failures** in Clojure tests
+2. **13 integration test failures** - Tests expect old command format (action/params) but code uses new nested format
 3. **5 disabled test files** that need analysis
 4. **No Kotlin tests** - need to write new ones for current architecture
+5. **Build order verified** - Java utils compile before Kotlin (correct order)
 
 ### 📋 Immediate Actions Needed:
 1. Investigate which tests are causing timeouts

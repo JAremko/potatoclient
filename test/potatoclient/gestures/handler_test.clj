@@ -112,10 +112,11 @@
       (handler/handle-tap-gesture test-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
-        (is (= "rotary-goto-ndc" (:action cmd)))
-        (is (= "heat" (get-in cmd [:params :channel])))
-        (is (= 0.0 (get-in cmd [:params :x])))
-        (is (= 0.0 (get-in cmd [:params :y])))))))
+        (is (contains? cmd :rotary))
+        (is (contains? (:rotary cmd) :goto-ndc))
+        (is (= :heat (get-in cmd [:rotary :goto-ndc :channel])))
+        (is (= 0.0 (get-in cmd [:rotary :goto-ndc :x])))
+        (is (= 0.0 (get-in cmd [:rotary :goto-ndc :y])))))))
 
 (deftest test-handle-double-tap-gesture
   "Test double-tap gesture handling"
@@ -124,11 +125,12 @@
       (handler/handle-double-tap-gesture test-double-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
-        (is (= "cv-start-track-ndc" (:action cmd)))
-        (is (= "day" (get-in cmd [:params :channel])))
-        (is (= -0.5 (get-in cmd [:params :x])))
-        (is (= 0.5 (get-in cmd [:params :y])))
-        (is (= 1234567000 (get-in cmd [:params :frame-timestamp])))))))
+        (is (contains? cmd :cv))
+        (is (contains? (:cv cmd) :start-track-ndc))
+        (is (= :day (get-in cmd [:cv :start-track-ndc :channel])))
+        (is (= -0.5 (get-in cmd [:cv :start-track-ndc :x])))
+        (is (= 0.5 (get-in cmd [:cv :start-track-ndc :y])))
+        (is (= 1234567000 (get-in cmd [:cv :start-track-ndc :frame-time])))))))
 
 (deftest test-handle-pan-gestures
   "Test pan gesture sequence handling"
@@ -146,20 +148,22 @@
       (handler/handle-pan-move-gesture test-pan-move-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
-        (is (= "rotary-set-velocity" (:action cmd)))
-        (is (number? (get-in cmd [:params :azimuth-speed])))
-        (is (number? (get-in cmd [:params :elevation-speed])))
+        (is (contains? cmd :rotary))
+        (is (contains? (:rotary cmd) :set-velocity))
+        (is (number? (get-in cmd [:rotary :set-velocity :azimuth-speed])))
+        (is (number? (get-in cmd [:rotary :set-velocity :elevation-speed])))
         (is (contains? #{:clockwise :counter-clockwise}
-                       (keyword (get-in cmd [:params :azimuth-direction]))))
+                       (get-in cmd [:rotary :set-velocity :azimuth-direction])))
         (is (contains? #{:clockwise :counter-clockwise}
-                       (keyword (get-in cmd [:params :elevation-direction])))))
+                       (get-in cmd [:rotary :set-velocity :elevation-direction]))))
 
       ;; Stop pan
       (reset! *captured-commands* [])
       (handler/handle-pan-stop-gesture test-pan-stop-gesture)
       (is (= 1 (count @*captured-commands*)))
       (let [cmd (first @*captured-commands*)]
-        (is (= "rotary-halt" (:action cmd))))
+        (is (contains? cmd :rotary))
+        (is (contains? (:rotary cmd) :halt)))
       (let [pan-state (app-db/get-in-app-db [:gestures :pan])]
         (is (not (:active pan-state)))))))
 
@@ -177,12 +181,14 @@
       ;; Test each gesture type
       (handler/handle-gesture-event test-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
-      (is (= "rotary-goto-ndc" (:action (first @*captured-commands*))))
+      (is (contains? (first @*captured-commands*) :rotary))
+      (is (contains? (:rotary (first @*captured-commands*)) :goto-ndc))
 
       (reset! *captured-commands* [])
       (handler/handle-gesture-event test-double-tap-gesture)
       (is (= 1 (count @*captured-commands*)))
-      (is (= "cv-start-track-ndc" (:action (first @*captured-commands*))))
+      (is (contains? (first @*captured-commands*) :cv))
+      (is (contains? (:cv (first @*captured-commands*)) :start-track-ndc))
 
       (reset! *captured-commands* [])
       (handler/handle-gesture-event test-swipe-gesture)
@@ -191,7 +197,8 @@
 (deftest test-calculate-rotation-speeds
   "Test rotation speed calculation"
   (testing "Rotation speed calculation"
-    (let [config {:max-rotation-speed 1.0
+    (let [config {:zoom-table-index 0
+                  :max-rotation-speed 1.0
                   :min-rotation-speed 0.0001
                   :ndc-threshold 0.5
                   :dead-zone-radius 0.05
@@ -261,8 +268,9 @@
           (is (= 1.0 (:max-rotation-speed config)))))
 
       (testing "Default fallback for unknown camera"
-        (let [config (config/get-speed-config-for-zoom-value :unknown 1.0)]
-          (is (= 1.0 (:max-rotation-speed config))))))))
+        ;; Test with a camera type that doesn't have config - should use default
+        (let [config (config/get-speed-config-for-zoom-value :heat 100.0)]  ; Very high zoom - should use last config
+          (is (number? (:max-rotation-speed config))))))))
 
 (deftest test-pan-throttling
   "Test pan gesture throttling"

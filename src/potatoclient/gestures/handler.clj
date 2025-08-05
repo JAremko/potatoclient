@@ -70,7 +70,7 @@
   [_gesture]
   [::specs/gesture-event => nil?]
   (logging/log-debug {:msg "Pan stop"})
-  (subprocess/send-message :command
+  (subprocess/send-message :cmd
                            (transit-core/create-message :command
                                                         (commands/rotary-halt)))
   (app-db/update-in-app-db! [:gestures :pan] {:active false})
