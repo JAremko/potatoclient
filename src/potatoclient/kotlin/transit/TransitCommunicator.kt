@@ -89,7 +89,7 @@ class TransitCommunicator(
     /**
      * Send a message to the Clojure process with backpressure awareness
      */
-    suspend fun sendMessage(message: Map<String, Any>) {
+    suspend fun sendMessage(message: Map<Any, Any>) {
         // Apply backpressure if needed
         if (backpressureActive.get()) {
             delay(10) // Small delay when under pressure
@@ -111,7 +111,7 @@ class TransitCommunicator(
     /**
      * Send a message directly without coroutine overhead (for critical paths)
      */
-    fun sendMessageDirect(message: Map<String, Any>) {
+    fun sendMessageDirect(message: Map<Any, Any>) {
         synchronized(writer) {
             try {
                 writer.write(message)
@@ -198,13 +198,13 @@ class TransitCommunicator(
      */
     fun createMessage(
         msgType: String,
-        payload: Map<String, Any>,
-    ): Map<String, Any> =
+        payload: Map<Any, Any>,
+    ): Map<Any, Any> =
         mapOf(
-            "msg-type" to msgType,
-            "msg-id" to UUID.randomUUID().toString(),
-            "timestamp" to System.currentTimeMillis(),
-            "payload" to payload,
+            TransitKeys.MSG_TYPE to msgType,
+            TransitKeys.MSG_ID to UUID.randomUUID().toString(),
+            TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+            TransitKeys.PAYLOAD to payload,
         )
 
     /**

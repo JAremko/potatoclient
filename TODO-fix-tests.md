@@ -16,6 +16,20 @@ Fix ALL tests to pass reliably. No disabled tests, no commented-out sections, no
 - ✅ Investigated tools (transit-test-generator, mock-video-stream)
 - 🔄 Started fixing TransitMessageProtocol to use keywords
 
+### Session 2 (2025-08-05 continued):
+- ✅ Updated TransitKeys.kt with all missing keys (including SET_VELOCITY)
+- ✅ Fixed TransitMessageProtocol to use keywords
+- ✅ Fixed TransitSubprocess to use keywords
+- ✅ Fixed TransitCommunicator to use keywords
+- ✅ Fixed VideoStreamManager interfaces to use Map<Any, Any>
+- ✅ Fixed MouseEventHandler interface to use Map<Any, Any>
+- ✅ Fixed TestModeWebSocketStub to use keywords (TYPE, ACTION, MSG_ID)
+- ✅ Fixed StateSubprocess to use keywords
+- ✅ Completed CommandBuilder keyword migration (all functions now use TransitKeys)
+- ✅ Fixed MouseEventHandler to use keywords for event data
+- ✅ Deleted all obsolete Kotlin test files (15 files referencing old architecture)
+- ✅ Fixed working_subprocess_test - now passes with keyword fix!
+
 ### Tools Status:
 - **transit-test-generator**: ✅ Uses keywords correctly, ready to use for test generation
 - **mock-video-stream**: ✅ Uses keywords correctly, can simulate server for integration tests
@@ -247,60 +261,74 @@ make start-server  # Runs on localhost:8080
 make scenario SCENARIO=rapid-commands
 ```
 
-## Progress Summary (as of current analysis)
+## Progress Summary (as of Session 2)
 
 ### ✅ Completed:
 1. Fixed `working_subprocess_test.clj` compilation error (ProcessBuilder issue)
 2. Added Kotlin test compilation to Makefile
-3. Identified test timeout was due to subprocess stdin handling
-4. Discovered architecture violation: Transit messages using strings instead of keywords
+3. Fixed Transit keyword architecture violation - all Kotlin code now uses keywords
+4. Deleted all obsolete Kotlin test files (15 files)
+5. CommandBuilder fully migrated to use TransitKeys
+6. All Kotlin code compiles successfully
+7. working_subprocess_test.clj now passes!
 
-### 🔴 Major Issues Found:
-1. **All Kotlin tests (20 files) are obsolete** - reference non-existent classes
-2. **Transit protocol violation** - Kotlin code using string keys instead of keywords
-3. **32 gesture-related test failures** in Clojure tests
-4. **5 disabled test files** that need analysis
+### 🔴 Remaining Issues:
+1. **Test suite timeout** - Tests still time out after 2 minutes
+2. **32 gesture-related test failures** in Clojure tests
+3. **5 disabled test files** that need analysis
+4. **No Kotlin tests** - need to write new ones for current architecture
 
 ### 📋 Immediate Actions Needed:
-1. Delete all existing Kotlin tests (they're for old architecture)
-2. Fix Transit message creation to use keywords (TransitKeys instead of MessageKeys)
-3. Write new Kotlin tests for current GeneratedHandlers architecture
-4. Fix gesture test failures
-5. Analyze and either fix or delete the 5 disabled tests
+1. Investigate which tests are causing timeouts
+2. Fix gesture test failures (may need keyword fixes)
+3. Write new Kotlin tests using transit-test-generator and mock-video-stream
+4. Analyze and fix/delete the 5 disabled tests
+5. Ensure all tests run in CI without timeouts
 
 ## Current Work In Progress
 
-### 🔄 Fixing Transit Keyword Issue (CRITICAL)
-**File**: `src/potatoclient/kotlin/transit/TransitMessageProtocol.kt`
-**Issue**: Using `MessageKeys` (strings) instead of `TransitKeys` (keywords)
-**Progress**: Started converting createMessage() function
-**TODO**: 
-- [ ] Finish updating all MessageKeys references to TransitKeys
-- [ ] Update TransitKeys.kt if missing any keys
-- [ ] Test with transit-test-generator tool
-- [ ] Verify working_subprocess_test.clj passes
+### ✅ Transit Keyword Issue FIXED!
+**Status**: COMPLETED - Major refactor successfully completed
+**Progress**: 
+- All Transit infrastructure updated to use keywords
+- CommandBuilder fully migrated to use TransitKeys
+- TestModeWebSocketStub fixed to use keywords
+- All Kotlin code now compiles successfully
+- working_subprocess_test.clj now passes!
+
+**Completed Work**:
+- ✅ Updated TransitKeys.kt with all required keywords
+- ✅ Fixed all Transit message creation to use keywords
+- ✅ Migrated CommandBuilder to use TransitKeys throughout
+- ✅ Fixed all Kotlin compilation errors
+- ✅ Verified working_subprocess_test.clj passes with keywords
 
 ## Next Steps
 
-1. **Complete Transit keyword fix** (architecture violation - highest priority)
-   - Use transit-test-generator to validate fixed messages
+1. **Fix test timeout issues** (highest priority)
+   - Tests are still timing out after keyword fix
+   - Need to investigate which specific tests are hanging
+   - Add proper timeouts to async operations
    
-2. **Delete obsolete Kotlin tests**
-   - All 15 active test files reference non-existent classes
-   - Keep the .skip files for reference when writing new tests
+2. **Fix gesture test failures** (32 failures)
+   - handler_test.clj has 18 failures
+   - integration_test.clj has 14 failures
+   - May need keyword fixes in gesture handling code
    
-3. **Write new Kotlin tests using tools**
+3. **Analyze and fix disabled tests**
+   - 4 .skip files in test/kotlin/
+   - 1 .disabled file in test/potatoclient/transit/
+   - Either update for current architecture or remove
+   
+4. **Write new Kotlin tests using tools**
    - Use transit-test-generator for message generation
    - Use mock-video-stream for integration tests
    - Focus on testing GeneratedHandlers architecture
    
-4. **Fix gesture test failures** (32 failures)
-   - Investigate root cause
-   - May be related to Transit keyword issue
-   
 5. **Ensure CI runs all tests**
-   - Verify Kotlin tests execute in CI
+   - Verify all tests execute in CI
    - Add test summary reporting
+   - No tests should be skipped
 
 ---
 

@@ -64,8 +64,8 @@ abstract class TransitSubprocess(
         while (running.get()) {
             try {
                 val message = transitComm.readMessage()
-                if (message != null && message["msg-type"] == "command") {
-                    val payload = message["payload"] as? Map<*, *>
+                if (message != null && message[TransitKeys.MSG_TYPE] == "command") {
+                    val payload = message[TransitKeys.PAYLOAD] as? Map<*, *>
                     if (payload != null) {
                         handleCommand(payload)
                     }
@@ -82,7 +82,7 @@ abstract class TransitSubprocess(
      * Handle a command - can be overridden by subclasses
      */
     protected open fun handleCommand(payload: Map<*, *>) {
-        val action = payload["action"] as? String ?: return
+        val action = payload[TransitKeys.ACTION] as? String ?: return
 
         when (action) {
             "stop", "shutdown" -> {
@@ -90,7 +90,7 @@ abstract class TransitSubprocess(
                 stop()
             }
             "ping" -> {
-                sendResponse("pong", mapOf("timestamp" to System.currentTimeMillis()))
+                sendResponse("pong", mapOf(TransitKeys.TIMESTAMP to System.currentTimeMillis()))
             }
             "status" -> {
                 sendResponse("status", getStatus())
@@ -104,21 +104,21 @@ abstract class TransitSubprocess(
      */
     protected fun sendResponse(
         action: String,
-        data: Map<String, Any> = emptyMap(),
+        data: Map<Any, Any> = emptyMap(),
     ) {
         val payload =
-            mutableMapOf<String, Any>(
-                "action" to action,
-                "process" to processType,
+            mutableMapOf<Any, Any>(
+                TransitKeys.ACTION to action,
+                TransitKeys.PROCESS to processType,
             ) + data
 
         runBlocking {
             transitComm.sendMessage(
                 mapOf(
-                    "msg-type" to "response",
-                    "msg-id" to UUID.randomUUID().toString(),
-                    "timestamp" to System.currentTimeMillis(),
-                    "payload" to payload,
+                    TransitKeys.MSG_TYPE to "response",
+                    TransitKeys.MSG_ID to UUID.randomUUID().toString(),
+                    TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+                    TransitKeys.PAYLOAD to payload,
                 ),
             )
         }
@@ -166,7 +166,7 @@ abstract class TransitSubprocess(
     /**
      * Get subprocess status information
      */
-    protected abstract fun getStatus(): Map<String, Any>
+    protected abstract fun getStatus(): Map<Any, Any>
 
     // Helper methods for common operations
 

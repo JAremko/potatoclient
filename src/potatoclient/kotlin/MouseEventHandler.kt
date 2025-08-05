@@ -9,6 +9,7 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
+import potatoclient.kotlin.transit.TransitKeys
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -22,9 +23,9 @@ class MouseEventHandler(
 ) {
     interface EventCallback {
         // Only gesture events and commands
-        fun onGestureEvent(event: Map<String, Any>)
+        fun onGestureEvent(event: Map<Any, Any>)
 
-        fun sendCommand(command: Map<String, Any>)
+        fun sendCommand(command: Map<Any, Any>)
     }
 
     // Gesture recognition components
@@ -108,22 +109,22 @@ class MouseEventHandler(
         val aspectRatio = canvasWidth.toDouble() / canvasHeight.toDouble()
 
         val baseEvent =
-            mutableMapOf(
-                "type" to EventType.GESTURE,
-                "gesture-type" to gesture.getEventType(),
-                "timestamp" to gesture.timestamp,
-                "canvas-width" to canvasWidth,
-                "canvas-height" to canvasHeight,
-                "aspect-ratio" to aspectRatio,
-                "stream-type" to streamType.toKeyword(),
+            mutableMapOf<Any, Any>(
+                TransitKeys.TYPE to EventType.GESTURE,
+                TransitKeys.GESTURE_TYPE to gesture.getEventType(),
+                TransitKeys.TIMESTAMP to gesture.timestamp,
+                TransitKeys.CANVAS_WIDTH to canvasWidth,
+                TransitKeys.CANVAS_HEIGHT to canvasHeight,
+                TransitKeys.ASPECT_RATIO to aspectRatio,
+                TransitKeys.STREAM_TYPE to streamType.toKeyword(),
             )
 
         when (gesture) {
             is GestureEvent.Tap -> {
-                baseEvent["x"] = gesture.x
-                baseEvent["y"] = gesture.y
-                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
-                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+                baseEvent[TransitKeys.X] = gesture.x
+                baseEvent[TransitKeys.Y] = gesture.y
+                baseEvent[TransitKeys.NDC_X] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent[TransitKeys.NDC_Y] = pixelToNDC(gesture.y, canvasHeight, true)
 
                 // Send rotary-goto-ndc command
                 sendRotaryGotoNDC(
@@ -132,16 +133,16 @@ class MouseEventHandler(
                 )
             }
             is GestureEvent.DoubleTap -> {
-                baseEvent["x"] = gesture.x
-                baseEvent["y"] = gesture.y
-                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
-                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+                baseEvent[TransitKeys.X] = gesture.x
+                baseEvent[TransitKeys.Y] = gesture.y
+                baseEvent[TransitKeys.NDC_X] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent[TransitKeys.NDC_Y] = pixelToNDC(gesture.y, canvasHeight, true)
 
                 // Get frame timestamp if available
                 val frameData = frameDataProvider?.getFrameData()
                 frameData?.let {
-                    baseEvent["frame-timestamp"] = it.timestamp
-                    baseEvent["frame-duration"] = it.duration
+                    baseEvent[TransitKeys.FRAME_TIMESTAMP] = it.timestamp
+                    baseEvent[TransitKeys.FRAME_DURATION] = it.duration
                 }
 
                 // Send CV tracking command
@@ -152,33 +153,33 @@ class MouseEventHandler(
                 )
             }
             is GestureEvent.PanStart -> {
-                baseEvent["x"] = gesture.x
-                baseEvent["y"] = gesture.y
-                baseEvent["ndc-x"] = pixelToNDC(gesture.x, canvasWidth)
-                baseEvent["ndc-y"] = pixelToNDC(gesture.y, canvasHeight, true)
+                baseEvent[TransitKeys.X] = gesture.x
+                baseEvent[TransitKeys.Y] = gesture.y
+                baseEvent[TransitKeys.NDC_X] = pixelToNDC(gesture.x, canvasWidth)
+                baseEvent[TransitKeys.NDC_Y] = pixelToNDC(gesture.y, canvasHeight, true)
                 panController.startPan()
             }
             is GestureEvent.PanMove -> {
-                baseEvent["x"] = gesture.x
-                baseEvent["y"] = gesture.y
-                baseEvent["delta-x"] = gesture.deltaX
-                baseEvent["delta-y"] = gesture.deltaY
+                baseEvent[TransitKeys.X] = gesture.x
+                baseEvent[TransitKeys.Y] = gesture.y
+                baseEvent[TransitKeys.DELTA_X] = gesture.deltaX
+                baseEvent[TransitKeys.DELTA_Y] = gesture.deltaY
 
                 // Apply aspect ratio adjustment to X delta
                 val ndcDeltaX = pixelToNDC(gesture.deltaX, canvasWidth, false)
                 val ndcDeltaY = pixelToNDC(gesture.deltaY, canvasHeight, true)
                 val adjustedNdcDeltaX = ndcDeltaX * aspectRatio
 
-                baseEvent["ndc-delta-x"] = adjustedNdcDeltaX
-                baseEvent["ndc-delta-y"] = ndcDeltaY
+                baseEvent[TransitKeys.NDC_DELTA_X] = adjustedNdcDeltaX
+                baseEvent[TransitKeys.NDC_DELTA_Y] = ndcDeltaY
 
                 // Update pan controller with current zoom level
                 val currentZoomLevel = frameDataProvider?.getCurrentZoomLevel() ?: 0
                 panController.updatePan(adjustedNdcDeltaX, ndcDeltaY, currentZoomLevel)
             }
             is GestureEvent.PanStop -> {
-                baseEvent["x"] = gesture.x
-                baseEvent["y"] = gesture.y
+                baseEvent[TransitKeys.X] = gesture.x
+                baseEvent[TransitKeys.Y] = gesture.y
                 panController.stopPan()
             }
             // No swipe handling - removed intentionally
@@ -186,8 +187,8 @@ class MouseEventHandler(
 
         // Add frame data if available
         frameDataProvider?.getFrameData()?.let { frameData ->
-            baseEvent["frame-timestamp"] = frameData.timestamp
-            baseEvent["frame-duration"] = frameData.duration
+            baseEvent[TransitKeys.FRAME_TIMESTAMP] = frameData.timestamp
+            baseEvent[TransitKeys.FRAME_DURATION] = frameData.duration
         }
 
         callback.onGestureEvent(baseEvent)

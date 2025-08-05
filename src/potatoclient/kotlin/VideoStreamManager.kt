@@ -313,12 +313,12 @@ class VideoStreamManager(
     override fun isRunning(): Boolean = running.get()
 
     // New MouseEventHandler.EventCallback methods for gestures
-    override fun onGestureEvent(event: Map<String, Any>) {
+    override fun onGestureEvent(event: Map<Any, Any>) {
         // Send gesture event to main process via Transit
         messageProtocol.sendEvent(EventType.GESTURE, event)
     }
 
-    override fun sendCommand(command: Map<String, Any>) {
+    override fun sendCommand(command: Map<Any, Any>) {
         // Send command directly to main process to be forwarded to command subprocess
         // The command is already in the new nested format from CommandBuilder
         messageProtocol.sendCommand(command)

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import potatoclient.java.transit.MessageType
 import potatoclient.kotlin.transit.TransitCommunicator
+import potatoclient.kotlin.transit.TransitKeys
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -43,59 +44,59 @@ class TestModeWebSocketStub(
         transitComm.sendMessage(response)
     }
 
-    private fun createPongResponse(): Map<String, Any> =
+    private fun createPongResponse(): Map<Any, Any> =
         mapOf(
-            "msg-type" to MessageType.RESPONSE.key,
-            "msg-id" to
+            TransitKeys.MSG_TYPE to MessageType.RESPONSE.key,
+            TransitKeys.MSG_ID to
                 java.util.UUID
                     .randomUUID()
                     .toString(),
-            "timestamp" to System.currentTimeMillis(),
-            "payload" to
+            TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+            TransitKeys.PAYLOAD to
                 mapOf(
-                    "type" to "pong",
-                    "timestamp" to System.currentTimeMillis(),
+                    TransitKeys.TYPE to "pong",
+                    TransitKeys.TIMESTAMP to System.currentTimeMillis(),
                 ),
         )
 
     private fun createAckResponse(
         commandType: String,
         commandId: Int,
-    ): Map<String, Any> =
+    ): Map<Any, Any> =
         mapOf(
-            "msg-type" to MessageType.RESPONSE.key,
-            "msg-id" to
+            TransitKeys.MSG_TYPE to MessageType.RESPONSE.key,
+            TransitKeys.MSG_ID to
                 java.util.UUID
                     .randomUUID()
                     .toString(),
-            "timestamp" to System.currentTimeMillis(),
-            "payload" to
+            TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+            TransitKeys.PAYLOAD to
                 mapOf(
-                    "type" to "ack",
-                    "command" to commandType,
-                    "id" to commandId,
+                    TransitKeys.TYPE to "ack",
+                    TransitKeys.ACTION to commandType,
+                    TransitKeys.MSG_ID to commandId,
                 ),
         )
 
-    private fun createErrorResponse(message: String): Map<String, Any> =
+    private fun createErrorResponse(message: String): Map<Any, Any> =
         mapOf(
-            "msg-type" to MessageType.ERROR.key,
-            "msg-id" to
+            TransitKeys.MSG_TYPE to MessageType.ERROR.key,
+            TransitKeys.MSG_ID to
                 java.util.UUID
                     .randomUUID()
                     .toString(),
-            "timestamp" to System.currentTimeMillis(),
-            "payload" to
+            TransitKeys.TIMESTAMP to System.currentTimeMillis(),
+            TransitKeys.PAYLOAD to
                 mapOf(
-                    "type" to "error",
-                    "message" to message,
+                    TransitKeys.TYPE to "error",
+                    TransitKeys.MESSAGE to message,
                 ),
         )
 
     private suspend fun handleRotaryCommand(
         rotary: JonSharedCmdRotary.Root,
         commandId: Int,
-    ): Map<String, Any> {
+    ): Map<Any, Any> {
         // Simulate validation based on actual commands
         return when {
             rotary.hasRotateToNdc() -> {
@@ -116,7 +117,7 @@ class TestModeWebSocketStub(
     private fun handleCvCommand(
         cv: JonSharedCmdCv.Root,
         commandId: Int,
-    ): Map<String, Any> =
+    ): Map<Any, Any> =
         when {
             cv.hasStartTrackNdc() -> {
                 val track = cv.startTrackNdc

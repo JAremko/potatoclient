@@ -72,7 +72,7 @@
               (is (some #(= "test-mode-ready" (get-in % [:payload :status])) msgs)
                   "Should receive test-mode-ready")
               (is (some #(= "pong" (get-in % [:payload :type])) msgs)
-                  "Should receive pong response")))))
+                  "Should receive pong response"))))
 
         (finally
           (.close subprocess-stdin)

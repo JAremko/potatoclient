@@ -2,6 +2,7 @@ package potatoclient.kotlin.events
 
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
+import potatoclient.kotlin.transit.TransitKeys
 
 /**
  * Builder for creating Transit commands in the new nested format.
@@ -19,15 +20,15 @@ object CommandBuilder {
         streamType: StreamType,
         ndcX: Double,
         ndcY: Double,
-    ): Map<String, Any> =
+    ): Map<Any, Any> =
         mapOf(
-            "rotary" to
+            TransitKeys.ROTARY to
                 mapOf(
-                    "goto-ndc" to
+                    TransitKeys.GOTO_NDC to
                         mapOf(
-                            "channel" to streamType.toKeyword(),
-                            "x" to ndcX,
-                            "y" to ndcY,
+                            TransitKeys.CHANNEL to streamType.toKeyword(),
+                            TransitKeys.X to ndcX,
+                            TransitKeys.Y to ndcY,
                         ),
                 ),
         )
@@ -42,19 +43,19 @@ object CommandBuilder {
         ndcX: Double,
         ndcY: Double,
         frameTimestamp: Long? = null,
-    ): Map<String, Any> {
+    ): Map<Any, Any> {
         val params =
-            mutableMapOf(
-                "channel" to streamType.toKeyword(),
-                "x" to ndcX,
-                "y" to ndcY,
+            mutableMapOf<Any, Any>(
+                TransitKeys.CHANNEL to streamType.toKeyword(),
+                TransitKeys.X to ndcX,
+                TransitKeys.Y to ndcY,
             )
-        frameTimestamp?.let { params["frame-time"] = it }
+        frameTimestamp?.let { params[TransitKeys.FRAME_TIME] = it }
 
         return mapOf(
-            "cv" to
+            TransitKeys.CV to
                 mapOf(
-                    "start-track-ndc" to params,
+                    TransitKeys.START_TRACK_NDC to params,
                 ),
         )
     }
@@ -69,16 +70,16 @@ object CommandBuilder {
         elSpeed: Double,
         azDir: RotaryDirection,
         elDir: RotaryDirection,
-    ): Map<String, Any> =
+    ): Map<Any, Any> =
         mapOf(
-            "rotary" to
+            TransitKeys.ROTARY to
                 mapOf(
-                    "set-velocity" to
+                    TransitKeys.SET_VELOCITY to
                         mapOf(
-                            "azimuth-speed" to azSpeed,
-                            "elevation-speed" to elSpeed,
-                            "azimuth-direction" to azDir.toKeyword(),
-                            "elevation-direction" to elDir.toKeyword(),
+                            TransitKeys.AZIMUTH_SPEED to azSpeed,
+                            TransitKeys.ELEVATION_SPEED to elSpeed,
+                            TransitKeys.AZIMUTH_DIRECTION to azDir.toKeyword(),
+                            TransitKeys.ELEVATION_DIRECTION to elDir.toKeyword(),
                         ),
                 ),
         )
@@ -88,11 +89,11 @@ object CommandBuilder {
      * Old: {"action": "rotary-halt", "params": {}}
      * New: {"rotary": {"halt": {}}}
      */
-    fun rotaryHalt(): Map<String, Any> =
+    fun rotaryHalt(): Map<Any, Any> =
         mapOf(
-            "rotary" to
+            TransitKeys.ROTARY to
                 mapOf(
-                    "halt" to emptyMap<String, Any>(),
+                    TransitKeys.HALT to emptyMap<Any, Any>(),
                 ),
         )
 
@@ -101,11 +102,11 @@ object CommandBuilder {
      * Old: {"action": "heat-camera-next-zoom-table-pos", "params": {}}
      * New: {"heat-camera": {"next-zoom-table-pos": {}}}
      */
-    fun heatCameraNextZoom(): Map<String, Any> =
+    fun heatCameraNextZoom(): Map<Any, Any> =
         mapOf(
-            "heat-camera" to
+            TransitKeys.HEAT_CAMERA to
                 mapOf(
-                    "next-zoom-table-pos" to emptyMap<String, Any>(),
+                    TransitKeys.NEXT_ZOOM_TABLE_POS to emptyMap<Any, Any>(),
                 ),
         )
 
@@ -113,11 +114,11 @@ object CommandBuilder {
      * Create a heat camera zoom out command
      * New: {"heat-camera": {"prev-zoom-table-pos": {}}}
      */
-    fun heatCameraPrevZoom(): Map<String, Any> =
+    fun heatCameraPrevZoom(): Map<Any, Any> =
         mapOf(
-            "heat-camera" to
+            TransitKeys.HEAT_CAMERA to
                 mapOf(
-                    "prev-zoom-table-pos" to emptyMap<String, Any>(),
+                    TransitKeys.PREV_ZOOM_TABLE_POS to emptyMap<Any, Any>(),
                 ),
         )
 
@@ -125,11 +126,11 @@ object CommandBuilder {
      * Create a day camera zoom command
      * New: {"day-camera": {"next-zoom-table-pos": {}}}
      */
-    fun dayCameraNextZoom(): Map<String, Any> =
+    fun dayCameraNextZoom(): Map<Any, Any> =
         mapOf(
-            "day-camera" to
+            TransitKeys.DAY_CAMERA to
                 mapOf(
-                    "next-zoom-table-pos" to emptyMap<String, Any>(),
+                    TransitKeys.NEXT_ZOOM_TABLE_POS to emptyMap<Any, Any>(),
                 ),
         )
 
@@ -137,11 +138,11 @@ object CommandBuilder {
      * Create a day camera zoom out command
      * New: {"day-camera": {"prev-zoom-table-pos": {}}}
      */
-    fun dayCameraPrevZoom(): Map<String, Any> =
+    fun dayCameraPrevZoom(): Map<Any, Any> =
         mapOf(
-            "day-camera" to
+            TransitKeys.DAY_CAMERA to
                 mapOf(
-                    "prev-zoom-table-pos" to emptyMap<String, Any>(),
+                    TransitKeys.PREV_ZOOM_TABLE_POS to emptyMap<Any, Any>(),
                 ),
         )
 }

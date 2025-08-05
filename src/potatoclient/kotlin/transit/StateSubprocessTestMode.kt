@@ -48,7 +48,7 @@ suspend fun runStateTestMode(
                         val protoState = JonSharedData.JonGUIState.parseFrom(protoBytes)
 
                         // Wrap in map and send
-                        val stateMap = mapOf<String, Any>("state" to protoState)
+                        val stateMap = mapOf<Any, Any>(TransitKeys.STATE to protoState)
                         transitComm.sendMessageDirect(
                             messageProtocol.createMessage(
                                 MessageType.STATE_UPDATE,

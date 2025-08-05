@@ -51,7 +51,7 @@ class StateSubprocess(
     /**
      * Create a properly formatted state update message
      */
-    private fun createStateUpdateMessage(state: Map<String, Any>): Map<String, Any> =
+    private fun createStateUpdateMessage(state: Map<Any, Any>): Map<Any, Any> =
         messageProtocol.createMessage(
             MessageType.STATE_UPDATE,
             state,
@@ -92,8 +92,8 @@ class StateSubprocess(
 
             // Send protobuf directly - Transit handlers will serialize it
             // The handler tags it as "jon-state" and converts all enums to keywords
-            // We need to wrap the protobuf in a map since createMessage expects Map<String, Any>
-            val stateMap = mapOf<String, Any>("state" to protoState)
+            // We need to wrap the protobuf in a map since createMessage expects Map<Any, Any>
+            val stateMap = mapOf<Any, Any>(TransitKeys.STATE to protoState)
             transitComm.sendMessageDirect(
                 messageProtocol.createMessage(
                     MessageType.STATE_UPDATE,

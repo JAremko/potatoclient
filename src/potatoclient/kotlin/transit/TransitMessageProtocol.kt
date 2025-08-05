@@ -1,5 +1,6 @@
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.TransitFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import potatoclient.java.transit.EventType
@@ -38,9 +39,9 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.LOG,
                     mapOf(
-                        MessageKeys.LEVEL to level,
-                        MessageKeys.MESSAGE to message,
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.LEVEL to level,
+                        TransitKeys.MESSAGE to message,
+                        TransitKeys.PROCESS to processType,
                     ),
                 )
             // Use coroutine to send message
@@ -81,12 +82,12 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.ERROR,
                     mapOf(
-                        MessageKeys.CONTEXT to context,
-                        MessageKeys.ERROR to ex.message,
-                        MessageKeys.CLASS to ex.javaClass.name,
-                        MessageKeys.STACK_TRACE to stackTrace,
-                        MessageKeys.PROCESS to processType,
-                    ) as Map<String, Any>,
+                        TransitKeys.CONTEXT to context,
+                        TransitKeys.ERROR to (ex.message ?: "Unknown error"),
+                        TransitKeys.CLASS to ex.javaClass.name,
+                        TransitKeys.STACK_TRACE to stackTrace,
+                        TransitKeys.PROCESS to processType,
+                    ),
                 )
             kotlinx.coroutines.GlobalScope.launch {
                 transitComm.sendMessage(errorMsg)
@@ -143,9 +144,9 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.METRIC,
                     mapOf(
-                        MessageKeys.NAME to name,
-                        MessageKeys.VALUE to value,
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.NAME to name,
+                        TransitKeys.VALUE to value,
+                        TransitKeys.PROCESS to processType,
                     ),
                 )
             kotlinx.coroutines.GlobalScope.launch {
@@ -168,8 +169,8 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.STATUS,
                     mapOf(
-                        MessageKeys.STATUS to status,
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.STATUS to status,
+                        TransitKeys.PROCESS to processType,
                     ) + details,
                 )
             kotlinx.coroutines.GlobalScope.launch {
@@ -192,8 +193,8 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.RESPONSE,
                     mapOf(
-                        MessageKeys.ACTION to action,
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.ACTION to action,
+                        TransitKeys.PROCESS to processType,
                     ) + details,
                 )
 
@@ -210,15 +211,15 @@ class TransitMessageProtocol(
      */
     fun sendEvent(
         eventType: EventType,
-        data: Map<String, Any>,
+        data: Map<Any, Any>,
     ) {
         try {
             val eventMsg =
                 createMessage(
                     MessageType.EVENT,
                     mapOf(
-                        MessageKeys.TYPE to eventType.keyword, // Use keyword instead of enum
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.TYPE to eventType.keyword, // Use keyword instead of enum
+                        TransitKeys.PROCESS to processType,
                     ) + data,
                 )
             kotlinx.coroutines.GlobalScope.launch {
@@ -246,15 +247,15 @@ class TransitMessageProtocol(
         sendEvent(
             EventType.NAVIGATION,
             mapOf(
-                MessageKeys.X to x,
-                MessageKeys.Y to y,
-                MessageKeys.FRAME_TIMESTAMP to frameTimestamp,
-                MessageKeys.FRAME_DURATION to frameDuration,
-                MessageKeys.CANVAS_WIDTH to canvasWidth,
-                MessageKeys.CANVAS_HEIGHT to canvasHeight,
-                MessageKeys.NAV_TYPE to navType,
-                MessageKeys.NDC_X to ndcX,
-                MessageKeys.NDC_Y to ndcY,
+                TransitKeys.X to x,
+                TransitKeys.Y to y,
+                TransitKeys.FRAME_TIMESTAMP to frameTimestamp,
+                TransitKeys.FRAME_DURATION to frameDuration,
+                TransitKeys.CANVAS_WIDTH to canvasWidth,
+                TransitKeys.CANVAS_HEIGHT to canvasHeight,
+                TransitKeys.NAV_TYPE to navType,
+                TransitKeys.NDC_X to ndcX,
+                TransitKeys.NDC_Y to ndcY,
             ),
         )
     }
@@ -270,12 +271,12 @@ class TransitMessageProtocol(
         width: Int? = null,
         height: Int? = null,
     ) {
-        val data = mutableMapOf<String, Any>(MessageKeys.TYPE to eventType)
-        windowState?.let { data[MessageKeys.WINDOW_STATE] = it }
-        x?.let { data[MessageKeys.X] = it }
-        y?.let { data[MessageKeys.Y] = it }
-        width?.let { data[MessageKeys.WIDTH] = it }
-        height?.let { data[MessageKeys.HEIGHT] = it }
+        val data = mutableMapOf<Any, Any>(TransitKeys.TYPE to eventType)
+        windowState?.let { data[TransitKeys.WINDOW_STATE] = it }
+        x?.let { data[TransitKeys.X] = it }
+        y?.let { data[TransitKeys.Y] = it }
+        width?.let { data[TransitKeys.WIDTH] = it }
+        height?.let { data[TransitKeys.HEIGHT] = it }
 
         sendEvent(EventType.WINDOW, data)
     }
@@ -292,8 +293,8 @@ class TransitMessageProtocol(
                 createMessage(
                     MessageType.REQUEST,
                     mapOf(
-                        MessageKeys.ACTION to action,
-                        MessageKeys.PROCESS to processType,
+                        TransitKeys.ACTION to action,
+                        TransitKeys.PROCESS to processType,
                     ) + data,
                 )
             kotlinx.coroutines.GlobalScope.launch {
@@ -307,7 +308,7 @@ class TransitMessageProtocol(
     /**
      * Send a command message (for video stream commands in new nested format)
      */
-    fun sendCommand(command: Map<String, Any>) {
+    fun sendCommand(command: Map<Any, Any>) {
         try {
             val commandMsg =
                 createMessage(
@@ -327,7 +328,7 @@ class TransitMessageProtocol(
      */
     fun createMessage(
         msgType: MessageType,
-        payload: Map<String, Any>,
+        payload: Map<Any, Any>,
     ): Map<Any, Any> =
         mapOf(
             TransitKeys.MSG_TYPE to msgType.key,
@@ -366,33 +367,33 @@ class MessageBuilder(
     fun response(
         action: String,
         status: String,
-        data: Map<String, Any> = emptyMap(),
+        data: Map<Any, Any> = emptyMap(),
     ) = protocol.createMessage(
         MessageType.RESPONSE,
         mapOf(
-            MessageKeys.ACTION to action,
-            MessageKeys.STATUS to status,
-            MessageKeys.DATA to data,
+            TransitKeys.ACTION to action,
+            TransitKeys.STATUS to status,
+            TransitKeys.DATA to data,
         ),
     )
 
     fun request(
         action: String,
-        data: Map<String, Any> = emptyMap(),
+        data: Map<Any, Any> = emptyMap(),
     ) = protocol.createMessage(
         MessageType.REQUEST,
         mapOf(
-            MessageKeys.ACTION to action,
-            MessageKeys.DATA to data,
-        ) + mapOf(MessageKeys.PROCESS to protocol.processType),
+            TransitKeys.ACTION to action,
+            TransitKeys.DATA to data,
+        ) + mapOf(TransitKeys.PROCESS to protocol.processType),
     )
 
     fun event(
         eventType: EventType,
-        data: Map<String, Any>,
+        data: Map<Any, Any>,
     ) = protocol.createMessage(
         MessageType.EVENT,
-        mapOf(MessageKeys.TYPE to eventType.key) + data,
+        mapOf(TransitKeys.TYPE to eventType.key) + data,
     )
 
     fun gestureEvent(
@@ -402,16 +403,16 @@ class MessageBuilder(
         canvasHeight: Int,
         aspectRatio: Double,
         streamType: String,
-        additionalData: Map<String, Any> = emptyMap(),
+        additionalData: Map<Any, Any> = emptyMap(),
     ) = event(
         EventType.GESTURE,
         mapOf(
-            "gesture-type" to gestureType.key,
-            "timestamp" to timestamp,
-            "canvas-width" to canvasWidth,
-            "canvas-height" to canvasHeight,
-            "aspect-ratio" to aspectRatio,
-            "stream-type" to streamType,
+            TransitKeys.TYPE to gestureType.key,
+            TransitKeys.TIMESTAMP to timestamp,
+            TransitKeys.CANVAS_WIDTH to canvasWidth,
+            TransitKeys.CANVAS_HEIGHT to canvasHeight,
+            TransitKeys.ASPECT_RATIO to aspectRatio,
+            TransitKeys.STREAM_TYPE to streamType,
         ) + additionalData,
     )
 
@@ -428,15 +429,15 @@ class MessageBuilder(
     ) = event(
         EventType.NAVIGATION,
         mapOf(
-            MessageKeys.NAV_TYPE to navType.key,
-            MessageKeys.X to x,
-            MessageKeys.Y to y,
-            MessageKeys.NDC_X to ndcX,
-            MessageKeys.NDC_Y to ndcY,
-            MessageKeys.FRAME_TIMESTAMP to frameTimestamp,
-            MessageKeys.FRAME_DURATION to frameDuration,
-            MessageKeys.CANVAS_WIDTH to canvasWidth,
-            MessageKeys.CANVAS_HEIGHT to canvasHeight,
+            TransitKeys.NAV_TYPE to navType.key,
+            TransitKeys.X to x,
+            TransitKeys.Y to y,
+            TransitKeys.NDC_X to ndcX,
+            TransitKeys.NDC_Y to ndcY,
+            TransitKeys.FRAME_TIMESTAMP to frameTimestamp,
+            TransitKeys.FRAME_DURATION to frameDuration,
+            TransitKeys.CANVAS_WIDTH to canvasWidth,
+            TransitKeys.CANVAS_HEIGHT to canvasHeight,
         ),
     )
 
@@ -447,13 +448,13 @@ class MessageBuilder(
         y: Int? = null,
         width: Int? = null,
         height: Int? = null,
-    ): Map<String, Any> {
-        val data = mutableMapOf<String, Any>("window-type" to windowType.key)
-        windowState?.let { data[MessageKeys.WINDOW_STATE] = it }
-        x?.let { data[MessageKeys.X] = it }
-        y?.let { data[MessageKeys.Y] = it }
-        width?.let { data[MessageKeys.WIDTH] = it }
-        height?.let { data[MessageKeys.HEIGHT] = it }
+    ): Map<Any, Any> {
+        val data = mutableMapOf<Any, Any>(TransitKeys.TYPE to windowType.key)
+        windowState?.let { data[TransitKeys.WINDOW_STATE] = it }
+        x?.let { data[TransitKeys.X] = it }
+        y?.let { data[TransitKeys.Y] = it }
+        width?.let { data[TransitKeys.WIDTH] = it }
+        height?.let { data[TransitKeys.HEIGHT] = it }
 
         return event(EventType.WINDOW, data)
     }
@@ -464,9 +465,9 @@ class MessageBuilder(
     ) = protocol.createMessage(
         MessageType.LOG,
         mapOf(
-            MessageKeys.LEVEL to level,
-            MessageKeys.MESSAGE to message,
-            MessageKeys.PROCESS to protocol.processType,
+            TransitKeys.LEVEL to level,
+            TransitKeys.MESSAGE to message,
+            TransitKeys.PROCESS to protocol.processType,
         ),
     )
 
@@ -474,17 +475,17 @@ class MessageBuilder(
         context: String,
         error: String,
         exception: Exception? = null,
-    ): Map<String, Any> {
+    ): Map<Any, Any> {
         val payload =
-            mutableMapOf(
-                MessageKeys.CONTEXT to context,
-                MessageKeys.ERROR to error,
-                MessageKeys.PROCESS to protocol.processType,
+            mutableMapOf<Any, Any>(
+                TransitKeys.CONTEXT to context,
+                TransitKeys.ERROR to error,
+                TransitKeys.PROCESS to protocol.processType,
             )
 
         exception?.let { ex ->
-            payload[MessageKeys.CLASS] = ex.javaClass.name
-            payload[MessageKeys.STACK_TRACE] = ex.stackTraceToString()
+            payload[TransitKeys.CLASS] = ex.javaClass.name
+            payload[TransitKeys.STACK_TRACE] = ex.stackTraceToString()
         }
 
         return protocol.createMessage(MessageType.ERROR, payload)
@@ -496,9 +497,9 @@ class MessageBuilder(
     ) = protocol.createMessage(
         MessageType.METRIC,
         mapOf(
-            MessageKeys.NAME to name,
-            MessageKeys.VALUE to value,
-            MessageKeys.PROCESS to protocol.processType,
+            TransitKeys.NAME to name,
+            TransitKeys.VALUE to value,
+            TransitKeys.PROCESS to protocol.processType,
         ),
     )
 
@@ -508,8 +509,8 @@ class MessageBuilder(
     ) = protocol.createMessage(
         MessageType.STATUS,
         mapOf(
-            MessageKeys.STATUS to status,
-            MessageKeys.PROCESS to protocol.processType,
+            TransitKeys.STATUS to status,
+            TransitKeys.PROCESS to protocol.processType,
         ) + details,
     )
 }
