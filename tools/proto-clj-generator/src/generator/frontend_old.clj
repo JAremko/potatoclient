@@ -1,5 +1,5 @@
 (ns generator.frontend
-  "Frontend using rewrite-clj for AST-based code generation.
+  "Frontend for the proto-clj-generator using rewrite-clj templates.
   Generates Clojure code from the EDN intermediate representation."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
@@ -10,69 +10,28 @@
             [rewrite-clj.node :as n]))
 
 ;; =============================================================================
-;; Template Loading and Parsing
+;; Template Loading
 ;; =============================================================================
 
 (defn load-template
-  "Load a template file from resources as a string."
+  "Load a template file from resources."
   [template-name]
   (if-let [resource (io/resource (str "templates/" template-name))]
     (slurp resource)
     (throw (ex-info "Template not found" {:template template-name}))))
 
+(defn templates
+  "Load templates on demand."
+  []
+  {:namespace (load-template "namespace.clj")
+   :builder (load-template "builder.clj")
+   :oneof-builder (load-template "oneof-builder.clj")
+   :parser (load-template "parser.clj")
+   :oneof-parser (load-template "oneof-parser.clj")})
+
 ;; =============================================================================
-;; AST Node Creation Helpers
+;; Template Helpers
 ;; =============================================================================
-
-(defn create-when-contains-node
-  "Create (when (contains? m :key) ...) node."
-  [map-sym key-kw body-node]
-  (n/list-node
-   [(n/token-node 'when)
-    (n/whitespace-node " ")
-    (n/list-node
-     [(n/token-node 'contains?)
-      (n/whitespace-node " ")
-      (n/token-node map-sym)
-      (n/whitespace-node " ")
-      (n/keyword-node key-kw)])
-    (n/newline-node "\n")
-    (n/whitespace-node "      ")
-    body-node]))
-
-(defn create-method-call-node
-  "Create (.methodName obj args...) node."
-  [method-name obj & args]
-  (n/list-node
-   (concat
-    [(n/token-node (symbol method-name))
-     (n/whitespace-node " ")
-     (n/token-node obj)]
-    (when (seq args)
-      (mapcat (fn [arg]
-               [(n/whitespace-node " ")
-                arg])
-             args)))))
-
-(defn create-get-node
-  "Create (get m :key) node."
-  [map-sym key-kw]
-  (n/list-node
-   [(n/token-node 'get)
-    (n/whitespace-node " ")
-    (n/token-node map-sym)
-    (n/whitespace-node " ")
-    (n/keyword-node key-kw)]))
-
-(defn create-assoc-node
-  "Create (assoc :key value) node."
-  [key-kw value-node]
-  (n/list-node
-   [(n/token-node 'assoc)
-    (n/whitespace-node " ")
-    (n/keyword-node key-kw)
-    (n/whitespace-node " ")
-    value-node]))
 
 ;; =============================================================================
 ;; Code Generation Helpers
@@ -81,17 +40,12 @@
 (defn field-java-setter
   "Generate Java setter method name for a field."
   [field]
-  (str ".set" (csk/->PascalCase (:proto-name field))))
+  (str "set" (csk/->PascalCase (:proto-name field))))
 
 (defn field-java-getter
   "Generate Java getter method name for a field."
   [field]
-  (str ".get" (csk/->PascalCase (:proto-name field))))
-
-(defn field-java-has
-  "Generate Java has method name for a field."
-  [field]
-  (str ".has" (csk/->PascalCase (:proto-name field))))
+  (str "get" (csk/->PascalCase (:proto-name field))))
 
 (defn resolve-builder-name
   "Resolve the builder function name for a type reference."
@@ -123,101 +77,85 @@
 ;; Field Generation
 ;; =============================================================================
 
-(defn generate-field-setter-node
-  "Generate AST node for setting a single field."
-  [field]
-  (create-when-contains-node
-   'm
-   (:name field)
-   (create-method-call-node
-    (field-java-setter field)
-    'builder
-    (create-get-node 'm (:name field)))))
+(defn generate-field-setter
+  "Generate code for setting a single field."
+  [field indent]
+  (let [spaces (apply str (repeat indent " "))]
+    (str spaces "(when (contains? m " (:name field) ")\n"
+         spaces "  (." (field-java-setter field) " builder (get m " (:name field) ")))")))
 
-(defn generate-field-getter-node
-  "Generate AST node for getting a single field value."
+(defn generate-field-getter
+  "Generate code for getting a single field value."
   [field]
-  (n/list-node
-   [(create-method-call-node (field-java-has field) 'proto)
-    (n/whitespace-node " ")
-    (create-assoc-node
-     (:name field)
-     (create-method-call-node (field-java-getter field) 'proto))]))
+  (str "(." (str "has" (csk/->PascalCase (:proto-name field))) " proto) "
+       "(assoc " (:name field) " (." (field-java-getter field) " proto))"))
 
-(defn generate-regular-fields-setter-code
-  "Generate setter code for regular fields."
+(defn generate-regular-fields-setter
+  "Generate setters for regular fields."
   [fields]
   (if (seq fields)
     (str ";; Set regular fields\n    "
-         (str/join "\n    " 
-                  (map #(n/string (generate-field-setter-node %)) fields)))
+         (str/join "\n    " (map #(generate-field-setter % 0) fields)))
     ""))
 
-(defn generate-regular-fields-getter-code
-  "Generate getter code for regular fields."
+(defn generate-regular-fields-getter
+  "Generate getters for regular fields."
   [fields]
   (if (seq fields)
     (str ";; Regular fields\n    "
-         (str/join "\n    " 
-                  (map #(n/string (generate-field-getter-node %)) fields)))
+         (str/join "\n    " (map generate-field-getter fields)))
     ""))
 
 ;; =============================================================================
 ;; Oneof Generation
 ;; =============================================================================
 
-(defn generate-oneof-case-node
-  "Generate a case clause node for a oneof field."
+(defn generate-oneof-case
+  "Generate a case clause for a oneof field."
   [field type-lookup]
   (let [field-type (get-in field [:type :message :type-ref])
         builder-name (when field-type
                       (resolve-builder-name field-type type-lookup))]
-    (str "    " (:name field) " "
-         (n/string
-          (create-method-call-node
-           (field-java-setter field)
-           'builder
-           (if (and (get-in field [:type :message])
-                    builder-name)
-             ;; Message type - need to build it
-             (n/list-node
-              [(n/token-node (symbol builder-name))
-               (n/whitespace-node " ")
-               (n/token-node 'field-value)])
-             ;; Scalar type - set directly
-             (n/token-node 'field-value)))))))
+    (if (and (get-in field [:type :message])
+             builder-name)
+      ;; Message type - need to build it
+      (str "    " (:name field) " (." 
+           (field-java-setter field) " builder (" 
+           builder-name " field-value))")
+      ;; Scalar type - set directly
+      (str "    " (:name field) " (." 
+           (field-java-setter field) " builder field-value)"))))
 
-(defn generate-oneof-parser-case-node
-  "Generate a case clause node for parsing a oneof field."
+(defn generate-oneof-parser-case
+  "Generate a case clause for parsing a oneof field."
   [field type-lookup]
   (let [field-type (get-in field [:type :message :type-ref])
         parser-name (when field-type
                      (resolve-parser-name field-type type-lookup))]
-    (str "    " (csk/->SCREAMING_SNAKE_CASE (:proto-name field))
-         " {" (:name field) " "
-         (if (and (get-in field [:type :message])
-                  parser-name)
-           ;; Message type - need to parse it
-           (str "(" parser-name " " 
-                (n/string (create-method-call-node (field-java-getter field) 'proto))
-                ")")
-           ;; Scalar type - get directly
-           (n/string (create-method-call-node (field-java-getter field) 'proto)))
-         "}")))
+    (if (and (get-in field [:type :message])
+             parser-name)
+      ;; Message type - need to parse it
+      (str "    " (csk/->SCREAMING_SNAKE_CASE (:proto-name field))
+           " {" (:name field) " (" parser-name " (." 
+           (field-java-getter field) " proto))}")
+      ;; Scalar type - get directly
+      (str "    " (csk/->SCREAMING_SNAKE_CASE (:proto-name field))
+           " {" (:name field) " (." 
+           (field-java-getter field) " proto)}"))))
 
-(defn generate-oneof-payload-setter-code
+(defn generate-oneof-payload-setter
   "Generate the oneof payload setter code."
   [message oneof-fields]
   (if (seq oneof-fields)
     (str "\n    ;; Set oneof payload\n"
-         "    (when-let [payload (first (filter (fn [[k v]] (#{"
+         "    (when-let [payload (first (filter (fn [[k v]] (#{" 
          (str/join " " (map :name oneof-fields))
          "} k)) m))]\n"
-         "      (build-" (csk/->kebab-case (:proto-name message))
+         "      (build-" (csk/->kebab-case (:proto-name message)) 
          "-payload builder payload))")
     ""))
 
-(defn generate-oneof-payload-getter-code
+(defn generate-oneof-payload-getter
   "Generate the oneof payload getter code."
   [message]
   (if (seq (:oneofs message))
@@ -231,58 +169,58 @@
 ;; =============================================================================
 
 (defn generate-builder
-  "Generate a builder function for a message."
+  "Generate a builder function for a message using template."
   [message type-lookup]
   (let [regular-fields (remove :oneof-index (:fields message))
         oneof-fields (filter :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
-        template (load-template "builder.clj")]
-    (-> template
+        builder-template (:builder (templates))]
+    (-> builder-template
         (str/replace "BUILD-FN-NAME" fn-name)
         (str/replace "PROTO-NAME" (:proto-name message))
         (str/replace "JAVA-CLASS" (:java-class message))
-        (str/replace "REGULAR-FIELDS" (generate-regular-fields-setter-code regular-fields))
-        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-setter-code message oneof-fields)))))
+        (str/replace "REGULAR-FIELDS" (generate-regular-fields-setter regular-fields))
+        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-setter message oneof-fields)))))
 
 (defn generate-oneof-builder
-  "Generate the oneof payload builder for a message."
+  "Generate the oneof payload builder for a message using template."
   [message type-lookup]
   (when (seq (:oneofs message))
     (let [oneof-fields (mapcat :fields (:oneofs message))
           case-clauses (str/join "\n" 
-                               (map #(generate-oneof-case-node % type-lookup) 
+                               (map #(generate-oneof-case % type-lookup) 
                                    oneof-fields))
           fn-name (str "build-" (name (:name message)))
-          template (load-template "oneof-builder.clj")]
+          template (:oneof-builder (templates))]
       (str "\n" (-> template
                     (str/replace "BUILD-FN-NAME-PAYLOAD" (str fn-name "-payload"))
                     (str/replace "CASE-CLAUSES" case-clauses))))))
 
 (defn generate-parser
-  "Generate a parser function for a message."
+  "Generate a parser function for a message using template."
   [message type-lookup]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
-        template (load-template "parser.clj")]
-    (-> template
+        parser-template (:parser (templates))]
+    (-> parser-template
         (str/replace "PARSE-FN-NAME" fn-name)
         (str/replace "PROTO-NAME" (:proto-name message))
         (str/replace "JAVA-CLASS" (:java-class message))
-        (str/replace "REGULAR-FIELDS" (generate-regular-fields-getter-code regular-fields))
-        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-getter-code message)))))
+        (str/replace "REGULAR-FIELDS" (generate-regular-fields-getter regular-fields))
+        (str/replace "ONEOF-PAYLOAD" (generate-oneof-payload-getter message)))))
 
 (defn generate-oneof-parser
-  "Generate the oneof payload parser for a message."
+  "Generate the oneof payload parser for a message using template."
   [message type-lookup]
   (when (seq (:oneofs message))
     (let [oneof (first (:oneofs message))
           oneof-fields (:fields oneof)
           case-clauses (str/join "\n"
-                               (map #(generate-oneof-parser-case-node % type-lookup) 
+                               (map #(generate-oneof-parser-case % type-lookup) 
                                    oneof-fields))
           fn-name (str "parse-" (name (:name message)))
-          oneof-getter (str ".get" (csk/->PascalCase (:proto-name oneof)) "Case")
-          template (load-template "oneof-parser.clj")]
+          oneof-getter (str "get" (csk/->PascalCase (:proto-name oneof)) "Case")
+          template (:oneof-parser (templates))]
       (str "\n" (-> template
                      (str/replace "PARSE-FN-NAME-PAYLOAD" (str fn-name "-payload"))
                      (str/replace "PROTO-NAME" (:proto-name message))
@@ -294,32 +232,38 @@
 ;; Enum Generation
 ;; =============================================================================
 
-(defn generate-enum-value-entry
-  "Generate a single enum value entry."
-  [value enum]
-  (str (:name value) " " (:java-class enum) "/" 
-       (csk/->SCREAMING_SNAKE_CASE (:proto-name value))))
+(defn generate-enum-value-map
+  "Generate the enum value mapping."
+  [enum]
+  (str "{" (str/join "\n   "
+                    (map (fn [value]
+                          (str (:name value) " " (:java-class enum) "/" 
+                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))))
+                        (:values enum)))
+       "}"))
 
-(defn generate-enum-reverse-entry
-  "Generate a single reverse enum entry."
-  [value enum]
-  (str (:java-class enum) "/" 
-       (csk/->SCREAMING_SNAKE_CASE (:proto-name value))
-       " " (:name value)))
+(defn generate-enum-reverse-map
+  "Generate the reverse enum mapping (Java -> keyword)."
+  [enum]
+  (str "{" (str/join "\n   "
+                    (map (fn [value]
+                          (str (:java-class enum) "/" 
+                               (csk/->SCREAMING_SNAKE_CASE (:proto-name value))
+                               " " (:name value)))
+                        (:values enum)))
+       "}"))
 
 (defn generate-enum
   "Generate enum mappings."
   [enum]
   (when (:proto-name enum)
-    (let [values-entries (map #(generate-enum-value-entry % enum) (:values enum))
-          reverse-entries (map #(generate-enum-reverse-entry % enum) (:values enum))]
-      (str ";; Enum: " (:proto-name enum) "\n"
-           "(def " (csk/->kebab-case (:proto-name enum)) "-values\n"
-           "  \"Keyword to Java enum mapping for " (:proto-name enum) ".\"\n"
-           "  {" (str/join "\n   " values-entries) "})\n\n"
-           "(def " (csk/->kebab-case (:proto-name enum)) "-keywords\n"
-           "  \"Java enum to keyword mapping for " (:proto-name enum) ".\"\n"
-           "  {" (str/join "\n   " reverse-entries) "})\n"))))
+    (str ";; Enum: " (:proto-name enum) "\n"
+         "(def " (csk/->kebab-case (:proto-name enum)) "-values\n"
+         "  \"Keyword to Java enum mapping for " (:proto-name enum) ".\"\n"
+         "  " (generate-enum-value-map enum) ")\n\n"
+         "(def " (csk/->kebab-case (:proto-name enum)) "-keywords\n"
+         "  \"Java enum to keyword mapping for " (:proto-name enum) ".\"\n"
+         "  " (generate-enum-reverse-map enum) ")\n")))
 
 ;; =============================================================================
 ;; Import Generation
@@ -332,6 +276,7 @@
                                (sp/multi-path :messages :enums) 
                                sp/ALL :java-class]
                               edn-data)]
+    (println "Found java classes:" (take 5 all-classes))
     (->> all-classes
          (map #(str/replace % #"\$.*" ""))  ; Remove inner class part
          (remove #(or (empty? %)
@@ -350,7 +295,7 @@
 ;; =============================================================================
 
 (defn generate-code
-  "Generate complete Clojure code from EDN data."
+  "Generate complete Clojure code from EDN data using templates."
   [{:keys [ns-name edn-data type-lookup]}]
   (let [imports (collect-imports edn-data)
         messages (sp/select [:files sp/ALL :messages sp/ALL] edn-data)
@@ -371,9 +316,9 @@
                                                 [(generate-oneof-parser msg type-lookup)])))
                                            messages))
         
-        template (load-template "namespace.clj")]
+        ns-file (:namespace (templates))]
     
-    (-> template
+    (-> ns-file
         (str/replace "NAMESPACE-PLACEHOLDER" ns-name)
         (str/replace "IMPORTS-PLACEHOLDER" (format-imports imports))
         (str/replace "ENUMS-PLACEHOLDER" enum-code)

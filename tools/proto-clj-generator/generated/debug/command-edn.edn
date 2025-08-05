@@ -258,7 +258,7 @@
        :type {:unknown {:proto-type :type-enum}},
        :label :label-optional,
        :optional? true,
-       :default-value :unverified}],
+       :default-value "UNVERIFIED"}],
      :oneofs [],
      :nested-types
      [{:type :message,
@@ -592,7 +592,7 @@
        :type {:unknown {:proto-type :type-enum}},
        :label :label-optional,
        :optional? true,
-       :default-value :speed}
+       :default-value "SPEED"}
       {:name :go-package,
        :proto-name "go_package",
        :number 11,
@@ -753,7 +753,7 @@
        :type {:unknown {:proto-type :type-enum}},
        :label :label-optional,
        :optional? true,
-       :default-value :string}
+       :default-value "STRING"}
       {:name :packed,
        :proto-name "packed",
        :number 2,
@@ -766,7 +766,7 @@
        :type {:unknown {:proto-type :type-enum}},
        :label :label-optional,
        :optional? true,
-       :default-value :js-normal}
+       :default-value "JS_NORMAL"}
       {:name :lazy,
        :proto-name "lazy",
        :number 5,
@@ -1032,7 +1032,7 @@
        :type {:unknown {:proto-type :type-enum}},
        :label :label-optional,
        :optional? true,
-       :default-value :idempotency-unknown}
+       :default-value "IDEMPOTENCY_UNKNOWN"}
       {:name :features,
        :proto-name "features",
        :number 35,
@@ -1335,33 +1335,37 @@
      :proto-name "Edition",
      :java-class "google.protobuf.Protobuf$Edition",
      :values
-     [{:name :edition-unknown, :proto-name :edition-unknown, :number 0}
-      {:name :edition-legacy, :proto-name :edition-legacy, :number 900}
+     [{:name :edition-unknown,
+       :proto-name "EDITION_UNKNOWN",
+       :number 0}
+      {:name :edition-legacy,
+       :proto-name "EDITION_LEGACY",
+       :number 900}
       {:name :edition-proto-2,
-       :proto-name :edition-proto-2,
+       :proto-name "EDITION_PROTO2",
        :number 998}
       {:name :edition-proto-3,
-       :proto-name :edition-proto-3,
+       :proto-name "EDITION_PROTO3",
        :number 999}
-      {:name :edition-2023, :proto-name :edition-2023, :number 1000}
-      {:name :edition-2024, :proto-name :edition-2024, :number 1001}
+      {:name :edition-2023, :proto-name "EDITION_2023", :number 1000}
+      {:name :edition-2024, :proto-name "EDITION_2024", :number 1001}
       {:name :edition-1-test-only,
-       :proto-name :edition-1-test-only,
+       :proto-name "EDITION_1_TEST_ONLY",
        :number 1}
       {:name :edition-2-test-only,
-       :proto-name :edition-2-test-only,
+       :proto-name "EDITION_2_TEST_ONLY",
        :number 2}
       {:name :edition-99997-test-only,
-       :proto-name :edition-99997-test-only,
+       :proto-name "EDITION_99997_TEST_ONLY",
        :number 99997}
       {:name :edition-99998-test-only,
-       :proto-name :edition-99998-test-only,
+       :proto-name "EDITION_99998_TEST_ONLY",
        :number 99998}
       {:name :edition-99999-test-only,
-       :proto-name :edition-99999-test-only,
+       :proto-name "EDITION_99999_TEST_ONLY",
        :number 99999}
       {:name :edition-max,
-       :proto-name :edition-max,
+       :proto-name "EDITION_MAX",
        :number 2147483647}]}
     {:type :enum,
      :name :symbol-visibility,
@@ -1369,13 +1373,13 @@
      :java-class "google.protobuf.Protobuf$SymbolVisibility",
      :values
      [{:name :visibility-unset,
-       :proto-name :visibility-unset,
+       :proto-name "VISIBILITY_UNSET",
        :number 0}
       {:name :visibility-local,
-       :proto-name :visibility-local,
+       :proto-name "VISIBILITY_LOCAL",
        :number 1}
       {:name :visibility-export,
-       :proto-name :visibility-export,
+       :proto-name "VISIBILITY_EXPORT",
        :number 2}]}]}
   {:type :file,
    :name "google/protobuf/duration.proto",
@@ -3272,25 +3276,25 @@
      :java-class "buf.validate.Validate$Ignore",
      :values
      [{:name :ignore-unspecified,
-       :proto-name :ignore-unspecified,
+       :proto-name "IGNORE_UNSPECIFIED",
        :number 0}
       {:name :ignore-if-zero-value,
-       :proto-name :ignore-if-zero-value,
+       :proto-name "IGNORE_IF_ZERO_VALUE",
        :number 1}
-      {:name :ignore-always, :proto-name :ignore-always, :number 3}]}
+      {:name :ignore-always, :proto-name "IGNORE_ALWAYS", :number 3}]}
     {:type :enum,
      :name :known-regex,
      :proto-name "KnownRegex",
      :java-class "buf.validate.Validate$KnownRegex",
      :values
      [{:name :known-regex-unspecified,
-       :proto-name :known-regex-unspecified,
+       :proto-name "KNOWN_REGEX_UNSPECIFIED",
        :number 0}
       {:name :known-regex-http-header-name,
-       :proto-name :known-regex-http-header-name,
+       :proto-name "KNOWN_REGEX_HTTP_HEADER_NAME",
        :number 1}
       {:name :known-regex-http-header-value,
-       :proto-name :known-regex-http-header-value,
+       :proto-name "KNOWN_REGEX_HTTP_HEADER_VALUE",
        :number 2}]}]}
   {:type :file,
    :name "jon_shared_cmd_compass.proto",
@@ -3645,20 +3649,21 @@
      :java-class "ser.Ser$JonGuiDataVideoChannelHeatFilters",
      :values
      [{:name :jon-gui-data-video-channel-heat-filter-unspecified,
-       :proto-name :jon-gui-data-video-channel-heat-filter-unspecified,
+       :proto-name
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-video-channel-heat-filter-hot-white,
-       :proto-name :jon-gui-data-video-channel-heat-filter-hot-white,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE",
        :number 1}
       {:name :jon-gui-data-video-channel-heat-filter-hot-black,
-       :proto-name :jon-gui-data-video-channel-heat-filter-hot-black,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK",
        :number 2}
       {:name :jon-gui-data-video-channel-heat-filter-sepia,
-       :proto-name :jon-gui-data-video-channel-heat-filter-sepia,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA",
        :number 3}
       {:name :jon-gui-data-video-channel-heat-filter-sepia-inverse,
        :proto-name
-       :jon-gui-data-video-channel-heat-filter-sepia-inverse,
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE",
        :number 4}]}
     {:type :enum,
      :name :jon-gui-data-video-channel-heat-agc-modes,
@@ -3667,16 +3672,16 @@
      :values
      [{:name :jon-gui-data-video-channel-heat-agc-mode-unspecified,
        :proto-name
-       :jon-gui-data-video-channel-heat-agc-mode-unspecified,
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-video-channel-heat-agc-mode-1,
-       :proto-name :jon-gui-data-video-channel-heat-agc-mode-1,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1",
        :number 1}
       {:name :jon-gui-data-video-channel-heat-agc-mode-2,
-       :proto-name :jon-gui-data-video-channel-heat-agc-mode-2,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2",
        :number 2}
       {:name :jon-gui-data-video-channel-heat-agc-mode-3,
-       :proto-name :jon-gui-data-video-channel-heat-agc-mode-3,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3",
        :number 3}]}
     {:type :enum,
      :name :jon-gui-data-gps-units,
@@ -3684,16 +3689,16 @@
      :java-class "ser.Ser$JonGuiDataGpsUnits",
      :values
      [{:name :jon-gui-data-gps-units-unspecified,
-       :proto-name :jon-gui-data-gps-units-unspecified,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-gps-units-decimal-degrees,
-       :proto-name :jon-gui-data-gps-units-decimal-degrees,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES",
        :number 1}
       {:name :jon-gui-data-gps-units-degrees-minutes-seconds,
-       :proto-name :jon-gui-data-gps-units-degrees-minutes-seconds,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS",
        :number 2}
       {:name :jon-gui-data-gps-units-degrees-decimal-minutes,
-       :proto-name :jon-gui-data-gps-units-degrees-decimal-minutes,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES",
        :number 3}]}
     {:type :enum,
      :name :jon-gui-data-gps-fix-type,
@@ -3701,22 +3706,22 @@
      :java-class "ser.Ser$JonGuiDataGpsFixType",
      :values
      [{:name :jon-gui-data-gps-fix-type-unspecified,
-       :proto-name :jon-gui-data-gps-fix-type-unspecified,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-gps-fix-type-none,
-       :proto-name :jon-gui-data-gps-fix-type-none,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_NONE",
        :number 1}
       {:name :jon-gui-data-gps-fix-type-1-d,
-       :proto-name :jon-gui-data-gps-fix-type-1-d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_1D",
        :number 2}
       {:name :jon-gui-data-gps-fix-type-2-d,
-       :proto-name :jon-gui-data-gps-fix-type-2-d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_2D",
        :number 3}
       {:name :jon-gui-data-gps-fix-type-3-d,
-       :proto-name :jon-gui-data-gps-fix-type-3-d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_3D",
        :number 4}
       {:name :jon-gui-data-gps-fix-type-manual,
-       :proto-name :jon-gui-data-gps-fix-type-manual,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_MANUAL",
        :number 5}]}
     {:type :enum,
      :name :jon-gui-data-compass-units,
@@ -3724,19 +3729,19 @@
      :java-class "ser.Ser$JonGuiDataCompassUnits",
      :values
      [{:name :jon-gui-data-compass-units-unspecified,
-       :proto-name :jon-gui-data-compass-units-unspecified,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-compass-units-degrees,
-       :proto-name :jon-gui-data-compass-units-degrees,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_DEGREES",
        :number 1}
       {:name :jon-gui-data-compass-units-mils,
-       :proto-name :jon-gui-data-compass-units-mils,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_MILS",
        :number 2}
       {:name :jon-gui-data-compass-units-grad,
-       :proto-name :jon-gui-data-compass-units-grad,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_GRAD",
        :number 3}
       {:name :jon-gui-data-compass-units-mrad,
-       :proto-name :jon-gui-data-compass-units-mrad,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_MRAD",
        :number 4}]}
     {:type :enum,
      :name :jon-gui-data-accumulator-state-idx,
@@ -3744,37 +3749,37 @@
      :java-class "ser.Ser$JonGuiDataAccumulatorStateIdx",
      :values
      [{:name :jon-gui-data-accumulator-state-unspecified,
-       :proto-name :jon-gui-data-accumulator-state-unspecified,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-accumulator-state-unknown,
-       :proto-name :jon-gui-data-accumulator-state-unknown,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN",
        :number 1}
       {:name :jon-gui-data-accumulator-state-empty,
-       :proto-name :jon-gui-data-accumulator-state-empty,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY",
        :number 2}
       {:name :jon-gui-data-accumulator-state-1,
-       :proto-name :jon-gui-data-accumulator-state-1,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_1",
        :number 3}
       {:name :jon-gui-data-accumulator-state-2,
-       :proto-name :jon-gui-data-accumulator-state-2,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_2",
        :number 4}
       {:name :jon-gui-data-accumulator-state-3,
-       :proto-name :jon-gui-data-accumulator-state-3,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_3",
        :number 5}
       {:name :jon-gui-data-accumulator-state-4,
-       :proto-name :jon-gui-data-accumulator-state-4,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_4",
        :number 6}
       {:name :jon-gui-data-accumulator-state-5,
-       :proto-name :jon-gui-data-accumulator-state-5,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_5",
        :number 7}
       {:name :jon-gui-data-accumulator-state-6,
-       :proto-name :jon-gui-data-accumulator-state-6,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_6",
        :number 8}
       {:name :jon-gui-data-accumulator-state-full,
-       :proto-name :jon-gui-data-accumulator-state-full,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_FULL",
        :number 9}
       {:name :jon-gui-data-accumulator-state-charging,
-       :proto-name :jon-gui-data-accumulator-state-charging,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING",
        :number 10}]}
     {:type :enum,
      :name :jon-gui-data-time-formats,
@@ -3782,10 +3787,10 @@
      :java-class "ser.Ser$JonGuiDataTimeFormats",
      :values
      [{:name :jon-gui-data-time-format-unspecified,
-       :proto-name :jon-gui-data-time-format-unspecified,
+       :proto-name "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-time-format-h-m-s,
-       :proto-name :jon-gui-data-time-format-h-m-s,
+       :proto-name "JON_GUI_DATA_TIME_FORMAT_H_M_S",
        :number 1}
       {:name :jon-gui-data-time-format-y-m-d-h-m-s,
        :proto-name "JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S",
@@ -3796,13 +3801,13 @@
      :java-class "ser.Ser$JonGuiDataRotaryDirection",
      :values
      [{:name :jon-gui-data-rotary-direction-unspecified,
-       :proto-name :jon-gui-data-rotary-direction-unspecified,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-rotary-direction-clockwise,
-       :proto-name :jon-gui-data-rotary-direction-clockwise,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE",
        :number 1}
       {:name :jon-gui-data-rotary-direction-counter-clockwise,
-       :proto-name :jon-gui-data-rotary-direction-counter-clockwise,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE",
        :number 2}]}
     {:type :enum,
      :name :jon-gui-data-lrf-scan-modes,
@@ -3810,25 +3815,25 @@
      :java-class "ser.Ser$JonGuiDataLrfScanModes",
      :values
      [{:name :jon-gui-data-lrf-scan-mode-unspecified,
-       :proto-name :jon-gui-data-lrf-scan-mode-unspecified,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-lrf-scan-mode-1-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-1-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS",
        :number 1}
       {:name :jon-gui-data-lrf-scan-mode-4-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-4-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS",
        :number 2}
       {:name :jon-gui-data-lrf-scan-mode-10-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-10-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS",
        :number 3}
       {:name :jon-gui-data-lrf-scan-mode-20-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-20-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS",
        :number 4}
       {:name :jon-gui-data-lrf-scan-mode-100-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-100-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS",
        :number 5}
       {:name :jon-gui-data-lrf-scan-mode-200-hz-continuous,
-       :proto-name :jon-gui-data-lrf-scan-mode-200-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS",
        :number 6}]}
     {:type :enum,
      :name :jon-gui-datat-lrf-laser-pointer-modes,
@@ -3836,16 +3841,16 @@
      :java-class "ser.Ser$JonGuiDatatLrfLaserPointerModes",
      :values
      [{:name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
-       :proto-name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-lrf-laser-pointer-mode-off,
-       :proto-name :jon-gui-data-lrf-laser-pointer-mode-off,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF",
        :number 1}
       {:name :jon-gui-data-lrf-laser-pointer-mode-on-1,
-       :proto-name :jon-gui-data-lrf-laser-pointer-mode-on-1,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1",
        :number 2}
       {:name :jon-gui-data-lrf-laser-pointer-mode-on-2,
-       :proto-name :jon-gui-data-lrf-laser-pointer-mode-on-2,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2",
        :number 3}]}
     {:type :enum,
      :name :jon-gui-data-compass-calibrate-status,
@@ -3853,25 +3858,25 @@
      :java-class "ser.Ser$JonGuiDataCompassCalibrateStatus",
      :values
      [{:name :jon-gui-data-compass-calibrate-status-unspecified,
-       :proto-name :jon-gui-data-compass-calibrate-status-unspecified,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-compass-calibrate-status-not-calibrating,
        :proto-name
-       :jon-gui-data-compass-calibrate-status-not-calibrating,
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING",
        :number 1}
       {:name :jon-gui-data-compass-calibrate-status-calibrating-short,
        :proto-name
-       :jon-gui-data-compass-calibrate-status-calibrating-short,
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT",
        :number 2}
       {:name :jon-gui-data-compass-calibrate-status-calibrating-long,
        :proto-name
-       :jon-gui-data-compass-calibrate-status-calibrating-long,
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG",
        :number 3}
       {:name :jon-gui-data-compass-calibrate-status-finished,
-       :proto-name :jon-gui-data-compass-calibrate-status-finished,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED",
        :number 4}
       {:name :jon-gui-data-compass-calibrate-status-error,
-       :proto-name :jon-gui-data-compass-calibrate-status-error,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR",
        :number 5}]}
     {:type :enum,
      :name :jon-gui-data-rotary-mode,
@@ -3879,25 +3884,25 @@
      :java-class "ser.Ser$JonGuiDataRotaryMode",
      :values
      [{:name :jon-gui-data-rotary-mode-unspecified,
-       :proto-name :jon-gui-data-rotary-mode-unspecified,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-rotary-mode-initialization,
-       :proto-name :jon-gui-data-rotary-mode-initialization,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_INITIALIZATION",
        :number 1}
       {:name :jon-gui-data-rotary-mode-speed,
-       :proto-name :jon-gui-data-rotary-mode-speed,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_SPEED",
        :number 2}
       {:name :jon-gui-data-rotary-mode-position,
-       :proto-name :jon-gui-data-rotary-mode-position,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_POSITION",
        :number 3}
       {:name :jon-gui-data-rotary-mode-stabilization,
-       :proto-name :jon-gui-data-rotary-mode-stabilization,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_STABILIZATION",
        :number 4}
       {:name :jon-gui-data-rotary-mode-targeting,
-       :proto-name :jon-gui-data-rotary-mode-targeting,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_TARGETING",
        :number 5}
       {:name :jon-gui-data-rotary-mode-video-tracker,
-       :proto-name :jon-gui-data-rotary-mode-video-tracker,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER",
        :number 6}]}
     {:type :enum,
      :name :jon-gui-data-video-channel,
@@ -3905,13 +3910,13 @@
      :java-class "ser.Ser$JonGuiDataVideoChannel",
      :values
      [{:name :jon-gui-data-video-channel-unspecified,
-       :proto-name :jon-gui-data-video-channel-unspecified,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-video-channel-heat,
-       :proto-name :jon-gui-data-video-channel-heat,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT",
        :number 1}
       {:name :jon-gui-data-video-channel-day,
-       :proto-name :jon-gui-data-video-channel-day,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_DAY",
        :number 2}]}
     {:type :enum,
      :name :jon-gui-data-rec-osd-screen,
@@ -3919,19 +3924,19 @@
      :java-class "ser.Ser$JonGuiDataRecOsdScreen",
      :values
      [{:name :jon-gui-data-rec-osd-screen-unspecified,
-       :proto-name :jon-gui-data-rec-osd-screen-unspecified,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-rec-osd-screen-main,
-       :proto-name :jon-gui-data-rec-osd-screen-main,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_MAIN",
        :number 1}
       {:name :jon-gui-data-rec-osd-screen-lrf-measure,
-       :proto-name :jon-gui-data-rec-osd-screen-lrf-measure,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE",
        :number 2}
       {:name :jon-gui-data-rec-osd-screen-lrf-result,
-       :proto-name :jon-gui-data-rec-osd-screen-lrf-result,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT",
        :number 3}
       {:name :jon-gui-data-rec-osd-screen-lrf-result-simplified,
-       :proto-name :jon-gui-data-rec-osd-screen-lrf-result-simplified,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED",
        :number 4}]}
     {:type :enum,
      :name :jon-gui-data-fx-mode-day,
@@ -3939,25 +3944,25 @@
      :java-class "ser.Ser$JonGuiDataFxModeDay",
      :values
      [{:name :jon-gui-data-fx-mode-day-default,
-       :proto-name :jon-gui-data-fx-mode-day-default,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_DEFAULT",
        :number 0}
       {:name :jon-gui-data-fx-mode-day-a,
-       :proto-name :jon-gui-data-fx-mode-day-a,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_A",
        :number 1}
       {:name :jon-gui-data-fx-mode-day-b,
-       :proto-name :jon-gui-data-fx-mode-day-b,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_B",
        :number 2}
       {:name :jon-gui-data-fx-mode-day-c,
-       :proto-name :jon-gui-data-fx-mode-day-c,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_C",
        :number 3}
       {:name :jon-gui-data-fx-mode-day-d,
-       :proto-name :jon-gui-data-fx-mode-day-d,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_D",
        :number 4}
       {:name :jon-gui-data-fx-mode-day-e,
-       :proto-name :jon-gui-data-fx-mode-day-e,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_E",
        :number 5}
       {:name :jon-gui-data-fx-mode-day-f,
-       :proto-name :jon-gui-data-fx-mode-day-f,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_F",
        :number 6}]}
     {:type :enum,
      :name :jon-gui-data-fx-mode-heat,
@@ -3965,25 +3970,25 @@
      :java-class "ser.Ser$JonGuiDataFxModeHeat",
      :values
      [{:name :jon-gui-data-fx-mode-heat-default,
-       :proto-name :jon-gui-data-fx-mode-heat-default,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT",
        :number 0}
       {:name :jon-gui-data-fx-mode-heat-a,
-       :proto-name :jon-gui-data-fx-mode-heat-a,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_A",
        :number 1}
       {:name :jon-gui-data-fx-mode-heat-b,
-       :proto-name :jon-gui-data-fx-mode-heat-b,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_B",
        :number 2}
       {:name :jon-gui-data-fx-mode-heat-c,
-       :proto-name :jon-gui-data-fx-mode-heat-c,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_C",
        :number 3}
       {:name :jon-gui-data-fx-mode-heat-d,
-       :proto-name :jon-gui-data-fx-mode-heat-d,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_D",
        :number 4}
       {:name :jon-gui-data-fx-mode-heat-e,
-       :proto-name :jon-gui-data-fx-mode-heat-e,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_E",
        :number 5}
       {:name :jon-gui-data-fx-mode-heat-f,
-       :proto-name :jon-gui-data-fx-mode-heat-f,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_F",
        :number 6}]}
     {:type :enum,
      :name :jon-gui-data-system-localizations,
@@ -3991,19 +3996,19 @@
      :java-class "ser.Ser$JonGuiDataSystemLocalizations",
      :values
      [{:name :jon-gui-data-system-localization-unspecified,
-       :proto-name :jon-gui-data-system-localization-unspecified,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-system-localization-en,
-       :proto-name :jon-gui-data-system-localization-en,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_EN",
        :number 1}
       {:name :jon-gui-data-system-localization-ua,
-       :proto-name :jon-gui-data-system-localization-ua,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UA",
        :number 2}
       {:name :jon-gui-data-system-localization-ar,
-       :proto-name :jon-gui-data-system-localization-ar,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_AR",
        :number 3}
       {:name :jon-gui-data-system-localization-cs,
-       :proto-name :jon-gui-data-system-localization-cs,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_CS",
        :number 4}]}
     {:type :enum,
      :name :jon-gui-data-client-type,
@@ -4011,19 +4016,19 @@
      :java-class "ser.Ser$JonGuiDataClientType",
      :values
      [{:name :jon-gui-data-client-type-unspecified,
-       :proto-name :jon-gui-data-client-type-unspecified,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED",
        :number 0}
       {:name :jon-gui-data-client-type-internal-cv,
-       :proto-name :jon-gui-data-client-type-internal-cv,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV",
        :number 1}
       {:name :jon-gui-data-client-type-local-network,
-       :proto-name :jon-gui-data-client-type-local-network,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK",
        :number 2}
       {:name :jon-gui-data-client-type-certificate-protected,
-       :proto-name :jon-gui-data-client-type-certificate-protected,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED",
        :number 3}
       {:name :jon-gui-data-client-type-lira,
-       :proto-name :jon-gui-data-client-type-lira,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_LIRA",
        :number 4}]}]}
   {:type :file,
    :name "jon_shared_cmd_lrf.proto",

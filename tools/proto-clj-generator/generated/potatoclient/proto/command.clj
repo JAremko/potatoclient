@@ -25,392 +25,392 @@
 ;; Enum: Edition
 (def edition-values
   "Keyword to Java enum mapping for Edition."
-  {:edition-unknown google.protobuf.Protobuf$Edition/:EDITION_UNKNOWN
-   :edition-legacy google.protobuf.Protobuf$Edition/:EDITION_LEGACY
-   :edition-proto-2 google.protobuf.Protobuf$Edition/:EDITION_PROTO_2
-   :edition-proto-3 google.protobuf.Protobuf$Edition/:EDITION_PROTO_3
-   :edition-2023 google.protobuf.Protobuf$Edition/:EDITION_2023
-   :edition-2024 google.protobuf.Protobuf$Edition/:EDITION_2024
-   :edition-1-test-only google.protobuf.Protobuf$Edition/:EDITION_1_TEST_ONLY
-   :edition-2-test-only google.protobuf.Protobuf$Edition/:EDITION_2_TEST_ONLY
-   :edition-99997-test-only google.protobuf.Protobuf$Edition/:EDITION_99997_TEST_ONLY
-   :edition-99998-test-only google.protobuf.Protobuf$Edition/:EDITION_99998_TEST_ONLY
-   :edition-99999-test-only google.protobuf.Protobuf$Edition/:EDITION_99999_TEST_ONLY
-   :edition-max google.protobuf.Protobuf$Edition/:EDITION_MAX})
+  {:edition-unknown google.protobuf.Protobuf$Edition/EDITION_UNKNOWN
+   :edition-legacy google.protobuf.Protobuf$Edition/EDITION_LEGACY
+   :edition-proto-2 google.protobuf.Protobuf$Edition/EDITION_PROTO_2
+   :edition-proto-3 google.protobuf.Protobuf$Edition/EDITION_PROTO_3
+   :edition-2023 google.protobuf.Protobuf$Edition/EDITION_2023
+   :edition-2024 google.protobuf.Protobuf$Edition/EDITION_2024
+   :edition-1-test-only google.protobuf.Protobuf$Edition/EDITION_1_TEST_ONLY
+   :edition-2-test-only google.protobuf.Protobuf$Edition/EDITION_2_TEST_ONLY
+   :edition-99997-test-only google.protobuf.Protobuf$Edition/EDITION_99997_TEST_ONLY
+   :edition-99998-test-only google.protobuf.Protobuf$Edition/EDITION_99998_TEST_ONLY
+   :edition-99999-test-only google.protobuf.Protobuf$Edition/EDITION_99999_TEST_ONLY
+   :edition-max google.protobuf.Protobuf$Edition/EDITION_MAX})
 
 (def edition-keywords
   "Java enum to keyword mapping for Edition."
-  {google.protobuf.Protobuf$Edition/:EDITION_UNKNOWN :edition-unknown
-   google.protobuf.Protobuf$Edition/:EDITION_LEGACY :edition-legacy
-   google.protobuf.Protobuf$Edition/:EDITION_PROTO_2 :edition-proto-2
-   google.protobuf.Protobuf$Edition/:EDITION_PROTO_3 :edition-proto-3
-   google.protobuf.Protobuf$Edition/:EDITION_2023 :edition-2023
-   google.protobuf.Protobuf$Edition/:EDITION_2024 :edition-2024
-   google.protobuf.Protobuf$Edition/:EDITION_1_TEST_ONLY :edition-1-test-only
-   google.protobuf.Protobuf$Edition/:EDITION_2_TEST_ONLY :edition-2-test-only
-   google.protobuf.Protobuf$Edition/:EDITION_99997_TEST_ONLY :edition-99997-test-only
-   google.protobuf.Protobuf$Edition/:EDITION_99998_TEST_ONLY :edition-99998-test-only
-   google.protobuf.Protobuf$Edition/:EDITION_99999_TEST_ONLY :edition-99999-test-only
-   google.protobuf.Protobuf$Edition/:EDITION_MAX :edition-max})
+  {google.protobuf.Protobuf$Edition/EDITION_UNKNOWN :edition-unknown
+   google.protobuf.Protobuf$Edition/EDITION_LEGACY :edition-legacy
+   google.protobuf.Protobuf$Edition/EDITION_PROTO_2 :edition-proto-2
+   google.protobuf.Protobuf$Edition/EDITION_PROTO_3 :edition-proto-3
+   google.protobuf.Protobuf$Edition/EDITION_2023 :edition-2023
+   google.protobuf.Protobuf$Edition/EDITION_2024 :edition-2024
+   google.protobuf.Protobuf$Edition/EDITION_1_TEST_ONLY :edition-1-test-only
+   google.protobuf.Protobuf$Edition/EDITION_2_TEST_ONLY :edition-2-test-only
+   google.protobuf.Protobuf$Edition/EDITION_99997_TEST_ONLY :edition-99997-test-only
+   google.protobuf.Protobuf$Edition/EDITION_99998_TEST_ONLY :edition-99998-test-only
+   google.protobuf.Protobuf$Edition/EDITION_99999_TEST_ONLY :edition-99999-test-only
+   google.protobuf.Protobuf$Edition/EDITION_MAX :edition-max})
 
 ;; Enum: SymbolVisibility
 (def symbol-visibility-values
   "Keyword to Java enum mapping for SymbolVisibility."
-  {:visibility-unset google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_UNSET
-   :visibility-local google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_LOCAL
-   :visibility-export google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_EXPORT})
+  {:visibility-unset google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_UNSET
+   :visibility-local google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_LOCAL
+   :visibility-export google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_EXPORT})
 
 (def symbol-visibility-keywords
   "Java enum to keyword mapping for SymbolVisibility."
-  {google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_UNSET :visibility-unset
-   google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_LOCAL :visibility-local
-   google.protobuf.Protobuf$SymbolVisibility/:VISIBILITY_EXPORT :visibility-export})
+  {google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_UNSET :visibility-unset
+   google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_LOCAL :visibility-local
+   google.protobuf.Protobuf$SymbolVisibility/VISIBILITY_EXPORT :visibility-export})
 
 ;; Enum: Ignore
 (def ignore-values
   "Keyword to Java enum mapping for Ignore."
-  {:ignore-unspecified buf.validate.Validate$Ignore/:IGNORE_UNSPECIFIED
-   :ignore-if-zero-value buf.validate.Validate$Ignore/:IGNORE_IF_ZERO_VALUE
-   :ignore-always buf.validate.Validate$Ignore/:IGNORE_ALWAYS})
+  {:ignore-unspecified buf.validate.Validate$Ignore/IGNORE_UNSPECIFIED
+   :ignore-if-zero-value buf.validate.Validate$Ignore/IGNORE_IF_ZERO_VALUE
+   :ignore-always buf.validate.Validate$Ignore/IGNORE_ALWAYS})
 
 (def ignore-keywords
   "Java enum to keyword mapping for Ignore."
-  {buf.validate.Validate$Ignore/:IGNORE_UNSPECIFIED :ignore-unspecified
-   buf.validate.Validate$Ignore/:IGNORE_IF_ZERO_VALUE :ignore-if-zero-value
-   buf.validate.Validate$Ignore/:IGNORE_ALWAYS :ignore-always})
+  {buf.validate.Validate$Ignore/IGNORE_UNSPECIFIED :ignore-unspecified
+   buf.validate.Validate$Ignore/IGNORE_IF_ZERO_VALUE :ignore-if-zero-value
+   buf.validate.Validate$Ignore/IGNORE_ALWAYS :ignore-always})
 
 ;; Enum: KnownRegex
 (def known-regex-values
   "Keyword to Java enum mapping for KnownRegex."
-  {:known-regex-unspecified buf.validate.Validate$KnownRegex/:KNOWN_REGEX_UNSPECIFIED
-   :known-regex-http-header-name buf.validate.Validate$KnownRegex/:KNOWN_REGEX_HTTP_HEADER_NAME
-   :known-regex-http-header-value buf.validate.Validate$KnownRegex/:KNOWN_REGEX_HTTP_HEADER_VALUE})
+  {:known-regex-unspecified buf.validate.Validate$KnownRegex/KNOWN_REGEX_UNSPECIFIED
+   :known-regex-http-header-name buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_NAME
+   :known-regex-http-header-value buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_VALUE})
 
 (def known-regex-keywords
   "Java enum to keyword mapping for KnownRegex."
-  {buf.validate.Validate$KnownRegex/:KNOWN_REGEX_UNSPECIFIED :known-regex-unspecified
-   buf.validate.Validate$KnownRegex/:KNOWN_REGEX_HTTP_HEADER_NAME :known-regex-http-header-name
-   buf.validate.Validate$KnownRegex/:KNOWN_REGEX_HTTP_HEADER_VALUE :known-regex-http-header-value})
+  {buf.validate.Validate$KnownRegex/KNOWN_REGEX_UNSPECIFIED :known-regex-unspecified
+   buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_NAME :known-regex-http-header-name
+   buf.validate.Validate$KnownRegex/KNOWN_REGEX_HTTP_HEADER_VALUE :known-regex-http-header-value})
 
 ;; Enum: JonGuiDataVideoChannelHeatFilters
 (def jon-gui-data-video-channel-heat-filters-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatFilters."
-  {:jon-gui-data-video-channel-heat-filter-unspecified ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED
-   :jon-gui-data-video-channel-heat-filter-hot-white ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
-   :jon-gui-data-video-channel-heat-filter-hot-black ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
-   :jon-gui-data-video-channel-heat-filter-sepia ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
-   :jon-gui-data-video-channel-heat-filter-sepia-inverse ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE})
+  {:jon-gui-data-video-channel-heat-filter-unspecified ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-filter-hot-white ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
+   :jon-gui-data-video-channel-heat-filter-hot-black ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
+   :jon-gui-data-video-channel-heat-filter-sepia ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
+   :jon-gui-data-video-channel-heat-filter-sepia-inverse ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE})
 
 (def jon-gui-data-video-channel-heat-filters-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannelHeatFilters."
-  {ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED :jon-gui-data-video-channel-heat-filter-unspecified
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE :jon-gui-data-video-channel-heat-filter-hot-white
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK :jon-gui-data-video-channel-heat-filter-hot-black
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA :jon-gui-data-video-channel-heat-filter-sepia
-   ser.Ser$JonGuiDataVideoChannelHeatFilters/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE :jon-gui-data-video-channel-heat-filter-sepia-inverse})
+  {ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED :jon-gui-data-video-channel-heat-filter-unspecified
+   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE :jon-gui-data-video-channel-heat-filter-hot-white
+   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK :jon-gui-data-video-channel-heat-filter-hot-black
+   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA :jon-gui-data-video-channel-heat-filter-sepia
+   ser.Ser$JonGuiDataVideoChannelHeatFilters/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE :jon-gui-data-video-channel-heat-filter-sepia-inverse})
 
 ;; Enum: JonGuiDataVideoChannelHeatAGCModes
 (def jon-gui-data-video-channel-heat-agc-modes-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannelHeatAGCModes."
-  {:jon-gui-data-video-channel-heat-agc-mode-unspecified ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED
-   :jon-gui-data-video-channel-heat-agc-mode-1 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
-   :jon-gui-data-video-channel-heat-agc-mode-2 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
-   :jon-gui-data-video-channel-heat-agc-mode-3 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3})
+  {:jon-gui-data-video-channel-heat-agc-mode-unspecified ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED
+   :jon-gui-data-video-channel-heat-agc-mode-1 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
+   :jon-gui-data-video-channel-heat-agc-mode-2 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
+   :jon-gui-data-video-channel-heat-agc-mode-3 ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3})
 
 (def jon-gui-data-video-channel-heat-agc-modes-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannelHeatAGCModes."
-  {ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED :jon-gui-data-video-channel-heat-agc-mode-unspecified
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1 :jon-gui-data-video-channel-heat-agc-mode-1
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2 :jon-gui-data-video-channel-heat-agc-mode-2
-   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3 :jon-gui-data-video-channel-heat-agc-mode-3})
+  {ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED :jon-gui-data-video-channel-heat-agc-mode-unspecified
+   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1 :jon-gui-data-video-channel-heat-agc-mode-1
+   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2 :jon-gui-data-video-channel-heat-agc-mode-2
+   ser.Ser$JonGuiDataVideoChannelHeatAGCModes/JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3 :jon-gui-data-video-channel-heat-agc-mode-3})
 
 ;; Enum: JonGuiDataGpsUnits
 (def jon-gui-data-gps-units-values
   "Keyword to Java enum mapping for JonGuiDataGpsUnits."
-  {:jon-gui-data-gps-units-unspecified ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
-   :jon-gui-data-gps-units-decimal-degrees ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
-   :jon-gui-data-gps-units-degrees-minutes-seconds ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
-   :jon-gui-data-gps-units-degrees-decimal-minutes ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES})
+  {:jon-gui-data-gps-units-unspecified ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
+   :jon-gui-data-gps-units-decimal-degrees ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
+   :jon-gui-data-gps-units-degrees-minutes-seconds ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
+   :jon-gui-data-gps-units-degrees-decimal-minutes ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES})
 
 (def jon-gui-data-gps-units-keywords
   "Java enum to keyword mapping for JonGuiDataGpsUnits."
-  {ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_UNSPECIFIED :jon-gui-data-gps-units-unspecified
-   ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES :jon-gui-data-gps-units-decimal-degrees
-   ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS :jon-gui-data-gps-units-degrees-minutes-seconds
-   ser.Ser$JonGuiDataGpsUnits/:JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES :jon-gui-data-gps-units-degrees-decimal-minutes})
+  {ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_UNSPECIFIED :jon-gui-data-gps-units-unspecified
+   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES :jon-gui-data-gps-units-decimal-degrees
+   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS :jon-gui-data-gps-units-degrees-minutes-seconds
+   ser.Ser$JonGuiDataGpsUnits/JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES :jon-gui-data-gps-units-degrees-decimal-minutes})
 
 ;; Enum: JonGuiDataGpsFixType
 (def jon-gui-data-gps-fix-type-values
   "Keyword to Java enum mapping for JonGuiDataGpsFixType."
-  {:jon-gui-data-gps-fix-type-unspecified ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
-   :jon-gui-data-gps-fix-type-none ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_NONE
-   :jon-gui-data-gps-fix-type-1-d ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_1_D
-   :jon-gui-data-gps-fix-type-2-d ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_2_D
-   :jon-gui-data-gps-fix-type-3-d ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_3_D
-   :jon-gui-data-gps-fix-type-manual ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_MANUAL})
+  {:jon-gui-data-gps-fix-type-unspecified ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
+   :jon-gui-data-gps-fix-type-none ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
+   :jon-gui-data-gps-fix-type-1-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1_D
+   :jon-gui-data-gps-fix-type-2-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2_D
+   :jon-gui-data-gps-fix-type-3-d ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3_D
+   :jon-gui-data-gps-fix-type-manual ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL})
 
 (def jon-gui-data-gps-fix-type-keywords
   "Java enum to keyword mapping for JonGuiDataGpsFixType."
-  {ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED :jon-gui-data-gps-fix-type-unspecified
-   ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_NONE :jon-gui-data-gps-fix-type-none
-   ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_1_D :jon-gui-data-gps-fix-type-1-d
-   ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_2_D :jon-gui-data-gps-fix-type-2-d
-   ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_3_D :jon-gui-data-gps-fix-type-3-d
-   ser.Ser$JonGuiDataGpsFixType/:JON_GUI_DATA_GPS_FIX_TYPE_MANUAL :jon-gui-data-gps-fix-type-manual})
+  {ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED :jon-gui-data-gps-fix-type-unspecified
+   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE :jon-gui-data-gps-fix-type-none
+   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1_D :jon-gui-data-gps-fix-type-1-d
+   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2_D :jon-gui-data-gps-fix-type-2-d
+   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3_D :jon-gui-data-gps-fix-type-3-d
+   ser.Ser$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL :jon-gui-data-gps-fix-type-manual})
 
 ;; Enum: JonGuiDataCompassUnits
 (def jon-gui-data-compass-units-values
   "Keyword to Java enum mapping for JonGuiDataCompassUnits."
-  {:jon-gui-data-compass-units-unspecified ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
-   :jon-gui-data-compass-units-degrees ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_DEGREES
-   :jon-gui-data-compass-units-mils ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_MILS
-   :jon-gui-data-compass-units-grad ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_GRAD
-   :jon-gui-data-compass-units-mrad ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_MRAD})
+  {:jon-gui-data-compass-units-unspecified ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
+   :jon-gui-data-compass-units-degrees ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES
+   :jon-gui-data-compass-units-mils ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS
+   :jon-gui-data-compass-units-grad ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD
+   :jon-gui-data-compass-units-mrad ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD})
 
 (def jon-gui-data-compass-units-keywords
   "Java enum to keyword mapping for JonGuiDataCompassUnits."
-  {ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED :jon-gui-data-compass-units-unspecified
-   ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_DEGREES :jon-gui-data-compass-units-degrees
-   ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_MILS :jon-gui-data-compass-units-mils
-   ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_GRAD :jon-gui-data-compass-units-grad
-   ser.Ser$JonGuiDataCompassUnits/:JON_GUI_DATA_COMPASS_UNITS_MRAD :jon-gui-data-compass-units-mrad})
+  {ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED :jon-gui-data-compass-units-unspecified
+   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_DEGREES :jon-gui-data-compass-units-degrees
+   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MILS :jon-gui-data-compass-units-mils
+   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_GRAD :jon-gui-data-compass-units-grad
+   ser.Ser$JonGuiDataCompassUnits/JON_GUI_DATA_COMPASS_UNITS_MRAD :jon-gui-data-compass-units-mrad})
 
 ;; Enum: JonGuiDataAccumulatorStateIdx
 (def jon-gui-data-accumulator-state-idx-values
   "Keyword to Java enum mapping for JonGuiDataAccumulatorStateIdx."
-  {:jon-gui-data-accumulator-state-unspecified ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
-   :jon-gui-data-accumulator-state-unknown ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
-   :jon-gui-data-accumulator-state-empty ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
-   :jon-gui-data-accumulator-state-1 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_1
-   :jon-gui-data-accumulator-state-2 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_2
-   :jon-gui-data-accumulator-state-3 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_3
-   :jon-gui-data-accumulator-state-4 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_4
-   :jon-gui-data-accumulator-state-5 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_5
-   :jon-gui-data-accumulator-state-6 ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_6
-   :jon-gui-data-accumulator-state-full ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_FULL
-   :jon-gui-data-accumulator-state-charging ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING})
+  {:jon-gui-data-accumulator-state-unspecified ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
+   :jon-gui-data-accumulator-state-unknown ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
+   :jon-gui-data-accumulator-state-empty ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
+   :jon-gui-data-accumulator-state-1 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1
+   :jon-gui-data-accumulator-state-2 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2
+   :jon-gui-data-accumulator-state-3 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3
+   :jon-gui-data-accumulator-state-4 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4
+   :jon-gui-data-accumulator-state-5 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5
+   :jon-gui-data-accumulator-state-6 ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6
+   :jon-gui-data-accumulator-state-full ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL
+   :jon-gui-data-accumulator-state-charging ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING})
 
 (def jon-gui-data-accumulator-state-idx-keywords
   "Java enum to keyword mapping for JonGuiDataAccumulatorStateIdx."
-  {ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED :jon-gui-data-accumulator-state-unspecified
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN :jon-gui-data-accumulator-state-unknown
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY :jon-gui-data-accumulator-state-empty
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_1 :jon-gui-data-accumulator-state-1
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_2 :jon-gui-data-accumulator-state-2
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_3 :jon-gui-data-accumulator-state-3
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_4 :jon-gui-data-accumulator-state-4
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_5 :jon-gui-data-accumulator-state-5
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_6 :jon-gui-data-accumulator-state-6
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_FULL :jon-gui-data-accumulator-state-full
-   ser.Ser$JonGuiDataAccumulatorStateIdx/:JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING :jon-gui-data-accumulator-state-charging})
+  {ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED :jon-gui-data-accumulator-state-unspecified
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN :jon-gui-data-accumulator-state-unknown
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY :jon-gui-data-accumulator-state-empty
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_1 :jon-gui-data-accumulator-state-1
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_2 :jon-gui-data-accumulator-state-2
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_3 :jon-gui-data-accumulator-state-3
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_4 :jon-gui-data-accumulator-state-4
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_5 :jon-gui-data-accumulator-state-5
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_6 :jon-gui-data-accumulator-state-6
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_FULL :jon-gui-data-accumulator-state-full
+   ser.Ser$JonGuiDataAccumulatorStateIdx/JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING :jon-gui-data-accumulator-state-charging})
 
 ;; Enum: JonGuiDataTimeFormats
 (def jon-gui-data-time-formats-values
   "Keyword to Java enum mapping for JonGuiDataTimeFormats."
-  {:jon-gui-data-time-format-unspecified ser.Ser$JonGuiDataTimeFormats/:JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
-   :jon-gui-data-time-format-h-m-s ser.Ser$JonGuiDataTimeFormats/:JON_GUI_DATA_TIME_FORMAT_H_M_S
+  {:jon-gui-data-time-format-unspecified ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
+   :jon-gui-data-time-format-h-m-s ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S
    :jon-gui-data-time-format-y-m-d-h-m-s ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_M_D_H_M_S})
 
 (def jon-gui-data-time-formats-keywords
   "Java enum to keyword mapping for JonGuiDataTimeFormats."
-  {ser.Ser$JonGuiDataTimeFormats/:JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED :jon-gui-data-time-format-unspecified
-   ser.Ser$JonGuiDataTimeFormats/:JON_GUI_DATA_TIME_FORMAT_H_M_S :jon-gui-data-time-format-h-m-s
+  {ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED :jon-gui-data-time-format-unspecified
+   ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_H_M_S :jon-gui-data-time-format-h-m-s
    ser.Ser$JonGuiDataTimeFormats/JON_GUI_DATA_TIME_FORMAT_Y_M_D_H_M_S :jon-gui-data-time-format-y-m-d-h-m-s})
 
 ;; Enum: JonGuiDataRotaryDirection
 (def jon-gui-data-rotary-direction-values
   "Keyword to Java enum mapping for JonGuiDataRotaryDirection."
-  {:jon-gui-data-rotary-direction-unspecified ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
-   :jon-gui-data-rotary-direction-clockwise ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
-   :jon-gui-data-rotary-direction-counter-clockwise ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE})
+  {:jon-gui-data-rotary-direction-unspecified ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
+   :jon-gui-data-rotary-direction-clockwise ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+   :jon-gui-data-rotary-direction-counter-clockwise ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE})
 
 (def jon-gui-data-rotary-direction-keywords
   "Java enum to keyword mapping for JonGuiDataRotaryDirection."
-  {ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED :jon-gui-data-rotary-direction-unspecified
-   ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE :jon-gui-data-rotary-direction-clockwise
-   ser.Ser$JonGuiDataRotaryDirection/:JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE :jon-gui-data-rotary-direction-counter-clockwise})
+  {ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED :jon-gui-data-rotary-direction-unspecified
+   ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE :jon-gui-data-rotary-direction-clockwise
+   ser.Ser$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE :jon-gui-data-rotary-direction-counter-clockwise})
 
 ;; Enum: JonGuiDataLrfScanModes
 (def jon-gui-data-lrf-scan-modes-values
   "Keyword to Java enum mapping for JonGuiDataLrfScanModes."
-  {:jon-gui-data-lrf-scan-mode-unspecified ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
-   :jon-gui-data-lrf-scan-mode-1-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-4-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-10-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-20-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-100-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
-   :jon-gui-data-lrf-scan-mode-200-hz-continuous ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS})
+  {:jon-gui-data-lrf-scan-mode-unspecified ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS})
 
 (def jon-gui-data-lrf-scan-modes-keywords
   "Java enum to keyword mapping for JonGuiDataLrfScanModes."
-  {ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED :jon-gui-data-lrf-scan-mode-unspecified
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-1-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-4-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-10-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-20-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-100-hz-continuous
-   ser.Ser$JonGuiDataLrfScanModes/:JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-200-hz-continuous})
+  {ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED :jon-gui-data-lrf-scan-mode-unspecified
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   ser.Ser$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS :jon-gui-data-lrf-scan-mode-200-hz-continuous})
 
 ;; Enum: JonGuiDatatLrfLaserPointerModes
 (def jon-gui-datat-lrf-laser-pointer-modes-values
   "Keyword to Java enum mapping for JonGuiDatatLrfLaserPointerModes."
-  {:jon-gui-data-lrf-laser-pointer-mode-unspecified ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
-   :jon-gui-data-lrf-laser-pointer-mode-off ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
-   :jon-gui-data-lrf-laser-pointer-mode-on-1 ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
-   :jon-gui-data-lrf-laser-pointer-mode-on-2 ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2})
+  {:jon-gui-data-lrf-laser-pointer-mode-unspecified ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
+   :jon-gui-data-lrf-laser-pointer-mode-off ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
+   :jon-gui-data-lrf-laser-pointer-mode-on-1 ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
+   :jon-gui-data-lrf-laser-pointer-mode-on-2 ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2})
 
 (def jon-gui-datat-lrf-laser-pointer-modes-keywords
   "Java enum to keyword mapping for JonGuiDatatLrfLaserPointerModes."
-  {ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED :jon-gui-data-lrf-laser-pointer-mode-unspecified
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF :jon-gui-data-lrf-laser-pointer-mode-off
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1 :jon-gui-data-lrf-laser-pointer-mode-on-1
-   ser.Ser$JonGuiDatatLrfLaserPointerModes/:JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2 :jon-gui-data-lrf-laser-pointer-mode-on-2})
+  {ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED :jon-gui-data-lrf-laser-pointer-mode-unspecified
+   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF :jon-gui-data-lrf-laser-pointer-mode-off
+   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1 :jon-gui-data-lrf-laser-pointer-mode-on-1
+   ser.Ser$JonGuiDatatLrfLaserPointerModes/JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2 :jon-gui-data-lrf-laser-pointer-mode-on-2})
 
 ;; Enum: JonGuiDataCompassCalibrateStatus
 (def jon-gui-data-compass-calibrate-status-values
   "Keyword to Java enum mapping for JonGuiDataCompassCalibrateStatus."
-  {:jon-gui-data-compass-calibrate-status-unspecified ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
-   :jon-gui-data-compass-calibrate-status-not-calibrating ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
-   :jon-gui-data-compass-calibrate-status-calibrating-short ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
-   :jon-gui-data-compass-calibrate-status-calibrating-long ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
-   :jon-gui-data-compass-calibrate-status-finished ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
-   :jon-gui-data-compass-calibrate-status-error ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR})
+  {:jon-gui-data-compass-calibrate-status-unspecified ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
+   :jon-gui-data-compass-calibrate-status-not-calibrating ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+   :jon-gui-data-compass-calibrate-status-calibrating-short ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
+   :jon-gui-data-compass-calibrate-status-calibrating-long ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
+   :jon-gui-data-compass-calibrate-status-finished ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
+   :jon-gui-data-compass-calibrate-status-error ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR})
 
 (def jon-gui-data-compass-calibrate-status-keywords
   "Java enum to keyword mapping for JonGuiDataCompassCalibrateStatus."
-  {ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED :jon-gui-data-compass-calibrate-status-unspecified
-   ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING :jon-gui-data-compass-calibrate-status-not-calibrating
-   ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT :jon-gui-data-compass-calibrate-status-calibrating-short
-   ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG :jon-gui-data-compass-calibrate-status-calibrating-long
-   ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED :jon-gui-data-compass-calibrate-status-finished
-   ser.Ser$JonGuiDataCompassCalibrateStatus/:JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR :jon-gui-data-compass-calibrate-status-error})
+  {ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED :jon-gui-data-compass-calibrate-status-unspecified
+   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING :jon-gui-data-compass-calibrate-status-not-calibrating
+   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT :jon-gui-data-compass-calibrate-status-calibrating-short
+   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG :jon-gui-data-compass-calibrate-status-calibrating-long
+   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED :jon-gui-data-compass-calibrate-status-finished
+   ser.Ser$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR :jon-gui-data-compass-calibrate-status-error})
 
 ;; Enum: JonGuiDataRotaryMode
 (def jon-gui-data-rotary-mode-values
   "Keyword to Java enum mapping for JonGuiDataRotaryMode."
-  {:jon-gui-data-rotary-mode-unspecified ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
-   :jon-gui-data-rotary-mode-initialization ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
-   :jon-gui-data-rotary-mode-speed ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_SPEED
-   :jon-gui-data-rotary-mode-position ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_POSITION
-   :jon-gui-data-rotary-mode-stabilization ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_STABILIZATION
-   :jon-gui-data-rotary-mode-targeting ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_TARGETING
-   :jon-gui-data-rotary-mode-video-tracker ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER})
+  {:jon-gui-data-rotary-mode-unspecified ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
+   :jon-gui-data-rotary-mode-initialization ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+   :jon-gui-data-rotary-mode-speed ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
+   :jon-gui-data-rotary-mode-position ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
+   :jon-gui-data-rotary-mode-stabilization ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+   :jon-gui-data-rotary-mode-targeting ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
+   :jon-gui-data-rotary-mode-video-tracker ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER})
 
 (def jon-gui-data-rotary-mode-keywords
   "Java enum to keyword mapping for JonGuiDataRotaryMode."
-  {ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED :jon-gui-data-rotary-mode-unspecified
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_INITIALIZATION :jon-gui-data-rotary-mode-initialization
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_SPEED :jon-gui-data-rotary-mode-speed
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_POSITION :jon-gui-data-rotary-mode-position
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_STABILIZATION :jon-gui-data-rotary-mode-stabilization
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_TARGETING :jon-gui-data-rotary-mode-targeting
-   ser.Ser$JonGuiDataRotaryMode/:JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER :jon-gui-data-rotary-mode-video-tracker})
+  {ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED :jon-gui-data-rotary-mode-unspecified
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION :jon-gui-data-rotary-mode-initialization
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED :jon-gui-data-rotary-mode-speed
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION :jon-gui-data-rotary-mode-position
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION :jon-gui-data-rotary-mode-stabilization
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING :jon-gui-data-rotary-mode-targeting
+   ser.Ser$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER :jon-gui-data-rotary-mode-video-tracker})
 
 ;; Enum: JonGuiDataVideoChannel
 (def jon-gui-data-video-channel-values
   "Keyword to Java enum mapping for JonGuiDataVideoChannel."
-  {:jon-gui-data-video-channel-unspecified ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
-   :jon-gui-data-video-channel-heat ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-   :jon-gui-data-video-channel-day ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_DAY})
+  {:jon-gui-data-video-channel-unspecified ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
+   :jon-gui-data-video-channel-heat ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+   :jon-gui-data-video-channel-day ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY})
 
 (def jon-gui-data-video-channel-keywords
   "Java enum to keyword mapping for JonGuiDataVideoChannel."
-  {ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED :jon-gui-data-video-channel-unspecified
-   ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_HEAT :jon-gui-data-video-channel-heat
-   ser.Ser$JonGuiDataVideoChannel/:JON_GUI_DATA_VIDEO_CHANNEL_DAY :jon-gui-data-video-channel-day})
+  {ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED :jon-gui-data-video-channel-unspecified
+   ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT :jon-gui-data-video-channel-heat
+   ser.Ser$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY :jon-gui-data-video-channel-day})
 
 ;; Enum: JonGuiDataRecOsdScreen
 (def jon-gui-data-rec-osd-screen-values
   "Keyword to Java enum mapping for JonGuiDataRecOsdScreen."
-  {:jon-gui-data-rec-osd-screen-unspecified ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
-   :jon-gui-data-rec-osd-screen-main ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_MAIN
-   :jon-gui-data-rec-osd-screen-lrf-measure ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
-   :jon-gui-data-rec-osd-screen-lrf-result ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
-   :jon-gui-data-rec-osd-screen-lrf-result-simplified ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED})
+  {:jon-gui-data-rec-osd-screen-unspecified ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
+   :jon-gui-data-rec-osd-screen-main ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN
+   :jon-gui-data-rec-osd-screen-lrf-measure ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
+   :jon-gui-data-rec-osd-screen-lrf-result ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
+   :jon-gui-data-rec-osd-screen-lrf-result-simplified ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED})
 
 (def jon-gui-data-rec-osd-screen-keywords
   "Java enum to keyword mapping for JonGuiDataRecOsdScreen."
-  {ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED :jon-gui-data-rec-osd-screen-unspecified
-   ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_MAIN :jon-gui-data-rec-osd-screen-main
-   ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE :jon-gui-data-rec-osd-screen-lrf-measure
-   ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT :jon-gui-data-rec-osd-screen-lrf-result
-   ser.Ser$JonGuiDataRecOsdScreen/:JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED :jon-gui-data-rec-osd-screen-lrf-result-simplified})
+  {ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED :jon-gui-data-rec-osd-screen-unspecified
+   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_MAIN :jon-gui-data-rec-osd-screen-main
+   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE :jon-gui-data-rec-osd-screen-lrf-measure
+   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT :jon-gui-data-rec-osd-screen-lrf-result
+   ser.Ser$JonGuiDataRecOsdScreen/JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED :jon-gui-data-rec-osd-screen-lrf-result-simplified})
 
 ;; Enum: JonGuiDataFxModeDay
 (def jon-gui-data-fx-mode-day-values
   "Keyword to Java enum mapping for JonGuiDataFxModeDay."
-  {:jon-gui-data-fx-mode-day-default ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_DEFAULT
-   :jon-gui-data-fx-mode-day-a ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_A
-   :jon-gui-data-fx-mode-day-b ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_B
-   :jon-gui-data-fx-mode-day-c ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_C
-   :jon-gui-data-fx-mode-day-d ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_D
-   :jon-gui-data-fx-mode-day-e ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_E
-   :jon-gui-data-fx-mode-day-f ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_F})
+  {:jon-gui-data-fx-mode-day-default ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   :jon-gui-data-fx-mode-day-a ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
+   :jon-gui-data-fx-mode-day-b ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
+   :jon-gui-data-fx-mode-day-c ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
+   :jon-gui-data-fx-mode-day-d ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
+   :jon-gui-data-fx-mode-day-e ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
+   :jon-gui-data-fx-mode-day-f ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F})
 
 (def jon-gui-data-fx-mode-day-keywords
   "Java enum to keyword mapping for JonGuiDataFxModeDay."
-  {ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_DEFAULT :jon-gui-data-fx-mode-day-default
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_A :jon-gui-data-fx-mode-day-a
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_B :jon-gui-data-fx-mode-day-b
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_C :jon-gui-data-fx-mode-day-c
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_D :jon-gui-data-fx-mode-day-d
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_E :jon-gui-data-fx-mode-day-e
-   ser.Ser$JonGuiDataFxModeDay/:JON_GUI_DATA_FX_MODE_DAY_F :jon-gui-data-fx-mode-day-f})
+  {ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT :jon-gui-data-fx-mode-day-default
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A :jon-gui-data-fx-mode-day-a
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B :jon-gui-data-fx-mode-day-b
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C :jon-gui-data-fx-mode-day-c
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D :jon-gui-data-fx-mode-day-d
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E :jon-gui-data-fx-mode-day-e
+   ser.Ser$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F :jon-gui-data-fx-mode-day-f})
 
 ;; Enum: JonGuiDataFxModeHeat
 (def jon-gui-data-fx-mode-heat-values
   "Keyword to Java enum mapping for JonGuiDataFxModeHeat."
-  {:jon-gui-data-fx-mode-heat-default ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
-   :jon-gui-data-fx-mode-heat-a ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_A
-   :jon-gui-data-fx-mode-heat-b ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_B
-   :jon-gui-data-fx-mode-heat-c ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_C
-   :jon-gui-data-fx-mode-heat-d ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_D
-   :jon-gui-data-fx-mode-heat-e ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_E
-   :jon-gui-data-fx-mode-heat-f ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_F})
+  {:jon-gui-data-fx-mode-heat-default ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   :jon-gui-data-fx-mode-heat-a ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
+   :jon-gui-data-fx-mode-heat-b ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
+   :jon-gui-data-fx-mode-heat-c ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
+   :jon-gui-data-fx-mode-heat-d ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
+   :jon-gui-data-fx-mode-heat-e ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
+   :jon-gui-data-fx-mode-heat-f ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F})
 
 (def jon-gui-data-fx-mode-heat-keywords
   "Java enum to keyword mapping for JonGuiDataFxModeHeat."
-  {ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_DEFAULT :jon-gui-data-fx-mode-heat-default
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_A :jon-gui-data-fx-mode-heat-a
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_B :jon-gui-data-fx-mode-heat-b
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_C :jon-gui-data-fx-mode-heat-c
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_D :jon-gui-data-fx-mode-heat-d
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_E :jon-gui-data-fx-mode-heat-e
-   ser.Ser$JonGuiDataFxModeHeat/:JON_GUI_DATA_FX_MODE_HEAT_F :jon-gui-data-fx-mode-heat-f})
+  {ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT :jon-gui-data-fx-mode-heat-default
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A :jon-gui-data-fx-mode-heat-a
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B :jon-gui-data-fx-mode-heat-b
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C :jon-gui-data-fx-mode-heat-c
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D :jon-gui-data-fx-mode-heat-d
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E :jon-gui-data-fx-mode-heat-e
+   ser.Ser$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F :jon-gui-data-fx-mode-heat-f})
 
 ;; Enum: JonGuiDataSystemLocalizations
 (def jon-gui-data-system-localizations-values
   "Keyword to Java enum mapping for JonGuiDataSystemLocalizations."
-  {:jon-gui-data-system-localization-unspecified ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED
-   :jon-gui-data-system-localization-en ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
-   :jon-gui-data-system-localization-ua ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
-   :jon-gui-data-system-localization-ar ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
-   :jon-gui-data-system-localization-cs ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_CS})
+  {:jon-gui-data-system-localization-unspecified ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED
+   :jon-gui-data-system-localization-en ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
+   :jon-gui-data-system-localization-ua ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+   :jon-gui-data-system-localization-ar ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+   :jon-gui-data-system-localization-cs ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS})
 
 (def jon-gui-data-system-localizations-keywords
   "Java enum to keyword mapping for JonGuiDataSystemLocalizations."
-  {ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED :jon-gui-data-system-localization-unspecified
-   ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_EN :jon-gui-data-system-localization-en
-   ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_UA :jon-gui-data-system-localization-ua
-   ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_AR :jon-gui-data-system-localization-ar
-   ser.Ser$JonGuiDataSystemLocalizations/:JON_GUI_DATA_SYSTEM_LOCALIZATION_CS :jon-gui-data-system-localization-cs})
+  {ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED :jon-gui-data-system-localization-unspecified
+   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN :jon-gui-data-system-localization-en
+   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_UA :jon-gui-data-system-localization-ua
+   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_AR :jon-gui-data-system-localization-ar
+   ser.Ser$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_CS :jon-gui-data-system-localization-cs})
 
 ;; Enum: JonGuiDataClientType
 (def jon-gui-data-client-type-values
   "Keyword to Java enum mapping for JonGuiDataClientType."
-  {:jon-gui-data-client-type-unspecified ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
-   :jon-gui-data-client-type-internal-cv ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
-   :jon-gui-data-client-type-local-network ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   :jon-gui-data-client-type-certificate-protected ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
-   :jon-gui-data-client-type-lira ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_LIRA})
+  {:jon-gui-data-client-type-unspecified ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+   :jon-gui-data-client-type-internal-cv ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   :jon-gui-data-client-type-local-network ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   :jon-gui-data-client-type-certificate-protected ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   :jon-gui-data-client-type-lira ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA})
 
 (def jon-gui-data-client-type-keywords
   "Java enum to keyword mapping for JonGuiDataClientType."
-  {ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED :jon-gui-data-client-type-unspecified
-   ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV :jon-gui-data-client-type-internal-cv
-   ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK :jon-gui-data-client-type-local-network
-   ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED :jon-gui-data-client-type-certificate-protected
-   ser.Ser$JonGuiDataClientType/:JON_GUI_DATA_CLIENT_TYPE_LIRA :jon-gui-data-client-type-lira})
+  {ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED :jon-gui-data-client-type-unspecified
+   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV :jon-gui-data-client-type-internal-cv
+   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK :jon-gui-data-client-type-local-network
+   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED :jon-gui-data-client-type-certificate-protected
+   ser.Ser$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA :jon-gui-data-client-type-lira})
 
 
 ;; =============================================================================
@@ -423,7 +423,7 @@
   (let [builder (google.protobuf.Protobuf$FileDescriptorSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :file)
-  (.setFile builder (get m :file)))
+      (.setFile builder (get m :file)))
     
     (.build builder)))
 (defn parse-file-descriptor-set
@@ -431,7 +431,7 @@
   [^google.protobuf.Protobuf$FileDescriptorSet proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFile proto) (assoc :file (.getFile proto))
+    ((.hasFile proto) (assoc :file (.getFile proto)))
     ))
 (defn build-file-descriptor-proto
   "Build a FileDescriptorProto protobuf message from a map."
@@ -439,33 +439,33 @@
   (let [builder (google.protobuf.Protobuf$FileDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :package)
-  (.setPackage builder (get m :package)))
+      (.setPackage builder (get m :package)))
     (when (contains? m :dependency)
-  (.setDependency builder (get m :dependency)))
+      (.setDependency builder (get m :dependency)))
     (when (contains? m :public-dependency)
-  (.setPublicDependency builder (get m :public-dependency)))
+      (.setPublicDependency builder (get m :public-dependency)))
     (when (contains? m :weak-dependency)
-  (.setWeakDependency builder (get m :weak-dependency)))
+      (.setWeakDependency builder (get m :weak-dependency)))
     (when (contains? m :option-dependency)
-  (.setOptionDependency builder (get m :option-dependency)))
+      (.setOptionDependency builder (get m :option-dependency)))
     (when (contains? m :message-type)
-  (.setMessageType builder (get m :message-type)))
+      (.setMessageType builder (get m :message-type)))
     (when (contains? m :enum-type)
-  (.setEnumType builder (get m :enum-type)))
+      (.setEnumType builder (get m :enum-type)))
     (when (contains? m :service)
-  (.setService builder (get m :service)))
+      (.setService builder (get m :service)))
     (when (contains? m :extension)
-  (.setExtension builder (get m :extension)))
+      (.setExtension builder (get m :extension)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     (when (contains? m :source-code-info)
-  (.setSourceCodeInfo builder (get m :source-code-info)))
+      (.setSourceCodeInfo builder (get m :source-code-info)))
     (when (contains? m :syntax)
-  (.setSyntax builder (get m :syntax)))
+      (.setSyntax builder (get m :syntax)))
     (when (contains? m :edition)
-  (.setEdition builder (get m :edition)))
+      (.setEdition builder (get m :edition)))
     
     (.build builder)))
 (defn parse-file-descriptor-proto
@@ -473,20 +473,20 @@
   [^google.protobuf.Protobuf$FileDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasPackage proto) (assoc :package (.getPackage proto))
-    (.hasDependency proto) (assoc :dependency (.getDependency proto))
-    (.hasPublicDependency proto) (assoc :public-dependency (.getPublicDependency proto))
-    (.hasWeakDependency proto) (assoc :weak-dependency (.getWeakDependency proto))
-    (.hasOptionDependency proto) (assoc :option-dependency (.getOptionDependency proto))
-    (.hasMessageType proto) (assoc :message-type (.getMessageType proto))
-    (.hasEnumType proto) (assoc :enum-type (.getEnumType proto))
-    (.hasService proto) (assoc :service (.getService proto))
-    (.hasExtension proto) (assoc :extension (.getExtension proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasSourceCodeInfo proto) (assoc :source-code-info (.getSourceCodeInfo proto))
-    (.hasSyntax proto) (assoc :syntax (.getSyntax proto))
-    (.hasEdition proto) (assoc :edition (.getEdition proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasPackage proto) (assoc :package (.getPackage proto)))
+    ((.hasDependency proto) (assoc :dependency (.getDependency proto)))
+    ((.hasPublicDependency proto) (assoc :public-dependency (.getPublicDependency proto)))
+    ((.hasWeakDependency proto) (assoc :weak-dependency (.getWeakDependency proto)))
+    ((.hasOptionDependency proto) (assoc :option-dependency (.getOptionDependency proto)))
+    ((.hasMessageType proto) (assoc :message-type (.getMessageType proto)))
+    ((.hasEnumType proto) (assoc :enum-type (.getEnumType proto)))
+    ((.hasService proto) (assoc :service (.getService proto)))
+    ((.hasExtension proto) (assoc :extension (.getExtension proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
+    ((.hasSourceCodeInfo proto) (assoc :source-code-info (.getSourceCodeInfo proto)))
+    ((.hasSyntax proto) (assoc :syntax (.getSyntax proto)))
+    ((.hasEdition proto) (assoc :edition (.getEdition proto)))
     ))
 (defn build-descriptor-proto
   "Build a DescriptorProto protobuf message from a map."
@@ -494,27 +494,27 @@
   (let [builder (google.protobuf.Protobuf$DescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :field)
-  (.setField builder (get m :field)))
+      (.setField builder (get m :field)))
     (when (contains? m :extension)
-  (.setExtension builder (get m :extension)))
+      (.setExtension builder (get m :extension)))
     (when (contains? m :nested-type)
-  (.setNestedType builder (get m :nested-type)))
+      (.setNestedType builder (get m :nested-type)))
     (when (contains? m :enum-type)
-  (.setEnumType builder (get m :enum-type)))
+      (.setEnumType builder (get m :enum-type)))
     (when (contains? m :extension-range)
-  (.setExtensionRange builder (get m :extension-range)))
+      (.setExtensionRange builder (get m :extension-range)))
     (when (contains? m :oneof-decl)
-  (.setOneofDecl builder (get m :oneof-decl)))
+      (.setOneofDecl builder (get m :oneof-decl)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     (when (contains? m :reserved-range)
-  (.setReservedRange builder (get m :reserved-range)))
+      (.setReservedRange builder (get m :reserved-range)))
     (when (contains? m :reserved-name)
-  (.setReservedName builder (get m :reserved-name)))
+      (.setReservedName builder (get m :reserved-name)))
     (when (contains? m :visibility)
-  (.setVisibility builder (get m :visibility)))
+      (.setVisibility builder (get m :visibility)))
     
     (.build builder)))
 (defn parse-descriptor-proto
@@ -522,17 +522,17 @@
   [^google.protobuf.Protobuf$DescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasField proto) (assoc :field (.getField proto))
-    (.hasExtension proto) (assoc :extension (.getExtension proto))
-    (.hasNestedType proto) (assoc :nested-type (.getNestedType proto))
-    (.hasEnumType proto) (assoc :enum-type (.getEnumType proto))
-    (.hasExtensionRange proto) (assoc :extension-range (.getExtensionRange proto))
-    (.hasOneofDecl proto) (assoc :oneof-decl (.getOneofDecl proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasReservedRange proto) (assoc :reserved-range (.getReservedRange proto))
-    (.hasReservedName proto) (assoc :reserved-name (.getReservedName proto))
-    (.hasVisibility proto) (assoc :visibility (.getVisibility proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasField proto) (assoc :field (.getField proto)))
+    ((.hasExtension proto) (assoc :extension (.getExtension proto)))
+    ((.hasNestedType proto) (assoc :nested-type (.getNestedType proto)))
+    ((.hasEnumType proto) (assoc :enum-type (.getEnumType proto)))
+    ((.hasExtensionRange proto) (assoc :extension-range (.getExtensionRange proto)))
+    ((.hasOneofDecl proto) (assoc :oneof-decl (.getOneofDecl proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
+    ((.hasReservedRange proto) (assoc :reserved-range (.getReservedRange proto)))
+    ((.hasReservedName proto) (assoc :reserved-name (.getReservedName proto)))
+    ((.hasVisibility proto) (assoc :visibility (.getVisibility proto)))
     ))
 (defn build-extension-range-options
   "Build a ExtensionRangeOptions protobuf message from a map."
@@ -540,13 +540,13 @@
   (let [builder (google.protobuf.Protobuf$ExtensionRangeOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     (when (contains? m :declaration)
-  (.setDeclaration builder (get m :declaration)))
+      (.setDeclaration builder (get m :declaration)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :verification)
-  (.setVerification builder (get m :verification)))
+      (.setVerification builder (get m :verification)))
     
     (.build builder)))
 (defn parse-extension-range-options
@@ -554,10 +554,10 @@
   [^google.protobuf.Protobuf$ExtensionRangeOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
-    (.hasDeclaration proto) (assoc :declaration (.getDeclaration proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasVerification proto) (assoc :verification (.getVerification proto))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
+    ((.hasDeclaration proto) (assoc :declaration (.getDeclaration proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasVerification proto) (assoc :verification (.getVerification proto)))
     ))
 (defn build-field-descriptor-proto
   "Build a FieldDescriptorProto protobuf message from a map."
@@ -565,27 +565,27 @@
   (let [builder (google.protobuf.Protobuf$FieldDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :number)
-  (.setNumber builder (get m :number)))
+      (.setNumber builder (get m :number)))
     (when (contains? m :label)
-  (.setLabel builder (get m :label)))
+      (.setLabel builder (get m :label)))
     (when (contains? m :type)
-  (.setType builder (get m :type)))
+      (.setType builder (get m :type)))
     (when (contains? m :type-name)
-  (.setTypeName builder (get m :type-name)))
+      (.setTypeName builder (get m :type-name)))
     (when (contains? m :extendee)
-  (.setExtendee builder (get m :extendee)))
+      (.setExtendee builder (get m :extendee)))
     (when (contains? m :default-value)
-  (.setDefaultValue builder (get m :default-value)))
+      (.setDefaultValue builder (get m :default-value)))
     (when (contains? m :oneof-index)
-  (.setOneofIndex builder (get m :oneof-index)))
+      (.setOneofIndex builder (get m :oneof-index)))
     (when (contains? m :json-name)
-  (.setJsonName builder (get m :json-name)))
+      (.setJsonName builder (get m :json-name)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     (when (contains? m :proto-3-optional)
-  (.setProto3Optional builder (get m :proto-3-optional)))
+      (.setProto3Optional builder (get m :proto-3-optional)))
     
     (.build builder)))
 (defn parse-field-descriptor-proto
@@ -593,17 +593,17 @@
   [^google.protobuf.Protobuf$FieldDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasNumber proto) (assoc :number (.getNumber proto))
-    (.hasLabel proto) (assoc :label (.getLabel proto))
-    (.hasType proto) (assoc :type (.getType proto))
-    (.hasTypeName proto) (assoc :type-name (.getTypeName proto))
-    (.hasExtendee proto) (assoc :extendee (.getExtendee proto))
-    (.hasDefaultValue proto) (assoc :default-value (.getDefaultValue proto))
-    (.hasOneofIndex proto) (assoc :oneof-index (.getOneofIndex proto))
-    (.hasJsonName proto) (assoc :json-name (.getJsonName proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasProto3Optional proto) (assoc :proto-3-optional (.getProto3Optional proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasNumber proto) (assoc :number (.getNumber proto)))
+    ((.hasLabel proto) (assoc :label (.getLabel proto)))
+    ((.hasType proto) (assoc :type (.getType proto)))
+    ((.hasTypeName proto) (assoc :type-name (.getTypeName proto)))
+    ((.hasExtendee proto) (assoc :extendee (.getExtendee proto)))
+    ((.hasDefaultValue proto) (assoc :default-value (.getDefaultValue proto)))
+    ((.hasOneofIndex proto) (assoc :oneof-index (.getOneofIndex proto)))
+    ((.hasJsonName proto) (assoc :json-name (.getJsonName proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
+    ((.hasProto3Optional proto) (assoc :proto-3-optional (.getProto3Optional proto)))
     ))
 (defn build-oneof-descriptor-proto
   "Build a OneofDescriptorProto protobuf message from a map."
@@ -611,9 +611,9 @@
   (let [builder (google.protobuf.Protobuf$OneofDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     
     (.build builder)))
 (defn parse-oneof-descriptor-proto
@@ -621,8 +621,8 @@
   [^google.protobuf.Protobuf$OneofDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
     ))
 (defn build-enum-descriptor-proto
   "Build a EnumDescriptorProto protobuf message from a map."
@@ -630,17 +630,17 @@
   (let [builder (google.protobuf.Protobuf$EnumDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     (when (contains? m :reserved-range)
-  (.setReservedRange builder (get m :reserved-range)))
+      (.setReservedRange builder (get m :reserved-range)))
     (when (contains? m :reserved-name)
-  (.setReservedName builder (get m :reserved-name)))
+      (.setReservedName builder (get m :reserved-name)))
     (when (contains? m :visibility)
-  (.setVisibility builder (get m :visibility)))
+      (.setVisibility builder (get m :visibility)))
     
     (.build builder)))
 (defn parse-enum-descriptor-proto
@@ -648,12 +648,12 @@
   [^google.protobuf.Protobuf$EnumDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasReservedRange proto) (assoc :reserved-range (.getReservedRange proto))
-    (.hasReservedName proto) (assoc :reserved-name (.getReservedName proto))
-    (.hasVisibility proto) (assoc :visibility (.getVisibility proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
+    ((.hasReservedRange proto) (assoc :reserved-range (.getReservedRange proto)))
+    ((.hasReservedName proto) (assoc :reserved-name (.getReservedName proto)))
+    ((.hasVisibility proto) (assoc :visibility (.getVisibility proto)))
     ))
 (defn build-enum-value-descriptor-proto
   "Build a EnumValueDescriptorProto protobuf message from a map."
@@ -661,11 +661,11 @@
   (let [builder (google.protobuf.Protobuf$EnumValueDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :number)
-  (.setNumber builder (get m :number)))
+      (.setNumber builder (get m :number)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     
     (.build builder)))
 (defn parse-enum-value-descriptor-proto
@@ -673,9 +673,9 @@
   [^google.protobuf.Protobuf$EnumValueDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasNumber proto) (assoc :number (.getNumber proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasNumber proto) (assoc :number (.getNumber proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
     ))
 (defn build-service-descriptor-proto
   "Build a ServiceDescriptorProto protobuf message from a map."
@@ -683,11 +683,11 @@
   (let [builder (google.protobuf.Protobuf$ServiceDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :method)
-  (.setMethod builder (get m :method)))
+      (.setMethod builder (get m :method)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     
     (.build builder)))
 (defn parse-service-descriptor-proto
@@ -695,9 +695,9 @@
   [^google.protobuf.Protobuf$ServiceDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasMethod proto) (assoc :method (.getMethod proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasMethod proto) (assoc :method (.getMethod proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
     ))
 (defn build-method-descriptor-proto
   "Build a MethodDescriptorProto protobuf message from a map."
@@ -705,17 +705,17 @@
   (let [builder (google.protobuf.Protobuf$MethodDescriptorProto/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :input-type)
-  (.setInputType builder (get m :input-type)))
+      (.setInputType builder (get m :input-type)))
     (when (contains? m :output-type)
-  (.setOutputType builder (get m :output-type)))
+      (.setOutputType builder (get m :output-type)))
     (when (contains? m :options)
-  (.setOptions builder (get m :options)))
+      (.setOptions builder (get m :options)))
     (when (contains? m :client-streaming)
-  (.setClientStreaming builder (get m :client-streaming)))
+      (.setClientStreaming builder (get m :client-streaming)))
     (when (contains? m :server-streaming)
-  (.setServerStreaming builder (get m :server-streaming)))
+      (.setServerStreaming builder (get m :server-streaming)))
     
     (.build builder)))
 (defn parse-method-descriptor-proto
@@ -723,12 +723,12 @@
   [^google.protobuf.Protobuf$MethodDescriptorProto proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasInputType proto) (assoc :input-type (.getInputType proto))
-    (.hasOutputType proto) (assoc :output-type (.getOutputType proto))
-    (.hasOptions proto) (assoc :options (.getOptions proto))
-    (.hasClientStreaming proto) (assoc :client-streaming (.getClientStreaming proto))
-    (.hasServerStreaming proto) (assoc :server-streaming (.getServerStreaming proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasInputType proto) (assoc :input-type (.getInputType proto)))
+    ((.hasOutputType proto) (assoc :output-type (.getOutputType proto)))
+    ((.hasOptions proto) (assoc :options (.getOptions proto)))
+    ((.hasClientStreaming proto) (assoc :client-streaming (.getClientStreaming proto)))
+    ((.hasServerStreaming proto) (assoc :server-streaming (.getServerStreaming proto)))
     ))
 (defn build-file-options
   "Build a FileOptions protobuf message from a map."
@@ -736,47 +736,47 @@
   (let [builder (google.protobuf.Protobuf$FileOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :java-package)
-  (.setJavaPackage builder (get m :java-package)))
+      (.setJavaPackage builder (get m :java-package)))
     (when (contains? m :java-outer-classname)
-  (.setJavaOuterClassname builder (get m :java-outer-classname)))
+      (.setJavaOuterClassname builder (get m :java-outer-classname)))
     (when (contains? m :java-multiple-files)
-  (.setJavaMultipleFiles builder (get m :java-multiple-files)))
+      (.setJavaMultipleFiles builder (get m :java-multiple-files)))
     (when (contains? m :java-generate-equals-and-hash)
-  (.setJavaGenerateEqualsAndHash builder (get m :java-generate-equals-and-hash)))
+      (.setJavaGenerateEqualsAndHash builder (get m :java-generate-equals-and-hash)))
     (when (contains? m :java-string-check-utf-8)
-  (.setJavaStringCheckUtf8 builder (get m :java-string-check-utf-8)))
+      (.setJavaStringCheckUtf8 builder (get m :java-string-check-utf-8)))
     (when (contains? m :optimize-for)
-  (.setOptimizeFor builder (get m :optimize-for)))
+      (.setOptimizeFor builder (get m :optimize-for)))
     (when (contains? m :go-package)
-  (.setGoPackage builder (get m :go-package)))
+      (.setGoPackage builder (get m :go-package)))
     (when (contains? m :cc-generic-services)
-  (.setCcGenericServices builder (get m :cc-generic-services)))
+      (.setCcGenericServices builder (get m :cc-generic-services)))
     (when (contains? m :java-generic-services)
-  (.setJavaGenericServices builder (get m :java-generic-services)))
+      (.setJavaGenericServices builder (get m :java-generic-services)))
     (when (contains? m :py-generic-services)
-  (.setPyGenericServices builder (get m :py-generic-services)))
+      (.setPyGenericServices builder (get m :py-generic-services)))
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :cc-enable-arenas)
-  (.setCcEnableArenas builder (get m :cc-enable-arenas)))
+      (.setCcEnableArenas builder (get m :cc-enable-arenas)))
     (when (contains? m :objc-class-prefix)
-  (.setObjcClassPrefix builder (get m :objc-class-prefix)))
+      (.setObjcClassPrefix builder (get m :objc-class-prefix)))
     (when (contains? m :csharp-namespace)
-  (.setCsharpNamespace builder (get m :csharp-namespace)))
+      (.setCsharpNamespace builder (get m :csharp-namespace)))
     (when (contains? m :swift-prefix)
-  (.setSwiftPrefix builder (get m :swift-prefix)))
+      (.setSwiftPrefix builder (get m :swift-prefix)))
     (when (contains? m :php-class-prefix)
-  (.setPhpClassPrefix builder (get m :php-class-prefix)))
+      (.setPhpClassPrefix builder (get m :php-class-prefix)))
     (when (contains? m :php-namespace)
-  (.setPhpNamespace builder (get m :php-namespace)))
+      (.setPhpNamespace builder (get m :php-namespace)))
     (when (contains? m :php-metadata-namespace)
-  (.setPhpMetadataNamespace builder (get m :php-metadata-namespace)))
+      (.setPhpMetadataNamespace builder (get m :php-metadata-namespace)))
     (when (contains? m :ruby-package)
-  (.setRubyPackage builder (get m :ruby-package)))
+      (.setRubyPackage builder (get m :ruby-package)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-file-options
@@ -784,27 +784,27 @@
   [^google.protobuf.Protobuf$FileOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasJavaPackage proto) (assoc :java-package (.getJavaPackage proto))
-    (.hasJavaOuterClassname proto) (assoc :java-outer-classname (.getJavaOuterClassname proto))
-    (.hasJavaMultipleFiles proto) (assoc :java-multiple-files (.getJavaMultipleFiles proto))
-    (.hasJavaGenerateEqualsAndHash proto) (assoc :java-generate-equals-and-hash (.getJavaGenerateEqualsAndHash proto))
-    (.hasJavaStringCheckUtf8 proto) (assoc :java-string-check-utf-8 (.getJavaStringCheckUtf8 proto))
-    (.hasOptimizeFor proto) (assoc :optimize-for (.getOptimizeFor proto))
-    (.hasGoPackage proto) (assoc :go-package (.getGoPackage proto))
-    (.hasCcGenericServices proto) (assoc :cc-generic-services (.getCcGenericServices proto))
-    (.hasJavaGenericServices proto) (assoc :java-generic-services (.getJavaGenericServices proto))
-    (.hasPyGenericServices proto) (assoc :py-generic-services (.getPyGenericServices proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasCcEnableArenas proto) (assoc :cc-enable-arenas (.getCcEnableArenas proto))
-    (.hasObjcClassPrefix proto) (assoc :objc-class-prefix (.getObjcClassPrefix proto))
-    (.hasCsharpNamespace proto) (assoc :csharp-namespace (.getCsharpNamespace proto))
-    (.hasSwiftPrefix proto) (assoc :swift-prefix (.getSwiftPrefix proto))
-    (.hasPhpClassPrefix proto) (assoc :php-class-prefix (.getPhpClassPrefix proto))
-    (.hasPhpNamespace proto) (assoc :php-namespace (.getPhpNamespace proto))
-    (.hasPhpMetadataNamespace proto) (assoc :php-metadata-namespace (.getPhpMetadataNamespace proto))
-    (.hasRubyPackage proto) (assoc :ruby-package (.getRubyPackage proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasJavaPackage proto) (assoc :java-package (.getJavaPackage proto)))
+    ((.hasJavaOuterClassname proto) (assoc :java-outer-classname (.getJavaOuterClassname proto)))
+    ((.hasJavaMultipleFiles proto) (assoc :java-multiple-files (.getJavaMultipleFiles proto)))
+    ((.hasJavaGenerateEqualsAndHash proto) (assoc :java-generate-equals-and-hash (.getJavaGenerateEqualsAndHash proto)))
+    ((.hasJavaStringCheckUtf8 proto) (assoc :java-string-check-utf-8 (.getJavaStringCheckUtf8 proto)))
+    ((.hasOptimizeFor proto) (assoc :optimize-for (.getOptimizeFor proto)))
+    ((.hasGoPackage proto) (assoc :go-package (.getGoPackage proto)))
+    ((.hasCcGenericServices proto) (assoc :cc-generic-services (.getCcGenericServices proto)))
+    ((.hasJavaGenericServices proto) (assoc :java-generic-services (.getJavaGenericServices proto)))
+    ((.hasPyGenericServices proto) (assoc :py-generic-services (.getPyGenericServices proto)))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasCcEnableArenas proto) (assoc :cc-enable-arenas (.getCcEnableArenas proto)))
+    ((.hasObjcClassPrefix proto) (assoc :objc-class-prefix (.getObjcClassPrefix proto)))
+    ((.hasCsharpNamespace proto) (assoc :csharp-namespace (.getCsharpNamespace proto)))
+    ((.hasSwiftPrefix proto) (assoc :swift-prefix (.getSwiftPrefix proto)))
+    ((.hasPhpClassPrefix proto) (assoc :php-class-prefix (.getPhpClassPrefix proto)))
+    ((.hasPhpNamespace proto) (assoc :php-namespace (.getPhpNamespace proto)))
+    ((.hasPhpMetadataNamespace proto) (assoc :php-metadata-namespace (.getPhpMetadataNamespace proto)))
+    ((.hasRubyPackage proto) (assoc :ruby-package (.getRubyPackage proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-message-options
   "Build a MessageOptions protobuf message from a map."
@@ -812,19 +812,19 @@
   (let [builder (google.protobuf.Protobuf$MessageOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :message-set-wire-format)
-  (.setMessageSetWireFormat builder (get m :message-set-wire-format)))
+      (.setMessageSetWireFormat builder (get m :message-set-wire-format)))
     (when (contains? m :no-standard-descriptor-accessor)
-  (.setNoStandardDescriptorAccessor builder (get m :no-standard-descriptor-accessor)))
+      (.setNoStandardDescriptorAccessor builder (get m :no-standard-descriptor-accessor)))
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :map-entry)
-  (.setMapEntry builder (get m :map-entry)))
+      (.setMapEntry builder (get m :map-entry)))
     (when (contains? m :deprecated-legacy-json-field-conflicts)
-  (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
+      (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-message-options
@@ -832,13 +832,13 @@
   [^google.protobuf.Protobuf$MessageOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMessageSetWireFormat proto) (assoc :message-set-wire-format (.getMessageSetWireFormat proto))
-    (.hasNoStandardDescriptorAccessor proto) (assoc :no-standard-descriptor-accessor (.getNoStandardDescriptorAccessor proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasMapEntry proto) (assoc :map-entry (.getMapEntry proto))
-    (.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasMessageSetWireFormat proto) (assoc :message-set-wire-format (.getMessageSetWireFormat proto)))
+    ((.hasNoStandardDescriptorAccessor proto) (assoc :no-standard-descriptor-accessor (.getNoStandardDescriptorAccessor proto)))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasMapEntry proto) (assoc :map-entry (.getMapEntry proto)))
+    ((.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-field-options
   "Build a FieldOptions protobuf message from a map."
@@ -846,33 +846,33 @@
   (let [builder (google.protobuf.Protobuf$FieldOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :ctype)
-  (.setCtype builder (get m :ctype)))
+      (.setCtype builder (get m :ctype)))
     (when (contains? m :packed)
-  (.setPacked builder (get m :packed)))
+      (.setPacked builder (get m :packed)))
     (when (contains? m :jstype)
-  (.setJstype builder (get m :jstype)))
+      (.setJstype builder (get m :jstype)))
     (when (contains? m :lazy)
-  (.setLazy builder (get m :lazy)))
+      (.setLazy builder (get m :lazy)))
     (when (contains? m :unverified-lazy)
-  (.setUnverifiedLazy builder (get m :unverified-lazy)))
+      (.setUnverifiedLazy builder (get m :unverified-lazy)))
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :weak)
-  (.setWeak builder (get m :weak)))
+      (.setWeak builder (get m :weak)))
     (when (contains? m :debug-redact)
-  (.setDebugRedact builder (get m :debug-redact)))
+      (.setDebugRedact builder (get m :debug-redact)))
     (when (contains? m :retention)
-  (.setRetention builder (get m :retention)))
+      (.setRetention builder (get m :retention)))
     (when (contains? m :targets)
-  (.setTargets builder (get m :targets)))
+      (.setTargets builder (get m :targets)))
     (when (contains? m :edition-defaults)
-  (.setEditionDefaults builder (get m :edition-defaults)))
+      (.setEditionDefaults builder (get m :edition-defaults)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :feature-support)
-  (.setFeatureSupport builder (get m :feature-support)))
+      (.setFeatureSupport builder (get m :feature-support)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-field-options
@@ -880,20 +880,20 @@
   [^google.protobuf.Protobuf$FieldOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasCtype proto) (assoc :ctype (.getCtype proto))
-    (.hasPacked proto) (assoc :packed (.getPacked proto))
-    (.hasJstype proto) (assoc :jstype (.getJstype proto))
-    (.hasLazy proto) (assoc :lazy (.getLazy proto))
-    (.hasUnverifiedLazy proto) (assoc :unverified-lazy (.getUnverifiedLazy proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasWeak proto) (assoc :weak (.getWeak proto))
-    (.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto))
-    (.hasRetention proto) (assoc :retention (.getRetention proto))
-    (.hasTargets proto) (assoc :targets (.getTargets proto))
-    (.hasEditionDefaults proto) (assoc :edition-defaults (.getEditionDefaults proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasCtype proto) (assoc :ctype (.getCtype proto)))
+    ((.hasPacked proto) (assoc :packed (.getPacked proto)))
+    ((.hasJstype proto) (assoc :jstype (.getJstype proto)))
+    ((.hasLazy proto) (assoc :lazy (.getLazy proto)))
+    ((.hasUnverifiedLazy proto) (assoc :unverified-lazy (.getUnverifiedLazy proto)))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasWeak proto) (assoc :weak (.getWeak proto)))
+    ((.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto)))
+    ((.hasRetention proto) (assoc :retention (.getRetention proto)))
+    ((.hasTargets proto) (assoc :targets (.getTargets proto)))
+    ((.hasEditionDefaults proto) (assoc :edition-defaults (.getEditionDefaults proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-oneof-options
   "Build a OneofOptions protobuf message from a map."
@@ -901,9 +901,9 @@
   (let [builder (google.protobuf.Protobuf$OneofOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-oneof-options
@@ -911,8 +911,8 @@
   [^google.protobuf.Protobuf$OneofOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-enum-options
   "Build a EnumOptions protobuf message from a map."
@@ -920,15 +920,15 @@
   (let [builder (google.protobuf.Protobuf$EnumOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :allow-alias)
-  (.setAllowAlias builder (get m :allow-alias)))
+      (.setAllowAlias builder (get m :allow-alias)))
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :deprecated-legacy-json-field-conflicts)
-  (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
+      (.setDeprecatedLegacyJsonFieldConflicts builder (get m :deprecated-legacy-json-field-conflicts)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-enum-options
@@ -936,11 +936,11 @@
   [^google.protobuf.Protobuf$EnumOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasAllowAlias proto) (assoc :allow-alias (.getAllowAlias proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasAllowAlias proto) (assoc :allow-alias (.getAllowAlias proto)))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasDeprecatedLegacyJsonFieldConflicts proto) (assoc :deprecated-legacy-json-field-conflicts (.getDeprecatedLegacyJsonFieldConflicts proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-enum-value-options
   "Build a EnumValueOptions protobuf message from a map."
@@ -948,15 +948,15 @@
   (let [builder (google.protobuf.Protobuf$EnumValueOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :debug-redact)
-  (.setDebugRedact builder (get m :debug-redact)))
+      (.setDebugRedact builder (get m :debug-redact)))
     (when (contains? m :feature-support)
-  (.setFeatureSupport builder (get m :feature-support)))
+      (.setFeatureSupport builder (get m :feature-support)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-enum-value-options
@@ -964,11 +964,11 @@
   [^google.protobuf.Protobuf$EnumValueOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto))
-    (.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasDebugRedact proto) (assoc :debug-redact (.getDebugRedact proto)))
+    ((.hasFeatureSupport proto) (assoc :feature-support (.getFeatureSupport proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-service-options
   "Build a ServiceOptions protobuf message from a map."
@@ -976,11 +976,11 @@
   (let [builder (google.protobuf.Protobuf$ServiceOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-service-options
@@ -988,9 +988,9 @@
   [^google.protobuf.Protobuf$ServiceOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-method-options
   "Build a MethodOptions protobuf message from a map."
@@ -998,13 +998,13 @@
   (let [builder (google.protobuf.Protobuf$MethodOptions/newBuilder)]
     ;; Set regular fields
     (when (contains? m :deprecated)
-  (.setDeprecated builder (get m :deprecated)))
+      (.setDeprecated builder (get m :deprecated)))
     (when (contains? m :idempotency-level)
-  (.setIdempotencyLevel builder (get m :idempotency-level)))
+      (.setIdempotencyLevel builder (get m :idempotency-level)))
     (when (contains? m :features)
-  (.setFeatures builder (get m :features)))
+      (.setFeatures builder (get m :features)))
     (when (contains? m :uninterpreted-option)
-  (.setUninterpretedOption builder (get m :uninterpreted-option)))
+      (.setUninterpretedOption builder (get m :uninterpreted-option)))
     
     (.build builder)))
 (defn parse-method-options
@@ -1012,10 +1012,10 @@
   [^google.protobuf.Protobuf$MethodOptions proto]
   (cond-> {}
     ;; Regular fields
-    (.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto))
-    (.hasIdempotencyLevel proto) (assoc :idempotency-level (.getIdempotencyLevel proto))
-    (.hasFeatures proto) (assoc :features (.getFeatures proto))
-    (.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto))
+    ((.hasDeprecated proto) (assoc :deprecated (.getDeprecated proto)))
+    ((.hasIdempotencyLevel proto) (assoc :idempotency-level (.getIdempotencyLevel proto)))
+    ((.hasFeatures proto) (assoc :features (.getFeatures proto)))
+    ((.hasUninterpretedOption proto) (assoc :uninterpreted-option (.getUninterpretedOption proto)))
     ))
 (defn build-uninterpreted-option
   "Build a UninterpretedOption protobuf message from a map."
@@ -1023,19 +1023,19 @@
   (let [builder (google.protobuf.Protobuf$UninterpretedOption/newBuilder)]
     ;; Set regular fields
     (when (contains? m :name)
-  (.setName builder (get m :name)))
+      (.setName builder (get m :name)))
     (when (contains? m :identifier-value)
-  (.setIdentifierValue builder (get m :identifier-value)))
+      (.setIdentifierValue builder (get m :identifier-value)))
     (when (contains? m :positive-int-value)
-  (.setPositiveIntValue builder (get m :positive-int-value)))
+      (.setPositiveIntValue builder (get m :positive-int-value)))
     (when (contains? m :negative-int-value)
-  (.setNegativeIntValue builder (get m :negative-int-value)))
+      (.setNegativeIntValue builder (get m :negative-int-value)))
     (when (contains? m :double-value)
-  (.setDoubleValue builder (get m :double-value)))
+      (.setDoubleValue builder (get m :double-value)))
     (when (contains? m :string-value)
-  (.setStringValue builder (get m :string-value)))
+      (.setStringValue builder (get m :string-value)))
     (when (contains? m :aggregate-value)
-  (.setAggregateValue builder (get m :aggregate-value)))
+      (.setAggregateValue builder (get m :aggregate-value)))
     
     (.build builder)))
 (defn parse-uninterpreted-option
@@ -1043,13 +1043,13 @@
   [^google.protobuf.Protobuf$UninterpretedOption proto]
   (cond-> {}
     ;; Regular fields
-    (.hasName proto) (assoc :name (.getName proto))
-    (.hasIdentifierValue proto) (assoc :identifier-value (.getIdentifierValue proto))
-    (.hasPositiveIntValue proto) (assoc :positive-int-value (.getPositiveIntValue proto))
-    (.hasNegativeIntValue proto) (assoc :negative-int-value (.getNegativeIntValue proto))
-    (.hasDoubleValue proto) (assoc :double-value (.getDoubleValue proto))
-    (.hasStringValue proto) (assoc :string-value (.getStringValue proto))
-    (.hasAggregateValue proto) (assoc :aggregate-value (.getAggregateValue proto))
+    ((.hasName proto) (assoc :name (.getName proto)))
+    ((.hasIdentifierValue proto) (assoc :identifier-value (.getIdentifierValue proto)))
+    ((.hasPositiveIntValue proto) (assoc :positive-int-value (.getPositiveIntValue proto)))
+    ((.hasNegativeIntValue proto) (assoc :negative-int-value (.getNegativeIntValue proto)))
+    ((.hasDoubleValue proto) (assoc :double-value (.getDoubleValue proto)))
+    ((.hasStringValue proto) (assoc :string-value (.getStringValue proto)))
+    ((.hasAggregateValue proto) (assoc :aggregate-value (.getAggregateValue proto)))
     ))
 (defn build-feature-set
   "Build a FeatureSet protobuf message from a map."
@@ -1057,21 +1057,21 @@
   (let [builder (google.protobuf.Protobuf$FeatureSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :field-presence)
-  (.setFieldPresence builder (get m :field-presence)))
+      (.setFieldPresence builder (get m :field-presence)))
     (when (contains? m :enum-type)
-  (.setEnumType builder (get m :enum-type)))
+      (.setEnumType builder (get m :enum-type)))
     (when (contains? m :repeated-field-encoding)
-  (.setRepeatedFieldEncoding builder (get m :repeated-field-encoding)))
+      (.setRepeatedFieldEncoding builder (get m :repeated-field-encoding)))
     (when (contains? m :utf-8-validation)
-  (.setUtf8Validation builder (get m :utf-8-validation)))
+      (.setUtf8Validation builder (get m :utf-8-validation)))
     (when (contains? m :message-encoding)
-  (.setMessageEncoding builder (get m :message-encoding)))
+      (.setMessageEncoding builder (get m :message-encoding)))
     (when (contains? m :json-format)
-  (.setJsonFormat builder (get m :json-format)))
+      (.setJsonFormat builder (get m :json-format)))
     (when (contains? m :enforce-naming-style)
-  (.setEnforceNamingStyle builder (get m :enforce-naming-style)))
+      (.setEnforceNamingStyle builder (get m :enforce-naming-style)))
     (when (contains? m :default-symbol-visibility)
-  (.setDefaultSymbolVisibility builder (get m :default-symbol-visibility)))
+      (.setDefaultSymbolVisibility builder (get m :default-symbol-visibility)))
     
     (.build builder)))
 (defn parse-feature-set
@@ -1079,14 +1079,14 @@
   [^google.protobuf.Protobuf$FeatureSet proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFieldPresence proto) (assoc :field-presence (.getFieldPresence proto))
-    (.hasEnumType proto) (assoc :enum-type (.getEnumType proto))
-    (.hasRepeatedFieldEncoding proto) (assoc :repeated-field-encoding (.getRepeatedFieldEncoding proto))
-    (.hasUtf8Validation proto) (assoc :utf-8-validation (.getUtf8Validation proto))
-    (.hasMessageEncoding proto) (assoc :message-encoding (.getMessageEncoding proto))
-    (.hasJsonFormat proto) (assoc :json-format (.getJsonFormat proto))
-    (.hasEnforceNamingStyle proto) (assoc :enforce-naming-style (.getEnforceNamingStyle proto))
-    (.hasDefaultSymbolVisibility proto) (assoc :default-symbol-visibility (.getDefaultSymbolVisibility proto))
+    ((.hasFieldPresence proto) (assoc :field-presence (.getFieldPresence proto)))
+    ((.hasEnumType proto) (assoc :enum-type (.getEnumType proto)))
+    ((.hasRepeatedFieldEncoding proto) (assoc :repeated-field-encoding (.getRepeatedFieldEncoding proto)))
+    ((.hasUtf8Validation proto) (assoc :utf-8-validation (.getUtf8Validation proto)))
+    ((.hasMessageEncoding proto) (assoc :message-encoding (.getMessageEncoding proto)))
+    ((.hasJsonFormat proto) (assoc :json-format (.getJsonFormat proto)))
+    ((.hasEnforceNamingStyle proto) (assoc :enforce-naming-style (.getEnforceNamingStyle proto)))
+    ((.hasDefaultSymbolVisibility proto) (assoc :default-symbol-visibility (.getDefaultSymbolVisibility proto)))
     ))
 (defn build-feature-set-defaults
   "Build a FeatureSetDefaults protobuf message from a map."
@@ -1094,11 +1094,11 @@
   (let [builder (google.protobuf.Protobuf$FeatureSetDefaults/newBuilder)]
     ;; Set regular fields
     (when (contains? m :defaults)
-  (.setDefaults builder (get m :defaults)))
+      (.setDefaults builder (get m :defaults)))
     (when (contains? m :minimum-edition)
-  (.setMinimumEdition builder (get m :minimum-edition)))
+      (.setMinimumEdition builder (get m :minimum-edition)))
     (when (contains? m :maximum-edition)
-  (.setMaximumEdition builder (get m :maximum-edition)))
+      (.setMaximumEdition builder (get m :maximum-edition)))
     
     (.build builder)))
 (defn parse-feature-set-defaults
@@ -1106,9 +1106,9 @@
   [^google.protobuf.Protobuf$FeatureSetDefaults proto]
   (cond-> {}
     ;; Regular fields
-    (.hasDefaults proto) (assoc :defaults (.getDefaults proto))
-    (.hasMinimumEdition proto) (assoc :minimum-edition (.getMinimumEdition proto))
-    (.hasMaximumEdition proto) (assoc :maximum-edition (.getMaximumEdition proto))
+    ((.hasDefaults proto) (assoc :defaults (.getDefaults proto)))
+    ((.hasMinimumEdition proto) (assoc :minimum-edition (.getMinimumEdition proto)))
+    ((.hasMaximumEdition proto) (assoc :maximum-edition (.getMaximumEdition proto)))
     ))
 (defn build-source-code-info
   "Build a SourceCodeInfo protobuf message from a map."
@@ -1116,7 +1116,7 @@
   (let [builder (google.protobuf.Protobuf$SourceCodeInfo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :location)
-  (.setLocation builder (get m :location)))
+      (.setLocation builder (get m :location)))
     
     (.build builder)))
 (defn parse-source-code-info
@@ -1124,7 +1124,7 @@
   [^google.protobuf.Protobuf$SourceCodeInfo proto]
   (cond-> {}
     ;; Regular fields
-    (.hasLocation proto) (assoc :location (.getLocation proto))
+    ((.hasLocation proto) (assoc :location (.getLocation proto)))
     ))
 (defn build-generated-code-info
   "Build a GeneratedCodeInfo protobuf message from a map."
@@ -1132,7 +1132,7 @@
   (let [builder (google.protobuf.Protobuf$GeneratedCodeInfo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :annotation)
-  (.setAnnotation builder (get m :annotation)))
+      (.setAnnotation builder (get m :annotation)))
     
     (.build builder)))
 (defn parse-generated-code-info
@@ -1140,7 +1140,7 @@
   [^google.protobuf.Protobuf$GeneratedCodeInfo proto]
   (cond-> {}
     ;; Regular fields
-    (.hasAnnotation proto) (assoc :annotation (.getAnnotation proto))
+    ((.hasAnnotation proto) (assoc :annotation (.getAnnotation proto)))
     ))
 (defn build-duration
   "Build a Duration protobuf message from a map."
@@ -1148,9 +1148,9 @@
   (let [builder (google.protobuf.Protobuf$Duration/newBuilder)]
     ;; Set regular fields
     (when (contains? m :seconds)
-  (.setSeconds builder (get m :seconds)))
+      (.setSeconds builder (get m :seconds)))
     (when (contains? m :nanos)
-  (.setNanos builder (get m :nanos)))
+      (.setNanos builder (get m :nanos)))
     
     (.build builder)))
 (defn parse-duration
@@ -1158,8 +1158,8 @@
   [^google.protobuf.Protobuf$Duration proto]
   (cond-> {}
     ;; Regular fields
-    (.hasSeconds proto) (assoc :seconds (.getSeconds proto))
-    (.hasNanos proto) (assoc :nanos (.getNanos proto))
+    ((.hasSeconds proto) (assoc :seconds (.getSeconds proto)))
+    ((.hasNanos proto) (assoc :nanos (.getNanos proto)))
     ))
 (defn build-timestamp
   "Build a Timestamp protobuf message from a map."
@@ -1167,9 +1167,9 @@
   (let [builder (google.protobuf.Protobuf$Timestamp/newBuilder)]
     ;; Set regular fields
     (when (contains? m :seconds)
-  (.setSeconds builder (get m :seconds)))
+      (.setSeconds builder (get m :seconds)))
     (when (contains? m :nanos)
-  (.setNanos builder (get m :nanos)))
+      (.setNanos builder (get m :nanos)))
     
     (.build builder)))
 (defn parse-timestamp
@@ -1177,8 +1177,8 @@
   [^google.protobuf.Protobuf$Timestamp proto]
   (cond-> {}
     ;; Regular fields
-    (.hasSeconds proto) (assoc :seconds (.getSeconds proto))
-    (.hasNanos proto) (assoc :nanos (.getNanos proto))
+    ((.hasSeconds proto) (assoc :seconds (.getSeconds proto)))
+    ((.hasNanos proto) (assoc :nanos (.getNanos proto)))
     ))
 (defn build-rule
   "Build a Rule protobuf message from a map."
@@ -1186,11 +1186,11 @@
   (let [builder (buf.validate.Validate$Rule/newBuilder)]
     ;; Set regular fields
     (when (contains? m :id)
-  (.setId builder (get m :id)))
+      (.setId builder (get m :id)))
     (when (contains? m :message)
-  (.setMessage builder (get m :message)))
+      (.setMessage builder (get m :message)))
     (when (contains? m :expression)
-  (.setExpression builder (get m :expression)))
+      (.setExpression builder (get m :expression)))
     
     (.build builder)))
 (defn parse-rule
@@ -1198,9 +1198,9 @@
   [^buf.validate.Validate$Rule proto]
   (cond-> {}
     ;; Regular fields
-    (.hasId proto) (assoc :id (.getId proto))
-    (.hasMessage proto) (assoc :message (.getMessage proto))
-    (.hasExpression proto) (assoc :expression (.getExpression proto))
+    ((.hasId proto) (assoc :id (.getId proto)))
+    ((.hasMessage proto) (assoc :message (.getMessage proto)))
+    ((.hasExpression proto) (assoc :expression (.getExpression proto)))
     ))
 (defn build-message-rules
   "Build a MessageRules protobuf message from a map."
@@ -1208,9 +1208,9 @@
   (let [builder (buf.validate.Validate$MessageRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :cel)
-  (.setCel builder (get m :cel)))
+      (.setCel builder (get m :cel)))
     (when (contains? m :oneof)
-  (.setOneof builder (get m :oneof)))
+      (.setOneof builder (get m :oneof)))
     
     (.build builder)))
 (defn parse-message-rules
@@ -1218,8 +1218,8 @@
   [^buf.validate.Validate$MessageRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasCel proto) (assoc :cel (.getCel proto))
-    (.hasOneof proto) (assoc :oneof (.getOneof proto))
+    ((.hasCel proto) (assoc :cel (.getCel proto)))
+    ((.hasOneof proto) (assoc :oneof (.getOneof proto)))
     ))
 (defn build-message-oneof-rule
   "Build a MessageOneofRule protobuf message from a map."
@@ -1227,9 +1227,9 @@
   (let [builder (buf.validate.Validate$MessageOneofRule/newBuilder)]
     ;; Set regular fields
     (when (contains? m :fields)
-  (.setFields builder (get m :fields)))
+      (.setFields builder (get m :fields)))
     (when (contains? m :required)
-  (.setRequired builder (get m :required)))
+      (.setRequired builder (get m :required)))
     
     (.build builder)))
 (defn parse-message-oneof-rule
@@ -1237,8 +1237,8 @@
   [^buf.validate.Validate$MessageOneofRule proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFields proto) (assoc :fields (.getFields proto))
-    (.hasRequired proto) (assoc :required (.getRequired proto))
+    ((.hasFields proto) (assoc :fields (.getFields proto)))
+    ((.hasRequired proto) (assoc :required (.getRequired proto)))
     ))
 (defn build-oneof-rules
   "Build a OneofRules protobuf message from a map."
@@ -1246,7 +1246,7 @@
   (let [builder (buf.validate.Validate$OneofRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :required)
-  (.setRequired builder (get m :required)))
+      (.setRequired builder (get m :required)))
     
     (.build builder)))
 (defn parse-oneof-rules
@@ -1254,7 +1254,7 @@
   [^buf.validate.Validate$OneofRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasRequired proto) (assoc :required (.getRequired proto))
+    ((.hasRequired proto) (assoc :required (.getRequired proto)))
     ))
 (defn build-field-rules
   "Build a FieldRules protobuf message from a map."
@@ -1262,11 +1262,11 @@
   (let [builder (buf.validate.Validate$FieldRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :cel)
-  (.setCel builder (get m :cel)))
+      (.setCel builder (get m :cel)))
     (when (contains? m :required)
-  (.setRequired builder (get m :required)))
+      (.setRequired builder (get m :required)))
     (when (contains? m :ignore)
-  (.setIgnore builder (get m :ignore)))
+      (.setIgnore builder (get m :ignore)))
     
     (.build builder)))
 
@@ -1301,9 +1301,9 @@
   [^buf.validate.Validate$FieldRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasCel proto) (assoc :cel (.getCel proto))
-    (.hasRequired proto) (assoc :required (.getRequired proto))
-    (.hasIgnore proto) (assoc :ignore (.getIgnore proto))
+    ((.hasCel proto) (assoc :cel (.getCel proto)))
+    ((.hasRequired proto) (assoc :required (.getRequired proto)))
+    ((.hasIgnore proto) (assoc :ignore (.getIgnore proto)))
     
     ;; Oneof payload
     true (merge (parse-field-rules-payload proto))))
@@ -1311,7 +1311,7 @@
 (defn parse-field-rules-payload
   "Parse the oneof payload from a FieldRules."
   [^buf.validate.Validate$FieldRules proto]
-  (case (.getTypeCase proto)
+  (case (..getTypeCase proto)
         FLOAT {:float (.getFloat proto)}
     DOUBLE {:double (.getDouble proto)}
     INT_32 {:int-32 (.getInt32 proto)}
@@ -1341,7 +1341,7 @@
   (let [builder (buf.validate.Validate$PredefinedRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :cel)
-  (.setCel builder (get m :cel)))
+      (.setCel builder (get m :cel)))
     
     (.build builder)))
 (defn parse-predefined-rules
@@ -1349,7 +1349,7 @@
   [^buf.validate.Validate$PredefinedRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasCel proto) (assoc :cel (.getCel proto))
+    ((.hasCel proto) (assoc :cel (.getCel proto)))
     ))
 (defn build-float-rules
   "Build a FloatRules protobuf message from a map."
@@ -1357,15 +1357,15 @@
   (let [builder (buf.validate.Validate$FloatRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :finite)
-  (.setFinite builder (get m :finite)))
+      (.setFinite builder (get m :finite)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1383,11 +1383,11 @@
   [^buf.validate.Validate$FloatRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasFinite proto) (assoc :finite (.getFinite proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasFinite proto) (assoc :finite (.getFinite proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-float-rules-payload proto))))
@@ -1395,7 +1395,7 @@
 (defn parse-float-rules-payload
   "Parse the oneof payload from a FloatRules."
   [^buf.validate.Validate$FloatRules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1406,15 +1406,15 @@
   (let [builder (buf.validate.Validate$DoubleRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :finite)
-  (.setFinite builder (get m :finite)))
+      (.setFinite builder (get m :finite)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1432,11 +1432,11 @@
   [^buf.validate.Validate$DoubleRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasFinite proto) (assoc :finite (.getFinite proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasFinite proto) (assoc :finite (.getFinite proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-double-rules-payload proto))))
@@ -1444,7 +1444,7 @@
 (defn parse-double-rules-payload
   "Parse the oneof payload from a DoubleRules."
   [^buf.validate.Validate$DoubleRules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1455,13 +1455,13 @@
   (let [builder (buf.validate.Validate$Int32Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1479,10 +1479,10 @@
   [^buf.validate.Validate$Int32Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-int-32-rules-payload proto))))
@@ -1490,7 +1490,7 @@
 (defn parse-int-32-rules-payload
   "Parse the oneof payload from a Int32Rules."
   [^buf.validate.Validate$Int32Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1501,13 +1501,13 @@
   (let [builder (buf.validate.Validate$Int64Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1525,10 +1525,10 @@
   [^buf.validate.Validate$Int64Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-int-64-rules-payload proto))))
@@ -1536,7 +1536,7 @@
 (defn parse-int-64-rules-payload
   "Parse the oneof payload from a Int64Rules."
   [^buf.validate.Validate$Int64Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1547,13 +1547,13 @@
   (let [builder (buf.validate.Validate$UInt32Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1571,10 +1571,10 @@
   [^buf.validate.Validate$UInt32Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-u-int-32-rules-payload proto))))
@@ -1582,7 +1582,7 @@
 (defn parse-u-int-32-rules-payload
   "Parse the oneof payload from a UInt32Rules."
   [^buf.validate.Validate$UInt32Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1593,13 +1593,13 @@
   (let [builder (buf.validate.Validate$UInt64Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1617,10 +1617,10 @@
   [^buf.validate.Validate$UInt64Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-u-int-64-rules-payload proto))))
@@ -1628,7 +1628,7 @@
 (defn parse-u-int-64-rules-payload
   "Parse the oneof payload from a UInt64Rules."
   [^buf.validate.Validate$UInt64Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1639,13 +1639,13 @@
   (let [builder (buf.validate.Validate$SInt32Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1663,10 +1663,10 @@
   [^buf.validate.Validate$SInt32Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-s-int-32-rules-payload proto))))
@@ -1674,7 +1674,7 @@
 (defn parse-s-int-32-rules-payload
   "Parse the oneof payload from a SInt32Rules."
   [^buf.validate.Validate$SInt32Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1685,13 +1685,13 @@
   (let [builder (buf.validate.Validate$SInt64Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1709,10 +1709,10 @@
   [^buf.validate.Validate$SInt64Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-s-int-64-rules-payload proto))))
@@ -1720,7 +1720,7 @@
 (defn parse-s-int-64-rules-payload
   "Parse the oneof payload from a SInt64Rules."
   [^buf.validate.Validate$SInt64Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1731,13 +1731,13 @@
   (let [builder (buf.validate.Validate$Fixed32Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1755,10 +1755,10 @@
   [^buf.validate.Validate$Fixed32Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-fixed-32-rules-payload proto))))
@@ -1766,7 +1766,7 @@
 (defn parse-fixed-32-rules-payload
   "Parse the oneof payload from a Fixed32Rules."
   [^buf.validate.Validate$Fixed32Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1777,13 +1777,13 @@
   (let [builder (buf.validate.Validate$Fixed64Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1801,10 +1801,10 @@
   [^buf.validate.Validate$Fixed64Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-fixed-64-rules-payload proto))))
@@ -1812,7 +1812,7 @@
 (defn parse-fixed-64-rules-payload
   "Parse the oneof payload from a Fixed64Rules."
   [^buf.validate.Validate$Fixed64Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1823,13 +1823,13 @@
   (let [builder (buf.validate.Validate$SFixed32Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1847,10 +1847,10 @@
   [^buf.validate.Validate$SFixed32Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-s-fixed-32-rules-payload proto))))
@@ -1858,7 +1858,7 @@
 (defn parse-s-fixed-32-rules-payload
   "Parse the oneof payload from a SFixed32Rules."
   [^buf.validate.Validate$SFixed32Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1869,13 +1869,13 @@
   (let [builder (buf.validate.Validate$SFixed64Rules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1893,10 +1893,10 @@
   [^buf.validate.Validate$SFixed64Rules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-s-fixed-64-rules-payload proto))))
@@ -1904,7 +1904,7 @@
 (defn parse-s-fixed-64-rules-payload
   "Parse the oneof payload from a SFixed64Rules."
   [^buf.validate.Validate$SFixed64Rules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -1915,9 +1915,9 @@
   (let [builder (buf.validate.Validate$BoolRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 (defn parse-bool-rules
@@ -1925,8 +1925,8 @@
   [^buf.validate.Validate$BoolRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     ))
 (defn build-string-rules
   "Build a StringRules protobuf message from a map."
@@ -1934,37 +1934,37 @@
   (let [builder (buf.validate.Validate$StringRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :len)
-  (.setLen builder (get m :len)))
+      (.setLen builder (get m :len)))
     (when (contains? m :min-len)
-  (.setMinLen builder (get m :min-len)))
+      (.setMinLen builder (get m :min-len)))
     (when (contains? m :max-len)
-  (.setMaxLen builder (get m :max-len)))
+      (.setMaxLen builder (get m :max-len)))
     (when (contains? m :len-bytes)
-  (.setLenBytes builder (get m :len-bytes)))
+      (.setLenBytes builder (get m :len-bytes)))
     (when (contains? m :min-bytes)
-  (.setMinBytes builder (get m :min-bytes)))
+      (.setMinBytes builder (get m :min-bytes)))
     (when (contains? m :max-bytes)
-  (.setMaxBytes builder (get m :max-bytes)))
+      (.setMaxBytes builder (get m :max-bytes)))
     (when (contains? m :pattern)
-  (.setPattern builder (get m :pattern)))
+      (.setPattern builder (get m :pattern)))
     (when (contains? m :prefix)
-  (.setPrefix builder (get m :prefix)))
+      (.setPrefix builder (get m :prefix)))
     (when (contains? m :suffix)
-  (.setSuffix builder (get m :suffix)))
+      (.setSuffix builder (get m :suffix)))
     (when (contains? m :contains)
-  (.setContains builder (get m :contains)))
+      (.setContains builder (get m :contains)))
     (when (contains? m :not-contains)
-  (.setNotContains builder (get m :not-contains)))
+      (.setNotContains builder (get m :not-contains)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :strict)
-  (.setStrict builder (get m :strict)))
+      (.setStrict builder (get m :strict)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -1996,22 +1996,22 @@
   [^buf.validate.Validate$StringRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasLen proto) (assoc :len (.getLen proto))
-    (.hasMinLen proto) (assoc :min-len (.getMinLen proto))
-    (.hasMaxLen proto) (assoc :max-len (.getMaxLen proto))
-    (.hasLenBytes proto) (assoc :len-bytes (.getLenBytes proto))
-    (.hasMinBytes proto) (assoc :min-bytes (.getMinBytes proto))
-    (.hasMaxBytes proto) (assoc :max-bytes (.getMaxBytes proto))
-    (.hasPattern proto) (assoc :pattern (.getPattern proto))
-    (.hasPrefix proto) (assoc :prefix (.getPrefix proto))
-    (.hasSuffix proto) (assoc :suffix (.getSuffix proto))
-    (.hasContains proto) (assoc :contains (.getContains proto))
-    (.hasNotContains proto) (assoc :not-contains (.getNotContains proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasStrict proto) (assoc :strict (.getStrict proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasLen proto) (assoc :len (.getLen proto)))
+    ((.hasMinLen proto) (assoc :min-len (.getMinLen proto)))
+    ((.hasMaxLen proto) (assoc :max-len (.getMaxLen proto)))
+    ((.hasLenBytes proto) (assoc :len-bytes (.getLenBytes proto)))
+    ((.hasMinBytes proto) (assoc :min-bytes (.getMinBytes proto)))
+    ((.hasMaxBytes proto) (assoc :max-bytes (.getMaxBytes proto)))
+    ((.hasPattern proto) (assoc :pattern (.getPattern proto)))
+    ((.hasPrefix proto) (assoc :prefix (.getPrefix proto)))
+    ((.hasSuffix proto) (assoc :suffix (.getSuffix proto)))
+    ((.hasContains proto) (assoc :contains (.getContains proto)))
+    ((.hasNotContains proto) (assoc :not-contains (.getNotContains proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasStrict proto) (assoc :strict (.getStrict proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-string-rules-payload proto))))
@@ -2019,7 +2019,7 @@
 (defn parse-string-rules-payload
   "Parse the oneof payload from a StringRules."
   [^buf.validate.Validate$StringRules proto]
-  (case (.getWellKnownCase proto)
+  (case (..getWellKnownCase proto)
         EMAIL {:email (.getEmail proto)}
     HOSTNAME {:hostname (.getHostname proto)}
     IP {:ip (.getIp proto)}
@@ -2046,27 +2046,27 @@
   (let [builder (buf.validate.Validate$BytesRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :len)
-  (.setLen builder (get m :len)))
+      (.setLen builder (get m :len)))
     (when (contains? m :min-len)
-  (.setMinLen builder (get m :min-len)))
+      (.setMinLen builder (get m :min-len)))
     (when (contains? m :max-len)
-  (.setMaxLen builder (get m :max-len)))
+      (.setMaxLen builder (get m :max-len)))
     (when (contains? m :pattern)
-  (.setPattern builder (get m :pattern)))
+      (.setPattern builder (get m :pattern)))
     (when (contains? m :prefix)
-  (.setPrefix builder (get m :prefix)))
+      (.setPrefix builder (get m :prefix)))
     (when (contains? m :suffix)
-  (.setSuffix builder (get m :suffix)))
+      (.setSuffix builder (get m :suffix)))
     (when (contains? m :contains)
-  (.setContains builder (get m :contains)))
+      (.setContains builder (get m :contains)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -2083,17 +2083,17 @@
   [^buf.validate.Validate$BytesRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasLen proto) (assoc :len (.getLen proto))
-    (.hasMinLen proto) (assoc :min-len (.getMinLen proto))
-    (.hasMaxLen proto) (assoc :max-len (.getMaxLen proto))
-    (.hasPattern proto) (assoc :pattern (.getPattern proto))
-    (.hasPrefix proto) (assoc :prefix (.getPrefix proto))
-    (.hasSuffix proto) (assoc :suffix (.getSuffix proto))
-    (.hasContains proto) (assoc :contains (.getContains proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasLen proto) (assoc :len (.getLen proto)))
+    ((.hasMinLen proto) (assoc :min-len (.getMinLen proto)))
+    ((.hasMaxLen proto) (assoc :max-len (.getMaxLen proto)))
+    ((.hasPattern proto) (assoc :pattern (.getPattern proto)))
+    ((.hasPrefix proto) (assoc :prefix (.getPrefix proto)))
+    ((.hasSuffix proto) (assoc :suffix (.getSuffix proto)))
+    ((.hasContains proto) (assoc :contains (.getContains proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-bytes-rules-payload proto))))
@@ -2101,7 +2101,7 @@
 (defn parse-bytes-rules-payload
   "Parse the oneof payload from a BytesRules."
   [^buf.validate.Validate$BytesRules proto]
-  (case (.getWellKnownCase proto)
+  (case (..getWellKnownCase proto)
         IP {:ip (.getIp proto)}
     IPV_4 {:ipv-4 (.getIpv4 proto)}
     IPV_6 {:ipv-6 (.getIpv6 proto)}
@@ -2113,15 +2113,15 @@
   (let [builder (buf.validate.Validate$EnumRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :defined-only)
-  (.setDefinedOnly builder (get m :defined-only)))
+      (.setDefinedOnly builder (get m :defined-only)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 (defn parse-enum-rules
@@ -2129,11 +2129,11 @@
   [^buf.validate.Validate$EnumRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasDefinedOnly proto) (assoc :defined-only (.getDefinedOnly proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasDefinedOnly proto) (assoc :defined-only (.getDefinedOnly proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     ))
 (defn build-repeated-rules
   "Build a RepeatedRules protobuf message from a map."
@@ -2141,13 +2141,13 @@
   (let [builder (buf.validate.Validate$RepeatedRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :min-items)
-  (.setMinItems builder (get m :min-items)))
+      (.setMinItems builder (get m :min-items)))
     (when (contains? m :max-items)
-  (.setMaxItems builder (get m :max-items)))
+      (.setMaxItems builder (get m :max-items)))
     (when (contains? m :unique)
-  (.setUnique builder (get m :unique)))
+      (.setUnique builder (get m :unique)))
     (when (contains? m :items)
-  (.setItems builder (get m :items)))
+      (.setItems builder (get m :items)))
     
     (.build builder)))
 (defn parse-repeated-rules
@@ -2155,10 +2155,10 @@
   [^buf.validate.Validate$RepeatedRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMinItems proto) (assoc :min-items (.getMinItems proto))
-    (.hasMaxItems proto) (assoc :max-items (.getMaxItems proto))
-    (.hasUnique proto) (assoc :unique (.getUnique proto))
-    (.hasItems proto) (assoc :items (.getItems proto))
+    ((.hasMinItems proto) (assoc :min-items (.getMinItems proto)))
+    ((.hasMaxItems proto) (assoc :max-items (.getMaxItems proto)))
+    ((.hasUnique proto) (assoc :unique (.getUnique proto)))
+    ((.hasItems proto) (assoc :items (.getItems proto)))
     ))
 (defn build-map-rules
   "Build a MapRules protobuf message from a map."
@@ -2166,13 +2166,13 @@
   (let [builder (buf.validate.Validate$MapRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :min-pairs)
-  (.setMinPairs builder (get m :min-pairs)))
+      (.setMinPairs builder (get m :min-pairs)))
     (when (contains? m :max-pairs)
-  (.setMaxPairs builder (get m :max-pairs)))
+      (.setMaxPairs builder (get m :max-pairs)))
     (when (contains? m :keys)
-  (.setKeys builder (get m :keys)))
+      (.setKeys builder (get m :keys)))
     (when (contains? m :values)
-  (.setValues builder (get m :values)))
+      (.setValues builder (get m :values)))
     
     (.build builder)))
 (defn parse-map-rules
@@ -2180,10 +2180,10 @@
   [^buf.validate.Validate$MapRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMinPairs proto) (assoc :min-pairs (.getMinPairs proto))
-    (.hasMaxPairs proto) (assoc :max-pairs (.getMaxPairs proto))
-    (.hasKeys proto) (assoc :keys (.getKeys proto))
-    (.hasValues proto) (assoc :values (.getValues proto))
+    ((.hasMinPairs proto) (assoc :min-pairs (.getMinPairs proto)))
+    ((.hasMaxPairs proto) (assoc :max-pairs (.getMaxPairs proto)))
+    ((.hasKeys proto) (assoc :keys (.getKeys proto)))
+    ((.hasValues proto) (assoc :values (.getValues proto)))
     ))
 (defn build-any-rules
   "Build a AnyRules protobuf message from a map."
@@ -2191,9 +2191,9 @@
   (let [builder (buf.validate.Validate$AnyRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     
     (.build builder)))
 (defn parse-any-rules
@@ -2201,8 +2201,8 @@
   [^buf.validate.Validate$AnyRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
     ))
 (defn build-duration-rules
   "Build a DurationRules protobuf message from a map."
@@ -2210,13 +2210,13 @@
   (let [builder (buf.validate.Validate$DurationRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :in)
-  (.setIn builder (get m :in)))
+      (.setIn builder (get m :in)))
     (when (contains? m :not-in)
-  (.setNotIn builder (get m :not-in)))
+      (.setNotIn builder (get m :not-in)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -2234,10 +2234,10 @@
   [^buf.validate.Validate$DurationRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasIn proto) (assoc :in (.getIn proto))
-    (.hasNotIn proto) (assoc :not-in (.getNotIn proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasIn proto) (assoc :in (.getIn proto)))
+    ((.hasNotIn proto) (assoc :not-in (.getNotIn proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-duration-rules-payload proto))))
@@ -2245,7 +2245,7 @@
 (defn parse-duration-rules-payload
   "Parse the oneof payload from a DurationRules."
   [^buf.validate.Validate$DurationRules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     ;; Default case - no payload set
@@ -2256,11 +2256,11 @@
   (let [builder (buf.validate.Validate$TimestampRules/newBuilder)]
     ;; Set regular fields
     (when (contains? m :const)
-  (.setConst builder (get m :const)))
+      (.setConst builder (get m :const)))
     (when (contains? m :within)
-  (.setWithin builder (get m :within)))
+      (.setWithin builder (get m :within)))
     (when (contains? m :example)
-  (.setExample builder (get m :example)))
+      (.setExample builder (get m :example)))
     
     (.build builder)))
 
@@ -2280,9 +2280,9 @@
   [^buf.validate.Validate$TimestampRules proto]
   (cond-> {}
     ;; Regular fields
-    (.hasConst proto) (assoc :const (.getConst proto))
-    (.hasWithin proto) (assoc :within (.getWithin proto))
-    (.hasExample proto) (assoc :example (.getExample proto))
+    ((.hasConst proto) (assoc :const (.getConst proto)))
+    ((.hasWithin proto) (assoc :within (.getWithin proto)))
+    ((.hasExample proto) (assoc :example (.getExample proto)))
     
     ;; Oneof payload
     true (merge (parse-timestamp-rules-payload proto))))
@@ -2290,7 +2290,7 @@
 (defn parse-timestamp-rules-payload
   "Parse the oneof payload from a TimestampRules."
   [^buf.validate.Validate$TimestampRules proto]
-  (case (.getLessThanCase proto)
+  (case (..getLessThanCase proto)
         LT {:lt (.getLt proto)}
     LTE {:lte (.getLte proto)}
     LT_NOW {:lt-now (.getLtNow proto)}
@@ -2302,7 +2302,7 @@
   (let [builder (buf.validate.Validate$Violations/newBuilder)]
     ;; Set regular fields
     (when (contains? m :violations)
-  (.setViolations builder (get m :violations)))
+      (.setViolations builder (get m :violations)))
     
     (.build builder)))
 (defn parse-violations
@@ -2310,7 +2310,7 @@
   [^buf.validate.Validate$Violations proto]
   (cond-> {}
     ;; Regular fields
-    (.hasViolations proto) (assoc :violations (.getViolations proto))
+    ((.hasViolations proto) (assoc :violations (.getViolations proto)))
     ))
 (defn build-violation
   "Build a Violation protobuf message from a map."
@@ -2318,15 +2318,15 @@
   (let [builder (buf.validate.Validate$Violation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :field)
-  (.setField builder (get m :field)))
+      (.setField builder (get m :field)))
     (when (contains? m :rule)
-  (.setRule builder (get m :rule)))
+      (.setRule builder (get m :rule)))
     (when (contains? m :rule-id)
-  (.setRuleId builder (get m :rule-id)))
+      (.setRuleId builder (get m :rule-id)))
     (when (contains? m :message)
-  (.setMessage builder (get m :message)))
+      (.setMessage builder (get m :message)))
     (when (contains? m :for-key)
-  (.setForKey builder (get m :for-key)))
+      (.setForKey builder (get m :for-key)))
     
     (.build builder)))
 (defn parse-violation
@@ -2334,11 +2334,11 @@
   [^buf.validate.Validate$Violation proto]
   (cond-> {}
     ;; Regular fields
-    (.hasField proto) (assoc :field (.getField proto))
-    (.hasRule proto) (assoc :rule (.getRule proto))
-    (.hasRuleId proto) (assoc :rule-id (.getRuleId proto))
-    (.hasMessage proto) (assoc :message (.getMessage proto))
-    (.hasForKey proto) (assoc :for-key (.getForKey proto))
+    ((.hasField proto) (assoc :field (.getField proto)))
+    ((.hasRule proto) (assoc :rule (.getRule proto)))
+    ((.hasRuleId proto) (assoc :rule-id (.getRuleId proto)))
+    ((.hasMessage proto) (assoc :message (.getMessage proto)))
+    ((.hasForKey proto) (assoc :for-key (.getForKey proto)))
     ))
 (defn build-field-path
   "Build a FieldPath protobuf message from a map."
@@ -2346,7 +2346,7 @@
   (let [builder (buf.validate.Validate$FieldPath/newBuilder)]
     ;; Set regular fields
     (when (contains? m :elements)
-  (.setElements builder (get m :elements)))
+      (.setElements builder (get m :elements)))
     
     (.build builder)))
 (defn parse-field-path
@@ -2354,7 +2354,7 @@
   [^buf.validate.Validate$FieldPath proto]
   (cond-> {}
     ;; Regular fields
-    (.hasElements proto) (assoc :elements (.getElements proto))
+    ((.hasElements proto) (assoc :elements (.getElements proto)))
     ))
 (defn build-field-path-element
   "Build a FieldPathElement protobuf message from a map."
@@ -2362,15 +2362,15 @@
   (let [builder (buf.validate.Validate$FieldPathElement/newBuilder)]
     ;; Set regular fields
     (when (contains? m :field-number)
-  (.setFieldNumber builder (get m :field-number)))
+      (.setFieldNumber builder (get m :field-number)))
     (when (contains? m :field-name)
-  (.setFieldName builder (get m :field-name)))
+      (.setFieldName builder (get m :field-name)))
     (when (contains? m :field-type)
-  (.setFieldType builder (get m :field-type)))
+      (.setFieldType builder (get m :field-type)))
     (when (contains? m :key-type)
-  (.setKeyType builder (get m :key-type)))
+      (.setKeyType builder (get m :key-type)))
     (when (contains? m :value-type)
-  (.setValueType builder (get m :value-type)))
+      (.setValueType builder (get m :value-type)))
     
     (.build builder)))
 
@@ -2389,11 +2389,11 @@
   [^buf.validate.Validate$FieldPathElement proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFieldNumber proto) (assoc :field-number (.getFieldNumber proto))
-    (.hasFieldName proto) (assoc :field-name (.getFieldName proto))
-    (.hasFieldType proto) (assoc :field-type (.getFieldType proto))
-    (.hasKeyType proto) (assoc :key-type (.getKeyType proto))
-    (.hasValueType proto) (assoc :value-type (.getValueType proto))
+    ((.hasFieldNumber proto) (assoc :field-number (.getFieldNumber proto)))
+    ((.hasFieldName proto) (assoc :field-name (.getFieldName proto)))
+    ((.hasFieldType proto) (assoc :field-type (.getFieldType proto)))
+    ((.hasKeyType proto) (assoc :key-type (.getKeyType proto)))
+    ((.hasValueType proto) (assoc :value-type (.getValueType proto)))
     
     ;; Oneof payload
     true (merge (parse-field-path-element-payload proto))))
@@ -2401,7 +2401,7 @@
 (defn parse-field-path-element-payload
   "Parse the oneof payload from a FieldPathElement."
   [^buf.validate.Validate$FieldPathElement proto]
-  (case (.getSubscriptCase proto)
+  (case (..getSubscriptCase proto)
         INDEX {:index (.getIndex proto)}
     BOOL_KEY {:bool-key (.getBoolKey proto)}
     INT_KEY {:int-key (.getIntKey proto)}
@@ -2445,7 +2445,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Compass.Compass$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         START {:start (.getStart proto)}
     STOP {:stop (.getStop proto)}
     SET_MAGNETIC_DECLINATION {:set-magnetic-declination (.getSetMagneticDeclination proto)}
@@ -2569,7 +2569,7 @@
   (let [builder (cmd.Compass.Compass$SetMagneticDeclination/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-magnetic-declination
@@ -2577,7 +2577,7 @@
   [^cmd.Compass.Compass$SetMagneticDeclination proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-offset-angle-azimuth
   "Build a SetOffsetAngleAzimuth protobuf message from a map."
@@ -2585,7 +2585,7 @@
   (let [builder (cmd.Compass.Compass$SetOffsetAngleAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-offset-angle-azimuth
@@ -2593,7 +2593,7 @@
   [^cmd.Compass.Compass$SetOffsetAngleAzimuth proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-offset-angle-elevation
   "Build a SetOffsetAngleElevation protobuf message from a map."
@@ -2601,7 +2601,7 @@
   (let [builder (cmd.Compass.Compass$SetOffsetAngleElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-offset-angle-elevation
@@ -2609,7 +2609,7 @@
   [^cmd.Compass.Compass$SetOffsetAngleElevation proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-use-rotary-position
   "Build a SetUseRotaryPosition protobuf message from a map."
@@ -2617,7 +2617,7 @@
   (let [builder (cmd.Compass.Compass$SetUseRotaryPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
-  (.setFlag builder (get m :flag)))
+      (.setFlag builder (get m :flag)))
     
     (.build builder)))
 (defn parse-set-use-rotary-position
@@ -2625,7 +2625,7 @@
   [^cmd.Compass.Compass$SetUseRotaryPosition proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFlag proto) (assoc :flag (.getFlag proto))
+    ((.hasFlag proto) (assoc :flag (.getFlag proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -2657,7 +2657,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Gps.Gps$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         START {:start (.getStart proto)}
     STOP {:stop (.getStop proto)}
     SET_MANUAL_POSITION {:set-manual-position (.getSetManualPosition proto)}
@@ -2710,7 +2710,7 @@
   (let [builder (cmd.Gps.Gps$SetUseManualPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
-  (.setFlag builder (get m :flag)))
+      (.setFlag builder (get m :flag)))
     
     (.build builder)))
 (defn parse-set-use-manual-position
@@ -2718,7 +2718,7 @@
   [^cmd.Gps.Gps$SetUseManualPosition proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFlag proto) (assoc :flag (.getFlag proto))
+    ((.hasFlag proto) (assoc :flag (.getFlag proto)))
     ))
 (defn build-set-manual-position
   "Build a SetManualPosition protobuf message from a map."
@@ -2726,11 +2726,11 @@
   (let [builder (cmd.Gps.Gps$SetManualPosition/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
-  (.setLatitude builder (get m :latitude)))
+      (.setLatitude builder (get m :latitude)))
     (when (contains? m :longitude)
-  (.setLongitude builder (get m :longitude)))
+      (.setLongitude builder (get m :longitude)))
     (when (contains? m :altitude)
-  (.setAltitude builder (get m :altitude)))
+      (.setAltitude builder (get m :altitude)))
     
     (.build builder)))
 (defn parse-set-manual-position
@@ -2738,9 +2738,9 @@
   [^cmd.Gps.Gps$SetManualPosition proto]
   (cond-> {}
     ;; Regular fields
-    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
-    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
-    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
+    ((.hasLatitude proto) (assoc :latitude (.getLatitude proto)))
+    ((.hasLongitude proto) (assoc :longitude (.getLongitude proto)))
+    ((.hasAltitude proto) (assoc :altitude (.getAltitude proto)))
     ))
 (defn build-jon-gui-data-meteo
   "Build a JonGuiDataMeteo protobuf message from a map."
@@ -2748,11 +2748,11 @@
   (let [builder (ser.Ser$JonGuiDataMeteo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :temperature)
-  (.setTemperature builder (get m :temperature)))
+      (.setTemperature builder (get m :temperature)))
     (when (contains? m :humidity)
-  (.setHumidity builder (get m :humidity)))
+      (.setHumidity builder (get m :humidity)))
     (when (contains? m :pressure)
-  (.setPressure builder (get m :pressure)))
+      (.setPressure builder (get m :pressure)))
     
     (.build builder)))
 (defn parse-jon-gui-data-meteo
@@ -2760,9 +2760,9 @@
   [^ser.Ser$JonGuiDataMeteo proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTemperature proto) (assoc :temperature (.getTemperature proto))
-    (.hasHumidity proto) (assoc :humidity (.getHumidity proto))
-    (.hasPressure proto) (assoc :pressure (.getPressure proto))
+    ((.hasTemperature proto) (assoc :temperature (.getTemperature proto)))
+    ((.hasHumidity proto) (assoc :humidity (.getHumidity proto)))
+    ((.hasPressure proto) (assoc :pressure (.getPressure proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -2804,7 +2804,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Lrf.Lrf$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         MEASURE {:measure (.getMeasure proto)}
     SCAN_ON {:scan-on (.getScanOn proto)}
     SCAN_OFF {:scan-off (.getScanOff proto)}
@@ -2997,7 +2997,7 @@
   (let [builder (cmd.Lrf.Lrf$SetScanMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-  (.setMode builder (get m :mode)))
+      (.setMode builder (get m :mode)))
     
     (.build builder)))
 (defn parse-set-scan-mode
@@ -3005,7 +3005,7 @@
   [^cmd.Lrf.Lrf$SetScanMode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMode proto) (assoc :mode (.getMode proto))
+    ((.hasMode proto) (assoc :mode (.getMode proto)))
     ))
 (defn build-new-session
   "Build a NewSession protobuf message from a map."
@@ -3026,7 +3026,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-value
@@ -3034,7 +3034,7 @@
   [^cmd.DayCamera.DayCamera$SetValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-move
   "Build a Move protobuf message from a map."
@@ -3042,9 +3042,9 @@
   (let [builder (cmd.DayCamera.DayCamera$Move/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
-  (.setTargetValue builder (get m :target-value)))
+      (.setTargetValue builder (get m :target-value)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     
     (.build builder)))
 (defn parse-move
@@ -3052,8 +3052,8 @@
   [^cmd.DayCamera.DayCamera$Move proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    ((.hasTargetValue proto) (assoc :target-value (.getTargetValue proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
     ))
 (defn build-offset
   "Build a Offset protobuf message from a map."
@@ -3061,7 +3061,7 @@
   (let [builder (cmd.DayCamera.DayCamera$Offset/newBuilder)]
     ;; Set regular fields
     (when (contains? m :offset-value)
-  (.setOffsetValue builder (get m :offset-value)))
+      (.setOffsetValue builder (get m :offset-value)))
     
     (.build builder)))
 (defn parse-offset
@@ -3069,7 +3069,7 @@
   [^cmd.DayCamera.DayCamera$Offset proto]
   (cond-> {}
     ;; Regular fields
-    (.hasOffsetValue proto) (assoc :offset-value (.getOffsetValue proto))
+    ((.hasOffsetValue proto) (assoc :offset-value (.getOffsetValue proto)))
     ))
 (defn build-set-clahe-level
   "Build a SetClaheLevel protobuf message from a map."
@@ -3077,7 +3077,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-clahe-level
@@ -3085,7 +3085,7 @@
   [^cmd.DayCamera.DayCamera$SetClaheLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-shift-clahe-level
   "Build a ShiftClaheLevel protobuf message from a map."
@@ -3093,7 +3093,7 @@
   (let [builder (cmd.DayCamera.DayCamera$ShiftClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-shift-clahe-level
@@ -3101,7 +3101,7 @@
   [^cmd.DayCamera.DayCamera$ShiftClaheLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -3145,7 +3145,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.DayCamera.DayCamera$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         FOCUS {:focus (.getFocus proto)}
     ZOOM {:zoom (.getZoom proto)}
     SET_IRIS {:set-iris (.getSetIris proto)}
@@ -3236,7 +3236,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-  (.setMode builder (get m :mode)))
+      (.setMode builder (get m :mode)))
     
     (.build builder)))
 (defn parse-set-fx-mode
@@ -3244,7 +3244,7 @@
   [^cmd.DayCamera.DayCamera$SetFxMode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMode proto) (assoc :mode (.getMode proto))
+    ((.hasMode proto) (assoc :mode (.getMode proto)))
     ))
 (defn build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
@@ -3252,7 +3252,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetDigitalZoomLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-digital-zoom-level
@@ -3260,7 +3260,7 @@
   [^cmd.DayCamera.DayCamera$SetDigitalZoomLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-focus
   "Build a Focus protobuf message from a map."
@@ -3293,7 +3293,7 @@
 (defn parse-focus-payload
   "Parse the oneof payload from a Focus."
   [^cmd.DayCamera.DayCamera$Focus proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_VALUE {:set-value (.getSetValue proto)}
     MOVE {:move (.getMove proto)}
     HALT {:halt (.getHalt proto)}
@@ -3336,7 +3336,7 @@
 (defn parse-zoom-payload
   "Parse the oneof payload from a Zoom."
   [^cmd.DayCamera.DayCamera$Zoom proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_VALUE {:set-value (.getSetValue proto)}
     MOVE {:move (.getMove proto)}
     HALT {:halt (.getHalt proto)}
@@ -3380,7 +3380,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetIris/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-iris
@@ -3388,7 +3388,7 @@
   [^cmd.DayCamera.DayCamera$SetIris proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-infra-red-filter
   "Build a SetInfraRedFilter protobuf message from a map."
@@ -3396,7 +3396,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetInfraRedFilter/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-infra-red-filter
@@ -3404,7 +3404,7 @@
   [^cmd.DayCamera.DayCamera$SetInfraRedFilter proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-auto-iris
   "Build a SetAutoIris protobuf message from a map."
@@ -3412,7 +3412,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetAutoIris/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-auto-iris
@@ -3420,7 +3420,7 @@
   [^cmd.DayCamera.DayCamera$SetAutoIris proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
@@ -3428,7 +3428,7 @@
   (let [builder (cmd.DayCamera.DayCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-zoom-table-value
@@ -3436,7 +3436,7 @@
   [^cmd.DayCamera.DayCamera$SetZoomTableValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-stop
   "Build a Stop protobuf message from a map."
@@ -3611,7 +3611,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.HeatCamera.HeatCamera$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         ZOOM {:zoom (.getZoom proto)}
     SET_AGC {:set-agc (.getSetAgc proto)}
     SET_FILTER {:set-filter (.getSetFilter proto)}
@@ -3651,7 +3651,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-  (.setMode builder (get m :mode)))
+      (.setMode builder (get m :mode)))
     
     (.build builder)))
 (defn parse-set-fx-mode
@@ -3659,7 +3659,7 @@
   [^cmd.HeatCamera.HeatCamera$SetFxMode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMode proto) (assoc :mode (.getMode proto))
+    ((.hasMode proto) (assoc :mode (.getMode proto)))
     ))
 (defn build-set-clahe-level
   "Build a SetClaheLevel protobuf message from a map."
@@ -3667,7 +3667,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-clahe-level
@@ -3675,7 +3675,7 @@
   [^cmd.HeatCamera.HeatCamera$SetClaheLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-shift-clahe-level
   "Build a ShiftClaheLevel protobuf message from a map."
@@ -3683,7 +3683,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$ShiftClaheLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-shift-clahe-level
@@ -3691,7 +3691,7 @@
   [^cmd.HeatCamera.HeatCamera$ShiftClaheLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-next-fx-mode
   "Build a NextFxMode protobuf message from a map."
@@ -3764,7 +3764,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-value
@@ -3772,7 +3772,7 @@
   [^cmd.HeatCamera.HeatCamera$SetValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-dde-level
   "Build a SetDDELevel protobuf message from a map."
@@ -3780,7 +3780,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetDDELevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-dde-level
@@ -3788,7 +3788,7 @@
   [^cmd.HeatCamera.HeatCamera$SetDDELevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
@@ -3796,7 +3796,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetDigitalZoomLevel/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-digital-zoom-level
@@ -3804,7 +3804,7 @@
   [^cmd.HeatCamera.HeatCamera$SetDigitalZoomLevel proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-shift-dde
   "Build a ShiftDDE protobuf message from a map."
@@ -3812,7 +3812,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$ShiftDDE/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-shift-dde
@@ -3820,7 +3820,7 @@
   [^cmd.HeatCamera.HeatCamera$ShiftDDE proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-zoom-in
   "Build a ZoomIn protobuf message from a map."
@@ -3967,7 +3967,7 @@
 (defn parse-zoom-payload
   "Parse the oneof payload from a Zoom."
   [^cmd.HeatCamera.HeatCamera$Zoom proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_ZOOM_TABLE_VALUE {:set-zoom-table-value (.getSetZoomTableValue proto)}
     NEXT_ZOOM_TABLE_POS {:next-zoom-table-pos (.getNextZoomTablePos proto)}
     PREV_ZOOM_TABLE_POS {:prev-zoom-table-pos (.getPrevZoomTablePos proto)}
@@ -4018,7 +4018,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-zoom-table-value
@@ -4026,7 +4026,7 @@
   [^cmd.HeatCamera.HeatCamera$SetZoomTableValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-agc
   "Build a SetAGC protobuf message from a map."
@@ -4034,7 +4034,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetAGC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-agc
@@ -4042,7 +4042,7 @@
   [^cmd.HeatCamera.HeatCamera$SetAGC proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-filters
   "Build a SetFilters protobuf message from a map."
@@ -4050,7 +4050,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetFilters/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-filters
@@ -4058,7 +4058,7 @@
   [^cmd.HeatCamera.HeatCamera$SetFilters proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-start
   "Build a Start protobuf message from a map."
@@ -4131,7 +4131,7 @@
   (let [builder (cmd.HeatCamera.HeatCamera$SetAutoFocus/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-auto-focus
@@ -4139,7 +4139,7 @@
   [^cmd.HeatCamera.HeatCamera$SetAutoFocus proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-reset-zoom
   "Build a ResetZoom protobuf message from a map."
@@ -4216,7 +4216,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.RotaryPlatform.RotaryPlatform$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         START {:start (.getStart proto)}
     STOP {:stop (.getStop proto)}
     AXIS {:axis (.getAxis proto)}
@@ -4249,9 +4249,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$Axis/newBuilder)]
     ;; Set regular fields
     (when (contains? m :azimuth)
-  (.setAzimuth builder (get m :azimuth)))
+      (.setAzimuth builder (get m :azimuth)))
     (when (contains? m :elevation)
-  (.setElevation builder (get m :elevation)))
+      (.setElevation builder (get m :elevation)))
     
     (.build builder)))
 (defn parse-axis
@@ -4259,8 +4259,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$Axis proto]
   (cond-> {}
     ;; Regular fields
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
+    ((.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto)))
+    ((.hasElevation proto) (assoc :elevation (.getElevation proto)))
     ))
 (defn build-set-mode
   "Build a SetMode protobuf message from a map."
@@ -4268,7 +4268,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-  (.setMode builder (get m :mode)))
+      (.setMode builder (get m :mode)))
     
     (.build builder)))
 (defn parse-set-mode
@@ -4276,7 +4276,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetMode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasMode proto) (assoc :mode (.getMode proto))
+    ((.hasMode proto) (assoc :mode (.getMode proto)))
     ))
 (defn build-set-azimuth-value
   "Build a SetAzimuthValue protobuf message from a map."
@@ -4284,9 +4284,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetAzimuthValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-set-azimuth-value
@@ -4294,8 +4294,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetAzimuthValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-azimuth-to
   "Build a RotateAzimuthTo protobuf message from a map."
@@ -4303,11 +4303,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthTo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
-  (.setTargetValue builder (get m :target-value)))
+      (.setTargetValue builder (get m :target-value)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-azimuth-to
@@ -4315,9 +4315,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthTo proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasTargetValue proto) (assoc :target-value (.getTargetValue proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-azimuth
   "Build a RotateAzimuth protobuf message from a map."
@@ -4325,9 +4325,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-azimuth
@@ -4335,8 +4335,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuth proto]
   (cond-> {}
     ;; Regular fields
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-elevation
   "Build a RotateElevation protobuf message from a map."
@@ -4344,9 +4344,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-elevation
@@ -4354,8 +4354,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateElevation proto]
   (cond-> {}
     ;; Regular fields
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-set-elevation-value
   "Build a SetElevationValue protobuf message from a map."
@@ -4363,7 +4363,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetElevationValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-elevation-value
@@ -4371,7 +4371,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetElevationValue proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-rotate-elevation-to
   "Build a RotateElevationTo protobuf message from a map."
@@ -4379,9 +4379,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationTo/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target-value)
-  (.setTargetValue builder (get m :target-value)))
+      (.setTargetValue builder (get m :target-value)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     
     (.build builder)))
 (defn parse-rotate-elevation-to
@@ -4389,8 +4389,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationTo proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTargetValue proto) (assoc :target-value (.getTargetValue proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    ((.hasTargetValue proto) (assoc :target-value (.getTargetValue proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
     ))
 (defn build-rotate-elevation-relative
   "Build a RotateElevationRelative protobuf message from a map."
@@ -4398,11 +4398,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelative/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-elevation-relative
@@ -4410,9 +4410,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelative proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-elevation-relative-set
   "Build a RotateElevationRelativeSet protobuf message from a map."
@@ -4420,9 +4420,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelativeSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-elevation-relative-set
@@ -4430,8 +4430,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateElevationRelativeSet proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-azimuth-relative
   "Build a RotateAzimuthRelative protobuf message from a map."
@@ -4439,11 +4439,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelative/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-azimuth-relative
@@ -4451,9 +4451,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelative proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-rotate-azimuth-relative-set
   "Build a RotateAzimuthRelativeSet protobuf message from a map."
@@ -4461,9 +4461,9 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelativeSet/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     (when (contains? m :direction)
-  (.setDirection builder (get m :direction)))
+      (.setDirection builder (get m :direction)))
     
     (.build builder)))
 (defn parse-rotate-azimuth-relative-set
@@ -4471,8 +4471,8 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateAzimuthRelativeSet proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
-    (.hasDirection proto) (assoc :direction (.getDirection proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
+    ((.hasDirection proto) (assoc :direction (.getDirection proto)))
     ))
 (defn build-set-platform-azimuth
   "Build a SetPlatformAzimuth protobuf message from a map."
@@ -4480,7 +4480,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformAzimuth/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-platform-azimuth
@@ -4488,7 +4488,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformAzimuth proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-platform-elevation
   "Build a SetPlatformElevation protobuf message from a map."
@@ -4496,7 +4496,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformElevation/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-platform-elevation
@@ -4504,7 +4504,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformElevation proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-set-platform-bank
   "Build a SetPlatformBank protobuf message from a map."
@@ -4512,7 +4512,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetPlatformBank/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-platform-bank
@@ -4520,7 +4520,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetPlatformBank proto]
   (cond-> {}
     ;; Regular fields
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
@@ -4566,7 +4566,7 @@
 (defn parse-azimuth-payload
   "Parse the oneof payload from a Azimuth."
   [^cmd.RotaryPlatform.RotaryPlatform$Azimuth proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_VALUE {:set-value (.getSetValue proto)}
     ROTATE_TO {:rotate-to (.getRotateTo proto)}
     ROTATE {:rotate (.getRotate proto)}
@@ -4737,7 +4737,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanSelectNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
-  (.setIndex builder (get m :index)))
+      (.setIndex builder (get m :index)))
     
     (.build builder)))
 (defn parse-scan-select-node
@@ -4745,7 +4745,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$ScanSelectNode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasIndex proto) (assoc :index (.getIndex proto))
+    ((.hasIndex proto) (assoc :index (.getIndex proto)))
     ))
 (defn build-scan-delete-node
   "Build a ScanDeleteNode protobuf message from a map."
@@ -4753,7 +4753,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanDeleteNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
-  (.setIndex builder (get m :index)))
+      (.setIndex builder (get m :index)))
     
     (.build builder)))
 (defn parse-scan-delete-node
@@ -4761,7 +4761,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$ScanDeleteNode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasIndex proto) (assoc :index (.getIndex proto))
+    ((.hasIndex proto) (assoc :index (.getIndex proto)))
     ))
 (defn build-scan-update-node
   "Build a ScanUpdateNode protobuf message from a map."
@@ -4769,19 +4769,19 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanUpdateNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
-  (.setIndex builder (get m :index)))
+      (.setIndex builder (get m :index)))
     (when (contains? m :day-zoom-table-value)
-  (.setDayZoomTableValue builder (get m :day-zoom-table-value)))
+      (.setDayZoomTableValue builder (get m :day-zoom-table-value)))
     (when (contains? m :heat-zoom-table-value)
-  (.setHeatZoomTableValue builder (get m :heat-zoom-table-value)))
+      (.setHeatZoomTableValue builder (get m :heat-zoom-table-value)))
     (when (contains? m :azimuth)
-  (.setAzimuth builder (get m :azimuth)))
+      (.setAzimuth builder (get m :azimuth)))
     (when (contains? m :elevation)
-  (.setElevation builder (get m :elevation)))
+      (.setElevation builder (get m :elevation)))
     (when (contains? m :linger)
-  (.setLinger builder (get m :linger)))
+      (.setLinger builder (get m :linger)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     
     (.build builder)))
 (defn parse-scan-update-node
@@ -4789,13 +4789,13 @@
   [^cmd.RotaryPlatform.RotaryPlatform$ScanUpdateNode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasIndex proto) (assoc :index (.getIndex proto))
-    (.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
-    (.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasLinger proto) (assoc :linger (.getLinger proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    ((.hasIndex proto) (assoc :index (.getIndex proto)))
+    ((.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto)))
+    ((.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto)))
+    ((.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto)))
+    ((.hasElevation proto) (assoc :elevation (.getElevation proto)))
+    ((.hasLinger proto) (assoc :linger (.getLinger proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
     ))
 (defn build-scan-add-node
   "Build a ScanAddNode protobuf message from a map."
@@ -4803,19 +4803,19 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$ScanAddNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index)
-  (.setIndex builder (get m :index)))
+      (.setIndex builder (get m :index)))
     (when (contains? m :day-zoom-table-value)
-  (.setDayZoomTableValue builder (get m :day-zoom-table-value)))
+      (.setDayZoomTableValue builder (get m :day-zoom-table-value)))
     (when (contains? m :heat-zoom-table-value)
-  (.setHeatZoomTableValue builder (get m :heat-zoom-table-value)))
+      (.setHeatZoomTableValue builder (get m :heat-zoom-table-value)))
     (when (contains? m :azimuth)
-  (.setAzimuth builder (get m :azimuth)))
+      (.setAzimuth builder (get m :azimuth)))
     (when (contains? m :elevation)
-  (.setElevation builder (get m :elevation)))
+      (.setElevation builder (get m :elevation)))
     (when (contains? m :linger)
-  (.setLinger builder (get m :linger)))
+      (.setLinger builder (get m :linger)))
     (when (contains? m :speed)
-  (.setSpeed builder (get m :speed)))
+      (.setSpeed builder (get m :speed)))
     
     (.build builder)))
 (defn parse-scan-add-node
@@ -4823,13 +4823,13 @@
   [^cmd.RotaryPlatform.RotaryPlatform$ScanAddNode proto]
   (cond-> {}
     ;; Regular fields
-    (.hasIndex proto) (assoc :index (.getIndex proto))
-    (.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto))
-    (.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto))
-    (.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto))
-    (.hasElevation proto) (assoc :elevation (.getElevation proto))
-    (.hasLinger proto) (assoc :linger (.getLinger proto))
-    (.hasSpeed proto) (assoc :speed (.getSpeed proto))
+    ((.hasIndex proto) (assoc :index (.getIndex proto)))
+    ((.hasDayZoomTableValue proto) (assoc :day-zoom-table-value (.getDayZoomTableValue proto)))
+    ((.hasHeatZoomTableValue proto) (assoc :heat-zoom-table-value (.getHeatZoomTableValue proto)))
+    ((.hasAzimuth proto) (assoc :azimuth (.getAzimuth proto)))
+    ((.hasElevation proto) (assoc :elevation (.getElevation proto)))
+    ((.hasLinger proto) (assoc :linger (.getLinger proto)))
+    ((.hasSpeed proto) (assoc :speed (.getSpeed proto)))
     ))
 (defn build-elevation
   "Build a Elevation protobuf message from a map."
@@ -4862,7 +4862,7 @@
 (defn parse-elevation-payload
   "Parse the oneof payload from a Elevation."
   [^cmd.RotaryPlatform.RotaryPlatform$Elevation proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_VALUE {:set-value (.getSetValue proto)}
     ROTATE_TO {:rotate-to (.getRotateTo proto)}
     ROTATE {:rotate (.getRotate proto)}
@@ -4877,7 +4877,7 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$setUseRotaryAsCompass/newBuilder)]
     ;; Set regular fields
     (when (contains? m :flag)
-  (.setFlag builder (get m :flag)))
+      (.setFlag builder (get m :flag)))
     
     (.build builder)))
 (defn parse-set-use-rotary-as-compass
@@ -4885,7 +4885,7 @@
   [^cmd.RotaryPlatform.RotaryPlatform$setUseRotaryAsCompass proto]
   (cond-> {}
     ;; Regular fields
-    (.hasFlag proto) (assoc :flag (.getFlag proto))
+    ((.hasFlag proto) (assoc :flag (.getFlag proto)))
     ))
 (defn build-rotate-to-gps
   "Build a RotateToGPS protobuf message from a map."
@@ -4893,11 +4893,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateToGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
-  (.setLatitude builder (get m :latitude)))
+      (.setLatitude builder (get m :latitude)))
     (when (contains? m :longitude)
-  (.setLongitude builder (get m :longitude)))
+      (.setLongitude builder (get m :longitude)))
     (when (contains? m :altitude)
-  (.setAltitude builder (get m :altitude)))
+      (.setAltitude builder (get m :altitude)))
     
     (.build builder)))
 (defn parse-rotate-to-gps
@@ -4905,9 +4905,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateToGPS proto]
   (cond-> {}
     ;; Regular fields
-    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
-    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
-    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
+    ((.hasLatitude proto) (assoc :latitude (.getLatitude proto)))
+    ((.hasLongitude proto) (assoc :longitude (.getLongitude proto)))
+    ((.hasAltitude proto) (assoc :altitude (.getAltitude proto)))
     ))
 (defn build-set-origin-gps
   "Build a SetOriginGPS protobuf message from a map."
@@ -4915,11 +4915,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$SetOriginGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude)
-  (.setLatitude builder (get m :latitude)))
+      (.setLatitude builder (get m :latitude)))
     (when (contains? m :longitude)
-  (.setLongitude builder (get m :longitude)))
+      (.setLongitude builder (get m :longitude)))
     (when (contains? m :altitude)
-  (.setAltitude builder (get m :altitude)))
+      (.setAltitude builder (get m :altitude)))
     
     (.build builder)))
 (defn parse-set-origin-gps
@@ -4927,9 +4927,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$SetOriginGPS proto]
   (cond-> {}
     ;; Regular fields
-    (.hasLatitude proto) (assoc :latitude (.getLatitude proto))
-    (.hasLongitude proto) (assoc :longitude (.getLongitude proto))
-    (.hasAltitude proto) (assoc :altitude (.getAltitude proto))
+    ((.hasLatitude proto) (assoc :latitude (.getLatitude proto)))
+    ((.hasLongitude proto) (assoc :longitude (.getLongitude proto)))
+    ((.hasAltitude proto) (assoc :altitude (.getAltitude proto)))
     ))
 (defn build-rotate-to-ndc
   "Build a RotateToNDC protobuf message from a map."
@@ -4937,11 +4937,11 @@
   (let [builder (cmd.RotaryPlatform.RotaryPlatform$RotateToNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-  (.setChannel builder (get m :channel)))
+      (.setChannel builder (get m :channel)))
     (when (contains? m :x)
-  (.setX builder (get m :x)))
+      (.setX builder (get m :x)))
     (when (contains? m :y)
-  (.setY builder (get m :y)))
+      (.setY builder (get m :y)))
     
     (.build builder)))
 (defn parse-rotate-to-ndc
@@ -4949,9 +4949,9 @@
   [^cmd.RotaryPlatform.RotaryPlatform$RotateToNDC proto]
   (cond-> {}
     ;; Regular fields
-    (.hasChannel proto) (assoc :channel (.getChannel proto))
-    (.hasX proto) (assoc :x (.getX proto))
-    (.hasY proto) (assoc :y (.getY proto))
+    ((.hasChannel proto) (assoc :channel (.getChannel proto)))
+    ((.hasX proto) (assoc :x (.getX proto)))
+    ((.hasY proto) (assoc :y (.getY proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -4986,7 +4986,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.OSD.Osd$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SHOW_DEFAULT_SCREEN {:show-default-screen (.getShowDefaultScreen proto)}
     SHOW_LRF_MEASURE_SCREEN {:show-lrf-measure-screen (.getShowLrfMeasureScreen proto)}
     SHOW_LRF_RESULT_SCREEN {:show-lrf-result-screen (.getShowLrfResultScreen proto)}
@@ -5128,7 +5128,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Lrf_calib.LrfCalib$Root proto]
-  (case (.getChannelCase proto)
+  (case (..getChannelCase proto)
         DAY {:day (.getDay proto)}
     HEAT {:heat (.getHeat proto)}
     ;; Default case - no payload set
@@ -5162,7 +5162,7 @@
 (defn parse-offsets-payload
   "Parse the oneof payload from a Offsets."
   [^cmd.Lrf_calib.LrfCalib$Offsets proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET {:set (.getSet proto)}
     SAVE {:save (.getSave proto)}
     RESET {:reset (.getReset proto)}
@@ -5175,9 +5175,9 @@
   (let [builder (cmd.Lrf_calib.LrfCalib$SetOffsets/newBuilder)]
     ;; Set regular fields
     (when (contains? m :x)
-  (.setX builder (get m :x)))
+      (.setX builder (get m :x)))
     (when (contains? m :y)
-  (.setY builder (get m :y)))
+      (.setY builder (get m :y)))
     
     (.build builder)))
 (defn parse-set-offsets
@@ -5185,8 +5185,8 @@
   [^cmd.Lrf_calib.LrfCalib$SetOffsets proto]
   (cond-> {}
     ;; Regular fields
-    (.hasX proto) (assoc :x (.getX proto))
-    (.hasY proto) (assoc :y (.getY proto))
+    ((.hasX proto) (assoc :x (.getX proto)))
+    ((.hasY proto) (assoc :y (.getY proto)))
     ))
 (defn build-shift-offsets-by
   "Build a ShiftOffsetsBy protobuf message from a map."
@@ -5194,9 +5194,9 @@
   (let [builder (cmd.Lrf_calib.LrfCalib$ShiftOffsetsBy/newBuilder)]
     ;; Set regular fields
     (when (contains? m :x)
-  (.setX builder (get m :x)))
+      (.setX builder (get m :x)))
     (when (contains? m :y)
-  (.setY builder (get m :y)))
+      (.setY builder (get m :y)))
     
     (.build builder)))
 (defn parse-shift-offsets-by
@@ -5204,8 +5204,8 @@
   [^cmd.Lrf_calib.LrfCalib$ShiftOffsetsBy proto]
   (cond-> {}
     ;; Regular fields
-    (.hasX proto) (assoc :x (.getX proto))
-    (.hasY proto) (assoc :y (.getY proto))
+    ((.hasX proto) (assoc :x (.getX proto)))
+    ((.hasY proto) (assoc :y (.getY proto)))
     ))
 (defn build-reset-offsets
   "Build a ResetOffsets protobuf message from a map."
@@ -5271,7 +5271,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.System.System$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         START_ALL {:start-all (.getStartAll proto)}
     STOP_ALL {:stop-all (.getStopAll proto)}
     REBOOT {:reboot (.getReboot proto)}
@@ -5449,7 +5449,7 @@
   (let [builder (cmd.System.System$SetLocalization/newBuilder)]
     ;; Set regular fields
     (when (contains? m :loc)
-  (.setLoc builder (get m :loc)))
+      (.setLoc builder (get m :loc)))
     
     (.build builder)))
 (defn parse-set-localization
@@ -5457,7 +5457,7 @@
   [^cmd.System.System$SetLocalization proto]
   (cond-> {}
     ;; Regular fields
-    (.hasLoc proto) (assoc :loc (.getLoc proto))
+    ((.hasLoc proto) (assoc :loc (.getLoc proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -5493,7 +5493,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.CV.Cv$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         SET_AUTO_FOCUS {:set-auto-focus (.getSetAutoFocus proto)}
     START_TRACK_NDC {:start-track-ndc (.getStartTrackNdc proto)}
     STOP_TRACK {:stop-track (.getStopTrack proto)}
@@ -5589,9 +5589,9 @@
   (let [builder (cmd.CV.Cv$SetAutoFocus/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-  (.setChannel builder (get m :channel)))
+      (.setChannel builder (get m :channel)))
     (when (contains? m :value)
-  (.setValue builder (get m :value)))
+      (.setValue builder (get m :value)))
     
     (.build builder)))
 (defn parse-set-auto-focus
@@ -5599,8 +5599,8 @@
   [^cmd.CV.Cv$SetAutoFocus proto]
   (cond-> {}
     ;; Regular fields
-    (.hasChannel proto) (assoc :channel (.getChannel proto))
-    (.hasValue proto) (assoc :value (.getValue proto))
+    ((.hasChannel proto) (assoc :channel (.getChannel proto)))
+    ((.hasValue proto) (assoc :value (.getValue proto)))
     ))
 (defn build-start-track-ndc
   "Build a StartTrackNDC protobuf message from a map."
@@ -5608,13 +5608,13 @@
   (let [builder (cmd.CV.Cv$StartTrackNDC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :channel)
-  (.setChannel builder (get m :channel)))
+      (.setChannel builder (get m :channel)))
     (when (contains? m :x)
-  (.setX builder (get m :x)))
+      (.setX builder (get m :x)))
     (when (contains? m :y)
-  (.setY builder (get m :y)))
+      (.setY builder (get m :y)))
     (when (contains? m :frame-time)
-  (.setFrameTime builder (get m :frame-time)))
+      (.setFrameTime builder (get m :frame-time)))
     
     (.build builder)))
 (defn parse-start-track-ndc
@@ -5622,10 +5622,10 @@
   [^cmd.CV.Cv$StartTrackNDC proto]
   (cond-> {}
     ;; Regular fields
-    (.hasChannel proto) (assoc :channel (.getChannel proto))
-    (.hasX proto) (assoc :x (.getX proto))
-    (.hasY proto) (assoc :y (.getY proto))
-    (.hasFrameTime proto) (assoc :frame-time (.getFrameTime proto))
+    ((.hasChannel proto) (assoc :channel (.getChannel proto)))
+    ((.hasX proto) (assoc :x (.getX proto)))
+    ((.hasY proto) (assoc :y (.getY proto)))
+    ((.hasFrameTime proto) (assoc :frame-time (.getFrameTime proto)))
     ))
 (defn build-stop-track
   "Build a StopTrack protobuf message from a map."
@@ -5670,7 +5670,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.DayCamGlassHeater.DayCamGlassHeater$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         START {:start (.getStart proto)}
     STOP {:stop (.getStop proto)}
     TURN_ON {:turn-on (.getTurnOn proto)}
@@ -5769,7 +5769,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Lira.Lira$Root proto]
-  (case (.getCmdCase proto)
+  (case (..getCmdCase proto)
         REFINE_TARGET {:refine-target (.getRefineTarget proto)}
     ;; Default case - no payload set
     {}))
@@ -5779,7 +5779,7 @@
   (let [builder (cmd.Lira.Lira$Refine_target/newBuilder)]
     ;; Set regular fields
     (when (contains? m :target)
-  (.setTarget builder (get m :target)))
+      (.setTarget builder (get m :target)))
     
     (.build builder)))
 (defn parse-refine-target
@@ -5787,7 +5787,7 @@
   [^cmd.Lira.Lira$Refine_target proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTarget proto) (assoc :target (.getTarget proto))
+    ((.hasTarget proto) (assoc :target (.getTarget proto)))
     ))
 (defn build-jon-gui-data-lira-target
   "Build a JonGuiDataLiraTarget protobuf message from a map."
@@ -5795,27 +5795,27 @@
   (let [builder (cmd.Lira.Lira$JonGuiDataLiraTarget/newBuilder)]
     ;; Set regular fields
     (when (contains? m :timestamp)
-  (.setTimestamp builder (get m :timestamp)))
+      (.setTimestamp builder (get m :timestamp)))
     (when (contains? m :target-longitude)
-  (.setTargetLongitude builder (get m :target-longitude)))
+      (.setTargetLongitude builder (get m :target-longitude)))
     (when (contains? m :target-latitude)
-  (.setTargetLatitude builder (get m :target-latitude)))
+      (.setTargetLatitude builder (get m :target-latitude)))
     (when (contains? m :target-altitude)
-  (.setTargetAltitude builder (get m :target-altitude)))
+      (.setTargetAltitude builder (get m :target-altitude)))
     (when (contains? m :target-azimuth)
-  (.setTargetAzimuth builder (get m :target-azimuth)))
+      (.setTargetAzimuth builder (get m :target-azimuth)))
     (when (contains? m :target-elevation)
-  (.setTargetElevation builder (get m :target-elevation)))
+      (.setTargetElevation builder (get m :target-elevation)))
     (when (contains? m :distance)
-  (.setDistance builder (get m :distance)))
+      (.setDistance builder (get m :distance)))
     (when (contains? m :uuid-part-1)
-  (.setUuidPart1 builder (get m :uuid-part-1)))
+      (.setUuidPart1 builder (get m :uuid-part-1)))
     (when (contains? m :uuid-part-2)
-  (.setUuidPart2 builder (get m :uuid-part-2)))
+      (.setUuidPart2 builder (get m :uuid-part-2)))
     (when (contains? m :uuid-part-3)
-  (.setUuidPart3 builder (get m :uuid-part-3)))
+      (.setUuidPart3 builder (get m :uuid-part-3)))
     (when (contains? m :uuid-part-4)
-  (.setUuidPart4 builder (get m :uuid-part-4)))
+      (.setUuidPart4 builder (get m :uuid-part-4)))
     
     (.build builder)))
 (defn parse-jon-gui-data-lira-target
@@ -5823,17 +5823,17 @@
   [^cmd.Lira.Lira$JonGuiDataLiraTarget proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto))
-    (.hasTargetLongitude proto) (assoc :target-longitude (.getTargetLongitude proto))
-    (.hasTargetLatitude proto) (assoc :target-latitude (.getTargetLatitude proto))
-    (.hasTargetAltitude proto) (assoc :target-altitude (.getTargetAltitude proto))
-    (.hasTargetAzimuth proto) (assoc :target-azimuth (.getTargetAzimuth proto))
-    (.hasTargetElevation proto) (assoc :target-elevation (.getTargetElevation proto))
-    (.hasDistance proto) (assoc :distance (.getDistance proto))
-    (.hasUuidPart1 proto) (assoc :uuid-part-1 (.getUuidPart1 proto))
-    (.hasUuidPart2 proto) (assoc :uuid-part-2 (.getUuidPart2 proto))
-    (.hasUuidPart3 proto) (assoc :uuid-part-3 (.getUuidPart3 proto))
-    (.hasUuidPart4 proto) (assoc :uuid-part-4 (.getUuidPart4 proto))
+    ((.hasTimestamp proto) (assoc :timestamp (.getTimestamp proto)))
+    ((.hasTargetLongitude proto) (assoc :target-longitude (.getTargetLongitude proto)))
+    ((.hasTargetLatitude proto) (assoc :target-latitude (.getTargetLatitude proto)))
+    ((.hasTargetAltitude proto) (assoc :target-altitude (.getTargetAltitude proto)))
+    ((.hasTargetAzimuth proto) (assoc :target-azimuth (.getTargetAzimuth proto)))
+    ((.hasTargetElevation proto) (assoc :target-elevation (.getTargetElevation proto)))
+    ((.hasDistance proto) (assoc :distance (.getDistance proto)))
+    ((.hasUuidPart1 proto) (assoc :uuid-part-1 (.getUuidPart1 proto)))
+    ((.hasUuidPart2 proto) (assoc :uuid-part-2 (.getUuidPart2 proto)))
+    ((.hasUuidPart3 proto) (assoc :uuid-part-3 (.getUuidPart3 proto)))
+    ((.hasUuidPart4 proto) (assoc :uuid-part-4 (.getUuidPart4 proto)))
     ))
 (defn build-root
   "Build a Root protobuf message from a map."
@@ -5841,15 +5841,15 @@
   (let [builder (cmd.Cmd$Root/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
-  (.setProtocolVersion builder (get m :protocol-version)))
+      (.setProtocolVersion builder (get m :protocol-version)))
     (when (contains? m :session-id)
-  (.setSessionId builder (get m :session-id)))
+      (.setSessionId builder (get m :session-id)))
     (when (contains? m :important)
-  (.setImportant builder (get m :important)))
+      (.setImportant builder (get m :important)))
     (when (contains? m :from-cv-subsystem)
-  (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
+      (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
-  (.setClientType builder (get m :client-type)))
+      (.setClientType builder (get m :client-type)))
     
     (.build builder)))
 
@@ -5878,11 +5878,11 @@
   [^cmd.Cmd$Root proto]
   (cond-> {}
     ;; Regular fields
-    (.hasProtocolVersion proto) (assoc :protocol-version (.getProtocolVersion proto))
-    (.hasSessionId proto) (assoc :session-id (.getSessionId proto))
-    (.hasImportant proto) (assoc :important (.getImportant proto))
-    (.hasFromCvSubsystem proto) (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
-    (.hasClientType proto) (assoc :client-type (.getClientType proto))
+    ((.hasProtocolVersion proto) (assoc :protocol-version (.getProtocolVersion proto)))
+    ((.hasSessionId proto) (assoc :session-id (.getSessionId proto)))
+    ((.hasImportant proto) (assoc :important (.getImportant proto)))
+    ((.hasFromCvSubsystem proto) (assoc :from-cv-subsystem (.getFromCvSubsystem proto)))
+    ((.hasClientType proto) (assoc :client-type (.getClientType proto)))
     
     ;; Oneof payload
     true (merge (parse-root-payload proto))))
@@ -5890,7 +5890,7 @@
 (defn parse-root-payload
   "Parse the oneof payload from a Root."
   [^cmd.Cmd$Root proto]
-  (case (.getPayloadCase proto)
+  (case (..getPayloadCase proto)
         DAY_CAMERA {:day-camera (.getDayCamera proto)}
     HEAT_CAMERA {:heat-camera (.getHeatCamera proto)}
     GPS {:gps (.getGps proto)}

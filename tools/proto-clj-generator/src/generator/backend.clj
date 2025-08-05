@@ -255,9 +255,11 @@
   (cond
     (map? v) (into {} (map (fn [[k val]]
                             [k (if (and (string? val) 
-                                       (or (re-matches #"[A-Z][A-Z0-9_]*" val)
-                                           (re-matches #"TYPE_[A-Z][A-Z0-9_]*" val)
-                                           (re-matches #"LABEL_[A-Z][A-Z0-9_]*" val)))
+                                       (not= k :name) ; Don't convert name fields
+                                       (or (re-matches #"TYPE_[A-Z][A-Z0-9_]*" val)
+                                           (re-matches #"LABEL_[A-Z][A-Z0-9_]*" val)
+                                           (re-matches #"RETENTION_[A-Z][A-Z0-9_]*" val)
+                                           (re-matches #"TARGET_[A-Z][A-Z0-9_]*" val)))
                                 (keywordize-value val)
                                 (process-json-value val))])
                           v))
