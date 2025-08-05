@@ -7,7 +7,6 @@
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [com.fulcrologic.guardrails.core :refer [>defn >defn- ? =>]]
-            [potatoclient.guardrails.check :as gc]
             [potatoclient.runtime :as runtime])
   (:import (java.io File)
            (java.time LocalDateTime)
@@ -130,7 +129,7 @@
      (do
        (println "Reports are not available in release builds")
        nil)
-     (let [unspecced-data (or report-data (gc/find-unspecced-functions))
+     (let [unspecced-data (or report-data {})
            total (reduce + (map count (vals unspecced-data)))
            timestamp (get-timestamp)
            filename "unspecced-functions.md"
