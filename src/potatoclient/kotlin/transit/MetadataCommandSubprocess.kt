@@ -189,14 +189,14 @@ fun main(args: Array<String>) {
         StdoutInterceptor.setMessageProtocol(messageProtocol)
 
         runBlocking {
-            messageProtocol.sendStatus("starting")
+            messageProtocol.sendStatus(TransitKeys.STATUS_STARTING)
 
             val subprocess = MetadataCommandSubprocess(wsUrl, transitComm)
 
             try {
                 subprocess.run()
             } finally {
-                messageProtocol.sendStatus("stopped")
+                messageProtocol.sendStatus(TransitKeys.STATUS_STOPPED)
             }
         }
     } catch (e: Exception) {

@@ -54,7 +54,7 @@ class TestModeWebSocketStub(
             TransitKeys.TIMESTAMP to System.currentTimeMillis(),
             TransitKeys.PAYLOAD to
                 mapOf(
-                    TransitKeys.TYPE to "pong",
+                    TransitKeys.TYPE to TransitKeys.PONG,
                     TransitKeys.TIMESTAMP to System.currentTimeMillis(),
                 ),
         )
@@ -72,7 +72,7 @@ class TestModeWebSocketStub(
             TransitKeys.TIMESTAMP to System.currentTimeMillis(),
             TransitKeys.PAYLOAD to
                 mapOf(
-                    TransitKeys.TYPE to "ack",
+                    TransitKeys.TYPE to TransitKeys.ACK,
                     TransitKeys.ACTION to commandType,
                     TransitKeys.MSG_ID to commandId,
                 ),
@@ -88,7 +88,7 @@ class TestModeWebSocketStub(
             TransitKeys.TIMESTAMP to System.currentTimeMillis(),
             TransitKeys.PAYLOAD to
                 mapOf(
-                    TransitKeys.TYPE to "error",
+                    TransitKeys.TYPE to TransitKeys.ERROR,
                     TransitKeys.MESSAGE to message,
                 ),
         )

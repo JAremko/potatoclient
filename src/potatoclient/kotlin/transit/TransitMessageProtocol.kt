@@ -1,5 +1,6 @@
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.Keyword
 import com.cognitect.transit.TransitFactory
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -161,8 +162,8 @@ class TransitMessageProtocol(
      * Send a status update
      */
     fun sendStatus(
-        status: String,
-        details: Map<String, Any> = emptyMap(),
+        status: Keyword,
+        details: Map<Any, Any> = emptyMap(),
     ) {
         try {
             val statusMsg =

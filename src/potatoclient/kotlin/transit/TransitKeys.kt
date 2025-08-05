@@ -99,4 +99,27 @@ object TransitKeys {
     val DELTA_Y: Keyword = TransitFactory.keyword("delta-y")
     val NDC_DELTA_X: Keyword = TransitFactory.keyword("ndc-delta-x")
     val NDC_DELTA_Y: Keyword = TransitFactory.keyword("ndc-delta-y")
+    
+    // Response type keywords
+    val PONG: Keyword = TransitFactory.keyword("pong")
+    val ACK: Keyword = TransitFactory.keyword("ack")
+    // ERROR already defined above
+    
+    // Status keywords
+    val STATUS_STARTING: Keyword = TransitFactory.keyword("starting")
+    val STATUS_TEST_MODE_READY: Keyword = TransitFactory.keyword("test-mode-ready")
+    val STATUS_SENT: Keyword = TransitFactory.keyword("sent")
+    val STATUS_STOPPED: Keyword = TransitFactory.keyword("stopped")
+    val STATUS_SHUTTING_DOWN: Keyword = TransitFactory.keyword("shutting-down")
+    val STATUS_TEST_MODE_STOPPED: Keyword = TransitFactory.keyword("test-mode-stopped")
+    
+    // Common field keywords (removing duplicates already defined above)
+    val TEST_MODE: Keyword = TransitFactory.keyword("test-mode")
+    val ORIGINAL_MSG_ID: Keyword = TransitFactory.keyword("original-msg-id")
+    val PROTO_TYPE: Keyword = TransitFactory.keyword("proto-type")
+    val SIZE: Keyword = TransitFactory.keyword("size")
+    val RATE_LIMIT_HZ: Keyword = TransitFactory.keyword("rate-limit-hz")
+    
+    // Additional keys from MessageKeys.java (camelCase versions)
+    val STREAM_ID: Keyword = TransitFactory.keyword("streamId")
 }

@@ -2,6 +2,7 @@
 
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.TransitFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
@@ -81,7 +82,7 @@ class CommandSubprocess(
                 messageProtocol.createMessage(
                     MessageType.RESPONSE,
                     mapOf(
-                        "status" to "sent",
+                        TransitKeys.STATUS to TransitKeys.STATUS_SENT,
                     ),
                 ),
             )
@@ -104,7 +105,7 @@ class CommandSubprocess(
                         messageProtocol.createMessage(
                             MessageType.RESPONSE,
                             mapOf(
-                                "status" to "stopped",
+                                TransitKeys.STATUS to TransitKeys.STATUS_STOPPED,
                             ),
                         ),
                     )
@@ -115,17 +116,17 @@ class CommandSubprocess(
             "get-stats" -> {
                 val stats =
                     mapOf(
-                        "received" to totalReceived.get(),
-                        "sent" to totalSent.get(),
-                        "ws-connected" to wsClient.isConnected(),
+                        TransitKeys.RECEIVED to totalReceived.get(),
+                        TransitKeys.SENT to totalSent.get(),
+                        TransitKeys.WS_CONNECTED to wsClient.isConnected(),
                     )
                 // Use proper message type for stats
                 transitComm.sendMessage(
                     messageProtocol.createMessage(
                         MessageType.METRIC,
                         mapOf(
-                            "name" to "command-stats",
-                            "value" to stats,
+                            TransitKeys.NAME to TransitFactory.keyword("command-stats"),
+                            TransitKeys.VALUE to stats,
                         ),
                     ),
                 )
@@ -141,8 +142,8 @@ class CommandSubprocess(
             messageProtocol.createMessage(
                 MessageType.ERROR,
                 mapOf(
-                    "context" to "command-error",
-                    "error" to (error.message ?: "Unknown error"),
+                    TransitKeys.CONTEXT to TransitFactory.keyword("command-error"),
+                    TransitKeys.ERROR to (error.message ?: "Unknown error"),
                 ),
             ),
         )
@@ -291,7 +292,7 @@ fun main(args: Array<String>) {
         StdoutInterceptor.setMessageProtocol(messageProtocol)
 
         runBlocking {
-            messageProtocol.sendStatus("starting")
+            messageProtocol.sendStatus(TransitKeys.STATUS_STARTING)
 
             if (isTestMode) {
                 logInfo("Running in test mode - no WebSocket connection")
@@ -302,7 +303,7 @@ fun main(args: Array<String>) {
                 try {
                     subprocess.run()
                 } finally {
-                    messageProtocol.sendStatus("stopped")
+                    messageProtocol.sendStatus(TransitKeys.STATUS_STOPPED)
                 }
             }
         }
@@ -323,7 +324,7 @@ suspend fun runTestMode(
 ) = coroutineScope {
     val testStub = TestModeWebSocketStub(transitComm)
 
-    messageProtocol.sendStatus("test-mode-ready")
+    messageProtocol.sendStatus(TransitKeys.STATUS_TEST_MODE_READY)
 
     // Handle incoming Transit messages
     while (isActive) {
@@ -369,7 +370,7 @@ suspend fun runTestMode(
                     val payload = msg[TransitKeys.PAYLOAD] as? Map<*, *>
                     val action = payload?.get(TransitKeys.ACTION) ?: payload?.get("action")
                     if (action == "shutdown") {
-                        messageProtocol.sendStatus("shutting-down")
+                        messageProtocol.sendStatus(TransitKeys.STATUS_SHUTTING_DOWN)
                         break
                     }
                 }
@@ -379,5 +380,5 @@ suspend fun runTestMode(
         }
     }
 
-    messageProtocol.sendStatus("test-mode-stopped")
+    messageProtocol.sendStatus(TransitKeys.STATUS_TEST_MODE_STOPPED)
 }

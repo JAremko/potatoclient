@@ -2,6 +2,7 @@
 
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.TransitFactory
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ suspend fun runStateTestMode(
     transitComm: TransitCommunicator,
     messageProtocol: TransitMessageProtocol,
 ) = coroutineScope {
-    messageProtocol.sendStatus("test-mode-ready")
+    messageProtocol.sendStatus(TransitKeys.STATUS_TEST_MODE_READY)
 
     // Create a minimal StateSubprocess-like handler
     val totalReceived =
@@ -84,7 +85,7 @@ suspend fun runStateTestMode(
                             transitComm.sendMessage(
                                 messageProtocol.createMessage(
                                     MessageType.RESPONSE,
-                                    mapOf("status" to "stopped"),
+                                    mapOf(TransitKeys.STATUS to TransitKeys.STATUS_STOPPED),
                                 ),
                             )
                             transitComm.close()
@@ -93,17 +94,17 @@ suspend fun runStateTestMode(
                         "get-stats" -> {
                             val stats =
                                 mapOf(
-                                    "received" to totalReceived.get(),
-                                    "sent" to totalSent.get(),
-                                    "ws-connected" to false,
-                                    "test-mode" to true,
+                                    TransitKeys.RECEIVED to totalReceived.get(),
+                                    TransitKeys.SENT to totalSent.get(),
+                                    TransitKeys.WS_CONNECTED to false,
+                                    TransitKeys.TEST_MODE to true,
                                 )
                             transitComm.sendMessage(
                                 messageProtocol.createMessage(
                                     MessageType.METRIC,
                                     mapOf(
-                                        "name" to "state-stats",
-                                        "value" to stats,
+                                        TransitKeys.NAME to TransitFactory.keyword("state-stats"),
+                                        TransitKeys.VALUE to stats,
                                     ),
                                 ),
                             )

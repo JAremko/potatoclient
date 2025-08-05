@@ -2,6 +2,7 @@
 
 package potatoclient.kotlin.transit
 
+import com.cognitect.transit.TransitFactory
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -119,7 +120,7 @@ class StateSubprocess(
                         messageProtocol.createMessage(
                             MessageType.RESPONSE,
                             mapOf(
-                                "status" to "stopped",
+                                TransitKeys.STATUS to TransitKeys.STATUS_STOPPED,
                             ),
                         ),
                     )
@@ -128,23 +129,23 @@ class StateSubprocess(
                 transitComm.close()
             }
             "set-rate-limit" -> {
-                val rateHz = (payload["rate-hz"] as? Number)?.toInt() ?: 30
+                val rateHz = (payload[TransitKeys.RATE_HZ] as? Number)?.toInt() ?: 30
                 rateLimiter.set(RateLimiter(rateHz, rateLimiterScope))
             }
             "get-stats" -> {
                 val stats =
                     mapOf(
-                        "received" to totalReceived.get(),
-                        "sent" to totalSent.get(),
-                        "ws-connected" to wsClient.isConnected(),
-                        "rate-limit-hz" to rateLimiter.get().rateHz,
+                        TransitKeys.RECEIVED to totalReceived.get(),
+                        TransitKeys.SENT to totalSent.get(),
+                        TransitKeys.WS_CONNECTED to wsClient.isConnected(),
+                        TransitKeys.RATE_LIMIT_HZ to rateLimiter.get().rateHz,
                     )
                 transitComm.sendMessage(
                     messageProtocol.createMessage(
                         MessageType.METRIC,
                         mapOf(
-                            "name" to "state-stats",
-                            "value" to stats,
+                            TransitKeys.NAME to TransitFactory.keyword("state-stats"),
+                            TransitKeys.VALUE to stats,
                         ),
                     ),
                 )
