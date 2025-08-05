@@ -185,8 +185,8 @@
 
 (defn generate-builder
   "Generate builder function for a message."
-  [message type-lookup current-package]
-  (let [template (load-template-string "builder.clj")
+  [message type-lookup current-package guardrails?]
+  (let [template (load-template-string (if guardrails? "builder-guardrails.clj" "builder.clj"))
         regular-fields (remove :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
         
@@ -219,18 +219,24 @@
 
 (defn generate-parser
   "Generate parser function for a message."
-  [message type-lookup current-package]
+  [message type-lookup current-package guardrails?]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
         has-fields? (or (seq regular-fields) (seq (:oneofs message)))
         
         ;; For empty messages, use a simpler template
         template (if has-fields?
-                   (load-template-string "parser.clj")
-                   (str "(defn " fn-name "\n"
-                        "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
-                        "  [^" (:java-class message) " proto]\n"
-                        "  {})"))
+                   (load-template-string (if guardrails? "parser-guardrails.clj" "parser.clj"))
+                   (if guardrails?
+                     (str "(>defn " fn-name "\n"
+                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
+                          "  [^" (:java-class message) " proto]\n"
+                          "  [any? => map?]\n"
+                          "  {})")
+                     (str "(defn " fn-name "\n"
+                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
+                          "  [^" (:java-class message) " proto]\n"
+                          "  {})")))
         
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
@@ -307,8 +313,8 @@
 
 (defn generate-oneof-builder
   "Generate oneof builder function."
-  [message oneof type-lookup current-package]
-  (let [template (load-template-string "oneof-builder.clj")
+  [message oneof type-lookup current-package guardrails?]
+  (let [template (load-template-string (if guardrails? "oneof-builder-guardrails.clj" "oneof-builder.clj"))
         fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
@@ -325,8 +331,8 @@
 
 (defn generate-oneof-parser
   "Generate oneof parser function."
-  [message oneof type-lookup current-package]
-  (let [template (load-template-string "oneof-parser.clj")
+  [message oneof type-lookup current-package guardrails?]
+  (let [template (load-template-string (if guardrails? "oneof-parser-guardrails.clj" "oneof-parser.clj"))
         fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
@@ -356,10 +362,21 @@
 (defn generate-namespace
   "Generate complete namespace."
   ([ns-name imports enums messages type-lookup]
-   (generate-namespace ns-name imports enums messages type-lookup []))
+   (generate-namespace ns-name imports enums messages type-lookup [] false))
   ([ns-name imports enums messages type-lookup require-specs]
-   (let [template (if (seq require-specs)
+   (generate-namespace ns-name imports enums messages type-lookup require-specs false))
+  ([ns-name imports enums messages type-lookup require-specs guardrails?]
+   (let [template (cond
+                    (and guardrails? (seq require-specs))
+                    (load-template-string "namespace-with-requires-guardrails.clj")
+                    
+                    guardrails?
+                    (load-template-string "namespace-guardrails.clj")
+                    
+                    (seq require-specs)
                     (load-template-string "namespace-with-requires.clj")
+                    
+                    :else
                     (load-template-string "namespace.clj"))
          
          ;; Extract current package from namespace name
@@ -406,15 +423,15 @@
          ;; Generate all message builders/parsers first, then all oneofs
          ;; This avoids forward reference issues
          all-builders (for [msg sorted-messages]
-                       (generate-builder msg type-lookup current-package))
+                       (generate-builder msg type-lookup current-package guardrails?))
          all-parsers (for [msg sorted-messages]
-                      (generate-parser msg type-lookup current-package))
+                      (generate-parser msg type-lookup current-package guardrails?))
          all-oneof-builders (for [msg sorted-messages
                                  oneof (:oneofs msg)]
-                             (generate-oneof-builder msg oneof type-lookup current-package))
+                             (generate-oneof-builder msg oneof type-lookup current-package guardrails?))
          all-oneof-parsers (for [msg sorted-messages
                                 oneof (:oneofs msg)]
-                            (generate-oneof-parser msg oneof type-lookup current-package))
+                            (generate-oneof-parser msg oneof type-lookup current-package guardrails?))
          
          messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
@@ -425,10 +442,8 @@
          
          ;; Generate require clause if needed
          require-clause (when (seq require-specs)
-                        (str "(:require\n   "
-                             (str/join "\n   " 
-                                      (map pr-str require-specs))
-                             ")\n  "))
+                        (str/join "\n            " 
+                                 (map pr-str require-specs)))
          
          replacements {"NAMESPACE-PLACEHOLDER" ns-name
                      "REQUIRE-PLACEHOLDER" (or require-clause "")
@@ -486,7 +501,7 @@
 
 (defn generate-code
   "Generate complete Clojure code from EDN data."
-  [{:keys [ns-name edn-data type-lookup]}]
+  [{:keys [ns-name edn-data type-lookup guardrails?]}]
   (let [imports (collect-imports edn-data)
         ;; Helper to collect all messages recursively
         collect-all-messages (fn collect [msg]
@@ -509,14 +524,16 @@
                    (sp/select [:files sp/ALL :enums sp/ALL] edn-data)
                    (->> all-messages
                         (mapcat collect-enums-from-message)))]
-    (generate-namespace ns-name imports all-enums all-messages type-lookup)))
+    (generate-namespace ns-name imports all-enums all-messages type-lookup [] guardrails?)))
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output."
-  [{:keys [command state type-lookup] :as backend-output} ns-prefix]
+  [{:keys [command state type-lookup] :as backend-output} ns-prefix guardrails?]
   {:command (generate-code {:ns-name (str ns-prefix ".command")
                            :edn-data command
-                           :type-lookup type-lookup})
+                           :type-lookup type-lookup
+                           :guardrails? guardrails?})
    :state (generate-code {:ns-name (str ns-prefix ".state")
                          :edn-data state
-                         :type-lookup type-lookup})})
+                         :type-lookup type-lookup
+                         :guardrails? guardrails?})})

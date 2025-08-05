@@ -1,6 +1,7 @@
 (ns potatoclient.proto.cmd.system
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser :as types])
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [potatoclient.proto.ser :as types])
   (:import cmd.System.JonSharedCmdSystem$Root
            cmd.System.JonSharedCmdSystem$StartALl
            cmd.System.JonSharedCmdSystem$StopALl
@@ -58,186 +59,221 @@
 (declare build-root-payload)
 (declare parse-root-payload)
 
-(defn build-root
-  "Build a Root protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$Root/newBuilder)]
-    ;; Handle oneof: cmd
-    (when-let [cmd-field (first
-                           (filter (fn [[k v]]
-                                     (#{:start-all :stop-all :reboot :power-off
-                                        :localization :reset-configs :start-rec
-                                        :stop-rec :mark-rec-important
-                                        :unmark-rec-important :enter-transport
-                                        :geodesic-mode-enable
-                                        :geodesic-mode-disable}
-                                      k))
-                             m))]
-      (build-root-payload builder cmd-field))
-    (.build builder)))
+(>defn build-root
+       "Build a Root protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$Root/newBuilder)]
+         ;; Handle oneof: cmd
+         (when-let [cmd-field (first (filter (fn [[k v]]
+                                               (#{:start-all :stop-all :reboot
+                                                  :power-off :localization
+                                                  :reset-configs :start-rec
+                                                  :stop-rec :mark-rec-important
+                                                  :unmark-rec-important
+                                                  :enter-transport
+                                                  :geodesic-mode-enable
+                                                  :geodesic-mode-disable}
+                                                k))
+                                       m))]
+           (build-root-payload builder cmd-field))
+         (.build builder)))
 
-(defn build-start-a-ll
-  "Build a StartALl protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$StartALl/newBuilder)]
-    (.build builder)))
+(>defn build-start-a-ll
+       "Build a StartALl protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$StartALl/newBuilder)]
+         (.build builder)))
 
-(defn build-stop-a-ll
-  "Build a StopALl protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$StopALl/newBuilder)]
-    (.build builder)))
+(>defn build-stop-a-ll
+       "Build a StopALl protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$StopALl/newBuilder)]
+         (.build builder)))
 
-(defn build-reboot
-  "Build a Reboot protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$Reboot/newBuilder)]
-    (.build builder)))
+(>defn build-reboot
+       "Build a Reboot protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$Reboot/newBuilder)]
+         (.build builder)))
 
-(defn build-power-off
-  "Build a PowerOff protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$PowerOff/newBuilder)]
-    (.build builder)))
+(>defn build-power-off
+       "Build a PowerOff protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$PowerOff/newBuilder)]
+         (.build builder)))
 
-(defn build-reset-configs
-  "Build a ResetConfigs protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$ResetConfigs/newBuilder)]
-    (.build builder)))
+(>defn build-reset-configs
+       "Build a ResetConfigs protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$ResetConfigs/newBuilder)]
+         (.build builder)))
 
-(defn build-start-rec
-  "Build a StartRec protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$StartRec/newBuilder)]
-    (.build builder)))
+(>defn build-start-rec
+       "Build a StartRec protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$StartRec/newBuilder)]
+         (.build builder)))
 
-(defn build-stop-rec
-  "Build a StopRec protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$StopRec/newBuilder)]
-    (.build builder)))
+(>defn build-stop-rec
+       "Build a StopRec protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$StopRec/newBuilder)]
+         (.build builder)))
 
-(defn build-mark-rec-important
-  "Build a MarkRecImportant protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$MarkRecImportant/newBuilder)]
-    (.build builder)))
+(>defn build-mark-rec-important
+       "Build a MarkRecImportant protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.System.JonSharedCmdSystem$MarkRecImportant/newBuilder)]
+         (.build builder)))
 
-(defn build-unmark-rec-important
-  "Build a UnmarkRecImportant protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$UnmarkRecImportant/newBuilder)]
-    (.build builder)))
+(>defn build-unmark-rec-important
+       "Build a UnmarkRecImportant protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.System.JonSharedCmdSystem$UnmarkRecImportant/newBuilder)]
+         (.build builder)))
 
-(defn build-enter-transport
-  "Build a EnterTransport protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$EnterTransport/newBuilder)]
-    (.build builder)))
+(>defn build-enter-transport
+       "Build a EnterTransport protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$EnterTransport/newBuilder)]
+         (.build builder)))
 
-(defn build-enable-geodesic-mode
-  "Build a EnableGeodesicMode protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$EnableGeodesicMode/newBuilder)]
-    (.build builder)))
+(>defn build-enable-geodesic-mode
+       "Build a EnableGeodesicMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.System.JonSharedCmdSystem$EnableGeodesicMode/newBuilder)]
+         (.build builder)))
 
-(defn build-disable-geodesic-mode
-  "Build a DisableGeodesicMode protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$DisableGeodesicMode/newBuilder)]
-    (.build builder)))
+(>defn build-disable-geodesic-mode
+       "Build a DisableGeodesicMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.System.JonSharedCmdSystem$DisableGeodesicMode/newBuilder)]
+         (.build builder)))
 
-(defn build-set-localization
-  "Build a SetLocalization protobuf message from a map."
-  [m]
-  (let [builder (cmd.System.JonSharedCmdSystem$SetLocalization/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :loc)
-      (.setLoc builder
-               (get types/jon-gui-data-system-localizations-values
-                    (get m :loc))))
-    (.build builder)))
+(>defn build-set-localization
+       "Build a SetLocalization protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.System.JonSharedCmdSystem$SetLocalization/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :loc)
+           (.setLoc builder
+                    (get types/jon-gui-data-system-localizations-values
+                         (get m :loc))))
+         (.build builder)))
 
-(defn parse-root
-  "Parse a Root protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$Root proto]
-  (cond-> {}
-    ;; Oneof payload
-    true (merge (parse-root-payload proto))))
+(>defn parse-root
+       "Parse a Root protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$Root proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Oneof payload
+         true (merge (parse-root-payload proto))))
 
-(defn parse-start-a-ll
-  "Parse a StartALl protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$StartALl proto]
-  {})
+(>defn parse-start-a-ll
+       "Parse a StartALl protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$StartALl proto]
+       [any? => map?]
+       {})
 
-(defn parse-stop-a-ll
-  "Parse a StopALl protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$StopALl proto]
-  {})
+(>defn parse-stop-a-ll
+       "Parse a StopALl protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$StopALl proto]
+       [any? => map?]
+       {})
 
-(defn parse-reboot
-  "Parse a Reboot protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$Reboot proto]
-  {})
+(>defn parse-reboot
+       "Parse a Reboot protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$Reboot proto]
+       [any? => map?]
+       {})
 
-(defn parse-power-off
-  "Parse a PowerOff protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$PowerOff proto]
-  {})
+(>defn parse-power-off
+       "Parse a PowerOff protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$PowerOff proto]
+       [any? => map?]
+       {})
 
-(defn parse-reset-configs
-  "Parse a ResetConfigs protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$ResetConfigs proto]
-  {})
+(>defn parse-reset-configs
+       "Parse a ResetConfigs protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$ResetConfigs proto]
+       [any? => map?]
+       {})
 
-(defn parse-start-rec
-  "Parse a StartRec protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$StartRec proto]
-  {})
+(>defn parse-start-rec
+       "Parse a StartRec protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$StartRec proto]
+       [any? => map?]
+       {})
 
-(defn parse-stop-rec
-  "Parse a StopRec protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$StopRec proto]
-  {})
+(>defn parse-stop-rec
+       "Parse a StopRec protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$StopRec proto]
+       [any? => map?]
+       {})
 
-(defn parse-mark-rec-important
-  "Parse a MarkRecImportant protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$MarkRecImportant proto]
-  {})
+(>defn parse-mark-rec-important
+       "Parse a MarkRecImportant protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$MarkRecImportant proto]
+       [any? => map?]
+       {})
 
-(defn parse-unmark-rec-important
-  "Parse a UnmarkRecImportant protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$UnmarkRecImportant proto]
-  {})
+(>defn parse-unmark-rec-important
+       "Parse a UnmarkRecImportant protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$UnmarkRecImportant proto]
+       [any? => map?]
+       {})
 
-(defn parse-enter-transport
-  "Parse a EnterTransport protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$EnterTransport proto]
-  {})
+(>defn parse-enter-transport
+       "Parse a EnterTransport protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$EnterTransport proto]
+       [any? => map?]
+       {})
 
-(defn parse-enable-geodesic-mode
-  "Parse a EnableGeodesicMode protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$EnableGeodesicMode proto]
-  {})
+(>defn parse-enable-geodesic-mode
+       "Parse a EnableGeodesicMode protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$EnableGeodesicMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-disable-geodesic-mode
-  "Parse a DisableGeodesicMode protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$DisableGeodesicMode proto]
-  {})
+(>defn parse-disable-geodesic-mode
+       "Parse a DisableGeodesicMode protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$DisableGeodesicMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-set-localization
-  "Parse a SetLocalization protobuf message to a map."
-  [^cmd.System.JonSharedCmdSystem$SetLocalization proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :loc
-           (get types/jon-gui-data-system-localizations-keywords
-                (.getLoc proto)))))
+(>defn parse-set-localization
+       "Parse a SetLocalization protobuf message to a map."
+       [^cmd.System.JonSharedCmdSystem$SetLocalization proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :loc
+                (get types/jon-gui-data-system-localizations-keywords
+                     (.getLoc proto)))))
 
-(defn build-root-payload
+(>defn-
+  build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :start-all (.setStartAll builder (build-start-a-ll value))
     :stop-all (.setStopAll builder (build-stop-a-ll value))
@@ -258,9 +294,11 @@
       (.setGeodesicModeDisable builder (build-disable-geodesic-mode value))
     (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
 
-(defn parse-root-payload
+(>defn-
+  parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.System.JonSharedCmdSystem$Root proto]
+  [any? => (? map?)]
   (cond (.hasStartAll proto) {:start-all (parse-start-a-ll (.getStartAll
                                                              proto))}
         (.hasStopAll proto) {:stop-all (parse-stop-a-ll (.getStopAll proto))}

@@ -1,6 +1,7 @@
 (ns potatoclient.proto.cmd.heatcamera
   "Generated protobuf functions."
-  (:require [potatoclient.proto.ser :as types])
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [potatoclient.proto.ser :as types])
   (:import
     cmd.HeatCamera.JonSharedCmdHeatCamera$Root
     cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
@@ -130,32 +131,35 @@
 (declare parse-root-payload)
 (declare parse-zoom-payload)
 
-(defn build-root
-  "Build a Root protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
-    ;; Handle oneof: cmd
-    (when-let [cmd-field (first (filter
-                                  (fn [[k v]]
-                                    (#{:zoom :set-agc :set-filter :start :stop
-                                       :photo :zoom-in :zoom-out :zoom-stop
-                                       :focus-in :focus-out :focus-stop
-                                       :calibrate :set-dde-level :enable-dde
-                                       :disable-dde :set-auto-focus
-                                       :focus-step-plus :focus-step-minus
-                                       :set-fx-mode :next-fx-mode :prev-fx-mode
-                                       :get-meteo :shift-dde :refresh-fx-mode
-                                       :reset-zoom :save-to-table
-                                       :set-calib-mode :set-digital-zoom-level
-                                       :set-clahe-level :shift-clahe-level}
-                                     k))
-                                  m))]
-      (build-root-payload builder cmd-field))
-    (.build builder)))
+(>defn build-root
+       "Build a Root protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
+         ;; Handle oneof: cmd
+         (when-let [cmd-field
+                      (first (filter
+                               (fn [[k v]]
+                                 (#{:zoom :set-agc :set-filter :start :stop
+                                    :photo :zoom-in :zoom-out :zoom-stop
+                                    :focus-in :focus-out :focus-stop :calibrate
+                                    :set-dde-level :enable-dde :disable-dde
+                                    :set-auto-focus :focus-step-plus
+                                    :focus-step-minus :set-fx-mode :next-fx-mode
+                                    :prev-fx-mode :get-meteo :shift-dde
+                                    :refresh-fx-mode :reset-zoom :save-to-table
+                                    :set-calib-mode :set-digital-zoom-level
+                                    :set-clahe-level :shift-clahe-level}
+                                  k))
+                               m))]
+           (build-root-payload builder cmd-field))
+         (.build builder)))
 
-(defn build-set-fx-mode
+(>defn
+  build-set-fx-mode
   "Build a SetFxMode protobuf message from a map."
   [m]
+  [map? => any?]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
@@ -163,74 +167,92 @@
                 (get types/jon-gui-data-fx-mode-heat-values (get m :mode))))
     (.build builder)))
 
-(defn build-set-clahe-level
-  "Build a SetClaheLevel protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-set-clahe-level
+       "Build a SetClaheLevel protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-shift-clahe-level
-  "Build a ShiftClaheLevel protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-shift-clahe-level
+       "Build a ShiftClaheLevel protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let
+         [builder
+            (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-next-fx-mode
-  "Build a NextFxMode protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode/newBuilder)]
-    (.build builder)))
+(>defn build-next-fx-mode
+       "Build a NextFxMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode/newBuilder)]
+         (.build builder)))
 
-(defn build-prev-fx-mode
-  "Build a PrevFxMode protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode/newBuilder)]
-    (.build builder)))
+(>defn build-prev-fx-mode
+       "Build a PrevFxMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode/newBuilder)]
+         (.build builder)))
 
-(defn build-refresh-fx-mode
-  "Build a RefreshFxMode protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
-    (.build builder)))
+(>defn build-refresh-fx-mode
+       "Build a RefreshFxMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
+         (.build builder)))
 
-(defn build-enable-dde
-  "Build a EnableDDE protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE/newBuilder)]
-    (.build builder)))
+(>defn build-enable-dde
+       "Build a EnableDDE protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE/newBuilder)]
+         (.build builder)))
 
-(defn build-disable-dde
-  "Build a DisableDDE protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE/newBuilder)]
-    (.build builder)))
+(>defn build-disable-dde
+       "Build a DisableDDE protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE/newBuilder)]
+         (.build builder)))
 
-(defn build-set-value
-  "Build a SetValue protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-set-value
+       "Build a SetValue protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-set-dde-level
-  "Build a SetDDELevel protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-set-dde-level
+       "Build a SetDDELevel protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-set-digital-zoom-level
+(>defn
+  build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
   [m]
+  [map? => any?]
   (let
     [builder
        (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel/newBuilder)]
@@ -238,404 +260,485 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (.build builder)))
 
-(defn build-shift-dde
-  "Build a ShiftDDE protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-shift-dde
+       "Build a ShiftDDE protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-zoom-in
-  "Build a ZoomIn protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn/newBuilder)]
-    (.build builder)))
+(>defn build-zoom-in
+       "Build a ZoomIn protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn/newBuilder)]
+         (.build builder)))
 
-(defn build-zoom-out
-  "Build a ZoomOut protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut/newBuilder)]
-    (.build builder)))
+(>defn build-zoom-out
+       "Build a ZoomOut protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut/newBuilder)]
+         (.build builder)))
 
-(defn build-zoom-stop
-  "Build a ZoomStop protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop/newBuilder)]
-    (.build builder)))
+(>defn build-zoom-stop
+       "Build a ZoomStop protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop/newBuilder)]
+         (.build builder)))
 
-(defn build-focus-in
-  "Build a FocusIn protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn/newBuilder)]
-    (.build builder)))
+(>defn build-focus-in
+       "Build a FocusIn protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn/newBuilder)]
+         (.build builder)))
 
-(defn build-focus-out
-  "Build a FocusOut protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut/newBuilder)]
-    (.build builder)))
+(>defn build-focus-out
+       "Build a FocusOut protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut/newBuilder)]
+         (.build builder)))
 
-(defn build-focus-stop
-  "Build a FocusStop protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop/newBuilder)]
-    (.build builder)))
+(>defn build-focus-stop
+       "Build a FocusStop protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop/newBuilder)]
+         (.build builder)))
 
-(defn build-focus-step-plus
-  "Build a FocusStepPlus protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
-    (.build builder)))
+(>defn build-focus-step-plus
+       "Build a FocusStepPlus protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
+         (.build builder)))
 
-(defn build-focus-step-minus
-  "Build a FocusStepMinus protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
-    (.build builder)))
+(>defn build-focus-step-minus
+       "Build a FocusStepMinus protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let
+         [builder
+            (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
+         (.build builder)))
 
-(defn build-calibrate
-  "Build a Calibrate protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate/newBuilder)]
-    (.build builder)))
+(>defn build-calibrate
+       "Build a Calibrate protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate/newBuilder)]
+         (.build builder)))
 
-(defn build-zoom
-  "Build a Zoom protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
-    ;; Handle oneof: cmd
-    (when-let [cmd-field (first (filter (fn [[k v]]
-                                          (#{:set-zoom-table-value
-                                             :next-zoom-table-pos
-                                             :prev-zoom-table-pos}
-                                           k))
-                                  m))]
-      (build-zoom-payload builder cmd-field))
-    (.build builder)))
+(>defn build-zoom
+       "Build a Zoom protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
+         ;; Handle oneof: cmd
+         (when-let [cmd-field (first (filter (fn [[k v]]
+                                               (#{:set-zoom-table-value
+                                                  :next-zoom-table-pos
+                                                  :prev-zoom-table-pos}
+                                                k))
+                                       m))]
+           (build-zoom-payload builder cmd-field))
+         (.build builder)))
 
-(defn build-next-zoom-table-pos
-  "Build a NextZoomTablePos protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
-    (.build builder)))
+(>defn build-next-zoom-table-pos
+       "Build a NextZoomTablePos protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let
+         [builder
+            (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
+         (.build builder)))
 
-(defn build-prev-zoom-table-pos
-  "Build a PrevZoomTablePos protobuf message from a map."
-  [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
-    (.build builder)))
+(>defn build-prev-zoom-table-pos
+       "Build a PrevZoomTablePos protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let
+         [builder
+            (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
+         (.build builder)))
 
-(defn build-set-calib-mode
-  "Build a SetCalibMode protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode/newBuilder)]
-    (.build builder)))
+(>defn build-set-calib-mode
+       "Build a SetCalibMode protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode/newBuilder)]
+         (.build builder)))
 
-(defn build-set-zoom-table-value
+(>defn
+  build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
   [m]
+  [map? => any?]
   (let [builder
           (cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value) (.setValue builder (get m :value)))
     (.build builder)))
 
-(defn build-set-agc
-  "Build a SetAGC protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value)
-      (.setValue builder
-                 (get types/jon-gui-data-video-channel-heat-agc-modes-values
-                      (get m :value))))
-    (.build builder)))
+(>defn build-set-agc
+       "Build a SetAGC protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value)
+           (.setValue builder
+                      (get
+                        types/jon-gui-data-video-channel-heat-agc-modes-values
+                        (get m :value))))
+         (.build builder)))
 
-(defn build-set-filters
-  "Build a SetFilters protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value)
-      (.setValue builder
-                 (get types/jon-gui-data-video-channel-heat-filters-values
-                      (get m :value))))
-    (.build builder)))
+(>defn build-set-filters
+       "Build a SetFilters protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value)
+           (.setValue builder
+                      (get types/jon-gui-data-video-channel-heat-filters-values
+                           (get m :value))))
+         (.build builder)))
 
-(defn build-start
-  "Build a Start protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Start/newBuilder)]
-    (.build builder)))
+(>defn build-start
+       "Build a Start protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Start/newBuilder)]
+         (.build builder)))
 
-(defn build-stop
-  "Build a Stop protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Stop/newBuilder)]
-    (.build builder)))
+(>defn build-stop
+       "Build a Stop protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Stop/newBuilder)]
+         (.build builder)))
 
-(defn build-halt
-  "Build a Halt protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Halt/newBuilder)]
-    (.build builder)))
+(>defn build-halt
+       "Build a Halt protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Halt/newBuilder)]
+         (.build builder)))
 
-(defn build-photo
-  "Build a Photo protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Photo/newBuilder)]
-    (.build builder)))
+(>defn build-photo
+       "Build a Photo protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Photo/newBuilder)]
+         (.build builder)))
 
-(defn build-get-meteo
-  "Build a GetMeteo protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo/newBuilder)]
-    (.build builder)))
+(>defn build-get-meteo
+       "Build a GetMeteo protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo/newBuilder)]
+         (.build builder)))
 
-(defn build-set-auto-focus
-  "Build a SetAutoFocus protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
-    (.build builder)))
+(>defn build-set-auto-focus
+       "Build a SetAutoFocus protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :value) (.setValue builder (get m :value)))
+         (.build builder)))
 
-(defn build-reset-zoom
-  "Build a ResetZoom protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom/newBuilder)]
-    (.build builder)))
+(>defn build-reset-zoom
+       "Build a ResetZoom protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom/newBuilder)]
+         (.build builder)))
 
-(defn build-save-to-table
-  "Build a SaveToTable protobuf message from a map."
-  [m]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable/newBuilder)]
-    (.build builder)))
+(>defn build-save-to-table
+       "Build a SaveToTable protobuf message from a map."
+       [m]
+       [map? => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable/newBuilder)]
+         (.build builder)))
 
-(defn parse-root
-  "Parse a Root protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
-  (cond-> {}
-    ;; Oneof payload
-    true (merge (parse-root-payload proto))))
+(>defn parse-root
+       "Parse a Root protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Oneof payload
+         true (merge (parse-root-payload proto))))
 
-(defn parse-set-fx-mode
-  "Parse a SetFxMode protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :mode
-           (get types/jon-gui-data-fx-mode-heat-keywords (.getMode proto)))))
+(>defn parse-set-fx-mode
+       "Parse a SetFxMode protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :mode
+                (get types/jon-gui-data-fx-mode-heat-keywords
+                     (.getMode proto)))))
 
-(defn parse-set-clahe-level
-  "Parse a SetClaheLevel protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-clahe-level
+       "Parse a SetClaheLevel protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-shift-clahe-level
-  "Parse a ShiftClaheLevel protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-shift-clahe-level
+       "Parse a ShiftClaheLevel protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-next-fx-mode
-  "Parse a NextFxMode protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode proto]
-  {})
+(>defn parse-next-fx-mode
+       "Parse a NextFxMode protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-prev-fx-mode
-  "Parse a PrevFxMode protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode proto]
-  {})
+(>defn parse-prev-fx-mode
+       "Parse a PrevFxMode protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-refresh-fx-mode
-  "Parse a RefreshFxMode protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode proto]
-  {})
+(>defn parse-refresh-fx-mode
+       "Parse a RefreshFxMode protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-enable-dde
-  "Parse a EnableDDE protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE proto]
-  {})
+(>defn parse-enable-dde
+       "Parse a EnableDDE protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE proto]
+       [any? => map?]
+       {})
 
-(defn parse-disable-dde
-  "Parse a DisableDDE protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE proto]
-  {})
+(>defn parse-disable-dde
+       "Parse a DisableDDE protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE proto]
+       [any? => map?]
+       {})
 
-(defn parse-set-value
-  "Parse a SetValue protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-value
+       "Parse a SetValue protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-set-dde-level
-  "Parse a SetDDELevel protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-dde-level
+       "Parse a SetDDELevel protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-set-digital-zoom-level
-  "Parse a SetDigitalZoomLevel protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-digital-zoom-level
+       "Parse a SetDigitalZoomLevel protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-shift-dde
-  "Parse a ShiftDDE protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-shift-dde
+       "Parse a ShiftDDE protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-zoom-in
-  "Parse a ZoomIn protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn proto]
-  {})
+(>defn parse-zoom-in
+       "Parse a ZoomIn protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn proto]
+       [any? => map?]
+       {})
 
-(defn parse-zoom-out
-  "Parse a ZoomOut protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut proto]
-  {})
+(>defn parse-zoom-out
+       "Parse a ZoomOut protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut proto]
+       [any? => map?]
+       {})
 
-(defn parse-zoom-stop
-  "Parse a ZoomStop protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop proto]
-  {})
+(>defn parse-zoom-stop
+       "Parse a ZoomStop protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop proto]
+       [any? => map?]
+       {})
 
-(defn parse-focus-in
-  "Parse a FocusIn protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn proto]
-  {})
+(>defn parse-focus-in
+       "Parse a FocusIn protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn proto]
+       [any? => map?]
+       {})
 
-(defn parse-focus-out
-  "Parse a FocusOut protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut proto]
-  {})
+(>defn parse-focus-out
+       "Parse a FocusOut protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut proto]
+       [any? => map?]
+       {})
 
-(defn parse-focus-stop
-  "Parse a FocusStop protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop proto]
-  {})
+(>defn parse-focus-stop
+       "Parse a FocusStop protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop proto]
+       [any? => map?]
+       {})
 
-(defn parse-focus-step-plus
-  "Parse a FocusStepPlus protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus proto]
-  {})
+(>defn parse-focus-step-plus
+       "Parse a FocusStepPlus protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus proto]
+       [any? => map?]
+       {})
 
-(defn parse-focus-step-minus
-  "Parse a FocusStepMinus protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus proto]
-  {})
+(>defn parse-focus-step-minus
+       "Parse a FocusStepMinus protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus proto]
+       [any? => map?]
+       {})
 
-(defn parse-calibrate
-  "Parse a Calibrate protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate proto]
-  {})
+(>defn parse-calibrate
+       "Parse a Calibrate protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate proto]
+       [any? => map?]
+       {})
 
-(defn parse-zoom
-  "Parse a Zoom protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-  (cond-> {}
-    ;; Oneof payload
-    true (merge (parse-zoom-payload proto))))
+(>defn parse-zoom
+       "Parse a Zoom protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Oneof payload
+         true (merge (parse-zoom-payload proto))))
 
-(defn parse-next-zoom-table-pos
-  "Parse a NextZoomTablePos protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos proto]
-  {})
+(>defn parse-next-zoom-table-pos
+       "Parse a NextZoomTablePos protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos proto]
+       [any? => map?]
+       {})
 
-(defn parse-prev-zoom-table-pos
-  "Parse a PrevZoomTablePos protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos proto]
-  {})
+(>defn parse-prev-zoom-table-pos
+       "Parse a PrevZoomTablePos protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos proto]
+       [any? => map?]
+       {})
 
-(defn parse-set-calib-mode
-  "Parse a SetCalibMode protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode proto]
-  {})
+(>defn parse-set-calib-mode
+       "Parse a SetCalibMode protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode proto]
+       [any? => map?]
+       {})
 
-(defn parse-set-zoom-table-value
-  "Parse a SetZoomTableValue protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-zoom-table-value
+       "Parse a SetZoomTableValue protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-set-agc
-  "Parse a SetAGC protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value
-           (get types/jon-gui-data-video-channel-heat-agc-modes-keywords
-                (.getValue proto)))))
+(>defn parse-set-agc
+       "Parse a SetAGC protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value
+                (get types/jon-gui-data-video-channel-heat-agc-modes-keywords
+                     (.getValue proto)))))
 
-(defn parse-set-filters
-  "Parse a SetFilters protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value
-           (get types/jon-gui-data-video-channel-heat-filters-keywords
-                (.getValue proto)))))
+(>defn parse-set-filters
+       "Parse a SetFilters protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value
+                (get types/jon-gui-data-video-channel-heat-filters-keywords
+                     (.getValue proto)))))
 
-(defn parse-start
-  "Parse a Start protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Start proto]
-  {})
+(>defn parse-start
+       "Parse a Start protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Start proto]
+       [any? => map?]
+       {})
 
-(defn parse-stop
-  "Parse a Stop protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Stop proto]
-  {})
+(>defn parse-stop
+       "Parse a Stop protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Stop proto]
+       [any? => map?]
+       {})
 
-(defn parse-halt
-  "Parse a Halt protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Halt proto]
-  {})
+(>defn parse-halt
+       "Parse a Halt protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Halt proto]
+       [any? => map?]
+       {})
 
-(defn parse-photo
-  "Parse a Photo protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Photo proto]
-  {})
+(>defn parse-photo
+       "Parse a Photo protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$Photo proto]
+       [any? => map?]
+       {})
 
-(defn parse-get-meteo
-  "Parse a GetMeteo protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo proto]
-  {})
+(>defn parse-get-meteo
+       "Parse a GetMeteo protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo proto]
+       [any? => map?]
+       {})
 
-(defn parse-set-auto-focus
-  "Parse a SetAutoFocus protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus proto]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-auto-focus
+       "Parse a SetAutoFocus protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus proto]
+       [any? => map?]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :value (.getValue proto))))
 
-(defn parse-reset-zoom
-  "Parse a ResetZoom protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom proto]
-  {})
+(>defn parse-reset-zoom
+       "Parse a ResetZoom protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom proto]
+       [any? => map?]
+       {})
 
-(defn parse-save-to-table
-  "Parse a SaveToTable protobuf message to a map."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable proto]
-  {})
+(>defn parse-save-to-table
+       "Parse a SaveToTable protobuf message to a map."
+       [^cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable proto]
+       [any? => map?]
+       {})
 
-(defn build-root-payload
+(>defn-
+  build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :zoom (.setZoom builder (build-zoom value))
     :set-agc (.setSetAgc builder (build-set-agc value))
@@ -673,21 +776,25 @@
                                             (build-shift-clahe-level value))
     (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
 
-(defn build-zoom-payload
-  "Build the oneof payload for Zoom."
-  [builder [field-key value]]
-  (case field-key
-    :set-zoom-table-value
-      (.setSetZoomTableValue builder (build-set-zoom-table-value value))
-    :next-zoom-table-pos
-      (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
-    :prev-zoom-table-pos
-      (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
-    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
+(>defn- build-zoom-payload
+        "Build the oneof payload for Zoom."
+        [builder [field-key value]]
+        [any? [:tuple keyword? any?] => any?]
+        (case field-key
+          :set-zoom-table-value
+            (.setSetZoomTableValue builder (build-set-zoom-table-value value))
+          :next-zoom-table-pos
+            (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
+          :prev-zoom-table-pos
+            (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
+          (throw (ex-info "Unknown oneof field"
+                          {:field field-key, :oneof ":cmd"}))))
 
-(defn parse-root-payload
+(>defn-
+  parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
+  [any? => (? map?)]
   (cond
     (.hasZoom proto) {:zoom (parse-zoom (.getZoom proto))}
     (.hasSetAgc proto) {:set-agc (parse-set-agc (.getSetAgc proto))}
@@ -738,15 +845,16 @@
                                                       (.getShiftClaheLevel
                                                         proto))}))
 
-(defn parse-zoom-payload
-  "Parse the oneof payload from Zoom."
-  [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-  (cond (.hasSetZoomTableValue proto) {:set-zoom-table-value
-                                         (parse-set-zoom-table-value
-                                           (.getSetZoomTableValue proto))}
-        (.hasNextZoomTablePos proto) {:next-zoom-table-pos
-                                        (parse-next-zoom-table-pos
-                                          (.getNextZoomTablePos proto))}
-        (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos
-                                        (parse-prev-zoom-table-pos
-                                          (.getPrevZoomTablePos proto))}))
+(>defn- parse-zoom-payload
+        "Parse the oneof payload from Zoom."
+        [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
+        [any? => (? map?)]
+        (cond (.hasSetZoomTableValue proto) {:set-zoom-table-value
+                                               (parse-set-zoom-table-value
+                                                 (.getSetZoomTableValue proto))}
+              (.hasNextZoomTablePos proto) {:next-zoom-table-pos
+                                              (parse-next-zoom-table-pos
+                                                (.getNextZoomTablePos proto))}
+              (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos
+                                              (parse-prev-zoom-table-pos
+                                                (.getPrevZoomTablePos proto))}))

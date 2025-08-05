@@ -26,10 +26,11 @@
   - :namespace-mode - :separated (default, one file per package) or :single (one file per domain)
   - :debug? - Write debug EDN files (default true)
   - :line-width - Line width for formatting (default 80)"
-  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug? line-width]
+  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug? line-width guardrails?]
     :or {namespace-mode :separated  ;; Default to separated namespaces
          debug? true
-         line-width 80}}]
+         line-width 80
+         guardrails? false}}]
   (try
     (log/info "Starting code generation")
     (log/info "Input directory:" input-dir)
@@ -59,7 +60,7 @@
         ;; Use namespaced frontend for separated mode
         (let [;; Analyze dependencies and enrich backend output
               enriched-backend-output (dep-graph/analyze-dependencies backend-output namespace-prefix)
-              generated (frontend-ns/generate-from-backend enriched-backend-output namespace-prefix)]
+              generated (frontend-ns/generate-from-backend enriched-backend-output namespace-prefix guardrails?)]
           (log/info "Formatting and writing generated code...")
           (let [format-opts {:indents cljfmt/default-indents
                            :alias-map {}}
@@ -85,7 +86,7 @@
              :mode namespace-mode}))
         
         ;; Original single-file mode
-        (let [generated (frontend/generate-from-backend backend-output namespace-prefix)]
+        (let [generated (frontend/generate-from-backend backend-output namespace-prefix guardrails?)]
           ;; Step 4: Format generated code
           (log/info "Formatting generated code...")
           (let [format-opts {:indents cljfmt/default-indents

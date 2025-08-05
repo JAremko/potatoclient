@@ -25,9 +25,14 @@
 
 (defn package->file-path
   "Convert protobuf package to file path.
-  e.g. 'cmd.Compass' -> 'cmd/compass.clj'"
+  e.g. 'cmd.Compass' -> 'cmd/compass.clj'
+  Note: Clojure requires underscores in filenames for namespaces with hyphens"
   [proto-package]
-  (str (str/replace (package->namespace proto-package) "." "/") ".clj"))
+  (-> proto-package
+      package->namespace
+      (str/replace "." "/")
+      (str/replace "-" "_")
+      (str ".clj")))
 
 (defn group-by-package
   "Group messages and enums by their package."
@@ -92,7 +97,7 @@
 
 (defn generate-namespace-file
   "Generate a single namespace file for a package."
-  [package-data ns-prefix type-lookup dependencies ns-key]
+  [package-data ns-prefix type-lookup dependencies ns-key guardrails?]
   (let [{:keys [messages enums package]} package-data
         ns-name (str ns-prefix "." (package->namespace package))
         imports (collect-all-imports messages enums type-lookup package ns-prefix)
@@ -103,7 +108,7 @@
                        (map :java-class enums)))
         ;; Get dependency-based requires from our analysis using ns-key
         require-specs (get dependencies ns-key [])]
-    (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs)))
+    (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs guardrails?)))
 
 ;; =============================================================================
 ;; Main API
@@ -113,7 +118,7 @@
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output with namespace separation."
-  [{:keys [command state type-lookup dependency-graph] :as backend-output} ns-prefix]
+  [{:keys [command state type-lookup dependency-graph] :as backend-output} ns-prefix guardrails?]
   (let [;; Group all files by package
         all-files (concat (:files command) (:files state))
         grouped (group-by-package all-files)
@@ -138,7 +143,7 @@
         (reduce-kv
          (fn [acc ns-key package-data]
            (let [file-path (package->file-path (:package package-data))
-                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies ns-key)]
+                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies ns-key guardrails?)]
              (assoc acc file-path content)))
          {}
          grouped)]
@@ -175,11 +180,15 @@
         
         ;; This is a simplified version - in reality we'd need to enumerate
         ;; all public functions to re-export them
-        template (str "(ns " ns-name "\n"
-                     "  \"" description "\"\n"
-                     "  (:require\n"
-                     (str/join "\n" (map #(str "   " (pr-str %)) requires))
-                     "))\n\n"
-                     ";; Re-export all public functions from sub-namespaces\n"
-                     ";; This supports testing without needing to know the internal namespace structure\n")]
+        template (if (seq requires)
+                   (str "(ns " ns-name "\n"
+                        "  \"" description "\"\n"
+                        "  (:require\n"
+                        (str/join "\n" (map #(str "   " (pr-str %)) requires))
+                        "))\n\n"
+                        ";; Re-export all public functions from sub-namespaces\n"
+                        ";; This supports testing without needing to know the internal namespace structure\n")
+                   (str "(ns " ns-name "\n"
+                        "  \"" description "\")\n\n"
+                        ";; No sub-namespaces to re-export\n"))]
     template))

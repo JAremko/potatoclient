@@ -1,7 +1,3 @@
-(ns potatoclient.proto.state
-  "State index - re-exports all state namespaces"
-  (:require))
+(ns potatoclient.proto.state "State index - re-exports all state namespaces")
 
-;; Re-export all public functions from sub-namespaces
-;; This supports testing without needing to know the internal namespace
-;; structure
+;; No sub-namespaces to re-export

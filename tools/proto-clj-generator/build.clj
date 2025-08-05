@@ -34,7 +34,7 @@
   (b/javac {:src-dirs [java-src-dir]
             :class-dir class-dir
             :basis (b/create-basis {:project "deps.edn"})
-            :javac-opts ["-source" "11" "-target" "11"]})
+            :javac-opts ["-source" "17" "-target" "17"]})
   (println "Java protobuf compilation complete"))
 
 (defn compile-all
