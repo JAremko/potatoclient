@@ -1,0 +1,158 @@
+{:lint-as {com.fulcrologic.guardrails.malli.core/>defn  clojure.core/defn
+           com.fulcrologic.guardrails.malli.core/>defn- clojure.core/defn
+           com.fulcrologic.guardrails.malli.core/>def   clojure.core/def
+           seesaw.core/action                           clojure.core/fn
+           seesaw.bind/bind                             clojure.core/->
+           seesaw.bind/transform                        clojure.core/fn
+           seesaw.bind/tee                              clojure.core/fn
+           seesaw.bind/funnel                           clojure.core/fn
+           seesaw.bind/some                             clojure.core/fn
+           seesaw.bind/property                         clojure.core/fn
+           seesaw.bind/value                            clojure.core/fn
+           taoensso.telemere/log!                       clojure.core/do
+           taoensso.telemere/trace!                     clojure.core/do
+           taoensso.telemere/debug!                     clojure.core/do
+           taoensso.telemere/info!                      clojure.core/do
+           taoensso.telemere/warn!                      clojure.core/do
+           taoensso.telemere/error!                     clojure.core/do
+           taoensso.telemere/fatal!                     clojure.core/do
+           taoensso.telemere/event!                     clojure.core/do
+           taoensso.telemere/with-signal                clojure.core/do
+           taoensso.telemere/with-ctx                   clojure.core/do
+           taoensso.telemere/with-ctx+                  clojure.core/do
+           taoensso.telemere/with-middleware            clojure.core/do
+           taoensso.telemere/with-handler               clojure.core/do
+           taoensso.telemere/with-min-level             clojure.core/do
+           taoensso.telemere/handler:console            clojure.core/fn
+           taoensso.telemere/handler:file               clojure.core/fn
+           taoensso.telemere/format-signal-fn           clojure.core/fn
+           taoensso.telemere/add-handler!               clojure.core/fn
+           taoensso.telemere/remove-handler!            clojure.core/fn
+           taoensso.telemere/set-min-level!             clojure.core/fn
+           taoensso.telemere/set-ns-filter!             clojure.core/fn
+           taoensso.telemere/stop-handlers!             clojure.core/fn
+           seesaw.mig/mig-panel                         clojure.core/hash-map
+           seesaw.bind/b-do                             clojure.core/fn
+           seesaw.core/flow-panel                       clojure.core/fn
+           seesaw.core/border-panel                     clojure.core/fn
+           seesaw.core/mig-panel                        clojure.core/fn
+           seesaw.core/horizontal-panel                 clojure.core/fn
+           seesaw.core/vertical-panel                   clojure.core/fn
+           seesaw.core/frame                            clojure.core/fn
+           seesaw.core/dialog                           clojure.core/fn
+           seesaw.core/button                           clojure.core/fn
+           seesaw.core/label                            clojure.core/fn
+           seesaw.core/text                             clojure.core/fn
+           seesaw.core/listbox                          clojure.core/fn
+           seesaw.core/table                            clojure.core/fn
+           seesaw.core/tree                             clojure.core/fn
+           seesaw.core/menu                             clojure.core/fn
+           seesaw.core/menubar                          clojure.core/fn
+           seesaw.core/toolbar                          clojure.core/fn
+           seesaw.core/separator                        clojure.core/fn
+           seesaw.core/splitter                         clojure.core/fn
+           seesaw.core/scrollable                       clojure.core/fn
+           seesaw.core/tabbed-panel                     clojure.core/fn
+           seesaw.core/canvas                           clojure.core/fn
+           seesaw.core/editor-pane                      clojure.core/fn
+           seesaw.core/listen                           clojure.core/doto
+           seesaw.core/config!                          clojure.core/doto
+           seesaw.core/invoke-later                     clojure.core/do
+           seesaw.core/invoke-now                       clojure.core/do}
+
+ :skip-comments true
+
+ :linters {:unused-referred-var          {:level :off}
+           :missing-docstring            {:level :warning}
+           :unsorted-required-namespaces {:level :warning}
+           :unused-namespace             {:level   :warning
+                                          :exclude [clojure.test]}
+           :unresolved-symbol            {:level   :error
+                                          :exclude [(clojure.test/is [thrown?])
+                                                    (seesaw.core/listen [e])
+                                                    (seesaw.core/select [root])
+                                                    (seesaw.bind/bind [db connected?])
+                                                    (seesaw.bind/b-do [connected?])
+                                                    (seesaw.mig/mig-panel [_])
+                                                    ;; Guardrails symbols
+                                                    =>
+                                                    |
+                                                    ?]}
+           :unresolved-var               {:level :error
+                                          :exclude [taoensso.telemere/handler:file
+                                                    taoensso.telemere/handler:console
+                                                    taoensso.telemere/format-signal-fn
+                                                    taoensso.telemere/add-handler!
+                                                    taoensso.telemere/remove-handler!
+                                                    taoensso.telemere/set-min-level!
+                                                    taoensso.telemere/set-ns-filter!
+                                                    taoensso.telemere/stop-handlers!]}
+           :unused-private-var           {:level :warning}
+           :redundant-do                 {:level :warning}
+           :redundant-let                {:level :warning}
+           :cond-else                    {:level :warning}
+           :keyword-binding              {:level :warning}
+           :unreachable-code             {:level :warning}
+           :deprecated-var               {:level                      :warning
+                                          :include-when-arity-differs true}
+           :unused-binding               {:level                                :warning
+                                          :exclude-destructured-keys-in-fn-args true}
+           :use                          {:level :warning}
+           :missing-test-assertion       {:level :warning}
+           :conflicting-alias            {:level :error}
+           :duplicate-map-key            {:level :error}
+           :duplicate-set-key            {:level :error}
+           :missing-map-value            {:level :error}
+           :redefined-var                {:level :warning}
+           :datalog-syntax               {:level :error}
+           :format                       {:level :warning}
+           :shadowed-var                 {:level :off}      ; Too many false positives with let bindings
+           :missing-else-branch          {:level   :warning
+                                          :exclude #{cond->}}
+           :misplaced-docstring          {:level :warning}
+           :not-a-function               {:level   :error
+                                          :exclude [user
+                                                    potatoclient.core
+                                                    potatoclient.ui.bindings]}
+           :type-mismatch                {:level :error}
+           :missing-clause-in-try        {:level :warning}
+           :missing-body-in-when         {:level :warning}
+           :missing-protocol-method      {:level :warning}
+           :namespace-name-mismatch      {:level :error}
+           :non-arg-vec-return-type-hint {:level :warning}
+           :invalid-arity                {:level   :error
+                                          :exclude [malli.core/=>]}
+           :private-function-call        {:level :error}
+           :inline-def                   {:level :warning}
+           :redundant-fn-wrapper         {:level :warning}
+           :def-fn                       {:level :off}      ; We use this pattern in seesaw
+           }
+
+ :hooks {:analyze-call {seesaw.core/defaction     hooks.seesaw/defaction
+                        seesaw.bind/bind          hooks.seesaw-ui/bind
+                        seesaw.mig/mig-panel      hooks.seesaw-ui/mig-panel
+                        seesaw.core/label         hooks.seesaw-ui/seesaw-widget
+                        seesaw.core/button        hooks.seesaw-ui/seesaw-widget
+                        seesaw.core/frame         hooks.seesaw-ui/seesaw-widget
+                        seesaw.core/dialog        hooks.seesaw-ui/seesaw-widget
+                        seesaw.core/menu          hooks.seesaw-ui/seesaw-widget
+                        seesaw.core/action        hooks.seesaw-ui/seesaw-widget
+                        potatoclient.proto/defmsg hooks.potatoclient/defmsg
+                        ;; Guardrails hooks
+                        com.fulcrologic.guardrails.malli.core/>defn  hooks.guardrails/defn-hook
+                        com.fulcrologic.guardrails.malli.core/>defn- hooks.guardrails/defn-hook
+                        com.fulcrologic.guardrails.malli.core/>def   hooks.guardrails/def-hook}}
+
+ :config-paths ["com.fulcrologic/guardrails"]
+
+ :output {:progress      true
+          :include-files ["src" "test"]
+          :exclude-files ["target"
+                          "out"
+                          "test-output*"
+                          "generated-ns"]}
+
+ :ns-groups [{:pattern "generator\\..*"
+              :name    "generator"}
+             {:pattern "clojure\\..*"
+              :name    "clojure"}]}

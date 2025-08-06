@@ -1,0 +1,1 @@
+["^ ","~$test-basic-serialization",["^ ","~:row",7,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$potatoclient.proto-validation-test","~:top-ns","^7"],"~$test-state-deserialization",["^ ","^1",24,"^2",1,"^3",["^4",[0]],"^5","^9","^6","^7","^8","^7"],"~:filename","test/potatoclient/proto_validation_test.clj"]

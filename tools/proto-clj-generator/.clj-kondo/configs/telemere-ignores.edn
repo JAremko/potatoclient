@@ -1,0 +1,15 @@
+{:linters 
+ {:not-a-function 
+  {:exclude 
+   ;; Telemere handler functions that clj-kondo thinks are being called incorrectly
+   [taoensso.telemere/add-handler!
+    taoensso.telemere/remove-handler!
+    taoensso.telemere/set-min-level!
+    taoensso.telemere/set-ns-filter!]}
+  
+  :invalid-arity
+  {:exclude
+   ;; Telemere functions with variable arities
+   [taoensso.telemere/add-handler!
+    taoensso.telemere/handler:console
+    taoensso.telemere/handler:file]}}}
