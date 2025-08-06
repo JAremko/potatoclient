@@ -75,7 +75,7 @@
       ;; Fallback to package-based if not in registry
       (-> package
          str/lower-case
-         (str/replace #"_" "-"))))
+         (str/replace #"_" "-")))))
 
 (defn resolve-enum-reference-with-aliases
   "Resolve an enum reference using the ns-alias-map to determine correct qualification.
@@ -102,7 +102,12 @@
           (let [enum-filename (:filename enum-info)
                 enum-package (:package enum-info)
                 enum-ns-suffix (file->namespace-suffix enum-filename enum-package)
-                enum-full-ns (str "potatoclient.proto." enum-ns-suffix)
+                ;; Get the namespace prefix from the first part of the namespace in the map
+                ;; or default to the expected pattern
+                ns-prefix (if-let [first-ns (first (keys ns-alias-map))]
+                           (str/join "." (take 2 (str/split first-ns #"\.")))
+                           "potatoclient.proto")
+                enum-full-ns (str ns-prefix "." enum-ns-suffix)
                 ;; Check if we have an alias for this namespace
                 ns-alias (get ns-alias-map enum-full-ns)]
             (if ns-alias

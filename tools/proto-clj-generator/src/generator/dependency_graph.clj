@@ -148,8 +148,8 @@
                      ;; Generate alias using registry metadata
                      dep-file (first (filter #(= (file->namespace-suffix (:name %) (:package %)) dep-ns) dep-files))
                      base-alias (if dep-file
-                                 ;; Use registry to generate alias from filename
-                                 (name (registry/filename->alias (registry/get-naming-config) (:name dep-file)))
+                                 ;; Generate alias from package
+                                 (naming/proto-package->clojure-alias (:package dep-file))
                                  ;; Fallback to last part of namespace
                                  (last (str/split dep-ns #"\.")))
                      ;; Handle duplicate aliases by appending a number

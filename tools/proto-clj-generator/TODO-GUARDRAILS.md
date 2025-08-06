@@ -21,10 +21,10 @@
   - Created centralized naming module with lossless proto<->keyword conversions
   - Fixed spec-gen.clj to use consistent lowercase naming (no kebab-case for packages)
   - Regenerated files with correct namespace references
-- [ ] Fix duplicate aliases (two `camera` aliases)
-  - Currently both `cmd.daycamera` and `ser.camera` use alias `camera`
-  - Need to disambiguate by using full package name or numbered suffixes
-  - Check frontend_namespaced.clj line ~180 for alias generation logic
+- [x] Fix duplicate aliases (two `camera` aliases)
+  - ~~Currently both `cmd.daycamera` and `ser.camera` use alias `camera`~~
+  - ~~Need to disambiguate by using full package name or numbered suffixes~~
+  - Fixed by adding numeric suffixes in dependency_graph.clj when conflicts detected
 - [ ] Implement actual re-exports in index files (command.clj, state.clj)
   - Currently generated but empty
   - Need to create actual defn wrappers that delegate to namespaced functions
@@ -164,6 +164,15 @@ We switched from package-based namespaces to file-based namespaces, which broke 
    - Tests are still failing due to namespace resolution issues
    - Need to ensure all generated namespaces match what tests expect
 
+3. **Enum Reference Qualification** (NEW ISSUE - 2025-08-06 Evening)
+   - Enum references in generated code are not being properly qualified with namespace aliases
+   - Generated: `(get jon-gui-data-gps-fix-type-values ...)`
+   - Expected: `(get ser/jon-gui-data-gps-fix-type-values ...)`
+   - The issue is that while the dependency analysis correctly identifies cross-file dependencies and the namespace generation includes the proper requires with aliases, the enum reference resolution is not using the qualified form
+   - Fixed `resolve-enum-reference-with-aliases` and `resolve-enum-keyword-map-with-aliases` to properly handle ns-alias-map
+   - Updated `generate-field-setter` to use the alias-aware versions
+   - Still need to investigate why the qualification is not being applied in the generated code
+
 ### 4. Spec Integration
 - [ ] Load specs from `/home/jare/git/potatoclient/shared/specs/custom/`
   - Read all .clj files in specs directory at generation time
@@ -300,7 +309,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 
 1. **Phase 1: Naming & Structure** (Current)
    - [x] Centralized naming module
-   - [ ] Fix duplicate aliases
+   - [x] Fix duplicate aliases
    - [ ] Update all generators to use naming module
    - [ ] Fix index file generation
 
@@ -311,13 +320,282 @@ We switched from package-based namespaces to file-based namespaces, which broke 
    - [ ] Add buf.validate integration
 
 3. **Phase 3: Guardrails**
-   - [ ] Update templates to use >defn
-   - [ ] Integrate Malli specs
+   - [x] Update templates to use >defn
+   - [ ] Integrate Malli specs from shared directory
    - [ ] Configure clj-kondo
    - [ ] Add guardrails-check tool
 
-4. **Phase 4: Polish**
+4. **Phase 4: Pipeline Architecture Improvements** (NEW)
+   - [ ] Enrich intermediate representation
+   - [ ] Split pipeline into more stages
+   - [ ] Add global knowledge repositories
+   - [ ] Strengthen Malli specs throughout
+
+5. **Phase 5: Polish**
    - [ ] Documentation
    - [ ] Performance optimization
    - [ ] Error message improvements
    - [ ] Final validation
+
+## 🚀 Pipeline Architecture Improvements (NEW SECTION)
+
+### Current Pipeline Overview
+1. **Backend Stage**: Parse JSON descriptors → EDN representation
+2. **Frontend Stage**: EDN → Clojure code generation
+
+### Proposed Enhanced Pipeline
+
+#### 1. Multi-Stage Architecture
+```
+JSON Descriptors 
+  → Parser Stage (Enhanced)
+  → Analysis Stage (NEW)
+  → Enrichment Stage (NEW)
+  → Code Generation Stage
+  → Post-Processing Stage (NEW)
+```
+
+#### 2. Enhanced Intermediate Representation
+
+**Current IR Limitations**:
+- Missing validation rules from buf.validate annotations
+- No cross-file dependency resolution metadata
+- Limited type relationship information
+- No performance hints or optimization metadata
+
+**Proposed IR Enhancements**:
+```clojure
+{:messages {...}
+ :enums {...}
+ :metadata
+ {:validation-rules   ; Extracted from buf.validate
+  {:field-path [:message :field]
+   :rules [{:type :range :min -90 :max 90}
+           {:type :cel :expression "..."}]}
+  
+  :type-graph         ; Complete type dependency graph
+  {:nodes {"Message1" {:deps #{"Message2" "Enum1"}}
+          "Message2" {:deps #{}}}
+   :topological-order ["Message2" "Enum1" "Message1"]}
+  
+  :naming-registry    ; Centralized naming decisions
+  {:proto->clojure {"cmd.DayCamera" "cmd.daycamera"}
+   :file->namespace {"types.proto" "ser.types"}
+   :package->alias {"cmd.DayCamera" "daycamera"}}
+  
+  :performance-hints  ; For optimized code generation
+  {:hot-paths #{[:parse-command :oneofs :cmd]}
+   :large-messages #{"JonGuiDataVideoFrame"}
+   :frequent-enums #{"JonGuiDataVideoChannel"}}}}
+```
+
+#### 3. Global Knowledge Repositories
+
+**Type Registry**:
+```clojure
+(def global-type-registry
+  "Central registry of all proto types across all files"
+  (atom {:messages {}
+         :enums {}
+         :services {}
+         :extensions {}}))
+
+(defn register-type! [type-key type-info]
+  (swap! global-type-registry assoc-in [:messages type-key] type-info))
+
+(defn resolve-type [type-ref]
+  (get-in @global-type-registry [:messages type-ref]))
+```
+
+**Naming Registry**:
+```clojure
+(def global-naming-registry
+  "Centralized naming decisions to ensure consistency"
+  (atom {:proto->clojure {}
+         :namespace-aliases {}
+         :reserved-names #{}}))
+```
+
+**Validation Registry**:
+```clojure
+(def global-validation-registry
+  "Central registry of validation rules and CEL expressions"
+  (atom {:field-rules {}
+         :message-rules {}
+         :cel-library {}}))
+```
+
+#### 4. New Pipeline Stages
+
+**Analysis Stage**:
+- Extract all validation rules from buf.validate annotations
+- Build complete type dependency graph
+- Identify circular dependencies
+- Detect naming conflicts
+- Analyze field usage patterns
+
+**Enrichment Stage**:
+- Add derived metadata (e.g., has-required-fields?)
+- Inject performance hints
+- Add documentation from source locations
+- Resolve all type references
+- Add Malli spec associations
+
+**Post-Processing Stage**:
+- Validate generated code against specs
+- Format code consistently
+- Add copyright headers
+- Generate index files
+- Run clj-kondo checks
+
+### Backend Enhancement: Leveraging JSON Descriptors
+
+Based on analysis of `/home/jare/git/potatoclient/examples/protogen/docs/json-descriptor-reference.md`:
+
+#### 1. Extract Validation Rules
+```clojure
+(defn extract-validation-rules [field]
+  (when-let [validate-field (get-in field [:options "[buf.validate.field]"])]
+    {:field (:name field)
+     :rules (merge
+             (extract-numeric-rules validate-field)
+             (extract-string-rules validate-field)
+             (extract-collection-rules validate-field)
+             (extract-message-rules validate-field))
+     :cel-expressions (get-in field [:options "[buf.validate.predefined]" :cel])}))
+```
+
+#### 2. Preserve Source Information
+```clojure
+(defn enrich-with-source-info [descriptor]
+  (let [source-info (:sourceCodeInfo descriptor)]
+    ;; Map source locations to generated code for better errors
+    ...))
+```
+
+#### 3. Extract Service Definitions (Future)
+```clojure
+(defn extract-services [file-descriptor]
+  (for [service (:service file-descriptor)]
+    {:name (:name service)
+     :methods (map extract-method-info (:method service))}))
+```
+
+#### 4. Handle Proto Options
+```clojure
+(defn extract-proto-options [descriptor]
+  {:java-package (get-in descriptor [:options :javaPackage])
+   :java-outer-classname (get-in descriptor [:options :javaOuterClassname])
+   :optimize-for (get-in descriptor [:options :optimizeFor])
+   :deprecated (get-in descriptor [:options :deprecated])})
+```
+
+### Stronger Malli Specs
+
+#### 1. Generator Function Specs
+```clojure
+(def generator-fn-spec
+  [:=> {:registry registry}
+   [:cat
+    ::ir/message        ; Input intermediate representation
+    ::config/options]   ; Generator options
+   ::ast/clojure-code]) ; Output AST
+
+(>defn generate-builder
+  [message options]
+  [::ir/message ::config/options => ::ast/clojure-code]
+  ...)
+```
+
+#### 2. Intermediate Representation Specs
+```clojure
+(def ::field-type
+  [:or
+   [:map [:scalar ::scalar-type]]
+   [:map [:message [:map [:type-ref ::type-ref]]]]
+   [:map [:enum [:map [:type-ref ::type-ref]]]]])
+
+(def ::field
+  [:map
+   [:name ::identifier]
+   [:number pos-int?]
+   [:type ::field-type]
+   [:repeated? boolean?]
+   [:optional? boolean?]
+   [:validation {:optional true} ::validation-rules]])
+
+(def ::message
+  [:map
+   [:name ::identifier]
+   [:fields [:vector ::field]]
+   [:oneofs [:vector ::oneof]]
+   [:metadata {:optional true} ::message-metadata]])
+```
+
+#### 3. Pipeline Stage Specs
+```clojure
+(def ::pipeline-stage
+  [:=> {:registry registry}
+   [:cat ::stage-input]
+   [:or 
+    [:tuple [:enum :ok] ::stage-output]
+    [:tuple [:enum :error] ::error-info]]])
+```
+
+### Backend Testing Improvements
+
+#### 1. Property-Based Testing
+```clojure
+(deftest proto-name-roundtrip-test
+  (checking "proto names roundtrip correctly" 100
+    [proto-name (gen/such-that valid-proto-name? gen/string-alphanumeric)]
+    (is (= proto-name
+           (-> proto-name
+               proto->clojure-namespace
+               clojure-namespace->proto)))))
+```
+
+#### 2. Validation Rule Testing
+```clojure
+(deftest validation-extraction-test
+  (testing "Extract all buf.validate rules correctly"
+    (let [descriptor (load-test-descriptor "validation-heavy.json")]
+      (is (= expected-rules
+             (extract-all-validation-rules descriptor))))))
+```
+
+#### 3. Dependency Resolution Testing
+```clojure
+(deftest circular-dependency-test
+  (testing "Detect circular dependencies"
+    (let [descriptor (load-test-descriptor "circular-deps.json")]
+      (is (thrown? CircularDependencyException
+                   (build-dependency-graph descriptor))))))
+```
+
+### Benefits of Enhanced Pipeline
+
+1. **Better Error Messages**: Source location tracking
+2. **Optimized Code**: Performance hints guide generation
+3. **Validation Integration**: buf.validate rules in generated code
+4. **Maintainability**: Clear separation of concerns
+5. **Extensibility**: Easy to add new stages/features
+6. **Testing**: Each stage can be tested independently
+7. **Documentation**: Metadata flows through pipeline
+
+### Implementation Priority
+
+1. **High Priority**:
+   - Extract validation rules from JSON descriptors
+   - Build proper type dependency graph
+   - Create global registries
+
+2. **Medium Priority**:
+   - Add analysis stage
+   - Enhance IR with metadata
+   - Add pipeline specs
+
+3. **Low Priority**:
+   - Performance optimization hints
+   - Service definition support
+   - Source location tracking

@@ -1,0 +1,71 @@
+{:nodes
+ #{"cmd.Lira"
+   "cmd.RotaryPlatform"
+   "cmd.System"
+   "cmd.Lrf_calib"
+   "cmd.Gps"
+   "cmd.HeatCamera"
+   "cmd.CV"
+   "cmd.DayCamera"
+   "cmd.DayCamGlassHeater"
+   "cmd"
+   "cmd.Lrf"
+   "cmd.Compass"
+   "ser"
+   "cmd.OSD"},
+ :edges
+ {"cmd.Lira" #{},
+  "cmd.RotaryPlatform" #{"ser"},
+  "cmd.System" #{"ser"},
+  "cmd.Lrf_calib" #{},
+  "cmd.Gps" #{},
+  "cmd.HeatCamera" #{"ser"},
+  "cmd.CV" #{"ser"},
+  "cmd.DayCamera" #{"ser"},
+  "cmd.DayCamGlassHeater" #{},
+  "cmd"
+  #{"cmd.Lira"
+    "cmd.RotaryPlatform"
+    "cmd.System"
+    "cmd.Lrf_calib"
+    "cmd.Gps"
+    "cmd.HeatCamera"
+    "cmd.CV"
+    "cmd.DayCamera"
+    "cmd.DayCamGlassHeater"
+    "cmd.Lrf"
+    "cmd.Compass"
+    "ser"
+    "cmd.OSD"},
+  "cmd.Lrf" #{"ser"},
+  "cmd.Compass" #{},
+  "ser" #{"ser"},
+  "cmd.OSD" #{}},
+ :file->package
+ {"jon_shared_cmd_gps.proto" "cmd.Gps",
+  "jon_shared_data_camera_day.proto" "ser",
+  "jon_shared_cmd_compass.proto" "cmd.Compass",
+  "jon_shared_cmd.proto" "cmd",
+  "jon_shared_data_system.proto" "ser",
+  "jon_shared_data_types.proto" "ser",
+  "jon_shared_cmd_cv.proto" "cmd.CV",
+  "jon_shared_data_rec_osd.proto" "ser",
+  "jon_shared_data_camera_heat.proto" "ser",
+  "jon_shared_cmd_lrf.proto" "cmd.Lrf",
+  "jon_shared_data_compass_calibration.proto" "ser",
+  "jon_shared_data_gps.proto" "ser",
+  "jon_shared_data.proto" "ser",
+  "jon_shared_cmd_system.proto" "cmd.System",
+  "jon_shared_data_rotary.proto" "ser",
+  "jon_shared_cmd_day_cam_glass_heater.proto" "cmd.DayCamGlassHeater",
+  "jon_shared_data_lrf.proto" "ser",
+  "jon_shared_cmd_osd.proto" "cmd.OSD",
+  "jon_shared_cmd_day_camera.proto" "cmd.DayCamera",
+  "jon_shared_cmd_rotary.proto" "cmd.RotaryPlatform",
+  "jon_shared_data_compass.proto" "ser",
+  "jon_shared_data_day_cam_glass_heater.proto" "ser",
+  "jon_shared_data_actual_space_time.proto" "ser",
+  "jon_shared_data_time.proto" "ser",
+  "jon_shared_cmd_lira.proto" "cmd.Lira",
+  "jon_shared_cmd_heat_camera.proto" "cmd.HeatCamera",
+  "jon_shared_cmd_lrf_align.proto" "cmd.Lrf_calib"}}

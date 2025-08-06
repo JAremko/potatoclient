@@ -94,8 +94,8 @@
                     ;; Regular enum field
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          enum-ref (type-res/resolve-enum-reference 
-                                   enum-type current-package type-lookup)
+                          enum-ref (type-res/resolve-enum-reference-with-aliases 
+                                   enum-type current-package type-lookup ns-alias-map nil)
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(get " qualified-ref " (get m " field-key "))"))
                     
@@ -164,8 +164,8 @@
                     ;; Repeated enum field
                     (and (:repeated? field) (get-in field [:type :enum]))
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          enum-ref (type-res/resolve-enum-keyword-map 
-                                   enum-type current-package type-lookup)
+                          enum-ref (type-res/resolve-enum-keyword-map-with-aliases 
+                                   enum-type current-package type-lookup ns-alias-map nil)
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(mapv #(get " qualified-ref " %) (" getter-expr " proto))"))
                     
@@ -183,8 +183,8 @@
                     ;; Regular enum field
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          enum-ref (type-res/resolve-enum-keyword-map 
-                                   enum-type current-package type-lookup)
+                          enum-ref (type-res/resolve-enum-keyword-map-with-aliases 
+                                   enum-type current-package type-lookup ns-alias-map nil)
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(get " qualified-ref " (" getter-expr " proto))"))
                     
@@ -366,7 +366,7 @@
 
 (defn generate-oneof-parser-case
   "Generate a single case for oneof parser."
-  [field message type-lookup current-package]
+  [field message type-lookup current-package ns-alias-map]
   (let [field-type (:type field)
         type-ref (or (get-in field-type [:message :type-ref])
                      (get-in field-type [:enum :type-ref]))
@@ -389,8 +389,8 @@
         getter-expr (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)")
         value-expr (cond
                     parser-fn (str "(" parser-fn " " getter-expr ")")
-                    is-enum? (let [enum-ref (type-res/resolve-enum-keyword-map 
-                                           type-ref current-package type-lookup)
+                    is-enum? (let [enum-ref (type-res/resolve-enum-keyword-map-with-aliases 
+                                           type-ref current-package type-lookup ns-alias-map nil)
                                   qualified-ref (type-res/qualified-enum-ref enum-ref)]
                               (str "(get " qualified-ref " " getter-expr ")"))
                     :else getter-expr)]
@@ -422,14 +422,14 @@
 
 (defn generate-oneof-parser
   "Generate oneof parser function."
-  [message oneof type-lookup current-package]
+  [message oneof type-lookup current-package ns-alias-map]
   (let [template (load-template-string "oneof-parser-guardrails.clj")
         fn-name (str "parse-" (naming/proto-name->clojure-fn-name (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
         
         cases (str/join "\n    " 
-                       (map #(generate-oneof-parser-case % message type-lookup current-package) 
+                       (map #(generate-oneof-parser-case % message type-lookup current-package ns-alias-map) 
                             oneof-fields))
         
         replacements {"ONEOF-PARSE-FN-NAME" fn-name
@@ -533,7 +533,7 @@
                              (generate-oneof-builder msg oneof type-lookup current-package))
          all-oneof-parsers (for [msg sorted-messages
                                 oneof (:oneofs msg)]
-                            (generate-oneof-parser msg oneof type-lookup current-package))
+                            (generate-oneof-parser msg oneof type-lookup current-package ns-alias-map))
          
          messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
