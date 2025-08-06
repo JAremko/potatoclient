@@ -1,6 +1,7 @@
 (ns potatoclient.proto.cmd.compass
   "Generated protobuf functions."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]])
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [malli.core :as m])
   (:import cmd.Compass.JonSharedCmdCompass$Root
            cmd.Compass.JonSharedCmdCompass$Start
            cmd.Compass.JonSharedCmdCompass$Stop
@@ -20,6 +21,73 @@
 ;; =============================================================================
 
 ;; No enums
+
+;; =============================================================================
+;; Malli Specs
+;; =============================================================================
+
+(def root-spec
+  "Malli spec for root message"
+  [:map
+   [:cmd
+    [:altn
+     {:calibrate-cencel [:map
+                         [:calibrate-cencel :cmd.compass/calibrate-cencel]],
+      :start [:map [:start :cmd.compass/start]],
+      :set-offset-angle-elevation [:map
+                                   [:set-offset-angle-elevation
+                                    :cmd.compass/set-offset-angle-elevation]],
+      :stop [:map [:stop :cmd.compass/stop]],
+      :calibrate-next [:map [:calibrate-next :cmd.compass/calibrate-next]],
+      :get-meteo [:map [:get-meteo :cmd.compass/get-meteo]],
+      :set-use-rotary-position
+        [:map [:set-use-rotary-position :cmd.compass/set-use-rotary-position]],
+      :set-magnetic-declination [:map
+                                 [:set-magnetic-declination
+                                  :cmd.compass/set-magnetic-declination]],
+      :start-calibrate-short
+        [:map [:start-calibrate-short :cmd.compass/calibrate-start-short]],
+      :start-calibrate-long
+        [:map [:start-calibrate-long :cmd.compass/calibrate-start-long]],
+      :set-offset-angle-azimuth [:map
+                                 [:set-offset-angle-azimuth
+                                  :cmd.compass/set-offset-angle-azimuth]]}]]])
+
+(def start-spec "Malli spec for start message" [:map])
+
+(def stop-spec "Malli spec for stop message" [:map])
+
+(def next-spec "Malli spec for next message" [:map])
+
+(def calibrate-start-long-spec
+  "Malli spec for calibrate-start-long message"
+  [:map])
+
+(def calibrate-start-short-spec
+  "Malli spec for calibrate-start-short message"
+  [:map])
+
+(def calibrate-next-spec "Malli spec for calibrate-next message" [:map])
+
+(def calibrate-cencel-spec "Malli spec for calibrate-cencel message" [:map])
+
+(def get-meteo-spec "Malli spec for get-meteo message" [:map])
+
+(def set-magnetic-declination-spec
+  "Malli spec for set-magnetic-declination message"
+  [:map [:value [:maybe :float]]])
+
+(def set-offset-angle-azimuth-spec
+  "Malli spec for set-offset-angle-azimuth message"
+  [:map [:value [:maybe :float]]])
+
+(def set-offset-angle-elevation-spec
+  "Malli spec for set-offset-angle-elevation message"
+  [:map [:value [:maybe :float]]])
+
+(def set-use-rotary-position-spec
+  "Malli spec for set-use-rotary-position message"
+  [:map [:flag [:maybe :boolean]]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -58,7 +126,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [map? => any?]
+       [root-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field
@@ -78,28 +146,28 @@
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [map? => any?]
+       [start-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [map? => any?]
+       [stop-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-next
        "Build a Next protobuf message from a map."
        [m]
-       [map? => any?]
+       [next-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Next/newBuilder)]
          (.build builder)))
 
 (>defn build-calibrate-start-long
        "Build a CalibrateStartLong protobuf message from a map."
        [m]
-       [map? => any?]
+       [calibrate-start-long-spec => any?]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateStartLong/newBuilder)]
          (.build builder)))
@@ -107,7 +175,7 @@
 (>defn build-calibrate-start-short
        "Build a CalibrateStartShort protobuf message from a map."
        [m]
-       [map? => any?]
+       [calibrate-start-short-spec => any?]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateStartShort/newBuilder)]
          (.build builder)))
@@ -115,14 +183,14 @@
 (>defn build-calibrate-next
        "Build a CalibrateNext protobuf message from a map."
        [m]
-       [map? => any?]
+       [calibrate-next-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateNext/newBuilder)]
          (.build builder)))
 
 (>defn build-calibrate-cencel
        "Build a CalibrateCencel protobuf message from a map."
        [m]
-       [map? => any?]
+       [calibrate-cencel-spec => any?]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateCencel/newBuilder)]
          (.build builder)))
@@ -130,14 +198,14 @@
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [map? => any?]
+       [get-meteo-spec => any?]
        (let [builder (cmd.Compass.JonSharedCmdCompass$GetMeteo/newBuilder)]
          (.build builder)))
 
 (>defn build-set-magnetic-declination
        "Build a SetMagneticDeclination protobuf message from a map."
        [m]
-       [map? => any?]
+       [set-magnetic-declination-spec => any?]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination/newBuilder)]
@@ -148,7 +216,7 @@
 (>defn build-set-offset-angle-azimuth
        "Build a SetOffsetAngleAzimuth protobuf message from a map."
        [m]
-       [map? => any?]
+       [set-offset-angle-azimuth-spec => any?]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth/newBuilder)]
@@ -160,7 +228,7 @@
   build-set-offset-angle-elevation
   "Build a SetOffsetAngleElevation protobuf message from a map."
   [m]
-  [map? => any?]
+  [set-offset-angle-elevation-spec => any?]
   (let [builder
           (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation/newBuilder)]
     ;; Set regular fields
@@ -170,7 +238,7 @@
 (>defn build-set-use-rotary-position
        "Build a SetUseRotaryPosition protobuf message from a map."
        [m]
-       [map? => any?]
+       [set-use-rotary-position-spec => any?]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition/newBuilder)]
@@ -181,7 +249,7 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$Root proto]
-       [any? => map?]
+       [any? => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -189,55 +257,55 @@
 (>defn parse-start
        "Parse a Start protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$Start proto]
-       [any? => map?]
+       [any? => start-spec]
        {})
 
 (>defn parse-stop
        "Parse a Stop protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$Stop proto]
-       [any? => map?]
+       [any? => stop-spec]
        {})
 
 (>defn parse-next
        "Parse a Next protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$Next proto]
-       [any? => map?]
+       [any? => next-spec]
        {})
 
 (>defn parse-calibrate-start-long
        "Parse a CalibrateStartLong protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$CalibrateStartLong proto]
-       [any? => map?]
+       [any? => calibrate-start-long-spec]
        {})
 
 (>defn parse-calibrate-start-short
        "Parse a CalibrateStartShort protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$CalibrateStartShort proto]
-       [any? => map?]
+       [any? => calibrate-start-short-spec]
        {})
 
 (>defn parse-calibrate-next
        "Parse a CalibrateNext protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$CalibrateNext proto]
-       [any? => map?]
+       [any? => calibrate-next-spec]
        {})
 
 (>defn parse-calibrate-cencel
        "Parse a CalibrateCencel protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$CalibrateCencel proto]
-       [any? => map?]
+       [any? => calibrate-cencel-spec]
        {})
 
 (>defn parse-get-meteo
        "Parse a GetMeteo protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$GetMeteo proto]
-       [any? => map?]
+       [any? => get-meteo-spec]
        {})
 
 (>defn parse-set-magnetic-declination
        "Parse a SetMagneticDeclination protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination proto]
-       [any? => map?]
+       [any? => set-magnetic-declination-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -245,7 +313,7 @@
 (>defn parse-set-offset-angle-azimuth
        "Parse a SetOffsetAngleAzimuth protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth proto]
-       [any? => map?]
+       [any? => set-offset-angle-azimuth-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -253,7 +321,7 @@
 (>defn parse-set-offset-angle-elevation
        "Parse a SetOffsetAngleElevation protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation proto]
-       [any? => map?]
+       [any? => set-offset-angle-elevation-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -261,7 +329,7 @@
 (>defn parse-set-use-rotary-position
        "Parse a SetUseRotaryPosition protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition proto]
-       [any? => map?]
+       [any? => set-use-rotary-position-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :flag (.getFlag proto))))

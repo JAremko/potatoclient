@@ -1,6 +1,7 @@
 (ns potatoclient.proto.ser
   "Generated protobuf functions."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]])
+  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [malli.core :as m])
   (:import
     ser.JonSharedDataTypes$JonGuiDataMeteo
     ser.JonSharedDataTime$JonGuiDataTime
@@ -1071,6 +1072,420 @@
      :jon-gui-data-client-type-lira})
 
 ;; =============================================================================
+;; Malli Specs
+;; =============================================================================
+
+(def jon-gui-data-video-channel-heat-filters-spec
+  "Malli spec for jon-gui-data-video-channel-heat-filters enum"
+  [:enum :jon-gui-data-video-channel-heat-filter-unspecified
+   :jon-gui-data-video-channel-heat-filter-hot-white
+   :jon-gui-data-video-channel-heat-filter-hot-black
+   :jon-gui-data-video-channel-heat-filter-sepia
+   :jon-gui-data-video-channel-heat-filter-sepia-inverse])
+
+(def jon-gui-data-video-channel-heat-agc-modes-spec
+  "Malli spec for jon-gui-data-video-channel-heat-agc-modes enum"
+  [:enum :jon-gui-data-video-channel-heat-agc-mode-unspecified
+   :jon-gui-data-video-channel-heat-agc-mode-1
+   :jon-gui-data-video-channel-heat-agc-mode-2
+   :jon-gui-data-video-channel-heat-agc-mode-3])
+
+(def jon-gui-data-gps-units-spec
+  "Malli spec for jon-gui-data-gps-units enum"
+  [:enum :jon-gui-data-gps-units-unspecified
+   :jon-gui-data-gps-units-decimal-degrees
+   :jon-gui-data-gps-units-degrees-minutes-seconds
+   :jon-gui-data-gps-units-degrees-decimal-minutes])
+
+(def jon-gui-data-gps-fix-type-spec
+  "Malli spec for jon-gui-data-gps-fix-type enum"
+  [:enum :jon-gui-data-gps-fix-type-unspecified :jon-gui-data-gps-fix-type-none
+   :jon-gui-data-gps-fix-type-1-d :jon-gui-data-gps-fix-type-2-d
+   :jon-gui-data-gps-fix-type-3-d :jon-gui-data-gps-fix-type-manual])
+
+(def jon-gui-data-compass-units-spec
+  "Malli spec for jon-gui-data-compass-units enum"
+  [:enum :jon-gui-data-compass-units-unspecified
+   :jon-gui-data-compass-units-degrees :jon-gui-data-compass-units-mils
+   :jon-gui-data-compass-units-grad :jon-gui-data-compass-units-mrad])
+
+(def jon-gui-data-accumulator-state-idx-spec
+  "Malli spec for jon-gui-data-accumulator-state-idx enum"
+  [:enum :jon-gui-data-accumulator-state-unspecified
+   :jon-gui-data-accumulator-state-unknown :jon-gui-data-accumulator-state-empty
+   :jon-gui-data-accumulator-state-1 :jon-gui-data-accumulator-state-2
+   :jon-gui-data-accumulator-state-3 :jon-gui-data-accumulator-state-4
+   :jon-gui-data-accumulator-state-5 :jon-gui-data-accumulator-state-6
+   :jon-gui-data-accumulator-state-full
+   :jon-gui-data-accumulator-state-charging])
+
+(def jon-gui-data-time-formats-spec
+  "Malli spec for jon-gui-data-time-formats enum"
+  [:enum :jon-gui-data-time-format-unspecified :jon-gui-data-time-format-h-m-s
+   :jon-gui-data-time-format-y-m-d-h-m-s])
+
+(def jon-gui-data-rotary-direction-spec
+  "Malli spec for jon-gui-data-rotary-direction enum"
+  [:enum :jon-gui-data-rotary-direction-unspecified
+   :jon-gui-data-rotary-direction-clockwise
+   :jon-gui-data-rotary-direction-counter-clockwise])
+
+(def jon-gui-data-lrf-scan-modes-spec
+  "Malli spec for jon-gui-data-lrf-scan-modes enum"
+  [:enum :jon-gui-data-lrf-scan-mode-unspecified
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous])
+
+(def jon-gui-datat-lrf-laser-pointer-modes-spec
+  "Malli spec for jon-gui-datat-lrf-laser-pointer-modes enum"
+  [:enum :jon-gui-data-lrf-laser-pointer-mode-unspecified
+   :jon-gui-data-lrf-laser-pointer-mode-off
+   :jon-gui-data-lrf-laser-pointer-mode-on-1
+   :jon-gui-data-lrf-laser-pointer-mode-on-2])
+
+(def jon-gui-data-compass-calibrate-status-spec
+  "Malli spec for jon-gui-data-compass-calibrate-status enum"
+  [:enum :jon-gui-data-compass-calibrate-status-unspecified
+   :jon-gui-data-compass-calibrate-status-not-calibrating
+   :jon-gui-data-compass-calibrate-status-calibrating-short
+   :jon-gui-data-compass-calibrate-status-calibrating-long
+   :jon-gui-data-compass-calibrate-status-finished
+   :jon-gui-data-compass-calibrate-status-error])
+
+(def jon-gui-data-rotary-mode-spec
+  "Malli spec for jon-gui-data-rotary-mode enum"
+  [:enum :jon-gui-data-rotary-mode-unspecified
+   :jon-gui-data-rotary-mode-initialization :jon-gui-data-rotary-mode-speed
+   :jon-gui-data-rotary-mode-position :jon-gui-data-rotary-mode-stabilization
+   :jon-gui-data-rotary-mode-targeting :jon-gui-data-rotary-mode-video-tracker])
+
+(def jon-gui-data-video-channel-spec
+  "Malli spec for jon-gui-data-video-channel enum"
+  [:enum :jon-gui-data-video-channel-unspecified
+   :jon-gui-data-video-channel-heat :jon-gui-data-video-channel-day])
+
+(def jon-gui-data-rec-osd-screen-spec
+  "Malli spec for jon-gui-data-rec-osd-screen enum"
+  [:enum :jon-gui-data-rec-osd-screen-unspecified
+   :jon-gui-data-rec-osd-screen-main :jon-gui-data-rec-osd-screen-lrf-measure
+   :jon-gui-data-rec-osd-screen-lrf-result
+   :jon-gui-data-rec-osd-screen-lrf-result-simplified])
+
+(def jon-gui-data-fx-mode-day-spec
+  "Malli spec for jon-gui-data-fx-mode-day enum"
+  [:enum :jon-gui-data-fx-mode-day-default :jon-gui-data-fx-mode-day-a
+   :jon-gui-data-fx-mode-day-b :jon-gui-data-fx-mode-day-c
+   :jon-gui-data-fx-mode-day-d :jon-gui-data-fx-mode-day-e
+   :jon-gui-data-fx-mode-day-f])
+
+(def jon-gui-data-fx-mode-heat-spec
+  "Malli spec for jon-gui-data-fx-mode-heat enum"
+  [:enum :jon-gui-data-fx-mode-heat-default :jon-gui-data-fx-mode-heat-a
+   :jon-gui-data-fx-mode-heat-b :jon-gui-data-fx-mode-heat-c
+   :jon-gui-data-fx-mode-heat-d :jon-gui-data-fx-mode-heat-e
+   :jon-gui-data-fx-mode-heat-f])
+
+(def jon-gui-data-system-localizations-spec
+  "Malli spec for jon-gui-data-system-localizations enum"
+  [:enum :jon-gui-data-system-localization-unspecified
+   :jon-gui-data-system-localization-en :jon-gui-data-system-localization-ua
+   :jon-gui-data-system-localization-ar :jon-gui-data-system-localization-cs])
+
+(def jon-gui-data-client-type-spec
+  "Malli spec for jon-gui-data-client-type enum"
+  [:enum :jon-gui-data-client-type-unspecified
+   :jon-gui-data-client-type-internal-cv :jon-gui-data-client-type-local-network
+   :jon-gui-data-client-type-certificate-protected
+   :jon-gui-data-client-type-lira])
+
+(def jon-gui-data-video-channel-heat-filters-spec
+  "Malli spec for jon-gui-data-video-channel-heat-filters enum"
+  [:enum :jon-gui-data-video-channel-heat-filter-unspecified
+   :jon-gui-data-video-channel-heat-filter-hot-white
+   :jon-gui-data-video-channel-heat-filter-hot-black
+   :jon-gui-data-video-channel-heat-filter-sepia
+   :jon-gui-data-video-channel-heat-filter-sepia-inverse])
+
+(def jon-gui-data-video-channel-heat-agc-modes-spec
+  "Malli spec for jon-gui-data-video-channel-heat-agc-modes enum"
+  [:enum :jon-gui-data-video-channel-heat-agc-mode-unspecified
+   :jon-gui-data-video-channel-heat-agc-mode-1
+   :jon-gui-data-video-channel-heat-agc-mode-2
+   :jon-gui-data-video-channel-heat-agc-mode-3])
+
+(def jon-gui-data-gps-units-spec
+  "Malli spec for jon-gui-data-gps-units enum"
+  [:enum :jon-gui-data-gps-units-unspecified
+   :jon-gui-data-gps-units-decimal-degrees
+   :jon-gui-data-gps-units-degrees-minutes-seconds
+   :jon-gui-data-gps-units-degrees-decimal-minutes])
+
+(def jon-gui-data-gps-fix-type-spec
+  "Malli spec for jon-gui-data-gps-fix-type enum"
+  [:enum :jon-gui-data-gps-fix-type-unspecified :jon-gui-data-gps-fix-type-none
+   :jon-gui-data-gps-fix-type-1-d :jon-gui-data-gps-fix-type-2-d
+   :jon-gui-data-gps-fix-type-3-d :jon-gui-data-gps-fix-type-manual])
+
+(def jon-gui-data-compass-units-spec
+  "Malli spec for jon-gui-data-compass-units enum"
+  [:enum :jon-gui-data-compass-units-unspecified
+   :jon-gui-data-compass-units-degrees :jon-gui-data-compass-units-mils
+   :jon-gui-data-compass-units-grad :jon-gui-data-compass-units-mrad])
+
+(def jon-gui-data-accumulator-state-idx-spec
+  "Malli spec for jon-gui-data-accumulator-state-idx enum"
+  [:enum :jon-gui-data-accumulator-state-unspecified
+   :jon-gui-data-accumulator-state-unknown :jon-gui-data-accumulator-state-empty
+   :jon-gui-data-accumulator-state-1 :jon-gui-data-accumulator-state-2
+   :jon-gui-data-accumulator-state-3 :jon-gui-data-accumulator-state-4
+   :jon-gui-data-accumulator-state-5 :jon-gui-data-accumulator-state-6
+   :jon-gui-data-accumulator-state-full
+   :jon-gui-data-accumulator-state-charging])
+
+(def jon-gui-data-time-formats-spec
+  "Malli spec for jon-gui-data-time-formats enum"
+  [:enum :jon-gui-data-time-format-unspecified :jon-gui-data-time-format-h-m-s
+   :jon-gui-data-time-format-y-m-d-h-m-s])
+
+(def jon-gui-data-rotary-direction-spec
+  "Malli spec for jon-gui-data-rotary-direction enum"
+  [:enum :jon-gui-data-rotary-direction-unspecified
+   :jon-gui-data-rotary-direction-clockwise
+   :jon-gui-data-rotary-direction-counter-clockwise])
+
+(def jon-gui-data-lrf-scan-modes-spec
+  "Malli spec for jon-gui-data-lrf-scan-modes enum"
+  [:enum :jon-gui-data-lrf-scan-mode-unspecified
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous])
+
+(def jon-gui-datat-lrf-laser-pointer-modes-spec
+  "Malli spec for jon-gui-datat-lrf-laser-pointer-modes enum"
+  [:enum :jon-gui-data-lrf-laser-pointer-mode-unspecified
+   :jon-gui-data-lrf-laser-pointer-mode-off
+   :jon-gui-data-lrf-laser-pointer-mode-on-1
+   :jon-gui-data-lrf-laser-pointer-mode-on-2])
+
+(def jon-gui-data-compass-calibrate-status-spec
+  "Malli spec for jon-gui-data-compass-calibrate-status enum"
+  [:enum :jon-gui-data-compass-calibrate-status-unspecified
+   :jon-gui-data-compass-calibrate-status-not-calibrating
+   :jon-gui-data-compass-calibrate-status-calibrating-short
+   :jon-gui-data-compass-calibrate-status-calibrating-long
+   :jon-gui-data-compass-calibrate-status-finished
+   :jon-gui-data-compass-calibrate-status-error])
+
+(def jon-gui-data-rotary-mode-spec
+  "Malli spec for jon-gui-data-rotary-mode enum"
+  [:enum :jon-gui-data-rotary-mode-unspecified
+   :jon-gui-data-rotary-mode-initialization :jon-gui-data-rotary-mode-speed
+   :jon-gui-data-rotary-mode-position :jon-gui-data-rotary-mode-stabilization
+   :jon-gui-data-rotary-mode-targeting :jon-gui-data-rotary-mode-video-tracker])
+
+(def jon-gui-data-video-channel-spec
+  "Malli spec for jon-gui-data-video-channel enum"
+  [:enum :jon-gui-data-video-channel-unspecified
+   :jon-gui-data-video-channel-heat :jon-gui-data-video-channel-day])
+
+(def jon-gui-data-rec-osd-screen-spec
+  "Malli spec for jon-gui-data-rec-osd-screen enum"
+  [:enum :jon-gui-data-rec-osd-screen-unspecified
+   :jon-gui-data-rec-osd-screen-main :jon-gui-data-rec-osd-screen-lrf-measure
+   :jon-gui-data-rec-osd-screen-lrf-result
+   :jon-gui-data-rec-osd-screen-lrf-result-simplified])
+
+(def jon-gui-data-fx-mode-day-spec
+  "Malli spec for jon-gui-data-fx-mode-day enum"
+  [:enum :jon-gui-data-fx-mode-day-default :jon-gui-data-fx-mode-day-a
+   :jon-gui-data-fx-mode-day-b :jon-gui-data-fx-mode-day-c
+   :jon-gui-data-fx-mode-day-d :jon-gui-data-fx-mode-day-e
+   :jon-gui-data-fx-mode-day-f])
+
+(def jon-gui-data-fx-mode-heat-spec
+  "Malli spec for jon-gui-data-fx-mode-heat enum"
+  [:enum :jon-gui-data-fx-mode-heat-default :jon-gui-data-fx-mode-heat-a
+   :jon-gui-data-fx-mode-heat-b :jon-gui-data-fx-mode-heat-c
+   :jon-gui-data-fx-mode-heat-d :jon-gui-data-fx-mode-heat-e
+   :jon-gui-data-fx-mode-heat-f])
+
+(def jon-gui-data-system-localizations-spec
+  "Malli spec for jon-gui-data-system-localizations enum"
+  [:enum :jon-gui-data-system-localization-unspecified
+   :jon-gui-data-system-localization-en :jon-gui-data-system-localization-ua
+   :jon-gui-data-system-localization-ar :jon-gui-data-system-localization-cs])
+
+(def jon-gui-data-client-type-spec
+  "Malli spec for jon-gui-data-client-type enum"
+  [:enum :jon-gui-data-client-type-unspecified
+   :jon-gui-data-client-type-internal-cv :jon-gui-data-client-type-local-network
+   :jon-gui-data-client-type-certificate-protected
+   :jon-gui-data-client-type-lira])
+
+(def jon-gui-data-meteo-spec
+  "Malli spec for jon-gui-data-meteo message"
+  [:map [:temperature [:maybe :float]] [:humidity [:maybe :float]]
+   [:pressure [:maybe :float]]])
+
+(def jon-gui-data-meteo-spec
+  "Malli spec for jon-gui-data-meteo message"
+  [:map [:temperature [:maybe :float]] [:humidity [:maybe :float]]
+   [:pressure [:maybe :float]]])
+
+(def jon-gui-data-time-spec
+  "Malli spec for jon-gui-data-time message"
+  [:map [:timestamp [:maybe :int]] [:manual-timestamp [:maybe :int]]
+   [:zone-id [:maybe :int]] [:use-manual-time [:maybe :boolean]]])
+
+(def jon-gui-data-system-spec
+  "Malli spec for jon-gui-data-system message"
+  [:map [:cpu-temperature [:maybe :float]] [:gpu-temperature [:maybe :float]]
+   [:gpu-load [:maybe :float]] [:cpu-load [:maybe :float]]
+   [:power-consumption [:maybe :float]]
+   [:loc [:maybe :ser/jon-gui-data-system-localizations]]
+   [:cur-video-rec-dir-year [:maybe :int]]
+   [:cur-video-rec-dir-month [:maybe :int]]
+   [:cur-video-rec-dir-day [:maybe :int]]
+   [:cur-video-rec-dir-hour [:maybe :int]]
+   [:cur-video-rec-dir-minute [:maybe :int]]
+   [:cur-video-rec-dir-second [:maybe :int]] [:rec-enabled [:maybe :boolean]]
+   [:important-rec-enabled [:maybe :boolean]]
+   [:low-disk-space [:maybe :boolean]] [:no-disk-space [:maybe :boolean]]
+   [:disk-space [:maybe :int]] [:tracking [:maybe :boolean]]
+   [:vampire-mode [:maybe :boolean]] [:stabilization-mode [:maybe :boolean]]
+   [:geodesic-mode [:maybe :boolean]] [:cv-dumping [:maybe :boolean]]])
+
+(def jon-gui-data-lrf-spec
+  "Malli spec for jon-gui-data-lrf message"
+  [:map [:is-scanning [:maybe :boolean]] [:is-measuring [:maybe :boolean]]
+   [:measure-id [:maybe :int]] [:target [:maybe :ser/jon-gui-data-target]]
+   [:pointer-mode [:maybe :ser/jon-gui-datat-lrf-laser-pointer-modes]]
+   [:fog-mode-enabled [:maybe :boolean]] [:is-refining [:maybe :boolean]]])
+
+(def jon-gui-data-target-spec
+  "Malli spec for jon-gui-data-target message"
+  [:map [:timestamp [:maybe :int]] [:target-longitude [:maybe :double]]
+   [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]]
+   [:observer-longitude [:maybe :double]] [:observer-latitude [:maybe :double]]
+   [:observer-altitude [:maybe :double]] [:observer-azimuth [:maybe :double]]
+   [:observer-elevation [:maybe :double]] [:observer-bank [:maybe :double]]
+   [:distance-2d [:maybe :double]] [:distance-3b [:maybe :double]]
+   [:observer-fix-type [:maybe :ser/jon-gui-data-gps-fix-type]]
+   [:session-id [:maybe :int]] [:target-id [:maybe :int]]
+   [:target-color [:maybe :ser/rgb-color]] [:type [:maybe :int]]
+   [:uuid-part-1 [:maybe :int]] [:uuid-part-2 [:maybe :int]]
+   [:uuid-part-3 [:maybe :int]] [:uuid-part-4 [:maybe :int]]])
+
+(def rgb-color-spec
+  "Malli spec for rgb-color message"
+  [:map [:red [:maybe :int]] [:green [:maybe :int]] [:blue [:maybe :int]]])
+
+(def jon-gui-data-gps-spec
+  "Malli spec for jon-gui-data-gps message"
+  [:map [:longitude [:maybe :double]] [:latitude [:maybe :double]]
+   [:altitude [:maybe :double]] [:manual-longitude [:maybe :double]]
+   [:manual-latitude [:maybe :double]] [:manual-altitude [:maybe :double]]
+   [:fix-type [:maybe :ser/jon-gui-data-gps-fix-type]]
+   [:use-manual [:maybe :boolean]]])
+
+(def jon-gui-data-compass-spec
+  "Malli spec for jon-gui-data-compass message"
+  [:map [:azimuth [:maybe :double]] [:elevation [:maybe :double]]
+   [:bank [:maybe :double]] [:offset-azimuth [:maybe :double]]
+   [:offset-elevation [:maybe :double]] [:magnetic-declination [:maybe :double]]
+   [:calibrating [:maybe :boolean]]])
+
+(def jon-gui-data-compass-calibration-spec
+  "Malli spec for jon-gui-data-compass-calibration message"
+  [:map [:stage [:maybe :int]] [:final-stage [:maybe :int]]
+   [:target-azimuth [:maybe :double]] [:target-elevation [:maybe :double]]
+   [:target-bank [:maybe :double]]
+   [:status [:maybe :ser/jon-gui-data-compass-calibrate-status]]])
+
+(def jon-gui-data-rotary-spec
+  "Malli spec for jon-gui-data-rotary message"
+  [:map [:azimuth [:maybe :float]] [:azimuth-speed [:maybe :float]]
+   [:elevation [:maybe :float]] [:elevation-speed [:maybe :float]]
+   [:platform-azimuth [:maybe :float]] [:platform-elevation [:maybe :float]]
+   [:platform-bank [:maybe :float]] [:is-moving [:maybe :boolean]]
+   [:mode [:maybe :ser/jon-gui-data-rotary-mode]]
+   [:is-scanning [:maybe :boolean]] [:is-scanning-paused [:maybe :boolean]]
+   [:use-rotary-as-compass [:maybe :boolean]] [:scan-target [:maybe :int]]
+   [:scan-target-max [:maybe :int]] [:sun-azimuth [:maybe :float]]
+   [:sun-elevation [:maybe :float]]
+   [:current-scan-node [:maybe :ser/scan-node]]])
+
+(def scan-node-spec
+  "Malli spec for scan-node message"
+  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
+   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
+   [:elevation [:maybe :double]] [:linger [:maybe :double]]
+   [:speed [:maybe :double]]])
+
+(def jon-gui-data-camera-day-spec
+  "Malli spec for jon-gui-data-camera-day message"
+  [:map [:focus-pos [:maybe :float]] [:zoom-pos [:maybe :float]]
+   [:iris-pos [:maybe :float]] [:infrared-filter [:maybe :boolean]]
+   [:zoom-table-pos [:maybe :int]] [:zoom-table-pos-max [:maybe :int]]
+   [:fx-mode [:maybe :ser/jon-gui-data-fx-mode-day]]
+   [:auto-focus [:maybe :boolean]] [:auto-iris [:maybe :boolean]]
+   [:digital-zoom-level [:maybe :float]] [:clahe-level [:maybe :float]]])
+
+(def jon-gui-data-camera-heat-spec
+  "Malli spec for jon-gui-data-camera-heat message"
+  [:map [:zoom-pos [:maybe :float]]
+   [:agc-mode [:maybe :ser/jon-gui-data-video-channel-heat-agc-modes]]
+   [:filter [:maybe :ser/jon-gui-data-video-channel-heat-filters]]
+   [:auto-focus [:maybe :boolean]] [:zoom-table-pos [:maybe :int]]
+   [:zoom-table-pos-max [:maybe :int]] [:dde-level [:maybe :int]]
+   [:dde-enabled [:maybe :boolean]]
+   [:fx-mode [:maybe :ser/jon-gui-data-fx-mode-heat]]
+   [:digital-zoom-level [:maybe :float]] [:clahe-level [:maybe :float]]])
+
+(def jon-gui-data-rec-osd-spec
+  "Malli spec for jon-gui-data-rec-osd message"
+  [:map [:screen [:maybe :ser/jon-gui-data-rec-osd-screen]]
+   [:heat-osd-enabled [:maybe :boolean]] [:day-osd-enabled [:maybe :boolean]]
+   [:heat-crosshair-offset-horizontal [:maybe :int]]
+   [:heat-crosshair-offset-vertical [:maybe :int]]
+   [:day-crosshair-offset-horizontal [:maybe :int]]
+   [:day-crosshair-offset-vertical [:maybe :int]]])
+
+(def jon-gui-data-day-cam-glass-heater-spec
+  "Malli spec for jon-gui-data-day-cam-glass-heater message"
+  [:map [:temperature [:maybe :double]] [:status [:maybe :boolean]]])
+
+(def jon-gui-data-actual-space-time-spec
+  "Malli spec for jon-gui-data-actual-space-time message"
+  [:map [:azimuth [:maybe :float]] [:elevation [:maybe :float]]
+   [:bank [:maybe :float]] [:latitude [:maybe :float]]
+   [:longitude [:maybe :float]] [:altitude [:maybe :double]]
+   [:timestamp [:maybe :int]]])
+
+(def jon-gui-state-spec
+  "Malli spec for jon-gui-state message"
+  [:map [:protocol-version [:maybe :int]]
+   [:system [:maybe :ser/jon-gui-data-system]]
+   [:meteo-internal [:maybe :ser/jon-gui-data-meteo]]
+   [:lrf [:maybe :ser/jon-gui-data-lrf]] [:time [:maybe :ser/jon-gui-data-time]]
+   [:gps [:maybe :ser/jon-gui-data-gps]]
+   [:compass [:maybe :ser/jon-gui-data-compass]]
+   [:rotary [:maybe :ser/jon-gui-data-rotary]]
+   [:camera-day [:maybe :ser/jon-gui-data-camera-day]]
+   [:camera-heat [:maybe :ser/jon-gui-data-camera-heat]]
+   [:compass-calibration [:maybe :ser/jon-gui-data-compass-calibration]]
+   [:rec-osd [:maybe :ser/jon-gui-data-rec-osd]]
+   [:day-cam-glass-heater [:maybe :ser/jon-gui-data-day-cam-glass-heater]]
+   [:actual-space-time [:maybe :ser/jon-gui-data-actual-space-time]]])
+
+;; =============================================================================
 ;; Builders and Parsers
 ;; =============================================================================
 
@@ -1115,7 +1530,7 @@
 (>defn build-jon-gui-data-meteo
        "Build a JonGuiDataMeteo protobuf message from a map."
        [m]
-       [map? => any?]
+       [jon-gui-data-meteo-spec => any?]
        (let [builder (ser.JonSharedDataTypes$JonGuiDataMeteo/newBuilder)]
          ;; Set regular fields
          (when (contains? m :temperature)
@@ -1127,7 +1542,7 @@
 (>defn build-jon-gui-data-meteo
        "Build a JonGuiDataMeteo protobuf message from a map."
        [m]
-       [map? => any?]
+       [jon-gui-data-meteo-spec => any?]
        (let [builder (ser.JonSharedDataTypes$JonGuiDataMeteo/newBuilder)]
          ;; Set regular fields
          (when (contains? m :temperature)
@@ -1139,7 +1554,7 @@
 (>defn build-jon-gui-data-time
        "Build a JonGuiDataTime protobuf message from a map."
        [m]
-       [map? => any?]
+       [jon-gui-data-time-spec => any?]
        (let [builder (ser.JonSharedDataTime$JonGuiDataTime/newBuilder)]
          ;; Set regular fields
          (when (contains? m :timestamp)
@@ -1155,7 +1570,7 @@
   build-jon-gui-data-system
   "Build a JonGuiDataSystem protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-system-spec => any?]
   (let [builder (ser.JonSharedDataSystem$JonGuiDataSystem/newBuilder)]
     ;; Set regular fields
     (when (contains? m :cpu-temperature)
@@ -1203,7 +1618,7 @@
 (>defn build-jon-gui-data-lrf
        "Build a JonGuiDataLrf protobuf message from a map."
        [m]
-       [map? => any?]
+       [jon-gui-data-lrf-spec => any?]
        (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
          ;; Set regular fields
          (when (contains? m :is-scanning)
@@ -1228,7 +1643,7 @@
   build-jon-gui-data-target
   "Build a JonGuiDataTarget protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-target-spec => any?]
   (let [builder (ser.JonSharedDataLrf$JonGuiDataTarget/newBuilder)]
     ;; Set regular fields
     (when (contains? m :timestamp) (.setTimestamp builder (get m :timestamp)))
@@ -1276,7 +1691,7 @@
 (>defn build-rgb-color
        "Build a RgbColor protobuf message from a map."
        [m]
-       [map? => any?]
+       [rgb-color-spec => any?]
        (let [builder (ser.JonSharedDataLrf$RgbColor/newBuilder)]
          ;; Set regular fields
          (when (contains? m :red) (.setRed builder (get m :red)))
@@ -1288,7 +1703,7 @@
   build-jon-gui-data-gps
   "Build a JonGuiDataGps protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-gps-spec => any?]
   (let [builder (ser.JonSharedDataGps$JonGuiDataGps/newBuilder)]
     ;; Set regular fields
     (when (contains? m :longitude) (.setLongitude builder (get m :longitude)))
@@ -1309,7 +1724,7 @@
 (>defn build-jon-gui-data-compass
        "Build a JonGuiDataCompass protobuf message from a map."
        [m]
-       [map? => any?]
+       [jon-gui-data-compass-spec => any?]
        (let [builder (ser.JonSharedDataCompass$JonGuiDataCompass/newBuilder)]
          ;; Set regular fields
          (when (contains? m :azimuth) (.setAzimuth builder (get m :azimuth)))
@@ -1330,7 +1745,7 @@
   build-jon-gui-data-compass-calibration
   "Build a JonGuiDataCompassCalibration protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-compass-calibration-spec => any?]
   (let
     [builder
        (ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration/newBuilder)]
@@ -1354,7 +1769,7 @@
   build-jon-gui-data-rotary
   "Build a JonGuiDataRotary protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-rotary-spec => any?]
   (let [builder (ser.JonSharedDataRotary$JonGuiDataRotary/newBuilder)]
     ;; Set regular fields
     (when (contains? m :azimuth) (.setAzimuth builder (get m :azimuth)))
@@ -1394,7 +1809,7 @@
 (>defn build-scan-node
        "Build a ScanNode protobuf message from a map."
        [m]
-       [map? => any?]
+       [scan-node-spec => any?]
        (let [builder (ser.JonSharedDataRotary$ScanNode/newBuilder)]
          ;; Set regular fields
          (when (contains? m :index) (.setIndex builder (get m :index)))
@@ -1413,7 +1828,7 @@
   build-jon-gui-data-camera-day
   "Build a JonGuiDataCameraDay protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-camera-day-spec => any?]
   (let [builder (ser.JonSharedDataCameraDay$JonGuiDataCameraDay/newBuilder)]
     ;; Set regular fields
     (when (contains? m :focus-pos) (.setFocusPos builder (get m :focus-pos)))
@@ -1440,7 +1855,7 @@
   build-jon-gui-data-camera-heat
   "Build a JonGuiDataCameraHeat protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-camera-heat-spec => any?]
   (let [builder (ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat/newBuilder)]
     ;; Set regular fields
     (when (contains? m :zoom-pos) (.setZoomPos builder (get m :zoom-pos)))
@@ -1473,7 +1888,7 @@
   build-jon-gui-data-rec-osd
   "Build a JonGuiDataRecOsd protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-rec-osd-spec => any?]
   (let [builder (ser.JonSharedDataRecOsd$JonGuiDataRecOsd/newBuilder)]
     ;; Set regular fields
     (when (contains? m :screen)
@@ -1503,7 +1918,7 @@
   build-jon-gui-data-day-cam-glass-heater
   "Build a JonGuiDataDayCamGlassHeater protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-day-cam-glass-heater-spec => any?]
   (let
     [builder
        (ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater/newBuilder)]
@@ -1517,7 +1932,7 @@
   build-jon-gui-data-actual-space-time
   "Build a JonGuiDataActualSpaceTime protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-data-actual-space-time-spec => any?]
   (let
     [builder
        (ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime/newBuilder)]
@@ -1535,7 +1950,7 @@
   build-jon-gui-state
   "Build a JonGUIState protobuf message from a map."
   [m]
-  [map? => any?]
+  [jon-gui-state-spec => any?]
   (let [builder (ser.JonSharedData$JonGUIState/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
@@ -1580,7 +1995,7 @@
 (>defn parse-jon-gui-data-meteo
        "Parse a JonGuiDataMeteo protobuf message to a map."
        [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-       [any? => map?]
+       [any? => jon-gui-data-meteo-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -1590,7 +2005,7 @@
 (>defn parse-jon-gui-data-meteo
        "Parse a JonGuiDataMeteo protobuf message to a map."
        [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-       [any? => map?]
+       [any? => jon-gui-data-meteo-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -1600,7 +2015,7 @@
 (>defn parse-jon-gui-data-time
        "Parse a JonGuiDataTime protobuf message to a map."
        [^ser.JonSharedDataTime$JonGuiDataTime proto]
-       [any? => map?]
+       [any? => jon-gui-data-time-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :timestamp (.getTimestamp proto))
@@ -1611,7 +2026,7 @@
 (>defn parse-jon-gui-data-system
        "Parse a JonGuiDataSystem protobuf message to a map."
        [^ser.JonSharedDataSystem$JonGuiDataSystem proto]
-       [any? => map?]
+       [any? => jon-gui-data-system-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :cpu-temperature (.getCpuTemperature proto))
@@ -1642,7 +2057,7 @@
 (>defn parse-jon-gui-data-lrf
        "Parse a JonGuiDataLrf protobuf message to a map."
        [^ser.JonSharedDataLrf$JonGuiDataLrf proto]
-       [any? => map?]
+       [any? => jon-gui-data-lrf-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :is-scanning (.getIsScanning proto))
@@ -1659,7 +2074,7 @@
 (>defn parse-jon-gui-data-target
        "Parse a JonGuiDataTarget protobuf message to a map."
        [^ser.JonSharedDataLrf$JonGuiDataTarget proto]
-       [any? => map?]
+       [any? => jon-gui-data-target-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :timestamp (.getTimestamp proto))
@@ -1690,7 +2105,7 @@
 (>defn parse-rgb-color
        "Parse a RgbColor protobuf message to a map."
        [^ser.JonSharedDataLrf$RgbColor proto]
-       [any? => map?]
+       [any? => rgb-color-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :red (.getRed proto))
@@ -1700,7 +2115,7 @@
 (>defn parse-jon-gui-data-gps
        "Parse a JonGuiDataGps protobuf message to a map."
        [^ser.JonSharedDataGps$JonGuiDataGps proto]
-       [any? => map?]
+       [any? => jon-gui-data-gps-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :longitude (.getLongitude proto))
@@ -1716,7 +2131,7 @@
 (>defn parse-jon-gui-data-compass
        "Parse a JonGuiDataCompass protobuf message to a map."
        [^ser.JonSharedDataCompass$JonGuiDataCompass proto]
-       [any? => map?]
+       [any? => jon-gui-data-compass-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :azimuth (.getAzimuth proto))
@@ -1730,7 +2145,7 @@
 (>defn parse-jon-gui-data-compass-calibration
        "Parse a JonGuiDataCompassCalibration protobuf message to a map."
        [^ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration proto]
-       [any? => map?]
+       [any? => jon-gui-data-compass-calibration-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :stage (.getStage proto))
@@ -1746,7 +2161,7 @@
   parse-jon-gui-data-rotary
   "Parse a JonGuiDataRotary protobuf message to a map."
   [^ser.JonSharedDataRotary$JonGuiDataRotary proto]
-  [any? => map?]
+  [any? => jon-gui-data-rotary-spec]
   (cond-> {}
     ;; Regular fields
     true (assoc :azimuth (.getAzimuth proto))
@@ -1771,7 +2186,7 @@
 (>defn parse-scan-node
        "Parse a ScanNode protobuf message to a map."
        [^ser.JonSharedDataRotary$ScanNode proto]
-       [any? => map?]
+       [any? => scan-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))
@@ -1785,7 +2200,7 @@
 (>defn parse-jon-gui-data-camera-day
        "Parse a JonGuiDataCameraDay protobuf message to a map."
        [^ser.JonSharedDataCameraDay$JonGuiDataCameraDay proto]
-       [any? => map?]
+       [any? => jon-gui-data-camera-day-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :focus-pos (.getFocusPos proto))
@@ -1804,7 +2219,7 @@
 (>defn parse-jon-gui-data-camera-heat
        "Parse a JonGuiDataCameraHeat protobuf message to a map."
        [^ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat proto]
-       [any? => map?]
+       [any? => jon-gui-data-camera-heat-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :zoom-pos (.getZoomPos proto))
@@ -1827,7 +2242,7 @@
 (>defn parse-jon-gui-data-rec-osd
        "Parse a JonGuiDataRecOsd protobuf message to a map."
        [^ser.JonSharedDataRecOsd$JonGuiDataRecOsd proto]
-       [any? => map?]
+       [any? => jon-gui-data-rec-osd-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :screen
@@ -1846,7 +2261,7 @@
 (>defn parse-jon-gui-data-day-cam-glass-heater
        "Parse a JonGuiDataDayCamGlassHeater protobuf message to a map."
        [^ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater proto]
-       [any? => map?]
+       [any? => jon-gui-data-day-cam-glass-heater-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -1855,7 +2270,7 @@
 (>defn parse-jon-gui-data-actual-space-time
        "Parse a JonGuiDataActualSpaceTime protobuf message to a map."
        [^ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime proto]
-       [any? => map?]
+       [any? => jon-gui-data-actual-space-time-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :azimuth (.getAzimuth proto))
@@ -1870,7 +2285,7 @@
   parse-jon-gui-state
   "Parse a JonGUIState protobuf message to a map."
   [^ser.JonSharedData$JonGUIState proto]
-  [any? => map?]
+  [any? => jon-gui-state-spec]
   (cond-> {}
     ;; Regular fields
     true (assoc :protocol-version (.getProtocolVersion proto))

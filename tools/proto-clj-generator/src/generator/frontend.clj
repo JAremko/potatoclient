@@ -8,7 +8,8 @@
             [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]
             [rewrite-clj.node :as n]
-            [generator.type-resolution :as type-res]))
+            [generator.type-resolution :as type-res]
+            [generator.spec-gen :as spec-gen]))
 
 ;; =============================================================================
 ;; Template Loading
@@ -210,9 +211,11 @@
                                               "-payload builder " var-name "))")))
                                       (:oneofs message))))
         
+        spec-name (spec-gen/message->spec-name message)
         replacements {"BUILD-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
                      "JAVA-CLASS" (:java-class message)
+                     "SPEC-NAME" spec-name
                      "REGULAR-FIELDS" (or regular-field-setters "")
                      "ONEOF-PAYLOAD" (or oneof-payloads "")}]
     (replace-in-template template replacements)))
@@ -222,6 +225,7 @@
   [message type-lookup current-package guardrails?]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
+        spec-name (spec-gen/message->spec-name message)
         has-fields? (or (seq regular-fields) (seq (:oneofs message)))
         
         ;; For empty messages, use a simpler template
@@ -231,7 +235,7 @@
                      (str "(>defn " fn-name "\n"
                           "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
                           "  [^" (:java-class message) " proto]\n"
-                          "  [any? => map?]\n"
+                          "  [any? => " spec-name "]\n"
                           "  {})")
                      (str "(defn " fn-name "\n"
                           "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
@@ -253,6 +257,7 @@
         replacements {"PARSE-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
                      "JAVA-CLASS" (:java-class message)
+                     "SPEC-NAME" spec-name
                      "REGULAR-FIELDS" (or field-getters "")
                      "ONEOF-PAYLOAD" (or oneof-payload "")}]
     (if has-fields?
@@ -272,9 +277,30 @@
         is-enum? (get-in field-type [:enum])
         builder-fn (when (and type-ref (get-in field-type [:message]))
                     (let [canonical-ref (str/replace type-ref #"^\." "")
-                          type-def (get type-lookup canonical-ref)]
+                          type-def (get type-lookup canonical-ref)
+                          target-package (:package type-def)
+                          ;; Check if we need namespace qualification (case-insensitive)
+                          needs-ns? (and target-package 
+                                        (not= (str/lower-case target-package) 
+                                              (str/lower-case current-package)))
+                          ;; Debug print
+                          _ (println "DEBUG oneof builder:"
+                                    "field" (:name field)
+                                    "type-ref" type-ref
+                                    "canonical-ref" canonical-ref
+                                    "type-def?" (boolean type-def)
+                                    "target-package" target-package 
+                                    "current-package" current-package
+                                    "needs-ns?" needs-ns?)]
                       (when (and type-def (= :message (:type type-def)))
-                        (str "build-" (name (:name type-def))))))
+                        (if needs-ns?
+                          ;; Qualify with namespace alias
+                          (let [ns-alias (-> (last (str/split target-package #"\."))
+                                             str/lower-case
+                                             (str/replace "_" "-"))]
+                            (str ns-alias "/build-" (name (:name type-def))))
+                          ;; Same namespace, no qualification needed
+                          (str "build-" (name (:name type-def)))))))
         value-expr (cond
                     builder-fn (str "(" builder-fn " value)")
                     is-enum? (let [enum-ref (type-res/resolve-enum-reference 
@@ -295,9 +321,21 @@
         is-enum? (get-in field-type [:enum])
         parser-fn (when (and type-ref (get-in field-type [:message]))
                    (let [canonical-ref (str/replace type-ref #"^\." "")
-                         type-def (get type-lookup canonical-ref)]
+                         type-def (get type-lookup canonical-ref)
+                         target-package (:package type-def)
+                         ;; Check if we need namespace qualification (case-insensitive)
+                         needs-ns? (and target-package 
+                                       (not= (str/lower-case target-package)
+                                             (str/lower-case current-package)))]
                      (when (and type-def (= :message (:type type-def)))
-                       (str "parse-" (name (:name type-def))))))
+                       (if needs-ns?
+                         ;; Qualify with namespace alias
+                         (let [ns-alias (-> (last (str/split target-package #"\."))
+                                            str/lower-case
+                                            (str/replace "_" "-"))]
+                           (str ns-alias "/parse-" (name (:name type-def))))
+                         ;; Same namespace, no qualification needed
+                         (str "parse-" (name (:name type-def)))))))
         getter-expr (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)")
         value-expr (cond
                     parser-fn (str "(" parser-fn " " getter-expr ")")
@@ -362,11 +400,32 @@
 (defn generate-namespace
   "Generate complete namespace."
   ([ns-name imports enums messages type-lookup]
-   (generate-namespace ns-name imports enums messages type-lookup [] false))
+   (generate-namespace ns-name imports enums messages type-lookup [] false true nil))
   ([ns-name imports enums messages type-lookup require-specs]
-   (generate-namespace ns-name imports enums messages type-lookup require-specs false))
+   (generate-namespace ns-name imports enums messages type-lookup require-specs false true nil))
   ([ns-name imports enums messages type-lookup require-specs guardrails?]
+   (generate-namespace ns-name imports enums messages type-lookup require-specs guardrails? true nil))
+  ([ns-name imports enums messages type-lookup require-specs guardrails? generate-specs?]
+   (generate-namespace ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? nil))
+  ([ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? proto-package]
    (let [template (cond
+                    ;; Specs + guardrails + requires
+                    (and generate-specs? guardrails? (seq require-specs))
+                    (load-template-string "namespace-with-specs-guardrails.clj")
+                    
+                    ;; Specs + guardrails (no requires) 
+                    (and generate-specs? guardrails?)
+                    (load-template-string "namespace-with-specs-guardrails.clj")
+                    
+                    ;; Specs + requires (no guardrails)
+                    (and generate-specs? (seq require-specs))
+                    (load-template-string "namespace-with-specs.clj")
+                    
+                    ;; Specs only
+                    generate-specs?
+                    (load-template-string "namespace-with-specs.clj")
+                    
+                    ;; Original templates without specs
                     (and guardrails? (seq require-specs))
                     (load-template-string "namespace-with-requires-guardrails.clj")
                     
@@ -379,18 +438,18 @@
                     :else
                     (load-template-string "namespace.clj"))
          
-         ;; Extract current package from namespace name
-         ;; e.g. "potatoclient.proto.cmd.rotaryplatform" -> "cmd.RotaryPlatform"
-         current-package (when (str/includes? ns-name ".")
-                          (let [parts (str/split ns-name #"\.")
-                                ;; Skip the namespace prefix parts
-                                package-parts (drop-while #(not (#{"cmd" "ser"} %)) parts)]
-                            (when (seq package-parts)
-                              ;; Convert last part to PascalCase for proto package
-                              (if (= 1 (count package-parts))
-                                (first package-parts)
-                                (str (first package-parts) "." 
-                                     (csk/->PascalCase (last package-parts)))))))
+         ;; Use provided proto-package or extract from namespace name
+         current-package (or proto-package
+                            (when (str/includes? ns-name ".")
+                              (let [parts (str/split ns-name #"\.")
+                                    ;; Skip the namespace prefix parts
+                                    package-parts (drop-while #(not (#{"cmd" "ser"} %)) parts)]
+                                (when (seq package-parts)
+                                  ;; Convert last part to PascalCase for proto package
+                                  (if (= 1 (count package-parts))
+                                    (first package-parts)
+                                    (str (first package-parts) "." 
+                                         (csk/->PascalCase (last package-parts))))))))
          
          enums-code (when (seq enums)
                       (str/join "\n\n" (map generate-enum-def enums)))
@@ -445,10 +504,21 @@
                         (str/join "\n            " 
                                  (map pr-str require-specs)))
          
+         ;; Generate specs if requested
+         specs-code (when generate-specs?
+                     (let [{:keys [enum-specs message-specs]} 
+                           (spec-gen/generate-specs-for-namespace 
+                            {:messages messages :enums enums})]
+                       (str (when (seq enum-specs)
+                             (str enum-specs "\n\n"))
+                            (when (seq message-specs)
+                             message-specs))))
+         
          replacements {"NAMESPACE-PLACEHOLDER" ns-name
                      "REQUIRE-PLACEHOLDER" (or require-clause "")
                      "IMPORTS-PLACEHOLDER" (generate-imports imports)
                      "ENUMS-PLACEHOLDER" (or enums-code ";; No enums")
+                     "SPECS-PLACEHOLDER" (or specs-code ";; No specs")
                      "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages"))}]
     (replace-in-template template replacements))))
 
@@ -501,7 +571,7 @@
 
 (defn generate-code
   "Generate complete Clojure code from EDN data."
-  [{:keys [ns-name edn-data type-lookup guardrails?]}]
+  [{:keys [ns-name edn-data type-lookup guardrails? proto-package]}]
   (let [imports (collect-imports edn-data)
         ;; Helper to collect all messages recursively
         collect-all-messages (fn collect [msg]
@@ -524,7 +594,7 @@
                    (sp/select [:files sp/ALL :enums sp/ALL] edn-data)
                    (->> all-messages
                         (mapcat collect-enums-from-message)))]
-    (generate-namespace ns-name imports all-enums all-messages type-lookup [] guardrails?)))
+    (generate-namespace ns-name imports all-enums all-messages type-lookup [] guardrails? true proto-package)))
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output."
@@ -532,8 +602,10 @@
   {:command (generate-code {:ns-name (str ns-prefix ".command")
                            :edn-data command
                            :type-lookup type-lookup
-                           :guardrails? guardrails?})
+                           :guardrails? guardrails?
+                           :proto-package "cmd"})
    :state (generate-code {:ns-name (str ns-prefix ".state")
                          :edn-data state
                          :type-lookup type-lookup
-                         :guardrails? guardrails?})})
+                         :guardrails? guardrails?
+                         :proto-package "ser"})})

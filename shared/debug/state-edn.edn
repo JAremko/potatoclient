@@ -11,6 +11,7 @@
      :name :jon-gui-data-meteo,
      :proto-name "JonGuiDataMeteo",
      :java-class "ser.JonSharedDataTypes$JonGuiDataMeteo",
+     :package "ser",
      :fields
      [{:name :temperature,
        :proto-name "temperature",
@@ -38,6 +39,7 @@
      :proto-name "JonGuiDataVideoChannelHeatFilters",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters",
+     :package "ser",
      :values
      [{:name :jon-gui-data-video-channel-heat-filter-unspecified,
        :proto-name
@@ -61,6 +63,7 @@
      :proto-name "JonGuiDataVideoChannelHeatAGCModes",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes",
+     :package "ser",
      :values
      [{:name :jon-gui-data-video-channel-heat-agc-mode-unspecified,
        :proto-name
@@ -79,6 +82,7 @@
      :name :jon-gui-data-gps-units,
      :proto-name "JonGuiDataGpsUnits",
      :java-class "ser.JonSharedDataTypes$JonGuiDataGpsUnits",
+     :package "ser",
      :values
      [{:name :jon-gui-data-gps-units-unspecified,
        :proto-name "JON_GUI_DATA_GPS_UNITS_UNSPECIFIED",
@@ -96,6 +100,7 @@
      :name :jon-gui-data-gps-fix-type,
      :proto-name "JonGuiDataGpsFixType",
      :java-class "ser.JonSharedDataTypes$JonGuiDataGpsFixType",
+     :package "ser",
      :values
      [{:name :jon-gui-data-gps-fix-type-unspecified,
        :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED",
@@ -119,6 +124,7 @@
      :name :jon-gui-data-compass-units,
      :proto-name "JonGuiDataCompassUnits",
      :java-class "ser.JonSharedDataTypes$JonGuiDataCompassUnits",
+     :package "ser",
      :values
      [{:name :jon-gui-data-compass-units-unspecified,
        :proto-name "JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED",
@@ -140,6 +146,7 @@
      :proto-name "JonGuiDataAccumulatorStateIdx",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx",
+     :package "ser",
      :values
      [{:name :jon-gui-data-accumulator-state-unspecified,
        :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED",
@@ -178,6 +185,7 @@
      :name :jon-gui-data-time-formats,
      :proto-name "JonGuiDataTimeFormats",
      :java-class "ser.JonSharedDataTypes$JonGuiDataTimeFormats",
+     :package "ser",
      :values
      [{:name :jon-gui-data-time-format-unspecified,
        :proto-name "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED",
@@ -192,6 +200,7 @@
      :name :jon-gui-data-rotary-direction,
      :proto-name "JonGuiDataRotaryDirection",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryDirection",
+     :package "ser",
      :values
      [{:name :jon-gui-data-rotary-direction-unspecified,
        :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED",
@@ -206,6 +215,7 @@
      :name :jon-gui-data-lrf-scan-modes,
      :proto-name "JonGuiDataLrfScanModes",
      :java-class "ser.JonSharedDataTypes$JonGuiDataLrfScanModes",
+     :package "ser",
      :values
      [{:name :jon-gui-data-lrf-scan-mode-unspecified,
        :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED",
@@ -233,6 +243,7 @@
      :proto-name "JonGuiDatatLrfLaserPointerModes",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes",
+     :package "ser",
      :values
      [{:name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
        :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED",
@@ -251,6 +262,7 @@
      :proto-name "JonGuiDataCompassCalibrateStatus",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus",
+     :package "ser",
      :values
      [{:name :jon-gui-data-compass-calibrate-status-unspecified,
        :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED",
@@ -277,6 +289,7 @@
      :name :jon-gui-data-rotary-mode,
      :proto-name "JonGuiDataRotaryMode",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryMode",
+     :package "ser",
      :values
      [{:name :jon-gui-data-rotary-mode-unspecified,
        :proto-name "JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED",
@@ -303,6 +316,7 @@
      :name :jon-gui-data-video-channel,
      :proto-name "JonGuiDataVideoChannel",
      :java-class "ser.JonSharedDataTypes$JonGuiDataVideoChannel",
+     :package "ser",
      :values
      [{:name :jon-gui-data-video-channel-unspecified,
        :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED",
@@ -317,6 +331,7 @@
      :name :jon-gui-data-rec-osd-screen,
      :proto-name "JonGuiDataRecOsdScreen",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRecOsdScreen",
+     :package "ser",
      :values
      [{:name :jon-gui-data-rec-osd-screen-unspecified,
        :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED",
@@ -337,6 +352,7 @@
      :name :jon-gui-data-fx-mode-day,
      :proto-name "JonGuiDataFxModeDay",
      :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeDay",
+     :package "ser",
      :values
      [{:name :jon-gui-data-fx-mode-day-default,
        :proto-name "JON_GUI_DATA_FX_MODE_DAY_DEFAULT",
@@ -363,6 +379,7 @@
      :name :jon-gui-data-fx-mode-heat,
      :proto-name "JonGuiDataFxModeHeat",
      :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeHeat",
+     :package "ser",
      :values
      [{:name :jon-gui-data-fx-mode-heat-default,
        :proto-name "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT",
@@ -390,6 +407,7 @@
      :proto-name "JonGuiDataSystemLocalizations",
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataSystemLocalizations",
+     :package "ser",
      :values
      [{:name :jon-gui-data-system-localization-unspecified,
        :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED",
@@ -410,6 +428,7 @@
      :name :jon-gui-data-client-type,
      :proto-name "JonGuiDataClientType",
      :java-class "ser.JonSharedDataTypes$JonGuiDataClientType",
+     :package "ser",
      :values
      [{:name :jon-gui-data-client-type-unspecified,
        :proto-name "JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED",
@@ -437,6 +456,7 @@
      :name :jon-gui-data-time,
      :proto-name "JonGuiDataTime",
      :java-class "ser.JonSharedDataTime$JonGuiDataTime",
+     :package "ser",
      :fields
      [{:name :timestamp,
        :proto-name "timestamp",
@@ -476,6 +496,7 @@
      :name :jon-gui-data-system,
      :proto-name "JonGuiDataSystem",
      :java-class "ser.JonSharedDataSystem$JonGuiDataSystem",
+     :package "ser",
      :fields
      [{:name :cpu-temperature,
        :proto-name "cpu_temperature",
@@ -623,6 +644,7 @@
      :name :jon-gui-data-lrf,
      :proto-name "JonGuiDataLrf",
      :java-class "ser.JonSharedDataLrf$JonGuiDataLrf",
+     :package "ser",
      :fields
      [{:name :is-scanning,
        :proto-name "is_scanning",
@@ -673,6 +695,7 @@
      :name :jon-gui-data-target,
      :proto-name "JonGuiDataTarget",
      :java-class "ser.JonSharedDataLrf$JonGuiDataTarget",
+     :package "ser",
      :fields
      [{:name :timestamp,
        :proto-name "timestamp",
@@ -806,6 +829,7 @@
      :name :rgb-color,
      :proto-name "RgbColor",
      :java-class "ser.JonSharedDataLrf$RgbColor",
+     :package "ser",
      :fields
      [{:name :red,
        :proto-name "red",
@@ -839,6 +863,7 @@
      :name :jon-gui-data-gps,
      :proto-name "JonGuiDataGps",
      :java-class "ser.JonSharedDataGps$JonGuiDataGps",
+     :package "ser",
      :fields
      [{:name :longitude,
        :proto-name "longitude",
@@ -902,6 +927,7 @@
      :name :jon-gui-data-compass,
      :proto-name "JonGuiDataCompass",
      :java-class "ser.JonSharedDataCompass$JonGuiDataCompass",
+     :package "ser",
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -960,6 +986,7 @@
      :proto-name "JonGuiDataCompassCalibration",
      :java-class
      "ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration",
+     :package "ser",
      :fields
      [{:name :stage,
        :proto-name "stage",
@@ -1012,6 +1039,7 @@
      :name :jon-gui-data-rotary,
      :proto-name "JonGuiDataRotary",
      :java-class "ser.JonSharedDataRotary$JonGuiDataRotary",
+     :package "ser",
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -1121,6 +1149,7 @@
      :name :scan-node,
      :proto-name "ScanNode",
      :java-class "ser.JonSharedDataRotary$ScanNode",
+     :package "ser",
      :fields
      [{:name :index,
        :proto-name "index",
@@ -1178,6 +1207,7 @@
      :name :jon-gui-data-camera-day,
      :proto-name "JonGuiDataCameraDay",
      :java-class "ser.JonSharedDataCameraDay$JonGuiDataCameraDay",
+     :package "ser",
      :fields
      [{:name :focus-pos,
        :proto-name "focus_pos",
@@ -1259,6 +1289,7 @@
      :name :jon-gui-data-camera-heat,
      :proto-name "JonGuiDataCameraHeat",
      :java-class "ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat",
+     :package "ser",
      :fields
      [{:name :zoom-pos,
        :proto-name "zoom_pos",
@@ -1342,6 +1373,7 @@
      :name :jon-gui-data-rec-osd,
      :proto-name "JonGuiDataRecOsd",
      :java-class "ser.JonSharedDataRecOsd$JonGuiDataRecOsd",
+     :package "ser",
      :fields
      [{:name :screen,
        :proto-name "screen",
@@ -1400,6 +1432,7 @@
      :proto-name "JonGuiDataDayCamGlassHeater",
      :java-class
      "ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater",
+     :package "ser",
      :fields
      [{:name :temperature,
        :proto-name "temperature",
@@ -1428,6 +1461,7 @@
      :proto-name "JonGuiDataActualSpaceTime",
      :java-class
      "ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime",
+     :package "ser",
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -1498,6 +1532,7 @@
      :name :jon-gui-state,
      :proto-name "JonGUIState",
      :java-class "ser.JonSharedData$JonGUIState",
+     :package "ser",
      :fields
      [{:name :protocol-version,
        :proto-name "protocol_version",

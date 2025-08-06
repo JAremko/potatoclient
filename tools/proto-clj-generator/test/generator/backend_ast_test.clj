@@ -70,7 +70,7 @@
       
       (testing "Enum value name conversion"
         (let [value-names (map :name (:values result))]
-          (is (= #{:edition-unknown :edition-legacy :edition-proto2}
+          (is (= #{:edition-unknown :edition-legacy :edition-proto-2}
                  (set value-names)))
           ;; Proto names should remain unchanged
           (let [proto-names (map :proto-name (:values result))]
@@ -149,7 +149,8 @@
   (testing "Canonical references for enums are correct"
     (let [edn-data {:type :descriptor-set
                     :files [{:package "test"
-                            :messages [{:name :message
+                            :messages [{:type :message
+                                       :name :message
                                        :proto-name "Message"
                                        :nested-types [{:type :enum
                                                       :name :status

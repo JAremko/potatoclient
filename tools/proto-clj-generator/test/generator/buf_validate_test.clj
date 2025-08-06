@@ -1,8 +1,8 @@
 (ns generator.buf-validate-test
   "Test buf.validate constraints are enforced"
   (:require [clojure.test :refer :all]
-            [potatoclient.proto.command :as cmd-gen]
-            [potatoclient.proto.state :as state-gen])
+            [potatoclient.proto.cmd :as cmd-gen]
+            [potatoclient.proto.ser :as state-gen])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [ser JonSharedData JonSharedData$JonGUIState JonSharedDataTypes$JonGuiDataClientType]
            [build.buf.protovalidate Validator ValidatorFactory ValidationResult]
@@ -42,7 +42,7 @@
       (testing "protocol_version must be > 0"
         ;; Valid case
         (let [valid-cmd {:protocol-version 1 
-                        :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :client-type :jon-gui-data-client-type-local-network
                         :ping {}}
               proto (cmd-gen/build-root valid-cmd)]
           (is (instance? JonSharedCmd$Root proto))
@@ -140,7 +140,7 @@
     ;; Java protobuf doesn't enforce uint32 non-negative at build time
     ;; Negative values wrap around to large positive values
     (let [cmd (cmd-gen/build-root {:protocol-version -1 
-                                   :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                                   :client-type :jon-gui-data-client-type-local-network
                                    :ping {}})
           protocol-version (.getProtocolVersion cmd)]
       (is (instance? JonSharedCmd$Root cmd))
@@ -155,7 +155,7 @@
       (testing "protocol_version must be > 0 (edge cases)"
         ;; Test exact boundary (0)
         (let [zero-cmd {:protocol-version 0
-                       :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                       :client-type :jon-gui-data-client-type-local-network
                        :ping {}}
               proto (cmd-gen/build-root zero-cmd)
               result (.validate validator proto)]
@@ -170,7 +170,7 @@
         
         ;; Test valid boundary (1)
         (let [one-cmd {:protocol-version 1
-                      :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                      :client-type :jon-gui-data-client-type-local-network
                       :ping {}}
               proto (cmd-gen/build-root one-cmd)
               result (.validate validator proto)]
@@ -179,7 +179,7 @@
         
         ;; Test well above boundary
         (let [large-cmd {:protocol-version 1000000
-                        :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :client-type :jon-gui-data-client-type-local-network
                         :ping {}}
               proto (cmd-gen/build-root large-cmd)
               result (.validate validator proto)]
@@ -189,7 +189,7 @@
       (testing "client_type enum constraints"
         ;; Test UNSPECIFIED (0) is rejected
         (let [unspec-cmd {:protocol-version 1
-                         :client-type JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+                         :client-type :jon-gui-data-client-type-unspecified
                          :ping {}}
               proto (cmd-gen/build-root unspec-cmd)
               result (.validate validator proto)]
@@ -203,10 +203,10 @@
                 "Should mention 'not in [0]' constraint")))
         
         ;; Test valid enum values
-        (doseq [[name value] [["INTERNAL_CV" JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV]
-                             ["LOCAL_NETWORK" JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK]
-                             ["CERTIFICATE_PROTECTED" JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED]
-                             ["LIRA" JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA]]]
+        (doseq [[name value] [["INTERNAL_CV" :jon-gui-data-client-type-internal-cv]
+                             ["LOCAL_NETWORK" :jon-gui-data-client-type-local-network]
+                             ["CERTIFICATE_PROTECTED" :jon-gui-data-client-type-certificate-protected]
+                             ["LIRA" :jon-gui-data-client-type-lira]]]
           (let [cmd {:protocol-version 1
                     :client-type value
                     :ping {}}

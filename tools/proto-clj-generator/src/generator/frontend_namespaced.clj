@@ -108,7 +108,7 @@
                        (map :java-class enums)))
         ;; Get dependency-based requires from our analysis using ns-key
         require-specs (get dependencies ns-key [])]
-    (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs guardrails?)))
+    (frontend/generate-namespace ns-name java-imports enums messages type-lookup require-specs guardrails? true package)))
 
 ;; =============================================================================
 ;; Main API
@@ -150,21 +150,23 @@
     
     ;; Also generate index files that re-export everything for compatibility
     (let [cmd-packages (filter #(str/starts-with? % "cmd.") (keys grouped))
-          state-packages (filter #(str/starts-with? % "ser.") (keys grouped))
+          state-packages (filter #(str/starts-with? % "ser") (keys grouped))
           
           ;; Generate index for commands
           cmd-index (generate-index-file 
                      (str ns-prefix ".command")
                      cmd-packages
                      ns-prefix
-                     "Commands index - re-exports all command namespaces")
+                     "Commands index - re-exports all command namespaces"
+                     grouped)
           
           ;; Generate index for state
           state-index (generate-index-file
                        (str ns-prefix ".state") 
                        state-packages
                        ns-prefix
-                       "State index - re-exports all state namespaces")]
+                       "State index - re-exports all state namespaces"
+                       grouped)]
       
       (-> generated-files
           (assoc "command.clj" cmd-index)
@@ -172,14 +174,29 @@
 
 (defn generate-index-file
   "Generate an index file that re-exports functions from multiple namespaces."
-  [ns-name packages ns-prefix description]
+  [ns-name packages ns-prefix description grouped]
   (let [requires (map (fn [pkg]
                         (let [ns-suffix (package->namespace pkg)]
                           [(symbol (str ns-prefix "." ns-suffix)) :as (symbol ns-suffix)]))
                       packages)
         
-        ;; This is a simplified version - in reality we'd need to enumerate
-        ;; all public functions to re-export them
+        ;; Generate re-exports for all messages in the packages
+        re-exports (when (seq requires)
+                    (mapcat (fn [pkg]
+                             (let [ns-suffix (package->namespace pkg)
+                                   ns-alias (symbol ns-suffix)
+                                   ;; Find the package data in grouped, not in edn-data files
+                                   package-data (get grouped pkg)]
+                               (when package-data
+                                 (mapcat (fn [msg]
+                                          (let [msg-name (name (:name msg))
+                                                build-fn (str "build-" msg-name)
+                                                parse-fn (str "parse-" msg-name)]
+                                            [(str "(def " build-fn " " ns-alias "/" build-fn ")")
+                                             (str "(def " parse-fn " " ns-alias "/" parse-fn ")")]))
+                                        (:messages package-data)))))
+                           packages))
+        
         template (if (seq requires)
                    (str "(ns " ns-name "\n"
                         "  \"" description "\"\n"
@@ -187,7 +204,8 @@
                         (str/join "\n" (map #(str "   " (pr-str %)) requires))
                         "))\n\n"
                         ";; Re-export all public functions from sub-namespaces\n"
-                        ";; This supports testing without needing to know the internal namespace structure\n")
+                        ";; This supports testing without needing to know the internal namespace structure\n\n"
+                        (str/join "\n" re-exports) "\n")
                    (str "(ns " ns-name "\n"
                         "  \"" description "\")\n\n"
                         ";; No sub-namespaces to re-export\n"))]

@@ -30,9 +30,9 @@
       (let [field {:name "ping"
                    :number 2
                    :label "LABEL_OPTIONAL"
-                   :type :message
-                   :type-name ".cmd.System.Ping"
-                   :oneof-index 0}
+                   :type "TYPE_MESSAGE"
+                   :typeName ".cmd.System.Ping"
+                   :oneofIndex 0}
             result (backend/field->edn field)]
         (is (= :ping (:name result)))
         (is (= {:message {:type-ref ".cmd.System.Ping"}} (:type result)))
@@ -42,8 +42,8 @@
       (let [field {:name "mode"
                    :number 3
                    :label "LABEL_OPTIONAL"
-                   :type :enum
-                   :type-name ".cmd.FocusMode"}
+                   :type "TYPE_ENUM"
+                   :typeName ".cmd.FocusMode"}
             result (backend/field->edn field)]
         (is (= :mode (:name result)))
         (is (= {:enum {:type-ref ".cmd.FocusMode"}} (:type result)))))))
@@ -71,18 +71,18 @@
                    :field [{:name "protocol_version"
                            :number 1
                            :label "LABEL_OPTIONAL"
-                           :type :int32}
+                           :type "TYPE_INT32"}
                           {:name "ping"
                            :number 2
                            :label "LABEL_OPTIONAL"
-                           :type :message
-                           :type-name ".cmd.System.Ping"
-                           :oneof-index 0}]
-                   :oneof-decl [{:name "payload"}]
-                   :nested-type [{:name "Ping"
+                           :type "TYPE_MESSAGE"
+                           :typeName ".cmd.System.Ping"
+                           :oneofIndex 0}]
+                   :oneofDecl [{:name "payload"}]
+                   :nestedType [{:name "Ping"
                                  :field [{:name "timestamp"
                                          :number 1
-                                         :type :int64}]}]}
+                                         :type "TYPE_INT64"}]}]}
           context {:package "cmd"
                    :java-package nil
                    :java-outer-classname "JonSharedCmd"}
@@ -143,12 +143,15 @@
   (testing "Collect all types with canonical references"
     (let [edn-data {:type :descriptor-set
                     :files [{:package "cmd"
-                            :messages [{:name :root
+                            :messages [{:type :message
+                                       :name :root
                                        :proto-name "Root"
-                                       :nested-types [{:name :ping
+                                       :nested-types [{:type :message
+                                                      :name :ping
                                                       :proto-name "Ping"
                                                       :nested-types []}]}]
-                            :enums [{:name :focus-mode
+                            :enums [{:type :enum
+                                    :name :focus-mode
                                     :proto-name "FocusMode"}]}]}
           result (backend/collect-all-types edn-data)]
       
@@ -172,23 +175,23 @@
            (backend/process-json-value {:label "LABEL_OPTIONAL"
                                        :type "TYPE_MESSAGE"})))
     
-    (is (= {:fields [{:label :repeated}]
+    (is (= {:fields [{:label "REPEATED"}]
             :name "test"}
            (backend/process-json-value {:fields [{:label "REPEATED"}]
                                        :name "test"})))
     
-    (is (= {:nested {:deeply {:label :optional}}}
+    (is (= {:nested {:deeply {:label "OPTIONAL"}}}
            (backend/process-json-value {:nested {:deeply {:label "OPTIONAL"}}})))))
 
 (deftest file->edn-test
   (testing "Convert file descriptor to EDN"
     (let [file {:name "test.proto"
                 :package "test"
-                :options {:java-outer-classname "TestProto"
-                         :java-package "com.example.test"}
-                :message-type [{:name "Message"
-                               :field [{:name "id" :number 1 :type :int32}]}]
-                :enum-type [{:name "Status"
+                :options {:javaOuterClassname "TestProto"
+                         :javaPackage "com.example.test"}
+                :messageType [{:name "Message"
+                               :field [{:name "id" :number 1 :type "TYPE_INT32"}]}]
+                :enumType [{:name "Status"
                            :value [{:name "UNKNOWN" :number 0}]}]}
           result (backend/file->edn file)]
       

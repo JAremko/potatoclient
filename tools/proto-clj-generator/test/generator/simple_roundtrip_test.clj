@@ -3,8 +3,8 @@
   (:require [clojure.test :refer :all]
             [malli.core :as m]
             [malli.generator :as mg]
-            [potatoclient.proto.command :as cmd-gen]
-            [potatoclient.proto.state :as state-gen]
+            [potatoclient.proto.cmd :as cmd-gen]
+            [potatoclient.proto.ser :as state-gen]
             [potatoclient.specs.malli-oneof :as oneof])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [ser JonSharedData JonSharedData$JonGUIState]))

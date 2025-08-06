@@ -2,11 +2,8 @@
   "Test that generated code can do roundtrip conversions."
   (:require [clojure.test :refer :all]))
 
-(deftest basic-structure-test
-  (testing "Generated files exist"
-    ;; Just verify the generator created files
-    (is (.exists (clojure.java.io/file "generated/potatoclient/proto/command.clj")))
-    (is (.exists (clojure.java.io/file "generated/potatoclient/proto/state.clj")))))
+;; Removed - this test was for single namespace mode which we no longer use
+;; We have actual roundtrip tests in simple-roundtrip-test.clj
 
 ;; Note: Full roundtrip tests would require:
 ;; 1. Adding generated code to classpath

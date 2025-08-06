@@ -57,6 +57,16 @@ repl: ## Start a REPL with test dependencies
 	@echo "Starting REPL..."
 	@clojure -M:dev:test
 
+.PHONY: guardrails-check
+guardrails-check: ## Check guardrails coverage for generated code
+	@echo "Checking guardrails coverage..."
+	@clojure -X:guardrails-check :namespaces '[potatoclient.proto.cmd potatoclient.proto.ser]'
+
+.PHONY: nrepl
+nrepl: ## Start nREPL server on port 7888
+	@echo "Starting nREPL on port 7888..."
+	@clojure -M:dev:test:nrepl
+
 .PHONY: clean
 clean: ## Clean generated files
 	@echo "Cleaning..."

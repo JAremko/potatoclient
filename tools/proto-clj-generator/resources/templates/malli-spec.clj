@@ -1,0 +1,3 @@
+(def SPEC-NAME
+  "Malli spec for SPEC-DESCRIPTION"
+  SPEC-SCHEMA)

@@ -85,8 +85,8 @@
                         :label :label-optional}]
                :oneofs []}
           
-          builder-code (frontend/generate-builder msg {})
-          parser-code (frontend/generate-parser msg {})]
+          builder-code (frontend/generate-builder msg {} "test" false)
+          parser-code (frontend/generate-parser msg {} "test" false)]
       
       ;; Check builder
       (testing "Builder uses addAll for repeated fields"
@@ -100,7 +100,8 @@
         (is (str/includes? parser-code ".getTagsList"))
         (is (str/includes? parser-code ".getNumbersList"))
         (is (str/includes? parser-code "(vec"))
-        (is (str/includes? parser-code ".hasName"))
+        ;; We now always include all fields, not using .hasName checks
+        (is (str/includes? parser-code "true (assoc :name (.getName proto))"))
         (is (str/includes? parser-code ".getName"))))))
 
 (deftest end-to-end-repeated-fields-test
@@ -110,7 +111,7 @@
           backend-output {:command {:files [result]}
                          :state {:files []}
                          :type-lookup (backend/build-type-lookup {:files [result]})}
-          frontend-output (frontend/generate-from-backend backend-output "test.proto")
+          frontend-output (frontend/generate-from-backend backend-output "test.proto" false)
           command-code (:command frontend-output)]
       
       ;; Basic structure check
@@ -124,4 +125,5 @@
       ;; Parser checks  
       (is (str/includes? command-code "true (assoc :tags (vec (.getTagsList proto)))"))
       (is (str/includes? command-code "true (assoc :numbers (vec (.getNumbersList proto)))"))
-      (is (str/includes? command-code ".hasName proto) (assoc :name (.getName proto))")))))
+      ;; We now always include all fields, not conditional on hasName
+      (is (str/includes? command-code "true (assoc :name (.getName proto))")))))

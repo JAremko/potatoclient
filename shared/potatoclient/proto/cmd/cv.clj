@@ -1,6 +1,7 @@
 (ns potatoclient.proto.cmd.cv
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
+            [malli.core :as m]
             [potatoclient.proto.ser :as types])
   (:import cmd.CV.JonSharedCmdCv$Root
            cmd.CV.JonSharedCmdCv$VampireModeEnable
@@ -18,6 +19,62 @@
 ;; =============================================================================
 
 ;; No enums
+
+;; =============================================================================
+;; Malli Specs
+;; =============================================================================
+
+(def root-spec
+  "Malli spec for root message"
+  [:map
+   [:cmd
+    [:altn
+     {:vampire-mode-enable [:map
+                            [:vampire-mode-enable :cmd.cv/vampire-mode-enable]],
+      :vampire-mode-disable
+        [:map [:vampire-mode-disable :cmd.cv/vampire-mode-disable]],
+      :dump-stop [:map [:dump-stop :cmd.cv/dump-stop]],
+      :stabilization-mode-disable
+        [:map [:stabilization-mode-disable :cmd.cv/stabilization-mode-disable]],
+      :set-auto-focus [:map [:set-auto-focus :cmd.cv/set-auto-focus]],
+      :start-track-ndc [:map [:start-track-ndc :cmd.cv/start-track-ndc]],
+      :dump-start [:map [:dump-start :cmd.cv/dump-start]],
+      :stop-track [:map [:stop-track :cmd.cv/stop-track]],
+      :stabilization-mode-enable [:map
+                                  [:stabilization-mode-enable
+                                   :cmd.cv/stabilization-mode-enable]]}]]])
+
+(def vampire-mode-enable-spec
+  "Malli spec for vampire-mode-enable message"
+  [:map])
+
+(def dump-start-spec "Malli spec for dump-start message" [:map])
+
+(def dump-stop-spec "Malli spec for dump-stop message" [:map])
+
+(def vampire-mode-disable-spec
+  "Malli spec for vampire-mode-disable message"
+  [:map])
+
+(def stabilization-mode-enable-spec
+  "Malli spec for stabilization-mode-enable message"
+  [:map])
+
+(def stabilization-mode-disable-spec
+  "Malli spec for stabilization-mode-disable message"
+  [:map])
+
+(def set-auto-focus-spec
+  "Malli spec for set-auto-focus message"
+  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]]
+   [:value [:maybe :boolean]]])
+
+(def start-track-ndc-spec
+  "Malli spec for start-track-ndc message"
+  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]] [:x [:maybe :float]]
+   [:y [:maybe :float]] [:frame-time [:maybe :int]]])
+
+(def stop-track-spec "Malli spec for stop-track message" [:map])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -50,7 +107,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [map? => any?]
+       [root-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]]
@@ -69,42 +126,42 @@
 (>defn build-vampire-mode-enable
        "Build a VampireModeEnable protobuf message from a map."
        [m]
-       [map? => any?]
+       [vampire-mode-enable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$VampireModeEnable/newBuilder)]
          (.build builder)))
 
 (>defn build-dump-start
        "Build a DumpStart protobuf message from a map."
        [m]
-       [map? => any?]
+       [dump-start-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$DumpStart/newBuilder)]
          (.build builder)))
 
 (>defn build-dump-stop
        "Build a DumpStop protobuf message from a map."
        [m]
-       [map? => any?]
+       [dump-stop-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$DumpStop/newBuilder)]
          (.build builder)))
 
 (>defn build-vampire-mode-disable
        "Build a VampireModeDisable protobuf message from a map."
        [m]
-       [map? => any?]
+       [vampire-mode-disable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$VampireModeDisable/newBuilder)]
          (.build builder)))
 
 (>defn build-stabilization-mode-enable
        "Build a StabilizationModeEnable protobuf message from a map."
        [m]
-       [map? => any?]
+       [stabilization-mode-enable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$StabilizationModeEnable/newBuilder)]
          (.build builder)))
 
 (>defn build-stabilization-mode-disable
        "Build a StabilizationModeDisable protobuf message from a map."
        [m]
-       [map? => any?]
+       [stabilization-mode-disable-spec => any?]
        (let [builder
                (cmd.CV.JonSharedCmdCv$StabilizationModeDisable/newBuilder)]
          (.build builder)))
@@ -112,7 +169,7 @@
 (>defn build-set-auto-focus
        "Build a SetAutoFocus protobuf message from a map."
        [m]
-       [map? => any?]
+       [set-auto-focus-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$SetAutoFocus/newBuilder)]
          ;; Set regular fields
          (when (contains? m :channel)
@@ -125,7 +182,7 @@
 (>defn build-start-track-ndc
        "Build a StartTrackNDC protobuf message from a map."
        [m]
-       [map? => any?]
+       [start-track-ndc-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$StartTrackNDC/newBuilder)]
          ;; Set regular fields
          (when (contains? m :channel)
@@ -141,14 +198,14 @@
 (>defn build-stop-track
        "Build a StopTrack protobuf message from a map."
        [m]
-       [map? => any?]
+       [stop-track-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$StopTrack/newBuilder)]
          (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$Root proto]
-       [any? => map?]
+       [any? => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -156,43 +213,43 @@
 (>defn parse-vampire-mode-enable
        "Parse a VampireModeEnable protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$VampireModeEnable proto]
-       [any? => map?]
+       [any? => vampire-mode-enable-spec]
        {})
 
 (>defn parse-dump-start
        "Parse a DumpStart protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$DumpStart proto]
-       [any? => map?]
+       [any? => dump-start-spec]
        {})
 
 (>defn parse-dump-stop
        "Parse a DumpStop protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$DumpStop proto]
-       [any? => map?]
+       [any? => dump-stop-spec]
        {})
 
 (>defn parse-vampire-mode-disable
        "Parse a VampireModeDisable protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$VampireModeDisable proto]
-       [any? => map?]
+       [any? => vampire-mode-disable-spec]
        {})
 
 (>defn parse-stabilization-mode-enable
        "Parse a StabilizationModeEnable protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$StabilizationModeEnable proto]
-       [any? => map?]
+       [any? => stabilization-mode-enable-spec]
        {})
 
 (>defn parse-stabilization-mode-disable
        "Parse a StabilizationModeDisable protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$StabilizationModeDisable proto]
-       [any? => map?]
+       [any? => stabilization-mode-disable-spec]
        {})
 
 (>defn parse-set-auto-focus
        "Parse a SetAutoFocus protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$SetAutoFocus proto]
-       [any? => map?]
+       [any? => set-auto-focus-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :channel
@@ -203,7 +260,7 @@
 (>defn parse-start-track-ndc
        "Parse a StartTrackNDC protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$StartTrackNDC proto]
-       [any? => map?]
+       [any? => start-track-ndc-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :channel
@@ -216,7 +273,7 @@
 (>defn parse-stop-track
        "Parse a StopTrack protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$StopTrack proto]
-       [any? => map?]
+       [any? => stop-track-spec]
        {})
 
 (>defn-

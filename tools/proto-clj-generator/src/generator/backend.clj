@@ -139,6 +139,9 @@
 ;; EDN Conversion using Specter
 ;; =============================================================================
 
+;; Forward declarations
+(declare enum->edn)
+
 (defn field->edn
   "Convert a protobuf field to EDN representation."
   [field]
@@ -167,12 +170,18 @@
   [message context parent-names]
   (let [fields (sp/select [:field sp/ALL] message)
         oneof-decls (sp/select [:oneofDecl sp/ALL] message)
-        java-class (generate-java-class-name context (:name message) parent-names)]
+        java-class (generate-java-class-name context (:name message) parent-names)
+        ;; Process both nested messages and nested enums
+        nested-messages (vec (map #(message->edn % context (conj parent-names (:name message)))
+                                 (get message :nestedType [])))
+        nested-enums (vec (map #(enum->edn % context (conj parent-names (:name message)))
+                              (get message :enumType [])))]
     
     {:type :message
      :name (csk/->kebab-case-keyword (:name message))
      :proto-name (:name message)
      :java-class java-class
+     :package (:package context)  ;; Include package info
      :fields (mapv field->edn 
                    (remove #(some? (:oneofIndex %)) fields))
      :oneofs (vec (map-indexed 
@@ -183,8 +192,7 @@
                       :fields (mapv field->edn
                                    (filter #(= (:oneofIndex %) idx) fields))})
                    oneof-decls))
-     :nested-types (vec (map #(message->edn % context (conj parent-names (:name message)))
-                            (get message :nestedType [])))}))
+     :nested-types (vec (concat nested-messages nested-enums))}))
 
 (defn enum->edn
   "Convert a protobuf enum to EDN representation."
@@ -193,6 +201,7 @@
    :name (csk/->kebab-case-keyword (:name enum))
    :proto-name (:name enum)
    :java-class (generate-java-class-name context (:name enum) parent-names)
+   :package (:package context)  ;; Include package info
    :values (mapv (fn [v] 
                    {:name (-> (:name v)
                              ;; Pre-process to handle special cases like 1D, 2D, 3D
@@ -244,10 +253,30 @@
   "Helper to collect messages with their parent path"
   [parent-names msg]
   (cons {:message msg :parent-names parent-names}
-        (mapcat #(collect-message-with-path 
-                  (conj parent-names (:proto-name msg)) 
-                  %)
+        (mapcat #(if (= (:type %) :message)
+                   (collect-message-with-path 
+                    (conj parent-names (:proto-name msg)) 
+                    %)
+                   []) ;; Skip enums - they're handled separately
                (:nested-types msg []))))
+
+(defn collect-enum-with-path
+  "Helper to collect enums with their parent path"
+  [parent-names item]
+  (cond
+    ;; If it's an enum, return it with parent path
+    (= (:type item) :enum)
+    [{:enum item :parent-names parent-names}]
+    
+    ;; If it's a message, collect enums from its nested types
+    (= (:type item) :message)
+    (mapcat #(collect-enum-with-path 
+              (conj parent-names (:proto-name item)) 
+              %)
+            (:nested-types item []))
+    
+    :else
+    []))
 
 (defn collect-all-types
   "Collect all types from EDN data with their canonical references using Specter."
@@ -269,9 +298,16 @@
                       canonical (get-canonical-type-ref msg file-context parent-names)]]
             [canonical msg])
           
-          ;; Process enums
+          ;; Process top-level enums
           (for [enum (:enums file)
                 :let [canonical (get-canonical-type-ref enum file-context [])]]
+            [canonical enum])
+          
+          ;; Process nested enums from messages
+          (for [enum-info (mapcat #(collect-enum-with-path [] %) (:messages file))
+                :let [enum (:enum enum-info)
+                      parent-names (:parent-names enum-info)
+                      canonical (get-canonical-type-ref enum file-context parent-names)]]
             [canonical enum]))))
      files-with-context)))
 
