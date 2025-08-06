@@ -24,11 +24,11 @@
   [:map
    [:cmd
     [:altn
-     {:start [:map [:start :cmd.day-cam-glass-heater/start]],
-      :stop [:map [:stop :cmd.day-cam-glass-heater/stop]],
-      :turn-on [:map [:turn-on :cmd.day-cam-glass-heater/turn-on]],
-      :turn-off [:map [:turn-off :cmd.day-cam-glass-heater/turn-off]],
-      :get-meteo [:map [:get-meteo :cmd.day-cam-glass-heater/get-meteo]]}]]])
+     {:start [:map [:start :cmd.daycamglassheater/start]],
+      :stop [:map [:stop :cmd.daycamglassheater/stop]],
+      :turn-on [:map [:turn-on :cmd.daycamglassheater/turn-on]],
+      :turn-off [:map [:turn-off :cmd.daycamglassheater/turn-off]],
+      :get-meteo [:map [:get-meteo :cmd.daycamglassheater/get-meteo]]}]]])
 
 (def start-spec "Malli spec for start message" [:map])
 

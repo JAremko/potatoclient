@@ -10,20 +10,21 @@
 
 (defn type-name->keyword
   "Convert protobuf type name to keyword reference.
-  e.g. '.cmd.Compass.Root' -> :cmd.compass/root"
+  e.g. '.cmd.Compass.Root' -> :cmd.compass/root
+  Must match the package->namespace function in frontend_namespaced.clj"
   [type-name]
   (when type-name
     (let [parts (str/split type-name #"\.")
           ;; Remove empty first part from leading dot
           parts (if (empty? (first parts)) (rest parts) parts)]
       (if (= 1 (count parts))
-        ;; Single part - just kebab-case it
-        (keyword (csk/->kebab-case (last parts)))
+        ;; Single part - just lowercase it (no kebab-case)
+        (keyword (str/lower-case (last parts)))
         ;; Multiple parts - namespace/name
         (let [ns-parts (butlast parts)
               name-part (last parts)
-              ;; Convert each part to kebab-case
-              ns-str (str/join "." (map csk/->kebab-case ns-parts))]
+              ;; Convert each part to lowercase (matching package->namespace)
+              ns-str (str/join "." (map str/lower-case ns-parts))]
           (keyword ns-str (csk/->kebab-case name-part)))))))
 
 (defmulti process-field-type

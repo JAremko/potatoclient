@@ -45,12 +45,12 @@
       :gps [:map [:gps :cmd.gps/root]],
       :lrf [:map [:lrf :cmd.lrf/root]],
       :day-cam-glass-heater
-        [:map [:day-cam-glass-heater :cmd.day-cam-glass-heater/root]],
-      :day-camera [:map [:day-camera :cmd.day-camera/root]],
-      :heat-camera [:map [:heat-camera :cmd.heat-camera/root]],
+        [:map [:day-cam-glass-heater :cmd.daycamglassheater/root]],
+      :day-camera [:map [:day-camera :cmd.daycamera/root]],
+      :heat-camera [:map [:heat-camera :cmd.heatcamera/root]],
       :lira [:map [:lira :cmd.lira/root]],
-      :lrf-calib [:map [:lrf-calib :cmd.lrf-calib/root]],
-      :rotary [:map [:rotary :cmd.rotary-platform/root]],
+      :lrf-calib [:map [:lrf-calib :cmd.lrf_calib/root]],
+      :rotary [:map [:rotary :cmd.rotaryplatform/root]],
       :compass [:map [:compass :cmd.compass/root]],
       :frozen [:map [:frozen :cmd/frozen]]}]]])
 

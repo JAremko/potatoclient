@@ -10,13 +10,6 @@
 (defn clean [_]
   (b/delete {:path "target"}))
 
-(defn copy-specs [_]
-  "Copy spec files to class dir"
-  (println "Copying spec files...")
-  ;; Copy protobuf specs
-  (b/copy-dir {:src-dirs ["../../shared/specs/protobuf"]
-               :target-dir (str class-dir "/potatoclient/specs")})
-  (println "Spec files copied successfully"))
 
 ;; build uberjar
 (defn uberjar [_]
@@ -24,8 +17,6 @@
   ;; Copy source and resources
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
-  ;; Copy external specs
-  (copy-specs nil)
   
   ;; Create basis without external paths
   (let [basis (b/create-basis {:project "deps.edn"})]

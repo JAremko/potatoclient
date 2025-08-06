@@ -1,9 +1,6 @@
-(ns proto-explorer.cli
-  "Babashka CLI interface for proto-explorer"
-  (:require [proto-explorer.java-class-mapper :as mapper]
-            [proto-explorer.nested-class-mapper :as nested-mapper]
-            [proto-explorer.keyword-tree-mapper :as keyword-mapper]
-            [proto-explorer.json-to-edn :as json-edn]
+(ns proto-explorer.cli-bb
+  "Babashka-compatible CLI interface for proto-explorer"
+  (:require [proto-explorer.json-to-edn :as json-edn]
             [clj-fuzzy.metrics :as fuzzy]
             [clojure.string :as str]
             [clojure.edn :as edn]
@@ -47,20 +44,25 @@
           all-messages (atom [])
           pattern-lower (str/lower-case pattern)]
       (doseq [file json-files]
-        (let [data (json-edn/load-json-descriptor (.getPath file))
-              messages (get-in data [:file 0 :message-type] [])]  
-          (doseq [msg messages]
-            (let [msg-name (:name msg)
-                  msg-name-lower (str/lower-case msg-name)
-                  score (fuzzy/levenshtein msg-name-lower pattern-lower)]
-              (when (or (str/includes? msg-name-lower pattern-lower)
-                       (< score 5))  ; Allow fuzzy matches with distance < 5
-                (swap! all-messages conj {:name msg-name
-                                        :file (.getName file)
-                                        :score score}))))))
+        (try
+          (let [data (json-edn/load-json-descriptor (.getPath file))
+                files (:file data [])]
+            (doseq [file-desc files]
+              (when-let [messages (:message-type file-desc)]
+                (doseq [msg messages]
+                  (let [msg-name (:name msg)
+                        msg-name-lower (str/lower-case msg-name)]
+                    (when (or (str/includes? msg-name-lower pattern-lower)
+                             (< (fuzzy/levenshtein msg-name-lower pattern-lower) 5))  ; Allow fuzzy matches
+                      (swap! all-messages conj {:name msg-name
+                                              :file (.getName file)
+                                              :proto-file (:name file-desc)})))))))
+          (catch Exception e
+            ;; Skip files that fail to parse
+            nil)))
       (let [sorted-results (->> @all-messages
-                              (sort-by :score)
-                              (take 20))]
+                              (sort-by :name)
+                              (take 50))]
         (output-data {:found (count sorted-results)
                      :messages sorted-results})))
     (output-data {:error "Usage: bb find <pattern>"})))
@@ -76,11 +78,18 @@
     (doseq [file json-files]
       (when (or (nil? package-filter)
                 (str/includes? (.getName file) package-filter))
-        (let [data (json-edn/load-json-descriptor (.getPath file))
-              messages (get-in data [:file 0 :message-type] [])]
-          (doseq [msg messages]
-            (swap! all-messages conj {:name (:name msg)
-                                    :file (.getName file)})))))
+        (try
+          (let [data (json-edn/load-json-descriptor (.getPath file))
+                files (:file data [])]
+            (doseq [file-desc files]
+              (when-let [messages (:message-type file-desc)]
+                (doseq [msg messages]
+                  (swap! all-messages conj {:name (:name msg)
+                                          :file (.getName file)
+                                          :proto-file (:name file-desc)})))))
+          (catch Exception e
+            ;; Skip files that fail to parse
+            nil))))
     (output-data {:total (count @all-messages)
                   :messages (sort-by :name @all-messages)})))
 
@@ -123,51 +132,3 @@
         "find" (find-messages [(:pattern query)])
         "list" (list-messages (when (:package query) [(:package query)]))
         (output-data {:error (str "Unknown query type: " (:type query))})))))
-
-(defn generate-proto-type-mapping
-  "Generate proto type mapping from descriptors"
-  [args]
-  (let [input-dir (or (first args) "output/json-descriptors")
-        output-file (or (second args) "../../shared/specs/protobuf/proto_type_mapping.clj")]
-    (try
-      (mapper/generate-proto-type-mapping input-dir output-file)
-      (output-data {:success true
-                    :output output-file})
-      (catch Exception e
-        (output-data {:error (str "Failed to generate mapping: " (.getMessage e))})))))
-
-(defn generate-nested-proto-mapping
-  "Generate context-aware nested proto mapping"
-  [args]
-  (let [input-dir (or (first args) "output/json-descriptors")
-        output-file (or (second args) "../../shared/specs/protobuf/nested_proto_mapping.clj")]
-    (try
-      (nested-mapper/generate-nested-proto-mapping input-dir output-file)
-      (output-data {:success true
-                    :output output-file})
-      (catch Exception e
-        (output-data {:error (str "Failed to generate mapping: " (.getMessage e))})))))
-
-(defn generate-keyword-tree-cmd
-  "Generate keyword-based proto tree for commands"
-  [args]
-  (let [input-dir (or (first args) "output/json-descriptors")
-        output-file (or (second args) "../../shared/specs/protobuf/proto_keyword_tree_cmd.clj")]
-    (try
-      (keyword-mapper/generate-keyword-tree-cmd input-dir output-file)
-      (output-data {:success true
-                    :output output-file})
-      (catch Exception e
-        (output-data {:error (str "Failed to generate tree: " (.getMessage e))})))))
-
-(defn generate-keyword-tree-state
-  "Generate keyword-based proto tree for state"
-  [args]
-  (let [input-dir (or (first args) "output/json-descriptors")
-        output-file (or (second args) "../../shared/specs/protobuf/proto_keyword_tree_state.clj")]
-    (try
-      (keyword-mapper/generate-keyword-tree-state input-dir output-file)
-      (output-data {:success true
-                    :output output-file})
-      (catch Exception e
-        (output-data {:error (str "Failed to generate tree: " (.getMessage e))})))))

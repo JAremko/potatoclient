@@ -24,18 +24,18 @@
   [:map
    [:channel
     [:altn
-     {:day [:map [:day :cmd.lrf-calib/offsets]],
-      :heat [:map [:heat :cmd.lrf-calib/offsets]]}]]])
+     {:day [:map [:day :cmd.lrf_calib/offsets]],
+      :heat [:map [:heat :cmd.lrf_calib/offsets]]}]]])
 
 (def offsets-spec
   "Malli spec for offsets message"
   [:map
    [:cmd
     [:altn
-     {:set [:map [:set :cmd.lrf-calib/set-offsets]],
-      :save [:map [:save :cmd.lrf-calib/save-offsets]],
-      :reset [:map [:reset :cmd.lrf-calib/reset-offsets]],
-      :shift [:map [:shift :cmd.lrf-calib/shift-offsets-by]]}]]])
+     {:set [:map [:set :cmd.lrf_calib/set-offsets]],
+      :save [:map [:save :cmd.lrf_calib/save-offsets]],
+      :reset [:map [:reset :cmd.lrf_calib/reset-offsets]],
+      :shift [:map [:shift :cmd.lrf_calib/shift-offsets-by]]}]]])
 
 (def set-offsets-spec
   "Malli spec for set-offsets message"

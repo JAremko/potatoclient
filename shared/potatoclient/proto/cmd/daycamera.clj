@@ -69,28 +69,26 @@
   [:map
    [:cmd
     [:altn
-     {:zoom [:map [:zoom :cmd.day-camera/zoom]],
+     {:zoom [:map [:zoom :cmd.daycamera/zoom]],
       :set-infra-red-filter
-        [:map [:set-infra-red-filter :cmd.day-camera/set-infra-red-filter]],
-      :set-clahe-level [:map
-                        [:set-clahe-level :cmd.day-camera/set-clahe-level]],
-      :prev-fx-mode [:map [:prev-fx-mode :cmd.day-camera/prev-fx-mode]],
-      :start [:map [:start :cmd.day-camera/start]],
-      :halt-all [:map [:halt-all :cmd.day-camera/halt-all]],
+        [:map [:set-infra-red-filter :cmd.daycamera/set-infra-red-filter]],
+      :set-clahe-level [:map [:set-clahe-level :cmd.daycamera/set-clahe-level]],
+      :prev-fx-mode [:map [:prev-fx-mode :cmd.daycamera/prev-fx-mode]],
+      :start [:map [:start :cmd.daycamera/start]],
+      :halt-all [:map [:halt-all :cmd.daycamera/halt-all]],
       :set-digital-zoom-level
-        [:map [:set-digital-zoom-level :cmd.day-camera/set-digital-zoom-level]],
-      :stop [:map [:stop :cmd.day-camera/stop]],
-      :photo [:map [:photo :cmd.day-camera/photo]],
-      :get-meteo [:map [:get-meteo :cmd.day-camera/get-meteo]],
-      :focus [:map [:focus :cmd.day-camera/focus]],
-      :set-fx-mode [:map [:set-fx-mode :cmd.day-camera/set-fx-mode]],
-      :set-iris [:map [:set-iris :cmd.day-camera/set-iris]],
-      :refresh-fx-mode [:map
-                        [:refresh-fx-mode :cmd.day-camera/refresh-fx-mode]],
-      :set-auto-iris [:map [:set-auto-iris :cmd.day-camera/set-auto-iris]],
-      :next-fx-mode [:map [:next-fx-mode :cmd.day-camera/next-fx-mode]],
+        [:map [:set-digital-zoom-level :cmd.daycamera/set-digital-zoom-level]],
+      :stop [:map [:stop :cmd.daycamera/stop]],
+      :photo [:map [:photo :cmd.daycamera/photo]],
+      :get-meteo [:map [:get-meteo :cmd.daycamera/get-meteo]],
+      :focus [:map [:focus :cmd.daycamera/focus]],
+      :set-fx-mode [:map [:set-fx-mode :cmd.daycamera/set-fx-mode]],
+      :set-iris [:map [:set-iris :cmd.daycamera/set-iris]],
+      :refresh-fx-mode [:map [:refresh-fx-mode :cmd.daycamera/refresh-fx-mode]],
+      :set-auto-iris [:map [:set-auto-iris :cmd.daycamera/set-auto-iris]],
+      :next-fx-mode [:map [:next-fx-mode :cmd.daycamera/next-fx-mode]],
       :shift-clahe-level
-        [:map [:shift-clahe-level :cmd.day-camera/shift-clahe-level]]}]]])
+        [:map [:shift-clahe-level :cmd.daycamera/shift-clahe-level]]}]]])
 
 (def get-pos-spec "Malli spec for get-pos message" [:map])
 
@@ -115,13 +113,13 @@
   [:map
    [:cmd
     [:altn
-     {:set-value [:map [:set-value :cmd.day-camera/set-value]],
-      :move [:map [:move :cmd.day-camera/move]],
-      :halt [:map [:halt :cmd.day-camera/halt]],
-      :offset [:map [:offset :cmd.day-camera/offset]],
-      :reset-focus [:map [:reset-focus :cmd.day-camera/reset-focus]],
+     {:set-value [:map [:set-value :cmd.daycamera/set-value]],
+      :move [:map [:move :cmd.daycamera/move]],
+      :halt [:map [:halt :cmd.daycamera/halt]],
+      :offset [:map [:offset :cmd.daycamera/offset]],
+      :reset-focus [:map [:reset-focus :cmd.daycamera/reset-focus]],
       :save-to-table-focus
-        [:map [:save-to-table-focus :cmd.day-camera/save-to-table-focus]]}]]])
+        [:map [:save-to-table-focus :cmd.daycamera/save-to-table-focus]]}]]])
 
 (def zoom-spec
   "Malli spec for zoom message"
@@ -129,17 +127,17 @@
    [:cmd
     [:altn
      {:prev-zoom-table-pos
-        [:map [:prev-zoom-table-pos :cmd.day-camera/prev-zoom-table-pos]],
-      :offset [:map [:offset :cmd.day-camera/offset]],
-      :move [:map [:move :cmd.day-camera/move]],
-      :reset-zoom [:map [:reset-zoom :cmd.day-camera/reset-zoom]],
+        [:map [:prev-zoom-table-pos :cmd.daycamera/prev-zoom-table-pos]],
+      :offset [:map [:offset :cmd.daycamera/offset]],
+      :move [:map [:move :cmd.daycamera/move]],
+      :reset-zoom [:map [:reset-zoom :cmd.daycamera/reset-zoom]],
       :next-zoom-table-pos
-        [:map [:next-zoom-table-pos :cmd.day-camera/next-zoom-table-pos]],
-      :set-value [:map [:set-value :cmd.day-camera/set-value]],
+        [:map [:next-zoom-table-pos :cmd.daycamera/next-zoom-table-pos]],
+      :set-value [:map [:set-value :cmd.daycamera/set-value]],
       :set-zoom-table-value
-        [:map [:set-zoom-table-value :cmd.day-camera/set-zoom-table-value]],
-      :halt [:map [:halt :cmd.day-camera/halt]],
-      :save-to-table [:map [:save-to-table :cmd.day-camera/save-to-table]]}]]])
+        [:map [:set-zoom-table-value :cmd.daycamera/set-zoom-table-value]],
+      :halt [:map [:halt :cmd.daycamera/halt]],
+      :save-to-table [:map [:save-to-table :cmd.daycamera/save-to-table]]}]]])
 
 (def next-zoom-table-pos-spec
   "Malli spec for next-zoom-table-pos message"

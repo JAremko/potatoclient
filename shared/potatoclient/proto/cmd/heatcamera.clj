@@ -57,44 +57,43 @@
   [:map
    [:cmd
     [:altn
-     {:set-dde-level [:map [:set-dde-level :cmd.heat-camera/set-dde-level]],
-      :set-calib-mode [:map [:set-calib-mode :cmd.heat-camera/set-calib-mode]],
-      :zoom [:map [:zoom :cmd.heat-camera/zoom]],
-      :set-agc [:map [:set-agc :cmd.heat-camera/set-agc]],
-      :shift-dde [:map [:shift-dde :cmd.heat-camera/shift-dde]],
-      :set-filter [:map [:set-filter :cmd.heat-camera/set-filters]],
+     {:set-dde-level [:map [:set-dde-level :cmd.heatcamera/set-dde-level]],
+      :set-calib-mode [:map [:set-calib-mode :cmd.heatcamera/set-calib-mode]],
+      :zoom [:map [:zoom :cmd.heatcamera/zoom]],
+      :set-agc [:map [:set-agc :cmd.heatcamera/set-agc]],
+      :shift-dde [:map [:shift-dde :cmd.heatcamera/shift-dde]],
+      :set-filter [:map [:set-filter :cmd.heatcamera/set-filters]],
       :set-clahe-level [:map
-                        [:set-clahe-level :cmd.heat-camera/set-clahe-level]],
-      :disable-dde [:map [:disable-dde :cmd.heat-camera/disable-dde]],
-      :prev-fx-mode [:map [:prev-fx-mode :cmd.heat-camera/prev-fx-mode]],
-      :start [:map [:start :cmd.heat-camera/start]],
+                        [:set-clahe-level :cmd.heatcamera/set-clahe-level]],
+      :disable-dde [:map [:disable-dde :cmd.heatcamera/disable-dde]],
+      :prev-fx-mode [:map [:prev-fx-mode :cmd.heatcamera/prev-fx-mode]],
+      :start [:map [:start :cmd.heatcamera/start]],
       :focus-step-minus [:map
-                         [:focus-step-minus :cmd.heat-camera/focus-step-minus]],
-      :set-digital-zoom-level [:map
-                               [:set-digital-zoom-level
-                                :cmd.heat-camera/set-digital-zoom-level]],
-      :enable-dde [:map [:enable-dde :cmd.heat-camera/enable-dde]],
-      :focus-stop [:map [:focus-stop :cmd.heat-camera/focus-stop]],
-      :stop [:map [:stop :cmd.heat-camera/stop]],
-      :reset-zoom [:map [:reset-zoom :cmd.heat-camera/reset-zoom]],
-      :zoom-out [:map [:zoom-out :cmd.heat-camera/zoom-out]],
-      :photo [:map [:photo :cmd.heat-camera/photo]],
-      :zoom-in [:map [:zoom-in :cmd.heat-camera/zoom-in]],
-      :get-meteo [:map [:get-meteo :cmd.heat-camera/get-meteo]],
+                         [:focus-step-minus :cmd.heatcamera/focus-step-minus]],
+      :set-digital-zoom-level
+        [:map [:set-digital-zoom-level :cmd.heatcamera/set-digital-zoom-level]],
+      :enable-dde [:map [:enable-dde :cmd.heatcamera/enable-dde]],
+      :focus-stop [:map [:focus-stop :cmd.heatcamera/focus-stop]],
+      :stop [:map [:stop :cmd.heatcamera/stop]],
+      :reset-zoom [:map [:reset-zoom :cmd.heatcamera/reset-zoom]],
+      :zoom-out [:map [:zoom-out :cmd.heatcamera/zoom-out]],
+      :photo [:map [:photo :cmd.heatcamera/photo]],
+      :zoom-in [:map [:zoom-in :cmd.heatcamera/zoom-in]],
+      :get-meteo [:map [:get-meteo :cmd.heatcamera/get-meteo]],
       :focus-step-plus [:map
-                        [:focus-step-plus :cmd.heat-camera/focus-step-plus]],
-      :set-fx-mode [:map [:set-fx-mode :cmd.heat-camera/set-fx-mode]],
+                        [:focus-step-plus :cmd.heatcamera/focus-step-plus]],
+      :set-fx-mode [:map [:set-fx-mode :cmd.heatcamera/set-fx-mode]],
       :refresh-fx-mode [:map
-                        [:refresh-fx-mode :cmd.heat-camera/refresh-fx-mode]],
-      :focus-out [:map [:focus-out :cmd.heat-camera/focus-out]],
-      :set-auto-focus [:map [:set-auto-focus :cmd.heat-camera/set-auto-focus]],
-      :zoom-stop [:map [:zoom-stop :cmd.heat-camera/zoom-stop]],
-      :save-to-table [:map [:save-to-table :cmd.heat-camera/save-to-table]],
-      :next-fx-mode [:map [:next-fx-mode :cmd.heat-camera/next-fx-mode]],
-      :calibrate [:map [:calibrate :cmd.heat-camera/calibrate]],
+                        [:refresh-fx-mode :cmd.heatcamera/refresh-fx-mode]],
+      :focus-out [:map [:focus-out :cmd.heatcamera/focus-out]],
+      :set-auto-focus [:map [:set-auto-focus :cmd.heatcamera/set-auto-focus]],
+      :zoom-stop [:map [:zoom-stop :cmd.heatcamera/zoom-stop]],
+      :save-to-table [:map [:save-to-table :cmd.heatcamera/save-to-table]],
+      :next-fx-mode [:map [:next-fx-mode :cmd.heatcamera/next-fx-mode]],
+      :calibrate [:map [:calibrate :cmd.heatcamera/calibrate]],
       :shift-clahe-level
-        [:map [:shift-clahe-level :cmd.heat-camera/shift-clahe-level]],
-      :focus-in [:map [:focus-in :cmd.heat-camera/focus-in]]}]]])
+        [:map [:shift-clahe-level :cmd.heatcamera/shift-clahe-level]],
+      :focus-in [:map [:focus-in :cmd.heatcamera/focus-in]]}]]])
 
 (def set-fx-mode-spec
   "Malli spec for set-fx-mode message"
@@ -158,11 +157,11 @@
    [:cmd
     [:altn
      {:set-zoom-table-value
-        [:map [:set-zoom-table-value :cmd.heat-camera/set-zoom-table-value]],
+        [:map [:set-zoom-table-value :cmd.heatcamera/set-zoom-table-value]],
       :next-zoom-table-pos
-        [:map [:next-zoom-table-pos :cmd.heat-camera/next-zoom-table-pos]],
+        [:map [:next-zoom-table-pos :cmd.heatcamera/next-zoom-table-pos]],
       :prev-zoom-table-pos
-        [:map [:prev-zoom-table-pos :cmd.heat-camera/prev-zoom-table-pos]]}]]])
+        [:map [:prev-zoom-table-pos :cmd.heatcamera/prev-zoom-table-pos]]}]]])
 
 (def next-zoom-table-pos-spec
   "Malli spec for next-zoom-table-pos message"

@@ -59,49 +59,48 @@
   [:map
    [:cmd
     [:altn
-     {:rotate-to-gps [:map [:rotate-to-gps :cmd.rotary-platform/rotate-to-gps]],
-      :scan-pause [:map [:scan-pause :cmd.rotary-platform/scan-pause]],
-      :rotate-to-ndc [:map [:rotate-to-ndc :cmd.rotary-platform/rotate-to-ndc]],
-      :scan-start [:map [:scan-start :cmd.rotary-platform/scan-start]],
-      :set-platform-azimuth [:map
-                             [:set-platform-azimuth
-                              :cmd.rotary-platform/set-platform-azimuth]],
-      :scan-stop [:map [:scan-stop :cmd.rotary-platform/scan-stop]],
-      :start [:map [:start :cmd.rotary-platform/start]],
-      :stop [:map [:stop :cmd.rotary-platform/stop]],
+     {:rotate-to-gps [:map [:rotate-to-gps :cmd.rotaryplatform/rotate-to-gps]],
+      :scan-pause [:map [:scan-pause :cmd.rotaryplatform/scan-pause]],
+      :rotate-to-ndc [:map [:rotate-to-ndc :cmd.rotaryplatform/rotate-to-ndc]],
+      :scan-start [:map [:scan-start :cmd.rotaryplatform/scan-start]],
+      :set-platform-azimuth
+        [:map [:set-platform-azimuth :cmd.rotaryplatform/set-platform-azimuth]],
+      :scan-stop [:map [:scan-stop :cmd.rotaryplatform/scan-stop]],
+      :start [:map [:start :cmd.rotaryplatform/start]],
+      :stop [:map [:stop :cmd.rotaryplatform/stop]],
       :set-origin-gps [:map
-                       [:set-origin-gps :cmd.rotary-platform/set-origin-gps]],
-      :scan-next [:map [:scan-next :cmd.rotary-platform/scan-next]],
+                       [:set-origin-gps :cmd.rotaryplatform/set-origin-gps]],
+      :scan-next [:map [:scan-next :cmd.rotaryplatform/scan-next]],
       :set-platform-bank
-        [:map [:set-platform-bank :cmd.rotary-platform/set-platform-bank]],
-      :get-meteo [:map [:get-meteo :cmd.rotary-platform/get-meteo]],
+        [:map [:set-platform-bank :cmd.rotaryplatform/set-platform-bank]],
+      :get-meteo [:map [:get-meteo :cmd.rotaryplatform/get-meteo]],
       :set-use-rotary-as-compass
         [:map
          [:set-use-rotary-as-compass
-          :cmd.rotary-platform/set-use-rotary-as-compass]],
-      :scan-prev [:map [:scan-prev :cmd.rotary-platform/scan-prev]],
-      :scan-add-node [:map [:scan-add-node :cmd.rotary-platform/scan-add-node]],
+          :cmd.rotaryplatform/set-use-rotary-as-compass]],
+      :scan-prev [:map [:scan-prev :cmd.rotaryplatform/scan-prev]],
+      :scan-add-node [:map [:scan-add-node :cmd.rotaryplatform/scan-add-node]],
       :set-platform-elevation [:map
                                [:set-platform-elevation
-                                :cmd.rotary-platform/set-platform-elevation]],
+                                :cmd.rotaryplatform/set-platform-elevation]],
       :scan-select-node
-        [:map [:scan-select-node :cmd.rotary-platform/scan-select-node]],
-      :halt [:map [:halt :cmd.rotary-platform/halt]],
+        [:map [:scan-select-node :cmd.rotaryplatform/scan-select-node]],
+      :halt [:map [:halt :cmd.rotaryplatform/halt]],
       :scan-delete-node
-        [:map [:scan-delete-node :cmd.rotary-platform/scan-delete-node]],
-      :axis [:map [:axis :cmd.rotary-platform/axis]],
-      :scan-unpause [:map [:scan-unpause :cmd.rotary-platform/scan-unpause]],
-      :set-mode [:map [:set-mode :cmd.rotary-platform/set-mode]],
+        [:map [:scan-delete-node :cmd.rotaryplatform/scan-delete-node]],
+      :axis [:map [:axis :cmd.rotaryplatform/axis]],
+      :scan-unpause [:map [:scan-unpause :cmd.rotaryplatform/scan-unpause]],
+      :set-mode [:map [:set-mode :cmd.rotaryplatform/set-mode]],
       :scan-refresh-node-list [:map
                                [:scan-refresh-node-list
-                                :cmd.rotary-platform/scan-refresh-node-list]],
+                                :cmd.rotaryplatform/scan-refresh-node-list]],
       :scan-update-node
-        [:map [:scan-update-node :cmd.rotary-platform/scan-update-node]]}]]])
+        [:map [:scan-update-node :cmd.rotaryplatform/scan-update-node]]}]]])
 
 (def axis-spec
   "Malli spec for axis message"
-  [:map [:azimuth [:maybe :cmd.rotary-platform/azimuth]]
-   [:elevation [:maybe :cmd.rotary-platform/elevation]]])
+  [:map [:azimuth [:maybe :cmd.rotaryplatform/azimuth]]
+   [:elevation [:maybe :cmd.rotaryplatform/elevation]]])
 
 (def set-mode-spec
   "Malli spec for set-mode message"
@@ -174,13 +173,13 @@
   [:map
    [:cmd
     [:altn
-     {:set-value [:map [:set-value :cmd.rotary-platform/set-azimuth-value]],
-      :rotate-to [:map [:rotate-to :cmd.rotary-platform/rotate-azimuth-to]],
-      :rotate [:map [:rotate :cmd.rotary-platform/rotate-azimuth]],
-      :relative [:map [:relative :cmd.rotary-platform/rotate-azimuth-relative]],
+     {:set-value [:map [:set-value :cmd.rotaryplatform/set-azimuth-value]],
+      :rotate-to [:map [:rotate-to :cmd.rotaryplatform/rotate-azimuth-to]],
+      :rotate [:map [:rotate :cmd.rotaryplatform/rotate-azimuth]],
+      :relative [:map [:relative :cmd.rotaryplatform/rotate-azimuth-relative]],
       :relative-set
-        [:map [:relative-set :cmd.rotary-platform/rotate-azimuth-relative-set]],
-      :halt [:map [:halt :cmd.rotary-platform/halt-azimuth]]}]]])
+        [:map [:relative-set :cmd.rotaryplatform/rotate-azimuth-relative-set]],
+      :halt [:map [:halt :cmd.rotaryplatform/halt-azimuth]]}]]])
 
 (def start-spec "Malli spec for start message" [:map])
 
@@ -235,15 +234,15 @@
   [:map
    [:cmd
     [:altn
-     {:set-value [:map [:set-value :cmd.rotary-platform/set-elevation-value]],
-      :rotate-to [:map [:rotate-to :cmd.rotary-platform/rotate-elevation-to]],
-      :rotate [:map [:rotate :cmd.rotary-platform/rotate-elevation]],
+     {:set-value [:map [:set-value :cmd.rotaryplatform/set-elevation-value]],
+      :rotate-to [:map [:rotate-to :cmd.rotaryplatform/rotate-elevation-to]],
+      :rotate [:map [:rotate :cmd.rotaryplatform/rotate-elevation]],
       :relative [:map
-                 [:relative :cmd.rotary-platform/rotate-elevation-relative]],
+                 [:relative :cmd.rotaryplatform/rotate-elevation-relative]],
       :relative-set [:map
                      [:relative-set
-                      :cmd.rotary-platform/rotate-elevation-relative-set]],
-      :halt [:map [:halt :cmd.rotary-platform/halt-elevation]]}]]])
+                      :cmd.rotaryplatform/rotate-elevation-relative-set]],
+      :halt [:map [:halt :cmd.rotaryplatform/halt-elevation]]}]]])
 
 (def set-use-rotary-as-compass-spec
   "Malli spec for set-use-rotary-as-compass message"

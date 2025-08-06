@@ -47,7 +47,7 @@
                "--port" "7889"]}
   
   :test
-  {:extra-paths ["test" "../../shared/specs/protobuf" "../../shared/specs/custom"]
+  {:extra-paths ["test"]
    :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
                                                        :git/sha "9e35c979860c75555adaff7600070c60004a0f44"}}
    :main-opts ["-m" "cognitect.test-runner"]}
@@ -57,7 +57,7 @@
    :main-opts ["-m" "cognitect.test-runner" "-d" "test/unit"]}
   
   :test:integration
-  {:inherit [:test :test-protos]
+  {:inherit [:test]
    :main-opts ["-m" "cognitect.test-runner" "-d" "test/integration"]}
   
   :test:watch
@@ -66,8 +66,7 @@
    :main-opts ["-m" "com.jakemccrary.test-refresh"]}
   
   :run
-  {:extra-paths ["../../shared/specs/protobuf" "../../shared/specs/custom"]
-   :main-opts ["-m" "proto-explorer.main"]}
+  {:main-opts ["-m" "proto-explorer.main"]}
   
   :mcp
   {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
