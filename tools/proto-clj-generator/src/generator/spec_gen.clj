@@ -2,7 +2,8 @@
   "Generate Malli specs from protobuf EDN representation.
   Based on proto-explorer's approach but integrated into our generation pipeline."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]))
+            [camel-snake-kebab.core :as csk]
+            [generator.constraints.compiler :as compiler]))
 
 ;; =============================================================================
 ;; Field Processing
@@ -115,9 +116,9 @@
 (defn apply-constraints
   "Apply buf.validate constraints to schema"
   [schema field]
-  ;; TODO: Extract and apply constraints from field options
-  ;; For now, just return the schema unchanged
-  schema)
+  (if (:constraints field)
+    (compiler/apply-constraints schema field)
+    schema))
 
 (defn process-field-schema
   "Process a single field into its schema"

@@ -6,7 +6,8 @@
             [cheshire.core :as json]
             [camel-snake-kebab.core :as csk]
             [com.rpl.specter :as sp]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [generator.constraints.extractor :as extractor]))
 
 ;; =============================================================================
 ;; Specter Paths
@@ -148,7 +149,9 @@
   (let [base {:name (csk/->kebab-case-keyword (:name field))
               :proto-name (:name field)
               :number (:number field)
-              :type (resolve-field-type field)}]
+              :type (resolve-field-type field)}
+        ;; Extract constraints if present
+        constraints (extractor/extract-and-normalize-constraints field)]
     (cond-> base
       (:label field)
       (assoc :label (keywordize-value (:label field)))
@@ -161,6 +164,10 @@
       
       (some? (:oneofIndex field))
       (assoc :oneof-index (:oneofIndex field))
+      
+      ;; Add constraints if present
+      constraints
+      (assoc :constraints constraints)
       
       (:defaultValue field)
       (assoc :default-value (:defaultValue field)))))
