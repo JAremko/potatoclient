@@ -14,6 +14,16 @@
 - `core.clj` - Load shared specs
 - New: `guardrails.clj` - Spec generation/mapping
 
+### Proto-Explorer Reference Implementation
+- `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/spec_generator.clj` - Malli spec generation from JSON descriptors
+- `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/buf_validate_extractor.clj` - buf.validate constraint extraction
+- `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/constraints/compiler.clj` - Constraint to Malli schema compilation
+- `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/constraints/metadata_enricher.clj` - Metadata-based constraint attachment
+- `/home/jare/git/potatoclient/tools/proto-explorer/test/proto_explorer/constraints/compiler_test.clj` - Constraint compiler tests
+
+### JSON Descriptor Documentation
+- `/home/jare/git/potatoclient/examples/protogen/docs/json-descriptor-reference.md` - Complete JSON descriptor format reference
+
 ## 📊 Success Criteria
 1. All tests pass with new structure
    - Namespace resolution works correctly
@@ -326,7 +336,123 @@ Each phase is complete when:
    - Clear errors for invalid input
    - Deterministic output
 
-## 🚀 Pipeline Architecture Improvements (NEW SECTION)
+## 🔬 Deep Analysis: Proto-Explorer Implementation Insights
+
+### Key Learnings from Proto-Explorer
+
+#### 1. Spec Generation Architecture
+Proto-Explorer uses a **multimethod-based approach** for spec generation:
+- Dispatches on field type (`:type-string`, `:type-message`, etc.)
+- Handles field modifiers (repeated, optional) as schema transformations
+- Processes oneofs as special `:oneof` schemas with keyword-keyed alternatives
+
+#### 2. buf.validate Constraint Extraction
+The constraint extraction is **sophisticated and complete**:
+- Extracts from `options["[buf.validate.field]"]` in JSON descriptors
+- Supports all constraint types: numeric, string, collection, message, enum
+- Preserves CEL expressions for complex validations
+- Groups constraints by type (numeric, string, etc.) for targeted processing
+
+#### 3. Constraint Compilation Strategy
+Proto-Explorer's **constraint compiler** is elegant:
+- Uses multimethod dispatch on `[constraint-type spec-type]` pairs
+- Generates both Malli schemas AND generator hints
+- Handles edge cases (e.g., `gt` vs `gte` for floats vs integers)
+- Produces clean, composable schema fragments
+
+#### 4. Metadata-Driven Design
+The **metadata enricher** pattern is powerful:
+- Attaches constraints as metadata to preserve original schema structure
+- Allows multiple passes over the schema without loss of information
+- Enables clean separation between schema structure and validation rules
+
+### Critical Implementation Details from JSON Descriptors
+
+#### 1. Field Structure in JSON
+```json
+{
+  "name": "temperature",
+  "number": 3,
+  "label": "LABEL_OPTIONAL",  // or LABEL_REPEATED, LABEL_REQUIRED
+  "type": "TYPE_FLOAT",       // TYPE_STRING, TYPE_MESSAGE, etc.
+  "typeName": ".package.MessageName",  // For MESSAGE/ENUM types
+  "oneofIndex": 0,            // If part of a oneof
+  "options": {
+    "[buf.validate.field]": {
+      "float": {
+        "gte": -50.0,
+        "lte": 150.0
+      }
+    }
+  }
+}
+```
+
+#### 2. Oneof Representation
+- Fields have `oneofIndex` pointing to their oneof group
+- `oneofDecl` array defines oneof names
+- Must generate as Malli `:oneof` with proper structure
+
+#### 3. Type Resolution Requirements
+- Type names are **fully qualified** with leading dot
+- Must resolve across file boundaries
+- Need to track file dependencies for proper requires
+
+#### 4. Validation Rule Categories
+
+**Numeric Constraints**:
+- `const`, `lt`, `lte`, `gt`, `gte`, `in`, `not_in`
+- Different handling for floats (epsilon adjustments) vs integers
+
+**String Constraints**:
+- Length: `min_len`, `max_len`, `len`
+- Pattern: `pattern`, `prefix`, `suffix`, `contains`
+- Format: `email`, `hostname`, `ip`, `ipv4`, `ipv6`, `uri`, `uuid`
+- Membership: `in`, `not_in`
+
+**Collection Constraints**:
+- `min_items`, `max_items`, `unique`
+- Applied to repeated fields
+
+**Message Constraints**:
+- `required` - field cannot be null
+- `skip` - skip validation
+
+### Improvements We Should Port to proto-clj-generator
+
+#### 1. Constraint-Aware Code Generation
+Generate guardrails specs that include buf.validate constraints:
+```clojure
+(>defn build-coordinate
+  [m]
+  [[:map 
+    [:latitude [:and :double [:>= -90.0] [:<= 90.0]]]
+    [:longitude [:and :double [:>= -180.0] [:<= 180.0]]]]
+   => #(instance? Coordinate %)]
+  ...)
+```
+
+#### 2. Enhanced Type Registry
+Build a global type registry during parsing:
+- Track all messages, enums, and their fully qualified names
+- Resolve type dependencies before code generation
+- Generate proper namespace requires based on actual usage
+
+#### 3. Validation Function Generation
+For each constrained field, generate validation predicates:
+```clojure
+(defn- valid-latitude? [v]
+  (and (double? v) (>= v -90.0) (<= v 90.0)))
+```
+
+#### 4. Test Data Generation
+Use constraint information for property-based testing:
+```clojure
+(def latitude-gen
+  (gen/double* {:min -90.0 :max 90.0}))
+```
+
+## 🚀 Pipeline Architecture Improvements
 
 ### Current Pipeline Overview
 1. **Backend Stage**: Parse JSON descriptors → EDN representation
@@ -436,6 +562,42 @@ JSON Descriptors
 - Add copyright headers
 - Generate index files
 - Run clj-kondo checks
+
+### Proto-Explorer Testing Patterns
+
+#### 1. Constraint Compiler Testing
+Proto-Explorer tests each constraint type independently:
+```clojure
+(deftest test-float-constraints
+  (testing "Float constraints with gte and lt"
+    (let [field {:type :type-float
+                 :constraints {:buf.validate {:float {:gte 0 :lt 360}}}}
+          result (compiler/compile-field-constraints field)]
+      (is (= [:>= 0] (first (:schema result))))
+      (is (= [:< 360] (second (:schema result))))
+      (is (= 0 (:min (:generator result))))
+      (is (= 359.9999 (:max (:generator result)))))))
+```
+
+Key insights:
+- Tests constraint compilation separately from spec generation
+- Verifies both schema output AND generator hints
+- Tests edge cases like gt vs gte handling
+
+#### 2. Spec Generation Testing
+Tests the complete spec generation pipeline:
+- Simple messages with basic fields
+- Messages with repeated fields
+- Oneof handling
+- Nested message references
+- Enum processing
+
+#### 3. Integration Testing
+Proto-Explorer includes integration tests that:
+- Load actual proto JSON descriptors
+- Generate complete specs
+- Validate generated specs with Malli
+- Test roundtrip data generation
 
 ### Backend Enhancement: Leveraging JSON Descriptors
 
@@ -588,3 +750,56 @@ Based on analysis of `/home/jare/git/potatoclient/examples/protogen/docs/json-de
    - Performance optimization hints
    - Service definition support
    - Source location tracking
+
+## 🎯 Actionable Improvements for proto-clj-generator
+
+### Phase 1: Port Core Constraint Features
+1. **Create constraint extraction namespace**
+   - Port `buf_validate_extractor.clj` concepts
+   - Extract constraints from JSON descriptor options
+   - Build constraint maps for each field
+
+2. **Implement constraint compiler**
+   - Port multimethod approach from `constraints/compiler.clj`
+   - Generate Malli schema fragments from constraints
+   - Include generator hints for property testing
+
+3. **Enhance spec generation in templates**
+   - Modify guardrails templates to include constraint specs
+   - Generate validation predicates for runtime checks
+   - Add constraint documentation to generated functions
+
+### Phase 2: Improve Type System
+1. **Build comprehensive type registry**
+   - Parse all types from JSON descriptors first
+   - Create bidirectional lookup maps
+   - Track cross-file dependencies
+
+2. **Fix type resolution**
+   - Handle fully qualified names properly
+   - Resolve types across file boundaries
+   - Generate correct namespace requires
+
+### Phase 3: Enhanced Testing
+1. **Add constraint-aware test generation**
+   - Generate property-based tests using constraints
+   - Create valid test data respecting all rules
+   - Test edge cases based on constraint boundaries
+
+2. **Implement roundtrip validation**
+   - Proto → Map → Proto with full fidelity
+   - Validate constraints at each step
+   - Clear error messages for violations
+
+### Key Files to Create/Modify
+1. `src/generator/constraints/extractor.clj` - Extract buf.validate rules
+2. `src/generator/constraints/compiler.clj` - Compile to Malli schemas  
+3. `src/generator/validation.clj` - Runtime validation functions
+4. `src/generator/type_registry.clj` - Global type tracking
+5. Update all templates to use constraint-aware specs
+
+### Success Metrics
+- All buf.validate constraints enforced in generated code
+- Property-based tests use constraint information
+- Clear validation errors with field context
+- Zero false positives in constraint validation
