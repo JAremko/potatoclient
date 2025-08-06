@@ -26,7 +26,7 @@
   - :namespace-mode - :separated (default, one file per package) or :single (one file per domain)
   - :debug? - Write debug EDN files (default true)
   - :line-width - Line width for formatting (default 80)"
-  [{:keys [input-dir output-dir namespace-prefix namespace-mode debug? line-width guardrails?]
+  [{:keys [input-dir output-dir namespace-prefix namespace-mode namespace-split? debug? line-width guardrails?]
     :or {namespace-mode :separated  ;; Default to separated namespaces
          debug? true
          line-width 80
@@ -56,7 +56,7 @@
       (log/info "Frontend: Generating Clojure code from EDN...")
       (log/info "Using namespace mode:" namespace-mode)
       
-      (if (= namespace-mode :separated)
+      (if (or (= namespace-mode :separated) namespace-split?)
         ;; Use namespaced frontend for separated mode
         (let [;; Analyze dependencies and enrich backend output
               enriched-backend-output (dep-graph/analyze-dependencies backend-output namespace-prefix)

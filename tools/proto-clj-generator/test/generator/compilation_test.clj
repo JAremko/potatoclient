@@ -10,10 +10,10 @@
 (deftest generated-code-compiles
   (testing "All generated files have valid Clojure syntax"
     ;; First generate the code
-    (let [result (core/generate-all {:input-dir "../../tools/proto-explorer/output/json-descriptors"
+    (let [result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
                                       :output-dir "test-output"
                                       :namespace-prefix "test.proto"
-                                      :namespace-mode :separated
+                                      :namespace-split? true
                                       :debug? false})]
       (is (:success result))
       
@@ -37,10 +37,10 @@
 
 (deftest dependency-graph-correctness
   (testing "Dependencies are correctly resolved"
-    (let [result (core/generate-all {:input-dir "../../tools/proto-explorer/output/json-descriptors"
+    (let [result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
                                       :output-dir "test-output"
                                       :namespace-prefix "test.proto.deps"
-                                      :namespace-mode :separated
+                                      :namespace-split? true
                                       :debug? true})]
       
       ;; Check that files with dependencies have require statements

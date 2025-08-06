@@ -1,18 +1,50 @@
 (ns potatoclient.proto.cmd.gps
   "Generated protobuf functions."
-  (:import
-   cmd.Gps.JonSharedCmdGps$Root
-   cmd.Gps.JonSharedCmdGps$Start
-   cmd.Gps.JonSharedCmdGps$Stop
-   cmd.Gps.JonSharedCmdGps$GetMeteo
-   cmd.Gps.JonSharedCmdGps$SetUseManualPosition
-   cmd.Gps.JonSharedCmdGps$SetManualPosition))
+  (:require [malli.core :as m])
+  (:import cmd.Gps.JonSharedCmdGps$Root
+           cmd.Gps.JonSharedCmdGps$Start
+           cmd.Gps.JonSharedCmdGps$Stop
+           cmd.Gps.JonSharedCmdGps$GetMeteo
+           cmd.Gps.JonSharedCmdGps$SetUseManualPosition
+           cmd.Gps.JonSharedCmdGps$SetManualPosition))
 
 ;; =============================================================================
 ;; Enums
 ;; =============================================================================
 
 ;; No enums
+
+;; =============================================================================
+;; Malli Specs
+;; =============================================================================
+
+(def root-spec
+  "Malli spec for root message"
+  [:map
+   [:cmd
+    [:altn
+     {:start [:map [:start :cmd.gps/start]],
+      :stop [:map [:stop :cmd.gps/stop]],
+      :set-manual-position
+        [:map [:set-manual-position :cmd.gps/set-manual-position]],
+      :set-use-manual-position
+        [:map [:set-use-manual-position :cmd.gps/set-use-manual-position]],
+      :get-meteo [:map [:get-meteo :cmd.gps/get-meteo]]}]]])
+
+(def start-spec "Malli spec for start message" [:map])
+
+(def stop-spec "Malli spec for stop message" [:map])
+
+(def get-meteo-spec "Malli spec for get-meteo message" [:map])
+
+(def set-use-manual-position-spec
+  "Malli spec for set-use-manual-position message"
+  [:map [:flag [:maybe :boolean]]])
+
+(def set-manual-position-spec
+  "Malli spec for set-manual-position message"
+  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
+   [:altitude [:maybe :float]]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -38,31 +70,30 @@
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Gps.JonSharedCmdGps$Root/newBuilder)]
-
-;; Handle oneof: cmd
-    (when-let [cmd-field (first (filter (fn [[k v]] (#{:start :stop :set-manual-position :set-use-manual-position :get-meteo} k)) m))]
+    ;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]]
+                                          (#{:start :stop :set-manual-position
+                                             :set-use-manual-position
+                                             :get-meteo}
+                                           k))
+                                  m))]
       (build-root-payload builder cmd-field))
     (.build builder)))
 
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.JonSharedCmdGps$Start/newBuilder)]
-
-    (.build builder)))
+  (let [builder (cmd.Gps.JonSharedCmdGps$Start/newBuilder)] (.build builder)))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  (let [builder (cmd.Gps.JonSharedCmdGps$Stop/newBuilder)]
-
-    (.build builder)))
+  (let [builder (cmd.Gps.JonSharedCmdGps$Stop/newBuilder)] (.build builder)))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
   (let [builder (cmd.Gps.JonSharedCmdGps$GetMeteo/newBuilder)]
-
     (.build builder)))
 
 (defn build-set-use-manual-position
@@ -70,9 +101,7 @@
   [m]
   (let [builder (cmd.Gps.JonSharedCmdGps$SetUseManualPosition/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :flag)
-      (.setFlag builder (get m :flag)))
-
+    (when (contains? m :flag) (.setFlag builder (get m :flag)))
     (.build builder)))
 
 (defn build-set-manual-position
@@ -80,21 +109,16 @@
   [m]
   (let [builder (cmd.Gps.JonSharedCmdGps$SetManualPosition/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :latitude)
-      (.setLatitude builder (get m :latitude)))
-    (when (contains? m :longitude)
-      (.setLongitude builder (get m :longitude)))
-    (when (contains? m :altitude)
-      (.setAltitude builder (get m :altitude)))
-
+    (when (contains? m :latitude) (.setLatitude builder (get m :latitude)))
+    (when (contains? m :longitude) (.setLongitude builder (get m :longitude)))
+    (when (contains? m :altitude) (.setAltitude builder (get m :altitude)))
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Gps.JonSharedCmdGps$Root proto]
   (cond-> {}
-
-;; Oneof payload
+    ;; Oneof payload
     true (merge (parse-root-payload proto))))
 
 (defn parse-start
@@ -134,17 +158,23 @@
   (case field-key
     :start (.setStart builder (build-start value))
     :stop (.setStop builder (build-stop value))
-    :set-manual-position (.setSetManualPosition builder (build-set-manual-position value))
-    :set-use-manual-position (.setSetUseManualPosition builder (build-set-use-manual-position value))
+    :set-manual-position
+      (.setSetManualPosition builder (build-set-manual-position value))
+    :set-use-manual-position
+      (.setSetUseManualPosition builder (build-set-use-manual-position value))
     :get-meteo (.setGetMeteo builder (build-get-meteo value))
-    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
+    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
 
 (defn parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.Gps.JonSharedCmdGps$Root proto]
-  (cond
-    (.hasStart proto) {:start (parse-start (.getStart proto))}
-    (.hasStop proto) {:stop (parse-stop (.getStop proto))}
-    (.hasSetManualPosition proto) {:set-manual-position (parse-set-manual-position (.getSetManualPosition proto))}
-    (.hasSetUseManualPosition proto) {:set-use-manual-position (parse-set-use-manual-position (.getSetUseManualPosition proto))}
-    (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}))
+  (cond (.hasStart proto) {:start (parse-start (.getStart proto))}
+        (.hasStop proto) {:stop (parse-stop (.getStop proto))}
+        (.hasSetManualPosition proto) {:set-manual-position
+                                         (parse-set-manual-position
+                                           (.getSetManualPosition proto))}
+        (.hasSetUseManualPosition proto) {:set-use-manual-position
+                                            (parse-set-use-manual-position
+                                              (.getSetUseManualPosition proto))}
+        (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo
+                                                            proto))}))

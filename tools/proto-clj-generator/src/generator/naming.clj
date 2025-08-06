@@ -7,7 +7,9 @@
   - Preserves all original casing and structure
   
   The key insight is to encode the proto structure directly in Clojure keywords
-  rather than trying to convert to idiomatic Clojure names."
+  rather than trying to convert to idiomatic Clojure names.
+  
+  All conversions are memoized and checked for collisions to guarantee 1-to-1 mappings."
   (:require [clojure.string :as str]
             [camel-snake-kebab.core :as csk]
             [malli.core :as m]
@@ -19,11 +21,11 @@
 
 (def proto-package-spec
   "Spec for protobuf package names like 'cmd.DayCamera'"
-  [:re #"^[a-z]+(\.[A-Za-z_][A-Za-z0-9_]*)*$"])
+  [:re #"^[a-z][a-z0-9]*(\.[A-Za-z][A-Za-z0-9_]*)*$"])
 
 (def proto-type-ref-spec
   "Spec for protobuf type references like '.cmd.DayCamera.Root'"
-  [:re #"^\.?[a-z]+(\.[A-Za-z_][A-Za-z0-9_]*)+$"])
+  [:re #"^\.?[a-z][a-z0-9]*(\.[A-Za-z][A-Za-z0-9_]*)+$"])
 
 (def proto-identifier-spec
   "Spec for a single protobuf identifier (PascalCase or snake_case)"
@@ -31,7 +33,7 @@
 
 (def clojure-namespace-spec
   "Spec for Clojure namespace strings like 'cmd.daycamera'"
-  [:re #"^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)*$"])
+  [:re #"^[a-z][a-z0-9_-]*(\.[a-z][a-z0-9_-]*)*$"])
 
 (def clojure-keyword-spec
   "Spec for Clojure namespaced keywords like :cmd.daycamera/root"
@@ -42,11 +44,11 @@
   "Spec for our special proto-encoded keywords like :potatoclient.proto/cmd.DayCamera.Root"
   [:and keyword?
    [:fn (fn [k] (= (namespace k) "potatoclient.proto"))]
-   [:fn (fn [k] (re-matches #"^[a-z]+(\.[A-Za-z_][A-Za-z0-9_]*)+$" (name k)))]])
+   [:fn (fn [k] (re-matches #"^[a-z][a-z0-9]*(\.[A-Za-z][A-Za-z0-9_]*)*$" (name k)))]])
 
 (def file-path-spec
   "Spec for file paths like 'cmd/daycamera.clj'"
-  [:re #"^[a-z_]+(/[a-z_]+)*\.clj$"])
+  [:re #"^[a-z0-9_]+(/[a-z0-9_]+)*\.clj$"])
 
 ;; =============================================================================
 ;; Strategy for Lossless Conversion
@@ -62,6 +64,47 @@
 ;; This preserves the exact proto structure and can roundtrip perfectly
 
 ;; =============================================================================
+;; Collision Detection and Memoization
+;; =============================================================================
+
+(defonce conversion-cache
+  (atom {}))
+
+(defonce reverse-cache
+  (atom {}))
+
+(defn- check-and-cache!
+  "Memoize conversion and check for collisions.
+  Throws if output already exists with different input."
+  [conversion-name input output]
+  (let [forward-path [conversion-name input]
+        reverse-path [conversion-name output]]
+    ;; Check if we've seen this input before
+    (if-let [cached (get-in @conversion-cache forward-path)]
+      ;; Return cached value
+      cached
+      ;; New conversion - check for collisions
+      (let [existing-input (get-in @reverse-cache reverse-path)]
+        (when (and existing-input (not= existing-input input))
+          (throw (ex-info "Naming collision detected!"
+                          {:conversion conversion-name
+                           :input input
+                           :output output
+                           :existing-input existing-input
+                           :message (str "Output '" output "' already mapped to '" 
+                                        existing-input "', cannot map to '" input "'")})))
+        ;; Safe to cache
+        (swap! conversion-cache assoc-in forward-path output)
+        (swap! reverse-cache assoc-in reverse-path input)
+        output))))
+
+(defn clear-conversion-cache!
+  "Clear all conversion caches. Useful for testing."
+  []
+  (reset! conversion-cache {})
+  (reset! reverse-cache {}))
+
+;; =============================================================================
 ;; Core Conversions (Lossless)
 ;; =============================================================================
 
@@ -70,29 +113,34 @@
 (defn proto-type->keyword
   "Convert protobuf type to keyword preserving all information.
   e.g. '.cmd.DayCamera.Root' -> :potatoclient.proto/cmd.DayCamera.Root
-       'cmd.Root' -> :potatoclient.proto/cmd.Root"
+       'cmd.Root' -> :potatoclient.proto/cmd.Root
+  Always normalizes by removing leading dot."
   {:malli/schema [:=> [:cat proto-type-ref-spec] proto-encoded-keyword-spec]}
   [type-ref]
-  (let [;; Remove leading dot if present
-        clean-ref (if (str/starts-with? type-ref ".")
+  ;; Remove leading dot if present for cleaner keywords
+  (let [clean-ref (if (str/starts-with? type-ref ".")
                     (subs type-ref 1)
-                    type-ref)]
-    (keyword proto-ns-prefix clean-ref)))
+                    type-ref)
+        result (keyword proto-ns-prefix clean-ref)]
+    (check-and-cache! ::proto-type->keyword type-ref result)))
 
 (defn keyword->proto-type
   "Convert keyword back to protobuf type reference.
-  e.g. :potatoclient.proto/cmd.DayCamera.Root -> '.cmd.DayCamera.Root'"
+  e.g. :potatoclient.proto/cmd.DayCamera.Root -> '.cmd.DayCamera.Root'
+  Always returns with leading dot for consistency."
   {:malli/schema [:=> [:cat proto-encoded-keyword-spec] proto-type-ref-spec]}
   [kw]
   (when (= (namespace kw) proto-ns-prefix)
-    (str "." (name kw))))
+    (let [result (str "." (name kw))]
+      (check-and-cache! ::keyword->proto-type kw result))))
 
 (defn proto-package->keyword
   "Convert protobuf package to keyword preserving all information.
   e.g. 'cmd.DayCamera' -> :potatoclient.proto/cmd.DayCamera"
   {:malli/schema [:=> [:cat proto-package-spec] proto-encoded-keyword-spec]}
   [proto-package]
-  (keyword proto-ns-prefix proto-package))
+  (let [result (keyword proto-ns-prefix proto-package)]
+    (check-and-cache! ::proto-package->keyword proto-package result)))
 
 (defn keyword->proto-package
   "Convert keyword back to protobuf package.
@@ -109,7 +157,10 @@
 (defn normalize-for-filesystem
   "Convert a proto name part to filesystem-safe form.
   DayCamera -> daycamera
-  Lrf_calib -> lrf_calib (preserves underscores)"
+  Lrf_calib -> lrf_calib (preserves underscores)
+  
+  Note: This is case-insensitive, so 'Lira' and 'lira' both -> 'lira'.
+  The collision detection will catch any actual collisions."
   [part]
   (str/lower-case part))
 
@@ -120,8 +171,9 @@
   {:malli/schema [:=> [:cat proto-package-spec] clojure-namespace-spec]}
   [proto-package]
   (let [parts (str/split proto-package #"\.")
-        normalized (map normalize-for-filesystem parts)]
-    (str proto-ns-prefix "." (str/join "." normalized))))
+        normalized (map normalize-for-filesystem parts)
+        result (str proto-ns-prefix "." (str/join "." normalized))]
+    (check-and-cache! ::proto-package->clj-namespace proto-package result)))
 
 (defn proto-package->file-path
   "Convert protobuf package to file path.
@@ -129,16 +181,18 @@
   {:malli/schema [:=> [:cat proto-package-spec] file-path-spec]}
   [proto-package]
   (let [parts (str/split proto-package #"\.")
-        normalized (map normalize-for-filesystem parts)]
-    (str (str/join "/" normalized) ".clj")))
+        normalized (map normalize-for-filesystem parts)
+        result (str (str/join "/" normalized) ".clj")]
+    (check-and-cache! ::proto-package->file-path proto-package result)))
 
 (defn proto-package->alias
   "Extract alias from protobuf package.
   e.g. 'cmd.DayCamera' -> 'daycamera'"
   {:malli/schema [:=> [:cat proto-package-spec] :string]}
   [proto-package]
-  (let [parts (str/split proto-package #"\.")]
-    (normalize-for-filesystem (last parts))))
+  (let [parts (str/split proto-package #"\.")
+        result (normalize-for-filesystem (last parts))]
+    (check-and-cache! ::proto-package->alias proto-package result)))
 
 ;; =============================================================================
 ;; Name Conversions (for idiomatic Clojure)
@@ -150,7 +204,16 @@
   e.g. 'SetDDELevel' -> 'set-dde-level'"
   {:malli/schema [:=> [:cat :string] :string]}
   [proto-name]
-  (csk/->kebab-case proto-name))
+  (let [base-result (csk/->kebab-case proto-name)
+        ;; Handle edge cases where result might be empty, start with hyphen, or start with number
+        intermediate (cond
+                       (empty? base-result) "underscore"  ; "_" -> "underscore"
+                       (str/starts-with? base-result "-") (str "underscore" base-result) ; "_Foo" -> "underscore-foo"
+                       :else base-result)
+        result (if (re-matches #"^[0-9].*" intermediate) 
+                 (str "n" intermediate) ; "0" -> "n0", "9abc" -> "n9abc"
+                 intermediate)]
+    (check-and-cache! ::proto-name->clojure-fn-name proto-name result)))
 
 (defn proto-field->clojure-key
   "Convert protobuf field name to Clojure keyword.
@@ -158,7 +221,8 @@
        'clientType' -> :client-type"
   {:malli/schema [:=> [:cat :string] keyword?]}
   [field-name]
-  (keyword (csk/->kebab-case field-name)))
+  (let [result (keyword (csk/->kebab-case field-name))]
+    (check-and-cache! ::proto-field->clojure-key field-name result)))
 
 ;; =============================================================================
 ;; Spec References (for Malli)
@@ -172,18 +236,19 @@
   [type-ref]
   (let [parts (str/split type-ref #"\.")
         ;; Remove empty first part from leading dot
-        parts (if (empty? (first parts)) (rest parts) parts)]
-    (if (= 1 (count parts))
-      ;; Single part
-      (keyword (normalize-for-filesystem (last parts)))
-      ;; Multiple parts - namespace/name
-      (let [ns-parts (butlast parts)
-            name-part (last parts)
-            ;; Convert namespace parts
-            ns-str (->> ns-parts
-                        (map normalize-for-filesystem)
-                        (str/join "."))]
-        (keyword ns-str (csk/->kebab-case name-part))))))
+        parts (if (empty? (first parts)) (rest parts) parts)
+        result (if (= 1 (count parts))
+                 ;; Single part
+                 (keyword (normalize-for-filesystem (last parts)))
+                 ;; Multiple parts - namespace/name
+                 (let [ns-parts (butlast parts)
+                       name-part (last parts)
+                       ;; Convert namespace parts
+                       ns-str (->> ns-parts
+                                   (map normalize-for-filesystem)
+                                   (str/join "."))]
+                   (keyword ns-str (csk/->kebab-case name-part))))]
+    (check-and-cache! ::proto-type->spec-keyword type-ref result)))
 
 ;; =============================================================================
 ;; Validation Functions

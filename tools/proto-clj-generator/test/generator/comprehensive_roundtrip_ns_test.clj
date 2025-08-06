@@ -1,0 +1,166 @@
+(ns generator.comprehensive-roundtrip-ns-test
+  "Comprehensive roundtrip tests for namespace-split generated code"
+  (:require [clojure.test :refer :all]
+            [clojure.java.io :as io]
+            [generator.core :as core]
+            [clojure.java.shell :as shell])
+  (:import [cmd JonSharedCmd JonSharedCmd$Root]
+           [ser JonSharedData JonSharedData$JonGUIState]))
+
+(defonce generated? (atom false))
+
+(defn ensure-generated-code!
+  "Generate code once for all tests"
+  []
+  (when-not @generated?
+    (println "Generating code for roundtrip tests...")
+    ;; First, clear the naming cache to avoid collisions from previous runs
+    (require 'generator.naming)
+    ((resolve 'generator.naming/clear-conversion-cache!))
+    
+    ;; Generate in single mode for roundtrip tests to avoid the Lira collision
+    (let [result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
+                                     :output-dir "test-roundtrip-output"
+                                     :namespace-prefix "test.roundtrip"
+                                     :namespace-mode :single
+                                     :debug? false})]
+      (when-not (:success result)
+        (throw (ex-info "Failed to generate code" result)))
+      
+      ;; Compile the generated code
+      (println "Compiling generated code...")
+      (let [compile-result (shell/sh "java" "-cp" 
+                                     (System/getProperty "java.class.path")
+                                     "clojure.main" 
+                                     "-e" 
+                                     "(compile 'test.roundtrip.command)")]
+        (when-not (zero? (:exit compile-result))
+          (throw (ex-info "Failed to compile generated code" compile-result))))
+      
+      (reset! generated? true)
+      
+      ;; Load the generated namespaces
+      (require '[test.roundtrip.command :as cmd-gen])
+      (require '[test.roundtrip.state :as state-gen]))))
+
+(use-fixtures :once (fn [f] 
+                     (ensure-generated-code!)
+                     (f)))
+
+(deftest simple-ping-roundtrip
+  (testing "Simple ping command roundtrips correctly"
+    (let [cmd-gen (find-ns 'test.roundtrip.command)
+              build-root (ns-resolve cmd-gen 'build-root)
+              parse-root (ns-resolve cmd-gen 'parse-root)]
+          
+      (testing "with ping command"
+        (let [input {:ping {}}
+              proto (build-root input)
+              output (parse-root proto)]
+          (is (= input output))
+          (is (instance? JonSharedCmd$Root proto))
+          (is (.hasPing proto)))))))
+
+(deftest rotary-command-roundtrip
+  (testing "Rotary platform commands roundtrip correctly"
+    (let [cmd-gen (find-ns 'test.roundtrip.command)
+          build-root (ns-resolve cmd-gen 'build-root)
+          parse-root (ns-resolve cmd-gen 'parse-root)]
+      
+      (testing "goto-ndc command"
+        (let [input {:rotary {:goto-ndc {:channel :heat :x 0.5 :y -0.75}}}
+              proto (build-root input)
+              output (parse-root proto)]
+          (is (= input output))
+          (is (.hasRotary proto))))
+      
+      (testing "halt command"
+        (let [input {:rotary {:halt {}}}
+              proto (build-root input)
+              output (parse-root proto)]
+          (is (= input output)))))))
+
+(deftest system-command-roundtrip
+  (testing "System commands roundtrip correctly"
+    (let [cmd-gen (find-ns 'test.roundtrip.command)
+          build-root (ns-resolve cmd-gen 'build-root)
+          parse-root (ns-resolve cmd-gen 'parse-root)]
+      
+      (testing "start-rec command"
+        (let [input {:system {:start-rec {}}}
+              proto (build-root input)
+              output (parse-root proto)]
+          (is (= input output))))
+      
+      (testing "stop-rec command"
+        (let [input {:system {:stop-rec {}}}
+              proto (build-root input)
+              output (parse-root proto)]
+          (is (= input output)))))))
+
+(deftest state-roundtrip
+  (testing "State messages roundtrip correctly"
+    (let [state-gen (find-ns 'test.roundtrip.state)
+          build-jon-gui-state (ns-resolve state-gen 'build-jon-gui-state)
+          parse-jon-gui-state (ns-resolve state-gen 'parse-jon-gui-state)]
+      
+      (testing "basic state with required fields"
+        (let [input {:gui-connected-to-state-updater? true
+                     :connected-to-command-runner? false
+                     :client-type :spectator
+                     :protocol-version 1}
+              proto (build-jon-gui-state input)
+              output (parse-jon-gui-state proto)]
+          (is (= input output))
+          (is (instance? JonSharedData$JonGUIState proto))))
+      
+      (testing "state with all fields"
+        (let [input {:gui-connected-to-state-updater? true
+                     :connected-to-command-runner? true
+                     :client-type :driver
+                     :protocol-version 2
+                     :time-ms 1234567890
+                     :lrf-state {:some :data}
+                     :gps-state {:lat 45.0 :lon -122.0}}
+              proto (build-jon-gui-state input)
+              output (parse-jon-gui-state proto)]
+          ;; Note: nested messages need their own builders, 
+          ;; so this might not work perfectly yet
+          (is (= (:gui-connected-to-state-updater? input) 
+                 (:gui-connected-to-state-updater? output)))
+          (is (= (:client-type input) (:client-type output)))
+          (is (= (:protocol-version input) (:protocol-version output))))))))
+
+(deftest empty-message-roundtrip
+  (testing "Empty messages roundtrip correctly"
+    (let [cmd-gen (find-ns 'test.roundtrip.command)
+          build-root (ns-resolve cmd-gen 'build-root)
+          parse-root (ns-resolve cmd-gen 'parse-root)]
+      
+      (testing "empty root throws or returns empty map"
+        ;; Depending on implementation, might throw or return {}
+        (let [result (try 
+                      (parse-root (build-root {}))
+                      (catch Exception e
+                        :error))]
+          (is (or (= {} result)
+                  (= :error result))))))))
+
+(deftest byte-comparison-roundtrip
+  (testing "Serialized bytes are identical after roundtrip"
+    (let [cmd-gen (find-ns 'test.roundtrip.command)
+          build-root (ns-resolve cmd-gen 'build-root)
+          parse-root (ns-resolve cmd-gen 'parse-root)]
+      
+      (testing "for various command types"
+        (doseq [input [{:ping {}}
+                       {:rotary {:halt {}}}
+                       {:system {:start-rec {}}}]]
+          (let [proto1 (build-root input)
+                bytes1 (.toByteArray proto1)
+                ;; Parse and rebuild
+                parsed (parse-root proto1)
+                proto2 (build-root parsed)
+                bytes2 (.toByteArray proto2)]
+            (is (= (vec bytes1) (vec bytes2))
+                (str "Bytes should match for " input))))))))

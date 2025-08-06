@@ -3,7 +3,8 @@
   Ensures correct namespace requires and compilation order."
   (:require [clojure.string :as str]
             [clojure.set :as set]
-            [com.rpl.specter :as sp]))
+            [com.rpl.specter :as sp]
+            [generator.naming :as naming]))
 
 ;; =============================================================================
 ;; Dependency Extraction
@@ -24,13 +25,16 @@
       ;; Convert remaining underscores to dots
       (str/replace #"_" "."))) ; then back to dots
 
-(defn package->namespace
-  "Convert protobuf package to Clojure namespace suffix.
+;; Use centralized naming function
+(defn package->namespace-suffix
+  "Get just the namespace suffix part for a package.
   e.g. 'cmd.DayCamera' -> 'cmd.daycamera'"
   [proto-package]
-  (-> proto-package
-      (str/lower-case)
-      (str/replace "_" "-")))
+  (let [full-ns (naming/proto-package->clj-namespace proto-package)
+        prefix "potatoclient.proto."]
+    (if (str/starts-with? full-ns prefix)
+      (subs full-ns (count prefix))
+      full-ns)))
 
 (defn extract-imports-from-file
   "Extract import dependencies from a file EDN structure."
@@ -127,8 +131,8 @@
   "Convert package dependencies to Clojure require specs.
   Returns a vector of require specs like [potatoclient.proto.ser.types :as types]"
   [current-package dep-packages ns-prefix]
-  (let [current-ns (package->namespace current-package)
-        deps-namespaces (map package->namespace dep-packages)
+  (let [current-ns (package->namespace-suffix current-package)
+        deps-namespaces (map package->namespace-suffix dep-packages)
         ;; Filter out self-dependencies (same namespace)
         external-deps (remove #(= % current-ns) deps-namespaces)
         ;; Track used aliases to avoid duplicates

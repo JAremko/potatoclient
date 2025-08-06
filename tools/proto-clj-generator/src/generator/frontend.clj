@@ -9,7 +9,8 @@
             [rewrite-clj.parser :as p]
             [rewrite-clj.node :as n]
             [generator.type-resolution :as type-res]
-            [generator.spec-gen :as spec-gen]))
+            [generator.spec-gen :as spec-gen]
+            [generator.naming :as naming]))
 
 ;; =============================================================================
 ;; Template Loading
@@ -64,7 +65,7 @@
                                             (str/replace #"^\." "")
                                             (str/split #"\.")
                                             last
-                                            csk/->kebab-case))]
+                                            naming/proto-name->clojure-fn-name))]
                       (str "(build-" message-name " (get m " field-key "))"))
                     
                     is-enum?
@@ -119,7 +120,7 @@
                                             (str/replace #"^\." "")
                                             (str/split #"\.")
                                             last
-                                            csk/->kebab-case))]
+                                            naming/proto-name->clojure-fn-name))]
                       (str "(parse-" message-name " (" getter-expr " proto))"))
                     
                     is-enum?
@@ -168,8 +169,8 @@
 (defn generate-enum-def
   "Generate enum definition."
   [enum]
-  (let [values-name (str (csk/->kebab-case (:proto-name enum)) "-values")
-        keywords-name (str (csk/->kebab-case (:proto-name enum)) "-keywords")
+  (let [values-name (str (naming/proto-name->clojure-fn-name (:proto-name enum)) "-values")
+        keywords-name (str (naming/proto-name->clojure-fn-name (:proto-name enum)) "-keywords")
         value-entries (str/join "\n   " (map #(generate-enum-value-entry % enum) (:values enum)))
         keyword-entries (str/join "\n   " (map #(generate-enum-reverse-entry % enum) (:values enum)))]
     (str ";; Enum: " (:proto-name enum) "\n"
@@ -207,7 +208,7 @@
                                               "    (when-let [" var-name " (first (filter (fn [[k v]] (#{"
                                               (str/join " " (map pr-str oneof-field-names))
                                               "} k)) m))]\n"
-                                              "      (build-" (csk/->kebab-case (:proto-name message))
+                                              "      (build-" (naming/proto-name->clojure-fn-name (:proto-name message))
                                               "-payload builder " var-name "))")))
                                       (:oneofs message))))
         
@@ -251,7 +252,7 @@
         oneof-payload (when (seq (:oneofs message))
                        (str "\n    ;; Oneof payload\n"
                             "    true (merge (parse-" 
-                            (csk/->kebab-case (:proto-name message)) 
+                            (naming/proto-name->clojure-fn-name (:proto-name message)) 
                             "-payload proto))"))
         
         replacements {"PARSE-FN-NAME" fn-name
@@ -353,7 +354,7 @@
   "Generate oneof builder function."
   [message oneof type-lookup current-package guardrails?]
   (let [template (load-template-string (if guardrails? "oneof-builder-guardrails.clj" "oneof-builder.clj"))
-        fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
+        fn-name (str "build-" (naming/proto-name->clojure-fn-name (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
         
@@ -371,7 +372,7 @@
   "Generate oneof parser function."
   [message oneof type-lookup current-package guardrails?]
   (let [template (load-template-string (if guardrails? "oneof-parser-guardrails.clj" "oneof-parser.clj"))
-        fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
+        fn-name (str "parse-" (naming/proto-name->clojure-fn-name (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
         
@@ -473,10 +474,10 @@
                                         (str "(declare parse-" (name (:name msg)) ")"))
                                       (for [msg sorted-messages
                                             :when (seq (:oneofs msg))]
-                                        (str "(declare build-" (str/replace (str/lower-case (:proto-name msg)) #"_" "-") "-payload)"))
+                                        (str "(declare build-" (naming/proto-name->clojure-fn-name (:proto-name msg)) "-payload)"))
                                       (for [msg sorted-messages
                                             :when (seq (:oneofs msg))]
-                                        (str "(declare parse-" (str/replace (str/lower-case (:proto-name msg)) #"_" "-") "-payload)"))))
+                                        (str "(declare parse-" (naming/proto-name->clojure-fn-name (:proto-name msg)) "-payload)"))))
                             "\n"))
          
          ;; Generate all message builders/parsers first, then all oneofs
