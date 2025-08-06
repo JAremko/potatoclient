@@ -3,9 +3,15 @@
 ## Overview
 This document outlines the plan to remove Kotlin subprocesses (Command and State) and reimplement their functionality using:
 - **[Hato](https://github.com/gnarroway/hato)** - Modern HTTP/WebSocket client for Clojure
-- **[core.async](https://github.com/clojure/core.async)** - Clojure's async programming library
+- **[core.async](https://github.com/clojure/core.async)** - Clojure's async programming library  
 - **[Transit](https://github.com/cognitect/transit-clj)** - Only for video stream subprocess communication
 - **Custom Proto Generator** - Using [rewrite-clj](https://github.com/clj-commons/rewrite-clj) for code generation
+
+## Key Principles
+- **NO BACKWARD COMPATIBILITY NEEDED** - We're building a new system from scratch
+- **Clean Architecture** - Build solid bedrock with no technical debt
+- **Metadata-Driven** - All configuration from proto descriptors, no hardcoding
+- **Simplicity First** - Choose clean solutions over complex compatibility layers
 
 ## Current Architecture Analysis
 
@@ -154,25 +160,32 @@ All subprocesses support:
 3. Structured error handling with Transit logging
 4. Clean separation of concerns (process/core/handlers)
 
-## Refactoring Steps
+## Refactoring Steps - UPDATED PROGRESS
 
-### Phase 1: Research and Planning
+### Phase 1: Research and Planning ✅ COMPLETED
 - [x] Research current Kotlin subprocess implementation
 - [x] Analyze mock-video-stream reference implementation
 - [x] Research protobuf version compatibility issues
 - [x] Research Hato WebSocket capabilities
 - [x] Create detailed implementation plan
 
-### Phase 1.5: Proto Serialization Generator (NEW)
-- [ ] Create new tool: `tools/proto-clj-generator`
-  - [ ] Set up project structure with deps.edn
-  - [ ] Add dependencies: rewrite-clj, core.match, malli, cheshire
+### Phase 1.5: Proto Serialization Generator 🚧 IN PROGRESS
+- [x] Create new tool: `tools/proto-clj-generator`
+  - [x] Set up project structure with deps.edn
+  - [x] Add dependencies: rewrite-clj, core.match, malli, cheshire
   - [ ] Include custom oneof schema from `shared/specs/custom/potatoclient/specs/malli_oneof.clj`
     - [ ] Add shared/specs to classpath
     - [ ] Register custom :oneof schema type in Malli registry
     - [ ] Use same oneof handling as proto-explorer for consistency
+- [x] **NEW: Create metadata-driven dependency resolution system**
+  - [x] Create `proto_registry.clj` - Centralized proto file metadata registry
+  - [x] Create `naming_config.clj` - Configurable naming conventions
+  - [x] Implement dynamic namespace resolution (no hardcoding)
+  - [x] Build comprehensive type lookup from JSON descriptors
+  - [x] Create dynamic alias generation system
+  - [x] Add comprehensive tests for new system
 - [ ] Parse JSON descriptors from proto-explorer
-  - [ ] Read from `tools/proto-explorer/output/json-descriptors/`
+  - [x] Extract file/package/namespace mappings dynamically
   - [ ] Parse message types, fields, oneofs, enums
   - [ ] Build internal representation for code generation
 - [ ] Design rewrite-clj templates for different field types
@@ -435,6 +448,7 @@ We'll generate our own serialization code similar to the existing Kotlin generat
 2. **Generate Clojure code** - Direct map↔protobuf conversion functions
 3. **Keep current protobuf-java 4.x** - No version downgrade needed
 4. **Template-based generation** - Use rewrite-clj + core.match for clean code generation
+5. **Metadata-driven resolution** - No hardcoded namespaces or aliases
 
 #### Code Generation Architecture
 
@@ -522,6 +536,7 @@ We'll generate our own serialization code similar to the existing Kotlin generat
 4. **Maintainable** - Templates are readable and modifiable
 5. **Consistent** - Matches existing Kotlin generator pattern
 6. **Validation** - Malli validation on both AST and runtime data
+7. **No backward compatibility** - Clean implementation from scratch
 
 #### Integration with Existing System
 
@@ -531,7 +546,7 @@ We'll generate our own serialization code similar to the existing Kotlin generat
 **Files**: 
 - `jon_shared_cmd.json` - Command definitions
 - `jon_shared_data.json` - State definitions
-- Individual component files (e.g., `jon_shared_cmd_rotary.json`)
+- Individual component files (e.g., `jon_shared_cmd_cv.json`)
 
 **Example Structure**:
 ```json
@@ -737,6 +752,62 @@ We'll generate our own serialization code similar to the existing Kotlin generat
 5. **Performance**: Reduced IPC overhead
 6. **Maintainability**: All code in one language/process
 7. **Debugging**: Easier debugging without cross-process boundaries
+8. **No Technical Debt**: Clean implementation without backward compatibility
+
+## Recent Progress Summary
+
+### Completed Metadata-Driven Resolution System
+1. **Proto Registry** (`proto_registry.clj`)
+   - Centralized registry for all proto file metadata
+   - Dynamic namespace resolution based on JSON descriptors
+   - No more hardcoded patterns
+
+2. **Naming Configuration** (`naming_config.clj`)
+   - Configurable naming conventions with pattern rules
+   - Flexible alias generation
+   - Extensible without code changes
+
+3. **Updated Type Resolution**
+   - Uses registry for all lookups
+   - Dynamic enum resolution
+   - Metadata-driven approach throughout
+
+4. **Fixed Dependency Graph**
+   - Dynamic alias generation
+   - No hardcoded "types" aliases
+   - Uses registry metadata
+
+5. **Comprehensive Tests**
+   - Full test coverage for new systems
+   - Validates all resolution paths
+   - Tests custom configurations
+
+## Next Steps
+
+1. **Complete Proto Generator Setup**
+   - Add custom oneof schema support
+   - Parse remaining JSON descriptor fields
+   - Design and implement code templates
+
+2. **Implement Code Generation**
+   - Build template system with rewrite-clj
+   - Generate bidirectional converters
+   - Add macro generation for patterns
+
+3. **WebSocket Infrastructure**
+   - Implement Hato WebSocket wrappers
+   - Create core.async channel topology
+   - Build reconnection logic
+
+4. **Replace Subprocesses**
+   - Command subprocess first
+   - Then state subprocess
+   - Full integration testing
+
+5. **Cleanup and Documentation**
+   - Remove all Kotlin code
+   - Update build systems
+   - Complete documentation
 
 ## Additional Resources
 
@@ -763,16 +834,20 @@ We'll generate our own serialization code similar to the existing Kotlin generat
 tools/proto-clj-generator/
 ├── src/
 │   ├── generator/
-│   │   ├── core.clj          # Main generator logic
-│   │   ├── templates.clj     # rewrite-clj templates
-│   │   ├── parser.clj        # JSON descriptor parsing
-│   │   └── validation.clj    # Malli AST validation
-│   └── main.clj              # CLI entry point
+│   │   ├── core.clj              # Main generator logic
+│   │   ├── templates.clj         # rewrite-clj templates
+│   │   ├── parser.clj            # JSON descriptor parsing
+│   │   ├── validation.clj        # Malli AST validation
+│   │   ├── proto_registry.clj    # ✅ DONE - Metadata registry
+│   │   ├── naming_config.clj     # ✅ DONE - Naming conventions
+│   │   └── type_resolution.clj   # ✅ UPDATED - Uses registry
+│   └── main.clj                  # CLI entry point
 ├── test/
 │   └── generator/
-│       ├── roundtrip_test.clj # Test generated code
-│       └── templates_test.clj # Test template generation
-└── deps.edn                   # Dependencies
+│       ├── proto_registry_test.clj # ✅ DONE - Registry tests
+│       ├── roundtrip_test.clj      # Test generated code
+│       └── templates_test.clj      # Test template generation
+└── deps.edn                        # Dependencies
 ```
 
 **Key Dependencies**:
@@ -784,7 +859,7 @@ tools/proto-clj-generator/
 ```
 
 **Generation Process**:
-1. Read JSON descriptors from `proto-explorer` output
+1. Load JSON descriptors into registry ✅
 2. Parse into internal representation
 3. Generate AST using rewrite-clj templates
 4. Validate AST with Malli schemas
@@ -825,34 +900,11 @@ tools/proto-clj-generator/
 - **Remove**: Kotlin subprocesses (after migration)
 - **Remove**: tools/proto-explorer/generate-kotlin-handlers.clj (no longer needed)
 
-## Next Steps
+## Guiding Principles
 
-1. **Create tools/proto-clj-generator**
-   - Set up project structure
-   - Add required dependencies
-   - Create main entry point
-
-2. **Implement JSON descriptor parsing**
-   - Read descriptors from `tools/proto-explorer/output/json-descriptors/`
-   - Build internal representation
-   - Handle all protobuf features (oneof, repeated, nested)
-
-3. **Design and implement rewrite-clj templates**
-   - Create templates for different field types
-   - Generate macros for common patterns
-   - Add AST validation with Malli
-
-4. **Generate conversion code**
-   - Generate bidirectional converters
-   - Add proper namespaces and imports
-   - Include comprehensive docstrings
-
-5. **Test generated code**
-   - Roundtrip tests for all message types
-   - Property-based testing with generators
-   - Performance benchmarks
-
-6. **Implement WebSocket infrastructure**
-   - Create Hato WebSocket clients
-   - Design core.async channel topology
-   - Add reconnection and rate limiting
+1. **Clean Slate**: No backward compatibility needed - we're building new
+2. **Metadata-Driven**: All configuration from data, not code
+3. **Simple Over Complex**: Choose straightforward solutions
+4. **Performance**: Direct conversions without intermediate formats
+5. **Testability**: Everything must be testable in isolation
+6. **No Technical Debt**: Build it right the first time

@@ -5,7 +5,8 @@
             [clojure.set :as set]
             [com.rpl.specter :as sp]
             [generator.naming :as naming]
-            [generator.frontend-namespaced :refer [file->namespace-suffix]]))
+            [generator.frontend-namespaced :refer [file->namespace-suffix]]
+            [generator.proto-registry :as registry]))
 
 ;; =============================================================================
 ;; Dependency Extraction
@@ -144,13 +145,13 @@
     (vec (for [dep-ns external-deps
                :let [full-ns (str ns-prefix "." dep-ns)
                      ;; Generate a meaningful alias from the namespace
-                     base-alias (cond
-                                 ;; For ser.types namespace, use "types" as alias
-                                 (str/starts-with? dep-ns "ser.") "types"
-                                 ;; For simple "ser" namespace (legacy), also use "types"
-                                 (= dep-ns "ser") "types"
-                                 ;; For nested namespaces like cmd.daycamera, use last part
-                                 :else (last (str/split dep-ns #"\.")))
+                     ;; Generate alias using registry metadata
+                     dep-file (first (filter #(= (file->namespace-suffix (:name %) (:package %)) dep-ns) dep-files))
+                     base-alias (if dep-file
+                                 ;; Use registry to generate alias from filename
+                                 (name (registry/filename->alias (registry/get-naming-config) (:name dep-file)))
+                                 ;; Fallback to last part of namespace
+                                 (last (str/split dep-ns #"\.")))
                      ;; Handle duplicate aliases by appending a number
                      alias (loop [candidate base-alias
                                   n 2]
