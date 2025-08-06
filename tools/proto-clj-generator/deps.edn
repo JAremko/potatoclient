@@ -27,16 +27,20 @@
                       {:git/tag "v0.5.1" :git/sha "dfb30dd"}
                       lambdaisland/deep-diff2 {:mvn/version "2.12.219"}
                       org.clojure/tools.reader {:mvn/version "1.5.0"}
-                      com.fulcrologic/guardrails {:mvn/version "1.2.4"}
-                      org.clojure/test.check {:mvn/version "1.1.1"}
-                      com.gfredericks/test.chuck {:mvn/version "0.2.14"}}
+                      com.fulcrologic/guardrails {:mvn/version "1.2.4"}}
          :exec-fn cognitect.test-runner.api/test}
   
   :gen {:exec-fn generator.main/generate
         :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
                     :output-dir "/home/jare/git/potatoclient/shared"
-                    :namespace-prefix "potatoclient.proto"}}
+                    :namespace-prefix "potatoclient.proto"
+                    :guardrails? true}}
   
+  :gen-single {:exec-fn generator.main/generate
+               :exec-args {:input-dir "../../tools/proto-explorer/output/json-descriptors"
+                           :output-dir "generated-single"
+                           :namespace-prefix "potatoclient.proto"
+                           :namespace-mode :single}}
   
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.5"}}
           :ns-default build}
@@ -49,4 +53,4 @@
                      :exec-args {:namespaces [potatoclient.proto.cmd potatoclient.proto.ser]}}
   
   :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}}
-          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}}
+          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}

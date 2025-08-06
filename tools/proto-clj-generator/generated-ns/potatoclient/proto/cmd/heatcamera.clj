@@ -1,206 +1,49 @@
 (ns potatoclient.proto.cmd.heatcamera
   "Generated protobuf functions."
-  (:require [malli.core :as m]
-            [potatoclient.proto.ser :as types])
   (:import
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Root
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel
-    cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode
-    cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode
-    cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode
-    cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE
-    cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop
-    cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn
-    cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut
-    cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop
-    cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus
-    cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom
-    cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos
-    cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Start
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Stop
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Halt
-    cmd.HeatCamera.JonSharedCmdHeatCamera$Photo
-    cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus
-    cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom
-    cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable))
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Root
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel
+   cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode
+   cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode
+   cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode
+   cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE
+   cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop
+   cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn
+   cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut
+   cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop
+   cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus
+   cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom
+   cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos
+   cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Start
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Stop
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Halt
+   cmd.HeatCamera.JonSharedCmdHeatCamera$Photo
+   cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus
+   cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom
+   cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable))
 
 ;; =============================================================================
 ;; Enums
 ;; =============================================================================
 
 ;; No enums
-
-;; =============================================================================
-;; Malli Specs
-;; =============================================================================
-
-(def root-spec
-  "Malli spec for root message"
-  [:map
-   [:cmd
-    [:altn
-     {:set-dde-level [:map [:set-dde-level :cmd.heatcamera/set-dde-level]],
-      :set-calib-mode [:map [:set-calib-mode :cmd.heatcamera/set-calib-mode]],
-      :zoom [:map [:zoom :cmd.heatcamera/zoom]],
-      :set-agc [:map [:set-agc :cmd.heatcamera/set-agc]],
-      :shift-dde [:map [:shift-dde :cmd.heatcamera/shift-dde]],
-      :set-filter [:map [:set-filter :cmd.heatcamera/set-filters]],
-      :set-clahe-level [:map
-                        [:set-clahe-level :cmd.heatcamera/set-clahe-level]],
-      :disable-dde [:map [:disable-dde :cmd.heatcamera/disable-dde]],
-      :prev-fx-mode [:map [:prev-fx-mode :cmd.heatcamera/prev-fx-mode]],
-      :start [:map [:start :cmd.heatcamera/start]],
-      :focus-step-minus [:map
-                         [:focus-step-minus :cmd.heatcamera/focus-step-minus]],
-      :set-digital-zoom-level
-        [:map [:set-digital-zoom-level :cmd.heatcamera/set-digital-zoom-level]],
-      :enable-dde [:map [:enable-dde :cmd.heatcamera/enable-dde]],
-      :focus-stop [:map [:focus-stop :cmd.heatcamera/focus-stop]],
-      :stop [:map [:stop :cmd.heatcamera/stop]],
-      :reset-zoom [:map [:reset-zoom :cmd.heatcamera/reset-zoom]],
-      :zoom-out [:map [:zoom-out :cmd.heatcamera/zoom-out]],
-      :photo [:map [:photo :cmd.heatcamera/photo]],
-      :zoom-in [:map [:zoom-in :cmd.heatcamera/zoom-in]],
-      :get-meteo [:map [:get-meteo :cmd.heatcamera/get-meteo]],
-      :focus-step-plus [:map
-                        [:focus-step-plus :cmd.heatcamera/focus-step-plus]],
-      :set-fx-mode [:map [:set-fx-mode :cmd.heatcamera/set-fx-mode]],
-      :refresh-fx-mode [:map
-                        [:refresh-fx-mode :cmd.heatcamera/refresh-fx-mode]],
-      :focus-out [:map [:focus-out :cmd.heatcamera/focus-out]],
-      :set-auto-focus [:map [:set-auto-focus :cmd.heatcamera/set-auto-focus]],
-      :zoom-stop [:map [:zoom-stop :cmd.heatcamera/zoom-stop]],
-      :save-to-table [:map [:save-to-table :cmd.heatcamera/save-to-table]],
-      :next-fx-mode [:map [:next-fx-mode :cmd.heatcamera/next-fx-mode]],
-      :calibrate [:map [:calibrate :cmd.heatcamera/calibrate]],
-      :shift-clahe-level
-        [:map [:shift-clahe-level :cmd.heatcamera/shift-clahe-level]],
-      :focus-in [:map [:focus-in :cmd.heatcamera/focus-in]]}]]])
-
-(def set-fx-mode-spec
-  "Malli spec for set-fx-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-fx-mode-heat]]])
-
-(def set-clahe-level-spec
-  "Malli spec for set-clahe-level message"
-  [:map [:value [:maybe :float]]])
-
-(def shift-clahe-level-spec
-  "Malli spec for shift-clahe-level message"
-  [:map [:value [:maybe :float]]])
-
-(def next-fx-mode-spec "Malli spec for next-fx-mode message" [:map])
-
-(def prev-fx-mode-spec "Malli spec for prev-fx-mode message" [:map])
-
-(def refresh-fx-mode-spec "Malli spec for refresh-fx-mode message" [:map])
-
-(def enable-dde-spec "Malli spec for enable-dde message" [:map])
-
-(def disable-dde-spec "Malli spec for disable-dde message" [:map])
-
-(def set-value-spec
-  "Malli spec for set-value message"
-  [:map [:value [:maybe :float]]])
-
-(def set-dde-level-spec
-  "Malli spec for set-dde-level message"
-  [:map [:value [:maybe :int]]])
-
-(def set-digital-zoom-level-spec
-  "Malli spec for set-digital-zoom-level message"
-  [:map [:value [:maybe :float]]])
-
-(def shift-dde-spec
-  "Malli spec for shift-dde message"
-  [:map [:value [:maybe :int]]])
-
-(def zoom-in-spec "Malli spec for zoom-in message" [:map])
-
-(def zoom-out-spec "Malli spec for zoom-out message" [:map])
-
-(def zoom-stop-spec "Malli spec for zoom-stop message" [:map])
-
-(def focus-in-spec "Malli spec for focus-in message" [:map])
-
-(def focus-out-spec "Malli spec for focus-out message" [:map])
-
-(def focus-stop-spec "Malli spec for focus-stop message" [:map])
-
-(def focus-step-plus-spec "Malli spec for focus-step-plus message" [:map])
-
-(def focus-step-minus-spec "Malli spec for focus-step-minus message" [:map])
-
-(def calibrate-spec "Malli spec for calibrate message" [:map])
-
-(def zoom-spec
-  "Malli spec for zoom message"
-  [:map
-   [:cmd
-    [:altn
-     {:set-zoom-table-value
-        [:map [:set-zoom-table-value :cmd.heatcamera/set-zoom-table-value]],
-      :next-zoom-table-pos
-        [:map [:next-zoom-table-pos :cmd.heatcamera/next-zoom-table-pos]],
-      :prev-zoom-table-pos
-        [:map [:prev-zoom-table-pos :cmd.heatcamera/prev-zoom-table-pos]]}]]])
-
-(def next-zoom-table-pos-spec
-  "Malli spec for next-zoom-table-pos message"
-  [:map])
-
-(def prev-zoom-table-pos-spec
-  "Malli spec for prev-zoom-table-pos message"
-  [:map])
-
-(def set-calib-mode-spec "Malli spec for set-calib-mode message" [:map])
-
-(def set-zoom-table-value-spec
-  "Malli spec for set-zoom-table-value message"
-  [:map [:value [:maybe :int]]])
-
-(def set-agc-spec
-  "Malli spec for set-agc message"
-  [:map [:value [:maybe :ser/jon-gui-data-video-channel-heat-agc-modes]]])
-
-(def set-filters-spec
-  "Malli spec for set-filters message"
-  [:map [:value [:maybe :ser/jon-gui-data-video-channel-heat-filters]]])
-
-(def start-spec "Malli spec for start message" [:map])
-
-(def stop-spec "Malli spec for stop message" [:map])
-
-(def halt-spec "Malli spec for halt message" [:map])
-
-(def photo-spec "Malli spec for photo message" [:map])
-
-(def get-meteo-spec "Malli spec for get-meteo message" [:map])
-
-(def set-auto-focus-spec
-  "Malli spec for set-auto-focus message"
-  [:map [:value [:maybe :boolean]]])
-
-(def reset-zoom-spec "Malli spec for reset-zoom message" [:map])
-
-(def save-to-table-spec "Malli spec for save-to-table message" [:map])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -290,22 +133,9 @@
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
-    ;; Handle oneof: cmd
-    (when-let [cmd-field (first (filter
-                                  (fn [[k v]]
-                                    (#{:zoom :set-agc :set-filter :start :stop
-                                       :photo :zoom-in :zoom-out :zoom-stop
-                                       :focus-in :focus-out :focus-stop
-                                       :calibrate :set-dde-level :enable-dde
-                                       :disable-dde :set-auto-focus
-                                       :focus-step-plus :focus-step-minus
-                                       :set-fx-mode :next-fx-mode :prev-fx-mode
-                                       :get-meteo :shift-dde :refresh-fx-mode
-                                       :reset-zoom :save-to-table
-                                       :set-calib-mode :set-digital-zoom-level
-                                       :set-clahe-level :shift-clahe-level}
-                                     k))
-                                  m))]
+
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:zoom :set-agc :set-filter :start :stop :photo :zoom-in :zoom-out :zoom-stop :focus-in :focus-out :focus-stop :calibrate :set-dde-level :enable-dde :disable-dde :set-auto-focus :focus-step-plus :focus-step-minus :set-fx-mode :next-fx-mode :prev-fx-mode :get-meteo :shift-dde :refresh-fx-mode :reset-zoom :save-to-table :set-calib-mode :set-digital-zoom-level :set-clahe-level :shift-clahe-level} k)) m))]
       (build-root-payload builder cmd-field))
     (.build builder)))
 
@@ -315,57 +145,63 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
-      (.setMode builder
-                (get types/jon-gui-data-fx-mode-heat-values (get m :mode))))
+      (.setMode builder (get jon-gui-data-fx-mode-heat-values (get m :mode))))
+
     (.build builder)))
 
 (defn build-set-clahe-level
   "Build a SetClaheLevel protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-shift-clahe-level
   "Build a ShiftClaheLevel protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-next-fx-mode
   "Build a NextFxMode protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode/newBuilder)]
+
     (.build builder)))
 
 (defn build-prev-fx-mode
   "Build a PrevFxMode protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode/newBuilder)]
+
     (.build builder)))
 
 (defn build-refresh-fx-mode
   "Build a RefreshFxMode protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
+
     (.build builder)))
 
 (defn build-enable-dde
   "Build a EnableDDE protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE/newBuilder)]
+
     (.build builder)))
 
 (defn build-disable-dde
   "Build a DisableDDE protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE/newBuilder)]
+
     (.build builder)))
 
 (defn build-set-value
@@ -373,7 +209,9 @@
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-set-dde-level
@@ -381,17 +219,19 @@
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
   [m]
-  (let
-    [builder
-       (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-shift-dde
@@ -399,106 +239,113 @@
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-zoom-in
   "Build a ZoomIn protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn/newBuilder)]
+
     (.build builder)))
 
 (defn build-zoom-out
   "Build a ZoomOut protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut/newBuilder)]
+
     (.build builder)))
 
 (defn build-zoom-stop
   "Build a ZoomStop protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop/newBuilder)]
+
     (.build builder)))
 
 (defn build-focus-in
   "Build a FocusIn protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn/newBuilder)]
+
     (.build builder)))
 
 (defn build-focus-out
   "Build a FocusOut protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut/newBuilder)]
+
     (.build builder)))
 
 (defn build-focus-stop
   "Build a FocusStop protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop/newBuilder)]
+
     (.build builder)))
 
 (defn build-focus-step-plus
   "Build a FocusStepPlus protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
+
     (.build builder)))
 
 (defn build-focus-step-minus
   "Build a FocusStepMinus protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
+
     (.build builder)))
 
 (defn build-calibrate
   "Build a Calibrate protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate/newBuilder)]
+
     (.build builder)))
 
 (defn build-zoom
   "Build a Zoom protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
-    ;; Handle oneof: cmd
-    (when-let [cmd-field (first (filter (fn [[k v]]
-                                          (#{:set-zoom-table-value
-                                             :next-zoom-table-pos
-                                             :prev-zoom-table-pos}
-                                           k))
-                                  m))]
+
+;; Handle oneof: cmd
+    (when-let [cmd-field (first (filter (fn [[k v]] (#{:set-zoom-table-value :next-zoom-table-pos :prev-zoom-table-pos} k)) m))]
       (build-zoom-payload builder cmd-field))
     (.build builder)))
 
 (defn build-next-zoom-table-pos
   "Build a NextZoomTablePos protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
+
     (.build builder)))
 
 (defn build-prev-zoom-table-pos
   "Build a PrevZoomTablePos protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
+
     (.build builder)))
 
 (defn build-set-calib-mode
   "Build a SetCalibMode protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode/newBuilder)]
+
     (.build builder)))
 
 (defn build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
   [m]
-  (let [builder
-          (cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue/newBuilder)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-set-agc
@@ -507,9 +354,8 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-      (.setValue builder
-                 (get types/jon-gui-data-video-channel-heat-agc-modes-values
-                      (get m :value))))
+      (.setValue builder (get jon-gui-data-video-channel-heat-agc-modes-values (get m :value))))
+
     (.build builder)))
 
 (defn build-set-filters
@@ -518,39 +364,43 @@
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value)
-      (.setValue builder
-                 (get types/jon-gui-data-video-channel-heat-filters-values
-                      (get m :value))))
+      (.setValue builder (get jon-gui-data-video-channel-heat-filters-values (get m :value))))
+
     (.build builder)))
 
 (defn build-start
   "Build a Start protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Start/newBuilder)]
+
     (.build builder)))
 
 (defn build-stop
   "Build a Stop protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Stop/newBuilder)]
+
     (.build builder)))
 
 (defn build-halt
   "Build a Halt protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Halt/newBuilder)]
+
     (.build builder)))
 
 (defn build-photo
   "Build a Photo protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Photo/newBuilder)]
+
     (.build builder)))
 
 (defn build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo/newBuilder)]
+
     (.build builder)))
 
 (defn build-set-auto-focus
@@ -558,26 +408,31 @@
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :value)
+      (.setValue builder (get m :value)))
+
     (.build builder)))
 
 (defn build-reset-zoom
   "Build a ResetZoom protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom/newBuilder)]
+
     (.build builder)))
 
 (defn build-save-to-table
   "Build a SaveToTable protobuf message from a map."
   [m]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable/newBuilder)]
+
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
   (cond-> {}
-    ;; Oneof payload
+
+;; Oneof payload
     true (merge (parse-root-payload proto))))
 
 (defn parse-set-fx-mode
@@ -585,8 +440,7 @@
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
   (cond-> {}
     ;; Regular fields
-    true (assoc :mode
-           (get types/jon-gui-data-fx-mode-heat-keywords (.getMode proto)))))
+    true (assoc :mode (get jon-gui-data-fx-mode-heat-keywords (.getMode proto)))))
 
 (defn parse-set-clahe-level
   "Parse a SetClaheLevel protobuf message to a map."
@@ -704,7 +558,8 @@
   "Parse a Zoom protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
   (cond-> {}
-    ;; Oneof payload
+
+;; Oneof payload
     true (merge (parse-zoom-payload proto))))
 
 (defn parse-next-zoom-table-pos
@@ -734,18 +589,14 @@
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
   (cond-> {}
     ;; Regular fields
-    true (assoc :value
-           (get types/jon-gui-data-video-channel-heat-agc-modes-keywords
-                (.getValue proto)))))
+    true (assoc :value (get jon-gui-data-video-channel-heat-agc-modes-keywords (.getValue proto)))))
 
 (defn parse-set-filters
   "Parse a SetFilters protobuf message to a map."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
   (cond-> {}
     ;; Regular fields
-    true (assoc :value
-           (get types/jon-gui-data-video-channel-heat-filters-keywords
-                (.getValue proto)))))
+    true (assoc :value (get jon-gui-data-video-channel-heat-filters-keywords (.getValue proto)))))
 
 (defn parse-start
   "Parse a Start protobuf message to a map."
@@ -811,8 +662,7 @@
     :disable-dde (.setDisableDde builder (build-disable-dde value))
     :set-auto-focus (.setSetAutoFocus builder (build-set-auto-focus value))
     :focus-step-plus (.setFocusStepPlus builder (build-focus-step-plus value))
-    :focus-step-minus (.setFocusStepMinus builder
-                                          (build-focus-step-minus value))
+    :focus-step-minus (.setFocusStepMinus builder (build-focus-step-minus value))
     :set-fx-mode (.setSetFxMode builder (build-set-fx-mode value))
     :next-fx-mode (.setNextFxMode builder (build-next-fx-mode value))
     :prev-fx-mode (.setPrevFxMode builder (build-prev-fx-mode value))
@@ -822,24 +672,19 @@
     :reset-zoom (.setResetZoom builder (build-reset-zoom value))
     :save-to-table (.setSaveToTable builder (build-save-to-table value))
     :set-calib-mode (.setSetCalibMode builder (build-set-calib-mode value))
-    :set-digital-zoom-level
-      (.setSetDigitalZoomLevel builder (build-set-digital-zoom-level value))
+    :set-digital-zoom-level (.setSetDigitalZoomLevel builder (build-set-digital-zoom-level value))
     :set-clahe-level (.setSetClaheLevel builder (build-set-clahe-level value))
-    :shift-clahe-level (.setShiftClaheLevel builder
-                                            (build-shift-clahe-level value))
-    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
+    :shift-clahe-level (.setShiftClaheLevel builder (build-shift-clahe-level value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
 
 (defn build-zoom-payload
   "Build the oneof payload for Zoom."
   [builder [field-key value]]
   (case field-key
-    :set-zoom-table-value
-      (.setSetZoomTableValue builder (build-set-zoom-table-value value))
-    :next-zoom-table-pos
-      (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
-    :prev-zoom-table-pos
-      (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
-    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
+    :set-zoom-table-value (.setSetZoomTableValue builder (build-set-zoom-table-value value))
+    :next-zoom-table-pos (.setNextZoomTablePos builder (build-next-zoom-table-pos value))
+    :prev-zoom-table-pos (.setPrevZoomTablePos builder (build-prev-zoom-table-pos value))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
 
 (defn parse-root-payload
   "Parse the oneof payload from Root."
@@ -847,8 +692,7 @@
   (cond
     (.hasZoom proto) {:zoom (parse-zoom (.getZoom proto))}
     (.hasSetAgc proto) {:set-agc (parse-set-agc (.getSetAgc proto))}
-    (.hasSetFilter proto) {:set-filter (parse-set-filters (.getSetFilter
-                                                            proto))}
+    (.hasSetFilter proto) {:set-filter (parse-set-filters (.getSetFilter proto))}
     (.hasStart proto) {:start (parse-start (.getStart proto))}
     (.hasStop proto) {:stop (parse-stop (.getStop proto))}
     (.hasPhoto proto) {:photo (parse-photo (.getPhoto proto))}
@@ -859,50 +703,29 @@
     (.hasFocusOut proto) {:focus-out (parse-focus-out (.getFocusOut proto))}
     (.hasFocusStop proto) {:focus-stop (parse-focus-stop (.getFocusStop proto))}
     (.hasCalibrate proto) {:calibrate (parse-calibrate (.getCalibrate proto))}
-    (.hasSetDdeLevel proto) {:set-dde-level (parse-set-dde-level
-                                              (.getSetDdeLevel proto))}
+    (.hasSetDdeLevel proto) {:set-dde-level (parse-set-dde-level (.getSetDdeLevel proto))}
     (.hasEnableDde proto) {:enable-dde (parse-enable-dde (.getEnableDde proto))}
-    (.hasDisableDde proto) {:disable-dde (parse-disable-dde (.getDisableDde
-                                                              proto))}
-    (.hasSetAutoFocus proto) {:set-auto-focus (parse-set-auto-focus
-                                                (.getSetAutoFocus proto))}
-    (.hasFocusStepPlus proto) {:focus-step-plus (parse-focus-step-plus
-                                                  (.getFocusStepPlus proto))}
-    (.hasFocusStepMinus proto) {:focus-step-minus (parse-focus-step-minus
-                                                    (.getFocusStepMinus proto))}
-    (.hasSetFxMode proto) {:set-fx-mode (parse-set-fx-mode (.getSetFxMode
-                                                             proto))}
-    (.hasNextFxMode proto) {:next-fx-mode (parse-next-fx-mode (.getNextFxMode
-                                                                proto))}
-    (.hasPrevFxMode proto) {:prev-fx-mode (parse-prev-fx-mode (.getPrevFxMode
-                                                                proto))}
+    (.hasDisableDde proto) {:disable-dde (parse-disable-dde (.getDisableDde proto))}
+    (.hasSetAutoFocus proto) {:set-auto-focus (parse-set-auto-focus (.getSetAutoFocus proto))}
+    (.hasFocusStepPlus proto) {:focus-step-plus (parse-focus-step-plus (.getFocusStepPlus proto))}
+    (.hasFocusStepMinus proto) {:focus-step-minus (parse-focus-step-minus (.getFocusStepMinus proto))}
+    (.hasSetFxMode proto) {:set-fx-mode (parse-set-fx-mode (.getSetFxMode proto))}
+    (.hasNextFxMode proto) {:next-fx-mode (parse-next-fx-mode (.getNextFxMode proto))}
+    (.hasPrevFxMode proto) {:prev-fx-mode (parse-prev-fx-mode (.getPrevFxMode proto))}
     (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo proto))}
     (.hasShiftDde proto) {:shift-dde (parse-shift-dde (.getShiftDde proto))}
-    (.hasRefreshFxMode proto) {:refresh-fx-mode (parse-refresh-fx-mode
-                                                  (.getRefreshFxMode proto))}
+    (.hasRefreshFxMode proto) {:refresh-fx-mode (parse-refresh-fx-mode (.getRefreshFxMode proto))}
     (.hasResetZoom proto) {:reset-zoom (parse-reset-zoom (.getResetZoom proto))}
-    (.hasSaveToTable proto) {:save-to-table (parse-save-to-table
-                                              (.getSaveToTable proto))}
-    (.hasSetCalibMode proto) {:set-calib-mode (parse-set-calib-mode
-                                                (.getSetCalibMode proto))}
-    (.hasSetDigitalZoomLevel proto) {:set-digital-zoom-level
-                                       (parse-set-digital-zoom-level
-                                         (.getSetDigitalZoomLevel proto))}
-    (.hasSetClaheLevel proto) {:set-clahe-level (parse-set-clahe-level
-                                                  (.getSetClaheLevel proto))}
-    (.hasShiftClaheLevel proto) {:shift-clahe-level (parse-shift-clahe-level
-                                                      (.getShiftClaheLevel
-                                                        proto))}))
+    (.hasSaveToTable proto) {:save-to-table (parse-save-to-table (.getSaveToTable proto))}
+    (.hasSetCalibMode proto) {:set-calib-mode (parse-set-calib-mode (.getSetCalibMode proto))}
+    (.hasSetDigitalZoomLevel proto) {:set-digital-zoom-level (parse-set-digital-zoom-level (.getSetDigitalZoomLevel proto))}
+    (.hasSetClaheLevel proto) {:set-clahe-level (parse-set-clahe-level (.getSetClaheLevel proto))}
+    (.hasShiftClaheLevel proto) {:shift-clahe-level (parse-shift-clahe-level (.getShiftClaheLevel proto))}))
 
 (defn parse-zoom-payload
   "Parse the oneof payload from Zoom."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-  (cond (.hasSetZoomTableValue proto) {:set-zoom-table-value
-                                         (parse-set-zoom-table-value
-                                           (.getSetZoomTableValue proto))}
-        (.hasNextZoomTablePos proto) {:next-zoom-table-pos
-                                        (parse-next-zoom-table-pos
-                                          (.getNextZoomTablePos proto))}
-        (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos
-                                        (parse-prev-zoom-table-pos
-                                          (.getPrevZoomTablePos proto))}))
+  (cond
+    (.hasSetZoomTableValue proto) {:set-zoom-table-value (parse-set-zoom-table-value (.getSetZoomTableValue proto))}
+    (.hasNextZoomTablePos proto) {:next-zoom-table-pos (parse-next-zoom-table-pos (.getNextZoomTablePos proto))}
+    (.hasPrevZoomTablePos proto) {:prev-zoom-table-pos (parse-prev-zoom-table-pos (.getPrevZoomTablePos proto))}))

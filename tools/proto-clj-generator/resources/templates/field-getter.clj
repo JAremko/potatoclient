@@ -1,1 +1,1 @@
-(.hasFIELD-METHOD proto) (assoc FIELD-KEY VALUE-EXPR)
+(METHOD-NAME proto) (assoc FIELD-KEY GETTER-NAME)

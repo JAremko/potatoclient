@@ -182,7 +182,6 @@
      :proto-name (:name message)
      :java-class java-class
      :package (:package context)  ;; Include package info
-     :filename (:filename context) ;; Include filename info
      :fields (mapv field->edn 
                    (remove #(some? (:oneofIndex %)) fields))
      :oneofs (vec (map-indexed 
@@ -203,7 +202,6 @@
    :proto-name (:name enum)
    :java-class (generate-java-class-name context (:name enum) parent-names)
    :package (:package context)  ;; Include package info
-   :filename (:filename context) ;; Include filename info
    :values (mapv (fn [v] 
                    {:name (-> (:name v)
                              ;; Pre-process to handle special cases like 1D, 2D, 3D
@@ -223,7 +221,6 @@
                                  (str/replace #"\.proto$" "")
                                  (csk/->PascalCase)))
         context {:package (:package file)
-                 :filename (:name file)
                  :java-package (sp/select-first [:options :javaPackage] file)
                  :java-outer-classname (or (sp/select-first [:options :javaOuterClassname] file)
                                           default-outer-class)}]

@@ -2,7 +2,7 @@
   "Basic roundtrip tests without Malli validation"
   (:require [clojure.test :refer :all]
             [potatoclient.proto.cmd :as cmd]
-            [potatoclient.proto.state :as state]
+            [potatoclient.proto.ser :as ser]
             [potatoclient.proto.cmd.daycamera :as daycamera]
             [potatoclient.proto.cmd.heatcamera :as heatcamera]
             [potatoclient.proto.cmd.system :as system])

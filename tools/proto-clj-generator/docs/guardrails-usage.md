@@ -115,9 +115,12 @@ When adding custom functions to work with generated code:
 - Performance impact is acceptable
 
 ### Production Mode
-Note: All generated code now uses guardrails by default. The `:guardrails?` parameter has been removed.
+Generate without guardrails:
+```bash
+clojure -X:gen :guardrails? false
+```
 
-You can disable guardrails at runtime if needed:
+Or disable at runtime:
 ```clojure
 ;; In production config
 (require '[com.fulcrologic.guardrails.config :as gr])
@@ -194,7 +197,7 @@ If validation is slow:
 
 ### Missing Specs in Generated Code
 This shouldn't happen, but if it does:
-1. All generated code now uses guardrails by default
+1. Check the generator ran with `:guardrails? true`
 2. Regenerate the code
 3. File a bug report
 

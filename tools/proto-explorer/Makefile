@@ -1,11 +1,11 @@
 # Proto Explorer - Self-Documenting Build System
 # 
 # This Makefile integrates with the protogen tool to generate JSON descriptors
-# for protobuf analysis.
+# and convert them to Malli specs for protobuf validation.
 #
 # Key Features:
-# - JSON descriptor generation
-# - Protobuf analysis tools
+# - Generates Malli specs with buf.validate constraint support
+# - Provides constraint-aware test data generation
 # - Supports both REPL and CLI interfaces
 #
 # Default target shows help
@@ -17,6 +17,7 @@ PROTO_DIR = proto
 OUTPUT_DIR = output
 JSON_DESCRIPTORS_DIR = $(OUTPUT_DIR)/json-descriptors
 JAVA_DIR = $(OUTPUT_DIR)/java
+SPECS_DIR = ../../shared/specs/protobuf
 REPORTS_DIR = reports
 
 # Colors for output
@@ -36,7 +37,7 @@ help: ## Show all available commands with detailed descriptions
 	@grep -E '^(generate-all|clean|test):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "GENERATION STEPS:"
-	@grep -E '^(copy-protos|generate-descriptors):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(copy-protos|generate-descriptors|generate-specs):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "DEVELOPMENT:"
 	@grep -E '^(repl|test-json-parser|analyze-descriptors):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -54,7 +55,7 @@ help: ## Show all available commands with detailed descriptions
 proto: copy-protos generate-descriptors ## Alias for generating proto files and JSON descriptors
 
 .PHONY: generate-all
-generate-all: proto ## Complete generation pipeline: protos → JSON
+generate-all: proto generate-specs ## Complete generation pipeline: protos → JSON → specs
 
 .PHONY: clean
 clean: ## Remove all generated files and outputs
@@ -94,6 +95,15 @@ generate-descriptors: copy-protos ## Generate JSON descriptors using protogen
 		make generate
 	@echo "$(GREEN)JSON descriptors generated in $(JSON_DESCRIPTORS_DIR)$(NC)"
 
+.PHONY: generate-specs
+generate-specs: ## Generate Malli specs from JSON descriptors
+	@echo "$(GREEN)Generating Malli specs from JSON descriptors...$(NC)"
+	@mkdir -p $(SPECS_DIR)
+	@clojure -M:run generate-specs \
+		--input $(JSON_DESCRIPTORS_DIR) \
+		--output $(SPECS_DIR) \
+		--verbose
+	@echo "$(GREEN)Malli specs generated in $(SPECS_DIR)$(NC)"
 
 ###############################################################################
 # DEVELOPMENT COMMANDS
@@ -195,6 +205,13 @@ format: ## Format code using cljfmt
 # REPORTING COMMANDS
 ###############################################################################
 
+.PHONY: report-specs
+report-specs: ## Generate a report of all generated specs
+	@echo "$(GREEN)Generating spec report...$(NC)"
+	@mkdir -p $(REPORTS_DIR)
+	@clojure -M:run report-specs \
+		--input $(SPECS_DIR) \
+		--output $(REPORTS_DIR)/spec-report.md
 
 .PHONY: report-validation
 report-validation: ## Report on buf.validate constraint coverage
@@ -208,6 +225,21 @@ report-validation: ## Report on buf.validate constraint coverage
 # CLI COMMANDS
 ###############################################################################
 
+.PHONY: cli-find
+cli-find: ## Find specs by pattern using CLI (usage: make cli-find PATTERN=rotary)
+	@bb find $(PATTERN)
+
+.PHONY: cli-spec
+cli-spec: ## Get spec definition using CLI (usage: make cli-spec SPEC=:cmd/ping)
+	@bb spec $(SPEC)
+
+.PHONY: cli-example
+cli-example: ## Generate example data using CLI (usage: make cli-example SPEC=:cmd/ping)
+	@bb example $(SPEC)
+
+.PHONY: cli-examples
+cli-examples: ## Generate multiple examples using CLI (usage: make cli-examples SPEC=:cmd/ping N=5)
+	@bb examples $(SPEC) $(N)
 
 .PHONY: cli-list
 cli-list: ## List all messages using CLI (usage: make cli-list [PACKAGE=cmd])
@@ -229,6 +261,9 @@ java-builder: ## Get Java builder info (usage: make java-builder MSG=Root)
 java-summary: ## Get Java class summary (usage: make java-summary MSG=Root)
 	@clojure -M:run java-summary $(MSG)
 
+.PHONY: cli-stats
+cli-stats: ## Show spec statistics using CLI
+	@bb stats
 
 .PHONY: bb-install
 bb-install: ## Install Babashka if not already installed
@@ -256,6 +291,9 @@ uberjar: ## Build uberjar for proto-explorer (includes Java reflection features)
 
 .PHONY: ci-test
 ci-test: clean generate-all test ## Full CI test suite
+
+.PHONY: ci-validate
+ci-validate: generate-all report-validation ## Validate constraint coverage
 
 .PHONY: install-git-hooks
 install-git-hooks: ## Install git hooks for pre-commit checks

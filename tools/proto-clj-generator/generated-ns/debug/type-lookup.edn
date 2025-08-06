@@ -3,7 +3,6 @@
   :name :zoom,
   :proto-name "Zoom",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -37,7 +36,6 @@
   :name :enable-dde,
   :proto-name "EnableDDE",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -47,7 +45,6 @@
   :proto-name "SetPlatformAzimuth",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -63,7 +60,6 @@
   :proto-name "RotateElevationRelativeSet",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -84,7 +80,6 @@
   :name :save-offsets,
   :proto-name "SaveOffsets",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets",
-  :package "cmd.Lrf_calib",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -93,7 +88,6 @@
   :name :elevation,
   :proto-name "Elevation",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Elevation",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -155,7 +149,6 @@
   :name :jon-gui-data-rec-osd-screen,
   :proto-name "JonGuiDataRecOsdScreen",
   :java-class "ser.JonSharedDataTypes$JonGuiDataRecOsdScreen",
-  :package "ser",
   :values
   [{:name :jon-gui-data-rec-osd-screen-unspecified,
     :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED",
@@ -177,7 +170,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Start",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -187,7 +179,6 @@
   :proto-name "ScanRefreshNodeList",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -196,7 +187,6 @@
   :name :target-designator-off,
   :proto-name "TargetDesignatorOff",
   :java-class "cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -205,7 +195,6 @@
   :name :next-zoom-table-pos,
   :proto-name "NextZoomTablePos",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$NextZoomTablePos",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -214,7 +203,6 @@
   :name :set-value,
   :proto-name "SetValue",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetValue",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -229,7 +217,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.Gps.JonSharedCmdGps$Root",
-  :package "cmd.Gps",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -277,7 +264,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Root",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -468,7 +454,6 @@
   :name :halt-azimuth,
   :proto-name "HaltAzimuth",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -477,7 +462,6 @@
   :name :rotate-azimuth-to,
   :proto-name "RotateAzimuthTo",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :target-value,
     :proto-name "target_value",
@@ -504,7 +488,6 @@
   :name :next-fx-mode,
   :proto-name "NextFxMode",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -513,7 +496,6 @@
   :name :refine-off,
   :proto-name "RefineOff",
   :java-class "cmd.Lrf.JonSharedCmdLrf$RefineOff",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -523,7 +505,6 @@
   :proto-name "Stop",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -532,7 +513,6 @@
   :name :scan-select-node,
   :proto-name "ScanSelectNode",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :index,
     :proto-name "index",
@@ -547,7 +527,6 @@
   :name :disable-day-osd,
   :proto-name "DisableDayOSD",
   :java-class "cmd.OSD.JonSharedCmdOsd$DisableDayOSD",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -556,7 +535,6 @@
   :name :start-rec,
   :proto-name "StartRec",
   :java-class "cmd.System.JonSharedCmdSystem$StartRec",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -565,7 +543,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.Lrf.JonSharedCmdLrf$Start",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -574,7 +551,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.Gps.JonSharedCmdGps$Stop",
-  :package "cmd.Gps",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -583,7 +559,6 @@
   :name :jon-gui-data-rotary,
   :proto-name "JonGuiDataRotary",
   :java-class "ser.JonSharedDataRotary$JonGuiDataRotary",
-  :package "ser",
   :fields
   [{:name :azimuth,
     :proto-name "azimuth",
@@ -694,7 +669,6 @@
   :name :set-azimuth-value,
   :proto-name "SetAzimuthValue",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -715,7 +689,6 @@
   :name :zoom,
   :proto-name "Zoom",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Zoom",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -791,7 +764,6 @@
   :name :set-value,
   :proto-name "SetValue",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -806,7 +778,6 @@
   :name :halt,
   :proto-name "Halt",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Halt",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -815,7 +786,6 @@
   :name :calibrate-cencel,
   :proto-name "CalibrateCencel",
   :java-class "cmd.Compass.JonSharedCmdCompass$CalibrateCencel",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -824,7 +794,6 @@
   :name :axis,
   :proto-name "Axis",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Axis",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :azimuth,
     :proto-name "azimuth",
@@ -845,7 +814,6 @@
   :name :jon-gui-data-rec-osd,
   :proto-name "JonGuiDataRecOsd",
   :java-class "ser.JonSharedDataRecOsd$JonGuiDataRecOsd",
-  :package "ser",
   :fields
   [{:name :screen,
     :proto-name "screen",
@@ -896,7 +864,6 @@
   :name :set-agc,
   :proto-name "SetAGC",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -913,7 +880,6 @@
   :proto-name "setUseRotaryAsCompass",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :flag,
     :proto-name "flag",
@@ -928,7 +894,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.Gps.JonSharedCmdGps$Start",
-  :package "cmd.Gps",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -937,7 +902,6 @@
   :name :jon-gui-data-system-localizations,
   :proto-name "JonGuiDataSystemLocalizations",
   :java-class "ser.JonSharedDataTypes$JonGuiDataSystemLocalizations",
-  :package "ser",
   :values
   [{:name :jon-gui-data-system-localization-unspecified,
     :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED",
@@ -959,7 +923,6 @@
   :name :zoom-stop,
   :proto-name "ZoomStop",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -968,7 +931,6 @@
   :name :jon-gui-data-compass-units,
   :proto-name "JonGuiDataCompassUnits",
   :java-class "ser.JonSharedDataTypes$JonGuiDataCompassUnits",
-  :package "ser",
   :values
   [{:name :jon-gui-data-compass-units-unspecified,
     :proto-name "JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED",
@@ -990,7 +952,6 @@
   :name :set-auto-iris,
   :proto-name "SetAutoIris",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetAutoIris",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -1005,7 +966,6 @@
   :name :scan-delete-node,
   :proto-name "ScanDeleteNode",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :index,
     :proto-name "index",
@@ -1021,7 +981,6 @@
   :proto-name "GetMeteo",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1030,7 +989,6 @@
   :name :set-filters,
   :proto-name "SetFilters",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -1045,7 +1003,6 @@
   :name :get-pos,
   :proto-name "GetPos",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$GetPos",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1054,7 +1011,6 @@
   :name :move,
   :proto-name "Move",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Move",
-  :package "cmd.DayCamera",
   :fields
   [{:name :target-value,
     :proto-name "target_value",
@@ -1075,7 +1031,6 @@
   :name :refresh-fx-mode,
   :proto-name "RefreshFxMode",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$RefreshFxMode",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1084,7 +1039,6 @@
   :name :save-to-table-focus,
   :proto-name "SaveToTableFocus",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SaveToTableFocus",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1093,7 +1047,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.Lrf.JonSharedCmdLrf$Root",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -1211,7 +1164,6 @@
   :name :set-auto-focus,
   :proto-name "SetAutoFocus",
   :java-class "cmd.CV.JonSharedCmdCv$SetAutoFocus",
-  :package "cmd.CV",
   :fields
   [{:name :channel,
     :proto-name "channel",
@@ -1232,7 +1184,6 @@
   :name :set-calib-mode,
   :proto-name "SetCalibMode",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1241,7 +1192,6 @@
   :name :jon-gui-data-fx-mode-heat,
   :proto-name "JonGuiDataFxModeHeat",
   :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeHeat",
-  :package "ser",
   :values
   [{:name :jon-gui-data-fx-mode-heat-default,
     :proto-name "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT",
@@ -1269,7 +1219,6 @@
   :name :enable-heat-osd,
   :proto-name "EnableHeatOSD",
   :java-class "cmd.OSD.JonSharedCmdOsd$EnableHeatOSD",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1278,7 +1227,6 @@
   :name :offset,
   :proto-name "Offset",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Offset",
-  :package "cmd.DayCamera",
   :fields
   [{:name :offset-value,
     :proto-name "offset_value",
@@ -1293,7 +1241,6 @@
   :name :offsets,
   :proto-name "Offsets",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets",
-  :package "cmd.Lrf_calib",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -1334,7 +1281,6 @@
   :name :reset-focus,
   :proto-name "ResetFocus",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$ResetFocus",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1343,7 +1289,6 @@
   :name :next-zoom-table-pos,
   :proto-name "NextZoomTablePos",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1352,7 +1297,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.Compass.JonSharedCmdCompass$Root",
-  :package "cmd.Compass",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -1445,7 +1389,6 @@
   :name :show-default-screen,
   :proto-name "ShowDefaultScreen",
   :java-class "cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1454,7 +1397,6 @@
   :name :show-lrf-result-screen,
   :proto-name "ShowLRFResultScreen",
   :java-class "cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1463,7 +1405,6 @@
   :name :enable-geodesic-mode,
   :proto-name "EnableGeodesicMode",
   :java-class "cmd.System.JonSharedCmdSystem$EnableGeodesicMode",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1472,7 +1413,6 @@
   :name :stabilization-mode-disable,
   :proto-name "StabilizationModeDisable",
   :java-class "cmd.CV.JonSharedCmdCv$StabilizationModeDisable",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1481,7 +1421,6 @@
   :name :jon-gui-data-rotary-mode,
   :proto-name "JonGuiDataRotaryMode",
   :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryMode",
-  :package "ser",
   :values
   [{:name :jon-gui-data-rotary-mode-unspecified,
     :proto-name "JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED",
@@ -1509,7 +1448,6 @@
   :name :show-lrf-measure-screen,
   :proto-name "ShowLRFMeasureScreen",
   :java-class "cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1519,7 +1457,6 @@
   :proto-name "RotateAzimuthRelativeSet",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -1540,7 +1477,6 @@
   :name :save-to-table,
   :proto-name "SaveToTable",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1549,7 +1485,6 @@
   :name :set-fx-mode,
   :proto-name "SetFxMode",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :mode,
     :proto-name "mode",
@@ -1564,7 +1499,6 @@
   :name :jon-gui-state,
   :proto-name "JonGUIState",
   :java-class "ser.JonSharedData$JonGUIState",
-  :package "ser",
   :fields
   [{:name :protocol-version,
     :proto-name "protocol_version",
@@ -1657,7 +1591,6 @@
   :name :focus-in,
   :proto-name "FocusIn",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1666,7 +1599,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$Root",
-  :package "cmd.Lrf_calib",
   :fields [],
   :oneofs
   [{:name :channel,
@@ -1694,7 +1626,6 @@
   :proto-name "JonGuiDataCompassCalibration",
   :java-class
   "ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration",
-  :package "ser",
   :fields
   [{:name :stage,
     :proto-name "stage",
@@ -1739,7 +1670,6 @@
   :name :jon-gui-data-time,
   :proto-name "JonGuiDataTime",
   :java-class "ser.JonSharedDataTime$JonGuiDataTime",
-  :package "ser",
   :fields
   [{:name :timestamp,
     :proto-name "timestamp",
@@ -1772,7 +1702,6 @@
   :name :set-iris,
   :proto-name "SetIris",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetIris",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -1787,7 +1716,6 @@
   :name :jon-gui-data-gps-fix-type,
   :proto-name "JonGuiDataGpsFixType",
   :java-class "ser.JonSharedDataTypes$JonGuiDataGpsFixType",
-  :package "ser",
   :values
   [{:name :jon-gui-data-gps-fix-type-unspecified,
     :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED",
@@ -1812,7 +1740,6 @@
   :name :calibrate-start-short,
   :proto-name "CalibrateStartShort",
   :java-class "cmd.Compass.JonSharedCmdCompass$CalibrateStartShort",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1821,7 +1748,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Root",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -1955,7 +1881,6 @@
   :proto-name "SetZoomTableValue",
   :java-class
   "cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -1970,7 +1895,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Start",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -1980,7 +1904,6 @@
   :proto-name "JonGuiDataCompassCalibrateStatus",
   :java-class
   "ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus",
-  :package "ser",
   :values
   [{:name :jon-gui-data-compass-calibrate-status-unspecified,
     :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED",
@@ -2008,7 +1931,6 @@
   :name :prev-zoom-table-pos,
   :proto-name "PrevZoomTablePos",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$PrevZoomTablePos",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2017,7 +1939,6 @@
   :name :disable-geodesic-mode,
   :proto-name "DisableGeodesicMode",
   :java-class "cmd.System.JonSharedCmdSystem$DisableGeodesicMode",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2026,7 +1947,6 @@
   :name :refine-target,
   :proto-name "Refine_target",
   :java-class "cmd.Lira.JonSharedCmdLira$Refine_target",
-  :package "cmd.Lira",
   :fields
   [{:name :target,
     :proto-name "target",
@@ -2041,7 +1961,6 @@
   :name :jon-gui-data-video-channel,
   :proto-name "JonGuiDataVideoChannel",
   :java-class "ser.JonSharedDataTypes$JonGuiDataVideoChannel",
-  :package "ser",
   :values
   [{:name :jon-gui-data-video-channel-unspecified,
     :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED",
@@ -2057,7 +1976,6 @@
   :name :enable-day-osd,
   :proto-name "EnableDayOSD",
   :java-class "cmd.OSD.JonSharedCmdOsd$EnableDayOSD",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2066,7 +1984,6 @@
   :name :jon-gui-data-system,
   :proto-name "JonGuiDataSystem",
   :java-class "ser.JonSharedDataSystem$JonGuiDataSystem",
-  :package "ser",
   :fields
   [{:name :cpu-temperature,
     :proto-name "cpu_temperature",
@@ -2207,7 +2124,6 @@
   :name :set-auto-focus,
   :proto-name "SetAutoFocus",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -2222,7 +2138,6 @@
   :name :set-offset-angle-azimuth,
   :proto-name "SetOffsetAngleAzimuth",
   :java-class "cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth",
-  :package "cmd.Compass",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -2237,7 +2152,6 @@
   :name :scan-stop,
   :proto-name "ScanStop",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2246,7 +2160,6 @@
   :name :vampire-mode-enable,
   :proto-name "VampireModeEnable",
   :java-class "cmd.CV.JonSharedCmdCv$VampireModeEnable",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2255,7 +2168,6 @@
   :name :halt,
   :proto-name "Halt",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Halt",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2264,7 +2176,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.JonSharedCmd$Root",
-  :package "cmd",
   :fields
   [{:name :protocol-version,
     :proto-name "protocol_version",
@@ -2412,7 +2323,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2421,7 +2331,6 @@
   :name :jon-gui-data-lira-target,
   :proto-name "JonGuiDataLiraTarget",
   :java-class "cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget",
-  :package "cmd.Lira",
   :fields
   [{:name :timestamp,
     :proto-name "timestamp",
@@ -2497,7 +2406,6 @@
   :proto-name "JonGuiDataActualSpaceTime",
   :java-class
   "ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime",
-  :package "ser",
   :fields
   [{:name :azimuth,
     :proto-name "azimuth",
@@ -2548,7 +2456,6 @@
   :name :next,
   :proto-name "Next",
   :java-class "cmd.Compass.JonSharedCmdCompass$Next",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2557,7 +2464,6 @@
   :name :frozen,
   :proto-name "Frozen",
   :java-class "cmd.JonSharedCmd$Frozen",
-  :package "cmd",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2566,7 +2472,6 @@
   :name :scan-update-node,
   :proto-name "ScanUpdateNode",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :index,
     :proto-name "index",
@@ -2617,7 +2522,6 @@
   :name :jon-gui-data-fx-mode-day,
   :proto-name "JonGuiDataFxModeDay",
   :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeDay",
-  :package "ser",
   :values
   [{:name :jon-gui-data-fx-mode-day-default,
     :proto-name "JON_GUI_DATA_FX_MODE_DAY_DEFAULT",
@@ -2645,7 +2549,6 @@
   :name :dump-stop,
   :proto-name "DumpStop",
   :java-class "cmd.CV.JonSharedCmdCv$DumpStop",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2654,7 +2557,6 @@
   :name :set-clahe-level,
   :proto-name "SetClaheLevel",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -2669,7 +2571,6 @@
   :name :reboot,
   :proto-name "Reboot",
   :java-class "cmd.System.JonSharedCmdSystem$Reboot",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2678,7 +2579,6 @@
   :name :ping,
   :proto-name "Ping",
   :java-class "cmd.JonSharedCmd$Ping",
-  :package "cmd",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2687,7 +2587,6 @@
   :name :dump-start,
   :proto-name "DumpStart",
   :java-class "cmd.CV.JonSharedCmdCv$DumpStart",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2696,7 +2595,6 @@
   :name :halt-elevation,
   :proto-name "HaltElevation",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2705,7 +2603,6 @@
   :name :target-designator-on-mode-b,
   :proto-name "TargetDesignatorOnModeB",
   :java-class "cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2714,7 +2611,6 @@
   :name :halt,
   :proto-name "Halt",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Halt",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2723,7 +2619,6 @@
   :name :scan-node,
   :proto-name "ScanNode",
   :java-class "ser.JonSharedDataRotary$ScanNode",
-  :package "ser",
   :fields
   [{:name :index,
     :proto-name "index",
@@ -2774,7 +2669,6 @@
   :name :jon-gui-data-compass,
   :proto-name "JonGuiDataCompass",
   :java-class "ser.JonSharedDataCompass$JonGuiDataCompass",
-  :package "ser",
   :fields
   [{:name :azimuth,
     :proto-name "azimuth",
@@ -2825,7 +2719,6 @@
   :name :set-manual-position,
   :proto-name "SetManualPosition",
   :java-class "cmd.Gps.JonSharedCmdGps$SetManualPosition",
-  :package "cmd.Gps",
   :fields
   [{:name :latitude,
     :proto-name "latitude",
@@ -2852,7 +2745,6 @@
   :name :measure,
   :proto-name "Measure",
   :java-class "cmd.Lrf.JonSharedCmdLrf$Measure",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2861,7 +2753,6 @@
   :name :target-designator-on-mode-a,
   :proto-name "TargetDesignatorOnModeA",
   :java-class "cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2871,7 +2762,6 @@
   :proto-name "SetElevationValue",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -2886,7 +2776,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.CV.JonSharedCmdCv$Root",
-  :package "cmd.CV",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -2962,7 +2851,6 @@
   :name :calibrate-start-long,
   :proto-name "CalibrateStartLong",
   :java-class "cmd.Compass.JonSharedCmdCompass$CalibrateStartLong",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2971,7 +2859,6 @@
   :name :reset-offsets,
   :proto-name "ResetOffsets",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets",
-  :package "cmd.Lrf_calib",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2980,7 +2867,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.Lrf.JonSharedCmdLrf$Stop",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -2989,7 +2875,6 @@
   :name :rotate-azimuth,
   :proto-name "RotateAzimuth",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :speed,
     :proto-name "speed",
@@ -3010,7 +2895,6 @@
   :name :prev-fx-mode,
   :proto-name "PrevFxMode",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$PrevFxMode",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3019,7 +2903,6 @@
   :name :set-scan-mode,
   :proto-name "SetScanMode",
   :java-class "cmd.Lrf.JonSharedCmdLrf$SetScanMode",
-  :package "cmd.Lrf",
   :fields
   [{:name :mode,
     :proto-name "mode",
@@ -3034,7 +2917,6 @@
   :name :shift-dde,
   :proto-name "ShiftDDE",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3049,7 +2931,6 @@
   :name :set-infra-red-filter,
   :proto-name "SetInfraRedFilter",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetInfraRedFilter",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3064,7 +2945,6 @@
   :name :rotate-to-ndc,
   :proto-name "RotateToNDC",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :channel,
     :proto-name "channel",
@@ -3091,7 +2971,6 @@
   :name :zoom-in,
   :proto-name "ZoomIn",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3100,7 +2979,6 @@
   :name :show-lrf-result-simplified-screen,
   :proto-name "ShowLRFResultSimplifiedScreen",
   :java-class "cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3109,7 +2987,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Stop",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3118,7 +2995,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.Compass.JonSharedCmdCompass$Start",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3127,7 +3003,6 @@
   :name :stop-rec,
   :proto-name "StopRec",
   :java-class "cmd.System.JonSharedCmdSystem$StopRec",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3136,7 +3011,6 @@
   :name :jon-gui-data-accumulator-state-idx,
   :proto-name "JonGuiDataAccumulatorStateIdx",
   :java-class "ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx",
-  :package "ser",
   :values
   [{:name :jon-gui-data-accumulator-state-unspecified,
     :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED",
@@ -3176,7 +3050,6 @@
   :name :scan-prev,
   :proto-name "ScanPrev",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3185,7 +3058,6 @@
   :name :set-use-manual-position,
   :proto-name "SetUseManualPosition",
   :java-class "cmd.Gps.JonSharedCmdGps$SetUseManualPosition",
-  :package "cmd.Gps",
   :fields
   [{:name :flag,
     :proto-name "flag",
@@ -3200,7 +3072,6 @@
   :name :reset-configs,
   :proto-name "ResetConfigs",
   :java-class "cmd.System.JonSharedCmdSystem$ResetConfigs",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3209,7 +3080,6 @@
   :name :enter-transport,
   :proto-name "EnterTransport",
   :java-class "cmd.System.JonSharedCmdSystem$EnterTransport",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3219,7 +3089,6 @@
   :proto-name "JonGuiDataDayCamGlassHeater",
   :java-class
   "ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater",
-  :package "ser",
   :fields
   [{:name :temperature,
     :proto-name "temperature",
@@ -3240,7 +3109,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$GetMeteo",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3249,7 +3117,6 @@
   :name :shift-clahe-level,
   :proto-name "ShiftClaheLevel",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$ShiftClaheLevel",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3264,7 +3131,6 @@
   :name :calibrate,
   :proto-name "Calibrate",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3273,7 +3139,6 @@
   :name :new-session,
   :proto-name "NewSession",
   :java-class "cmd.Lrf.JonSharedCmdLrf$NewSession",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3282,7 +3147,6 @@
   :name :jon-gui-data-meteo,
   :proto-name "JonGuiDataMeteo",
   :java-class "ser.JonSharedDataTypes$JonGuiDataMeteo",
-  :package "ser",
   :fields
   [{:name :temperature,
     :proto-name "temperature",
@@ -3309,7 +3173,6 @@
   :name :enable-fog-mode,
   :proto-name "EnableFogMode",
   :java-class "cmd.Lrf.JonSharedCmdLrf$EnableFogMode",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3318,7 +3181,6 @@
   :name :disable-heat-osd,
   :proto-name "DisableHeatOSD",
   :java-class "cmd.OSD.JonSharedCmdOsd$DisableHeatOSD",
-  :package "cmd.OSD",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3327,7 +3189,6 @@
   :name :stabilization-mode-enable,
   :proto-name "StabilizationModeEnable",
   :java-class "cmd.CV.JonSharedCmdCv$StabilizationModeEnable",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3336,7 +3197,6 @@
   :name :set-offsets,
   :proto-name "SetOffsets",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets",
-  :package "cmd.Lrf_calib",
   :fields
   [{:name :x,
     :proto-name "x",
@@ -3357,7 +3217,6 @@
   :name :set-origin-gps,
   :proto-name "SetOriginGPS",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :latitude,
     :proto-name "latitude",
@@ -3384,7 +3243,6 @@
   :name :power-off,
   :proto-name "PowerOff",
   :java-class "cmd.System.JonSharedCmdSystem$PowerOff",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3394,7 +3252,6 @@
   :proto-name "SetPlatformElevation",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3410,7 +3267,6 @@
   :proto-name "SetDigitalZoomLevel",
   :java-class
   "cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3425,7 +3281,6 @@
   :name :scan-pause,
   :proto-name "ScanPause",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3434,7 +3289,6 @@
   :name :set-localization,
   :proto-name "SetLocalization",
   :java-class "cmd.System.JonSharedCmdSystem$SetLocalization",
-  :package "cmd.System",
   :fields
   [{:name :loc,
     :proto-name "loc",
@@ -3449,7 +3303,6 @@
   :name :stop-a-ll,
   :proto-name "StopALl",
   :java-class "cmd.System.JonSharedCmdSystem$StopALl",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3458,7 +3311,6 @@
   :name :set-dde-level,
   :proto-name "SetDDELevel",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3474,7 +3326,6 @@
   :proto-name "RotateAzimuthRelative",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -3501,7 +3352,6 @@
   :name :refresh-fx-mode,
   :proto-name "RefreshFxMode",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3510,7 +3360,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.System.JonSharedCmdSystem$Root",
-  :package "cmd.System",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -3614,7 +3463,6 @@
   :name :jon-gui-data-lrf,
   :proto-name "JonGuiDataLrf",
   :java-class "ser.JonSharedDataLrf$JonGuiDataLrf",
-  :package "ser",
   :fields
   [{:name :is-scanning,
     :proto-name "is_scanning",
@@ -3665,7 +3513,6 @@
   :name :jon-gui-data-camera-heat,
   :proto-name "JonGuiDataCameraHeat",
   :java-class "ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat",
-  :package "ser",
   :fields
   [{:name :zoom-pos,
     :proto-name "zoom_pos",
@@ -3741,7 +3588,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.Compass.JonSharedCmdCompass$GetMeteo",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3751,7 +3597,6 @@
   :proto-name "JonGuiDataVideoChannelHeatAGCModes",
   :java-class
   "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes",
-  :package "ser",
   :values
   [{:name :jon-gui-data-video-channel-heat-agc-mode-unspecified,
     :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED",
@@ -3770,7 +3615,6 @@
   :name :jon-gui-data-target,
   :proto-name "JonGuiDataTarget",
   :java-class "ser.JonSharedDataLrf$JonGuiDataTarget",
-  :package "ser",
   :fields
   [{:name :timestamp,
     :proto-name "timestamp",
@@ -3905,7 +3749,6 @@
   :name :mark-rec-important,
   :proto-name "MarkRecImportant",
   :java-class "cmd.System.JonSharedCmdSystem$MarkRecImportant",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -3914,7 +3757,6 @@
   :name :jon-gui-data-client-type,
   :proto-name "JonGuiDataClientType",
   :java-class "ser.JonSharedDataTypes$JonGuiDataClientType",
-  :package "ser",
   :values
   [{:name :jon-gui-data-client-type-unspecified,
     :proto-name "JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED",
@@ -3936,7 +3778,6 @@
   :name :focus,
   :proto-name "Focus",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Focus",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -3992,7 +3833,6 @@
   :proto-name "SetDigitalZoomLevel",
   :java-class
   "cmd.DayCamera.JonSharedCmdDayCamera$SetDigitalZoomLevel",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -4007,7 +3847,6 @@
   :name :focus-stop,
   :proto-name "FocusStop",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4016,7 +3855,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4025,7 +3863,6 @@
   :name :photo,
   :proto-name "Photo",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Photo",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4034,7 +3871,6 @@
   :name :jon-gui-data-gps,
   :proto-name "JonGuiDataGps",
   :java-class "ser.JonSharedDataGps$JonGuiDataGps",
-  :package "ser",
   :fields
   [{:name :longitude,
     :proto-name "longitude",
@@ -4091,7 +3927,6 @@
   :name :unmark-rec-important,
   :proto-name "UnmarkRecImportant",
   :java-class "cmd.System.JonSharedCmdSystem$UnmarkRecImportant",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4100,7 +3935,6 @@
   :name :scan-unpause,
   :proto-name "ScanUnpause",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4109,7 +3943,6 @@
   :name :halt-all,
   :proto-name "HaltAll",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$HaltAll",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4118,7 +3951,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.OSD.JonSharedCmdOsd$Root",
-  :package "cmd.OSD",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -4188,7 +4020,6 @@
   :name :set-magnetic-declination,
   :proto-name "SetMagneticDeclination",
   :java-class "cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination",
-  :package "cmd.Compass",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -4203,7 +4034,6 @@
   :name :azimuth,
   :proto-name "Azimuth",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -4264,7 +4094,6 @@
   :name :rotate-to-gps,
   :proto-name "RotateToGPS",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :latitude,
     :proto-name "latitude",
@@ -4291,7 +4120,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.Gps.JonSharedCmdGps$GetMeteo",
-  :package "cmd.Gps",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4300,7 +4128,6 @@
   :name :scan-start,
   :proto-name "ScanStart",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4309,7 +4136,6 @@
   :name :scan-add-node,
   :proto-name "ScanAddNode",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :index,
     :proto-name "index",
@@ -4360,7 +4186,6 @@
   :name :focus-step-minus,
   :proto-name "FocusStepMinus",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4369,7 +4194,6 @@
   :name :set-platform-bank,
   :proto-name "SetPlatformBank",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -4384,7 +4208,6 @@
   :name :jon-gui-data-camera-day,
   :proto-name "JonGuiDataCameraDay",
   :java-class "ser.JonSharedDataCameraDay$JonGuiDataCameraDay",
-  :package "ser",
   :fields
   [{:name :focus-pos,
     :proto-name "focus_pos",
@@ -4460,7 +4283,6 @@
   :proto-name "JonGuiDataVideoChannelHeatFilters",
   :java-class
   "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters",
-  :package "ser",
   :values
   [{:name :jon-gui-data-video-channel-heat-filter-unspecified,
     :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED",
@@ -4482,7 +4304,6 @@
   :name :photo,
   :proto-name "Photo",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Photo",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4491,7 +4312,6 @@
   :name :focus-out,
   :proto-name "FocusOut",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4501,7 +4321,6 @@
   :proto-name "RotateElevationTo",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :target-value,
     :proto-name "target_value",
@@ -4522,7 +4341,6 @@
   :name :focus-step-plus,
   :proto-name "FocusStepPlus",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4531,7 +4349,6 @@
   :name :rgb-color,
   :proto-name "RgbColor",
   :java-class "ser.JonSharedDataLrf$RgbColor",
-  :package "ser",
   :fields
   [{:name :red,
     :proto-name "red",
@@ -4558,7 +4375,6 @@
   :name :start,
   :proto-name "Start",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Start",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4567,7 +4383,6 @@
   :name :shift-clahe-level,
   :proto-name "ShiftClaheLevel",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel",
-  :package "cmd.HeatCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -4582,7 +4397,6 @@
   :name :rotate-elevation,
   :proto-name "RotateElevation",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :speed,
     :proto-name "speed",
@@ -4603,7 +4417,6 @@
   :name :save-to-table,
   :proto-name "SaveToTable",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SaveToTable",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4612,7 +4425,6 @@
   :name :disable-dde,
   :proto-name "DisableDDE",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4621,7 +4433,6 @@
   :name :prev-fx-mode,
   :proto-name "PrevFxMode",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4630,7 +4441,6 @@
   :name :set-zoom-table-value,
   :proto-name "SetZoomTableValue",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetZoomTableValue",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -4645,7 +4455,6 @@
   :name :stop-track,
   :proto-name "StopTrack",
   :java-class "cmd.CV.JonSharedCmdCv$StopTrack",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4655,7 +4464,6 @@
   :proto-name "Start",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4665,7 +4473,6 @@
   :proto-name "Root",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -4714,7 +4521,6 @@
   :proto-name "TurnOn",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4723,7 +4529,6 @@
   :name :calibrate-next,
   :proto-name "CalibrateNext",
   :java-class "cmd.Compass.JonSharedCmdCompass$CalibrateNext",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4732,7 +4537,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Stop",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4741,7 +4545,6 @@
   :name :scan-off,
   :proto-name "ScanOff",
   :java-class "cmd.Lrf.JonSharedCmdLrf$ScanOff",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4750,7 +4553,6 @@
   :name :vampire-mode-disable,
   :proto-name "VampireModeDisable",
   :java-class "cmd.CV.JonSharedCmdCv$VampireModeDisable",
-  :package "cmd.CV",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4759,7 +4561,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.Compass.JonSharedCmdCompass$Stop",
-  :package "cmd.Compass",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4768,7 +4569,6 @@
   :name :start-track-ndc,
   :proto-name "StartTrackNDC",
   :java-class "cmd.CV.JonSharedCmdCv$StartTrackNDC",
-  :package "cmd.CV",
   :fields
   [{:name :channel,
     :proto-name "channel",
@@ -4801,7 +4601,6 @@
   :name :next-fx-mode,
   :proto-name "NextFxMode",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$NextFxMode",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4810,7 +4609,6 @@
   :name :get-meteo,
   :proto-name "GetMeteo",
   :java-class "cmd.Lrf.JonSharedCmdLrf$GetMeteo",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4819,7 +4617,6 @@
   :name :refine-on,
   :proto-name "RefineOn",
   :java-class "cmd.Lrf.JonSharedCmdLrf$RefineOn",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4828,7 +4625,6 @@
   :name :scan-on,
   :proto-name "ScanOn",
   :java-class "cmd.Lrf.JonSharedCmdLrf$ScanOn",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4837,7 +4633,6 @@
   :name :reset-zoom,
   :proto-name "ResetZoom",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$ResetZoom",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4846,7 +4641,6 @@
   :name :jon-gui-data-lrf-scan-modes,
   :proto-name "JonGuiDataLrfScanModes",
   :java-class "ser.JonSharedDataTypes$JonGuiDataLrfScanModes",
-  :package "ser",
   :values
   [{:name :jon-gui-data-lrf-scan-mode-unspecified,
     :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED",
@@ -4875,7 +4669,6 @@
   :proto-name "TurnOff",
   :java-class
   "cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff",
-  :package "cmd.DayCamGlassHeater",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4884,7 +4677,6 @@
   :name :shift-offsets-by,
   :proto-name "ShiftOffsetsBy",
   :java-class "cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy",
-  :package "cmd.Lrf_calib",
   :fields
   [{:name :x,
     :proto-name "x",
@@ -4905,7 +4697,6 @@
   :name :jon-gui-data-time-formats,
   :proto-name "JonGuiDataTimeFormats",
   :java-class "ser.JonSharedDataTypes$JonGuiDataTimeFormats",
-  :package "ser",
   :values
   [{:name :jon-gui-data-time-format-unspecified,
     :proto-name "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED",
@@ -4921,7 +4712,6 @@
   :name :prev-zoom-table-pos,
   :proto-name "PrevZoomTablePos",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4930,7 +4720,6 @@
   :name :reset-zoom,
   :proto-name "ResetZoom",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4939,7 +4728,6 @@
   :name :set-use-rotary-position,
   :proto-name "SetUseRotaryPosition",
   :java-class "cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition",
-  :package "cmd.Compass",
   :fields
   [{:name :flag,
     :proto-name "flag",
@@ -4954,7 +4742,6 @@
   :name :scan-next,
   :proto-name "ScanNext",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext",
-  :package "cmd.RotaryPlatform",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4963,7 +4750,6 @@
   :name :noop,
   :proto-name "Noop",
   :java-class "cmd.JonSharedCmd$Noop",
-  :package "cmd",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -4973,7 +4759,6 @@
   :proto-name "RotateElevationRelative",
   :java-class
   "cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -5000,7 +4785,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$Root",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -5231,7 +5015,6 @@
   :name :stop,
   :proto-name "Stop",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$Stop",
-  :package "cmd.DayCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -5240,7 +5023,6 @@
   :name :set-clahe-level,
   :proto-name "SetClaheLevel",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetClaheLevel",
-  :package "cmd.DayCamera",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -5255,7 +5037,6 @@
   :name :jon-gui-data-gps-units,
   :proto-name "JonGuiDataGpsUnits",
   :java-class "ser.JonSharedDataTypes$JonGuiDataGpsUnits",
-  :package "ser",
   :values
   [{:name :jon-gui-data-gps-units-unspecified,
     :proto-name "JON_GUI_DATA_GPS_UNITS_UNSPECIFIED",
@@ -5274,7 +5055,6 @@
   :name :set-mode,
   :proto-name "SetMode",
   :java-class "cmd.RotaryPlatform.JonSharedCmdRotary$SetMode",
-  :package "cmd.RotaryPlatform",
   :fields
   [{:name :mode,
     :proto-name "mode",
@@ -5290,7 +5070,6 @@
   :proto-name "SetOffsetAngleElevation",
   :java-class
   "cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation",
-  :package "cmd.Compass",
   :fields
   [{:name :value,
     :proto-name "value",
@@ -5305,7 +5084,6 @@
   :name :disable-fog-mode,
   :proto-name "DisableFogMode",
   :java-class "cmd.Lrf.JonSharedCmdLrf$DisableFogMode",
-  :package "cmd.Lrf",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -5314,7 +5092,6 @@
   :name :zoom-out,
   :proto-name "ZoomOut",
   :java-class "cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut",
-  :package "cmd.HeatCamera",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -5323,7 +5100,6 @@
   :name :root,
   :proto-name "Root",
   :java-class "cmd.Lira.JonSharedCmdLira$Root",
-  :package "cmd.Lira",
   :fields [],
   :oneofs
   [{:name :cmd,
@@ -5343,7 +5119,6 @@
   :name :set-fx-mode,
   :proto-name "SetFxMode",
   :java-class "cmd.DayCamera.JonSharedCmdDayCamera$SetFxMode",
-  :package "cmd.DayCamera",
   :fields
   [{:name :mode,
     :proto-name "mode",
@@ -5358,7 +5133,6 @@
   :name :jon-gui-data-rotary-direction,
   :proto-name "JonGuiDataRotaryDirection",
   :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryDirection",
-  :package "ser",
   :values
   [{:name :jon-gui-data-rotary-direction-unspecified,
     :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED",
@@ -5374,7 +5148,6 @@
   :name :start-a-ll,
   :proto-name "StartALl",
   :java-class "cmd.System.JonSharedCmdSystem$StartALl",
-  :package "cmd.System",
   :fields [],
   :oneofs [],
   :nested-types []},
@@ -5383,7 +5156,6 @@
   :name :jon-gui-datat-lrf-laser-pointer-modes,
   :proto-name "JonGuiDatatLrfLaserPointerModes",
   :java-class "ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes",
-  :package "ser",
   :values
   [{:name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
     :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED",

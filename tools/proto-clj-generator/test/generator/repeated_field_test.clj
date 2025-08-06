@@ -85,8 +85,8 @@
                         :label :label-optional}]
                :oneofs []}
           
-          builder-code (frontend/generate-builder msg {} "test")
-          parser-code (frontend/generate-parser msg {} "test")]
+          builder-code (frontend/generate-builder msg {} "test" false)
+          parser-code (frontend/generate-parser msg {} "test" false)]
       
       ;; Check builder
       (testing "Builder uses addAll for repeated fields"
@@ -111,7 +111,7 @@
           backend-output {:command {:files [result]}
                          :state {:files []}
                          :type-lookup (backend/build-type-lookup {:files [result]})}
-          frontend-output (frontend/generate-from-backend backend-output "test.proto")
+          frontend-output (frontend/generate-from-backend backend-output "test.proto" false)
           command-code (:command frontend-output)]
       
       ;; Basic structure check

@@ -1,2 +1,2 @@
 (when (contains? m FIELD-KEY)
-  (.setFIELD-METHOD builder SET-VALUE-EXPR))
+  (METHOD-NAME builder (get m FIELD-KEY)))

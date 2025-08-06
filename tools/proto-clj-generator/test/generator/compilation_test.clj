@@ -10,9 +10,10 @@
 (deftest generated-code-compiles
   (testing "All generated files have valid Clojure syntax"
     ;; First generate the code
-    (let [result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
+    (let [result (core/generate-all {:input-dir "../../tools/proto-explorer/output/json-descriptors"
                                       :output-dir "test-output"
                                       :namespace-prefix "test.proto"
+                                      :namespace-mode :separated
                                       :debug? false})]
       (is (:success result))
       
@@ -36,9 +37,10 @@
 
 (deftest dependency-graph-correctness
   (testing "Dependencies are correctly resolved"
-    (let [result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
+    (let [result (core/generate-all {:input-dir "../../tools/proto-explorer/output/json-descriptors"
                                       :output-dir "test-output"
                                       :namespace-prefix "test.proto.deps"
+                                      :namespace-mode :separated
                                       :debug? true})]
       
       ;; Check that files with dependencies have require statements
@@ -51,11 +53,9 @@
       ;; Check that files without dependencies have no requires
       (testing "Files without proto dependencies have no extra requires"
         (let [gps-file (slurp "test-output/test/proto/deps/cmd/gps.clj")]
-          ;; cmd.gps has no dependencies besides guardrails
-          (is (re-find #":require.*guardrails" gps-file)
-              "gps should have guardrails require")
-          (is (not (re-find #":require.*test\\.proto\\.deps\\." gps-file))
-              "gps should have no other proto requires"))))))
+          ;; cmd.gps has no dependencies
+          (is (not (re-find #":require" gps-file))
+              "gps should have no require statements"))))))
 
 ;; Clean up test output after tests
 (defn cleanup-test-output []

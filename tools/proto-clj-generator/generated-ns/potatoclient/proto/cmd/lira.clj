@@ -1,38 +1,15 @@
 (ns potatoclient.proto.cmd.lira
   "Generated protobuf functions."
-  (:require [malli.core :as m])
-  (:import cmd.Lira.JonSharedCmdLira$Root
-           cmd.Lira.JonSharedCmdLira$Refine_target
-           cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget))
+  (:import
+   cmd.Lira.JonSharedCmdLira$Root
+   cmd.Lira.JonSharedCmdLira$Refine_target
+   cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget))
 
 ;; =============================================================================
 ;; Enums
 ;; =============================================================================
 
 ;; No enums
-
-;; =============================================================================
-;; Malli Specs
-;; =============================================================================
-
-(def root-spec
-  "Malli spec for root message"
-  [:map
-   [:cmd
-    [:altn {:refine-target [:map [:refine-target :cmd.lira/refine-target]]}]]])
-
-(def refine-target-spec
-  "Malli spec for refine-target message"
-  [:map [:target [:maybe :cmd.lira/jon-gui-data-lira-target]]])
-
-(def jon-gui-data-lira-target-spec
-  "Malli spec for jon-gui-data-lira-target message"
-  [:map [:timestamp [:maybe :int]] [:target-longitude [:maybe :double]]
-   [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]]
-   [:target-azimuth [:maybe :double]] [:target-elevation [:maybe :double]]
-   [:distance [:maybe :double]] [:uuid-part-1 [:maybe :int]]
-   [:uuid-part-2 [:maybe :int]] [:uuid-part-3 [:maybe :int]]
-   [:uuid-part-4 [:maybe :int]]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -52,7 +29,8 @@
   "Build a Root protobuf message from a map."
   [m]
   (let [builder (cmd.Lira.JonSharedCmdLira$Root/newBuilder)]
-    ;; Handle oneof: cmd
+
+;; Handle oneof: cmd
     (when-let [cmd-field (first (filter (fn [[k v]] (#{:refine-target} k)) m))]
       (build-root-payload builder cmd-field))
     (.build builder)))
@@ -64,6 +42,7 @@
     ;; Set regular fields
     (when (contains? m :target)
       (.setTarget builder (build-jon-gui-data-lira-target (get m :target))))
+
     (.build builder)))
 
 (defn build-jon-gui-data-lira-target
@@ -71,7 +50,8 @@
   [m]
   (let [builder (cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget/newBuilder)]
     ;; Set regular fields
-    (when (contains? m :timestamp) (.setTimestamp builder (get m :timestamp)))
+    (when (contains? m :timestamp)
+      (.setTimestamp builder (get m :timestamp)))
     (when (contains? m :target-longitude)
       (.setTargetLongitude builder (get m :target-longitude)))
     (when (contains? m :target-latitude)
@@ -82,7 +62,8 @@
       (.setTargetAzimuth builder (get m :target-azimuth)))
     (when (contains? m :target-elevation)
       (.setTargetElevation builder (get m :target-elevation)))
-    (when (contains? m :distance) (.setDistance builder (get m :distance)))
+    (when (contains? m :distance)
+      (.setDistance builder (get m :distance)))
     (when (contains? m :uuid-part-1)
       (.setUuidPart1 builder (get m :uuid-part-1)))
     (when (contains? m :uuid-part-2)
@@ -91,13 +72,15 @@
       (.setUuidPart3 builder (get m :uuid-part-3)))
     (when (contains? m :uuid-part-4)
       (.setUuidPart4 builder (get m :uuid-part-4)))
+
     (.build builder)))
 
 (defn parse-root
   "Parse a Root protobuf message to a map."
   [^cmd.Lira.JonSharedCmdLira$Root proto]
   (cond-> {}
-    ;; Oneof payload
+
+;; Oneof payload
     true (merge (parse-root-payload proto))))
 
 (defn parse-refine-target
@@ -105,8 +88,7 @@
   [^cmd.Lira.JonSharedCmdLira$Refine_target proto]
   (cond-> {}
     ;; Regular fields
-    (.hasTarget proto) (assoc :target
-                         (parse-jon-gui-data-lira-target (.getTarget proto)))))
+    (.hasTarget proto) (assoc :target (parse-jon-gui-data-lira-target (.getTarget proto)))))
 
 (defn parse-jon-gui-data-lira-target
   "Parse a JonGuiDataLiraTarget protobuf message to a map."
@@ -130,10 +112,10 @@
   [builder [field-key value]]
   (case field-key
     :refine-target (.setRefineTarget builder (build-refine-target value))
-    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
+    (throw (ex-info "Unknown oneof field" {:field field-key :oneof ":cmd"}))))
 
 (defn parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.Lira.JonSharedCmdLira$Root proto]
-  (cond (.hasRefineTarget proto) {:refine-target (parse-refine-target
-                                                   (.getRefineTarget proto))}))
+  (cond
+    (.hasRefineTarget proto) {:refine-target (parse-refine-target (.getRefineTarget proto))}))

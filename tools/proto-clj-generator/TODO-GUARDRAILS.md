@@ -1,4 +1,3 @@
-
 # !!! IMPORTANT! ALWAYS READ THE WHOLE DOCUMENT !!!!
 
 ## 🔍 Key Files to Research
@@ -8,6 +7,83 @@
 - `/home/jare/git/potatoclient/Makefile` - build/lint setup
 - Examples of `>defn` usage in main app code
 - `/home/jare/git/potatoclient/shared/specs/` - Malli specs
+
+### Generator Files to Modify
+- `frontend.clj` - Change defn generation to >defn
+- `templates/` - Update templates for guardrails
+- `core.clj` - Load shared specs
+- New: `guardrails.clj` - Spec generation/mapping
+
+## 📊 Success Criteria
+1. All tests pass with new structure
+   - Namespace resolution works correctly
+   - No duplicate aliases in generated code
+   - Index files properly re-export functions
+2. Roundtrip tests validate perfectly
+   - Proto -> Map -> Proto preserves all data
+   - Buf.validate passes on all generated protos
+   - Malli validation passes on all generated maps
+3. All generated functions use `>defn`/`>defn-`
+   - 100% of build-* functions have guardrails
+   - 100% of parse-* functions have guardrails
+   - Private helper functions use >defn-
+4. Guardrails-check tool reports 100% coverage
+   - No functions using plain defn (except approved exceptions)
+   - All specs properly attached
+   - Specs actually validate data
+5. clj-kondo reports no false positives
+   - Clean lint output on generated code
+   - Guardrails macros properly recognized
+   - No unresolved symbol warnings
+6. Buf.validate checks pass
+   - All protobuf validation rules enforced
+   - Clear errors on validation failures
+   - Integration with test suite
+
+## 💡 Implementation Notes
+
+### Guardrails Function Pattern
+```clojure
+(>defn build-some-message
+  "Build a SomeMessage protobuf from a map."
+  [m]
+  [::some-message-spec => protobuf-class?]
+  (let [builder ...]
+    ...))
+
+(>defn parse-some-message
+  "Parse a SomeMessage protobuf to a map."
+  [proto]
+  [protobuf-class? => ::some-message-spec]
+  {...})
+```
+
+### Spec Loading
+- Load specs at generation time
+- Map proto package.MessageName to ::.../message-name specs
+- Use specs for both guardrails and validation
+
+### Build Configuration
+- Guardrails enabled by default
+- Disabled only for release builds
+- Same pattern as main app
+
+## 🔄 Naming Conversion Architecture
+
+### Lossless Conversions
+- Proto type: `.cmd.DayCamera.Root` <-> Keyword: `:potatoclient.proto/cmd.DayCamera.Root`
+- Proto package: `cmd.DayCamera` <-> Keyword: `:potatoclient.proto/cmd.DayCamera`
+- Preserves all original casing and structure
+
+### Lossy Conversions (for filesystem)
+- Proto package -> Clojure namespace: `cmd.DayCamera` -> `potatoclient.proto.cmd.daycamera`
+- Proto package -> File path: `cmd.DayCamera` -> `cmd/daycamera.clj`
+- Proto package -> Alias: `cmd.DayCamera` -> `daycamera`
+
+### Testing Strategy
+- Unit tests for all conversions
+- Property-based testing with Malli generators
+- Roundtrip validation for lossless conversions
 
 ## 🎯 Core Principles
 
@@ -31,7 +107,7 @@
 
 ## 🏗️ Implementation Order (REVISED FOR CLEAN FOUNDATION)
 
-### Phase -1. clj-kondo Configuration
+### Phase -1: clj-kondo Configuration
 - [ ] Copy/adapt `.clj-kondo/` config from main app
   - Copy config/clj-kondo/hooks/ directory
   - Copy .clj-kondo/config.edn with guardrails setup

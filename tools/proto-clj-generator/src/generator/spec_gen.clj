@@ -2,8 +2,7 @@
   "Generate Malli specs from protobuf EDN representation.
   Based on proto-explorer's approach but integrated into our generation pipeline."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]
-            [generator.naming :as naming]))
+            [camel-snake-kebab.core :as csk]))
 
 ;; =============================================================================
 ;; Field Processing
@@ -11,11 +10,21 @@
 
 (defn type-name->keyword
   "Convert protobuf type name to keyword reference.
-  e.g. '.cmd.Compass.Root' -> :cmd.compass/root
-  Uses centralized naming module for consistency."
+  e.g. '.cmd.Compass.Root' -> :cmd.compass/root"
   [type-name]
   (when type-name
-    (naming/proto-type->spec-keyword type-name)))
+    (let [parts (str/split type-name #"\.")
+          ;; Remove empty first part from leading dot
+          parts (if (empty? (first parts)) (rest parts) parts)]
+      (if (= 1 (count parts))
+        ;; Single part - just kebab-case it
+        (keyword (csk/->kebab-case (last parts)))
+        ;; Multiple parts - namespace/name
+        (let [ns-parts (butlast parts)
+              name-part (last parts)
+              ;; Convert each part to kebab-case
+              ns-str (str/join "." (map csk/->kebab-case ns-parts))]
+          (keyword ns-str (csk/->kebab-case name-part)))))))
 
 (defmulti process-field-type
   "Process a field's type into a Malli schema"
@@ -130,7 +139,7 @@
         oneof-name (:name oneof-decl)]
     ;; Return just the key and schema pair, not wrapped in [:map ...]
     [(keyword oneof-name)
-     [:oneof
+     [:altn
       (into {}
             (map (fn [field]
                    (let [field-key (keyword (:name field))]
@@ -171,7 +180,7 @@
   "Generate a Malli spec for an enum"
   [enum-type context]
   (let [values (map (fn [v]
-                     (keyword (naming/proto-name->clojure-fn-name (or (:proto-name v) (:name v)))))
+                     (keyword (csk/->kebab-case (or (:proto-name v) (:name v)))))
                    (:values enum-type))]
     (if (empty? values)
       [:enum]  ; Empty enum (shouldn't happen but be defensive)
@@ -185,7 +194,7 @@
   "Generate spec def name for a message"
   [message]
   (-> (or (:proto-name message) (:name message))
-      naming/proto-name->clojure-fn-name
+      csk/->kebab-case
       (str "-spec")
       symbol))
 
@@ -193,7 +202,7 @@
   "Generate spec def name for an enum"
   [enum-type]
   (-> (or (:proto-name enum-type) (:name enum-type))
-      naming/proto-name->clojure-fn-name
+      csk/->kebab-case
       (str "-spec")
       symbol))
 
