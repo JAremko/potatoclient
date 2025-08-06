@@ -194,19 +194,20 @@
          grouped)]
     
     ;; Also generate index files that re-export everything for compatibility
-    ;; We need to use original packages, not the ns-keys which are lowercased
-    (let [all-original-packages (distinct (map :package (vals grouped)))
-          cmd-packages (filter #(and (str/starts-with? % "cmd.") ;; Only sub-packages
-                                    (not= % "cmd"))  ;; Exclude base cmd package
-                              all-original-packages)
-          state-packages (filter #(and (str/starts-with? % "ser")
-                                      (not= % "ser"))  ;; Exclude base ser package
-                                all-original-packages)
+    ;; We need to use the actual namespace keys from grouped, not the original packages
+    (let [all-ns-keys (keys grouped)
+          ;; For command index, include namespaces that start with "cmd." but not "cmd" itself
+          cmd-namespaces (filter #(and (str/starts-with? % "cmd.")
+                                      (not= % "cmd"))
+                                all-ns-keys)
+          ;; For state index, include all namespaces that start with "ser"
+          state-namespaces (filter #(str/starts-with? % "ser")
+                                  all-ns-keys)
           
           ;; Generate index for commands
           cmd-index (generate-index-file 
                      (str ns-prefix ".command")
-                     cmd-packages
+                     cmd-namespaces
                      ns-prefix
                      "Commands index - re-exports all command namespaces"
                      grouped)
@@ -214,7 +215,7 @@
           ;; Generate index for state
           state-index (generate-index-file
                        (str ns-prefix ".state") 
-                       state-packages
+                       state-namespaces
                        ns-prefix
                        "State index - re-exports all state namespaces"
                        grouped)]
@@ -225,17 +226,24 @@
 
 (defn generate-index-file
   "Generate an index file that re-exports functions from multiple namespaces."
-  [ns-name packages ns-prefix description grouped]
+  [ns-name namespace-keys ns-prefix description grouped]
   (let [;; Build requires with proper alias handling to avoid duplicates
         requires-with-aliases
-        (loop [remaining packages
+        (loop [remaining namespace-keys
                seen-aliases #{}
                result []]
           (if (empty? remaining)
             result
-            (let [pkg (first remaining)
-                  ns-suffix (package->namespace-suffix pkg)
-                  base-alias (naming/proto-package->clojure-alias pkg)
+            (let [ns-key (first remaining)
+                  ;; For index files, we're already given the namespace key
+                  ns-suffix ns-key
+                  ;; Extract package from grouped data to get the alias
+                  package-data (get grouped ns-key)
+                  pkg (:package package-data)
+                  base-alias (if pkg
+                              (naming/proto-package->clojure-alias pkg)
+                              ;; Fallback: use last part of namespace key
+                              (last (str/split ns-key #"\.")))
                   ;; Handle duplicate aliases by appending numbers
                   final-alias (loop [n 1
                                      candidate base-alias]
@@ -247,18 +255,17 @@
                      (conj result [(symbol (str ns-prefix "." ns-suffix)) 
                                   :as (symbol final-alias)])))))
         
-        ;; Create a package->alias map from requires
-        pkg-to-alias (into {} (map (fn [[ns-sym _ alias-sym] pkg]
-                                     [pkg (name alias-sym)])
-                                   requires-with-aliases
-                                   packages))
+        ;; Create a namespace-key->alias map from requires
+        ns-key-to-alias (into {} (map (fn [[ns-sym _ alias-sym] ns-key]
+                                        [ns-key (name alias-sym)])
+                                      requires-with-aliases
+                                      namespace-keys))
         
-        ;; Generate re-exports for all messages in the packages
+        ;; Generate re-exports for all messages in the namespaces
         re-exports (when (seq requires-with-aliases)
-                    (mapcat (fn [pkg]
-                             (let [ns-alias (get pkg-to-alias pkg)
-                                   ;; Find the package data in grouped using ns-key, not original package
-                                   ns-key (package->namespace-suffix pkg)
+                    (mapcat (fn [ns-key]
+                             (let [ns-alias (get ns-key-to-alias ns-key)
+                                   ;; Get the package data directly using ns-key
                                    package-data (get grouped ns-key)]
                                (when package-data
                                  (mapcat (fn [msg]
@@ -271,7 +278,7 @@
                                             [(str "(def " prefixed-build-fn " " ns-alias "/" build-fn ")")
                                              (str "(def " prefixed-parse-fn " " ns-alias "/" parse-fn ")")]))
                                         (:messages package-data)))))
-                           packages))
+                           namespace-keys))
         
         template (if (seq requires-with-aliases)
                    (str "(ns " ns-name "\n"

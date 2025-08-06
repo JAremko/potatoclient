@@ -70,7 +70,7 @@
       (.setTarget builder (build-jon-gui-data-target (get m :target))))
     (when (contains? m :pointer-mode)
       (.setPointerMode builder
-                       (get jon-gui-datat-lrf-laser-pointer-modes-values
+                       (get types/jon-gui-datat-lrf-laser-pointer-modes-values
                             (get m :pointer-mode))))
     (when (contains? m :fog-mode-enabled)
       (.setFogModeEnabled builder (get m :fog-mode-enabled)))
@@ -152,7 +152,7 @@
          (.hasTarget proto) (assoc :target
                               (parse-jon-gui-data-target (.getTarget proto)))
          true (assoc :pointer-mode
-                (get jon-gui-datat-lrf-laser-pointer-modes-keywords
+                (get types/jon-gui-datat-lrf-laser-pointer-modes-keywords
                      (.getPointerMode proto)))
          true (assoc :fog-mode-enabled (.getFogModeEnabled proto))
          true (assoc :is-refining (.getIsRefining proto))))

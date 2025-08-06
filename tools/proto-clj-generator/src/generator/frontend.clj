@@ -48,7 +48,7 @@
 
 (defn generate-field-setter
   "Generate setter code for a single field."
-  [field current-package type-lookup]
+  [field current-package type-lookup ns-alias-map]
   (let [is-message? (get-in field [:type :message])
         is-enum? (and (not (:repeated? field))
                      (get-in field [:type :enum]))
@@ -71,8 +71,8 @@
                     ;; Repeated enum field - v is the item in the loop
                     (and (:repeated? field) (get-in field [:type :enum]))
                     (let [enum-type (get-in field [:type :enum :type-ref])
-                          enum-ref (type-res/resolve-enum-reference 
-                                   enum-type current-package type-lookup)
+                          enum-ref (type-res/resolve-enum-reference-with-aliases 
+                                   enum-type current-package type-lookup ns-alias-map)
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(get " qualified-ref " v)"))
                     
@@ -132,7 +132,7 @@
 
 (defn generate-field-getter
   "Generate getter code for a single field."
-  [field current-package type-lookup]
+  [field current-package type-lookup ns-alias-map]
   (let [;; Check if this is a message type (which might have has methods)
         is-message? (and (not (:repeated? field))
                         (get-in field [:type :message]))
@@ -244,7 +244,7 @@
 
 (defn generate-builder
   "Generate builder function for a message."
-  [message type-lookup current-package]
+  [message type-lookup current-package ns-alias-map]
   (let [template (load-template-string "builder-guardrails.clj")
         regular-fields (remove :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
@@ -252,7 +252,7 @@
         regular-field-setters (when (seq regular-fields)
                                (str ";; Set regular fields\n    "
                                     (str/join "\n    " 
-                                             (map #(generate-field-setter % current-package type-lookup) 
+                                             (map #(generate-field-setter % current-package type-lookup ns-alias-map) 
                                                   regular-fields))))
         
         ;; Generate oneof handling for each oneof
@@ -280,7 +280,7 @@
 
 (defn generate-parser
   "Generate parser function for a message."
-  [message type-lookup current-package]
+  [message type-lookup current-package ns-alias-map]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
         spec-name (spec-gen/message->spec-name message)
@@ -299,7 +299,7 @@
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
                             (str/join "\n    "
-                                     (map #(generate-field-getter % current-package type-lookup) 
+                                     (map #(generate-field-getter % current-package type-lookup ns-alias-map) 
                                           regular-fields))))
         
         oneof-payload (when (seq (:oneofs message))
@@ -459,7 +459,12 @@
   ([ns-name imports enums messages type-lookup require-specs generate-specs?]
    (generate-namespace ns-name imports enums messages type-lookup require-specs generate-specs? nil))
   ([ns-name imports enums messages type-lookup require-specs generate-specs? proto-package]
-   (let [template (cond
+   (let [;; Build namespace->alias map from require specs
+         ns-alias-map (into {} (map (fn [[ns-sym :as alias-sym]]
+                                      [(str ns-sym) (str alias-sym)])
+                                    require-specs))
+         
+         template (cond
                     ;; Specs + requires
                     (and generate-specs? (seq require-specs))
                     (load-template-string "namespace-with-specs-guardrails.clj")
@@ -520,9 +525,9 @@
          ;; Generate all message builders/parsers first, then all oneofs
          ;; This avoids forward reference issues
          all-builders (for [msg sorted-messages]
-                       (generate-builder msg type-lookup current-package))
+                       (generate-builder msg type-lookup current-package ns-alias-map))
          all-parsers (for [msg sorted-messages]
-                      (generate-parser msg type-lookup current-package))
+                      (generate-parser msg type-lookup current-package ns-alias-map))
          all-oneof-builders (for [msg sorted-messages
                                  oneof (:oneofs msg)]
                              (generate-oneof-builder msg oneof type-lookup current-package))
