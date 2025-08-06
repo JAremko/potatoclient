@@ -305,37 +305,269 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 - Property-based testing with Malli generators
 - Roundtrip validation for lossless conversions
 
-## 🏗️ Implementation Order
+## 🎯 Core Principles
 
-1. **Phase 1: Naming & Structure** (Current)
-   - [x] Centralized naming module
-   - [x] Fix duplicate aliases
-   - [ ] Update all generators to use naming module
-   - [ ] Fix index file generation
+### NO BACKWARD COMPATIBILITY
+- **Clean slate approach** - We can break anything to make it better
+- **No versioning needed** - Single source of truth
+- **Delete legacy code** - Don't maintain parallel implementations
+- **Radical simplification** - If it's complex, redesign it
 
-2. **Phase 2: Testing**
-   - [ ] Update test fixtures for new structure
-   - [ ] Add generative tests for naming
-   - [ ] Implement comprehensive roundtrip tests
-   - [ ] Add buf.validate integration
+### ROCK SOLID FOUNDATION
+- **Test-first development** - Write tests before implementation
+- **100% test coverage** - Every function, every path
+- **Property-based testing** - Find edge cases automatically
+- **Integration tests** - Validate entire pipeline end-to-end
 
-3. **Phase 3: Guardrails**
-   - [x] Update templates to use >defn
-   - [ ] Integrate Malli specs from shared directory
-   - [ ] Configure clj-kondo
-   - [ ] Add guardrails-check tool
+### MAINTAINABLE CODE
+- **Strong typing** - Malli specs on everything
+- **Single responsibility** - Each function does one thing
+- **Clear naming** - Self-documenting code
+- **No magic** - Explicit over implicit
 
-4. **Phase 4: Pipeline Architecture Improvements** (NEW)
-   - [ ] Enrich intermediate representation
-   - [ ] Split pipeline into more stages
-   - [ ] Add global knowledge repositories
-   - [ ] Strengthen Malli specs throughout
+## 🏗️ Implementation Order (REVISED FOR CLEAN FOUNDATION)
 
-5. **Phase 5: Polish**
-   - [ ] Documentation
-   - [ ] Performance optimization
-   - [ ] Error message improvements
-   - [ ] Final validation
+### Phase 0: Clean House (IMMEDIATE)
+**Goal**: Remove all technical debt and establish clean base
+
+1. **Delete Legacy Code**
+   - [ ] Remove single-namespace mode completely
+   - [ ] Delete non-guardrails templates
+   - [ ] Remove all commented-out code
+   - [ ] Delete unused functions
+
+2. **Establish Testing Framework**
+   - [ ] Set up property-based testing infrastructure
+   - [ ] Create test data generators for all proto types
+   - [ ] Establish test coverage reporting (goal: 100%)
+   - [ ] Set up continuous test running
+
+**Validation**: 
+- All tests pass
+- Zero legacy code remains
+- Test coverage baseline established
+
+### Phase 1: Naming & Structure Foundation
+**Goal**: Bulletproof naming system that handles all edge cases
+
+1. **Complete Centralized Naming Module**
+   - [x] Create lossless proto<->keyword conversions
+   - [x] Create lossy conversions for filesystem
+   - [ ] Add comprehensive property-based tests
+   - [ ] Test with real proto corpus (1000+ files)
+   - [ ] Document all naming rules
+
+2. **Fix All Namespace Issues**
+   - [x] Fix duplicate aliases with numeric suffixes
+   - [ ] Fix enum qualification issues
+   - [ ] Implement proper index file generation
+   - [ ] Test cross-file dependencies exhaustively
+
+**Validation Gates**:
+- [ ] 100% naming test coverage
+- [ ] Property tests pass with 10,000 iterations
+- [ ] All proto files from main app generate correctly
+- [ ] Zero namespace conflicts in generated code
+
+### Phase 2: Type System & Dependency Graph
+**Goal**: Complete understanding of all type relationships
+
+1. **Build Comprehensive Type Registry**
+   - [ ] Parse all type information from JSON descriptors
+   - [ ] Build bidirectional type reference map
+   - [ ] Detect circular dependencies
+   - [ ] Create topological sort for generation order
+
+2. **Test Type Resolution**
+   - [ ] Unit tests for every type resolution function
+   - [ ] Property tests for type reference parsing
+   - [ ] Integration tests with complex proto hierarchies
+   - [ ] Edge cases: self-references, mutual recursion
+
+**Validation Gates**:
+- [ ] Can resolve any type from any context
+- [ ] Circular dependency detection works
+- [ ] Generation order is always correct
+- [ ] 100% test coverage on type system
+
+### Phase 3: Intermediate Representation (IR)
+**Goal**: Rich IR that captures everything needed for generation
+
+1. **Design Comprehensive IR Schema**
+   - [ ] Define Malli specs for entire IR
+   - [ ] Include validation rules from buf.validate
+   - [ ] Include all metadata from JSON descriptors
+   - [ ] Design for extensibility
+
+2. **Implement IR Generation**
+   - [ ] Parse JSON descriptors into IR
+   - [ ] Validate IR against specs
+   - [ ] Add derived metadata
+   - [ ] Test every field type and option
+
+**Validation Gates**:
+- [ ] IR captures 100% of JSON descriptor information
+- [ ] IR validates against Malli specs
+- [ ] Roundtrip: JSON -> IR -> JSON preserves everything
+- [ ] Performance: IR generation < 100ms for large protos
+
+### Phase 4: Code Generation Pipeline
+**Goal**: Clean, predictable code generation
+
+1. **Implement Multi-Stage Pipeline**
+   - [ ] Parser Stage: JSON -> Raw data
+   - [ ] Analysis Stage: Raw -> Analyzed
+   - [ ] Enrichment Stage: Analyzed -> Enriched IR
+   - [ ] Generation Stage: IR -> Clojure AST
+   - [ ] Emission Stage: AST -> Formatted code
+
+2. **Test Each Stage Independently**
+   - [ ] Unit tests for each stage
+   - [ ] Property tests for stage transitions
+   - [ ] Integration tests for full pipeline
+   - [ ] Benchmark each stage
+
+**Validation Gates**:
+- [ ] Each stage has 100% test coverage
+- [ ] Stage contracts enforced by Malli
+- [ ] Pipeline handles all proto constructs
+- [ ] Generated code compiles and passes tests
+
+### Phase 5: Validation & Guardrails Integration
+**Goal**: Generated code that validates itself
+
+1. **Extract buf.validate Rules**
+   - [ ] Parse all validation annotations
+   - [ ] Convert rules to Malli predicates
+   - [ ] Generate validation functions
+   - [ ] Test validation logic
+
+2. **Integrate with Guardrails**
+   - [ ] All functions use >defn
+   - [ ] Specs from shared/specs when available
+   - [ ] Generated specs for all messages
+   - [ ] Runtime validation hooks
+
+**Validation Gates**:
+- [ ] All validation rules enforced
+- [ ] Guardrails active on all functions
+- [ ] Invalid data rejected at runtime
+- [ ] Performance impact < 10%
+
+### Phase 6: Integration & Polish
+**Goal**: Production-ready system
+
+1. **Full Integration Testing**
+   - [ ] Test with entire PotatoClient proto set
+   - [ ] Verify all roundtrips work
+   - [ ] Performance benchmarks
+   - [ ] Memory usage analysis
+
+2. **Developer Experience**
+   - [ ] Clear error messages
+   - [ ] Helpful documentation
+   - [ ] Fast generation times
+   - [ ] Easy debugging
+
+**Validation Gates**:
+- [ ] Generates all PotatoClient protos correctly
+- [ ] All integration tests pass
+- [ ] Generation time < 5 seconds
+- [ ] Zero runtime errors
+
+## 📊 Testing Strategy
+
+### Unit Testing
+- Every public function has tests
+- Every edge case covered
+- Use `clojure.test` with good descriptions
+- Test pure functions in isolation
+
+### Property-Based Testing
+```clojure
+(defspec naming-roundtrip-spec
+  100000 ; Run MANY iterations
+  (prop/for-all [proto-name (gen-valid-proto-name)]
+    (= proto-name
+       (-> proto-name
+           proto->keyword
+           keyword->proto))))
+```
+
+### Integration Testing
+- Full pipeline tests with real proto files
+- Compare generated code against golden files
+- Test with main app's actual protos
+- Verify compilation and runtime behavior
+
+### Performance Testing
+```clojure
+(deftest generation-performance
+  (testing "Large proto files generate quickly"
+    (let [start (System/nanoTime)
+          result (generate-all-protos large-descriptor-set)
+          duration (/ (- (System/nanoTime) start) 1e9)]
+      (is (< duration 5.0) ; Less than 5 seconds
+          (str "Generation took " duration " seconds")))))
+```
+
+## 🚫 What We're NOT Doing
+
+1. **No Backward Compatibility**
+   - Delete old code freely
+   - Change APIs without deprecation
+   - Rename everything for clarity
+
+2. **No Incremental Migration**
+   - Big bang approach
+   - Replace entire system at once
+   - Test thoroughly before switching
+
+3. **No Legacy Support**
+   - Single output format
+   - Single namespace structure
+   - Single way to do things
+
+4. **No Premature Optimization**
+   - Clean code first
+   - Measure before optimizing
+   - Optimize only bottlenecks
+
+## ✅ Definition of Done
+
+Each phase is complete when:
+1. All tests pass (unit, property, integration)
+2. 100% test coverage achieved
+3. Code reviewed and refactored
+4. Documentation updated
+5. Performance benchmarks met
+6. No TODO comments remain
+
+## 🎯 Success Metrics
+
+1. **Code Quality**
+   - 100% test coverage
+   - Zero linter warnings
+   - All functions have guardrails
+   - Malli specs on all data
+
+2. **Performance**
+   - Generate all protos < 5 seconds
+   - Memory usage < 500MB
+   - Startup time < 1 second
+   - Zero runtime allocations in hot paths
+
+3. **Maintainability**
+   - New developer productive in < 1 hour
+   - Average function < 20 lines
+   - Cyclomatic complexity < 5
+   - Clear separation of concerns
+
+4. **Reliability**
+   - Zero runtime errors
+   - Handles all valid proto files
+   - Clear errors for invalid input
+   - Deterministic output
 
 ## 🚀 Pipeline Architecture Improvements (NEW SECTION)
 
