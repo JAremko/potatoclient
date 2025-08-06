@@ -2,19 +2,20 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [potatoclient.proto.cmd.lira :as lira]
-            [potatoclient.proto.cmd.rotaryplatform :as rotaryplatform]
+            [potatoclient.proto.cmd.day-cam-glass-heater :as
+             day-cam-glass-heater]
             [potatoclient.proto.cmd.system :as system]
-            [potatoclient.proto.cmd.lrf_calib :as lrf_calib]
-            [potatoclient.proto.cmd.gps :as gps]
-            [potatoclient.proto.cmd.heatcamera :as heatcamera]
-            [potatoclient.proto.cmd.cv :as cv]
-            [potatoclient.proto.cmd.daycamera :as daycamera]
-            [potatoclient.proto.cmd.daycamglassheater :as daycamglassheater]
+            [potatoclient.proto.ser.types :as types]
+            [potatoclient.proto.cmd.heat-camera :as heat-camera]
+            [potatoclient.proto.cmd.rotary-platform :as rotary-platform]
             [potatoclient.proto.cmd.lrf :as lrf]
-            [potatoclient.proto.cmd.compass :as compass]
-            [potatoclient.proto.ser :as types]
-            [potatoclient.proto.cmd.osd :as osd])
+            [potatoclient.proto.cmd.lira :as lira]
+            [potatoclient.proto.cmd.osd :as osd]
+            [potatoclient.proto.cmd.day-camera :as day-camera]
+            [potatoclient.proto.cmd.lrf-calib :as lrf-calib]
+            [potatoclient.proto.cmd.cv :as cv]
+            [potatoclient.proto.cmd.gps :as gps]
+            [potatoclient.proto.cmd.compass :as compass])
   (:import cmd.JonSharedCmd$Root
            cmd.JonSharedCmd$Ping
            cmd.JonSharedCmd$Noop
@@ -36,7 +37,7 @@
    [:important [:maybe :boolean]] [:from-cv-subsystem [:maybe :boolean]]
    [:client-type [:maybe :ser/jon-gui-data-client-type]]
    [:payload
-    [:altn
+    [:oneof
      {:osd [:map [:osd :cmd.osd/root]],
       :ping [:map [:ping :cmd/ping]],
       :system [:map [:system :cmd.system/root]],
@@ -80,7 +81,7 @@
   build-root
   "Build a Root protobuf message from a map."
   [m]
-  [root-spec => any?]
+  [root-spec => #(instance? cmd.JonSharedCmd$Root %)]
   (let [builder (cmd.JonSharedCmd$Root/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
@@ -107,25 +108,25 @@
 (>defn build-ping
        "Build a Ping protobuf message from a map."
        [m]
-       [ping-spec => any?]
+       [ping-spec => #(instance? cmd.JonSharedCmd$Ping %)]
        (let [builder (cmd.JonSharedCmd$Ping/newBuilder)] (.build builder)))
 
 (>defn build-noop
        "Build a Noop protobuf message from a map."
        [m]
-       [noop-spec => any?]
+       [noop-spec => #(instance? cmd.JonSharedCmd$Noop %)]
        (let [builder (cmd.JonSharedCmd$Noop/newBuilder)] (.build builder)))
 
 (>defn build-frozen
        "Build a Frozen protobuf message from a map."
        [m]
-       [frozen-spec => any?]
+       [frozen-spec => #(instance? cmd.JonSharedCmd$Frozen %)]
        (let [builder (cmd.JonSharedCmd$Frozen/newBuilder)] (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.JonSharedCmd$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.JonSharedCmd$Root %) => root-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :protocol-version (.getProtocolVersion proto))
@@ -159,23 +160,25 @@
 (>defn- build-root-payload
         "Build the oneof payload for Root."
         [builder [field-key value]]
-        [any? [:tuple keyword? any?] => any?]
+        [#(instance? cmd.JonSharedCmd$Root$Builder %) [:tuple keyword? any?] =>
+         #(instance? cmd.JonSharedCmd$Root$Builder %)]
         (case field-key
-          :day-camera (.setDayCamera builder (daycamera/build-root value))
-          :heat-camera (.setHeatCamera builder (heatcamera/build-root value))
+          :day-camera (.setDayCamera builder (day-camera/build-root value))
+          :heat-camera (.setHeatCamera builder (heat-camera/build-root value))
           :gps (.setGps builder (gps/build-root value))
           :compass (.setCompass builder (compass/build-root value))
           :lrf (.setLrf builder (lrf/build-root value))
           :lrf-calib (.setLrfCalib builder (lrf-calib/build-root value))
-          :rotary (.setRotary builder (rotaryplatform/build-root value))
+          :rotary (.setRotary builder (rotary-platform/build-root value))
           :osd (.setOsd builder (osd/build-root value))
           :ping (.setPing builder (build-ping value))
           :noop (.setNoop builder (build-noop value))
           :frozen (.setFrozen builder (build-frozen value))
           :system (.setSystem builder (system/build-root value))
           :cv (.setCv builder (cv/build-root value))
-          :day-cam-glass-heater
-            (.setDayCamGlassHeater builder (daycamglassheater/build-root value))
+          :day-cam-glass-heater (.setDayCamGlassHeater
+                                  builder
+                                  (day-cam-glass-heater/build-root value))
           :lira (.setLira builder (lira/build-root value))
           (throw (ex-info "Unknown oneof field"
                           {:field field-key, :oneof ":payload"}))))
@@ -184,18 +187,18 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.JonSharedCmd$Root proto]
-  [any? => (? map?)]
-  (cond (.hasDayCamera proto) {:day-camera (daycamera/parse-root (.getDayCamera
-                                                                   proto))}
-        (.hasHeatCamera proto) {:heat-camera (heatcamera/parse-root
+  [#(instance? cmd.JonSharedCmd$Root %) => (? map?)]
+  (cond (.hasDayCamera proto) {:day-camera (day-camera/parse-root (.getDayCamera
+                                                                    proto))}
+        (.hasHeatCamera proto) {:heat-camera (heat-camera/parse-root
                                                (.getHeatCamera proto))}
         (.hasGps proto) {:gps (gps/parse-root (.getGps proto))}
         (.hasCompass proto) {:compass (compass/parse-root (.getCompass proto))}
         (.hasLrf proto) {:lrf (lrf/parse-root (.getLrf proto))}
         (.hasLrfCalib proto) {:lrf-calib (lrf-calib/parse-root (.getLrfCalib
                                                                  proto))}
-        (.hasRotary proto) {:rotary (rotaryplatform/parse-root (.getRotary
-                                                                 proto))}
+        (.hasRotary proto) {:rotary (rotary-platform/parse-root (.getRotary
+                                                                  proto))}
         (.hasOsd proto) {:osd (osd/parse-root (.getOsd proto))}
         (.hasPing proto) {:ping (parse-ping (.getPing proto))}
         (.hasNoop proto) {:noop (parse-noop (.getNoop proto))}
@@ -203,6 +206,6 @@
         (.hasSystem proto) {:system (system/parse-root (.getSystem proto))}
         (.hasCv proto) {:cv (cv/parse-root (.getCv proto))}
         (.hasDayCamGlassHeater proto) {:day-cam-glass-heater
-                                         (daycamglassheater/parse-root
+                                         (day-cam-glass-heater/parse-root
                                            (.getDayCamGlassHeater proto))}
         (.hasLira proto) {:lira (lira/parse-root (.getLira proto))}))

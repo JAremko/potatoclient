@@ -26,7 +26,7 @@
   "Malli spec for root message"
   [:map
    [:cmd
-    [:altn
+    [:oneof
      {:show-default-screen
         [:map [:show-default-screen :cmd.osd/show-default-screen]],
       :show-lrf-measure-screen
@@ -95,7 +95,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => any?]
+       [root-spec => #(instance? cmd.OSD.JonSharedCmdOsd$Root %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter
@@ -114,28 +114,32 @@
 (>defn build-show-default-screen
        "Build a ShowDefaultScreen protobuf message from a map."
        [m]
-       [show-default-screen-spec => any?]
+       [show-default-screen-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-measure-screen
        "Build a ShowLRFMeasureScreen protobuf message from a map."
        [m]
-       [show-lrf-measure-screen-spec => any?]
+       [show-lrf-measure-screen-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-result-screen
        "Build a ShowLRFResultScreen protobuf message from a map."
        [m]
-       [show-lrf-result-screen-spec => any?]
+       [show-lrf-result-screen-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-result-simplified-screen
        "Build a ShowLRFResultSimplifiedScreen protobuf message from a map."
        [m]
-       [show-lrf-result-simplified-screen-spec => any?]
+       [show-lrf-result-simplified-screen-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen %)]
        (let
          [builder
             (cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen/newBuilder)]
@@ -144,35 +148,39 @@
 (>defn build-enable-heat-osd
        "Build a EnableHeatOSD protobuf message from a map."
        [m]
-       [enable-heat-osd-spec => any?]
+       [enable-heat-osd-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$EnableHeatOSD %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$EnableHeatOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-disable-heat-osd
        "Build a DisableHeatOSD protobuf message from a map."
        [m]
-       [disable-heat-osd-spec => any?]
+       [disable-heat-osd-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$DisableHeatOSD %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$DisableHeatOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-enable-day-osd
        "Build a EnableDayOSD protobuf message from a map."
        [m]
-       [enable-day-osd-spec => any?]
+       [enable-day-osd-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$EnableDayOSD %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$EnableDayOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-disable-day-osd
        "Build a DisableDayOSD protobuf message from a map."
        [m]
-       [disable-day-osd-spec => any?]
+       [disable-day-osd-spec =>
+        #(instance? cmd.OSD.JonSharedCmdOsd$DisableDayOSD %)]
        (let [builder (cmd.OSD.JonSharedCmdOsd$DisableDayOSD/newBuilder)]
          (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.OSD.JonSharedCmdOsd$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.OSD.JonSharedCmdOsd$Root %) => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -229,7 +237,8 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [any? [:tuple keyword? any?] => any?]
+  [#(instance? cmd.OSD.JonSharedCmdOsd$Root$Builder %) [:tuple keyword? any?] =>
+   #(instance? cmd.OSD.JonSharedCmdOsd$Root$Builder %)]
   (case field-key
     :show-default-screen
       (.setShowDefaultScreen builder (build-show-default-screen value))
@@ -252,7 +261,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.OSD.JonSharedCmdOsd$Root proto]
-  [any? => (? map?)]
+  [#(instance? cmd.OSD.JonSharedCmdOsd$Root %) => (? map?)]
   (cond (.hasShowDefaultScreen proto) {:show-default-screen
                                          (parse-show-default-screen
                                            (.getShowDefaultScreen proto))}

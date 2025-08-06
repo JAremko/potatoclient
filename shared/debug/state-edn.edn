@@ -7,11 +7,9 @@
    :java-outer-classname "JonSharedDataTypes",
    :dependencies [],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-meteo,
-     :proto-name "JonGuiDataMeteo",
-     :java-class "ser.JonSharedDataTypes$JonGuiDataMeteo",
+   [{:java-class "ser.JonSharedDataTypes$JonGuiDataMeteo",
      :package "ser",
+     :name :jon-gui-data-meteo,
      :fields
      [{:name :temperature,
        :proto-name "temperature",
@@ -31,6 +29,9 @@
        :type {:scalar :float},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataMeteo",
+     :type :message,
+     :filename "jon_shared_data_types.proto",
      :oneofs [],
      :nested-types []}],
    :enums
@@ -40,6 +41,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-video-channel-heat-filter-unspecified,
        :proto-name
@@ -64,6 +66,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-video-channel-heat-agc-mode-unspecified,
        :proto-name
@@ -83,6 +86,7 @@
      :proto-name "JonGuiDataGpsUnits",
      :java-class "ser.JonSharedDataTypes$JonGuiDataGpsUnits",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-gps-units-unspecified,
        :proto-name "JON_GUI_DATA_GPS_UNITS_UNSPECIFIED",
@@ -101,6 +105,7 @@
      :proto-name "JonGuiDataGpsFixType",
      :java-class "ser.JonSharedDataTypes$JonGuiDataGpsFixType",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-gps-fix-type-unspecified,
        :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED",
@@ -125,6 +130,7 @@
      :proto-name "JonGuiDataCompassUnits",
      :java-class "ser.JonSharedDataTypes$JonGuiDataCompassUnits",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-compass-units-unspecified,
        :proto-name "JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED",
@@ -147,6 +153,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-accumulator-state-unspecified,
        :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED",
@@ -186,6 +193,7 @@
      :proto-name "JonGuiDataTimeFormats",
      :java-class "ser.JonSharedDataTypes$JonGuiDataTimeFormats",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-time-format-unspecified,
        :proto-name "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED",
@@ -201,6 +209,7 @@
      :proto-name "JonGuiDataRotaryDirection",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryDirection",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-rotary-direction-unspecified,
        :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED",
@@ -216,6 +225,7 @@
      :proto-name "JonGuiDataLrfScanModes",
      :java-class "ser.JonSharedDataTypes$JonGuiDataLrfScanModes",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-lrf-scan-mode-unspecified,
        :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED",
@@ -244,6 +254,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
        :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED",
@@ -263,6 +274,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-compass-calibrate-status-unspecified,
        :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED",
@@ -290,6 +302,7 @@
      :proto-name "JonGuiDataRotaryMode",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryMode",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-rotary-mode-unspecified,
        :proto-name "JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED",
@@ -317,6 +330,7 @@
      :proto-name "JonGuiDataVideoChannel",
      :java-class "ser.JonSharedDataTypes$JonGuiDataVideoChannel",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-video-channel-unspecified,
        :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED",
@@ -332,6 +346,7 @@
      :proto-name "JonGuiDataRecOsdScreen",
      :java-class "ser.JonSharedDataTypes$JonGuiDataRecOsdScreen",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-rec-osd-screen-unspecified,
        :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED",
@@ -353,6 +368,7 @@
      :proto-name "JonGuiDataFxModeDay",
      :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeDay",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-fx-mode-day-default,
        :proto-name "JON_GUI_DATA_FX_MODE_DAY_DEFAULT",
@@ -380,6 +396,7 @@
      :proto-name "JonGuiDataFxModeHeat",
      :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeHeat",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-fx-mode-heat-default,
        :proto-name "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT",
@@ -408,6 +425,7 @@
      :java-class
      "ser.JonSharedDataTypes$JonGuiDataSystemLocalizations",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-system-localization-unspecified,
        :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED",
@@ -429,6 +447,7 @@
      :proto-name "JonGuiDataClientType",
      :java-class "ser.JonSharedDataTypes$JonGuiDataClientType",
      :package "ser",
+     :filename "jon_shared_data_types.proto",
      :values
      [{:name :jon-gui-data-client-type-unspecified,
        :proto-name "JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED",
@@ -452,11 +471,9 @@
    :java-outer-classname "JonSharedDataTime",
    :dependencies [],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-time,
-     :proto-name "JonGuiDataTime",
-     :java-class "ser.JonSharedDataTime$JonGuiDataTime",
+   [{:java-class "ser.JonSharedDataTime$JonGuiDataTime",
      :package "ser",
+     :name :jon-gui-data-time,
      :fields
      [{:name :timestamp,
        :proto-name "timestamp",
@@ -482,6 +499,9 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataTime",
+     :type :message,
+     :filename "jon_shared_data_time.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -492,11 +512,9 @@
    :java-outer-classname "JonSharedDataSystem",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-system,
-     :proto-name "JonGuiDataSystem",
-     :java-class "ser.JonSharedDataSystem$JonGuiDataSystem",
+   [{:java-class "ser.JonSharedDataSystem$JonGuiDataSystem",
      :package "ser",
+     :name :jon-gui-data-system,
      :fields
      [{:name :cpu-temperature,
        :proto-name "cpu_temperature",
@@ -630,6 +648,9 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataSystem",
+     :type :message,
+     :filename "jon_shared_data_system.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -640,11 +661,9 @@
    :java-outer-classname "JonSharedDataLrf",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-lrf,
-     :proto-name "JonGuiDataLrf",
-     :java-class "ser.JonSharedDataLrf$JonGuiDataLrf",
+   [{:java-class "ser.JonSharedDataLrf$JonGuiDataLrf",
      :package "ser",
+     :name :jon-gui-data-lrf,
      :fields
      [{:name :is-scanning,
        :proto-name "is_scanning",
@@ -689,13 +708,14 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataLrf",
+     :type :message,
+     :filename "jon_shared_data_lrf.proto",
      :oneofs [],
      :nested-types []}
-    {:type :message,
-     :name :jon-gui-data-target,
-     :proto-name "JonGuiDataTarget",
-     :java-class "ser.JonSharedDataLrf$JonGuiDataTarget",
+    {:java-class "ser.JonSharedDataLrf$JonGuiDataTarget",
      :package "ser",
+     :name :jon-gui-data-target,
      :fields
      [{:name :timestamp,
        :proto-name "timestamp",
@@ -823,13 +843,14 @@
        :type {:unknown {:proto-type :type-int-32}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataTarget",
+     :type :message,
+     :filename "jon_shared_data_lrf.proto",
      :oneofs [],
      :nested-types []}
-    {:type :message,
-     :name :rgb-color,
-     :proto-name "RgbColor",
-     :java-class "ser.JonSharedDataLrf$RgbColor",
+    {:java-class "ser.JonSharedDataLrf$RgbColor",
      :package "ser",
+     :name :rgb-color,
      :fields
      [{:name :red,
        :proto-name "red",
@@ -849,6 +870,9 @@
        :type {:unknown {:proto-type :type-uint-32}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "RgbColor",
+     :type :message,
+     :filename "jon_shared_data_lrf.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -859,11 +883,9 @@
    :java-outer-classname "JonSharedDataGps",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-gps,
-     :proto-name "JonGuiDataGps",
-     :java-class "ser.JonSharedDataGps$JonGuiDataGps",
+   [{:java-class "ser.JonSharedDataGps$JonGuiDataGps",
      :package "ser",
+     :name :jon-gui-data-gps,
      :fields
      [{:name :longitude,
        :proto-name "longitude",
@@ -913,6 +935,9 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataGps",
+     :type :message,
+     :filename "jon_shared_data_gps.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -923,11 +948,9 @@
    :java-outer-classname "JonSharedDataCompass",
    :dependencies [],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-compass,
-     :proto-name "JonGuiDataCompass",
-     :java-class "ser.JonSharedDataCompass$JonGuiDataCompass",
+   [{:java-class "ser.JonSharedDataCompass$JonGuiDataCompass",
      :package "ser",
+     :name :jon-gui-data-compass,
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -971,6 +994,9 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataCompass",
+     :type :message,
+     :filename "jon_shared_data_compass.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -981,12 +1007,10 @@
    :java-outer-classname "JonSharedDataCompassCalibration",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-compass-calibration,
-     :proto-name "JonGuiDataCompassCalibration",
-     :java-class
+   [{:java-class
      "ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration",
      :package "ser",
+     :name :jon-gui-data-compass-calibration,
      :fields
      [{:name :stage,
        :proto-name "stage",
@@ -1025,6 +1049,9 @@
        {:enum {:type-ref ".ser.JonGuiDataCompassCalibrateStatus"}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataCompassCalibration",
+     :type :message,
+     :filename "jon_shared_data_compass_calibration.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1035,11 +1062,9 @@
    :java-outer-classname "JonSharedDataRotary",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-rotary,
-     :proto-name "JonGuiDataRotary",
-     :java-class "ser.JonSharedDataRotary$JonGuiDataRotary",
+   [{:java-class "ser.JonSharedDataRotary$JonGuiDataRotary",
      :package "ser",
+     :name :jon-gui-data-rotary,
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -1143,13 +1168,14 @@
        :type {:message {:type-ref ".ser.ScanNode"}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataRotary",
+     :type :message,
+     :filename "jon_shared_data_rotary.proto",
      :oneofs [],
      :nested-types []}
-    {:type :message,
-     :name :scan-node,
-     :proto-name "ScanNode",
-     :java-class "ser.JonSharedDataRotary$ScanNode",
+    {:java-class "ser.JonSharedDataRotary$ScanNode",
      :package "ser",
+     :name :scan-node,
      :fields
      [{:name :index,
        :proto-name "index",
@@ -1193,6 +1219,9 @@
        :type {:scalar :double},
        :label :label-optional,
        :optional? true}],
+     :proto-name "ScanNode",
+     :type :message,
+     :filename "jon_shared_data_rotary.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1203,11 +1232,9 @@
    :java-outer-classname "JonSharedDataCameraDay",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-camera-day,
-     :proto-name "JonGuiDataCameraDay",
-     :java-class "ser.JonSharedDataCameraDay$JonGuiDataCameraDay",
+   [{:java-class "ser.JonSharedDataCameraDay$JonGuiDataCameraDay",
      :package "ser",
+     :name :jon-gui-data-camera-day,
      :fields
      [{:name :focus-pos,
        :proto-name "focus_pos",
@@ -1275,6 +1302,9 @@
        :type {:scalar :float},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataCameraDay",
+     :type :message,
+     :filename "jon_shared_data_camera_day.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1285,11 +1315,9 @@
    :java-outer-classname "JonSharedDataCameraHeat",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-camera-heat,
-     :proto-name "JonGuiDataCameraHeat",
-     :java-class "ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat",
+   [{:java-class "ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat",
      :package "ser",
+     :name :jon-gui-data-camera-heat,
      :fields
      [{:name :zoom-pos,
        :proto-name "zoom_pos",
@@ -1359,6 +1387,9 @@
        :type {:scalar :float},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataCameraHeat",
+     :type :message,
+     :filename "jon_shared_data_camera_heat.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1369,11 +1400,9 @@
    :java-outer-classname "JonSharedDataRecOsd",
    :dependencies ["jon_shared_data_types.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-rec-osd,
-     :proto-name "JonGuiDataRecOsd",
-     :java-class "ser.JonSharedDataRecOsd$JonGuiDataRecOsd",
+   [{:java-class "ser.JonSharedDataRecOsd$JonGuiDataRecOsd",
      :package "ser",
+     :name :jon-gui-data-rec-osd,
      :fields
      [{:name :screen,
        :proto-name "screen",
@@ -1417,6 +1446,9 @@
        :type {:unknown {:proto-type :type-int-32}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataRecOsd",
+     :type :message,
+     :filename "jon_shared_data_rec_osd.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1427,12 +1459,10 @@
    :java-outer-classname "JonSharedDataDayCamGlassHeater",
    :dependencies [],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-day-cam-glass-heater,
-     :proto-name "JonGuiDataDayCamGlassHeater",
-     :java-class
+   [{:java-class
      "ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater",
      :package "ser",
+     :name :jon-gui-data-day-cam-glass-heater,
      :fields
      [{:name :temperature,
        :proto-name "temperature",
@@ -1446,6 +1476,9 @@
        :type {:scalar :bool},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataDayCamGlassHeater",
+     :type :message,
+     :filename "jon_shared_data_day_cam_glass_heater.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1456,12 +1489,10 @@
    :java-outer-classname "JonSharedDataActualSpaceTime",
    :dependencies [],
    :messages
-   [{:type :message,
-     :name :jon-gui-data-actual-space-time,
-     :proto-name "JonGuiDataActualSpaceTime",
-     :java-class
+   [{:java-class
      "ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime",
      :package "ser",
+     :name :jon-gui-data-actual-space-time,
      :fields
      [{:name :azimuth,
        :proto-name "azimuth",
@@ -1505,6 +1536,9 @@
        :type {:unknown {:proto-type :type-int-64}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGuiDataActualSpaceTime",
+     :type :message,
+     :filename "jon_shared_data_actual_space_time.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}
@@ -1528,11 +1562,9 @@
     "jon_shared_data_day_cam_glass_heater.proto"
     "jon_shared_data_actual_space_time.proto"],
    :messages
-   [{:type :message,
-     :name :jon-gui-state,
-     :proto-name "JonGUIState",
-     :java-class "ser.JonSharedData$JonGUIState",
+   [{:java-class "ser.JonSharedData$JonGUIState",
      :package "ser",
+     :name :jon-gui-state,
      :fields
      [{:name :protocol-version,
        :proto-name "protocol_version",
@@ -1619,6 +1651,9 @@
        :type {:message {:type-ref ".ser.JonGuiDataActualSpaceTime"}},
        :label :label-optional,
        :optional? true}],
+     :proto-name "JonGUIState",
+     :type :message,
+     :filename "jon_shared_data.proto",
      :oneofs [],
      :nested-types []}],
    :enums []}],

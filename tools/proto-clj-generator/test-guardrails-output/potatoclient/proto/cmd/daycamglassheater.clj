@@ -23,7 +23,7 @@
   "Malli spec for root message"
   [:map
    [:cmd
-    [:altn
+    [:oneof
      {:start [:map [:start :cmd.daycamglassheater/start]],
       :stop [:map [:stop :cmd.daycamglassheater/stop]],
       :turn-on [:map [:turn-on :cmd.daycamglassheater/turn-on]],
@@ -64,7 +64,8 @@
   build-root
   "Build a Root protobuf message from a map."
   [m]
-  [root-spec => any?]
+  [root-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root %)]
   (let [builder
           (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root/newBuilder)]
     ;; Handle oneof: cmd
@@ -80,7 +81,8 @@
   build-start
   "Build a Start protobuf message from a map."
   [m]
-  [start-spec => any?]
+  [start-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start %)]
   (let
     [builder
        (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start/newBuilder)]
@@ -90,7 +92,8 @@
   build-stop
   "Build a Stop protobuf message from a map."
   [m]
-  [stop-spec => any?]
+  [stop-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop %)]
   (let [builder
           (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop/newBuilder)]
     (.build builder)))
@@ -99,7 +102,8 @@
   build-turn-on
   "Build a TurnOn protobuf message from a map."
   [m]
-  [turn-on-spec => any?]
+  [turn-on-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn %)]
   (let
     [builder
        (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn/newBuilder)]
@@ -109,7 +113,8 @@
   build-turn-off
   "Build a TurnOff protobuf message from a map."
   [m]
-  [turn-off-spec => any?]
+  [turn-off-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff %)]
   (let
     [builder
        (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff/newBuilder)]
@@ -119,7 +124,8 @@
   build-get-meteo
   "Build a GetMeteo protobuf message from a map."
   [m]
-  [get-meteo-spec => any?]
+  [get-meteo-spec =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo %)]
   (let
     [builder
        (cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo/newBuilder)]
@@ -128,7 +134,8 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root %)
+        => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -163,23 +170,27 @@
        [any? => get-meteo-spec]
        {})
 
-(>defn- build-root-payload
-        "Build the oneof payload for Root."
-        [builder [field-key value]]
-        [any? [:tuple keyword? any?] => any?]
-        (case field-key
-          :start (.setStart builder (build-start value))
-          :stop (.setStop builder (build-stop value))
-          :turn-on (.setTurnOn builder (build-turn-on value))
-          :turn-off (.setTurnOff builder (build-turn-off value))
-          :get-meteo (.setGetMeteo builder (build-get-meteo value))
-          (throw (ex-info "Unknown oneof field"
-                          {:field field-key, :oneof ":cmd"}))))
+(>defn-
+  build-root-payload
+  "Build the oneof payload for Root."
+  [builder [field-key value]]
+  [#(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root$Builder
+               %) [:tuple keyword? any?] =>
+   #(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root$Builder
+               %)]
+  (case field-key
+    :start (.setStart builder (build-start value))
+    :stop (.setStop builder (build-stop value))
+    :turn-on (.setTurnOn builder (build-turn-on value))
+    :turn-off (.setTurnOff builder (build-turn-off value))
+    :get-meteo (.setGetMeteo builder (build-get-meteo value))
+    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
 
 (>defn- parse-root-payload
         "Parse the oneof payload from Root."
         [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
-        [any? => (? map?)]
+        [#(instance? cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root %)
+         => (? map?)]
         (cond (.hasStart proto) {:start (parse-start (.getStart proto))}
               (.hasStop proto) {:stop (parse-stop (.getStop proto))}
               (.hasTurnOn proto) {:turn-on (parse-turn-on (.getTurnOn proto))}

@@ -1,1 +1,1 @@
-true (assoc FIELD-KEY (vec (.getFIELD-NAMEList proto)))
+true (assoc FIELD-KEY (vec VALUE-EXPR))

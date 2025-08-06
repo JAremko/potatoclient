@@ -30,7 +30,7 @@
   "Malli spec for root message"
   [:map
    [:cmd
-    [:altn
+    [:oneof
      {:calibrate-cencel [:map
                          [:calibrate-cencel :cmd.compass/calibrate-cencel]],
       :start [:map [:start :cmd.compass/start]],
@@ -126,7 +126,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => any?]
+       [root-spec => #(instance? cmd.Compass.JonSharedCmdCompass$Root %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field
@@ -146,28 +146,29 @@
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [start-spec => any?]
+       [start-spec => #(instance? cmd.Compass.JonSharedCmdCompass$Start %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [stop-spec => any?]
+       [stop-spec => #(instance? cmd.Compass.JonSharedCmdCompass$Stop %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-next
        "Build a Next protobuf message from a map."
        [m]
-       [next-spec => any?]
+       [next-spec => #(instance? cmd.Compass.JonSharedCmdCompass$Next %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$Next/newBuilder)]
          (.build builder)))
 
 (>defn build-calibrate-start-long
        "Build a CalibrateStartLong protobuf message from a map."
        [m]
-       [calibrate-start-long-spec => any?]
+       [calibrate-start-long-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$CalibrateStartLong %)]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateStartLong/newBuilder)]
          (.build builder)))
@@ -175,7 +176,8 @@
 (>defn build-calibrate-start-short
        "Build a CalibrateStartShort protobuf message from a map."
        [m]
-       [calibrate-start-short-spec => any?]
+       [calibrate-start-short-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$CalibrateStartShort %)]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateStartShort/newBuilder)]
          (.build builder)))
@@ -183,14 +185,16 @@
 (>defn build-calibrate-next
        "Build a CalibrateNext protobuf message from a map."
        [m]
-       [calibrate-next-spec => any?]
+       [calibrate-next-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$CalibrateNext %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$CalibrateNext/newBuilder)]
          (.build builder)))
 
 (>defn build-calibrate-cencel
        "Build a CalibrateCencel protobuf message from a map."
        [m]
-       [calibrate-cencel-spec => any?]
+       [calibrate-cencel-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$CalibrateCencel %)]
        (let [builder
                (cmd.Compass.JonSharedCmdCompass$CalibrateCencel/newBuilder)]
          (.build builder)))
@@ -198,14 +202,16 @@
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [get-meteo-spec => any?]
+       [get-meteo-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$GetMeteo %)]
        (let [builder (cmd.Compass.JonSharedCmdCompass$GetMeteo/newBuilder)]
          (.build builder)))
 
 (>defn build-set-magnetic-declination
        "Build a SetMagneticDeclination protobuf message from a map."
        [m]
-       [set-magnetic-declination-spec => any?]
+       [set-magnetic-declination-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination %)]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination/newBuilder)]
@@ -216,7 +222,8 @@
 (>defn build-set-offset-angle-azimuth
        "Build a SetOffsetAngleAzimuth protobuf message from a map."
        [m]
-       [set-offset-angle-azimuth-spec => any?]
+       [set-offset-angle-azimuth-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth %)]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth/newBuilder)]
@@ -228,7 +235,8 @@
   build-set-offset-angle-elevation
   "Build a SetOffsetAngleElevation protobuf message from a map."
   [m]
-  [set-offset-angle-elevation-spec => any?]
+  [set-offset-angle-elevation-spec =>
+   #(instance? cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation %)]
   (let [builder
           (cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation/newBuilder)]
     ;; Set regular fields
@@ -238,7 +246,8 @@
 (>defn build-set-use-rotary-position
        "Build a SetUseRotaryPosition protobuf message from a map."
        [m]
-       [set-use-rotary-position-spec => any?]
+       [set-use-rotary-position-spec =>
+        #(instance? cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition %)]
        (let
          [builder
             (cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition/newBuilder)]
@@ -249,7 +258,7 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.Compass.JonSharedCmdCompass$Root %) => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -305,7 +314,8 @@
 (>defn parse-set-magnetic-declination
        "Parse a SetMagneticDeclination protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination proto]
-       [any? => set-magnetic-declination-spec]
+       [#(instance? cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination %) =>
+        set-magnetic-declination-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -313,7 +323,8 @@
 (>defn parse-set-offset-angle-azimuth
        "Parse a SetOffsetAngleAzimuth protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth proto]
-       [any? => set-offset-angle-azimuth-spec]
+       [#(instance? cmd.Compass.JonSharedCmdCompass$SetOffsetAngleAzimuth %) =>
+        set-offset-angle-azimuth-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -321,7 +332,8 @@
 (>defn parse-set-offset-angle-elevation
        "Parse a SetOffsetAngleElevation protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation proto]
-       [any? => set-offset-angle-elevation-spec]
+       [#(instance? cmd.Compass.JonSharedCmdCompass$SetOffsetAngleElevation %)
+        => set-offset-angle-elevation-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -329,7 +341,8 @@
 (>defn parse-set-use-rotary-position
        "Parse a SetUseRotaryPosition protobuf message to a map."
        [^cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition proto]
-       [any? => set-use-rotary-position-spec]
+       [#(instance? cmd.Compass.JonSharedCmdCompass$SetUseRotaryPosition %) =>
+        set-use-rotary-position-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :flag (.getFlag proto))))
@@ -338,7 +351,9 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [any? [:tuple keyword? any?] => any?]
+  [#(instance? cmd.Compass.JonSharedCmdCompass$Root$Builder %)
+   [:tuple keyword? any?] =>
+   #(instance? cmd.Compass.JonSharedCmdCompass$Root$Builder %)]
   (case field-key
     :start (.setStart builder (build-start value))
     :stop (.setStop builder (build-stop value))
@@ -365,7 +380,7 @@
 (>defn- parse-root-payload
         "Parse the oneof payload from Root."
         [^cmd.Compass.JonSharedCmdCompass$Root proto]
-        [any? => (? map?)]
+        [#(instance? cmd.Compass.JonSharedCmdCompass$Root %) => (? map?)]
         (cond
           (.hasStart proto) {:start (parse-start (.getStart proto))}
           (.hasStop proto) {:stop (parse-stop (.getStop proto))}

@@ -57,9 +57,32 @@
         
         ;; For message types, we need to build them; for enums, convert from keywords
         value-expr (cond
+                    ;; Repeated message field - v is the item in the loop
+                    (and (:repeated? field) (get-in field [:type :message]))
+                    (let [type-ref (get-in field [:type :message :type-ref])
+                          message-name (when type-ref
+                                        (-> type-ref
+                                            (str/replace #"^\." "")
+                                            (str/split #"\.")
+                                            last
+                                            naming/proto-name->clojure-fn-name))]
+                      (str "(build-" message-name " v)"))
+                    
+                    ;; Repeated enum field - v is the item in the loop
+                    (and (:repeated? field) (get-in field [:type :enum]))
+                    (let [enum-type (get-in field [:type :enum :type-ref])
+                          enum-ref (type-res/resolve-enum-reference 
+                                   enum-type current-package type-lookup)
+                          qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                      (str "(get " qualified-ref " v)"))
+                    
+                    ;; Repeated scalar - v is the item in the loop
+                    (:repeated? field)
+                    "v"
+                    
+                    ;; Regular message field
                     is-message?
                     (let [type-ref (get-in field [:type :message :type-ref])
-                          ;; Extract the message name from the type reference
                           message-name (when type-ref
                                         (-> type-ref
                                             (str/replace #"^\." "")
@@ -68,6 +91,7 @@
                                             naming/proto-name->clojure-fn-name))]
                       (str "(build-" message-name " (get m " field-key "))"))
                     
+                    ;; Regular enum field
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
                           enum-ref (type-res/resolve-enum-reference 
@@ -75,24 +99,36 @@
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(get " qualified-ref " (get m " field-key "))"))
                     
+                    ;; Regular scalar
                     :else
                     (str "(get m " field-key ")"))
         
+        ;; For repeated fields, generate different code based on type
+        repeated-setter-code (when (:repeated? field)
+                              (cond
+                                ;; Repeated scalars and enums - use addAll
+                                (or (not (get-in field [:type :message]))
+                                    (get-in field [:type :enum]))
+                                (str "(when (contains? m " field-key ")\n"
+                                     "  (.addAll" field-name-pascal " builder (get m " field-key ")))")
+                                
+                                ;; Repeated messages - need to build each one
+                                :else
+                                (str "(when-let [values (seq (get m " field-key "))]\n"
+                                     "  (doseq [v values]\n"
+                                     "    (.add" field-name-pascal " builder " value-expr ")))")))
+        
         template (if (:repeated? field)
                    (load-template-string "field-setter-repeated.clj")
-                   ;; For non-repeated fields, use inline template
-                   (str "(when (contains? m " field-key ")\n"
-                        "  (." (if (:repeated? field)
-                               (str "addAll" field-name-pascal)
-                               (str "set" field-name-pascal))
-                        " builder " value-expr "))"))]
+                   (load-template-string "field-setter.clj"))
+        
+        replacements {"FIELD-KEY" field-key
+                     "FIELD-METHOD" field-name-pascal
+                     "SET-VALUE-EXPR" value-expr
+                     "VALUE-EXPR" value-expr
+                     "REPEATED-SETTER-CODE" (or repeated-setter-code "")}]
     
-    (if (:repeated? field)
-      (replace-in-template template 
-                          {"FIELD-KEY" field-key
-                           "FIELD-NAME" field-name-pascal
-                           "METHOD-NAME" (str ".addAll" field-name-pascal)})
-      template)))
+    (replace-in-template template replacements)))
 
 (defn generate-field-getter
   "Generate getter code for a single field."
@@ -108,13 +144,34 @@
         use-has-method? is-message?
         
         field-name-pascal (csk/->PascalCase (:proto-name field))
-        getter-expr (str ".get" field-name-pascal)
+        getter-expr (if (:repeated? field)
+                     (str ".get" field-name-pascal "List")
+                     (str ".get" field-name-pascal))
         
         ;; For messages, we need to parse them; for enums, convert to keywords
         value-expr (cond
+                    ;; Repeated message field
+                    (and (:repeated? field) (get-in field [:type :message]))
+                    (let [type-ref (get-in field [:type :message :type-ref])
+                          message-name (when type-ref
+                                        (-> type-ref
+                                            (str/replace #"^\." "")
+                                            (str/split #"\.")
+                                            last
+                                            naming/proto-name->clojure-fn-name))]
+                      (str "(mapv parse-" message-name " (" getter-expr " proto))"))
+                    
+                    ;; Repeated enum field
+                    (and (:repeated? field) (get-in field [:type :enum]))
+                    (let [enum-type (get-in field [:type :enum :type-ref])
+                          enum-ref (type-res/resolve-enum-keyword-map 
+                                   enum-type current-package type-lookup)
+                          qualified-ref (type-res/qualified-enum-ref enum-ref)]
+                      (str "(mapv #(get " qualified-ref " %) (" getter-expr " proto))"))
+                    
+                    ;; Regular message field
                     is-message?
                     (let [type-ref (get-in field [:type :message :type-ref])
-                          ;; Extract the message name from the type reference
                           message-name (when type-ref
                                         (-> type-ref
                                             (str/replace #"^\." "")
@@ -123,6 +180,7 @@
                                             naming/proto-name->clojure-fn-name))]
                       (str "(parse-" message-name " (" getter-expr " proto))"))
                     
+                    ;; Regular enum field
                     is-enum?
                     (let [enum-type (get-in field [:type :enum :type-ref])
                           enum-ref (type-res/resolve-enum-keyword-map 
@@ -130,6 +188,7 @@
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
                       (str "(get " qualified-ref " (" getter-expr " proto))"))
                     
+                    ;; Repeated scalar or regular scalar
                     :else
                     (str "(" getter-expr " proto)"))
         
@@ -142,10 +201,8 @@
         
         replacements {"FIELD-KEY" (str (:name field))
                      "FIELD-NAME" field-name-pascal
-                     "METHOD-NAME" (if (:repeated? field)
-                                    "true" 
-                                    (str ".has" field-name-pascal))
-                     "GETTER-NAME" value-expr}]
+                     "FIELD-METHOD" field-name-pascal
+                     "VALUE-EXPR" value-expr}]
     (replace-in-template template replacements)))
 
 ;; =============================================================================
@@ -187,8 +244,8 @@
 
 (defn generate-builder
   "Generate builder function for a message."
-  [message type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "builder-guardrails.clj" "builder.clj"))
+  [message type-lookup current-package]
+  (let [template (load-template-string "builder-guardrails.clj")
         regular-fields (remove :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
         
@@ -223,7 +280,7 @@
 
 (defn generate-parser
   "Generate parser function for a message."
-  [message type-lookup current-package guardrails?]
+  [message type-lookup current-package]
   (let [regular-fields (remove :oneof-index (:fields message))
         fn-name (str "parse-" (name (:name message)))
         spec-name (spec-gen/message->spec-name message)
@@ -231,17 +288,13 @@
         
         ;; For empty messages, use a simpler template
         template (if has-fields?
-                   (load-template-string (if guardrails? "parser-guardrails.clj" "parser.clj"))
-                   (if guardrails?
-                     (str "(>defn " fn-name "\n"
-                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
-                          "  [^" (:java-class message) " proto]\n"
-                          "  [any? => " spec-name "]\n"
-                          "  {})")
-                     (str "(defn " fn-name "\n"
-                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
-                          "  [^" (:java-class message) " proto]\n"
-                          "  {})")))
+                   (load-template-string "parser-guardrails.clj")
+                   ;; Always use guardrails
+                   (str "(>defn " fn-name "\n"
+                        "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
+                        "  [^" (:java-class message) " proto]\n"
+                        "  [any? => " spec-name "]\n"
+                        "  {})"))
         
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
@@ -296,9 +349,7 @@
                       (when (and type-def (= :message (:type type-def)))
                         (if needs-ns?
                           ;; Qualify with namespace alias
-                          (let [ns-alias (-> (last (str/split target-package #"\."))
-                                             str/lower-case
-                                             (str/replace "_" "-"))]
+                          (let [ns-alias (naming/proto-package->clojure-alias target-package)]
                             (str ns-alias "/build-" (name (:name type-def))))
                           ;; Same namespace, no qualification needed
                           (str "build-" (name (:name type-def)))))))
@@ -331,9 +382,7 @@
                      (when (and type-def (= :message (:type type-def)))
                        (if needs-ns?
                          ;; Qualify with namespace alias
-                         (let [ns-alias (-> (last (str/split target-package #"\."))
-                                            str/lower-case
-                                            (str/replace "_" "-"))]
+                         (let [ns-alias (naming/proto-package->clojure-alias target-package)]
                            (str ns-alias "/parse-" (name (:name type-def))))
                          ;; Same namespace, no qualification needed
                          (str "parse-" (name (:name type-def)))))))
@@ -352,8 +401,8 @@
 
 (defn generate-oneof-builder
   "Generate oneof builder function."
-  [message oneof type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "oneof-builder-guardrails.clj" "oneof-builder.clj"))
+  [message oneof type-lookup current-package]
+  (let [template (load-template-string "oneof-builder-guardrails.clj")
         fn-name (str "build-" (naming/proto-name->clojure-fn-name (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
@@ -362,16 +411,19 @@
                        (map #(generate-oneof-builder-case % message type-lookup current-package) 
                             oneof-fields))
         
+        ;; Get the builder class name (it's the nested Builder inside the message class)
+        builder-class (str (:java-class message) "$Builder")
         replacements {"ONEOF-BUILD-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
                      "ONEOF-NAME" (pr-str (:name oneof))
-                     "ONEOF-CASES" cases}]
+                     "ONEOF-CASES" cases
+                     "BUILDER-CLASS" builder-class}]
     (replace-in-template template replacements)))
 
 (defn generate-oneof-parser
   "Generate oneof parser function."
-  [message oneof type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "oneof-parser-guardrails.clj" "oneof-parser.clj"))
+  [message oneof type-lookup current-package]
+  (let [template (load-template-string "oneof-parser-guardrails.clj")
         fn-name (str "parse-" (naming/proto-name->clojure-fn-name (:proto-name message)) "-payload")
         ;; Use fields from the oneof structure itself
         oneof-fields (:fields oneof)
@@ -403,41 +455,26 @@
   ([ns-name imports enums messages type-lookup]
    (generate-namespace ns-name imports enums messages type-lookup [] false true nil))
   ([ns-name imports enums messages type-lookup require-specs]
-   (generate-namespace ns-name imports enums messages type-lookup require-specs false true nil))
-  ([ns-name imports enums messages type-lookup require-specs guardrails?]
-   (generate-namespace ns-name imports enums messages type-lookup require-specs guardrails? true nil))
-  ([ns-name imports enums messages type-lookup require-specs guardrails? generate-specs?]
-   (generate-namespace ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? nil))
-  ([ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? proto-package]
+   (generate-namespace ns-name imports enums messages type-lookup require-specs true nil))
+  ([ns-name imports enums messages type-lookup require-specs generate-specs?]
+   (generate-namespace ns-name imports enums messages type-lookup require-specs generate-specs? nil))
+  ([ns-name imports enums messages type-lookup require-specs generate-specs? proto-package]
    (let [template (cond
-                    ;; Specs + guardrails + requires
-                    (and generate-specs? guardrails? (seq require-specs))
-                    (load-template-string "namespace-with-specs-guardrails.clj")
-                    
-                    ;; Specs + guardrails (no requires) 
-                    (and generate-specs? guardrails?)
-                    (load-template-string "namespace-with-specs-guardrails.clj")
-                    
-                    ;; Specs + requires (no guardrails)
+                    ;; Specs + requires
                     (and generate-specs? (seq require-specs))
-                    (load-template-string "namespace-with-specs.clj")
+                    (load-template-string "namespace-with-specs-guardrails.clj")
                     
                     ;; Specs only
                     generate-specs?
-                    (load-template-string "namespace-with-specs.clj")
+                    (load-template-string "namespace-with-specs-guardrails.clj")
                     
-                    ;; Original templates without specs
-                    (and guardrails? (seq require-specs))
+                    ;; No specs but has requires
+                    (seq require-specs)
                     (load-template-string "namespace-with-requires-guardrails.clj")
                     
-                    guardrails?
-                    (load-template-string "namespace-guardrails.clj")
-                    
-                    (seq require-specs)
-                    (load-template-string "namespace-with-requires.clj")
-                    
+                    ;; No specs, no requires
                     :else
-                    (load-template-string "namespace.clj"))
+                    (load-template-string "namespace-guardrails.clj"))
          
          ;; Use provided proto-package or extract from namespace name
          current-package (or proto-package
@@ -483,15 +520,15 @@
          ;; Generate all message builders/parsers first, then all oneofs
          ;; This avoids forward reference issues
          all-builders (for [msg sorted-messages]
-                       (generate-builder msg type-lookup current-package guardrails?))
+                       (generate-builder msg type-lookup current-package))
          all-parsers (for [msg sorted-messages]
-                      (generate-parser msg type-lookup current-package guardrails?))
+                      (generate-parser msg type-lookup current-package))
          all-oneof-builders (for [msg sorted-messages
                                  oneof (:oneofs msg)]
-                             (generate-oneof-builder msg oneof type-lookup current-package guardrails?))
+                             (generate-oneof-builder msg oneof type-lookup current-package))
          all-oneof-parsers (for [msg sorted-messages
                                 oneof (:oneofs msg)]
-                            (generate-oneof-parser msg oneof type-lookup current-package guardrails?))
+                            (generate-oneof-parser msg oneof type-lookup current-package))
          
          messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
@@ -572,7 +609,7 @@
 
 (defn generate-code
   "Generate complete Clojure code from EDN data."
-  [{:keys [ns-name edn-data type-lookup guardrails? proto-package]}]
+  [{:keys [ns-name edn-data type-lookup proto-package]}]
   (let [imports (collect-imports edn-data)
         ;; Helper to collect all messages recursively
         collect-all-messages (fn collect [msg]
@@ -595,18 +632,16 @@
                    (sp/select [:files sp/ALL :enums sp/ALL] edn-data)
                    (->> all-messages
                         (mapcat collect-enums-from-message)))]
-    (generate-namespace ns-name imports all-enums all-messages type-lookup [] guardrails? true proto-package)))
+    (generate-namespace ns-name imports all-enums all-messages type-lookup [] true proto-package)))
 
 (defn generate-from-backend
   "Generate Clojure code from backend EDN output."
-  [{:keys [command state type-lookup] :as backend-output} ns-prefix guardrails?]
+  [{:keys [command state type-lookup] :as backend-output} ns-prefix]
   {:command (generate-code {:ns-name (str ns-prefix ".command")
                            :edn-data command
                            :type-lookup type-lookup
-                           :guardrails? guardrails?
                            :proto-package "cmd"})
    :state (generate-code {:ns-name (str ns-prefix ".state")
                          :edn-data state
                          :type-lookup type-lookup
-                         :guardrails? guardrails?
                          :proto-package "ser"})})

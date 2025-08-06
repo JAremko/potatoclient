@@ -34,7 +34,7 @@
          {:.cmd.Compass.Root {:name :root :package "cmd.Compass"}
           :.cmd.Compass.Start {:name :start :package "cmd.Compass"}}}
         
-        grouped (frontend-ns/group-by-package 
+        grouped (frontend-ns/group-by-file 
                  (get-in test-backend-output [:command :files]))]
     
     (println "\nGrouped data:")

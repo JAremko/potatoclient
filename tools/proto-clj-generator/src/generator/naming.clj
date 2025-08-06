@@ -194,6 +194,18 @@
         result (normalize-for-filesystem (last parts))]
     (check-and-cache! ::proto-package->alias proto-package result)))
 
+(defn proto-package->clojure-alias
+  "Extract Clojure-compatible alias from protobuf package, preserving kebab-case.
+  e.g. 'cmd.DayCamera' -> 'day-camera'
+       'cmd.DayCamGlassHeater' -> 'day-cam-glass-heater'
+  This is used for namespace aliases in require statements."
+  {:malli/schema [:=> [:cat proto-package-spec] :string]}
+  [proto-package]
+  (let [parts (str/split proto-package #"\.")
+        ;; Use kebab-case conversion to preserve word boundaries
+        result (csk/->kebab-case (last parts))]
+    (check-and-cache! ::proto-package->clojure-alias proto-package result)))
+
 ;; =============================================================================
 ;; Name Conversions (for idiomatic Clojure)
 ;; =============================================================================

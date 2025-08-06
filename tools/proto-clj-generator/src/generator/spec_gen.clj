@@ -130,7 +130,7 @@
         oneof-name (:name oneof-decl)]
     ;; Return just the key and schema pair, not wrapped in [:map ...]
     [(keyword oneof-name)
-     [:altn
+     [:oneof
       (into {}
             (map (fn [field]
                    (let [field-key (keyword (:name field))]

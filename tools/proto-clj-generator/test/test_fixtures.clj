@@ -1,27 +1,18 @@
 (ns test-fixtures
-  "Generate test fixtures for both single and namespaced modes"
+  "Generate test fixtures for separated namespace mode"
   (:require [generator.core :as core]
             [clojure.java.io :as io]))
 
 (defn generate-test-fixtures!
-  "Generate code in both modes for testing"
+  "Generate code for testing"
   []
   (println "Generating test fixtures...")
   
-  ;; Generate single-file mode for backward compatibility tests
-  (println "Generating single-file mode to test-output-single...")
+  ;; Generate separated namespace mode
+  (println "Generating separated namespace mode to test-output...")
   (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
-                      :output-dir "test-output-single"
+                      :output-dir "test-output"
                       :namespace-prefix "potatoclient.proto"
-                      :namespace-mode :single
-                      :debug? false})
-  
-  ;; Generate namespace-split mode 
-  (println "Generating namespace-split mode to test-output-ns...")
-  (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
-                      :output-dir "test-output-ns"
-                      :namespace-prefix "potatoclient.proto"
-                      :namespace-split? true
                       :debug? false})
   
   (println "Test fixtures generated successfully!"))

@@ -1,7 +1,7 @@
 (ns generator.debug-test
   "Debug test to understand proto behavior"
   (:require [clojure.test :refer :all]
-            [potatoclient.proto.command :as cmd-gen])
+            [potatoclient.proto.cmd :as cmd-gen])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]))
 
 (deftest debug-ping-command

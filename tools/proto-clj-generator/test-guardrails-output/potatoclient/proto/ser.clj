@@ -1530,7 +1530,8 @@
 (>defn build-jon-gui-data-meteo
        "Build a JonGuiDataMeteo protobuf message from a map."
        [m]
-       [jon-gui-data-meteo-spec => any?]
+       [jon-gui-data-meteo-spec =>
+        #(instance? ser.JonSharedDataTypes$JonGuiDataMeteo %)]
        (let [builder (ser.JonSharedDataTypes$JonGuiDataMeteo/newBuilder)]
          ;; Set regular fields
          (when (contains? m :temperature)
@@ -1542,7 +1543,8 @@
 (>defn build-jon-gui-data-meteo
        "Build a JonGuiDataMeteo protobuf message from a map."
        [m]
-       [jon-gui-data-meteo-spec => any?]
+       [jon-gui-data-meteo-spec =>
+        #(instance? ser.JonSharedDataTypes$JonGuiDataMeteo %)]
        (let [builder (ser.JonSharedDataTypes$JonGuiDataMeteo/newBuilder)]
          ;; Set regular fields
          (when (contains? m :temperature)
@@ -1554,7 +1556,8 @@
 (>defn build-jon-gui-data-time
        "Build a JonGuiDataTime protobuf message from a map."
        [m]
-       [jon-gui-data-time-spec => any?]
+       [jon-gui-data-time-spec =>
+        #(instance? ser.JonSharedDataTime$JonGuiDataTime %)]
        (let [builder (ser.JonSharedDataTime$JonGuiDataTime/newBuilder)]
          ;; Set regular fields
          (when (contains? m :timestamp)
@@ -1570,7 +1573,8 @@
   build-jon-gui-data-system
   "Build a JonGuiDataSystem protobuf message from a map."
   [m]
-  [jon-gui-data-system-spec => any?]
+  [jon-gui-data-system-spec =>
+   #(instance? ser.JonSharedDataSystem$JonGuiDataSystem %)]
   (let [builder (ser.JonSharedDataSystem$JonGuiDataSystem/newBuilder)]
     ;; Set regular fields
     (when (contains? m :cpu-temperature)
@@ -1615,35 +1619,36 @@
     (when (contains? m :cv-dumping) (.setCvDumping builder (get m :cv-dumping)))
     (.build builder)))
 
-(>defn build-jon-gui-data-lrf
-       "Build a JonGuiDataLrf protobuf message from a map."
-       [m]
-       [jon-gui-data-lrf-spec => any?]
-       (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :is-scanning)
-           (.setIsScanning builder (get m :is-scanning)))
-         (when (contains? m :is-measuring)
-           (.setIsMeasuring builder (get m :is-measuring)))
-         (when (contains? m :measure-id)
-           (.setMeasureId builder (get m :measure-id)))
-         (when (contains? m :target)
-           (.setTarget builder (build-jon-gui-data-target (get m :target))))
-         (when (contains? m :pointer-mode)
-           (.setPointerMode builder
-                            (get jon-gui-datat-lrf-laser-pointer-modes-values
-                                 (get m :pointer-mode))))
-         (when (contains? m :fog-mode-enabled)
-           (.setFogModeEnabled builder (get m :fog-mode-enabled)))
-         (when (contains? m :is-refining)
-           (.setIsRefining builder (get m :is-refining)))
-         (.build builder)))
+(>defn
+  build-jon-gui-data-lrf
+  "Build a JonGuiDataLrf protobuf message from a map."
+  [m]
+  [jon-gui-data-lrf-spec => #(instance? ser.JonSharedDataLrf$JonGuiDataLrf %)]
+  (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :is-scanning)
+      (.setIsScanning builder (get m :is-scanning)))
+    (when (contains? m :is-measuring)
+      (.setIsMeasuring builder (get m :is-measuring)))
+    (when (contains? m :measure-id) (.setMeasureId builder (get m :measure-id)))
+    (when (contains? m :target)
+      (.setTarget builder (build-jon-gui-data-target (get m :target))))
+    (when (contains? m :pointer-mode)
+      (.setPointerMode builder
+                       (get jon-gui-datat-lrf-laser-pointer-modes-values
+                            (get m :pointer-mode))))
+    (when (contains? m :fog-mode-enabled)
+      (.setFogModeEnabled builder (get m :fog-mode-enabled)))
+    (when (contains? m :is-refining)
+      (.setIsRefining builder (get m :is-refining)))
+    (.build builder)))
 
 (>defn
   build-jon-gui-data-target
   "Build a JonGuiDataTarget protobuf message from a map."
   [m]
-  [jon-gui-data-target-spec => any?]
+  [jon-gui-data-target-spec =>
+   #(instance? ser.JonSharedDataLrf$JonGuiDataTarget %)]
   (let [builder (ser.JonSharedDataLrf$JonGuiDataTarget/newBuilder)]
     ;; Set regular fields
     (when (contains? m :timestamp) (.setTimestamp builder (get m :timestamp)))
@@ -1691,7 +1696,7 @@
 (>defn build-rgb-color
        "Build a RgbColor protobuf message from a map."
        [m]
-       [rgb-color-spec => any?]
+       [rgb-color-spec => #(instance? ser.JonSharedDataLrf$RgbColor %)]
        (let [builder (ser.JonSharedDataLrf$RgbColor/newBuilder)]
          ;; Set regular fields
          (when (contains? m :red) (.setRed builder (get m :red)))
@@ -1703,7 +1708,7 @@
   build-jon-gui-data-gps
   "Build a JonGuiDataGps protobuf message from a map."
   [m]
-  [jon-gui-data-gps-spec => any?]
+  [jon-gui-data-gps-spec => #(instance? ser.JonSharedDataGps$JonGuiDataGps %)]
   (let [builder (ser.JonSharedDataGps$JonGuiDataGps/newBuilder)]
     ;; Set regular fields
     (when (contains? m :longitude) (.setLongitude builder (get m :longitude)))
@@ -1724,7 +1729,8 @@
 (>defn build-jon-gui-data-compass
        "Build a JonGuiDataCompass protobuf message from a map."
        [m]
-       [jon-gui-data-compass-spec => any?]
+       [jon-gui-data-compass-spec =>
+        #(instance? ser.JonSharedDataCompass$JonGuiDataCompass %)]
        (let [builder (ser.JonSharedDataCompass$JonGuiDataCompass/newBuilder)]
          ;; Set regular fields
          (when (contains? m :azimuth) (.setAzimuth builder (get m :azimuth)))
@@ -1745,7 +1751,9 @@
   build-jon-gui-data-compass-calibration
   "Build a JonGuiDataCompassCalibration protobuf message from a map."
   [m]
-  [jon-gui-data-compass-calibration-spec => any?]
+  [jon-gui-data-compass-calibration-spec =>
+   #(instance? ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
+               %)]
   (let
     [builder
        (ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration/newBuilder)]
@@ -1769,7 +1777,8 @@
   build-jon-gui-data-rotary
   "Build a JonGuiDataRotary protobuf message from a map."
   [m]
-  [jon-gui-data-rotary-spec => any?]
+  [jon-gui-data-rotary-spec =>
+   #(instance? ser.JonSharedDataRotary$JonGuiDataRotary %)]
   (let [builder (ser.JonSharedDataRotary$JonGuiDataRotary/newBuilder)]
     ;; Set regular fields
     (when (contains? m :azimuth) (.setAzimuth builder (get m :azimuth)))
@@ -1809,7 +1818,7 @@
 (>defn build-scan-node
        "Build a ScanNode protobuf message from a map."
        [m]
-       [scan-node-spec => any?]
+       [scan-node-spec => #(instance? ser.JonSharedDataRotary$ScanNode %)]
        (let [builder (ser.JonSharedDataRotary$ScanNode/newBuilder)]
          ;; Set regular fields
          (when (contains? m :index) (.setIndex builder (get m :index)))
@@ -1828,7 +1837,8 @@
   build-jon-gui-data-camera-day
   "Build a JonGuiDataCameraDay protobuf message from a map."
   [m]
-  [jon-gui-data-camera-day-spec => any?]
+  [jon-gui-data-camera-day-spec =>
+   #(instance? ser.JonSharedDataCameraDay$JonGuiDataCameraDay %)]
   (let [builder (ser.JonSharedDataCameraDay$JonGuiDataCameraDay/newBuilder)]
     ;; Set regular fields
     (when (contains? m :focus-pos) (.setFocusPos builder (get m :focus-pos)))
@@ -1855,7 +1865,8 @@
   build-jon-gui-data-camera-heat
   "Build a JonGuiDataCameraHeat protobuf message from a map."
   [m]
-  [jon-gui-data-camera-heat-spec => any?]
+  [jon-gui-data-camera-heat-spec =>
+   #(instance? ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat %)]
   (let [builder (ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat/newBuilder)]
     ;; Set regular fields
     (when (contains? m :zoom-pos) (.setZoomPos builder (get m :zoom-pos)))
@@ -1888,7 +1899,8 @@
   build-jon-gui-data-rec-osd
   "Build a JonGuiDataRecOsd protobuf message from a map."
   [m]
-  [jon-gui-data-rec-osd-spec => any?]
+  [jon-gui-data-rec-osd-spec =>
+   #(instance? ser.JonSharedDataRecOsd$JonGuiDataRecOsd %)]
   (let [builder (ser.JonSharedDataRecOsd$JonGuiDataRecOsd/newBuilder)]
     ;; Set regular fields
     (when (contains? m :screen)
@@ -1918,7 +1930,9 @@
   build-jon-gui-data-day-cam-glass-heater
   "Build a JonGuiDataDayCamGlassHeater protobuf message from a map."
   [m]
-  [jon-gui-data-day-cam-glass-heater-spec => any?]
+  [jon-gui-data-day-cam-glass-heater-spec =>
+   #(instance? ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater
+               %)]
   (let
     [builder
        (ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater/newBuilder)]
@@ -1932,7 +1946,8 @@
   build-jon-gui-data-actual-space-time
   "Build a JonGuiDataActualSpaceTime protobuf message from a map."
   [m]
-  [jon-gui-data-actual-space-time-spec => any?]
+  [jon-gui-data-actual-space-time-spec =>
+   #(instance? ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime %)]
   (let
     [builder
        (ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime/newBuilder)]
@@ -1950,7 +1965,7 @@
   build-jon-gui-state
   "Build a JonGUIState protobuf message from a map."
   [m]
-  [jon-gui-state-spec => any?]
+  [jon-gui-state-spec => #(instance? ser.JonSharedData$JonGUIState %)]
   (let [builder (ser.JonSharedData$JonGUIState/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
@@ -1995,7 +2010,8 @@
 (>defn parse-jon-gui-data-meteo
        "Parse a JonGuiDataMeteo protobuf message to a map."
        [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-       [any? => jon-gui-data-meteo-spec]
+       [#(instance? ser.JonSharedDataTypes$JonGuiDataMeteo %) =>
+        jon-gui-data-meteo-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -2005,7 +2021,8 @@
 (>defn parse-jon-gui-data-meteo
        "Parse a JonGuiDataMeteo protobuf message to a map."
        [^ser.JonSharedDataTypes$JonGuiDataMeteo proto]
-       [any? => jon-gui-data-meteo-spec]
+       [#(instance? ser.JonSharedDataTypes$JonGuiDataMeteo %) =>
+        jon-gui-data-meteo-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -2015,7 +2032,8 @@
 (>defn parse-jon-gui-data-time
        "Parse a JonGuiDataTime protobuf message to a map."
        [^ser.JonSharedDataTime$JonGuiDataTime proto]
-       [any? => jon-gui-data-time-spec]
+       [#(instance? ser.JonSharedDataTime$JonGuiDataTime %) =>
+        jon-gui-data-time-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :timestamp (.getTimestamp proto))
@@ -2026,7 +2044,8 @@
 (>defn parse-jon-gui-data-system
        "Parse a JonGuiDataSystem protobuf message to a map."
        [^ser.JonSharedDataSystem$JonGuiDataSystem proto]
-       [any? => jon-gui-data-system-spec]
+       [#(instance? ser.JonSharedDataSystem$JonGuiDataSystem %) =>
+        jon-gui-data-system-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :cpu-temperature (.getCpuTemperature proto))
@@ -2057,14 +2076,14 @@
 (>defn parse-jon-gui-data-lrf
        "Parse a JonGuiDataLrf protobuf message to a map."
        [^ser.JonSharedDataLrf$JonGuiDataLrf proto]
-       [any? => jon-gui-data-lrf-spec]
+       [#(instance? ser.JonSharedDataLrf$JonGuiDataLrf %) =>
+        jon-gui-data-lrf-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :is-scanning (.getIsScanning proto))
          true (assoc :is-measuring (.getIsMeasuring proto))
          true (assoc :measure-id (.getMeasureId proto))
-         (.hasTarget proto) (assoc :target
-                              (parse-jon-gui-data-target (.getTarget proto)))
+         (.hasFIELD-METHOD proto) (assoc :target VALUE-EXPR)
          true (assoc :pointer-mode
                 (get jon-gui-datat-lrf-laser-pointer-modes-keywords
                      (.getPointerMode proto)))
@@ -2074,7 +2093,8 @@
 (>defn parse-jon-gui-data-target
        "Parse a JonGuiDataTarget protobuf message to a map."
        [^ser.JonSharedDataLrf$JonGuiDataTarget proto]
-       [any? => jon-gui-data-target-spec]
+       [#(instance? ser.JonSharedDataLrf$JonGuiDataTarget %) =>
+        jon-gui-data-target-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :timestamp (.getTimestamp proto))
@@ -2094,8 +2114,7 @@
                      (.getObserverFixType proto)))
          true (assoc :session-id (.getSessionId proto))
          true (assoc :target-id (.getTargetId proto))
-         (.hasTargetColor proto) (assoc :target-color
-                                   (parse-rgb-color (.getTargetColor proto)))
+         (.hasFIELD-METHOD proto) (assoc :target-color VALUE-EXPR)
          true (assoc :type (.getType proto))
          true (assoc :uuid-part-1 (.getUuidPart1 proto))
          true (assoc :uuid-part-2 (.getUuidPart2 proto))
@@ -2105,7 +2124,7 @@
 (>defn parse-rgb-color
        "Parse a RgbColor protobuf message to a map."
        [^ser.JonSharedDataLrf$RgbColor proto]
-       [any? => rgb-color-spec]
+       [#(instance? ser.JonSharedDataLrf$RgbColor %) => rgb-color-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :red (.getRed proto))
@@ -2115,7 +2134,8 @@
 (>defn parse-jon-gui-data-gps
        "Parse a JonGuiDataGps protobuf message to a map."
        [^ser.JonSharedDataGps$JonGuiDataGps proto]
-       [any? => jon-gui-data-gps-spec]
+       [#(instance? ser.JonSharedDataGps$JonGuiDataGps %) =>
+        jon-gui-data-gps-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :longitude (.getLongitude proto))
@@ -2131,7 +2151,8 @@
 (>defn parse-jon-gui-data-compass
        "Parse a JonGuiDataCompass protobuf message to a map."
        [^ser.JonSharedDataCompass$JonGuiDataCompass proto]
-       [any? => jon-gui-data-compass-spec]
+       [#(instance? ser.JonSharedDataCompass$JonGuiDataCompass %) =>
+        jon-gui-data-compass-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :azimuth (.getAzimuth proto))
@@ -2145,7 +2166,9 @@
 (>defn parse-jon-gui-data-compass-calibration
        "Parse a JonGuiDataCompassCalibration protobuf message to a map."
        [^ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration proto]
-       [any? => jon-gui-data-compass-calibration-spec]
+       [#(instance?
+           ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
+           %) => jon-gui-data-compass-calibration-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :stage (.getStage proto))
@@ -2157,36 +2180,36 @@
                 (get jon-gui-data-compass-calibrate-status-keywords
                      (.getStatus proto)))))
 
-(>defn
-  parse-jon-gui-data-rotary
-  "Parse a JonGuiDataRotary protobuf message to a map."
-  [^ser.JonSharedDataRotary$JonGuiDataRotary proto]
-  [any? => jon-gui-data-rotary-spec]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :azimuth (.getAzimuth proto))
-    true (assoc :azimuth-speed (.getAzimuthSpeed proto))
-    true (assoc :elevation (.getElevation proto))
-    true (assoc :elevation-speed (.getElevationSpeed proto))
-    true (assoc :platform-azimuth (.getPlatformAzimuth proto))
-    true (assoc :platform-elevation (.getPlatformElevation proto))
-    true (assoc :platform-bank (.getPlatformBank proto))
-    true (assoc :is-moving (.getIsMoving proto))
-    true (assoc :mode (get jon-gui-data-rotary-mode-keywords (.getMode proto)))
-    true (assoc :is-scanning (.getIsScanning proto))
-    true (assoc :is-scanning-paused (.getIsScanningPaused proto))
-    true (assoc :use-rotary-as-compass (.getUseRotaryAsCompass proto))
-    true (assoc :scan-target (.getScanTarget proto))
-    true (assoc :scan-target-max (.getScanTargetMax proto))
-    true (assoc :sun-azimuth (.getSunAzimuth proto))
-    true (assoc :sun-elevation (.getSunElevation proto))
-    (.hasCurrentScanNode proto)
-      (assoc :current-scan-node (parse-scan-node (.getCurrentScanNode proto)))))
+(>defn parse-jon-gui-data-rotary
+       "Parse a JonGuiDataRotary protobuf message to a map."
+       [^ser.JonSharedDataRotary$JonGuiDataRotary proto]
+       [#(instance? ser.JonSharedDataRotary$JonGuiDataRotary %) =>
+        jon-gui-data-rotary-spec]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :azimuth (.getAzimuth proto))
+         true (assoc :azimuth-speed (.getAzimuthSpeed proto))
+         true (assoc :elevation (.getElevation proto))
+         true (assoc :elevation-speed (.getElevationSpeed proto))
+         true (assoc :platform-azimuth (.getPlatformAzimuth proto))
+         true (assoc :platform-elevation (.getPlatformElevation proto))
+         true (assoc :platform-bank (.getPlatformBank proto))
+         true (assoc :is-moving (.getIsMoving proto))
+         true (assoc :mode
+                (get jon-gui-data-rotary-mode-keywords (.getMode proto)))
+         true (assoc :is-scanning (.getIsScanning proto))
+         true (assoc :is-scanning-paused (.getIsScanningPaused proto))
+         true (assoc :use-rotary-as-compass (.getUseRotaryAsCompass proto))
+         true (assoc :scan-target (.getScanTarget proto))
+         true (assoc :scan-target-max (.getScanTargetMax proto))
+         true (assoc :sun-azimuth (.getSunAzimuth proto))
+         true (assoc :sun-elevation (.getSunElevation proto))
+         (.hasFIELD-METHOD proto) (assoc :current-scan-node VALUE-EXPR)))
 
 (>defn parse-scan-node
        "Parse a ScanNode protobuf message to a map."
        [^ser.JonSharedDataRotary$ScanNode proto]
-       [any? => scan-node-spec]
+       [#(instance? ser.JonSharedDataRotary$ScanNode %) => scan-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))
@@ -2200,7 +2223,8 @@
 (>defn parse-jon-gui-data-camera-day
        "Parse a JonGuiDataCameraDay protobuf message to a map."
        [^ser.JonSharedDataCameraDay$JonGuiDataCameraDay proto]
-       [any? => jon-gui-data-camera-day-spec]
+       [#(instance? ser.JonSharedDataCameraDay$JonGuiDataCameraDay %) =>
+        jon-gui-data-camera-day-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :focus-pos (.getFocusPos proto))
@@ -2219,7 +2243,8 @@
 (>defn parse-jon-gui-data-camera-heat
        "Parse a JonGuiDataCameraHeat protobuf message to a map."
        [^ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat proto]
-       [any? => jon-gui-data-camera-heat-spec]
+       [#(instance? ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat %) =>
+        jon-gui-data-camera-heat-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :zoom-pos (.getZoomPos proto))
@@ -2242,7 +2267,8 @@
 (>defn parse-jon-gui-data-rec-osd
        "Parse a JonGuiDataRecOsd protobuf message to a map."
        [^ser.JonSharedDataRecOsd$JonGuiDataRecOsd proto]
-       [any? => jon-gui-data-rec-osd-spec]
+       [#(instance? ser.JonSharedDataRecOsd$JonGuiDataRecOsd %) =>
+        jon-gui-data-rec-osd-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :screen
@@ -2261,7 +2287,9 @@
 (>defn parse-jon-gui-data-day-cam-glass-heater
        "Parse a JonGuiDataDayCamGlassHeater protobuf message to a map."
        [^ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater proto]
-       [any? => jon-gui-data-day-cam-glass-heater-spec]
+       [#(instance?
+           ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater
+           %) => jon-gui-data-day-cam-glass-heater-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :temperature (.getTemperature proto))
@@ -2270,7 +2298,8 @@
 (>defn parse-jon-gui-data-actual-space-time
        "Parse a JonGuiDataActualSpaceTime protobuf message to a map."
        [^ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime proto]
-       [any? => jon-gui-data-actual-space-time-spec]
+       [#(instance? ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime
+                    %) => jon-gui-data-actual-space-time-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :azimuth (.getAzimuth proto))
@@ -2281,39 +2310,23 @@
          true (assoc :altitude (.getAltitude proto))
          true (assoc :timestamp (.getTimestamp proto))))
 
-(>defn
-  parse-jon-gui-state
-  "Parse a JonGUIState protobuf message to a map."
-  [^ser.JonSharedData$JonGUIState proto]
-  [any? => jon-gui-state-spec]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :protocol-version (.getProtocolVersion proto))
-    (.hasSystem proto) (assoc :system
-                         (parse-jon-gui-data-system (.getSystem proto)))
-    (.hasMeteoInternal proto) (assoc :meteo-internal
-                                (parse-jon-gui-data-meteo (.getMeteoInternal
-                                                            proto)))
-    (.hasLrf proto) (assoc :lrf (parse-jon-gui-data-lrf (.getLrf proto)))
-    (.hasTime proto) (assoc :time (parse-jon-gui-data-time (.getTime proto)))
-    (.hasGps proto) (assoc :gps (parse-jon-gui-data-gps (.getGps proto)))
-    (.hasCompass proto) (assoc :compass
-                          (parse-jon-gui-data-compass (.getCompass proto)))
-    (.hasRotary proto) (assoc :rotary
-                         (parse-jon-gui-data-rotary (.getRotary proto)))
-    (.hasCameraDay proto)
-      (assoc :camera-day (parse-jon-gui-data-camera-day (.getCameraDay proto)))
-    (.hasCameraHeat proto) (assoc :camera-heat
-                             (parse-jon-gui-data-camera-heat (.getCameraHeat
-                                                               proto)))
-    (.hasCompassCalibration proto) (assoc :compass-calibration
-                                     (parse-jon-gui-data-compass-calibration
-                                       (.getCompassCalibration proto)))
-    (.hasRecOsd proto) (assoc :rec-osd
-                         (parse-jon-gui-data-rec-osd (.getRecOsd proto)))
-    (.hasDayCamGlassHeater proto) (assoc :day-cam-glass-heater
-                                    (parse-jon-gui-data-day-cam-glass-heater
-                                      (.getDayCamGlassHeater proto)))
-    (.hasActualSpaceTime proto) (assoc :actual-space-time
-                                  (parse-jon-gui-data-actual-space-time
-                                    (.getActualSpaceTime proto)))))
+(>defn parse-jon-gui-state
+       "Parse a JonGUIState protobuf message to a map."
+       [^ser.JonSharedData$JonGUIState proto]
+       [#(instance? ser.JonSharedData$JonGUIState %) => jon-gui-state-spec]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :protocol-version (.getProtocolVersion proto))
+         (.hasFIELD-METHOD proto) (assoc :system VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :meteo-internal VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :lrf VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :time VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :gps VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :compass VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :rotary VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :camera-day VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :camera-heat VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :compass-calibration VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :rec-osd VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :day-cam-glass-heater VALUE-EXPR)
+         (.hasFIELD-METHOD proto) (assoc :actual-space-time VALUE-EXPR)))

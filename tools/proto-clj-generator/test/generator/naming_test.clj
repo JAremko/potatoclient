@@ -65,6 +65,18 @@
     (is (= "cmd" (naming/proto-package->alias "cmd")))
     (is (= "ser" (naming/proto-package->alias "ser")))))
 
+(deftest proto-package->clojure-alias-test
+  (testing "extracts Clojure-compatible alias with kebab-case from protobuf package"
+    (is (= "day-camera" (naming/proto-package->clojure-alias "cmd.DayCamera")))
+    (is (= "heat-camera" (naming/proto-package->clojure-alias "cmd.HeatCamera")))
+    (is (= "day-cam-glass-heater" (naming/proto-package->clojure-alias "cmd.DayCamGlassHeater")))
+    (is (= "rotary-platform" (naming/proto-package->clojure-alias "cmd.RotaryPlatform")))
+    (is (= "lrf-calib" (naming/proto-package->clojure-alias "cmd.Lrf_calib")))
+    (is (= "cmd" (naming/proto-package->clojure-alias "cmd")))
+    (is (= "ser" (naming/proto-package->clojure-alias "ser")))
+    (is (= "gps" (naming/proto-package->clojure-alias "cmd.GPS")))
+    (is (= "cv" (naming/proto-package->clojure-alias "cmd.CV")))))
+
 (deftest proto-name->clojure-fn-name-test
   (testing "converts protobuf names to Clojure function names"
     (is (= "root" (naming/proto-name->clojure-fn-name "Root")))
@@ -204,11 +216,14 @@
   (prop/for-all [proto-pkg (mg/generator naming/proto-package-spec)]
     (let [ns (naming/proto-package->clj-namespace proto-pkg)
           file (naming/proto-package->file-path proto-pkg)
-          alias (naming/proto-package->alias proto-pkg)]
+          alias (naming/proto-package->alias proto-pkg)
+          clojure-alias (naming/proto-package->clojure-alias proto-pkg)]
       (and (naming/valid-clojure-namespace? ns)
            (naming/valid-file-path? file)
            (string? alias)
-           (= alias (str/lower-case alias))))))
+           (= alias (str/lower-case alias))
+           (string? clojure-alias)
+           (re-matches #"^[a-z][a-z0-9-]*$" clojure-alias)))))
 
 (defspec proto-name-conversion-spec 300
   (prop/for-all [proto-name (mg/generator naming/proto-identifier-spec)]

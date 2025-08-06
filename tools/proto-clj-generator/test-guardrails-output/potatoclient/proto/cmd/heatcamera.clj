@@ -56,7 +56,7 @@
   "Malli spec for root message"
   [:map
    [:cmd
-    [:altn
+    [:oneof
      {:set-dde-level [:map [:set-dde-level :cmd.heatcamera/set-dde-level]],
       :set-calib-mode [:map [:set-calib-mode :cmd.heatcamera/set-calib-mode]],
       :zoom [:map [:zoom :cmd.heatcamera/zoom]],
@@ -155,7 +155,7 @@
   "Malli spec for zoom message"
   [:map
    [:cmd
-    [:altn
+    [:oneof
      {:set-zoom-table-value
         [:map [:set-zoom-table-value :cmd.heatcamera/set-zoom-table-value]],
       :next-zoom-table-pos
@@ -290,7 +290,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => any?]
+       [root-spec => #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Root %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field
@@ -315,7 +315,8 @@
   build-set-fx-mode
   "Build a SetFxMode protobuf message from a map."
   [m]
-  [set-fx-mode-spec => any?]
+  [set-fx-mode-spec =>
+   #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode %)]
   (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :mode)
@@ -326,7 +327,8 @@
 (>defn build-set-clahe-level
        "Build a SetClaheLevel protobuf message from a map."
        [m]
-       [set-clahe-level-spec => any?]
+       [set-clahe-level-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel/newBuilder)]
          ;; Set regular fields
@@ -336,7 +338,8 @@
 (>defn build-shift-clahe-level
        "Build a ShiftClaheLevel protobuf message from a map."
        [m]
-       [shift-clahe-level-spec => any?]
+       [shift-clahe-level-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel %)]
        (let
          [builder
             (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel/newBuilder)]
@@ -347,7 +350,8 @@
 (>defn build-next-fx-mode
        "Build a NextFxMode protobuf message from a map."
        [m]
-       [next-fx-mode-spec => any?]
+       [next-fx-mode-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$NextFxMode/newBuilder)]
          (.build builder)))
@@ -355,7 +359,8 @@
 (>defn build-prev-fx-mode
        "Build a PrevFxMode protobuf message from a map."
        [m]
-       [prev-fx-mode-spec => any?]
+       [prev-fx-mode-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevFxMode/newBuilder)]
          (.build builder)))
@@ -363,7 +368,8 @@
 (>defn build-refresh-fx-mode
        "Build a RefreshFxMode protobuf message from a map."
        [m]
-       [refresh-fx-mode-spec => any?]
+       [refresh-fx-mode-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$RefreshFxMode/newBuilder)]
          (.build builder)))
@@ -371,7 +377,8 @@
 (>defn build-enable-dde
        "Build a EnableDDE protobuf message from a map."
        [m]
-       [enable-dde-spec => any?]
+       [enable-dde-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$EnableDDE/newBuilder)]
          (.build builder)))
@@ -379,7 +386,8 @@
 (>defn build-disable-dde
        "Build a DisableDDE protobuf message from a map."
        [m]
-       [disable-dde-spec => any?]
+       [disable-dde-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$DisableDDE/newBuilder)]
          (.build builder)))
@@ -387,7 +395,8 @@
 (>defn build-set-value
        "Build a SetValue protobuf message from a map."
        [m]
-       [set-value-spec => any?]
+       [set-value-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue/newBuilder)]
          ;; Set regular fields
@@ -397,7 +406,8 @@
 (>defn build-set-dde-level
        "Build a SetDDELevel protobuf message from a map."
        [m]
-       [set-dde-level-spec => any?]
+       [set-dde-level-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel/newBuilder)]
          ;; Set regular fields
@@ -408,7 +418,8 @@
   build-set-digital-zoom-level
   "Build a SetDigitalZoomLevel protobuf message from a map."
   [m]
-  [set-digital-zoom-level-spec => any?]
+  [set-digital-zoom-level-spec =>
+   #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel %)]
   (let
     [builder
        (cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel/newBuilder)]
@@ -419,7 +430,8 @@
 (>defn build-shift-dde
        "Build a ShiftDDE protobuf message from a map."
        [m]
-       [shift-dde-spec => any?]
+       [shift-dde-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE/newBuilder)]
          ;; Set regular fields
@@ -429,21 +441,24 @@
 (>defn build-zoom-in
        "Build a ZoomIn protobuf message from a map."
        [m]
-       [zoom-in-spec => any?]
+       [zoom-in-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomIn/newBuilder)]
          (.build builder)))
 
 (>defn build-zoom-out
        "Build a ZoomOut protobuf message from a map."
        [m]
-       [zoom-out-spec => any?]
+       [zoom-out-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomOut/newBuilder)]
          (.build builder)))
 
 (>defn build-zoom-stop
        "Build a ZoomStop protobuf message from a map."
        [m]
-       [zoom-stop-spec => any?]
+       [zoom-stop-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$ZoomStop/newBuilder)]
          (.build builder)))
@@ -451,14 +466,16 @@
 (>defn build-focus-in
        "Build a FocusIn protobuf message from a map."
        [m]
-       [focus-in-spec => any?]
+       [focus-in-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusIn/newBuilder)]
          (.build builder)))
 
 (>defn build-focus-out
        "Build a FocusOut protobuf message from a map."
        [m]
-       [focus-out-spec => any?]
+       [focus-out-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusOut/newBuilder)]
          (.build builder)))
@@ -466,7 +483,8 @@
 (>defn build-focus-stop
        "Build a FocusStop protobuf message from a map."
        [m]
-       [focus-stop-spec => any?]
+       [focus-stop-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStop/newBuilder)]
          (.build builder)))
@@ -474,7 +492,8 @@
 (>defn build-focus-step-plus
        "Build a FocusStepPlus protobuf message from a map."
        [m]
-       [focus-step-plus-spec => any?]
+       [focus-step-plus-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepPlus/newBuilder)]
          (.build builder)))
@@ -482,7 +501,8 @@
 (>defn build-focus-step-minus
        "Build a FocusStepMinus protobuf message from a map."
        [m]
-       [focus-step-minus-spec => any?]
+       [focus-step-minus-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus %)]
        (let
          [builder
             (cmd.HeatCamera.JonSharedCmdHeatCamera$FocusStepMinus/newBuilder)]
@@ -491,7 +511,8 @@
 (>defn build-calibrate
        "Build a Calibrate protobuf message from a map."
        [m]
-       [calibrate-spec => any?]
+       [calibrate-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate/newBuilder)]
          (.build builder)))
@@ -499,7 +520,7 @@
 (>defn build-zoom
        "Build a Zoom protobuf message from a map."
        [m]
-       [zoom-spec => any?]
+       [zoom-spec => #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]]
@@ -514,7 +535,8 @@
 (>defn build-next-zoom-table-pos
        "Build a NextZoomTablePos protobuf message from a map."
        [m]
-       [next-zoom-table-pos-spec => any?]
+       [next-zoom-table-pos-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos %)]
        (let
          [builder
             (cmd.HeatCamera.JonSharedCmdHeatCamera$NextZoomTablePos/newBuilder)]
@@ -523,7 +545,8 @@
 (>defn build-prev-zoom-table-pos
        "Build a PrevZoomTablePos protobuf message from a map."
        [m]
-       [prev-zoom-table-pos-spec => any?]
+       [prev-zoom-table-pos-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos %)]
        (let
          [builder
             (cmd.HeatCamera.JonSharedCmdHeatCamera$PrevZoomTablePos/newBuilder)]
@@ -532,7 +555,8 @@
 (>defn build-set-calib-mode
        "Build a SetCalibMode protobuf message from a map."
        [m]
-       [set-calib-mode-spec => any?]
+       [set-calib-mode-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetCalibMode/newBuilder)]
          (.build builder)))
@@ -541,30 +565,32 @@
   build-set-zoom-table-value
   "Build a SetZoomTableValue protobuf message from a map."
   [m]
-  [set-zoom-table-value-spec => any?]
+  [set-zoom-table-value-spec =>
+   #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue %)]
   (let [builder
           (cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue/newBuilder)]
     ;; Set regular fields
     (when (contains? m :value) (.setValue builder (get m :value)))
     (.build builder)))
 
-(>defn build-set-agc
-       "Build a SetAGC protobuf message from a map."
-       [m]
-       [set-agc-spec => any?]
-       (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :value)
-           (.setValue builder
-                      (get
-                        types/jon-gui-data-video-channel-heat-agc-modes-values
-                        (get m :value))))
-         (.build builder)))
+(>defn
+  build-set-agc
+  "Build a SetAGC protobuf message from a map."
+  [m]
+  [set-agc-spec => #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC %)]
+  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :value)
+      (.setValue builder
+                 (get types/jon-gui-data-video-channel-heat-agc-modes-values
+                      (get m :value))))
+    (.build builder)))
 
 (>defn build-set-filters
        "Build a SetFilters protobuf message from a map."
        [m]
-       [set-filters-spec => any?]
+       [set-filters-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
          ;; Set regular fields
@@ -577,35 +603,38 @@
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [start-spec => any?]
+       [start-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Start %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [stop-spec => any?]
+       [stop-spec => #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Stop %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-halt
        "Build a Halt protobuf message from a map."
        [m]
-       [halt-spec => any?]
+       [halt-spec => #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Halt %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Halt/newBuilder)]
          (.build builder)))
 
 (>defn build-photo
        "Build a Photo protobuf message from a map."
        [m]
-       [photo-spec => any?]
+       [photo-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Photo %)]
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$Photo/newBuilder)]
          (.build builder)))
 
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [get-meteo-spec => any?]
+       [get-meteo-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$GetMeteo/newBuilder)]
          (.build builder)))
@@ -613,7 +642,8 @@
 (>defn build-set-auto-focus
        "Build a SetAutoFocus protobuf message from a map."
        [m]
-       [set-auto-focus-spec => any?]
+       [set-auto-focus-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus/newBuilder)]
          ;; Set regular fields
@@ -623,7 +653,8 @@
 (>defn build-reset-zoom
        "Build a ResetZoom protobuf message from a map."
        [m]
-       [reset-zoom-spec => any?]
+       [reset-zoom-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$ResetZoom/newBuilder)]
          (.build builder)))
@@ -631,7 +662,8 @@
 (>defn build-save-to-table
        "Build a SaveToTable protobuf message from a map."
        [m]
-       [save-to-table-spec => any?]
+       [save-to-table-spec =>
+        #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable %)]
        (let [builder
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SaveToTable/newBuilder)]
          (.build builder)))
@@ -639,7 +671,7 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Root %) => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -647,7 +679,8 @@
 (>defn parse-set-fx-mode
        "Parse a SetFxMode protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode proto]
-       [any? => set-fx-mode-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode %) =>
+        set-fx-mode-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :mode
@@ -657,7 +690,8 @@
 (>defn parse-set-clahe-level
        "Parse a SetClaheLevel protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel proto]
-       [any? => set-clahe-level-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetClaheLevel %) =>
+        set-clahe-level-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -665,7 +699,8 @@
 (>defn parse-shift-clahe-level
        "Parse a ShiftClaheLevel protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel proto]
-       [any? => shift-clahe-level-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftClaheLevel %) =>
+        shift-clahe-level-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -703,7 +738,8 @@
 (>defn parse-set-value
        "Parse a SetValue protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue proto]
-       [any? => set-value-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetValue %) =>
+        set-value-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -711,7 +747,8 @@
 (>defn parse-set-dde-level
        "Parse a SetDDELevel protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel proto]
-       [any? => set-dde-level-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetDDELevel %) =>
+        set-dde-level-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -719,7 +756,8 @@
 (>defn parse-set-digital-zoom-level
        "Parse a SetDigitalZoomLevel protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel proto]
-       [any? => set-digital-zoom-level-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetDigitalZoomLevel %)
+        => set-digital-zoom-level-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -727,7 +765,8 @@
 (>defn parse-shift-dde
        "Parse a ShiftDDE protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE proto]
-       [any? => shift-dde-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$ShiftDDE %) =>
+        shift-dde-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -789,7 +828,7 @@
 (>defn parse-zoom
        "Parse a Zoom protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-       [any? => zoom-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom %) => zoom-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-zoom-payload proto))))
@@ -815,7 +854,8 @@
 (>defn parse-set-zoom-table-value
        "Parse a SetZoomTableValue protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue proto]
-       [any? => set-zoom-table-value-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetZoomTableValue %)
+        => set-zoom-table-value-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -823,7 +863,8 @@
 (>defn parse-set-agc
        "Parse a SetAGC protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC proto]
-       [any? => set-agc-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC %) =>
+        set-agc-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value
@@ -833,7 +874,8 @@
 (>defn parse-set-filters
        "Parse a SetFilters protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters proto]
-       [any? => set-filters-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters %) =>
+        set-filters-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value
@@ -873,7 +915,8 @@
 (>defn parse-set-auto-focus
        "Parse a SetAutoFocus protobuf message to a map."
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus proto]
-       [any? => set-auto-focus-spec]
+       [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$SetAutoFocus %) =>
+        set-auto-focus-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -894,7 +937,9 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [any? [:tuple keyword? any?] => any?]
+  [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Root$Builder %)
+   [:tuple keyword? any?] =>
+   #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Root$Builder %)]
   (case field-key
     :zoom (.setZoom builder (build-zoom value))
     :set-agc (.setSetAgc builder (build-set-agc value))
@@ -935,7 +980,9 @@
 (>defn- build-zoom-payload
         "Build the oneof payload for Zoom."
         [builder [field-key value]]
-        [any? [:tuple keyword? any?] => any?]
+        [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom$Builder %)
+         [:tuple keyword? any?] =>
+         #(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom$Builder %)]
         (case field-key
           :set-zoom-table-value
             (.setSetZoomTableValue builder (build-set-zoom-table-value value))
@@ -950,7 +997,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
-  [any? => (? map?)]
+  [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Root %) => (? map?)]
   (cond
     (.hasZoom proto) {:zoom (parse-zoom (.getZoom proto))}
     (.hasSetAgc proto) {:set-agc (parse-set-agc (.getSetAgc proto))}
@@ -1004,7 +1051,7 @@
 (>defn- parse-zoom-payload
         "Parse the oneof payload from Zoom."
         [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
-        [any? => (? map?)]
+        [#(instance? cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom %) => (? map?)]
         (cond (.hasSetZoomTableValue proto) {:set-zoom-table-value
                                                (parse-set-zoom-table-value
                                                  (.getSetZoomTableValue proto))}

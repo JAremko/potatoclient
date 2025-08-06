@@ -1,17 +1,17 @@
 (ns potatoclient.proto.command
   "Commands index - re-exports all command namespaces"
   (:require [potatoclient.proto.cmd.lira :as lira]
-            [potatoclient.proto.cmd.heatcamera :as heatcamera]
             [potatoclient.proto.cmd.system :as system]
             [potatoclient.proto.cmd.lrf :as lrf]
             [potatoclient.proto.cmd.compass :as compass]
             [potatoclient.proto.cmd.osd :as osd]
-            [potatoclient.proto.cmd.lrf_calib :as lrf_calib]
-            [potatoclient.proto.cmd.rotaryplatform :as rotaryplatform]
             [potatoclient.proto.cmd.gps :as gps]
-            [potatoclient.proto.cmd.daycamglassheater :as daycamglassheater]
+            [potatoclient.proto.cmd.daycamera :as day-camera]
+            [potatoclient.proto.cmd.daycamglassheater :as day-cam-glass-heater]
+            [potatoclient.proto.cmd.rotaryplatform :as rotary-platform]
             [potatoclient.proto.cmd.cv :as cv]
-            [potatoclient.proto.cmd.daycamera :as daycamera]))
+            [potatoclient.proto.cmd.lrf_calib :as lrf-calib]
+            [potatoclient.proto.cmd.heatcamera :as heat-camera]))
 
 ;; Re-export all public functions from sub-namespaces
 ;; This supports testing without needing to know the internal namespace
@@ -23,84 +23,6 @@
 (def lira-parse-refine-target lira/parse-refine-target)
 (def lira-build-jon-gui-data-lira-target lira/build-jon-gui-data-lira-target)
 (def lira-parse-jon-gui-data-lira-target lira/parse-jon-gui-data-lira-target)
-(def heatcamera-build-root heatcamera/build-root)
-(def heatcamera-parse-root heatcamera/parse-root)
-(def heatcamera-build-set-fx-mode heatcamera/build-set-fx-mode)
-(def heatcamera-parse-set-fx-mode heatcamera/parse-set-fx-mode)
-(def heatcamera-build-set-clahe-level heatcamera/build-set-clahe-level)
-(def heatcamera-parse-set-clahe-level heatcamera/parse-set-clahe-level)
-(def heatcamera-build-shift-clahe-level heatcamera/build-shift-clahe-level)
-(def heatcamera-parse-shift-clahe-level heatcamera/parse-shift-clahe-level)
-(def heatcamera-build-next-fx-mode heatcamera/build-next-fx-mode)
-(def heatcamera-parse-next-fx-mode heatcamera/parse-next-fx-mode)
-(def heatcamera-build-prev-fx-mode heatcamera/build-prev-fx-mode)
-(def heatcamera-parse-prev-fx-mode heatcamera/parse-prev-fx-mode)
-(def heatcamera-build-refresh-fx-mode heatcamera/build-refresh-fx-mode)
-(def heatcamera-parse-refresh-fx-mode heatcamera/parse-refresh-fx-mode)
-(def heatcamera-build-enable-dde heatcamera/build-enable-dde)
-(def heatcamera-parse-enable-dde heatcamera/parse-enable-dde)
-(def heatcamera-build-disable-dde heatcamera/build-disable-dde)
-(def heatcamera-parse-disable-dde heatcamera/parse-disable-dde)
-(def heatcamera-build-set-value heatcamera/build-set-value)
-(def heatcamera-parse-set-value heatcamera/parse-set-value)
-(def heatcamera-build-set-dde-level heatcamera/build-set-dde-level)
-(def heatcamera-parse-set-dde-level heatcamera/parse-set-dde-level)
-(def heatcamera-build-set-digital-zoom-level
-  heatcamera/build-set-digital-zoom-level)
-(def heatcamera-parse-set-digital-zoom-level
-  heatcamera/parse-set-digital-zoom-level)
-(def heatcamera-build-shift-dde heatcamera/build-shift-dde)
-(def heatcamera-parse-shift-dde heatcamera/parse-shift-dde)
-(def heatcamera-build-zoom-in heatcamera/build-zoom-in)
-(def heatcamera-parse-zoom-in heatcamera/parse-zoom-in)
-(def heatcamera-build-zoom-out heatcamera/build-zoom-out)
-(def heatcamera-parse-zoom-out heatcamera/parse-zoom-out)
-(def heatcamera-build-zoom-stop heatcamera/build-zoom-stop)
-(def heatcamera-parse-zoom-stop heatcamera/parse-zoom-stop)
-(def heatcamera-build-focus-in heatcamera/build-focus-in)
-(def heatcamera-parse-focus-in heatcamera/parse-focus-in)
-(def heatcamera-build-focus-out heatcamera/build-focus-out)
-(def heatcamera-parse-focus-out heatcamera/parse-focus-out)
-(def heatcamera-build-focus-stop heatcamera/build-focus-stop)
-(def heatcamera-parse-focus-stop heatcamera/parse-focus-stop)
-(def heatcamera-build-focus-step-plus heatcamera/build-focus-step-plus)
-(def heatcamera-parse-focus-step-plus heatcamera/parse-focus-step-plus)
-(def heatcamera-build-focus-step-minus heatcamera/build-focus-step-minus)
-(def heatcamera-parse-focus-step-minus heatcamera/parse-focus-step-minus)
-(def heatcamera-build-calibrate heatcamera/build-calibrate)
-(def heatcamera-parse-calibrate heatcamera/parse-calibrate)
-(def heatcamera-build-zoom heatcamera/build-zoom)
-(def heatcamera-parse-zoom heatcamera/parse-zoom)
-(def heatcamera-build-next-zoom-table-pos heatcamera/build-next-zoom-table-pos)
-(def heatcamera-parse-next-zoom-table-pos heatcamera/parse-next-zoom-table-pos)
-(def heatcamera-build-prev-zoom-table-pos heatcamera/build-prev-zoom-table-pos)
-(def heatcamera-parse-prev-zoom-table-pos heatcamera/parse-prev-zoom-table-pos)
-(def heatcamera-build-set-calib-mode heatcamera/build-set-calib-mode)
-(def heatcamera-parse-set-calib-mode heatcamera/parse-set-calib-mode)
-(def heatcamera-build-set-zoom-table-value
-  heatcamera/build-set-zoom-table-value)
-(def heatcamera-parse-set-zoom-table-value
-  heatcamera/parse-set-zoom-table-value)
-(def heatcamera-build-set-agc heatcamera/build-set-agc)
-(def heatcamera-parse-set-agc heatcamera/parse-set-agc)
-(def heatcamera-build-set-filters heatcamera/build-set-filters)
-(def heatcamera-parse-set-filters heatcamera/parse-set-filters)
-(def heatcamera-build-start heatcamera/build-start)
-(def heatcamera-parse-start heatcamera/parse-start)
-(def heatcamera-build-stop heatcamera/build-stop)
-(def heatcamera-parse-stop heatcamera/parse-stop)
-(def heatcamera-build-halt heatcamera/build-halt)
-(def heatcamera-parse-halt heatcamera/parse-halt)
-(def heatcamera-build-photo heatcamera/build-photo)
-(def heatcamera-parse-photo heatcamera/parse-photo)
-(def heatcamera-build-get-meteo heatcamera/build-get-meteo)
-(def heatcamera-parse-get-meteo heatcamera/parse-get-meteo)
-(def heatcamera-build-set-auto-focus heatcamera/build-set-auto-focus)
-(def heatcamera-parse-set-auto-focus heatcamera/parse-set-auto-focus)
-(def heatcamera-build-reset-zoom heatcamera/build-reset-zoom)
-(def heatcamera-parse-reset-zoom heatcamera/parse-reset-zoom)
-(def heatcamera-build-save-to-table heatcamera/build-save-to-table)
-(def heatcamera-parse-save-to-table heatcamera/parse-save-to-table)
 (def system-build-root system/build-root)
 (def system-parse-root system/parse-root)
 (def system-build-start-a-ll system/build-start-a-ll)
@@ -219,130 +141,6 @@
 (def osd-parse-enable-day-osd osd/parse-enable-day-osd)
 (def osd-build-disable-day-osd osd/build-disable-day-osd)
 (def osd-parse-disable-day-osd osd/parse-disable-day-osd)
-(def lrf_calib-build-root lrf_calib/build-root)
-(def lrf_calib-parse-root lrf_calib/parse-root)
-(def lrf_calib-build-offsets lrf_calib/build-offsets)
-(def lrf_calib-parse-offsets lrf_calib/parse-offsets)
-(def lrf_calib-build-set-offsets lrf_calib/build-set-offsets)
-(def lrf_calib-parse-set-offsets lrf_calib/parse-set-offsets)
-(def lrf_calib-build-shift-offsets-by lrf_calib/build-shift-offsets-by)
-(def lrf_calib-parse-shift-offsets-by lrf_calib/parse-shift-offsets-by)
-(def lrf_calib-build-reset-offsets lrf_calib/build-reset-offsets)
-(def lrf_calib-parse-reset-offsets lrf_calib/parse-reset-offsets)
-(def lrf_calib-build-save-offsets lrf_calib/build-save-offsets)
-(def lrf_calib-parse-save-offsets lrf_calib/parse-save-offsets)
-(def rotaryplatform-build-root rotaryplatform/build-root)
-(def rotaryplatform-parse-root rotaryplatform/parse-root)
-(def rotaryplatform-build-axis rotaryplatform/build-axis)
-(def rotaryplatform-parse-axis rotaryplatform/parse-axis)
-(def rotaryplatform-build-set-mode rotaryplatform/build-set-mode)
-(def rotaryplatform-parse-set-mode rotaryplatform/parse-set-mode)
-(def rotaryplatform-build-set-azimuth-value
-  rotaryplatform/build-set-azimuth-value)
-(def rotaryplatform-parse-set-azimuth-value
-  rotaryplatform/parse-set-azimuth-value)
-(def rotaryplatform-build-rotate-azimuth-to
-  rotaryplatform/build-rotate-azimuth-to)
-(def rotaryplatform-parse-rotate-azimuth-to
-  rotaryplatform/parse-rotate-azimuth-to)
-(def rotaryplatform-build-rotate-azimuth rotaryplatform/build-rotate-azimuth)
-(def rotaryplatform-parse-rotate-azimuth rotaryplatform/parse-rotate-azimuth)
-(def rotaryplatform-build-rotate-elevation
-  rotaryplatform/build-rotate-elevation)
-(def rotaryplatform-parse-rotate-elevation
-  rotaryplatform/parse-rotate-elevation)
-(def rotaryplatform-build-set-elevation-value
-  rotaryplatform/build-set-elevation-value)
-(def rotaryplatform-parse-set-elevation-value
-  rotaryplatform/parse-set-elevation-value)
-(def rotaryplatform-build-rotate-elevation-to
-  rotaryplatform/build-rotate-elevation-to)
-(def rotaryplatform-parse-rotate-elevation-to
-  rotaryplatform/parse-rotate-elevation-to)
-(def rotaryplatform-build-rotate-elevation-relative
-  rotaryplatform/build-rotate-elevation-relative)
-(def rotaryplatform-parse-rotate-elevation-relative
-  rotaryplatform/parse-rotate-elevation-relative)
-(def rotaryplatform-build-rotate-elevation-relative-set
-  rotaryplatform/build-rotate-elevation-relative-set)
-(def rotaryplatform-parse-rotate-elevation-relative-set
-  rotaryplatform/parse-rotate-elevation-relative-set)
-(def rotaryplatform-build-rotate-azimuth-relative
-  rotaryplatform/build-rotate-azimuth-relative)
-(def rotaryplatform-parse-rotate-azimuth-relative
-  rotaryplatform/parse-rotate-azimuth-relative)
-(def rotaryplatform-build-rotate-azimuth-relative-set
-  rotaryplatform/build-rotate-azimuth-relative-set)
-(def rotaryplatform-parse-rotate-azimuth-relative-set
-  rotaryplatform/parse-rotate-azimuth-relative-set)
-(def rotaryplatform-build-set-platform-azimuth
-  rotaryplatform/build-set-platform-azimuth)
-(def rotaryplatform-parse-set-platform-azimuth
-  rotaryplatform/parse-set-platform-azimuth)
-(def rotaryplatform-build-set-platform-elevation
-  rotaryplatform/build-set-platform-elevation)
-(def rotaryplatform-parse-set-platform-elevation
-  rotaryplatform/parse-set-platform-elevation)
-(def rotaryplatform-build-set-platform-bank
-  rotaryplatform/build-set-platform-bank)
-(def rotaryplatform-parse-set-platform-bank
-  rotaryplatform/parse-set-platform-bank)
-(def rotaryplatform-build-get-meteo rotaryplatform/build-get-meteo)
-(def rotaryplatform-parse-get-meteo rotaryplatform/parse-get-meteo)
-(def rotaryplatform-build-azimuth rotaryplatform/build-azimuth)
-(def rotaryplatform-parse-azimuth rotaryplatform/parse-azimuth)
-(def rotaryplatform-build-start rotaryplatform/build-start)
-(def rotaryplatform-parse-start rotaryplatform/parse-start)
-(def rotaryplatform-build-stop rotaryplatform/build-stop)
-(def rotaryplatform-parse-stop rotaryplatform/parse-stop)
-(def rotaryplatform-build-halt rotaryplatform/build-halt)
-(def rotaryplatform-parse-halt rotaryplatform/parse-halt)
-(def rotaryplatform-build-scan-start rotaryplatform/build-scan-start)
-(def rotaryplatform-parse-scan-start rotaryplatform/parse-scan-start)
-(def rotaryplatform-build-scan-stop rotaryplatform/build-scan-stop)
-(def rotaryplatform-parse-scan-stop rotaryplatform/parse-scan-stop)
-(def rotaryplatform-build-scan-pause rotaryplatform/build-scan-pause)
-(def rotaryplatform-parse-scan-pause rotaryplatform/parse-scan-pause)
-(def rotaryplatform-build-scan-unpause rotaryplatform/build-scan-unpause)
-(def rotaryplatform-parse-scan-unpause rotaryplatform/parse-scan-unpause)
-(def rotaryplatform-build-halt-azimuth rotaryplatform/build-halt-azimuth)
-(def rotaryplatform-parse-halt-azimuth rotaryplatform/parse-halt-azimuth)
-(def rotaryplatform-build-halt-elevation rotaryplatform/build-halt-elevation)
-(def rotaryplatform-parse-halt-elevation rotaryplatform/parse-halt-elevation)
-(def rotaryplatform-build-scan-prev rotaryplatform/build-scan-prev)
-(def rotaryplatform-parse-scan-prev rotaryplatform/parse-scan-prev)
-(def rotaryplatform-build-scan-next rotaryplatform/build-scan-next)
-(def rotaryplatform-parse-scan-next rotaryplatform/parse-scan-next)
-(def rotaryplatform-build-scan-refresh-node-list
-  rotaryplatform/build-scan-refresh-node-list)
-(def rotaryplatform-parse-scan-refresh-node-list
-  rotaryplatform/parse-scan-refresh-node-list)
-(def rotaryplatform-build-scan-select-node
-  rotaryplatform/build-scan-select-node)
-(def rotaryplatform-parse-scan-select-node
-  rotaryplatform/parse-scan-select-node)
-(def rotaryplatform-build-scan-delete-node
-  rotaryplatform/build-scan-delete-node)
-(def rotaryplatform-parse-scan-delete-node
-  rotaryplatform/parse-scan-delete-node)
-(def rotaryplatform-build-scan-update-node
-  rotaryplatform/build-scan-update-node)
-(def rotaryplatform-parse-scan-update-node
-  rotaryplatform/parse-scan-update-node)
-(def rotaryplatform-build-scan-add-node rotaryplatform/build-scan-add-node)
-(def rotaryplatform-parse-scan-add-node rotaryplatform/parse-scan-add-node)
-(def rotaryplatform-build-elevation rotaryplatform/build-elevation)
-(def rotaryplatform-parse-elevation rotaryplatform/parse-elevation)
-(def rotaryplatform-build-set-use-rotary-as-compass
-  rotaryplatform/build-set-use-rotary-as-compass)
-(def rotaryplatform-parse-set-use-rotary-as-compass
-  rotaryplatform/parse-set-use-rotary-as-compass)
-(def rotaryplatform-build-rotate-to-gps rotaryplatform/build-rotate-to-gps)
-(def rotaryplatform-parse-rotate-to-gps rotaryplatform/parse-rotate-to-gps)
-(def rotaryplatform-build-set-origin-gps rotaryplatform/build-set-origin-gps)
-(def rotaryplatform-parse-set-origin-gps rotaryplatform/parse-set-origin-gps)
-(def rotaryplatform-build-rotate-to-ndc rotaryplatform/build-rotate-to-ndc)
-(def rotaryplatform-parse-rotate-to-ndc rotaryplatform/parse-rotate-to-ndc)
 (def gps-build-root gps/build-root)
 (def gps-parse-root gps/parse-root)
 (def gps-build-start gps/build-start)
@@ -355,18 +153,6 @@
 (def gps-parse-set-use-manual-position gps/parse-set-use-manual-position)
 (def gps-build-set-manual-position gps/build-set-manual-position)
 (def gps-parse-set-manual-position gps/parse-set-manual-position)
-(def daycamglassheater-build-root daycamglassheater/build-root)
-(def daycamglassheater-parse-root daycamglassheater/parse-root)
-(def daycamglassheater-build-start daycamglassheater/build-start)
-(def daycamglassheater-parse-start daycamglassheater/parse-start)
-(def daycamglassheater-build-stop daycamglassheater/build-stop)
-(def daycamglassheater-parse-stop daycamglassheater/parse-stop)
-(def daycamglassheater-build-turn-on daycamglassheater/build-turn-on)
-(def daycamglassheater-parse-turn-on daycamglassheater/parse-turn-on)
-(def daycamglassheater-build-turn-off daycamglassheater/build-turn-off)
-(def daycamglassheater-parse-turn-off daycamglassheater/parse-turn-off)
-(def daycamglassheater-build-get-meteo daycamglassheater/build-get-meteo)
-(def daycamglassheater-parse-get-meteo daycamglassheater/parse-get-meteo)
 (def cv-build-root cv/build-root)
 (def cv-parse-root cv/parse-root)
 (def cv-build-vampire-mode-enable cv/build-vampire-mode-enable)
@@ -387,65 +173,3 @@
 (def cv-parse-start-track-ndc cv/parse-start-track-ndc)
 (def cv-build-stop-track cv/build-stop-track)
 (def cv-parse-stop-track cv/parse-stop-track)
-(def daycamera-build-set-value daycamera/build-set-value)
-(def daycamera-parse-set-value daycamera/parse-set-value)
-(def daycamera-build-move daycamera/build-move)
-(def daycamera-parse-move daycamera/parse-move)
-(def daycamera-build-offset daycamera/build-offset)
-(def daycamera-parse-offset daycamera/parse-offset)
-(def daycamera-build-set-clahe-level daycamera/build-set-clahe-level)
-(def daycamera-parse-set-clahe-level daycamera/parse-set-clahe-level)
-(def daycamera-build-shift-clahe-level daycamera/build-shift-clahe-level)
-(def daycamera-parse-shift-clahe-level daycamera/parse-shift-clahe-level)
-(def daycamera-build-root daycamera/build-root)
-(def daycamera-parse-root daycamera/parse-root)
-(def daycamera-build-get-pos daycamera/build-get-pos)
-(def daycamera-parse-get-pos daycamera/parse-get-pos)
-(def daycamera-build-next-fx-mode daycamera/build-next-fx-mode)
-(def daycamera-parse-next-fx-mode daycamera/parse-next-fx-mode)
-(def daycamera-build-prev-fx-mode daycamera/build-prev-fx-mode)
-(def daycamera-parse-prev-fx-mode daycamera/parse-prev-fx-mode)
-(def daycamera-build-refresh-fx-mode daycamera/build-refresh-fx-mode)
-(def daycamera-parse-refresh-fx-mode daycamera/parse-refresh-fx-mode)
-(def daycamera-build-halt-all daycamera/build-halt-all)
-(def daycamera-parse-halt-all daycamera/parse-halt-all)
-(def daycamera-build-set-fx-mode daycamera/build-set-fx-mode)
-(def daycamera-parse-set-fx-mode daycamera/parse-set-fx-mode)
-(def daycamera-build-set-digital-zoom-level
-  daycamera/build-set-digital-zoom-level)
-(def daycamera-parse-set-digital-zoom-level
-  daycamera/parse-set-digital-zoom-level)
-(def daycamera-build-focus daycamera/build-focus)
-(def daycamera-parse-focus daycamera/parse-focus)
-(def daycamera-build-zoom daycamera/build-zoom)
-(def daycamera-parse-zoom daycamera/parse-zoom)
-(def daycamera-build-next-zoom-table-pos daycamera/build-next-zoom-table-pos)
-(def daycamera-parse-next-zoom-table-pos daycamera/parse-next-zoom-table-pos)
-(def daycamera-build-prev-zoom-table-pos daycamera/build-prev-zoom-table-pos)
-(def daycamera-parse-prev-zoom-table-pos daycamera/parse-prev-zoom-table-pos)
-(def daycamera-build-set-iris daycamera/build-set-iris)
-(def daycamera-parse-set-iris daycamera/parse-set-iris)
-(def daycamera-build-set-infra-red-filter daycamera/build-set-infra-red-filter)
-(def daycamera-parse-set-infra-red-filter daycamera/parse-set-infra-red-filter)
-(def daycamera-build-set-auto-iris daycamera/build-set-auto-iris)
-(def daycamera-parse-set-auto-iris daycamera/parse-set-auto-iris)
-(def daycamera-build-set-zoom-table-value daycamera/build-set-zoom-table-value)
-(def daycamera-parse-set-zoom-table-value daycamera/parse-set-zoom-table-value)
-(def daycamera-build-stop daycamera/build-stop)
-(def daycamera-parse-stop daycamera/parse-stop)
-(def daycamera-build-start daycamera/build-start)
-(def daycamera-parse-start daycamera/parse-start)
-(def daycamera-build-photo daycamera/build-photo)
-(def daycamera-parse-photo daycamera/parse-photo)
-(def daycamera-build-halt daycamera/build-halt)
-(def daycamera-parse-halt daycamera/parse-halt)
-(def daycamera-build-get-meteo daycamera/build-get-meteo)
-(def daycamera-parse-get-meteo daycamera/parse-get-meteo)
-(def daycamera-build-reset-zoom daycamera/build-reset-zoom)
-(def daycamera-parse-reset-zoom daycamera/parse-reset-zoom)
-(def daycamera-build-reset-focus daycamera/build-reset-focus)
-(def daycamera-parse-reset-focus daycamera/parse-reset-focus)
-(def daycamera-build-save-to-table daycamera/build-save-to-table)
-(def daycamera-parse-save-to-table daycamera/parse-save-to-table)
-(def daycamera-build-save-to-table-focus daycamera/build-save-to-table-focus)
-(def daycamera-parse-save-to-table-focus daycamera/parse-save-to-table-focus)

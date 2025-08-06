@@ -49,21 +49,19 @@
   "Command-line entry point."
   [& args]
   (cond
-    (and (>= (count args) 3) (<= (count args) 5))
+    (and (>= (count args) 3) (<= (count args) 4))
     (let [[input-dir output-dir ns-prefix & opts] args
           namespace-split? (some #{"--namespace-split"} opts)
-          guardrails? (some #{"--guardrails"} opts)
           config {:input-dir input-dir
                   :output-dir output-dir
                   :namespace-prefix ns-prefix
-                  :namespace-split? namespace-split?
-                  :guardrails? guardrails?}]
+                  :namespace-split? namespace-split?}]
       (generate config)
       (System/exit 0))
     
     :else
     (do
-      (println "Usage: clojure -M:gen <input-dir> <output-dir> <namespace-prefix> [--namespace-split] [--guardrails]")
+      (println "Usage: clojure -M:gen <input-dir> <output-dir> <namespace-prefix> [--namespace-split]")
       (println "Example: clojure -M:gen ../../tools/proto-explorer/output/json-descriptors generated potatoclient.proto")
-      (println "         clojure -M:gen ../../tools/proto-explorer/output/json-descriptors generated-ns potatoclient.proto --namespace-split --guardrails")
+      (println "         clojure -M:gen ../../tools/proto-explorer/output/json-descriptors generated-ns potatoclient.proto --namespace-split")
       (System/exit 1))))

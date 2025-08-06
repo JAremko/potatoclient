@@ -4,7 +4,8 @@
   (:require [clojure.string :as str]
             [clojure.set :as set]
             [com.rpl.specter :as sp]
-            [generator.naming :as naming]))
+            [generator.naming :as naming]
+            [generator.frontend-namespaced :refer [file->namespace-suffix]]))
 
 ;; =============================================================================
 ;; Dependency Extraction
@@ -127,12 +128,15 @@
 ;; Namespace Mapping
 ;; =============================================================================
 
-(defn package-to-clj-requires
-  "Convert package dependencies to Clojure require specs.
+(defn file-deps-to-clj-requires
+  "Convert file-based dependencies to Clojure require specs.
   Returns a vector of require specs like [potatoclient.proto.ser.types :as types]"
-  [current-package dep-packages ns-prefix]
-  (let [current-ns (package->namespace-suffix current-package)
-        deps-namespaces (map package->namespace-suffix dep-packages)
+  [current-file dep-files ns-prefix all-files]
+  (let [current-ns (file->namespace-suffix (:name current-file) (:package current-file))
+        ;; For each dependency file, get its namespace
+        deps-namespaces (map (fn [dep-file]
+                              (file->namespace-suffix (:name dep-file) (:package dep-file)))
+                            dep-files)
         ;; Filter out self-dependencies (same namespace)
         external-deps (remove #(= % current-ns) deps-namespaces)
         ;; Track used aliases to avoid duplicates
@@ -141,7 +145,10 @@
                :let [full-ns (str ns-prefix "." dep-ns)
                      ;; Generate a meaningful alias from the namespace
                      base-alias (cond
-                                 (= dep-ns "ser") "types"  ;; Special case for common types
+                                 ;; For ser.types namespace, use "types" as alias
+                                 (str/starts-with? dep-ns "ser.") "types"
+                                 ;; For simple "ser" namespace (legacy), also use "types"
+                                 (= dep-ns "ser") "types"
                                  ;; For nested namespaces like cmd.daycamera, use last part
                                  :else (last (str/split dep-ns #"\.")))
                      ;; Handle duplicate aliases by appending a number
@@ -153,13 +160,49 @@
                                    candidate)))]]
            [(symbol full-ns) :as (symbol alias)]))))
 
-(defn analyze-type-references
-  "Analyze a message to find external type references.
-  Returns set of referenced namespaces."
-  [message type-lookup]
-  ;; TODO: Implement actual analysis of type references
-  ;; For now, return empty set
-  #{})
+(defn collect-type-refs-from-field
+  "Collect type references from a field."
+  [field]
+  (cond
+    ;; Enum type reference
+    (get-in field [:type :enum :type-ref])
+    #{(get-in field [:type :enum :type-ref])}
+    
+    ;; Message type reference
+    (get-in field [:type :message :type-ref])
+    #{(get-in field [:type :message :type-ref])}
+    
+    :else #{}))
+
+(defn collect-type-refs-from-message
+  "Recursively collect all type references from a message."
+  [message]
+  (let [;; Regular fields
+        field-refs (mapcat collect-type-refs-from-field (:fields message []))
+        ;; Oneof fields
+        oneof-refs (mapcat (fn [oneof]
+                            (mapcat collect-type-refs-from-field (:fields oneof [])))
+                          (:oneofs message []))]
+    (set (concat field-refs oneof-refs))))
+
+(defn analyze-file-dependencies
+  "Analyze a file to find which other files it depends on.
+  Returns a set of files that this file depends on."
+  [file type-lookup all-files]
+  (let [;; Collect all type references from all messages in this file
+        all-type-refs (mapcat collect-type-refs-from-message (:messages file []))
+        ;; Look up which file each type is defined in
+        dep-files (keep (fn [type-ref]
+                          ;; Try both with and without leading dot, and as string
+                          (let [clean-ref (str/replace type-ref #"^\." "")
+                                type-info (or (get type-lookup clean-ref)  ; Try as string first
+                                             (get type-lookup (keyword clean-ref)))]
+                            (when type-info
+                              ;; Find the file that defines this type
+                              (let [filename (:filename type-info)]
+                                (first (filter #(= (:name %) filename) all-files))))))
+                        all-type-refs)]
+    (set dep-files)))
 
 ;; =============================================================================
 ;; Main API
@@ -169,16 +212,21 @@
   "Analyze dependencies and return enriched backend output.
   Adds :clj-requires key to each file with require specs."
   [backend-output ns-prefix]
-  (let [graph (build-dependency-graph backend-output)
-        file->package (:file->package graph)
+  (let [;; Get all files and type lookup
+        all-files (concat (get-in backend-output [:command :files])
+                         (get-in backend-output [:state :files]))
+        type-lookup (:type-lookup backend-output)
+        
         ;; Build enhanced file data with dependencies
         enhance-file (fn [file]
-                       (let [current-package (:package file)
-                             proto-deps (:dependencies file [])
-                             ;; Convert file dependencies to package dependencies
-                             dep-packages (set (keep #(get file->package %) proto-deps))
-                             requires (package-to-clj-requires current-package dep-packages ns-prefix)]
-                         (assoc file :clj-requires requires)))]
+                       (let [;; Analyze actual type usage to find dependencies
+                             dep-files (analyze-file-dependencies file type-lookup all-files)
+                             ;; Convert to require specs
+                             requires (file-deps-to-clj-requires file dep-files ns-prefix all-files)]
+                         (assoc file :clj-requires requires)))
+        
+        ;; Build the original graph for compatibility
+        graph (build-dependency-graph backend-output)]
     ;; Return backend output with enhanced files
     (-> backend-output
         (update-in [:command :files] #(mapv enhance-file %))

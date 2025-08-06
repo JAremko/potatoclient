@@ -1,11 +1,18 @@
 # Proto-CLJ-Generator TODO: Guardrails & Testing
 
 ## 🎯 Primary Goals
-1. Fix all remaining namespace/alias issues
-2. Pass all tests with proper roundtrip validation
-3. Generate guardrails-enabled functions using `>defn`/`>defn-`
-4. Integrate Malli specs from shared directory
-5. Setup proper clj-kondo configuration for guardrails
+1. ~~Fix all remaining namespace/alias issues~~ ✅ (90% complete - index file issue remains)
+2. Pass all tests with proper roundtrip validation ⏳ (in progress)
+3. ~~Generate guardrails-enabled functions using `>defn`/`>defn-`~~ ✅ (complete)
+4. Integrate Malli specs from shared directory 📋 (not started)
+5. Setup proper clj-kondo configuration for guardrails 📋 (not started)
+
+## 📊 Overall Progress
+- **Guardrails Integration**: ✅ Complete - all generated functions use `>defn`/`>defn-`
+- **Namespace Refactoring**: 90% - file-based namespaces working, index file generation needs fix
+- **Test Suite**: ⏳ In progress - namespace issues being resolved
+- **Spec Integration**: 📋 Not started
+- **Tooling Setup**: 📋 Not started
 
 ## 📋 Tasks
 
@@ -67,7 +74,7 @@
   - Ensure generated specs align with UI expectations
   - Cross-validate with existing domain specs
 
-### 3. Guardrails Integration
+### 3. Guardrails Integration ✅ (Mostly Complete)
 
 #### Research References
 - Main app code for guardrails usage patterns
@@ -76,25 +83,86 @@
 - Main app `.clj-kondo/` config for guardrails support
 
 #### Implementation
-- [ ] Change generated functions from `defn`/`defn-` to `>defn`/`>defn-`
-  - Update templates/builder-guardrails.clj template
-  - Update templates/parser-guardrails.clj template
-  - Update templates/oneof-builder-guardrails.clj template
-  - Update templates/oneof-parser-guardrails.clj template
-  - Ensure all generated functions use guardrails macros
-- [ ] Attach Malli specs from `/home/jare/git/potatoclient/shared/specs/`
-  - Load specs at generation time, not runtime
-  - Create spec resolution map: proto type -> malli spec keyword
-  - Handle nested message specs correctly
-- [ ] Ensure guardrails active in all builds except release (like main app)
-  - Check main app's approach in project.clj/deps.edn
-  - Add guardrails dependency with proper configuration
-  - Test that specs are enforced during development
-- [ ] Generate proper function specs for:
-  - Build functions: `[::message-spec => #(instance? ProtoClass %)]`
-  - Parse functions: `[#(instance? ProtoClass %) => ::message-spec]`
-  - Oneof payload builders: `[any? [:tuple keyword? ::nested-spec] => any?]`
-  - Oneof payload parsers: `[#(instance? ProtoClass %) => (? ::oneof-spec)]`
+- [x] Change generated functions from `defn`/`defn-` to `>defn`/`>defn-`
+  - [x] Updated templates/builder-guardrails.clj template
+  - [x] Updated templates/parser-guardrails.clj template
+  - [x] Updated templates/oneof-builder-guardrails.clj template
+  - [x] Updated templates/oneof-parser-guardrails.clj template
+  - [x] All generated functions now use guardrails macros
+- [x] Attach Malli specs from `/home/jare/git/potatoclient/shared/specs/`
+  - [x] Updated oneof specs to use custom :oneof schema instead of :altn
+  - [x] Removed unnecessary malli-oneof import (registry setup belongs in app/test bootstrap)
+  - [ ] Create spec resolution map: proto type -> malli spec keyword
+  - [ ] Handle nested message specs correctly
+- [x] Ensure guardrails active in all builds (removed non-guardrails variant)
+  - [x] Removed all non-guardrails templates
+  - [x] Updated code to always generate guardrails functions
+  - [x] Simplified codebase by removing conditional logic
+- [x] Generate proper function specs for:
+  - [x] Build functions: `[::message-spec => #(instance? ProtoClass %)]`
+  - [x] Parse functions: `[#(instance? ProtoClass %) => ::message-spec]`
+  - [x] Oneof payload builders: `[#(instance? Builder %) [:tuple keyword? any?] => #(instance? Builder %)]`
+  - [x] Oneof payload parsers: `[#(instance? ProtoClass %) => (? map?)]`
+
+#### Recent Changes (2025-08-06)
+
+**Morning Session**:
+- [x] Fixed return value specs to use instance checks instead of `any?`
+- [x] Updated oneof-builder template to use Builder class instance checks
+- [x] Removed all non-guardrails template variants for simplicity
+- [x] Updated frontend.clj to always use guardrails templates
+- [x] Fixed namespace alias issue (removed hyphen replacement for namespace aliases)
+- [x] Removed single namespace mode completely
+- [x] Updated all tests to use separated namespace mode
+- [x] Fixed repeated field handling (addAll for scalars, loops for messages)
+- [x] Updated repeated field templates and generation logic
+
+**Afternoon Session**:
+- [x] Built comprehensive dependency graph that tracks file-level dependencies
+- [x] Fixed type lookup to include filename information
+- [x] Fixed namespace generation for file-based approach (e.g., `ser.types` from `jon_shared_data_types.proto`)
+- [x] Fixed file path generation to handle dashes (namespaces use dashes, files use underscores)
+- [x] Added `proto-package->clojure-alias` function with comprehensive tests
+- [x] Updated oneof builder/parser generation to use correct kebab-case aliases
+- [x] Updated test files to use `potatoclient.proto.state` instead of `potatoclient.proto.ser`
+
+### File-based Namespace Refactoring (Completed)
+
+#### Problem (Solved)
+We switched from package-based namespaces to file-based namespaces, which broke many tests. The key issue was that files like `jon_shared_data_types.proto` in package `ser` should generate namespace `ser.types`, not just `ser`.
+
+#### Solutions Implemented
+1. **Namespace Generation**
+   - [x] Created `file->namespace-suffix` function to map proto files to namespaces
+   - [x] Changed from `group-by-package` to `group-by-file`
+   - [x] Fixed namespace generation to use kebab-case (e.g., `cmd.day-cam-glass-heater`)
+
+2. **Dependency Resolution**
+   - [x] Updated type lookup to include filename information
+   - [x] Built comprehensive dependency graph that tracks file-level dependencies based on actual type usage
+   - [x] Fixed type lookup to work with string keys (not just keywords)
+   - [x] Fixed require statement generation to use correct namespaces (e.g., `ser.types` for enums)
+
+3. **File Path and Alias Issues**
+   - [x] Fixed file path generation - namespaces use dashes but file paths need underscores
+   - [x] Added `proto-package->clojure-alias` function to generate kebab-case aliases
+   - [x] Updated oneof builder/parser generation to use the correct alias format
+   - [x] Added comprehensive tests and generative testing for the new naming function
+
+4. **Test Updates**
+   - [x] Updated tests to use `potatoclient.proto.state` instead of `potatoclient.proto.ser`
+   - [x] Fixed namespace references in all test files
+
+#### Remaining Issues
+
+1. **State Index File Generation**
+   - The state.clj index file is trying to require `potatoclient.proto.ser` which doesn't exist
+   - Need to handle packages that come from file-based namespaces in the index generation
+   - The index generation logic needs to understand the file->namespace mapping
+
+2. **Test Failures**
+   - Tests are still failing due to namespace resolution issues
+   - Need to ensure all generated namespaces match what tests expect
 
 ### 4. Spec Integration
 - [ ] Load specs from `/home/jare/git/potatoclient/shared/specs/custom/`

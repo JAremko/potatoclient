@@ -4,7 +4,7 @@
             [malli.core :as m]
             [malli.generator :as mg]
             [potatoclient.proto.cmd :as cmd]
-            [potatoclient.proto.ser :as ser]
+            [potatoclient.proto.state :as state]
             [potatoclient.proto.cmd.daycamera :as daycamera]
             [potatoclient.proto.cmd.heatcamera :as heatcamera]
             [potatoclient.proto.cmd.system :as system])

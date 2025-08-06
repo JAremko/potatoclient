@@ -4,7 +4,7 @@
             [malli.core :as m]
             [malli.generator :as mg]
             [potatoclient.proto.cmd :as cmd-gen]
-            [potatoclient.proto.ser :as state-gen]
+            [potatoclient.proto.state :as state-gen]
             [potatoclient.specs.malli-oneof :as oneof])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [ser JonSharedData JonSharedData$JonGUIState]))

@@ -36,7 +36,7 @@
    [:important [:maybe :boolean]] [:from-cv-subsystem [:maybe :boolean]]
    [:client-type [:maybe :ser/jon-gui-data-client-type]]
    [:payload
-    [:altn
+    [:oneof
      {:osd [:map [:osd :cmd.osd/root]],
       :ping [:map [:ping :cmd/ping]],
       :system [:map [:system :cmd.system/root]],
@@ -80,7 +80,7 @@
   build-root
   "Build a Root protobuf message from a map."
   [m]
-  [root-spec => any?]
+  [root-spec => #(instance? cmd.JonSharedCmd$Root %)]
   (let [builder (cmd.JonSharedCmd$Root/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
@@ -107,25 +107,25 @@
 (>defn build-ping
        "Build a Ping protobuf message from a map."
        [m]
-       [ping-spec => any?]
+       [ping-spec => #(instance? cmd.JonSharedCmd$Ping %)]
        (let [builder (cmd.JonSharedCmd$Ping/newBuilder)] (.build builder)))
 
 (>defn build-noop
        "Build a Noop protobuf message from a map."
        [m]
-       [noop-spec => any?]
+       [noop-spec => #(instance? cmd.JonSharedCmd$Noop %)]
        (let [builder (cmd.JonSharedCmd$Noop/newBuilder)] (.build builder)))
 
 (>defn build-frozen
        "Build a Frozen protobuf message from a map."
        [m]
-       [frozen-spec => any?]
+       [frozen-spec => #(instance? cmd.JonSharedCmd$Frozen %)]
        (let [builder (cmd.JonSharedCmd$Frozen/newBuilder)] (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.JonSharedCmd$Root proto]
-       [any? => root-spec]
+       [#(instance? cmd.JonSharedCmd$Root %) => root-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :protocol-version (.getProtocolVersion proto))
@@ -159,7 +159,8 @@
 (>defn- build-root-payload
         "Build the oneof payload for Root."
         [builder [field-key value]]
-        [any? [:tuple keyword? any?] => any?]
+        [#(instance? cmd.JonSharedCmd$Root$Builder %) [:tuple keyword? any?] =>
+         #(instance? cmd.JonSharedCmd$Root$Builder %)]
         (case field-key
           :day-camera (.setDayCamera builder (daycamera/build-root value))
           :heat-camera (.setHeatCamera builder (heatcamera/build-root value))
@@ -184,7 +185,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.JonSharedCmd$Root proto]
-  [any? => (? map?)]
+  [#(instance? cmd.JonSharedCmd$Root %) => (? map?)]
   (cond (.hasDayCamera proto) {:day-camera (daycamera/parse-root (.getDayCamera
                                                                    proto))}
         (.hasHeatCamera proto) {:heat-camera (heatcamera/parse-root

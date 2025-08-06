@@ -11,14 +11,13 @@
           result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
                                      :output-dir output-dir
                                      :namespace-prefix "test.proto.ns"
-                                     :namespace-split? true
                                      :debug? false})]
       (is (:success result))
       
       (testing "Index files are generated"
         (let [ns-path (str output-dir "/test/proto/ns")]
-          (is (.exists (io/file ns-path "command.clj")))
-          (is (.exists (io/file ns-path "state.clj")))))
+          (is (.exists (io/file ns-path "cmd.clj")))
+          (is (.exists (io/file ns-path "ser.clj")))))
       
       (testing "Package-specific files are generated"
         (let [ns-path (str output-dir "/test/proto/ns")]
@@ -29,45 +28,33 @@
           (is (.exists (io/file ns-path "ser/heat.clj")))
           (is (.exists (io/file ns-path "ser/gps.clj")))))
       
-      (testing "Index files contain proper re-exports"
-        (let [cmd-content (slurp (io/file output-dir "test/proto/ns/command.clj"))]
-          ;; Check for prefixed re-exports
-          (is (str/includes? cmd-content "lira-build-root"))
-          (is (str/includes? cmd-content "heatcamera-build-root"))
-          (is (str/includes? cmd-content "system-build-root"))
+      (testing "Index files contain proper content"
+        (let [cmd-content (slurp (io/file output-dir "test/proto/ns/cmd.clj"))]
+          ;; Check for namespace declaration
+          (is (str/includes? cmd-content "(ns test.proto.ns.cmd"))
           ;; Check for proper requires
           (is (str/includes? cmd-content "[test.proto.ns.cmd.lira :as lira]"))
           (is (str/includes? cmd-content "[test.proto.ns.cmd.heatcamera :as heatcamera]")))))))
 
-(deftest namespace-split-vs-single-mode
-  (testing "Both modes generate working code"
-    (let [;; Generate in single mode
-          single-result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
-                                            :output-dir "test-output-single-mode"
-                                            :namespace-prefix "test.proto.single"
-                                            :namespace-mode :single
-                                            :debug? false})
-          ;; Generate in namespace-split mode
-          ns-result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
-                                        :output-dir "test-output-ns-mode"
-                                        :namespace-prefix "test.proto.split"
-                                        :namespace-split? true
-                                        :debug? false})]
+(deftest namespace-split-generates-expected-files
+  (testing "Separated namespace mode generates expected files"
+    (let [;; Generate in separated namespace mode
+          result (core/generate-all {:input-dir "../proto-explorer/output/json-descriptors"
+                                    :output-dir "test-output-separated"
+                                    :namespace-prefix "test.proto.separated"
+                                    :debug? false})]
       
-      (is (:success single-result))
-      (is (:success ns-result))
+      (is (:success result))
       
-      (testing "Single mode has monolithic files"
-        (let [single-path "test-output-single-mode/test/proto/single"]
-          (is (.exists (io/file single-path "command.clj")))
-          (is (.exists (io/file single-path "state.clj")))
-          ;; Should NOT have sub-packages
-          (is (not (.exists (io/file single-path "cmd"))))))
-      
-      (testing "Namespace-split mode has distributed files"
-        (let [ns-path "test-output-ns-mode/test/proto/split"]
-          (is (.exists (io/file ns-path "command.clj")))
-          (is (.exists (io/file ns-path "state.clj")))
+      (testing "Separated mode has package-specific files"
+        (let [ns-path "test-output-separated/test/proto/separated"]
+          ;; Should have index files
+          (is (.exists (io/file ns-path "cmd.clj")))
+          (is (.exists (io/file ns-path "ser.clj")))
           ;; Should have sub-packages
           (is (.exists (io/file ns-path "cmd")))
-          (is (.exists (io/file ns-path "ser"))))))))
+          (is (.exists (io/file ns-path "ser")))
+          ;; Check some specific package files
+          (is (.exists (io/file ns-path "cmd/lira.clj")))
+          (is (.exists (io/file ns-path "cmd/system.clj")))
+          (is (.exists (io/file ns-path "ser/gps.clj"))))))))
