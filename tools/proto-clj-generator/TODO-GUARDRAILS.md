@@ -1,3 +1,5 @@
+# !!! IMPORTANT! ALWAYS READ THE WHOLE DOCUMENT !!!!
+
 # Proto-CLJ-Generator TODO: Guardrails & Testing
 
 ## 🎯 Primary Goals
@@ -315,7 +317,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 
 ### ROCK SOLID FOUNDATION
 - **Test-first development** - Write tests before implementation
-- **100% test coverage** - Every function, every path
+- **test coverage** - Every function, every path
 - **Property-based testing** - Find edge cases automatically
 - **Integration tests** - Validate entire pipeline end-to-end
 
@@ -330,22 +332,22 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 ### Phase 0: Clean House (IMMEDIATE)
 **Goal**: Remove all technical debt and establish clean base
 
-1. **Delete Legacy Code**
-   - [ ] Remove single-namespace mode completely
-   - [ ] Delete non-guardrails templates
-   - [ ] Remove all commented-out code
-   - [ ] Delete unused functions
+1. **Archive (for future references) Legacy Code**
+   - [ ] single-namespace mode completely
+   - [ ] non-guardrails templates
+   - [ ] all commented-out code
+   - [ ] unused functions
 
 2. **Establish Testing Framework**
    - [ ] Set up property-based testing infrastructure
    - [ ] Create test data generators for all proto types
-   - [ ] Establish test coverage reporting (goal: 100%)
-   - [ ] Set up continuous test running
+   - [ ] Establish test coverage reporting (goal: ~100%)
 
 **Validation**: 
 - All tests pass
 - Zero legacy code remains
 - Test coverage baseline established
+- NO SKIPPING TESTS
 
 ### Phase 1: Naming & Structure Foundation
 **Goal**: Bulletproof naming system that handles all edge cases
@@ -354,7 +356,6 @@ We switched from package-based namespaces to file-based namespaces, which broke 
    - [x] Create lossless proto<->keyword conversions
    - [x] Create lossy conversions for filesystem
    - [ ] Add comprehensive property-based tests
-   - [ ] Test with real proto corpus (1000+ files)
    - [ ] Document all naming rules
 
 2. **Fix All Namespace Issues**
@@ -364,9 +365,9 @@ We switched from package-based namespaces to file-based namespaces, which broke 
    - [ ] Test cross-file dependencies exhaustively
 
 **Validation Gates**:
-- [ ] 100% naming test coverage
-- [ ] Property tests pass with 10,000 iterations
-- [ ] All proto files from main app generate correctly
+- [ ] ~100% naming test coverage
+- [ ] Property tests pass with 1000 iterations
+- [ ] All proto files generate correctly and compile
 - [ ] Zero namespace conflicts in generated code
 
 ### Phase 2: Type System & Dependency Graph
@@ -388,7 +389,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 - [ ] Can resolve any type from any context
 - [ ] Circular dependency detection works
 - [ ] Generation order is always correct
-- [ ] 100% test coverage on type system
+- [ ] ~100% test coverage on type system
 
 ### Phase 3: Intermediate Representation (IR)
 **Goal**: Rich IR that captures everything needed for generation
@@ -409,7 +410,6 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 - [ ] IR captures 100% of JSON descriptor information
 - [ ] IR validates against Malli specs
 - [ ] Roundtrip: JSON -> IR -> JSON preserves everything
-- [ ] Performance: IR generation < 100ms for large protos
 
 ### Phase 4: Code Generation Pipeline
 **Goal**: Clean, predictable code generation
@@ -428,7 +428,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
    - [ ] Benchmark each stage
 
 **Validation Gates**:
-- [ ] Each stage has 100% test coverage
+- [ ] Each stage has ~100% test coverage
 - [ ] Stage contracts enforced by Malli
 - [ ] Pipeline handles all proto constructs
 - [ ] Generated code compiles and passes tests
@@ -452,28 +452,6 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 - [ ] All validation rules enforced
 - [ ] Guardrails active on all functions
 - [ ] Invalid data rejected at runtime
-- [ ] Performance impact < 10%
-
-### Phase 6: Integration & Polish
-**Goal**: Production-ready system
-
-1. **Full Integration Testing**
-   - [ ] Test with entire PotatoClient proto set
-   - [ ] Verify all roundtrips work
-   - [ ] Performance benchmarks
-   - [ ] Memory usage analysis
-
-2. **Developer Experience**
-   - [ ] Clear error messages
-   - [ ] Helpful documentation
-   - [ ] Fast generation times
-   - [ ] Easy debugging
-
-**Validation Gates**:
-- [ ] Generates all PotatoClient protos correctly
-- [ ] All integration tests pass
-- [ ] Generation time < 5 seconds
-- [ ] Zero runtime errors
 
 ## 📊 Testing Strategy
 
@@ -486,7 +464,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 ### Property-Based Testing
 ```clojure
 (defspec naming-roundtrip-spec
-  100000 ; Run MANY iterations
+  1000 ; Run MANY iterations
   (prop/for-all [proto-name (gen-valid-proto-name)]
     (= proto-name
        (-> proto-name
@@ -499,17 +477,6 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 - Compare generated code against golden files
 - Test with main app's actual protos
 - Verify compilation and runtime behavior
-
-### Performance Testing
-```clojure
-(deftest generation-performance
-  (testing "Large proto files generate quickly"
-    (let [start (System/nanoTime)
-          result (generate-all-protos large-descriptor-set)
-          duration (/ (- (System/nanoTime) start) 1e9)]
-      (is (< duration 5.0) ; Less than 5 seconds
-          (str "Generation took " duration " seconds")))))
-```
 
 ## 🚫 What We're NOT Doing
 
@@ -537,7 +504,7 @@ We switched from package-based namespaces to file-based namespaces, which broke 
 
 Each phase is complete when:
 1. All tests pass (unit, property, integration)
-2. 100% test coverage achieved
+2. ~100% test coverage achieved
 3. Code reviewed and refactored
 4. Documentation updated
 5. Performance benchmarks met
@@ -546,24 +513,18 @@ Each phase is complete when:
 ## 🎯 Success Metrics
 
 1. **Code Quality**
-   - 100% test coverage
+   - ~100% test coverage
    - Zero linter warnings
    - All functions have guardrails
    - Malli specs on all data
 
-2. **Performance**
-   - Generate all protos < 5 seconds
-   - Memory usage < 500MB
-   - Startup time < 1 second
-   - Zero runtime allocations in hot paths
-
-3. **Maintainability**
+2. **Maintainability**
    - New developer productive in < 1 hour
    - Average function < 20 lines
    - Cyclomatic complexity < 5
    - Clear separation of concerns
 
-4. **Reliability**
+3. **Reliability**
    - Zero runtime errors
    - Handles all valid proto files
    - Clear errors for invalid input
