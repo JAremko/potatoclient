@@ -44,25 +44,21 @@
 ;; Malli Specs
 ;; =============================================================================
 
-(def set-value-spec
-  "Malli spec for set-value message"
-  [:map [:value [:maybe :float]]])
+(def set-value-spec "Malli spec for set-value message" [:map [:value :float]])
 
 (def move-spec
   "Malli spec for move message"
-  [:map [:target-value [:maybe :float]] [:speed [:maybe :float]]])
+  [:map [:target-value :float] [:speed :float]])
 
-(def offset-spec
-  "Malli spec for offset message"
-  [:map [:offset-value [:maybe :float]]])
+(def offset-spec "Malli spec for offset message" [:map [:offset-value :float]])
 
 (def set-clahe-level-spec
   "Malli spec for set-clahe-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def shift-clahe-level-spec
   "Malli spec for shift-clahe-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def root-spec
   "Malli spec for root message"
@@ -105,11 +101,11 @@
 
 (def set-fx-mode-spec
   "Malli spec for set-fx-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-fx-mode-day]]])
+  [:map [:mode :ser/jon-gui-data-fx-mode-day]])
 
 (def set-digital-zoom-level-spec
   "Malli spec for set-digital-zoom-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def focus-spec
   "Malli spec for focus message"
@@ -152,21 +148,19 @@
   "Malli spec for prev-zoom-table-pos message"
   [:map])
 
-(def set-iris-spec
-  "Malli spec for set-iris message"
-  [:map [:value [:maybe :float]]])
+(def set-iris-spec "Malli spec for set-iris message" [:map [:value :float]])
 
 (def set-infra-red-filter-spec
   "Malli spec for set-infra-red-filter message"
-  [:map [:value [:maybe :boolean]]])
+  [:map [:value :boolean]])
 
 (def set-auto-iris-spec
   "Malli spec for set-auto-iris message"
-  [:map [:value [:maybe :boolean]]])
+  [:map [:value :boolean]])
 
 (def set-zoom-table-value-spec
   "Malli spec for set-zoom-table-value message"
-  [:map [:value [:maybe :int]]])
+  [:map [:value :int]])
 
 (def stop-spec "Malli spec for stop message" [:map])
 

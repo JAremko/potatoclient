@@ -108,9 +108,7 @@
   [schema field]
   (case (:label field)
     :label-repeated [:vector schema]
-    :label-optional (if (:oneof-index field)
-                      schema  ; Oneof fields handle optionality at oneof level
-                      [:maybe schema])
+    :label-optional schema  ; In proto3, all fields have defaults and are never nil
     schema))
 
 (defn apply-constraints

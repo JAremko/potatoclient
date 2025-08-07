@@ -84,7 +84,7 @@
 
 (def set-localization-spec
   "Malli spec for set-localization message"
-  [:map [:loc [:maybe :ser/jon-gui-data-system-localizations]]])
+  [:map [:loc :ser/jon-gui-data-system-localizations]])
 
 ;; =============================================================================
 ;; Builders and Parsers

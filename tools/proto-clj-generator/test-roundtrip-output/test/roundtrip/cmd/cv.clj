@@ -67,13 +67,12 @@
 
 (def set-auto-focus-spec
   "Malli spec for set-auto-focus message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]]
-   [:value [:maybe :boolean]]])
+  [:map [:channel :ser/jon-gui-data-video-channel] [:value :boolean]])
 
 (def start-track-ndc-spec
   "Malli spec for start-track-ndc message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]] [:x [:maybe :float]]
-   [:y [:maybe :float]] [:frame-time [:maybe :int]]])
+  [:map [:channel :ser/jon-gui-data-video-channel] [:x :float] [:y :float]
+   [:frame-time :int]])
 
 (def stop-track-spec "Malli spec for stop-track message" [:map])
 

@@ -91,7 +91,7 @@
 
 (def set-scan-mode-spec
   "Malli spec for set-scan-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-lrf-scan-modes]]])
+  [:map [:mode :ser/jon-gui-data-lrf-scan-modes]])
 
 (def new-session-spec "Malli spec for new-session message" [:map])
 

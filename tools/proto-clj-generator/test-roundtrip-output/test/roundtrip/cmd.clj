@@ -32,10 +32,9 @@
 
 (def root-spec
   "Malli spec for root message"
-  [:map [:protocol-version [:and [:maybe :int] [:> 0]]]
-   [:session-id [:maybe :int]] [:important [:maybe :boolean]]
-   [:from-cv-subsystem [:maybe :boolean]]
-   [:client-type [:maybe :ser/jon-gui-data-client-type]]
+  [:map [:protocol-version [:and :int [:> 0]]] [:session-id :int]
+   [:important :boolean] [:from-cv-subsystem :boolean]
+   [:client-type :ser/jon-gui-data-client-type]
    [:payload
     [:oneof
      {:osd [:map [:osd :cmd.osd/root]],

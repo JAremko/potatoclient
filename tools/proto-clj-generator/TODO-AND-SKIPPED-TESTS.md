@@ -195,15 +195,39 @@ Based on TODO-GUARDRAILS.md requirements:
 - ✅ Switched spec_gen.clj to use :oneof instead of :altn
 - ✅ Removed all non-guardrails templates (7 files deleted)
 - ✅ Updated frontend.clj to only use guardrails templates
+- ✅ Fixed oneof code generation to properly nest fields under their parent field (e.g., `:payload`)
+- ✅ Removed :maybe wrappers from proto3 fields (they always have defaults)
+- ✅ Created full_roundtrip_validation_basic_test.clj with working test structure
 
 ### In Progress
 - 🔄 Working on enabling full roundtrip validation test
-- 🔄 Need to generate actual proto code to test roundtrip
+- 🔄 Fixing namespace resolution issues in test
+- 🔄 Handling enum not_in constraints to prevent default values
+- 🔄 Fixing enum value lookups (NPE in generated code)
+
+### Key Discoveries
+1. **Proto3 Default Values**: All fields in proto3 have defaults (0 for numbers, false for bools, empty string, etc.)
+   - This means we should NOT use `:maybe` in specs
+   - Roundtrip tests need to account for these defaults appearing in parsed data
+   
+2. **Enum Constraints**: Many enums have `not_in: [0]` buf.validate constraints
+   - This prevents using the default enum value (typically UNSPECIFIED)
+   - Our constraint extraction already handles this, creating `[:not [:enum [0]]]` schemas
+   
+3. **Oneof Structure**: The protobuf definition clearly shows `oneof payload`
+   - This means fields should be nested under `:payload` in Clojure maps
+   - Fixed the code generation to look in the correct location
+
+### Current Issues
+1. **Namespace Resolution**: Getting "namespace 'test.roundtrip.cmd.lira' not found" errors
+2. **Enum Value Lookups**: NPE when trying to look up enum values in types namespace
+3. **Guardrails Validation**: Need to enable with `(binding [com.fulcrologic.guardrails.config/*throw?* true] ...)`
 
 ### Next Steps
-1. Generate code from proto files for roundtrip testing
-2. Enable and run full roundtrip validation test
-3. Fix any issues found during roundtrip testing
+1. Fix namespace loading issues (ensure generated files are on classpath)
+2. Fix enum value registry/lookup mechanism
+3. Enable guardrails validation in tests
+4. Ensure full roundtrip test passes with all constraints
 
 ## Priority Action Plan
 

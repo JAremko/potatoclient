@@ -76,19 +76,19 @@
 
 (def set-magnetic-declination-spec
   "Malli spec for set-magnetic-declination message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def set-offset-angle-azimuth-spec
   "Malli spec for set-offset-angle-azimuth message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def set-offset-angle-elevation-spec
   "Malli spec for set-offset-angle-elevation message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def set-use-rotary-position-spec
   "Malli spec for set-use-rotary-position message"
-  [:map [:flag [:maybe :boolean]]])
+  [:map [:flag :boolean]])
 
 ;; =============================================================================
 ;; Builders and Parsers
