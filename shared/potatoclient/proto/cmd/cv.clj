@@ -2,7 +2,7 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [potatoclient.proto.ser.types :as types])
+            [potatoclient.proto.ser :as types])
   (:import cmd.CV.JonSharedCmdCv$Root
            cmd.CV.JonSharedCmdCv$VampireModeEnable
            cmd.CV.JonSharedCmdCv$DumpStart
@@ -33,6 +33,7 @@
                             [:vampire-mode-enable :cmd.cv/vampire-mode-enable]],
       :vampire-mode-disable
         [:map [:vampire-mode-disable :cmd.cv/vampire-mode-disable]],
+      :error/message "This oneof field is required",
       :dump-stop [:map [:dump-stop :cmd.cv/dump-stop]],
       :stabilization-mode-disable
         [:map [:stabilization-mode-disable :cmd.cv/stabilization-mode-disable]],
@@ -107,7 +108,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.CV.JonSharedCmdCv$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]]
@@ -126,46 +127,42 @@
 (>defn build-vampire-mode-enable
        "Build a VampireModeEnable protobuf message from a map."
        [m]
-       [vampire-mode-enable-spec =>
-        #(instance? cmd.CV.JonSharedCmdCv$VampireModeEnable %)]
+       [vampire-mode-enable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$VampireModeEnable/newBuilder)]
          (.build builder)))
 
 (>defn build-dump-start
        "Build a DumpStart protobuf message from a map."
        [m]
-       [dump-start-spec => #(instance? cmd.CV.JonSharedCmdCv$DumpStart %)]
+       [dump-start-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$DumpStart/newBuilder)]
          (.build builder)))
 
 (>defn build-dump-stop
        "Build a DumpStop protobuf message from a map."
        [m]
-       [dump-stop-spec => #(instance? cmd.CV.JonSharedCmdCv$DumpStop %)]
+       [dump-stop-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$DumpStop/newBuilder)]
          (.build builder)))
 
 (>defn build-vampire-mode-disable
        "Build a VampireModeDisable protobuf message from a map."
        [m]
-       [vampire-mode-disable-spec =>
-        #(instance? cmd.CV.JonSharedCmdCv$VampireModeDisable %)]
+       [vampire-mode-disable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$VampireModeDisable/newBuilder)]
          (.build builder)))
 
 (>defn build-stabilization-mode-enable
        "Build a StabilizationModeEnable protobuf message from a map."
        [m]
-       [stabilization-mode-enable-spec =>
-        #(instance? cmd.CV.JonSharedCmdCv$StabilizationModeEnable %)]
+       [stabilization-mode-enable-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$StabilizationModeEnable/newBuilder)]
          (.build builder)))
 
 (>defn build-stabilization-mode-disable
        "Build a StabilizationModeDisable protobuf message from a map."
        [m]
-       [stabilization-mode-disable-spec =>
-        #(instance? cmd.CV.JonSharedCmdCv$StabilizationModeDisable %)]
+       [stabilization-mode-disable-spec => any?]
        (let [builder
                (cmd.CV.JonSharedCmdCv$StabilizationModeDisable/newBuilder)]
          (.build builder)))
@@ -173,8 +170,7 @@
 (>defn build-set-auto-focus
        "Build a SetAutoFocus protobuf message from a map."
        [m]
-       [set-auto-focus-spec =>
-        #(instance? cmd.CV.JonSharedCmdCv$SetAutoFocus %)]
+       [set-auto-focus-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$SetAutoFocus/newBuilder)]
          ;; Set regular fields
          (when (contains? m :channel)
@@ -184,33 +180,33 @@
          (when (contains? m :value) (.setValue builder (get m :value)))
          (.build builder)))
 
-(>defn
-  build-start-track-ndc
-  "Build a StartTrackNDC protobuf message from a map."
-  [m]
-  [start-track-ndc-spec => #(instance? cmd.CV.JonSharedCmdCv$StartTrackNDC %)]
-  (let [builder (cmd.CV.JonSharedCmdCv$StartTrackNDC/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :channel)
-      (.setChannel builder
-                   (get types/jon-gui-data-video-channel-values
-                        (get m :channel))))
-    (when (contains? m :x) (.setX builder (get m :x)))
-    (when (contains? m :y) (.setY builder (get m :y)))
-    (when (contains? m :frame-time) (.setFrameTime builder (get m :frame-time)))
-    (.build builder)))
+(>defn build-start-track-ndc
+       "Build a StartTrackNDC protobuf message from a map."
+       [m]
+       [start-track-ndc-spec => any?]
+       (let [builder (cmd.CV.JonSharedCmdCv$StartTrackNDC/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :channel)
+           (.setChannel builder
+                        (get types/jon-gui-data-video-channel-values
+                             (get m :channel))))
+         (when (contains? m :x) (.setX builder (get m :x)))
+         (when (contains? m :y) (.setY builder (get m :y)))
+         (when (contains? m :frame-time)
+           (.setFrameTime builder (get m :frame-time)))
+         (.build builder)))
 
 (>defn build-stop-track
        "Build a StopTrack protobuf message from a map."
        [m]
-       [stop-track-spec => #(instance? cmd.CV.JonSharedCmdCv$StopTrack %)]
+       [stop-track-spec => any?]
        (let [builder (cmd.CV.JonSharedCmdCv$StopTrack/newBuilder)]
          (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.CV.JonSharedCmdCv$Root proto]
-       [#(instance? cmd.CV.JonSharedCmdCv$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -251,29 +247,29 @@
        [any? => stabilization-mode-disable-spec]
        {})
 
-(>defn
-  parse-set-auto-focus
-  "Parse a SetAutoFocus protobuf message to a map."
-  [^cmd.CV.JonSharedCmdCv$SetAutoFocus proto]
-  [#(instance? cmd.CV.JonSharedCmdCv$SetAutoFocus %) => set-auto-focus-spec]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :channel
-           (get types/jon-gui-data-video-channel-keywords (.getChannel proto)))
-    true (assoc :value (.getValue proto))))
+(>defn parse-set-auto-focus
+       "Parse a SetAutoFocus protobuf message to a map."
+       [^cmd.CV.JonSharedCmdCv$SetAutoFocus proto]
+       [any? => set-auto-focus-spec]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :channel
+                (get types/jon-gui-data-video-channel-keywords
+                     (.getChannel proto)))
+         true (assoc :value (.getValue proto))))
 
-(>defn
-  parse-start-track-ndc
-  "Parse a StartTrackNDC protobuf message to a map."
-  [^cmd.CV.JonSharedCmdCv$StartTrackNDC proto]
-  [#(instance? cmd.CV.JonSharedCmdCv$StartTrackNDC %) => start-track-ndc-spec]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :channel
-           (get types/jon-gui-data-video-channel-keywords (.getChannel proto)))
-    true (assoc :x (.getX proto))
-    true (assoc :y (.getY proto))
-    true (assoc :frame-time (.getFrameTime proto))))
+(>defn parse-start-track-ndc
+       "Parse a StartTrackNDC protobuf message to a map."
+       [^cmd.CV.JonSharedCmdCv$StartTrackNDC proto]
+       [any? => start-track-ndc-spec]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :channel
+                (get types/jon-gui-data-video-channel-keywords
+                     (.getChannel proto)))
+         true (assoc :x (.getX proto))
+         true (assoc :y (.getY proto))
+         true (assoc :frame-time (.getFrameTime proto))))
 
 (>defn parse-stop-track
        "Parse a StopTrack protobuf message to a map."
@@ -285,8 +281,7 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [#(instance? cmd.CV.JonSharedCmdCv$Root$Builder %) [:tuple keyword? any?] =>
-   #(instance? cmd.CV.JonSharedCmdCv$Root$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :set-auto-focus (.setSetAutoFocus builder (build-set-auto-focus value))
     :start-track-ndc (.setStartTrackNdc builder (build-start-track-ndc value))
@@ -309,7 +304,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.CV.JonSharedCmdCv$Root proto]
-  [#(instance? cmd.CV.JonSharedCmdCv$Root %) => (? map?)]
+  [any? => (? map?)]
   (cond
     (.hasSetAutoFocus proto) {:set-auto-focus (parse-set-auto-focus
                                                 (.getSetAutoFocus proto))}
@@ -330,3 +325,16 @@
                                      (.getStabilizationModeDisable proto))}
     (.hasDumpStart proto) {:dump-start (parse-dump-start (.getDumpStart proto))}
     (.hasDumpStop proto) {:dump-stop (parse-dump-stop (.getDumpStop proto))}))
+;; =============================================================================
+;; Validation Helper Functions
+;; =============================================================================
+
+;; Validation helpers for SetAutoFocus
+;; Warning: Could not extract spec for field channel
+
+;; Validation helpers for StartTrackNDC
+;; Warning: Could not extract spec for field channel
+
+;; Warning: Could not extract spec for field x
+
+;; Warning: Could not extract spec for field y

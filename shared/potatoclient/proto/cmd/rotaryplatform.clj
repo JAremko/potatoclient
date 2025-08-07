@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.rotaryplatform
+(ns potatoclient.proto.cmd.rotaryplatform
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [potatoclient.proto.ser :as types])
   (:import
     cmd.RotaryPlatform.JonSharedCmdRotary$Root
     cmd.RotaryPlatform.JonSharedCmdRotary$Axis
@@ -377,8 +377,8 @@
                                      :scan-delete-node :scan-update-node
                                      :scan-add-node}
                                    k))
-                          (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+                          m))]
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-axis
@@ -607,8 +607,8 @@
                                                (#{:set-value :rotate-to :rotate
                                                   :relative :relative-set :halt}
                                                 k))
-                                       (:cmd m)))]
-           (build-azimuth-cmd builder cmd-field))
+                                       m))]
+           (build-azimuth-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
@@ -776,8 +776,8 @@
                                                (#{:set-value :rotate-to :rotate
                                                   :relative :relative-set :halt}
                                                 k))
-                                       (:cmd m)))]
-           (build-elevation-cmd builder cmd-field))
+                                       m))]
+           (build-elevation-payload builder cmd-field))
          (.build builder)))
 
 (>defn

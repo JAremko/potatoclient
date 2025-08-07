@@ -30,7 +30,8 @@
         [:map [:set-manual-position :cmd.gps/set-manual-position]],
       :set-use-manual-position
         [:map [:set-use-manual-position :cmd.gps/set-use-manual-position]],
-      :get-meteo [:map [:get-meteo :cmd.gps/get-meteo]]}]]])
+      :get-meteo [:map [:get-meteo :cmd.gps/get-meteo]],
+      :error/message "This oneof field is required"}]]])
 
 (def start-spec "Malli spec for start message" [:map])
 
@@ -70,7 +71,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.Gps.JonSharedCmdGps$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field
@@ -85,29 +86,28 @@
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [start-spec => #(instance? cmd.Gps.JonSharedCmdGps$Start %)]
+       [start-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [stop-spec => #(instance? cmd.Gps.JonSharedCmdGps$Stop %)]
+       [stop-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [get-meteo-spec => #(instance? cmd.Gps.JonSharedCmdGps$GetMeteo %)]
+       [get-meteo-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$GetMeteo/newBuilder)]
          (.build builder)))
 
 (>defn build-set-use-manual-position
        "Build a SetUseManualPosition protobuf message from a map."
        [m]
-       [set-use-manual-position-spec =>
-        #(instance? cmd.Gps.JonSharedCmdGps$SetUseManualPosition %)]
+       [set-use-manual-position-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$SetUseManualPosition/newBuilder)]
          ;; Set regular fields
          (when (contains? m :flag) (.setFlag builder (get m :flag)))
@@ -116,8 +116,7 @@
 (>defn build-set-manual-position
        "Build a SetManualPosition protobuf message from a map."
        [m]
-       [set-manual-position-spec =>
-        #(instance? cmd.Gps.JonSharedCmdGps$SetManualPosition %)]
+       [set-manual-position-spec => any?]
        (let [builder (cmd.Gps.JonSharedCmdGps$SetManualPosition/newBuilder)]
          ;; Set regular fields
          (when (contains? m :latitude) (.setLatitude builder (get m :latitude)))
@@ -129,7 +128,7 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Gps.JonSharedCmdGps$Root proto]
-       [#(instance? cmd.Gps.JonSharedCmdGps$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
          ;; Oneof payload
          true (merge (parse-root-payload proto))))
@@ -155,8 +154,7 @@
 (>defn parse-set-use-manual-position
        "Parse a SetUseManualPosition protobuf message to a map."
        [^cmd.Gps.JonSharedCmdGps$SetUseManualPosition proto]
-       [#(instance? cmd.Gps.JonSharedCmdGps$SetUseManualPosition %) =>
-        set-use-manual-position-spec]
+       [any? => set-use-manual-position-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :flag (.getFlag proto))))
@@ -164,8 +162,7 @@
 (>defn parse-set-manual-position
        "Parse a SetManualPosition protobuf message to a map."
        [^cmd.Gps.JonSharedCmdGps$SetManualPosition proto]
-       [#(instance? cmd.Gps.JonSharedCmdGps$SetManualPosition %) =>
-        set-manual-position-spec]
+       [any? => set-manual-position-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :latitude (.getLatitude proto))
@@ -176,8 +173,7 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [#(instance? cmd.Gps.JonSharedCmdGps$Root$Builder %) [:tuple keyword? any?] =>
-   #(instance? cmd.Gps.JonSharedCmdGps$Root$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :start (.setStart builder (build-start value))
     :stop (.setStop builder (build-stop value))
@@ -191,7 +187,7 @@
 (>defn- parse-root-payload
         "Parse the oneof payload from Root."
         [^cmd.Gps.JonSharedCmdGps$Root proto]
-        [#(instance? cmd.Gps.JonSharedCmdGps$Root %) => (? map?)]
+        [any? => (? map?)]
         (cond (.hasStart proto) {:start (parse-start (.getStart proto))}
               (.hasStop proto) {:stop (parse-stop (.getStop proto))}
               (.hasSetManualPosition proto) {:set-manual-position
@@ -202,3 +198,13 @@
                                             (.getSetUseManualPosition proto))}
               (.hasGetMeteo proto) {:get-meteo (parse-get-meteo (.getGetMeteo
                                                                   proto))}))
+;; =============================================================================
+;; Validation Helper Functions
+;; =============================================================================
+
+;; Validation helpers for SetManualPosition
+;; Warning: Could not extract spec for field latitude
+
+;; Warning: Could not extract spec for field longitude
+
+;; Warning: Could not extract spec for field altitude

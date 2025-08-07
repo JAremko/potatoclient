@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.heatcamera
+(ns potatoclient.proto.cmd.heatcamera
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [potatoclient.proto.ser :as types])
   (:import
     cmd.HeatCamera.JonSharedCmdHeatCamera$Root
     cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
@@ -310,8 +310,8 @@
                                     :set-calib-mode :set-digital-zoom-level
                                     :set-clahe-level :shift-clahe-level}
                                   k))
-                               (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+                               m))]
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn
@@ -510,8 +510,8 @@
                                                   :next-zoom-table-pos
                                                   :prev-zoom-table-pos}
                                                 k))
-                                       (:cmd m)))]
-           (build-zoom-cmd builder cmd-field))
+                                       m))]
+           (build-zoom-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-next-zoom-table-pos

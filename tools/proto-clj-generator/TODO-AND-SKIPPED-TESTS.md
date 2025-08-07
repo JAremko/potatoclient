@@ -190,15 +190,20 @@ Based on TODO-GUARDRAILS.md requirements:
 - ✅ Created basic oneof spec tests (test_oneof.clj) - all passing
 - ✅ Created full roundtrip validation test file with custom :oneof support
 - ✅ Verified custom :oneof spec works correctly in isolation
+- ✅ Fixed registry issues by using global registry approach
+- ✅ Created global_registry_test.clj to verify the solution
+- ✅ Switched spec_gen.clj to use :oneof instead of :altn
+- ✅ Removed all non-guardrails templates (7 files deleted)
+- ✅ Updated frontend.clj to only use guardrails templates
 
 ### In Progress
-- 🔄 Debugging registry issues for custom :oneof spec in generated code
 - 🔄 Working on enabling full roundtrip validation test
+- 🔄 Need to generate actual proto code to test roundtrip
 
 ### Next Steps
-1. Fix registry propagation to make :oneof work in generated code
-2. Complete the full roundtrip validation test
-3. Remove non-guardrails templates
+1. Generate code from proto files for roundtrip testing
+2. Enable and run full roundtrip validation test
+3. Fix any issues found during roundtrip testing
 
 ## Priority Action Plan
 

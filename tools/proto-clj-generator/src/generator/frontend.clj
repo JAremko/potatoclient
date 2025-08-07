@@ -205,11 +205,15 @@
                                        (let [oneof-field-names (map :name (:fields oneof))
                                              var-name (str (name (:name oneof)) "-field")]
                                          (str "\n    ;; Handle oneof: " (:proto-name oneof) "\n"
-                                              "    (when-let [" var-name " (first (filter (fn [[k v]] (#{"
+                                              "    (when-let [" var-name "\n"
+                                              "                 (first (filter (fn [[k v]]\n"
+                                              "                                  (#{"
                                               (str/join " " (map pr-str oneof-field-names))
-                                              "} k)) m))]\n"
+                                              "}\n"
+                                              "                                   k))\n"
+                                              "                          (:" (name (:name oneof)) " m)))]\n"
                                               "      (build-" (csk/->kebab-case (:proto-name message))
-                                              "-payload builder " var-name "))")))
+                                              "-" (name (:name oneof)) " builder " var-name "))")))
                                       (:oneofs message))))
         
         spec-name (spec-gen/message->spec-name message)
@@ -232,16 +236,11 @@
         ;; For empty messages, use a simpler template
         template (if has-fields?
                    (load-template-string (if guardrails? "parser-guardrails.clj" "parser.clj"))
-                   (if guardrails?
-                     (str "(>defn " fn-name "\n"
-                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
-                          "  [^" (:java-class message) " proto]\n"
-                          "  [any? => " spec-name "]\n"
-                          "  {})")
-                     (str "(defn " fn-name "\n"
-                          "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
-                          "  [^" (:java-class message) " proto]\n"
-                          "  {})")))
+                   (str "(>defn " fn-name "\n"
+                        "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
+                        "  [^" (:java-class message) " proto]\n"
+                        "  [any? => " spec-name "]\n"
+                        "  {})"))
         
         field-getters (when (seq regular-fields)
                        (str ";; Regular fields\n    "
@@ -433,11 +432,8 @@
                     guardrails?
                     (load-template-string "namespace-guardrails.clj")
                     
-                    (seq require-specs)
-                    (load-template-string "namespace-with-requires.clj")
-                    
                     :else
-                    (load-template-string "namespace.clj"))
+                    (load-template-string "namespace-guardrails.clj"))
          
          ;; Use provided proto-package or extract from namespace name
          current-package (or proto-package

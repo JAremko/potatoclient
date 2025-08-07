@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.daycamglassheater
+(ns potatoclient.proto.cmd.daycamglassheater
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])
@@ -73,8 +73,8 @@
                                           (#{:start :stop :turn-on :turn-off
                                              :get-meteo}
                                            k))
-                                  (:cmd m)))]
-      (build-root-cmd builder cmd-field))
+                                  m))]
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (>defn

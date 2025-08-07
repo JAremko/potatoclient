@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.daycamera
+(ns potatoclient.proto.cmd.daycamera
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [potatoclient.proto.ser :as types])
   (:import cmd.DayCamera.JonSharedCmdDayCamera$SetValue
            cmd.DayCamera.JonSharedCmdDayCamera$Move
            cmd.DayCamera.JonSharedCmdDayCamera$Offset
@@ -326,8 +326,8 @@
                                        :refresh-fx-mode :set-digital-zoom-level
                                        :set-clahe-level :shift-clahe-level}
                                      k))
-                                  (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+                                  m))]
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-get-pos
@@ -401,8 +401,8 @@
                                                   :reset-focus
                                                   :save-to-table-focus}
                                                 k))
-                                       (:cmd m)))]
-           (build-focus-cmd builder cmd-field))
+                                       m))]
+           (build-focus-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-zoom
@@ -418,8 +418,8 @@
                                                   :prev-zoom-table-pos :offset
                                                   :reset-zoom :save-to-table}
                                                 k))
-                                       (:cmd m)))]
-           (build-zoom-cmd builder cmd-field))
+                                       m))]
+           (build-zoom-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-next-zoom-table-pos
