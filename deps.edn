@@ -1,4 +1,4 @@
-{:paths ["src" "resources" "src/potatoclient/java" "shared/specs/custom"]
+{:paths ["src" "resources" "src/potatoclient/java"]
 
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
         seesaw/seesaw {:mvn/version "1.5.0"}
@@ -20,6 +20,9 @@
                                                   :exclusions [net.java.dev.jna/jna]}
         ;; Add specific JNA version to avoid version range warning
         net.java.dev.jna/jna {:mvn/version "5.13.0"}
+        ;; Pronto - Clojure wrapper for Protocol Buffers (our fork with v4 support)
+        com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
+                              :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"}
         ;; Protocol Buffer dependencies
         com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
         com.google.protobuf/protobuf-java-util {:mvn/version "4.31.1"}
