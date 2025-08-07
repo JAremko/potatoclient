@@ -481,14 +481,20 @@ The generator includes comprehensive testing:
 - **Comprehensive Malli specs** for all data structures
 - **Property-based testing** infrastructure
 
+### ✅ Recently Completed (January 2025)
+- **Property-based testing infrastructure** for IR transformations
+- Random generators for protobuf IR structures
+- Comprehensive invariant and roundtrip property tests
+- Edge case coverage for circular dependencies and empty files
+
 ### 🚧 In Progress
-- Updating spec generation to use enriched IR metadata
-- Testing cross-namespace resolution with new system
+- Fine-tuning property tests for 100% pass rate
+- Performance optimizations (parallel processing, caching)
 
 ### 📋 Planned
-- Performance optimizations (parallel processing, caching)
 - Enhanced error messages with source locations
 - IDE integration support
+- Incremental compilation support
 
 ## Contributing
 

@@ -51,11 +51,11 @@ Each transformation is:
   - [x] Test type enrichment with cross-namespace refs
   - [x] Test full pipeline with real descriptors
 
-- [ ] Add property-based tests
-  - [ ] Generate random dependency graphs
-  - [ ] Generate random type hierarchies
-  - [ ] Test invariants (e.g., topological sort properties)
-  - [ ] Test roundtrip: IR → enriched IR → code → parsed data
+- [x] Add property-based tests
+  - [x] Generate random dependency graphs
+  - [x] Generate random type hierarchies
+  - [x] Test invariants (e.g., topological sort properties)
+  - [x] Test roundtrip: IR → enriched IR → code → parsed data
 
 ### 2. Guardrails Instrumentation ✅
 **Goal**: Every function validates its inputs and outputs
@@ -255,6 +255,19 @@ The ultimate test:
 The goal is not just working code, but **bulletproof** code that handles any valid protobuf schema correctly and fails gracefully with clear errors for invalid input.
 
 ## 🎉 Recent Achievements
+
+### Property-Based Testing for IR Transformations (January 2025)
+- ✅ Implemented comprehensive property-based tests using test.check
+- ✅ Created custom generators for IR data structures (files, messages, enums)
+- ✅ Added property tests for:
+  - Dependency graph building and topological sorting
+  - Symbol collection from nested types
+  - Type enrichment preservation
+  - Circular dependency detection
+  - Invariant checking (file count, FQN validity, no nil values)
+  - IR roundtrip properties
+- ✅ Tests cover edge cases like empty files, circular dependencies, and cross-namespace references
+- ✅ Performance sanity tests ensure enrichment completes in reasonable time
 
 ### Dependency Resolution System (January 2025)
 - ✅ Implemented multi-pass IR generation with Stuart Sierra's dependency library
