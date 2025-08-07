@@ -50,8 +50,8 @@
       
       (reset! generated? true))))
 
-;; Create custom registry with oneof support
-(def registry
+;; Register the custom :oneof schema globally so all generated code can use it
+(mr/set-default-registry!
   (merge (m/default-schemas)
          (mr/schemas m/default-registry)
          {:oneof oneof/-oneof-schema}))

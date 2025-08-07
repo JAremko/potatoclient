@@ -138,8 +138,7 @@
   (let [oneof-index (:index oneof-decl)
         oneof-fields (:fields oneof-decl)
         oneof-name (:name oneof-decl)
-        ;; For now, use :altn which is proven to work
-        ;; TODO: Switch to custom :oneof spec once we debug the registry issues
+        ;; Use custom :oneof spec for proper protobuf oneof validation
         field-specs (into {}
                          (map (fn [field]
                                 (let [field-key (keyword (:name field))]
@@ -147,11 +146,12 @@
                               oneof-fields))]
     ;; Return just the key and schema pair, not wrapped in [:map ...]
     [(keyword oneof-name)
-     ;; Use :altn for now, with constraint metadata in properties
+     ;; Use :oneof with properties containing field definitions
      (if-let [constraints (:constraints oneof-decl)]
-       [:altn {:error/message (when (:required constraints) "This oneof field is required")}
-        field-specs]
-       [:altn field-specs])]))
+       [:oneof (merge field-specs
+                     {:error/message (or (when (:required constraints) "This oneof field is required")
+                                       "Exactly one field must be set")})]
+       [:oneof field-specs])]))
 
 ;; =============================================================================
 ;; Message Processing
