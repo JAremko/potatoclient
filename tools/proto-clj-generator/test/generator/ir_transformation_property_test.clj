@@ -33,12 +33,20 @@
 
 ;; Generator for enum definitions
 (def enum-gen
-  (gen/fmap (fn [[name values]]
+  (gen/fmap (fn [[name values package]]
               {:type :enum
+               :name (keyword (clojure.string/lower-case name))
                :proto-name name
-               :values (mapv (fn [v] {:name v :number (rand-int 100)}) values)})
+               :package package
+               :values (mapv (fn [v i] 
+                               {:name (keyword (clojure.string/lower-case v))
+                                :proto-name v 
+                                :number i}) 
+                             values 
+                             (range))})
             (gen/tuple type-name-gen
-                       (gen/vector enum-value-gen 2 5))))
+                       (gen/vector enum-value-gen 2 5)
+                       package-name-gen)))
 
 ;; Generator for scalar field types
 (def scalar-type-gen
@@ -54,22 +62,27 @@
 
 ;; Generator for fields
 (def field-gen
-  (gen/fmap (fn [[name type]]
-              {:name name
+  (gen/fmap (fn [[name type num]]
+              {:name (keyword name)
+               :proto-name name
                :type type
-               :label :optional
-               :number (rand-int 1000)})
+               :label :label-optional
+               :number num})
             (gen/tuple (gen/elements ["id" "name" "value" "status" "data" "info"])
-                       field-type-gen)))
+                       field-type-gen
+                       (gen/choose 1 1000))))
 
 ;; Generator for messages
 (def message-gen
-  (gen/fmap (fn [[name fields]]
+  (gen/fmap (fn [[name fields package]]
               {:type :message
+               :name (keyword (clojure.string/lower-case name))
                :proto-name name
+               :package package
                :fields fields})
             (gen/tuple type-name-gen
-                       (gen/vector field-gen 1 5))))
+                       (gen/vector field-gen 1 5)
+                       package-name-gen)))
 
 ;; Generator for files with dependencies
 (def file-with-deps-gen
@@ -77,9 +90,35 @@
             package package-name-gen
             ;; Generate imports that don't include the current file
             other-files (gen/vector file-name-gen 0 5)
-            enums (gen/vector enum-gen 0 3)
-            messages (gen/vector message-gen 0 5)]
-    (let [imports (vec (distinct (remove #(= % filename) other-files)))]
+            enum-count (gen/choose 0 3)
+            message-count (gen/choose 0 5)]
+    (let [imports (vec (distinct (remove #(= % filename) other-files)))
+          ;; Generate enums with correct package
+          enums (mapv (fn [i]
+                        (let [name (str "Enum" i)]
+                          {:type :enum
+                           :name (keyword (clojure.string/lower-case name))
+                           :proto-name name
+                           :package package
+                           :values (mapv (fn [j]
+                                           {:name (keyword (str "value-" j))
+                                            :proto-name (str "VALUE_" j)
+                                            :number j})
+                                         (range 3))}))
+                      (range enum-count))
+          ;; Generate messages with correct package
+          messages (mapv (fn [i]
+                           (let [name (str "Message" i)]
+                             {:type :message
+                              :name (keyword (clojure.string/lower-case name))
+                              :proto-name name
+                              :package package
+                              :fields [{:name :field1
+                                        :proto-name "field1"
+                                        :type {:scalar :string}
+                                        :label :label-optional
+                                        :number (inc i)}]}))
+                         (range message-count))]
       {:type :file
        :name filename
        :package package
