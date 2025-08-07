@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.heatcamera
+(ns test.enum.cmd.heatcamera
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [test.enum.ser :as types])
   (:import
     cmd.HeatCamera.JonSharedCmdHeatCamera$Root
     cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode
@@ -99,15 +99,15 @@
 
 (def set-fx-mode-spec
   "Malli spec for set-fx-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-fx-mode-heat]]])
+  [:map [:mode :ser/jon-gui-data-fx-mode-heat]])
 
 (def set-clahe-level-spec
   "Malli spec for set-clahe-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def shift-clahe-level-spec
   "Malli spec for shift-clahe-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def next-fx-mode-spec "Malli spec for next-fx-mode message" [:map])
 
@@ -119,21 +119,17 @@
 
 (def disable-dde-spec "Malli spec for disable-dde message" [:map])
 
-(def set-value-spec
-  "Malli spec for set-value message"
-  [:map [:value [:maybe :float]]])
+(def set-value-spec "Malli spec for set-value message" [:map [:value :float]])
 
 (def set-dde-level-spec
   "Malli spec for set-dde-level message"
-  [:map [:value [:maybe :int]]])
+  [:map [:value :int]])
 
 (def set-digital-zoom-level-spec
   "Malli spec for set-digital-zoom-level message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
-(def shift-dde-spec
-  "Malli spec for shift-dde message"
-  [:map [:value [:maybe :int]]])
+(def shift-dde-spec "Malli spec for shift-dde message" [:map [:value :int]])
 
 (def zoom-in-spec "Malli spec for zoom-in message" [:map])
 
@@ -178,15 +174,15 @@
 
 (def set-zoom-table-value-spec
   "Malli spec for set-zoom-table-value message"
-  [:map [:value [:maybe :int]]])
+  [:map [:value :int]])
 
 (def set-agc-spec
   "Malli spec for set-agc message"
-  [:map [:value [:maybe :ser/jon-gui-data-video-channel-heat-agc-modes]]])
+  [:map [:value :ser/jon-gui-data-video-channel-heat-agc-modes]])
 
 (def set-filters-spec
   "Malli spec for set-filters message"
-  [:map [:value [:maybe :ser/jon-gui-data-video-channel-heat-filters]]])
+  [:map [:value :ser/jon-gui-data-video-channel-heat-filters]])
 
 (def start-spec "Malli spec for start message" [:map])
 
@@ -200,7 +196,7 @@
 
 (def set-auto-focus-spec
   "Malli spec for set-auto-focus message"
-  [:map [:value [:maybe :boolean]]])
+  [:map [:value :boolean]])
 
 (def reset-zoom-spec "Malli spec for reset-zoom message" [:map])
 
@@ -314,17 +310,18 @@
            (build-root-cmd builder cmd-field))
          (.build builder)))
 
-(>defn
-  build-set-fx-mode
-  "Build a SetFxMode protobuf message from a map."
-  [m]
-  [set-fx-mode-spec => any?]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :mode)
-      (.setMode builder
-                (get types/jon-gui-data-fx-mode-heat-values (get m :mode))))
-    (.build builder)))
+(>defn build-set-fx-mode
+       "Build a SetFxMode protobuf message from a map."
+       [m]
+       [set-fx-mode-spec => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :mode)
+           (.setMode builder
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-fx-mode-heat-values v))))
+         (.build builder)))
 
 (>defn build-set-clahe-level
        "Build a SetClaheLevel protobuf message from a map."
@@ -558,10 +555,10 @@
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
          ;; Set regular fields
          (when (contains? m :value)
-           (.setValue builder
-                      (get
-                        types/jon-gui-data-video-channel-heat-agc-modes-values
-                        (get m :value))))
+           (.setValue
+             builder
+             (when-let [v (get m :value)]
+               (get types/jon-gui-data-video-channel-heat-agc-modes-values v))))
          (.build builder)))
 
 (>defn build-set-filters
@@ -572,9 +569,10 @@
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
          ;; Set regular fields
          (when (contains? m :value)
-           (.setValue builder
-                      (get types/jon-gui-data-video-channel-heat-filters-values
-                           (get m :value))))
+           (.setValue
+             builder
+             (when-let [v (get m :value)]
+               (get types/jon-gui-data-video-channel-heat-filters-values v))))
          (.build builder)))
 
 (>defn build-start

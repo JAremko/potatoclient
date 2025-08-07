@@ -1558,7 +1558,8 @@
       (.setPowerConsumption builder (get m :power-consumption)))
     (when (contains? m :loc)
       (.setLoc builder
-               (get jon-gui-data-system-localizations-values (get m :loc))))
+               (when-let [v (get m :loc)]
+                 (get jon-gui-data-system-localizations-values v))))
     (when (contains? m :cur-video-rec-dir-year)
       (.setCurVideoRecDirYear builder (get m :cur-video-rec-dir-year)))
     (when (contains? m :cur-video-rec-dir-month)
@@ -1590,29 +1591,29 @@
     (when (contains? m :cv-dumping) (.setCvDumping builder (get m :cv-dumping)))
     (.build builder)))
 
-(>defn build-jon-gui-data-lrf
-       "Build a JonGuiDataLrf protobuf message from a map."
-       [m]
-       [jon-gui-data-lrf-spec => any?]
-       (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :is-scanning)
-           (.setIsScanning builder (get m :is-scanning)))
-         (when (contains? m :is-measuring)
-           (.setIsMeasuring builder (get m :is-measuring)))
-         (when (contains? m :measure-id)
-           (.setMeasureId builder (get m :measure-id)))
-         (when (contains? m :target)
-           (.setTarget builder (build-jon-gui-data-target (get m :target))))
-         (when (contains? m :pointer-mode)
-           (.setPointerMode builder
-                            (get jon-gui-datat-lrf-laser-pointer-modes-values
-                                 (get m :pointer-mode))))
-         (when (contains? m :fog-mode-enabled)
-           (.setFogModeEnabled builder (get m :fog-mode-enabled)))
-         (when (contains? m :is-refining)
-           (.setIsRefining builder (get m :is-refining)))
-         (.build builder)))
+(>defn
+  build-jon-gui-data-lrf
+  "Build a JonGuiDataLrf protobuf message from a map."
+  [m]
+  [jon-gui-data-lrf-spec => any?]
+  (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :is-scanning)
+      (.setIsScanning builder (get m :is-scanning)))
+    (when (contains? m :is-measuring)
+      (.setIsMeasuring builder (get m :is-measuring)))
+    (when (contains? m :measure-id) (.setMeasureId builder (get m :measure-id)))
+    (when (contains? m :target)
+      (.setTarget builder (build-jon-gui-data-target (get m :target))))
+    (when (contains? m :pointer-mode)
+      (.setPointerMode builder
+                       (when-let [v (get m :pointer-mode)]
+                         (get jon-gui-datat-lrf-laser-pointer-modes-values v))))
+    (when (contains? m :fog-mode-enabled)
+      (.setFogModeEnabled builder (get m :fog-mode-enabled)))
+    (when (contains? m :is-refining)
+      (.setIsRefining builder (get m :is-refining)))
+    (.build builder)))
 
 (>defn
   build-jon-gui-data-target
@@ -1646,8 +1647,8 @@
       (.setDistance3b builder (get m :distance-3b)))
     (when (contains? m :observer-fix-type)
       (.setObserverFixType builder
-                           (get jon-gui-data-gps-fix-type-values
-                                (get m :observer-fix-type))))
+                           (when-let [v (get m :observer-fix-type)]
+                             (get jon-gui-data-gps-fix-type-values v))))
     (when (contains? m :session-id) (.setSessionId builder (get m :session-id)))
     (when (contains? m :target-id) (.setTargetId builder (get m :target-id)))
     (when (contains? m :target-color)
@@ -1692,7 +1693,8 @@
       (.setManualAltitude builder (get m :manual-altitude)))
     (when (contains? m :fix-type)
       (.setFixType builder
-                   (get jon-gui-data-gps-fix-type-values (get m :fix-type))))
+                   (when-let [v (get m :fix-type)]
+                     (get jon-gui-data-gps-fix-type-values v))))
     (when (contains? m :use-manual) (.setUseManual builder (get m :use-manual)))
     (.build builder)))
 
@@ -1736,8 +1738,8 @@
       (.setTargetBank builder (get m :target-bank)))
     (when (contains? m :status)
       (.setStatus builder
-                  (get jon-gui-data-compass-calibrate-status-values
-                       (get m :status))))
+                  (when-let [v (get m :status)]
+                    (get jon-gui-data-compass-calibrate-status-values v))))
     (.build builder)))
 
 (>defn
@@ -1761,7 +1763,9 @@
       (.setPlatformBank builder (get m :platform-bank)))
     (when (contains? m :is-moving) (.setIsMoving builder (get m :is-moving)))
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-rotary-mode-values (get m :mode))))
+      (.setMode builder
+                (when-let [v (get m :mode)]
+                  (get jon-gui-data-rotary-mode-values v))))
     (when (contains? m :is-scanning)
       (.setIsScanning builder (get m :is-scanning)))
     (when (contains? m :is-scanning-paused)
@@ -1817,7 +1821,8 @@
       (.setZoomTablePosMax builder (get m :zoom-table-pos-max)))
     (when (contains? m :fx-mode)
       (.setFxMode builder
-                  (get jon-gui-data-fx-mode-day-values (get m :fx-mode))))
+                  (when-let [v (get m :fx-mode)]
+                    (get jon-gui-data-fx-mode-day-values v))))
     (when (contains? m :auto-focus) (.setAutoFocus builder (get m :auto-focus)))
     (when (contains? m :auto-iris) (.setAutoIris builder (get m :auto-iris)))
     (when (contains? m :digital-zoom-level)
@@ -1836,12 +1841,12 @@
     (when (contains? m :zoom-pos) (.setZoomPos builder (get m :zoom-pos)))
     (when (contains? m :agc-mode)
       (.setAgcMode builder
-                   (get jon-gui-data-video-channel-heat-agc-modes-values
-                        (get m :agc-mode))))
+                   (when-let [v (get m :agc-mode)]
+                     (get jon-gui-data-video-channel-heat-agc-modes-values v))))
     (when (contains? m :filter)
       (.setFilter builder
-                  (get jon-gui-data-video-channel-heat-filters-values
-                       (get m :filter))))
+                  (when-let [v (get m :filter)]
+                    (get jon-gui-data-video-channel-heat-filters-values v))))
     (when (contains? m :auto-focus) (.setAutoFocus builder (get m :auto-focus)))
     (when (contains? m :zoom-table-pos)
       (.setZoomTablePos builder (get m :zoom-table-pos)))
@@ -1852,7 +1857,8 @@
       (.setDdeEnabled builder (get m :dde-enabled)))
     (when (contains? m :fx-mode)
       (.setFxMode builder
-                  (get jon-gui-data-fx-mode-heat-values (get m :fx-mode))))
+                  (when-let [v (get m :fx-mode)]
+                    (get jon-gui-data-fx-mode-heat-values v))))
     (when (contains? m :digital-zoom-level)
       (.setDigitalZoomLevel builder (get m :digital-zoom-level)))
     (when (contains? m :clahe-level)
@@ -1868,7 +1874,8 @@
     ;; Set regular fields
     (when (contains? m :screen)
       (.setScreen builder
-                  (get jon-gui-data-rec-osd-screen-values (get m :screen))))
+                  (when-let [v (get m :screen)]
+                    (get jon-gui-data-rec-osd-screen-values v))))
     (when (contains? m :heat-osd-enabled)
       (.setHeatOsdEnabled builder (get m :heat-osd-enabled)))
     (when (contains? m :day-osd-enabled)

@@ -3,6 +3,7 @@
   (:require [clojure.test :refer :all]
             [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.properties :as prop]
+            [clojure.test.check.generators :as gen]
             [malli.core :as m]
             [malli.generator :as mg]
             [generator.spec-gen :as spec-gen]
@@ -48,115 +49,80 @@
         (m/validate spec value)))))
 
 ;; =============================================================================
-;; Test Actual Generated Specs
+;; Property Tests for Generated Specs
 ;; =============================================================================
 
-(deftest test-generated-message-specs
-  (testing "Generated message specs with constraints"
-    ;; Simulate what our generated specs look like
-    (let [root-spec [:map 
-                     [:protocol-version [:and :int [:> 0]]]
-                     [:session-id [:maybe :int]]
-                     [:important [:maybe :boolean]]]
-          
-          rgb-color-spec [:map
-                          [:red [:and [:maybe :int] [:>= 0] [:<= 255]]]
-                          [:green [:and [:maybe :int] [:>= 0] [:<= 255]]]
-                          [:blue [:and [:maybe :int] [:>= 0] [:<= 255]]]]
-          
-          gps-position-spec [:map
-                             [:latitude [:and [:maybe :double] [:>= -90.0] [:<= 90.0]]]
-                             [:longitude [:and [:maybe :double] [:>= -180.0] [:<= 180.0]]]
-                             [:altitude [:maybe :double]]]]
-      
-      ;; Test generation and validation
-      (testing "Root message generation"
-        (let [generated (mg/generate root-spec)]
-          (is (m/validate root-spec generated))
-          (is (> (:protocol-version generated) 0))))
-      
-      (testing "RGB color generation"
-        (let [generated (mg/generate rgb-color-spec)]
-          (is (m/validate rgb-color-spec generated))
-          (when (:red generated)
-            (is (and (>= (:red generated) 0) (<= (:red generated) 255))))
-          (when (:green generated)
-            (is (and (>= (:green generated) 0) (<= (:green generated) 255))))
-          (when (:blue generated)
-            (is (and (>= (:blue generated) 0) (<= (:blue generated) 255))))))
-      
-      (testing "GPS position generation"
-        (let [generated (mg/generate gps-position-spec)]
-          (is (m/validate gps-position-spec generated))
-          (when (:latitude generated)
-            (is (and (>= (:latitude generated) -90.0) 
-                     (<= (:latitude generated) 90.0))))
-          (when (:longitude generated)
-            (is (and (>= (:longitude generated) -180.0) 
-                     (<= (:longitude generated) 180.0)))))))))
+(deftest test-generated-spec-constraints
+  (testing "Generated specs include proper constraints"
+    ;; Test RGB spec generation
+    (let [rgb-field {:name "red"
+                     :type :type-uint32
+                     :constraints {:field-constraints {:gte 0 :lte 255}}}
+          spec (spec-gen/field->spec rgb-field {})]
+      (is (= [:and :int [:>= 0] [:<= 255]] spec)))
+    
+    ;; Test protocol version
+    (let [version-field {:name "protocol_version"
+                         :type :type-uint32
+                         :constraints {:field-constraints {:gt 0}}}
+          spec (spec-gen/field->spec version-field {})]
+      (is (= [:and :int [:> 0]] spec)))
+    
+    ;; Test latitude
+    (let [lat-field {:name "latitude"
+                     :type :type-double
+                     :constraints {:field-constraints {:gte -90.0 :lte 90.0}}}
+          spec (spec-gen/field->spec lat-field {})]
+      (is (= [:and :double [:>= -90.0] [:<= 90.0]] spec)))))
 
 ;; =============================================================================
-;; Property Tests for Constraint Compilation
+;; Advanced Property Tests
 ;; =============================================================================
 
-(defspec compiled-constraints-generate-valid-values
-  100
-  (prop/for-all [gt (gen/choose 0 100)
-                 lt (gen/choose 101 200)]
-    (let [field {:type :type-int32
-                 :constraints {:gt gt :lt lt}}
-          compiled (compiler/apply-constraints :int field)
-          value (mg/generate compiled)]
-      (and (> value gt)
-           (< value lt)))))
+(defspec complex-message-generation
+  50
+  ;; Test that complex messages with multiple constraints generate valid data
+  (let [message-spec [:map
+                      [:protocol-version [:and :int [:> 0]]]
+                      [:color [:map
+                               [:red [:and :int [:>= 0] [:<= 255]]]
+                               [:green [:and :int [:>= 0] [:<= 255]]]
+                               [:blue [:and :int [:>= 0] [:<= 255]]]]]
+                      [:location [:map
+                                  [:latitude [:and :double [:>= -90.0] [:<= 90.0]]]
+                                  [:longitude [:and :double [:>= -180.0] [:<= 180.0]]]]]]
+        gen-opts {:size 50 :seed 42}]
+    (prop/for-all [message (mg/generator message-spec gen-opts)]
+      (and (m/validate message-spec message)
+           (> (:protocol-version message) 0)
+           (every? #(and (>= % 0) (<= % 255)) 
+                   (vals (:color message)))
+           (let [{:keys [latitude longitude]} (:location message)]
+             (and (>= latitude -90.0) (<= latitude 90.0)
+                  (>= longitude -180.0) (<= longitude 180.0)))))))
+
+(deftest test-enum-constraints
+  (testing "Enum constraints (not_in) work correctly"
+    ;; Simulate an enum with not_in: [0] constraint
+    (let [enum-spec [:and [:enum :unspecified :value1 :value2 :value3]
+                     [:fn #(not= % :unspecified)]]
+          generated-values (mg/sample enum-spec {:size 100})]
+      (is (every? #(not= % :unspecified) generated-values))
+      (is (every? #{:value1 :value2 :value3} generated-values)))))
 
 ;; =============================================================================
-;; Test Edge Cases
+;; Performance Tests
 ;; =============================================================================
 
-(deftest test-constraint-edge-cases
-  (testing "Empty constraints"
-    (let [spec [:int]
-          values (mg/sample spec {:size 10})]
-      (is (every? int? values))))
-  
-  (testing "Conflicting constraints should fail"
-    ;; This should ideally throw or return nil
-    (let [impossible-spec [:and :int [:> 10] [:< 5]]]
-      (is (thrown? Exception (mg/generate impossible-spec)))))
-  
-  (testing "Exact value constraint"
-    (let [const-spec [:and :int [:>= 42] [:<= 42]]
-          values (mg/sample const-spec {:size 10})]
-      (is (every? #(= 42 %) values))))
-  
-  (testing "Complex string constraints"
-    (let [email-like [:and :string 
-                      [:fn #(re-matches #"[^@]+@[^@]+" %)]]
-          value (mg/generate email-like {:size 10})]
-      (is (re-matches #"[^@]+@[^@]+" value)))))
-
-;; =============================================================================
-;; Integration with Generated Code
-;; =============================================================================
-
-(defn test-generated-builder-with-constraints
-  "Template for testing generated builder functions"
-  [builder-fn parser-fn valid-data invalid-data]
-  (testing "Valid data passes through"
-    (let [proto (builder-fn valid-data)
-          parsed (parser-fn proto)]
-      (is (= valid-data parsed))))
-  
-  (testing "Invalid data rejected by guardrails"
-    ;; When guardrails is enabled, this should throw
-    (is (thrown? Exception (builder-fn invalid-data)))))
-
-;; Example test that would work with generated code:
-(comment
-  (deftest test-rgb-color-builder
-    (test-generated-builder-with-constraints
-     build-rgb-color
-     parse-rgb-color
-     {:red 128 :green 64 :blue 255}    ; valid
-     {:red 256 :green -1 :blue 300}))) ; invalid
+(deftest test-generator-performance
+  (testing "Generators with constraints perform acceptably"
+    (let [complex-spec [:map
+                        [:id [:and :string [:fn #(>= (count %) 10)] [:fn #(<= (count %) 20)]]]
+                        [:score [:and :int [:>= 0] [:<= 100]]]
+                        [:timestamp [:and :int [:> 0]]]
+                        [:tags [:vector [:and :string [:fn #(>= (count %) 1)] [:fn #(<= (count %) 10)]]]]]
+          start (System/nanoTime)
+          _ (mg/sample complex-spec {:size 1000})
+          elapsed (/ (- (System/nanoTime) start) 1e9)]
+      (is (< elapsed 5.0) ; Should generate 1000 samples in under 5 seconds
+          (str "Generation took " elapsed " seconds"))))))

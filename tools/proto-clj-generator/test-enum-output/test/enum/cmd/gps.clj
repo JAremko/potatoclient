@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.gps
+(ns test.enum.cmd.gps
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])
@@ -41,12 +41,11 @@
 
 (def set-use-manual-position-spec
   "Malli spec for set-use-manual-position message"
-  [:map [:flag [:maybe :boolean]]])
+  [:map [:flag :boolean]])
 
 (def set-manual-position-spec
   "Malli spec for set-manual-position message"
-  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
-   [:altitude [:maybe :float]]])
+  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
 
 ;; =============================================================================
 ;; Builders and Parsers

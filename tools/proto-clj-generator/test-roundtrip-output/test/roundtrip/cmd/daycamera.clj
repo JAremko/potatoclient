@@ -370,7 +370,8 @@
          ;; Set regular fields
          (when (contains? m :mode)
            (.setMode builder
-                     (get types/jon-gui-data-fx-mode-day-values (get m :mode))))
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-fx-mode-day-values v))))
          (.build builder)))
 
 (>defn

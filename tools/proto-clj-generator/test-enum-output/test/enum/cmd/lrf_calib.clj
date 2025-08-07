@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.lrf-calib
+(ns test.enum.cmd.lrf-calib
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])
@@ -40,11 +40,11 @@
 
 (def set-offsets-spec
   "Malli spec for set-offsets message"
-  [:map [:x [:maybe :int]] [:y [:maybe :int]]])
+  [:map [:x :int] [:y :int]])
 
 (def shift-offsets-by-spec
   "Malli spec for shift-offsets-by message"
-  [:map [:x [:maybe :int]] [:y [:maybe :int]]])
+  [:map [:x :int] [:y :int]])
 
 (def reset-offsets-spec "Malli spec for reset-offsets message" [:map])
 

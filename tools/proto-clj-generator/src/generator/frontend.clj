@@ -73,7 +73,7 @@
                           enum-ref (type-res/resolve-enum-reference 
                                    enum-type current-package type-lookup)
                           qualified-ref (type-res/qualified-enum-ref enum-ref)]
-                      (str "(get " qualified-ref " (get m " field-key "))"))
+                      (str "(when-let [v (get m " field-key ")] (get " qualified-ref " v))"))
                     
                     :else
                     (str "(get m " field-key ")"))

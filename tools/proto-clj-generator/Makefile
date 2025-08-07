@@ -32,8 +32,18 @@ lint-generated: generate ## Lint the generated code
 	@echo "Linting generated code..."
 	@cd ../.. && clj-kondo --lint shared/potatoclient/proto
 
+.PHONY: generate-test-code
+generate-test-code: compile-proto ## Generate code for tests
+	@echo "Generating test code..."
+	@rm -rf test-roundtrip-output
+	@clojure -M:gen generate-all \
+		--input-dir "../proto-explorer/output/json-descriptors" \
+		--output-dir "test-roundtrip-output" \
+		--namespace-prefix "test.roundtrip" \
+		--guardrails
+
 .PHONY: test
-test: compile-proto ## Run all tests (compiles proto classes first)
+test: generate-test-code ## Run all tests (generates test code first)
 	@echo "Running tests..."
 	@clojure -X:test
 

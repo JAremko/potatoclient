@@ -92,8 +92,8 @@
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
       (.setClientType builder
-                      (get types/jon-gui-data-client-type-values
-                           (get m :client-type))))
+                      (when-let [v (get m :client-type)]
+                        (get types/jon-gui-data-client-type-values v))))
     ;; Handle oneof: payload
     (when-let [payload-field
                  (first (filter (fn [[k v]]

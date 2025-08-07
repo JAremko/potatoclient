@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.lira
+(ns test.enum.cmd.lira
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])
@@ -26,16 +26,14 @@
 
 (def refine-target-spec
   "Malli spec for refine-target message"
-  [:map [:target [:maybe :cmd.lira/jon-gui-data-lira-target]]])
+  [:map [:target :cmd.lira/jon-gui-data-lira-target]])
 
 (def jon-gui-data-lira-target-spec
   "Malli spec for jon-gui-data-lira-target message"
-  [:map [:timestamp [:maybe :int]] [:target-longitude [:maybe :double]]
-   [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]]
-   [:target-azimuth [:maybe :double]] [:target-elevation [:maybe :double]]
-   [:distance [:maybe :double]] [:uuid-part-1 [:maybe :int]]
-   [:uuid-part-2 [:maybe :int]] [:uuid-part-3 [:maybe :int]]
-   [:uuid-part-4 [:maybe :int]]])
+  [:map [:timestamp :int] [:target-longitude :double] [:target-latitude :double]
+   [:target-altitude :double] [:target-azimuth :double]
+   [:target-elevation :double] [:distance :double] [:uuid-part-1 :int]
+   [:uuid-part-2 :int] [:uuid-part-3 :int] [:uuid-part-4 :int]])
 
 ;; =============================================================================
 ;; Builders and Parsers

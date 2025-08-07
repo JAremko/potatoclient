@@ -174,8 +174,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :value) (.setValue builder (get m :value)))
          (.build builder)))
 
@@ -187,8 +187,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :x) (.setX builder (get m :x)))
          (when (contains? m :y) (.setY builder (get m :y)))
          (when (contains? m :frame-time)

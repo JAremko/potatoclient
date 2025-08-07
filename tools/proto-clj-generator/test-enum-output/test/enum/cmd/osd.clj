@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.osd
+(ns test.enum.cmd.osd
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])

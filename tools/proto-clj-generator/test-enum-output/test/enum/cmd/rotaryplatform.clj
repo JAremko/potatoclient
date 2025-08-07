@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.rotaryplatform
+(ns test.enum.cmd.rotaryplatform
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [test.enum.ser :as types])
   (:import
     cmd.RotaryPlatform.JonSharedCmdRotary$Root
     cmd.RotaryPlatform.JonSharedCmdRotary$Axis
@@ -101,72 +101,67 @@
 
 (def axis-spec
   "Malli spec for axis message"
-  [:map [:azimuth [:maybe :cmd.rotary-platform/azimuth]]
-   [:elevation [:maybe :cmd.rotary-platform/elevation]]])
+  [:map [:azimuth :cmd.rotary-platform/azimuth]
+   [:elevation :cmd.rotary-platform/elevation]])
 
 (def set-mode-spec
   "Malli spec for set-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-rotary-mode]]])
+  [:map [:mode :ser/jon-gui-data-rotary-mode]])
 
 (def set-azimuth-value-spec
   "Malli spec for set-azimuth-value message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-to-spec
   "Malli spec for rotate-azimuth-to message"
-  [:map [:target-value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:target-value :float] [:speed :float]
+   [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-spec
   "Malli spec for rotate-azimuth message"
-  [:map [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:speed :float] [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-spec
   "Malli spec for rotate-elevation message"
-  [:map [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:speed :float] [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def set-elevation-value-spec
   "Malli spec for set-elevation-value message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def rotate-elevation-to-spec
   "Malli spec for rotate-elevation-to message"
-  [:map [:target-value [:maybe :float]] [:speed [:maybe :float]]])
+  [:map [:target-value :float] [:speed :float]])
 
 (def rotate-elevation-relative-spec
   "Malli spec for rotate-elevation-relative message"
-  [:map [:value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value :float] [:speed :float]
+   [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-relative-set-spec
   "Malli spec for rotate-elevation-relative-set message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-spec
   "Malli spec for rotate-azimuth-relative message"
-  [:map [:value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value :float] [:speed :float]
+   [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-set-spec
   "Malli spec for rotate-azimuth-relative-set message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
 
 (def set-platform-azimuth-spec
   "Malli spec for set-platform-azimuth message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def set-platform-elevation-spec
   "Malli spec for set-platform-elevation message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def set-platform-bank-spec
   "Malli spec for set-platform-bank message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value :float]])
 
 (def get-meteo-spec "Malli spec for get-meteo message" [:map])
 
@@ -212,25 +207,21 @@
 
 (def scan-select-node-spec
   "Malli spec for scan-select-node message"
-  [:map [:index [:maybe :int]]])
+  [:map [:index :int]])
 
 (def scan-delete-node-spec
   "Malli spec for scan-delete-node message"
-  [:map [:index [:maybe :int]]])
+  [:map [:index :int]])
 
 (def scan-update-node-spec
   "Malli spec for scan-update-node message"
-  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
-   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
-   [:elevation [:maybe :double]] [:linger [:maybe :double]]
-   [:speed [:maybe :double]]])
+  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
+   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
 
 (def scan-add-node-spec
   "Malli spec for scan-add-node message"
-  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
-   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
-   [:elevation [:maybe :double]] [:linger [:maybe :double]]
-   [:speed [:maybe :double]]])
+  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
+   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
 
 (def elevation-spec
   "Malli spec for elevation message"
@@ -250,22 +241,19 @@
 
 (def set-use-rotary-as-compass-spec
   "Malli spec for set-use-rotary-as-compass message"
-  [:map [:flag [:maybe :boolean]]])
+  [:map [:flag :boolean]])
 
 (def rotate-to-gps-spec
   "Malli spec for rotate-to-gps message"
-  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
-   [:altitude [:maybe :float]]])
+  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
 
 (def set-origin-gps-spec
   "Malli spec for set-origin-gps message"
-  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
-   [:altitude [:maybe :float]]])
+  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
 
 (def rotate-to-ndc-spec
   "Malli spec for rotate-to-ndc message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]] [:x [:maybe :float]]
-   [:y [:maybe :float]]])
+  [:map [:channel :ser/jon-gui-data-video-channel] [:x :float] [:y :float]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -401,40 +389,41 @@
          ;; Set regular fields
          (when (contains? m :mode)
            (.setMode builder
-                     (get types/jon-gui-data-rotary-mode-values (get m :mode))))
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-rotary-mode-values v))))
          (.build builder)))
 
-(>defn build-set-azimuth-value
-       "Build a SetAzimuthValue protobuf message from a map."
-       [m]
-       [set-azimuth-value-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :value) (.setValue builder (get m :value)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-set-azimuth-value
+  "Build a SetAzimuthValue protobuf message from a map."
+  [m]
+  [set-azimuth-value-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
-(>defn build-rotate-azimuth-to
-       "Build a RotateAzimuthTo protobuf message from a map."
-       [m]
-       [rotate-azimuth-to-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :target-value)
-           (.setTargetValue builder (get m :target-value)))
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-azimuth-to
+  "Build a RotateAzimuthTo protobuf message from a map."
+  [m]
+  [rotate-azimuth-to-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :target-value)
+      (.setTargetValue builder (get m :target-value)))
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn build-rotate-azimuth
        "Build a RotateAzimuth protobuf message from a map."
@@ -446,24 +435,25 @@
          (when (contains? m :speed) (.setSpeed builder (get m :speed)))
          (when (contains? m :direction)
            (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
+                          (when-let [v (get m :direction)]
+                            (get types/jon-gui-data-rotary-direction-values
+                                 v))))
          (.build builder)))
 
-(>defn build-rotate-elevation
-       "Build a RotateElevation protobuf message from a map."
-       [m]
-       [rotate-elevation-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-elevation
+  "Build a RotateElevation protobuf message from a map."
+  [m]
+  [rotate-elevation-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn
   build-set-elevation-value
@@ -502,8 +492,8 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -518,8 +508,8 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -535,8 +525,8 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -551,8 +541,8 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -825,8 +815,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :x) (.setX builder (get m :x)))
          (when (contains? m :y) (.setY builder (get m :y)))
          (.build builder)))

@@ -1,4 +1,4 @@
-(ns test.roundtrip.cmd.daycamglassheater
+(ns test.enum.cmd.daycamglassheater
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])

@@ -310,17 +310,18 @@
            (build-root-cmd builder cmd-field))
          (.build builder)))
 
-(>defn
-  build-set-fx-mode
-  "Build a SetFxMode protobuf message from a map."
-  [m]
-  [set-fx-mode-spec => any?]
-  (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :mode)
-      (.setMode builder
-                (get types/jon-gui-data-fx-mode-heat-values (get m :mode))))
-    (.build builder)))
+(>defn build-set-fx-mode
+       "Build a SetFxMode protobuf message from a map."
+       [m]
+       [set-fx-mode-spec => any?]
+       (let [builder
+               (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFxMode/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :mode)
+           (.setMode builder
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-fx-mode-heat-values v))))
+         (.build builder)))
 
 (>defn build-set-clahe-level
        "Build a SetClaheLevel protobuf message from a map."
@@ -554,10 +555,10 @@
        (let [builder (cmd.HeatCamera.JonSharedCmdHeatCamera$SetAGC/newBuilder)]
          ;; Set regular fields
          (when (contains? m :value)
-           (.setValue builder
-                      (get
-                        types/jon-gui-data-video-channel-heat-agc-modes-values
-                        (get m :value))))
+           (.setValue
+             builder
+             (when-let [v (get m :value)]
+               (get types/jon-gui-data-video-channel-heat-agc-modes-values v))))
          (.build builder)))
 
 (>defn build-set-filters
@@ -568,9 +569,10 @@
                (cmd.HeatCamera.JonSharedCmdHeatCamera$SetFilters/newBuilder)]
          ;; Set regular fields
          (when (contains? m :value)
-           (.setValue builder
-                      (get types/jon-gui-data-video-channel-heat-filters-values
-                           (get m :value))))
+           (.setValue
+             builder
+             (when-let [v (get m :value)]
+               (get types/jon-gui-data-video-channel-heat-filters-values v))))
          (.build builder)))
 
 (>defn build-start

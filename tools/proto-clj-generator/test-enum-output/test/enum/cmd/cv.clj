@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.cv
+(ns test.enum.cmd.cv
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [test.enum.ser :as types])
   (:import cmd.CV.JonSharedCmdCv$Root
            cmd.CV.JonSharedCmdCv$VampireModeEnable
            cmd.CV.JonSharedCmdCv$DumpStart
@@ -67,13 +67,12 @@
 
 (def set-auto-focus-spec
   "Malli spec for set-auto-focus message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]]
-   [:value [:maybe :boolean]]])
+  [:map [:channel :ser/jon-gui-data-video-channel] [:value :boolean]])
 
 (def start-track-ndc-spec
   "Malli spec for start-track-ndc message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]] [:x [:maybe :float]]
-   [:y [:maybe :float]] [:frame-time [:maybe :int]]])
+  [:map [:channel :ser/jon-gui-data-video-channel] [:x :float] [:y :float]
+   [:frame-time :int]])
 
 (def stop-track-spec "Malli spec for stop-track message" [:map])
 
@@ -175,8 +174,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :value) (.setValue builder (get m :value)))
          (.build builder)))
 
@@ -188,8 +187,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :x) (.setX builder (get m :x)))
          (when (contains? m :y) (.setY builder (get m :y)))
          (when (contains? m :frame-time)

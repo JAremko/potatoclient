@@ -1,4 +1,4 @@
-(ns test.roundtrip.ser
+(ns test.enum.ser
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m])
@@ -1331,161 +1331,134 @@
 
 (def jon-gui-data-meteo-spec
   "Malli spec for jon-gui-data-meteo message"
-  [:map [:temperature [:maybe :float]] [:humidity [:maybe :float]]
-   [:pressure [:maybe :float]]])
+  [:map [:temperature :float] [:humidity :float] [:pressure :float]])
 
 (def jon-gui-data-meteo-spec
   "Malli spec for jon-gui-data-meteo message"
-  [:map [:temperature [:maybe :float]] [:humidity [:maybe :float]]
-   [:pressure [:maybe :float]]])
+  [:map [:temperature :float] [:humidity :float] [:pressure :float]])
 
 (def jon-gui-data-time-spec
   "Malli spec for jon-gui-data-time message"
-  [:map [:timestamp [:maybe :int]] [:manual-timestamp [:maybe :int]]
-   [:zone-id [:maybe :int]] [:use-manual-time [:maybe :boolean]]])
+  [:map [:timestamp :int] [:manual-timestamp :int] [:zone-id :int]
+   [:use-manual-time :boolean]])
 
 (def jon-gui-data-system-spec
   "Malli spec for jon-gui-data-system message"
-  [:map [:cpu-temperature [:maybe :float]] [:gpu-temperature [:maybe :float]]
-   [:gpu-load [:maybe :float]] [:cpu-load [:maybe :float]]
-   [:power-consumption [:maybe :float]]
-   [:loc [:maybe :ser/jon-gui-data-system-localizations]]
-   [:cur-video-rec-dir-year [:maybe :int]]
-   [:cur-video-rec-dir-month [:maybe :int]]
-   [:cur-video-rec-dir-day [:maybe :int]]
-   [:cur-video-rec-dir-hour [:maybe :int]]
-   [:cur-video-rec-dir-minute [:maybe :int]]
-   [:cur-video-rec-dir-second [:maybe :int]] [:rec-enabled [:maybe :boolean]]
-   [:important-rec-enabled [:maybe :boolean]]
-   [:low-disk-space [:maybe :boolean]] [:no-disk-space [:maybe :boolean]]
-   [:disk-space [:maybe :int]] [:tracking [:maybe :boolean]]
-   [:vampire-mode [:maybe :boolean]] [:stabilization-mode [:maybe :boolean]]
-   [:geodesic-mode [:maybe :boolean]] [:cv-dumping [:maybe :boolean]]])
+  [:map [:cpu-temperature :float] [:gpu-temperature :float] [:gpu-load :float]
+   [:cpu-load :float] [:power-consumption :float]
+   [:loc :ser/jon-gui-data-system-localizations] [:cur-video-rec-dir-year :int]
+   [:cur-video-rec-dir-month :int] [:cur-video-rec-dir-day :int]
+   [:cur-video-rec-dir-hour :int] [:cur-video-rec-dir-minute :int]
+   [:cur-video-rec-dir-second :int] [:rec-enabled :boolean]
+   [:important-rec-enabled :boolean] [:low-disk-space :boolean]
+   [:no-disk-space :boolean] [:disk-space :int] [:tracking :boolean]
+   [:vampire-mode :boolean] [:stabilization-mode :boolean]
+   [:geodesic-mode :boolean] [:cv-dumping :boolean]])
 
 (def jon-gui-data-lrf-spec
   "Malli spec for jon-gui-data-lrf message"
-  [:map [:is-scanning [:maybe :boolean]] [:is-measuring [:maybe :boolean]]
-   [:measure-id [:maybe :int]] [:target [:maybe :ser/jon-gui-data-target]]
-   [:pointer-mode [:maybe :ser/jon-gui-datat-lrf-laser-pointer-modes]]
-   [:fog-mode-enabled [:maybe :boolean]] [:is-refining [:maybe :boolean]]])
+  [:map [:is-scanning :boolean] [:is-measuring :boolean] [:measure-id :int]
+   [:target :ser/jon-gui-data-target]
+   [:pointer-mode :ser/jon-gui-datat-lrf-laser-pointer-modes]
+   [:fog-mode-enabled :boolean] [:is-refining :boolean]])
 
 (def jon-gui-data-target-spec
   "Malli spec for jon-gui-data-target message"
-  [:map [:timestamp [:maybe :int]] [:target-longitude [:maybe :double]]
-   [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]]
-   [:observer-longitude [:maybe :double]] [:observer-latitude [:maybe :double]]
-   [:observer-altitude [:maybe :double]] [:observer-azimuth [:maybe :double]]
-   [:observer-elevation [:maybe :double]] [:observer-bank [:maybe :double]]
-   [:distance-2d [:maybe :double]] [:distance-3b [:maybe :double]]
-   [:observer-fix-type [:maybe :ser/jon-gui-data-gps-fix-type]]
-   [:session-id [:maybe :int]] [:target-id [:maybe :int]]
-   [:target-color [:maybe :ser/rgb-color]] [:type [:maybe :int]]
-   [:uuid-part-1 [:maybe :int]] [:uuid-part-2 [:maybe :int]]
-   [:uuid-part-3 [:maybe :int]] [:uuid-part-4 [:maybe :int]]])
+  [:map [:timestamp :int] [:target-longitude :double] [:target-latitude :double]
+   [:target-altitude :double] [:observer-longitude :double]
+   [:observer-latitude :double] [:observer-altitude :double]
+   [:observer-azimuth :double] [:observer-elevation :double]
+   [:observer-bank :double] [:distance-2d :double] [:distance-3b :double]
+   [:observer-fix-type :ser/jon-gui-data-gps-fix-type] [:session-id :int]
+   [:target-id :int] [:target-color :ser/rgb-color] [:type :int]
+   [:uuid-part-1 :int] [:uuid-part-2 :int] [:uuid-part-3 :int]
+   [:uuid-part-4 :int]])
 
 (def rgb-color-spec
   "Malli spec for rgb-color message"
-  [:map [:red [:and [:maybe :int] [:>= 0] [:<= 255]]]
-   [:green [:and [:maybe :int] [:>= 0] [:<= 255]]]
-   [:blue [:and [:maybe :int] [:>= 0] [:<= 255]]]])
+  [:map [:red [:and :int [:>= 0] [:<= 255]]]
+   [:green [:and :int [:>= 0] [:<= 255]]]
+   [:blue [:and :int [:>= 0] [:<= 255]]]])
 
 (def jon-gui-data-gps-spec
   "Malli spec for jon-gui-data-gps message"
-  [:map [:longitude [:maybe :double]] [:latitude [:maybe :double]]
-   [:altitude [:maybe :double]] [:manual-longitude [:maybe :double]]
-   [:manual-latitude [:maybe :double]] [:manual-altitude [:maybe :double]]
-   [:fix-type [:maybe :ser/jon-gui-data-gps-fix-type]]
-   [:use-manual [:maybe :boolean]]])
+  [:map [:longitude :double] [:latitude :double] [:altitude :double]
+   [:manual-longitude :double] [:manual-latitude :double]
+   [:manual-altitude :double] [:fix-type :ser/jon-gui-data-gps-fix-type]
+   [:use-manual :boolean]])
 
 (def jon-gui-data-compass-spec
   "Malli spec for jon-gui-data-compass message"
-  [:map [:azimuth [:maybe :double]] [:elevation [:maybe :double]]
-   [:bank [:maybe :double]] [:offset-azimuth [:maybe :double]]
-   [:offset-elevation [:maybe :double]] [:magnetic-declination [:maybe :double]]
-   [:calibrating [:maybe :boolean]]])
+  [:map [:azimuth :double] [:elevation :double] [:bank :double]
+   [:offset-azimuth :double] [:offset-elevation :double]
+   [:magnetic-declination :double] [:calibrating :boolean]])
 
 (def jon-gui-data-compass-calibration-spec
   "Malli spec for jon-gui-data-compass-calibration message"
-  [:map [:stage [:and [:maybe :int] [:>= 0]]]
-   [:final-stage [:and [:maybe :int] [:> 0]]] [:target-azimuth [:maybe :double]]
-   [:target-elevation [:maybe :double]] [:target-bank [:maybe :double]]
-   [:status [:maybe :ser/jon-gui-data-compass-calibrate-status]]])
+  [:map [:stage [:and :int [:>= 0]]] [:final-stage [:and :int [:> 0]]]
+   [:target-azimuth :double] [:target-elevation :double] [:target-bank :double]
+   [:status :ser/jon-gui-data-compass-calibrate-status]])
 
 (def jon-gui-data-rotary-spec
   "Malli spec for jon-gui-data-rotary message"
-  [:map [:azimuth [:maybe :float]] [:azimuth-speed [:maybe :float]]
-   [:elevation [:maybe :float]] [:elevation-speed [:maybe :float]]
-   [:platform-azimuth [:maybe :float]] [:platform-elevation [:maybe :float]]
-   [:platform-bank [:maybe :float]] [:is-moving [:maybe :boolean]]
-   [:mode [:maybe :ser/jon-gui-data-rotary-mode]]
-   [:is-scanning [:maybe :boolean]] [:is-scanning-paused [:maybe :boolean]]
-   [:use-rotary-as-compass [:maybe :boolean]] [:scan-target [:maybe :int]]
-   [:scan-target-max [:maybe :int]] [:sun-azimuth [:maybe :float]]
-   [:sun-elevation [:maybe :float]]
-   [:current-scan-node [:maybe :ser/scan-node]]])
+  [:map [:azimuth :float] [:azimuth-speed :float] [:elevation :float]
+   [:elevation-speed :float] [:platform-azimuth :float]
+   [:platform-elevation :float] [:platform-bank :float] [:is-moving :boolean]
+   [:mode :ser/jon-gui-data-rotary-mode] [:is-scanning :boolean]
+   [:is-scanning-paused :boolean] [:use-rotary-as-compass :boolean]
+   [:scan-target :int] [:scan-target-max :int] [:sun-azimuth :float]
+   [:sun-elevation :float] [:current-scan-node :ser/scan-node]])
 
 (def scan-node-spec
   "Malli spec for scan-node message"
-  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
-   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
-   [:elevation [:maybe :double]] [:linger [:maybe :double]]
-   [:speed [:maybe :double]]])
+  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
+   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
 
 (def jon-gui-data-camera-day-spec
   "Malli spec for jon-gui-data-camera-day message"
-  [:map [:focus-pos [:maybe :float]] [:zoom-pos [:maybe :float]]
-   [:iris-pos [:maybe :float]] [:infrared-filter [:maybe :boolean]]
-   [:zoom-table-pos [:maybe :int]] [:zoom-table-pos-max [:maybe :int]]
-   [:fx-mode [:maybe :ser/jon-gui-data-fx-mode-day]]
-   [:auto-focus [:maybe :boolean]] [:auto-iris [:maybe :boolean]]
-   [:digital-zoom-level [:maybe :float]] [:clahe-level [:maybe :float]]])
+  [:map [:focus-pos :float] [:zoom-pos :float] [:iris-pos :float]
+   [:infrared-filter :boolean] [:zoom-table-pos :int] [:zoom-table-pos-max :int]
+   [:fx-mode :ser/jon-gui-data-fx-mode-day] [:auto-focus :boolean]
+   [:auto-iris :boolean] [:digital-zoom-level :float] [:clahe-level :float]])
 
 (def jon-gui-data-camera-heat-spec
   "Malli spec for jon-gui-data-camera-heat message"
-  [:map [:zoom-pos [:maybe :float]]
-   [:agc-mode [:maybe :ser/jon-gui-data-video-channel-heat-agc-modes]]
-   [:filter [:maybe :ser/jon-gui-data-video-channel-heat-filters]]
-   [:auto-focus [:maybe :boolean]] [:zoom-table-pos [:maybe :int]]
-   [:zoom-table-pos-max [:maybe :int]] [:dde-level [:maybe :int]]
-   [:dde-enabled [:maybe :boolean]]
-   [:fx-mode [:maybe :ser/jon-gui-data-fx-mode-heat]]
-   [:digital-zoom-level [:maybe :float]] [:clahe-level [:maybe :float]]])
+  [:map [:zoom-pos :float]
+   [:agc-mode :ser/jon-gui-data-video-channel-heat-agc-modes]
+   [:filter :ser/jon-gui-data-video-channel-heat-filters] [:auto-focus :boolean]
+   [:zoom-table-pos :int] [:zoom-table-pos-max :int] [:dde-level :int]
+   [:dde-enabled :boolean] [:fx-mode :ser/jon-gui-data-fx-mode-heat]
+   [:digital-zoom-level :float] [:clahe-level :float]])
 
 (def jon-gui-data-rec-osd-spec
   "Malli spec for jon-gui-data-rec-osd message"
-  [:map [:screen [:maybe :ser/jon-gui-data-rec-osd-screen]]
-   [:heat-osd-enabled [:maybe :boolean]] [:day-osd-enabled [:maybe :boolean]]
-   [:heat-crosshair-offset-horizontal [:maybe :int]]
-   [:heat-crosshair-offset-vertical [:maybe :int]]
-   [:day-crosshair-offset-horizontal [:maybe :int]]
-   [:day-crosshair-offset-vertical [:maybe :int]]])
+  [:map [:screen :ser/jon-gui-data-rec-osd-screen] [:heat-osd-enabled :boolean]
+   [:day-osd-enabled :boolean] [:heat-crosshair-offset-horizontal :int]
+   [:heat-crosshair-offset-vertical :int]
+   [:day-crosshair-offset-horizontal :int]
+   [:day-crosshair-offset-vertical :int]])
 
 (def jon-gui-data-day-cam-glass-heater-spec
   "Malli spec for jon-gui-data-day-cam-glass-heater message"
-  [:map [:temperature [:maybe :double]] [:status [:maybe :boolean]]])
+  [:map [:temperature :double] [:status :boolean]])
 
 (def jon-gui-data-actual-space-time-spec
   "Malli spec for jon-gui-data-actual-space-time message"
-  [:map [:azimuth [:maybe :float]] [:elevation [:maybe :float]]
-   [:bank [:maybe :float]] [:latitude [:maybe :float]]
-   [:longitude [:maybe :float]] [:altitude [:maybe :double]]
-   [:timestamp [:maybe :int]]])
+  [:map [:azimuth :float] [:elevation :float] [:bank :float] [:latitude :float]
+   [:longitude :float] [:altitude :double] [:timestamp :int]])
 
 (def jon-gui-state-spec
   "Malli spec for jon-gui-state message"
-  [:map [:protocol-version [:and [:maybe :int] [:> 0]]]
-   [:system [:maybe :ser/jon-gui-data-system]]
-   [:meteo-internal [:maybe :ser/jon-gui-data-meteo]]
-   [:lrf [:maybe :ser/jon-gui-data-lrf]] [:time [:maybe :ser/jon-gui-data-time]]
-   [:gps [:maybe :ser/jon-gui-data-gps]]
-   [:compass [:maybe :ser/jon-gui-data-compass]]
-   [:rotary [:maybe :ser/jon-gui-data-rotary]]
-   [:camera-day [:maybe :ser/jon-gui-data-camera-day]]
-   [:camera-heat [:maybe :ser/jon-gui-data-camera-heat]]
-   [:compass-calibration [:maybe :ser/jon-gui-data-compass-calibration]]
-   [:rec-osd [:maybe :ser/jon-gui-data-rec-osd]]
-   [:day-cam-glass-heater [:maybe :ser/jon-gui-data-day-cam-glass-heater]]
-   [:actual-space-time [:maybe :ser/jon-gui-data-actual-space-time]]])
+  [:map [:protocol-version [:and :int [:> 0]]]
+   [:system :ser/jon-gui-data-system] [:meteo-internal :ser/jon-gui-data-meteo]
+   [:lrf :ser/jon-gui-data-lrf] [:time :ser/jon-gui-data-time]
+   [:gps :ser/jon-gui-data-gps] [:compass :ser/jon-gui-data-compass]
+   [:rotary :ser/jon-gui-data-rotary] [:camera-day :ser/jon-gui-data-camera-day]
+   [:camera-heat :ser/jon-gui-data-camera-heat]
+   [:compass-calibration :ser/jon-gui-data-compass-calibration]
+   [:rec-osd :ser/jon-gui-data-rec-osd]
+   [:day-cam-glass-heater :ser/jon-gui-data-day-cam-glass-heater]
+   [:actual-space-time :ser/jon-gui-data-actual-space-time]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -1585,7 +1558,8 @@
       (.setPowerConsumption builder (get m :power-consumption)))
     (when (contains? m :loc)
       (.setLoc builder
-               (get jon-gui-data-system-localizations-values (get m :loc))))
+               (when-let [v (get m :loc)]
+                 (get jon-gui-data-system-localizations-values v))))
     (when (contains? m :cur-video-rec-dir-year)
       (.setCurVideoRecDirYear builder (get m :cur-video-rec-dir-year)))
     (when (contains? m :cur-video-rec-dir-month)
@@ -1617,29 +1591,29 @@
     (when (contains? m :cv-dumping) (.setCvDumping builder (get m :cv-dumping)))
     (.build builder)))
 
-(>defn build-jon-gui-data-lrf
-       "Build a JonGuiDataLrf protobuf message from a map."
-       [m]
-       [jon-gui-data-lrf-spec => any?]
-       (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :is-scanning)
-           (.setIsScanning builder (get m :is-scanning)))
-         (when (contains? m :is-measuring)
-           (.setIsMeasuring builder (get m :is-measuring)))
-         (when (contains? m :measure-id)
-           (.setMeasureId builder (get m :measure-id)))
-         (when (contains? m :target)
-           (.setTarget builder (build-jon-gui-data-target (get m :target))))
-         (when (contains? m :pointer-mode)
-           (.setPointerMode builder
-                            (get jon-gui-datat-lrf-laser-pointer-modes-values
-                                 (get m :pointer-mode))))
-         (when (contains? m :fog-mode-enabled)
-           (.setFogModeEnabled builder (get m :fog-mode-enabled)))
-         (when (contains? m :is-refining)
-           (.setIsRefining builder (get m :is-refining)))
-         (.build builder)))
+(>defn
+  build-jon-gui-data-lrf
+  "Build a JonGuiDataLrf protobuf message from a map."
+  [m]
+  [jon-gui-data-lrf-spec => any?]
+  (let [builder (ser.JonSharedDataLrf$JonGuiDataLrf/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :is-scanning)
+      (.setIsScanning builder (get m :is-scanning)))
+    (when (contains? m :is-measuring)
+      (.setIsMeasuring builder (get m :is-measuring)))
+    (when (contains? m :measure-id) (.setMeasureId builder (get m :measure-id)))
+    (when (contains? m :target)
+      (.setTarget builder (build-jon-gui-data-target (get m :target))))
+    (when (contains? m :pointer-mode)
+      (.setPointerMode builder
+                       (when-let [v (get m :pointer-mode)]
+                         (get jon-gui-datat-lrf-laser-pointer-modes-values v))))
+    (when (contains? m :fog-mode-enabled)
+      (.setFogModeEnabled builder (get m :fog-mode-enabled)))
+    (when (contains? m :is-refining)
+      (.setIsRefining builder (get m :is-refining)))
+    (.build builder)))
 
 (>defn
   build-jon-gui-data-target
@@ -1673,8 +1647,8 @@
       (.setDistance3b builder (get m :distance-3b)))
     (when (contains? m :observer-fix-type)
       (.setObserverFixType builder
-                           (get jon-gui-data-gps-fix-type-values
-                                (get m :observer-fix-type))))
+                           (when-let [v (get m :observer-fix-type)]
+                             (get jon-gui-data-gps-fix-type-values v))))
     (when (contains? m :session-id) (.setSessionId builder (get m :session-id)))
     (when (contains? m :target-id) (.setTargetId builder (get m :target-id)))
     (when (contains? m :target-color)
@@ -1719,7 +1693,8 @@
       (.setManualAltitude builder (get m :manual-altitude)))
     (when (contains? m :fix-type)
       (.setFixType builder
-                   (get jon-gui-data-gps-fix-type-values (get m :fix-type))))
+                   (when-let [v (get m :fix-type)]
+                     (get jon-gui-data-gps-fix-type-values v))))
     (when (contains? m :use-manual) (.setUseManual builder (get m :use-manual)))
     (.build builder)))
 
@@ -1763,8 +1738,8 @@
       (.setTargetBank builder (get m :target-bank)))
     (when (contains? m :status)
       (.setStatus builder
-                  (get jon-gui-data-compass-calibrate-status-values
-                       (get m :status))))
+                  (when-let [v (get m :status)]
+                    (get jon-gui-data-compass-calibrate-status-values v))))
     (.build builder)))
 
 (>defn
@@ -1788,7 +1763,9 @@
       (.setPlatformBank builder (get m :platform-bank)))
     (when (contains? m :is-moving) (.setIsMoving builder (get m :is-moving)))
     (when (contains? m :mode)
-      (.setMode builder (get jon-gui-data-rotary-mode-values (get m :mode))))
+      (.setMode builder
+                (when-let [v (get m :mode)]
+                  (get jon-gui-data-rotary-mode-values v))))
     (when (contains? m :is-scanning)
       (.setIsScanning builder (get m :is-scanning)))
     (when (contains? m :is-scanning-paused)
@@ -1844,7 +1821,8 @@
       (.setZoomTablePosMax builder (get m :zoom-table-pos-max)))
     (when (contains? m :fx-mode)
       (.setFxMode builder
-                  (get jon-gui-data-fx-mode-day-values (get m :fx-mode))))
+                  (when-let [v (get m :fx-mode)]
+                    (get jon-gui-data-fx-mode-day-values v))))
     (when (contains? m :auto-focus) (.setAutoFocus builder (get m :auto-focus)))
     (when (contains? m :auto-iris) (.setAutoIris builder (get m :auto-iris)))
     (when (contains? m :digital-zoom-level)
@@ -1863,12 +1841,12 @@
     (when (contains? m :zoom-pos) (.setZoomPos builder (get m :zoom-pos)))
     (when (contains? m :agc-mode)
       (.setAgcMode builder
-                   (get jon-gui-data-video-channel-heat-agc-modes-values
-                        (get m :agc-mode))))
+                   (when-let [v (get m :agc-mode)]
+                     (get jon-gui-data-video-channel-heat-agc-modes-values v))))
     (when (contains? m :filter)
       (.setFilter builder
-                  (get jon-gui-data-video-channel-heat-filters-values
-                       (get m :filter))))
+                  (when-let [v (get m :filter)]
+                    (get jon-gui-data-video-channel-heat-filters-values v))))
     (when (contains? m :auto-focus) (.setAutoFocus builder (get m :auto-focus)))
     (when (contains? m :zoom-table-pos)
       (.setZoomTablePos builder (get m :zoom-table-pos)))
@@ -1879,7 +1857,8 @@
       (.setDdeEnabled builder (get m :dde-enabled)))
     (when (contains? m :fx-mode)
       (.setFxMode builder
-                  (get jon-gui-data-fx-mode-heat-values (get m :fx-mode))))
+                  (when-let [v (get m :fx-mode)]
+                    (get jon-gui-data-fx-mode-heat-values v))))
     (when (contains? m :digital-zoom-level)
       (.setDigitalZoomLevel builder (get m :digital-zoom-level)))
     (when (contains? m :clahe-level)
@@ -1895,7 +1874,8 @@
     ;; Set regular fields
     (when (contains? m :screen)
       (.setScreen builder
-                  (get jon-gui-data-rec-osd-screen-values (get m :screen))))
+                  (when-let [v (get m :screen)]
+                    (get jon-gui-data-rec-osd-screen-values v))))
     (when (contains? m :heat-osd-enabled)
       (.setHeatOsdEnabled builder (get m :heat-osd-enabled)))
     (when (contains? m :day-osd-enabled)

@@ -1,17 +1,17 @@
-(ns test.roundtrip.command
+(ns test.enum.command
   "Commands index - re-exports all command namespaces"
-  (:require [test.roundtrip.cmd.lira :as cmd.lira]
-            [test.roundtrip.cmd.heatcamera :as cmd.heatcamera]
-            [test.roundtrip.cmd.system :as cmd.system]
-            [test.roundtrip.cmd.lrf :as cmd.lrf]
-            [test.roundtrip.cmd.compass :as cmd.compass]
-            [test.roundtrip.cmd.osd :as cmd.osd]
-            [test.roundtrip.cmd.rotaryplatform :as cmd.rotaryplatform]
-            [test.roundtrip.cmd.gps :as cmd.gps]
-            [test.roundtrip.cmd.daycamglassheater :as cmd.daycamglassheater]
-            [test.roundtrip.cmd.cv :as cmd.cv]
-            [test.roundtrip.cmd.daycamera :as cmd.daycamera]
-            [test.roundtrip.cmd.lrf-calib :as cmd.lrf-calib]))
+  (:require [test.enum.cmd.lira :as cmd.lira]
+            [test.enum.cmd.heatcamera :as cmd.heatcamera]
+            [test.enum.cmd.system :as cmd.system]
+            [test.enum.cmd.lrf :as cmd.lrf]
+            [test.enum.cmd.compass :as cmd.compass]
+            [test.enum.cmd.osd :as cmd.osd]
+            [test.enum.cmd.rotaryplatform :as cmd.rotaryplatform]
+            [test.enum.cmd.gps :as cmd.gps]
+            [test.enum.cmd.daycamglassheater :as cmd.daycamglassheater]
+            [test.enum.cmd.cv :as cmd.cv]
+            [test.enum.cmd.daycamera :as cmd.daycamera]
+            [test.enum.cmd.lrf-calib :as cmd.lrf-calib]))
 
 ;; Re-export all public functions from sub-namespaces
 ;; This supports testing without needing to know the internal namespace

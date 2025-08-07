@@ -1,6 +1,6 @@
-(ns test.roundtrip.state
+(ns test.enum.state
   "State index - re-exports all state namespaces"
-  (:require [test.roundtrip.ser :as ser]))
+  (:require [test.enum.ser :as ser]))
 
 ;; Re-export all public functions from sub-namespaces
 ;; This supports testing without needing to know the internal namespace

@@ -389,40 +389,41 @@
          ;; Set regular fields
          (when (contains? m :mode)
            (.setMode builder
-                     (get types/jon-gui-data-rotary-mode-values (get m :mode))))
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-rotary-mode-values v))))
          (.build builder)))
 
-(>defn build-set-azimuth-value
-       "Build a SetAzimuthValue protobuf message from a map."
-       [m]
-       [set-azimuth-value-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :value) (.setValue builder (get m :value)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-set-azimuth-value
+  "Build a SetAzimuthValue protobuf message from a map."
+  [m]
+  [set-azimuth-value-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
-(>defn build-rotate-azimuth-to
-       "Build a RotateAzimuthTo protobuf message from a map."
-       [m]
-       [rotate-azimuth-to-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :target-value)
-           (.setTargetValue builder (get m :target-value)))
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-azimuth-to
+  "Build a RotateAzimuthTo protobuf message from a map."
+  [m]
+  [rotate-azimuth-to-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :target-value)
+      (.setTargetValue builder (get m :target-value)))
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn build-rotate-azimuth
        "Build a RotateAzimuth protobuf message from a map."
@@ -434,24 +435,25 @@
          (when (contains? m :speed) (.setSpeed builder (get m :speed)))
          (when (contains? m :direction)
            (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
+                          (when-let [v (get m :direction)]
+                            (get types/jon-gui-data-rotary-direction-values
+                                 v))))
          (.build builder)))
 
-(>defn build-rotate-elevation
-       "Build a RotateElevation protobuf message from a map."
-       [m]
-       [rotate-elevation-spec => any?]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-elevation
+  "Build a RotateElevation protobuf message from a map."
+  [m]
+  [rotate-elevation-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn
   build-set-elevation-value
@@ -490,8 +492,8 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -506,8 +508,8 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -523,8 +525,8 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -539,8 +541,8 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
@@ -813,8 +815,8 @@
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :x) (.setX builder (get m :x)))
          (when (contains? m :y) (.setY builder (get m :y)))
          (.build builder)))

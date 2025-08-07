@@ -1,20 +1,20 @@
-(ns test.roundtrip.cmd
+(ns test.enum.cmd
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.cmd.lira :as lira]
-            [test.roundtrip.cmd.rotaryplatform :as rotaryplatform]
-            [test.roundtrip.cmd.system :as system]
-            [test.roundtrip.cmd.lrf-calib :as lrf-calib]
-            [test.roundtrip.cmd.gps :as gps]
-            [test.roundtrip.cmd.heatcamera :as heatcamera]
-            [test.roundtrip.cmd.cv :as cv]
-            [test.roundtrip.cmd.daycamera :as daycamera]
-            [test.roundtrip.cmd.daycamglassheater :as daycamglassheater]
-            [test.roundtrip.cmd.lrf :as lrf]
-            [test.roundtrip.cmd.compass :as compass]
-            [test.roundtrip.ser :as types]
-            [test.roundtrip.cmd.osd :as osd])
+            [test.enum.cmd.lira :as lira]
+            [test.enum.cmd.rotaryplatform :as rotaryplatform]
+            [test.enum.cmd.system :as system]
+            [test.enum.cmd.lrf-calib :as lrf-calib]
+            [test.enum.cmd.gps :as gps]
+            [test.enum.cmd.heatcamera :as heatcamera]
+            [test.enum.cmd.cv :as cv]
+            [test.enum.cmd.daycamera :as daycamera]
+            [test.enum.cmd.daycamglassheater :as daycamglassheater]
+            [test.enum.cmd.lrf :as lrf]
+            [test.enum.cmd.compass :as compass]
+            [test.enum.ser :as types]
+            [test.enum.cmd.osd :as osd])
   (:import cmd.JonSharedCmd$Root
            cmd.JonSharedCmd$Ping
            cmd.JonSharedCmd$Noop
@@ -32,10 +32,9 @@
 
 (def root-spec
   "Malli spec for root message"
-  [:map [:protocol-version [:and [:maybe :int] [:> 0]]]
-   [:session-id [:maybe :int]] [:important [:maybe :boolean]]
-   [:from-cv-subsystem [:maybe :boolean]]
-   [:client-type [:maybe :ser/jon-gui-data-client-type]]
+  [:map [:protocol-version [:and :int [:> 0]]] [:session-id :int]
+   [:important :boolean] [:from-cv-subsystem :boolean]
+   [:client-type :ser/jon-gui-data-client-type]
    [:payload
     [:oneof
      {:osd [:map [:osd :cmd.osd/root]],
@@ -93,8 +92,8 @@
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
       (.setClientType builder
-                      (get types/jon-gui-data-client-type-values
-                           (get m :client-type))))
+                      (when-let [v (get m :client-type)]
+                        (get types/jon-gui-data-client-type-values v))))
     ;; Handle oneof: payload
     (when-let [payload-field
                  (first (filter (fn [[k v]]

@@ -238,8 +238,8 @@
          ;; Set regular fields
          (when (contains? m :loc)
            (.setLoc builder
-                    (get types/jon-gui-data-system-localizations-values
-                         (get m :loc))))
+                    (when-let [v (get m :loc)]
+                      (get types/jon-gui-data-system-localizations-values v))))
          (.build builder)))
 
 (>defn parse-root

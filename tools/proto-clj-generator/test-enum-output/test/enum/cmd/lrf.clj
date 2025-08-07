@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.lrf
+(ns test.enum.cmd.lrf
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [test.enum.ser :as types])
   (:import cmd.Lrf.JonSharedCmdLrf$Root
            cmd.Lrf.JonSharedCmdLrf$GetMeteo
            cmd.Lrf.JonSharedCmdLrf$Start
@@ -91,7 +91,7 @@
 
 (def set-scan-mode-spec
   "Malli spec for set-scan-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-lrf-scan-modes]]])
+  [:map [:mode :ser/jon-gui-data-lrf-scan-modes]])
 
 (def new-session-spec "Malli spec for new-session message" [:map])
 
@@ -256,8 +256,8 @@
          ;; Set regular fields
          (when (contains? m :mode)
            (.setMode builder
-                     (get types/jon-gui-data-lrf-scan-modes-values
-                          (get m :mode))))
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-lrf-scan-modes-values v))))
          (.build builder)))
 
 (>defn build-new-session

@@ -1,8 +1,8 @@
-(ns test.roundtrip.cmd.system
+(ns test.enum.cmd.system
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.roundtrip.ser :as types])
+            [test.enum.ser :as types])
   (:import cmd.System.JonSharedCmdSystem$Root
            cmd.System.JonSharedCmdSystem$StartALl
            cmd.System.JonSharedCmdSystem$StopALl
@@ -84,7 +84,7 @@
 
 (def set-localization-spec
   "Malli spec for set-localization message"
-  [:map [:loc [:maybe :ser/jon-gui-data-system-localizations]]])
+  [:map [:loc :ser/jon-gui-data-system-localizations]])
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -238,8 +238,8 @@
          ;; Set regular fields
          (when (contains? m :loc)
            (.setLoc builder
-                    (get types/jon-gui-data-system-localizations-values
-                         (get m :loc))))
+                    (when-let [v (get m :loc)]
+                      (get types/jon-gui-data-system-localizations-values v))))
          (.build builder)))
 
 (>defn parse-root
