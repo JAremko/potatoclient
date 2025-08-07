@@ -235,11 +235,23 @@
   [ValidString => ValidString]
   (kebab->pascal (any->kebab s)))
 
+(>defn ->kebab-case
+  "Convert any string to kebab-case"
+  [s]
+  [ValidString => ValidString]
+  (any->kebab s))
+
 (>defn ->kebab-case-keyword
   "Convert any string to kebab-case keyword"
   [s]
   [ValidString => ValidKeyword]
   (keyword (any->kebab s)))
+
+(>defn ->lossless-keyword
+  "Convert any string to a lossless keyword preserving exact format"
+  [s]
+  [ValidString => ValidKeyword]
+  (string->keyword s))
 
 ;; =============================================================================
 ;; Protobuf-Specific Conversions

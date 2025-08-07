@@ -102,17 +102,17 @@
 
 (defn resolve-field-type
   "Resolve a field's type to our intermediate representation."
-  [{:keys [type typeName] :as field}]
+  [{:keys [type type-name] :as field}]
   (let [type-kw (if (keyword? type) type (keywordize-value type))]
     (cond
       (contains? proto-type-mapping type-kw)
       (proto-type-mapping type-kw)
       
       (or (= type-kw :enum) (= type-kw :type-enum))
-      {:enum {:type-ref typeName}}
+      {:enum {:type-ref type-name}}
       
       (or (= type-kw :message) (= type-kw :type-message))
-      {:message {:type-ref typeName}}
+      {:message {:type-ref type-name}}
       
       :else
       {:unknown {:proto-type type-kw}})))
@@ -158,27 +158,27 @@
       (= (keywordize-value (:label field)) :label-optional)
       (assoc :optional? true)
       
-      (some? (:oneofIndex field))
-      (assoc :oneof-index (:oneofIndex field))
+      (some? (:oneof-index field))
+      (assoc :oneof-index (:oneof-index field))
       
       ;; Add constraints if present
       constraints
       (assoc :constraints constraints)
       
-      (:defaultValue field)
-      (assoc :default-value (:defaultValue field)))))
+      (:default-value field)
+      (assoc :default-value (:default-value field)))))
 
 (defn message->edn
   "Convert a protobuf message to EDN representation."
   [message context parent-names]
   (let [fields (sp/select [:field sp/ALL] message)
-        oneof-decls (sp/select [:oneofDecl sp/ALL] message)
+        oneof-decls (sp/select [:oneof-decl sp/ALL] message)
         java-class (generate-java-class-name context (:name message) parent-names)
         ;; Process both nested messages and nested enums
         nested-messages (vec (map #(message->edn % context (conj parent-names (:name message)))
-                                 (get message :nestedType [])))
+                                 (get message :nested-type [])))
         nested-enums (vec (map #(enum->edn % context (conj parent-names (:name message)))
-                              (get message :enumType [])))]
+                              (get message :enum-type [])))]
     
     {:type :message
      :name (conv/->kebab-case-keyword (:name message))
@@ -186,14 +186,14 @@
      :java-class java-class
      :package (:package context)  ;; Include package info
      :fields (mapv field->edn 
-                   (remove #(some? (:oneofIndex %)) fields))
+                   (remove #(some? (:oneof-index %)) fields))
      :oneofs (vec (map-indexed 
                    (fn [idx oneof-decl]
                      (let [base {:name (conv/->kebab-case-keyword (:name oneof-decl))
                                 :proto-name (:name oneof-decl)
                                 :index idx
                                 :fields (mapv field->edn
-                                             (filter #(= (:oneofIndex %) idx) fields))}
+                                             (filter #(= (:oneof-index %) idx) fields))}
                            ;; Extract oneof constraints if present
                            constraints (extractor/extract-oneof-constraints oneof-decl)]
                        (if constraints
@@ -229,9 +229,9 @@
                                  (str/replace #"\.proto$" "")
                                  (conv/->PascalCase)))
         context {:package (:package file)
-                 :java-package (or (sp/select-first [:options :javaPackage] file)
+                 :java-package (or (sp/select-first [:options :java-package] file)
                                    (:package file))
-                 :java-outer-classname (or (sp/select-first [:options :javaOuterClassname] file)
+                 :java-outer-classname (or (sp/select-first [:options :java-outer-classname] file)
                                           default-outer-class)}]
     {:type :file
      :name (:name file)
@@ -241,9 +241,9 @@
      :dependencies (vec (remove #(= % "buf/validate/validate.proto") 
                                 (:dependency file [])))  ;; Filter out buf/validate
      :messages (mapv #(message->edn % context [])
-                     (get file :messageType []))
+                     (get file :message-type []))
      :enums (mapv #(enum->edn % context [])
-                 (get file :enumType []))}))
+                 (get file :enum-type []))}))
 
 ;; =============================================================================
 ;; Type Lookup Building

@@ -3,7 +3,7 @@
   Uses templates as base and manipulates them via rewrite-clj."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [potatoclient.proto.string-conversion :as conv]
+            [potatoclient.proto.conversion :as conv]
             [com.rpl.specter :as sp]
             [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]

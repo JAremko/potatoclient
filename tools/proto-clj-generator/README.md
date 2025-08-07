@@ -529,90 +529,101 @@ Located in `shared/potatoclient/proto/conversion.clj`, providing:
 | `->PascalCase` | Any string | PascalCase string | `"xml-parser"` → `"XmlParser"` |
 | `->SCREAMING_SNAKE_CASE` | Any string | UPPER_SNAKE_CASE string | `"xml-parser"` → `"XML_PARSER"` |
 
-#### Bidirectional Conversions
+#### Protobuf-Specific Conversions
 
 | Function | Input | Output | Example |
 |----------|-------|---------|---------|
-| `kebab-case->snake_case` | kebab-case string | snake_case string | `"xml-parser"` → `"xml_parser"` |
-| `kebab-case->PascalCase` | kebab-case string | PascalCase string | `"xml-parser"` → `"XmlParser"` |
-| `kebab-case->UPPER_SNAKE_CASE` | kebab-case string | UPPER_SNAKE_CASE string | `"xml-parser"` → `"XML_PARSER"` |
-| `snake-case->kebab-case` | snake_case string | kebab-case string | `"xml_parser"` → `"xml-parser"` |
-| `pascal-case->kebab-case` | PascalCase string | kebab-case string | `"XmlParser"` → `"xml-parser"` |
-| `keyword->kebab-case` | keyword | kebab-case string | `:xml-parser` → `"xml-parser"` |
-| `clj-key->json-key` | Clojure keyword | camelCase string | `:xml-parser` → `"xmlParser"` |
+| `proto-field->clj-key` | Proto field name | Clojure keyword | `"protocol_version"` → `:protocol-version` |
+| `clj-key->proto-field` | Clojure keyword | Proto field name | `:protocol-version` → `"protocol_version"` |
+| `clj-key->json-field` | Clojure keyword | JSON field name | `:protocol-version` → `"protocolVersion"` |
+| `proto-const->clj-key` | Proto constant | Clojure keyword | `"TYPE_INT32"` → `:type-int32` |
+| `clj-key->proto-const` | Clojure keyword | Proto constant | `:type-int32` → `"TYPE_INT32"` |
 
 #### Java Method Name Generation
 
 | Function | Input | Output | Example |
 |----------|-------|---------|---------|
-| `getter-method-name` | field name | Java getter name | `"protocol-version"` → `"getProtocolVersion"` |
-| `setter-method-name` | field name | Java setter name | `"protocol-version"` → `"setProtocolVersion"` |
-| `has-method-name` | field name | Java has method | `"protocol-version"` → `"hasProtocolVersion"` |
-| `add-method-name` | field name | Java add method | `"values"` → `"addValues"` |
-| `add-all-method-name` | field name | Java addAll method | `"values"` → `"addAllValues"` |
+| `field->getter` | Field keyword | Java getter name | `:protocol-version` → `"getProtocolVersion"` |
+| `field->setter` | Field keyword | Java setter name | `:protocol-version` → `"setProtocolVersion"` |
+| `field->has` | Field keyword | Java has method | `:protocol-version` → `"hasProtocolVersion"` |
 
-### Protobuf-Specific Conversions
+#### Type Reference Conversions
 
-Located in `shared/potatoclient/proto/string_conversion_protobuf.clj`, providing lossless conversions for protobuf descriptors:
+| Function | Input | Output | Example |
+|----------|-------|---------|---------|  
+| `type-ref->keyword` | Proto type ref | Namespaced keyword | `".com.example.MyMessage"` → `:com.example/MyMessage` |
+| `keyword->type-ref` | Namespaced keyword | Proto type ref | `:com.example/MyMessage` → `".com.example.MyMessage"` |
 
-#### Type-Aware Conversions
+### Format Detection and Preservation
 
-| Function | Purpose | Example |
-|----------|---------|---------|
-| `proto-const->clj-keyword` | Protobuf constants | `"TYPE_INT32"` → `:type-int32` |
-| `clj-keyword->proto-const` | Reverse constant conversion | `:type-int32` → `"TYPE_INT32"` |
-| `field-name->clj-keyword` | Protobuf field names | `"protocol_version"` → `:protocol-version` |
-| `clj-keyword->field-name` | Reverse field conversion | `:protocol-version` → `"protocol_version"` |
-| `clj-keyword->json-name` | JSON field names | `:protocol-version` → `"protocolVersion"` |
-| `message-name->clj-keyword` | Message type names | `"MyMessage"` → `:proto.type/MyMessage` |
-| `clj-keyword->message-name` | Reverse message conversion | `:proto.type/MyMessage` → `"MyMessage"` |
-| `type-ref->clj-keyword` | Type references | `".com.example.MyMessage"` → `:com.example/MyMessage` |
-| `clj-keyword->type-ref` | Reverse type ref conversion | `:com.example/MyMessage` → `".com.example.MyMessage"` |
-| `java-class->clj-keyword` | Java class names | `"com.example.Outer$Inner"` → `:java.class/com.example.Outer$Inner` |
-| `clj-keyword->java-class` | Reverse Java class conversion | `:java.class/com.example.Outer$Inner` → `"com.example.Outer$Inner"` |
-| `file-name->clj-keyword` | Proto file names | `"my_proto.proto"` → `:proto.file/my_proto.proto` |
-| `clj-keyword->file-name` | Reverse file name conversion | `:proto.file/my_proto.proto` → `"my_proto.proto"` |
-| `method-name->clj-keyword` | RPC method names | `"GetUser"` → `:rpc.method/GetUser` |
-| `clj-keyword->method-name` | Reverse method conversion | `:rpc.method/GetUser` → `"GetUser"` |
-| `validation-key->clj-keyword` | Validation keys | `"[buf.validate.field]"` → `:validation/buf.validate.field` |
-| `clj-keyword->validation-key` | Reverse validation conversion | `:validation/buf.validate.field` → `"[buf.validate.field]"` |
+The module automatically detects the format of input strings and preserves this information using namespaced keywords:
+
+```clojure
+;; Format detection examples
+(string->keyword "XMLParser")   ; → :pascal/XMLParser
+(string->keyword "xmlParser")   ; → :camel/xmlParser
+(string->keyword "xml_parser")  ; → :snake/xml_parser
+(string->keyword "xml-parser")  ; → :kebab/xml-parser
+(string->keyword "XML_PARSER")  ; → :proto/XML_PARSER
+
+;; Lossless roundtrip
+(keyword->string :pascal/XMLParser) ; → "XMLParser"
+```
 
 ### Collision Detection
 
 All conversion functions automatically track collisions to prevent data loss:
 
 ```clojure
-;; If two different inputs map to the same output, an exception is thrown
-(->kebab-case-keyword "XMLParser")  ; → :xml-parser
-(->kebab-case-keyword "XmlParser")  ; → :xml-parser
-;; Throws: String conversion collision detected!
+;; Collision tracking example
+(proto-field->clj-key "protocol_version")  ; → :protocol-version
+(proto-field->clj-key "protocol-version")  ; → :protocol-version
+;; Second call returns cached value, preventing collision
+
+;; If different inputs would map to same output:
+(proto-field->clj-key "field_name")  ; → :field-name
+(proto-field->clj-key "FIELD_NAME")  ; → Would throw collision error
 ```
 
-### Lossless Conversion System
+### Regal-Based Validation
 
-For cases requiring perfect roundtrip conversion, use the lossless module in `shared/potatoclient/proto/string_conversion_lossless.clj`:
+All string conversions are validated using Regal patterns to ensure only valid identifiers are processed:
 
 ```clojure
-;; Smart lossless conversion preserves exact format
-(string->smart-lossless-keyword "XMLParser")  ; → :exact/WE1MUGFyc2Vy
-(smart-lossless-keyword->string :exact/WE1MUGFyc2Vy)  ; → "XMLParser"
+;; Valid string pattern
+(def valid-string-pattern
+  [:+ [:alt [:class [:alpha]] [:class [:digit]] "_" "-" "."]])
 
-;; Format-preserving conversion
-(string->lossless-keyword "xmlParser")  ; → :camel/xml-parser
-(lossless-keyword->string :camel/xml-parser)  ; → "xmlParser"
+;; Valid keyword pattern 
+(def valid-keyword-name-pattern
+  [:cat
+   [:? [:alt [:class [:alpha]] "_" "-"]]
+   [:* [:alt [:class [:alnum]] "_" "-" "."]]])
+
+;; Specs with attached generators
+(def ValidString
+  [:and
+   :string
+   [:fn {:error/message "must be a valid identifier string"}
+    #(re-matches (regal/regex valid-string-pattern) %)]
+   [::m/gen #(regal-gen/gen valid-string-pattern)]])
 ```
 
-### Validation with Malli Specs
+### Global Registry Integration
 
-All string types have associated Malli specs with Regal-based generators:
+The conversion module automatically registers its specs in the global Malli registry:
 
 ```clojure
-;; Available specs in :potatoclient.proto.string-conversion-specs namespace
-:PascalCaseString    ; Matches "XmlParser", "XMLParser", etc.
-:CamelCaseString     ; Matches "xmlParser", "parseXML", etc.
-:SnakeCaseString     ; Matches "xml_parser", "parse_xml", etc.
-:KebabCaseString     ; Matches "xml-parser", "parse-xml", etc.
-:ProtoConstantString ; Matches "TYPE_INT32", "LABEL_OPTIONAL", etc.
+;; Specs available in global registry
+:potatoclient.proto.conversion/ValidString   ; Any valid identifier string
+:potatoclient.proto.conversion/ValidKeyword  ; Any valid keyword
+
+;; All functions use these specs for validation
+(>defn string->keyword
+  "Convert any string to a namespaced keyword that preserves format."
+  [s]
+  [ValidString => ValidKeyword]  ; Uses registered specs
+  ...)
 ```
 
 ### Usage in the Generator
@@ -636,15 +647,22 @@ Example usage in generated code:
   {Type/TYPE_INT32 :type-int32})
 ```
 
-### Testing
+### Testing and Statistics
 
-Comprehensive tests ensure all conversions are correct and collision-free:
+The module provides utilities for testing and monitoring conversions:
 
-```bash
-# Run string conversion tests
-clojure -X:test :nses '[potatoclient.proto.string-conversion-test
-                        potatoclient.proto.string-conversion-lossless-test
-                        potatoclient.proto.string-conversion-bidirectional-test]'
+```clojure
+;; Validate roundtrip conversions
+(validate-roundtrip "XMLParser" :PascalCase :kebab-case) ; → true
+
+;; Get conversion statistics
+(get-stats)
+; → {:forward-conversions 142
+;    :reverse-conversions 142
+;    :functions ["string->keyword" "proto-field->clj-key" ...]}
+
+;; Clear caches for testing
+(clear-caches!)
 ```
 
 ## Troubleshooting

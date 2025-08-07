@@ -73,7 +73,6 @@ Each transformation is:
 
 - [x] Add runtime instrumentation controls
   - [x] Enable/disable validation per namespace (via Guardrails)
-  - [ ] Performance profiling with validation on/off
   - [x] Clear error messages with context (Malli provides)
 
 ### 3. Update Spec Generation
@@ -98,7 +97,6 @@ Every public function must have:
 - [x] Basic functionality tests (deps module)
 - [x] Edge case tests (deps module)
 - [x] Error condition tests (deps module)
-- [ ] Performance benchmarks
 
 ### 2. Integration Tests
 Test the full pipeline:
@@ -188,18 +186,6 @@ The ultimate test:
 - [x] Comprehensive unit tests for dependency resolution
 - [ ] Complete test coverage across all modules
 - [ ] Documentation updates
-
-### Phase 2: Optimization
-- [ ] Incremental compilation
-- [ ] Parallel processing
-- [ ] Caching strategies
-- [ ] Performance profiling
-
-### Phase 3: Advanced Features
-- [ ] IDE integration
-- [ ] Hot reloading
-- [ ] Schema evolution support
-- [ ] Debugging tools
 
 ## 📝 Design Principles
 

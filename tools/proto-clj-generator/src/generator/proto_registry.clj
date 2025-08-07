@@ -4,7 +4,7 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [cheshire.core :as json]
-            [potatoclient.proto.string-conversion :as conv]
+            [potatoclient.proto.conversion :as conv]
             [generator.naming-config :as naming]))
 
 (defonce ^:private registry (atom {}))

@@ -11,7 +11,7 @@
   
   All conversions are memoized and checked for collisions to guarantee 1-to-1 mappings."
   (:require [clojure.string :as str]
-            [potatoclient.proto.string-conversion :as conv]
+            [potatoclient.proto.conversion :as conv]
             [malli.core :as m]
             [malli.generator :as mg]))
 

@@ -2,7 +2,7 @@
   "Generate Malli specs from protobuf EDN representation.
   Based on proto-explorer's approach but integrated into our generation pipeline."
   (:require [clojure.string :as str]
-            [potatoclient.proto.string-conversion :as conv]
+            [potatoclient.proto.conversion :as conv]
             [generator.constraints.compiler :as compiler]))
 
 ;; =============================================================================

@@ -5,7 +5,7 @@
             [malli.registry :as mr]
             [com.fulcrologic.guardrails.malli.registry :as gr.reg]
             [potatoclient.specs.malli-oneof :as oneof]
-            [potatoclient.proto.string-conversion-specs :as str-specs]))
+            [potatoclient.proto.conversion :as conv]))
 
 (defonce registry-atom (atom nil))
 
@@ -20,13 +20,13 @@
                                ;; Custom :oneof schema from shared specs
                                {:oneof oneof/-oneof-schema}
                                ;; String conversion specs with generators
-                               str-specs/string-conversion-schemas)]
+                               conv/conversion-schemas)]
       (reset! registry-atom composite-registry)
       ;; Set as the default Malli registry
       (mr/set-default-registry! composite-registry)
       ;; Also merge into guardrails registry
       (gr.reg/merge-schemas! {:oneof oneof/-oneof-schema}
-                             str-specs/string-conversion-schemas)))))
+                             conv/conversion-schemas)))))
 
 (defn sanity-check-registry!
   "Run sanity checks to ensure the registry is properly configured."
