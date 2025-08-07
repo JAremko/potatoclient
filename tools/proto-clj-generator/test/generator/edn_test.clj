@@ -4,6 +4,7 @@
             [generator.backend :as backend]
             [generator.frontend :as frontend]
             [generator.edn-specs :as specs]
+            ;; [generator.global-registry :as registry]
             [malli.core :as m]
             [malli.generator :as mg]
             [clojure.pprint :as pp]
@@ -14,15 +15,17 @@
   (testing "Scalar field conversion to EDN"
     (let [proto-field {:name "protocol_version"
                        :number 1
-                       :label :optional
-                       :type :int32}
-          edn-field (backend/field->edn proto-field)]
+                       :label "LABEL_OPTIONAL"
+                       :type "TYPE_INT32"}
+          ;; Process JSON values like the backend does
+          processed-field (backend/process-json-value proto-field)
+          edn-field (backend/field->edn processed-field)]
       
       (is (= :protocol-version (:name edn-field)))
       (is (= "protocol_version" (:proto-name edn-field)))
       (is (= 1 (:number edn-field)))
       (is (= {:scalar :int32} (:type edn-field)))
-      (is (= :optional (:label edn-field)))
+      (is (= :label-optional (:label edn-field)))
       (is (true? (:optional? edn-field)))
       
       (is (specs/validate-field edn-field)
@@ -34,9 +37,11 @@
                        :number 2
                        :label "LABEL_OPTIONAL"
                        :type "TYPE_MESSAGE"
-                       :type-name ".cmd.System.Ping"
-                       :oneof-index 0}
-          edn-field (backend/field->edn proto-field)]
+                       :typeName ".cmd.System.Ping"
+                       :oneofIndex 0}
+          ;; Process JSON values like the backend does
+          processed-field (backend/process-json-value proto-field)
+          edn-field (backend/field->edn processed-field)]
       
       (is (= :ping (:name edn-field)))
       (is (= {:message {:type-ref ".cmd.System.Ping"}} (:type edn-field)))
@@ -51,14 +56,9 @@
                        :number 1
                        :label "LABEL_OPTIONAL"
                        :type "TYPE_ENUM"
-                       :type-name ".cmd.FocusMode"}
-          ;; The field is already in the format that the backend expects (after JSON parsing)
-          ;; Convert string keys to keywords first
-          keywordized-field (update-keys proto-field keyword)
-          ;; Then process JSON values
-          processed-field (sp/transform [sp/MAP-VALS] 
-                                       backend/process-json-value
-                                       keywordized-field)
+                       :typeName ".cmd.FocusMode"}
+          ;; Process JSON values like the backend does
+          processed-field (backend/process-json-value proto-field)
           edn-field (backend/field->edn processed-field)]
       
       (is (= :mode (:name edn-field)))
@@ -78,13 +78,18 @@
                                 :number 2
                                 :label "LABEL_OPTIONAL"
                                 :type "TYPE_MESSAGE"
-                                :type-name ".cmd.System.Ping"
-                                :oneof-index 0}]
-                        :oneof-decl [{:name "payload"}]}
+                                :typeName ".cmd.System.Ping"
+                                :oneofIndex 0}]
+                        :oneofDecl [{:name "payload"}]}
           context {:package "cmd"
                    :java-package nil
                    :java-outer-classname "JonSharedCmd"}
-          edn-message (backend/message->edn proto-message context)]
+          parent-names []
+          edn-message (backend/message->edn proto-message context parent-names)
+          ;; _ (println "Proto message fields:" (:field proto-message))
+          ;; _ (println "EDN message fields:" (:fields edn-message))
+          ;; _ (println "EDN message oneofs:" (:oneofs edn-message))
+          ]
       
       (is (= :message (:type edn-message)))
       (is (= :root (:name edn-message)))
@@ -110,7 +115,8 @@
           context {:package "cmd"
                    :java-package nil
                    :java-outer-classname "JonSharedCmd"}
-          edn-enum (backend/enum->edn proto-enum context)]
+          parent-names []
+          edn-enum (backend/enum->edn proto-enum context parent-names)]
       
       (is (= :enum (:type edn-enum)))
       (is (= :focus-mode (:name edn-enum)))
@@ -120,38 +126,43 @@
       (is (= #{:focus-mode-unknown :focus-mode-auto :focus-mode-manual}
              (set (map :name (:values edn-enum)))))
       
-      (is (m/validate specs/EnumDef edn-enum {:registry specs/registry})
+      (is (m/validate specs/EnumDef edn-enum)
           "Enum should validate against spec"))))
 
 (deftest type-lookup-test
   (testing "Type lookup building"
-    (let [edn-data {:type :file
-                   :messages [{:type :message
-                              :name :root
-                              :proto-name "Root"
-                              :java-class "cmd.JonSharedCmd$Root"
-                              :fields []
-                              :oneofs []
-                              :nested-types [{:type :message
-                                            :name :ping
-                                            :proto-name "Ping"
-                                            :java-class "cmd.System$Ping"
-                                            :fields []
-                                            :oneofs []
-                                            :nested-types []}]}]
-                   :enums [{:type :enum
-                           :name :focus-mode
-                           :proto-name "FocusMode"
-                           :java-class "cmd.JonSharedCmd$FocusMode"
-                           :values []}]}
+    (let [edn-data {:type :descriptor-set
+                   :files [{:type :file
+                           :package "cmd"
+                           :messages [{:type :message
+                                      :name :root
+                                      :proto-name "Root"
+                                      :java-class "cmd.JonSharedCmd$Root"
+                                      :package "cmd"
+                                      :fields []
+                                      :oneofs []
+                                      :nested-types [{:type :message
+                                                    :name :ping
+                                                    :proto-name "Ping"
+                                                    :java-class "cmd.JonSharedCmd$Ping"
+                                                    :package "cmd"
+                                                    :fields []
+                                                    :oneofs []
+                                                    :nested-types []}]}]
+                           :enums [{:type :enum
+                                   :name :focus-mode
+                                   :proto-name "FocusMode"
+                                   :java-class "cmd.JonSharedCmd$FocusMode"
+                                   :package "cmd"
+                                   :values []}]}]}
           lookup (backend/build-type-lookup edn-data)]
       
-      (is (contains? lookup :root))
-      (is (contains? lookup :ping))
-      (is (contains? lookup :focus-mode))
+      (is (contains? lookup "cmd.Root"))
+      (is (contains? lookup "cmd.Root.Ping"))
+      (is (contains? lookup "cmd.FocusMode"))
       
-      (is (= "cmd.JonSharedCmd$Root" (:java-class (get lookup :root))))
-      (is (= "cmd.System$Ping" (:java-class (get lookup :ping)))))))
+      (is (= "cmd.JonSharedCmd$Root" (:java-class (get lookup "cmd.Root"))))
+      (is (= "cmd.JonSharedCmd$Ping" (:java-class (get lookup "cmd.Root.Ping")))))))
 
 
 (deftest code-generation-test
@@ -166,8 +177,10 @@
                                :type {:scalar :int64}}]
                       :oneofs []}
           type-lookup {}
-          builder-code (frontend/generate-builder edn-message type-lookup)
-          parser-code (frontend/generate-parser edn-message type-lookup)]
+          current-package "cmd"
+          guardrails? true
+          builder-code (frontend/generate-builder edn-message type-lookup current-package guardrails?)
+          parser-code (frontend/generate-parser edn-message type-lookup current-package guardrails?)]
       
       (is (str/includes? builder-code "defn build-ping"))
       (is (str/includes? builder-code "cmd.System$Ping/newBuilder"))
@@ -196,8 +209,9 @@
                                         :value [{:name "UNKNOWN" :number 0}
                                                {:name "ACTIVE" :number 1}]}]}]}
           
-          ;; Convert to EDN through backend
-          edn-output (backend/parse-descriptor-set proto-desc)
+          ;; Convert files directly since parse-descriptor-set expects a file path
+          files (mapv backend/file->edn (:file proto-desc))
+          edn-output {:type :descriptor-set :files files}
           
           ;; Validate EDN structure
           validation (specs/validate-descriptor-set edn-output)]
@@ -206,7 +220,7 @@
       
       (when-not validation
         (println "Validation errors:")
-        (pp/pprint (specs/explain-validation-error specs/DescriptorSet edn-output)))
+        (pp/pprint (m/explain specs/DescriptorSet edn-output)))
       
       ;; Check structure
       (is (= :descriptor-set (:type edn-output)))

@@ -1,6 +1,7 @@
 (ns generator.edn-specs
   "Malli specifications for the EDN intermediate representation."
-  (:require [malli.core :as m]))
+  (:require [malli.core :as m]
+            [malli.registry :as mr]))
 
 ;; =============================================================================
 ;; Basic Types
