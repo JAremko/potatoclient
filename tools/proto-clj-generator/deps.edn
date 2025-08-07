@@ -17,7 +17,9 @@
         dev.weavejester/cljfmt {:mvn/version "0.12.0"}
         zprint/zprint {:mvn/version "1.2.9"}
         ;; For dependency graph algorithms
-        com.stuartsierra/dependency {:mvn/version "1.0.0"}}
+        com.stuartsierra/dependency {:mvn/version "1.0.0"}
+        ;; For regex pattern generation
+        lambdaisland/regal {:mvn/version "0.0.143"}}
  
  :aliases
  {:dev {:extra-paths ["test" "resources" "/home/jare/git/potatoclient/shared"]
