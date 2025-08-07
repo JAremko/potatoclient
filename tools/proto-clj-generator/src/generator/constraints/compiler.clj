@@ -343,9 +343,7 @@
     
     ;; Simple constraint additions
     (seq schema)
-    (if (= 1 (count schema))
-      (first schema)
-      (into [:and base-schema] schema))
+    (into [:and base-schema] schema)
     
     ;; Just base schema
     :else 

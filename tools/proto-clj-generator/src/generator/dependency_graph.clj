@@ -151,11 +151,30 @@
 
 (defn analyze-type-references
   "Analyze a message to find external type references.
-  Returns set of referenced namespaces."
+  Returns set of referenced packages."
   [message type-lookup]
-  ;; TODO: Implement actual analysis of type references
-  ;; For now, return empty set
-  #{})
+  (let [extract-type-refs (fn extract-refs [field]
+                           (when-let [type-ref (or (get-in field [:type :message :type-ref])
+                                                  (get-in field [:type :enum :type-ref]))]
+                             ;; Remove leading dot
+                             (let [clean-ref (if (str/starts-with? type-ref ".")
+                                              (subs type-ref 1)
+                                              type-ref)]
+                               (when-let [type-def (get type-lookup clean-ref)]
+                                 (:package type-def)))))
+        ;; Extract from regular fields
+        field-refs (keep extract-type-refs (:fields message))
+        ;; Extract from oneof fields
+        oneof-refs (for [oneof (:oneofs message)
+                         field (:fields oneof)]
+                    (extract-type-refs field))
+        ;; Extract from nested types (if any)
+        nested-refs (when (:nested-types message)
+                     (mapcat #(analyze-type-references % type-lookup)
+                            (:nested-types message)))]
+    ;; Return set of all referenced packages, excluding current package
+    (set (remove #(or (nil? %) (= % (:package message)))
+                (concat field-refs oneof-refs nested-refs)))))
 
 ;; =============================================================================
 ;; Main API
