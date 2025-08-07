@@ -307,7 +307,7 @@
                                     :set-clahe-level :shift-clahe-level}
                                   k))
                                (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-set-fx-mode
@@ -508,7 +508,7 @@
                                                   :prev-zoom-table-pos}
                                                 k))
                                        (:cmd m)))]
-           (build-zoom-cmd builder cmd-field))
+           (build-zoom-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-next-zoom-table-pos

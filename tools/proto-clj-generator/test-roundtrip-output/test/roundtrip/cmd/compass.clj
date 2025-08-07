@@ -141,7 +141,7 @@
                                           :calibrate-cencel :get-meteo}
                                         k))
                                (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start

@@ -80,7 +80,7 @@
          ;; Handle oneof: channel
          (when-let [channel-field (first (filter (fn [[k v]] (#{:day :heat} k))
                                            (:channel m)))]
-           (build-root-channel builder channel-field))
+           (build-root-payload builder channel-field))
          (.build builder)))
 
 (>defn build-offsets
@@ -92,7 +92,7 @@
          (when-let [cmd-field (first (filter (fn [[k v]]
                                                (#{:set :save :reset :shift} k))
                                        (:cmd m)))]
-           (build-offsets-cmd builder cmd-field))
+           (build-offsets-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-set-offsets

@@ -57,7 +57,7 @@
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]] (#{:refine-target} k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-refine-target

@@ -366,7 +366,7 @@
                                      :scan-add-node}
                                    k))
                           (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-axis
@@ -598,7 +598,7 @@
                                                   :relative :relative-set :halt}
                                                 k))
                                        (:cmd m)))]
-           (build-azimuth-cmd builder cmd-field))
+           (build-azimuth-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
@@ -767,7 +767,7 @@
                                                   :relative :relative-set :halt}
                                                 k))
                                        (:cmd m)))]
-           (build-elevation-cmd builder cmd-field))
+           (build-elevation-payload builder cmd-field))
          (.build builder)))
 
 (>defn

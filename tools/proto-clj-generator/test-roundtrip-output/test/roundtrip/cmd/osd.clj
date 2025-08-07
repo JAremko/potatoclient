@@ -109,7 +109,7 @@
                                             :enable-day-osd :disable-day-osd}
                                           k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-show-default-screen

@@ -213,7 +213,7 @@
                                               "                                   k))\n"
                                               "                          (:" (name (:name oneof)) " m)))]\n"
                                               "      (build-" (csk/->kebab-case (:proto-name message))
-                                              "-" (name (:name oneof)) " builder " var-name "))")))
+                                              "-payload builder " var-name "))")))
                                       (:oneofs message))))
         
         spec-name (spec-gen/message->spec-name message)

@@ -26,10 +26,52 @@ The proto-clj-generator MUST have a comprehensive test that validates the entire
 - Test MUST run as part of regular test suite
 
 ### Current Status:
-- **full_roundtrip_validation_test.clj.disabled** exists but is disabled
-- **full_roundtrip_validation_test.clj** created with custom :oneof support
-- **Basic oneof tests** created and passing in test_oneof.clj
-- Next: Fix registry issues to make :oneof work in generated code
+- **full_roundtrip_validation_basic_test.clj** created with pre-generation
+- **Custom :oneof support** working with global registry
+- **All skipped tests reviewed** - removed obsolete ones, fixed others
+- **Tests now run with `make test`** - pre-generates code before testing
+
+## CRITICAL DESIGN PRINCIPLES
+
+### 1. General Solutions, Not Hardcoded Workarounds
+**Principle**: All code generation logic must work for ANY valid protobuf schema, not just our test cases.
+
+**Example Issue**: Oneof payload function naming
+- **Bad**: Hardcoding "-payload" suffix without understanding why
+- **Good**: Understanding that we generate one payload handler function per message that has oneofs, named `build-<message-name>-payload`
+
+**Guidelines**:
+- Always derive patterns from the protobuf structure, not from observed test cases
+- Test with diverse protobuf schemas to ensure generality
+- Document WHY a pattern exists, not just WHAT it is
+- If something seems like a special case, investigate if it's actually a general pattern
+
+### 2. Oneof Handling Pattern
+**Current Implementation**:
+- Each message with oneofs gets a `-payload` function: `build-<message-name>-payload`
+- This function handles ALL oneofs in that message (though typically there's only one)
+- The oneof's actual name (e.g., "cmd") is used in specs and field access, not function naming
+- This keeps the API consistent regardless of oneof names or count
+
+**Why This Works**:
+- Predictable function naming
+- Handles multiple oneofs in a single message gracefully
+- Separates the concept of "payload handling" from specific field names
+
+**CRITICAL BUG FOUND**: 
+The current implementation has a bug with multiple oneofs:
+```clojure
+;; Current code generates a separate function for EACH oneof:
+(for [msg sorted-messages
+      oneof (:oneofs msg)]
+  (generate-oneof-builder msg oneof ...))
+```
+This would generate duplicate functions if a message has multiple oneofs! 
+
+**Required Fix**: 
+- Generate ONE payload function per message that handles ALL oneofs
+- The function should handle each oneof field appropriately
+- Test with protobuf schemas that have multiple oneofs per message
 
 ## TODOs in Source Code
 

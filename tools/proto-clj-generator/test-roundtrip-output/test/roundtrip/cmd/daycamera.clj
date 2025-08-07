@@ -321,7 +321,7 @@
                                        :set-clahe-level :shift-clahe-level}
                                      k))
                                   (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-get-pos
@@ -397,7 +397,7 @@
                                                   :save-to-table-focus}
                                                 k))
                                        (:cmd m)))]
-           (build-focus-cmd builder cmd-field))
+           (build-focus-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-zoom
@@ -414,7 +414,7 @@
                                                   :reset-zoom :save-to-table}
                                                 k))
                                        (:cmd m)))]
-           (build-zoom-cmd builder cmd-field))
+           (build-zoom-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-next-zoom-table-pos

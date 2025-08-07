@@ -36,11 +36,11 @@ lint-generated: generate ## Lint the generated code
 generate-test-code: compile-proto ## Generate code for tests
 	@echo "Generating test code..."
 	@rm -rf test-roundtrip-output
-	@clojure -M:gen generate-all \
-		--input-dir "../proto-explorer/output/json-descriptors" \
-		--output-dir "test-roundtrip-output" \
-		--namespace-prefix "test.roundtrip" \
-		--guardrails
+	@clojure -X:gen \
+		:input-dir '"../proto-explorer/output/json-descriptors"' \
+		:output-dir '"test-roundtrip-output"' \
+		:namespace-prefix '"test.roundtrip"' \
+		:guardrails? true
 
 .PHONY: test
 test: generate-test-code ## Run all tests (generates test code first)

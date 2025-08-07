@@ -139,7 +139,7 @@
                                                   :geodesic-mode-disable}
                                                 k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start-a-ll
