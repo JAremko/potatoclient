@@ -27,7 +27,9 @@ The proto-clj-generator MUST have a comprehensive test that validates the entire
 
 ### Current Status:
 - **full_roundtrip_validation_test.clj.disabled** exists but is disabled
-- Needs to be updated and re-enabled as highest priority
+- **full_roundtrip_validation_test.clj** created with custom :oneof support
+- **Basic oneof tests** created and passing in test_oneof.clj
+- Next: Fix registry issues to make :oneof work in generated code
 
 ## TODOs in Source Code
 
@@ -52,6 +54,7 @@ field-specs (into {}
 ```
 **Action Required**: Debug registry issues and switch from :altn to custom :oneof spec
 **Priority**: High (affects spec generation quality)
+**Progress**: Basic :oneof tests passing, need to fix registry propagation in generated code
 
 ### 3. edn_test.clj:156
 **Location**: `/test/generator/edn_test.clj`
@@ -179,6 +182,23 @@ Based on TODO-GUARDRAILS.md requirements:
 3. **Low Priority**:
    - Clean up any remaining commented-out code
    - Remove non-guardrails templates if any exist
+
+## Progress Update
+
+### Completed
+- ✅ Created comprehensive TODO and skipped tests documentation
+- ✅ Created basic oneof spec tests (test_oneof.clj) - all passing
+- ✅ Created full roundtrip validation test file with custom :oneof support
+- ✅ Verified custom :oneof spec works correctly in isolation
+
+### In Progress
+- 🔄 Debugging registry issues for custom :oneof spec in generated code
+- 🔄 Working on enabling full roundtrip validation test
+
+### Next Steps
+1. Fix registry propagation to make :oneof work in generated code
+2. Complete the full roundtrip validation test
+3. Remove non-guardrails templates
 
 ## Priority Action Plan
 
