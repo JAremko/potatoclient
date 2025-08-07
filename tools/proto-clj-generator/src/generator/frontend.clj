@@ -514,7 +514,10 @@
                             {:messages messages 
                              :enums enums
                              :current-package current-package
-                             :require-specs require-specs})]
+                             :require-specs require-specs
+                             ;; Pass package mappings if available from enriched data
+                             :package-mappings (when-let [graph (:dependency-graph type-lookup)]
+                                                 (:file->package graph))})]
                        (str (when (seq enum-specs)
                              (str enum-specs "\n\n"))
                             (when (seq message-specs)

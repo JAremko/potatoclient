@@ -4,6 +4,7 @@
             [generator.frontend :as frontend]
             [generator.frontend-namespaced :as frontend-ns]
             [generator.dependency-graph :as dep-graph]
+            [generator.deps :as deps]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [taoensso.timbre :as log]
@@ -39,17 +40,24 @@
     
     ;; Step 1: Parse descriptors to EDN using Backend
     (log/info "Backend: Parsing descriptors to EDN...")
-    (let [backend-output (backend/parse-all-descriptors input-dir)]
+    (let [backend-output (backend/parse-all-descriptors input-dir)
+          ;; Enrich the descriptor sets with type resolution
+          enriched-command (deps/enrich-descriptor-set (:command backend-output))
+          enriched-state (deps/enrich-descriptor-set (:state backend-output))
+          ;; Replace the original descriptor sets with enriched versions
+          enriched-backend-output (assoc backend-output
+                                         :command enriched-command
+                                         :state enriched-state)]
       
       ;; Step 2: Debug output
       (when debug?
         (log/info "Writing EDN representation for debugging...")
-        (write-edn-debug (:command backend-output) output-dir "command-edn.edn")
-        (write-edn-debug (:state backend-output) output-dir "state-edn.edn")
-        (write-edn-debug (:type-lookup backend-output) output-dir "type-lookup.edn")
+        (write-edn-debug (:command enriched-backend-output) output-dir "command-edn.edn")
+        (write-edn-debug (:state enriched-backend-output) output-dir "state-edn.edn")
+        (write-edn-debug (:type-lookup enriched-backend-output) output-dir "type-lookup.edn")
         ;; Also write dependency graph if using separated mode
         (when (= namespace-mode :separated)
-          (let [enriched (dep-graph/analyze-dependencies backend-output namespace-prefix)]
+          (let [enriched (dep-graph/analyze-dependencies enriched-backend-output namespace-prefix)]
             (write-edn-debug (:dependency-graph enriched) output-dir "dependency-graph.edn"))))
       
       ;; Step 3: Generate Clojure code using Frontend
@@ -58,9 +66,9 @@
       
       (if (= namespace-mode :separated)
         ;; Use namespaced frontend for separated mode
-        (let [;; Analyze dependencies and enrich backend output
-              enriched-backend-output (dep-graph/analyze-dependencies backend-output namespace-prefix)
-              generated (frontend-ns/generate-from-backend enriched-backend-output namespace-prefix guardrails?)]
+        (let [;; Analyze dependencies and add clj-requires
+              final-backend-output (dep-graph/analyze-dependencies enriched-backend-output namespace-prefix)
+              generated (frontend-ns/generate-from-backend final-backend-output namespace-prefix guardrails?)]
           (log/info "Formatting and writing generated code...")
           (let [format-opts {:indents cljfmt/default-indents
                            :alias-map {}}
@@ -82,11 +90,11 @@
             
             {:success true
              :files @written-files
-             :backend-output backend-output
+             :backend-output enriched-backend-output
              :mode namespace-mode}))
         
         ;; Original single-file mode
-        (let [generated (frontend/generate-from-backend backend-output namespace-prefix guardrails?)]
+        (let [generated (frontend/generate-from-backend enriched-backend-output namespace-prefix guardrails?)]
           ;; Step 4: Format generated code
           (log/info "Formatting generated code...")
           (let [format-opts {:indents cljfmt/default-indents

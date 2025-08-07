@@ -96,7 +96,7 @@
 
 (defn generate-namespace-file
   "Generate a single namespace file for a package."
-  [package-data ns-prefix type-lookup dependencies ns-key guardrails?]
+  [package-data ns-prefix type-lookup dependencies ns-key guardrails? dependency-graph]
   (let [{:keys [messages enums package]} package-data
         ns-name (str ns-prefix "." (package->namespace package))
         imports (collect-all-imports messages enums type-lookup package ns-prefix)
@@ -142,7 +142,7 @@
         (reduce-kv
          (fn [acc ns-key package-data]
            (let [file-path (package->file-path (:package package-data))
-                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies ns-key guardrails?)]
+                 content (generate-namespace-file package-data ns-prefix type-lookup dependencies ns-key guardrails? dependency-graph)]
              (assoc acc file-path content)))
          {}
          grouped)]
