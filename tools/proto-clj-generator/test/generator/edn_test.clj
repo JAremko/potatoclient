@@ -153,21 +153,6 @@
       (is (= "cmd.JonSharedCmd$Root" (:java-class (get lookup :root))))
       (is (= "cmd.System$Ping" (:java-class (get lookup :ping)))))))
 
-;; TODO: Implement resolve-builder-name function in frontend
-#_(deftest builder-name-resolution-test
-  (testing "Builder name resolution from type references"
-    (let [type-lookup {:ping {:name :ping}
-                      :calibrate-start-long {:name :calibrate-start-long}}]
-      
-      (is (= "build-ping" 
-             (frontend/resolve-builder-name ".cmd.System.Ping" type-lookup)))
-      
-      (is (= "build-calibrate-start-long"
-             (frontend/resolve-builder-name ".cmd.Compass.CalibrateStartLong" type-lookup)))
-      
-      ;; Test fallback when not in lookup
-      (is (= "build-unknown-message"
-             (frontend/resolve-builder-name ".cmd.UnknownMessage" type-lookup))))))
 
 (deftest code-generation-test
   (testing "Code generation from EDN"
