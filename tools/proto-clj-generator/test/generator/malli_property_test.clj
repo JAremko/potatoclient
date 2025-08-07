@@ -56,23 +56,23 @@
   (testing "Generated specs include proper constraints"
     ;; Test RGB spec generation
     (let [rgb-field {:name "red"
-                     :type :type-uint32
+                     :type {:scalar :uint32}
                      :constraints {:field-constraints {:gte 0 :lte 255}}}
-          spec (spec-gen/field->spec rgb-field {})]
+          spec (spec-gen/process-field-schema rgb-field {})]
       (is (= [:and :int [:>= 0] [:<= 255]] spec)))
     
     ;; Test protocol version
     (let [version-field {:name "protocol_version"
-                         :type :type-uint32
+                         :type {:scalar :uint32}
                          :constraints {:field-constraints {:gt 0}}}
-          spec (spec-gen/field->spec version-field {})]
+          spec (spec-gen/process-field-schema version-field {})]
       (is (= [:and :int [:> 0]] spec)))
     
     ;; Test latitude
     (let [lat-field {:name "latitude"
-                     :type :type-double
+                     :type {:scalar :double}
                      :constraints {:field-constraints {:gte -90.0 :lte 90.0}}}
-          spec (spec-gen/field->spec lat-field {})]
+          spec (spec-gen/process-field-schema lat-field {})]
       (is (= [:and :double [:>= -90.0] [:<= 90.0]] spec)))))
 
 ;; =============================================================================
@@ -125,4 +125,4 @@
           _ (mg/sample complex-spec {:size 1000})
           elapsed (/ (- (System/nanoTime) start) 1e9)]
       (is (< elapsed 5.0) ; Should generate 1000 samples in under 5 seconds
-          (str "Generation took " elapsed " seconds"))))))
+          (str "Generation took " elapsed " seconds")))))

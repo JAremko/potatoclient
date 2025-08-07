@@ -1,8 +1,10 @@
-(ns test.proto.separated.cmd.RotaryPlatform.cmd-rotary
+(ns test.proto.separated.cmd.rotaryplatform
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.proto.separated.ser.data :as types])
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
+            [test.proto.separated.ser :as types])
   (:import
     cmd.RotaryPlatform.JonSharedCmdRotary$Root
     cmd.RotaryPlatform.JonSharedCmdRotary$Axis
@@ -59,112 +61,118 @@
   [:map
    [:cmd
     [:oneof
-     {:rotate-to-gps [:map [:rotate-to-gps :cmd.rotaryplatform/rotate-to-gps]],
-      :scan-pause [:map [:scan-pause :cmd.rotaryplatform/scan-pause]],
-      :rotate-to-ndc [:map [:rotate-to-ndc :cmd.rotaryplatform/rotate-to-ndc]],
-      :scan-start [:map [:scan-start :cmd.rotaryplatform/scan-start]],
-      :set-platform-azimuth
-        [:map [:set-platform-azimuth :cmd.rotaryplatform/set-platform-azimuth]],
-      :scan-stop [:map [:scan-stop :cmd.rotaryplatform/scan-stop]],
-      :start [:map [:start :cmd.rotaryplatform/start]],
-      :stop [:map [:stop :cmd.rotaryplatform/stop]],
+     {:rotate-to-gps [:map [:rotate-to-gps :cmd.rotary-platform/rotate-to-gps]],
+      :scan-pause [:map [:scan-pause :cmd.rotary-platform/scan-pause]],
+      :rotate-to-ndc [:map [:rotate-to-ndc :cmd.rotary-platform/rotate-to-ndc]],
+      :scan-start [:map [:scan-start :cmd.rotary-platform/scan-start]],
+      :set-platform-azimuth [:map
+                             [:set-platform-azimuth
+                              :cmd.rotary-platform/set-platform-azimuth]],
+      :scan-stop [:map [:scan-stop :cmd.rotary-platform/scan-stop]],
+      :start [:map [:start :cmd.rotary-platform/start]],
+      :stop [:map [:stop :cmd.rotary-platform/stop]],
       :set-origin-gps [:map
-                       [:set-origin-gps :cmd.rotaryplatform/set-origin-gps]],
-      :scan-next [:map [:scan-next :cmd.rotaryplatform/scan-next]],
+                       [:set-origin-gps :cmd.rotary-platform/set-origin-gps]],
+      :scan-next [:map [:scan-next :cmd.rotary-platform/scan-next]],
       :set-platform-bank
-        [:map [:set-platform-bank :cmd.rotaryplatform/set-platform-bank]],
-      :get-meteo [:map [:get-meteo :cmd.rotaryplatform/get-meteo]],
+        [:map [:set-platform-bank :cmd.rotary-platform/set-platform-bank]],
+      :get-meteo [:map [:get-meteo :cmd.rotary-platform/get-meteo]],
       :set-use-rotary-as-compass
         [:map
          [:set-use-rotary-as-compass
-          :cmd.rotaryplatform/set-use-rotary-as-compass]],
-      :scan-prev [:map [:scan-prev :cmd.rotaryplatform/scan-prev]],
-      :scan-add-node [:map [:scan-add-node :cmd.rotaryplatform/scan-add-node]],
+          :cmd.rotary-platform/set-use-rotary-as-compass]],
+      :error/message "This oneof field is required",
+      :scan-prev [:map [:scan-prev :cmd.rotary-platform/scan-prev]],
+      :scan-add-node [:map [:scan-add-node :cmd.rotary-platform/scan-add-node]],
       :set-platform-elevation [:map
                                [:set-platform-elevation
-                                :cmd.rotaryplatform/set-platform-elevation]],
+                                :cmd.rotary-platform/set-platform-elevation]],
       :scan-select-node
-        [:map [:scan-select-node :cmd.rotaryplatform/scan-select-node]],
-      :halt [:map [:halt :cmd.rotaryplatform/halt]],
+        [:map [:scan-select-node :cmd.rotary-platform/scan-select-node]],
+      :halt [:map [:halt :cmd.rotary-platform/halt]],
       :scan-delete-node
-        [:map [:scan-delete-node :cmd.rotaryplatform/scan-delete-node]],
-      :axis [:map [:axis :cmd.rotaryplatform/axis]],
-      :scan-unpause [:map [:scan-unpause :cmd.rotaryplatform/scan-unpause]],
-      :set-mode [:map [:set-mode :cmd.rotaryplatform/set-mode]],
+        [:map [:scan-delete-node :cmd.rotary-platform/scan-delete-node]],
+      :axis [:map [:axis :cmd.rotary-platform/axis]],
+      :scan-unpause [:map [:scan-unpause :cmd.rotary-platform/scan-unpause]],
+      :set-mode [:map [:set-mode :cmd.rotary-platform/set-mode]],
       :scan-refresh-node-list [:map
                                [:scan-refresh-node-list
-                                :cmd.rotaryplatform/scan-refresh-node-list]],
+                                :cmd.rotary-platform/scan-refresh-node-list]],
       :scan-update-node
-        [:map [:scan-update-node :cmd.rotaryplatform/scan-update-node]]}]]])
+        [:map [:scan-update-node :cmd.rotary-platform/scan-update-node]]}]]])
 
 (def axis-spec
   "Malli spec for axis message"
-  [:map [:azimuth [:maybe :cmd.rotaryplatform/azimuth]]
-   [:elevation [:maybe :cmd.rotaryplatform/elevation]]])
+  [:map [:azimuth {:optional true} :cmd.rotary-platform/azimuth]
+   [:elevation {:optional true} :cmd.rotary-platform/elevation]])
 
 (def set-mode-spec
   "Malli spec for set-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-rotary-mode]]])
+  [:map [:mode {:optional true} :ser/jon-gui-data-rotary-mode]])
 
 (def set-azimuth-value-spec
   "Malli spec for set-azimuth-value message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-to-spec
   "Malli spec for rotate-azimuth-to message"
-  [:map [:target-value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:target-value {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-spec
   "Malli spec for rotate-azimuth message"
-  [:map [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-spec
   "Malli spec for rotate-elevation message"
-  [:map [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def set-elevation-value-spec
   "Malli spec for set-elevation-value message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value {:optional true} [:and :float [:>= -90] [:<= 90]]]])
 
 (def rotate-elevation-to-spec
   "Malli spec for rotate-elevation-to message"
-  [:map [:target-value [:maybe :float]] [:speed [:maybe :float]]])
+  [:map [:target-value {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def rotate-elevation-relative-spec
   "Malli spec for rotate-elevation-relative message"
-  [:map [:value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value {:optional true} :float]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-relative-set-spec
   "Malli spec for rotate-elevation-relative-set message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value {:optional true} :float]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-spec
   "Malli spec for rotate-azimuth-relative message"
-  [:map [:value [:maybe :float]] [:speed [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value {:optional true} :float]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-set-spec
   "Malli spec for rotate-azimuth-relative-set message"
-  [:map [:value [:maybe :float]]
-   [:direction [:maybe :ser/jon-gui-data-rotary-direction]]])
+  [:map [:value {:optional true} :float]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def set-platform-azimuth-spec
   "Malli spec for set-platform-azimuth message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value {:optional true} [:and :float [:> -360] [:< 360]]]])
 
 (def set-platform-elevation-spec
   "Malli spec for set-platform-elevation message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value {:optional true} [:and :float [:>= -90] [:<= 90]]]])
 
 (def set-platform-bank-spec
   "Malli spec for set-platform-bank message"
-  [:map [:value [:maybe :float]]])
+  [:map [:value {:optional true} [:and :float [:>= -180] [:< 180]]]])
 
 (def get-meteo-spec "Malli spec for get-meteo message" [:map])
 
@@ -173,13 +181,14 @@
   [:map
    [:cmd
     [:oneof
-     {:set-value [:map [:set-value :cmd.rotaryplatform/set-azimuth-value]],
-      :rotate-to [:map [:rotate-to :cmd.rotaryplatform/rotate-azimuth-to]],
-      :rotate [:map [:rotate :cmd.rotaryplatform/rotate-azimuth]],
-      :relative [:map [:relative :cmd.rotaryplatform/rotate-azimuth-relative]],
+     {:set-value [:map [:set-value :cmd.rotary-platform/set-azimuth-value]],
+      :rotate-to [:map [:rotate-to :cmd.rotary-platform/rotate-azimuth-to]],
+      :rotate [:map [:rotate :cmd.rotary-platform/rotate-azimuth]],
+      :relative [:map [:relative :cmd.rotary-platform/rotate-azimuth-relative]],
       :relative-set
-        [:map [:relative-set :cmd.rotaryplatform/rotate-azimuth-relative-set]],
-      :halt [:map [:halt :cmd.rotaryplatform/halt-azimuth]]}]]])
+        [:map [:relative-set :cmd.rotary-platform/rotate-azimuth-relative-set]],
+      :halt [:map [:halt :cmd.rotary-platform/halt-azimuth]],
+      :error/message "This oneof field is required"}]]])
 
 (def start-spec "Malli spec for start message" [:map])
 
@@ -209,59 +218,117 @@
 
 (def scan-select-node-spec
   "Malli spec for scan-select-node message"
-  [:map [:index [:maybe :int]]])
+  [:map [:index {:optional true} :int]])
 
 (def scan-delete-node-spec
   "Malli spec for scan-delete-node message"
-  [:map [:index [:maybe :int]]])
+  [:map [:index {:optional true} :int]])
 
 (def scan-update-node-spec
   "Malli spec for scan-update-node message"
-  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
-   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
-   [:elevation [:maybe :double]] [:linger [:maybe :double]]
-   [:speed [:maybe :double]]])
+  [:map [:index {:optional true} :int]
+   [:day-zoom-table-value {:optional true} :int]
+   [:heat-zoom-table-value {:optional true} :int]
+   [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:linger {:optional true} [:and :double [:>= 0]]]
+   [:speed {:optional true} [:and :double [:> 0] [:<= 1]]]])
 
 (def scan-add-node-spec
   "Malli spec for scan-add-node message"
-  [:map [:index [:maybe :int]] [:day-zoom-table-value [:maybe :int]]
-   [:heat-zoom-table-value [:maybe :int]] [:azimuth [:maybe :double]]
-   [:elevation [:maybe :double]] [:linger [:maybe :double]]
-   [:speed [:maybe :double]]])
+  [:map [:index {:optional true} :int]
+   [:day-zoom-table-value {:optional true} :int]
+   [:heat-zoom-table-value {:optional true} :int]
+   [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:linger {:optional true} [:and :double [:>= 0]]]
+   [:speed {:optional true} [:and :double [:> 0] [:<= 1]]]])
 
 (def elevation-spec
   "Malli spec for elevation message"
   [:map
    [:cmd
     [:oneof
-     {:set-value [:map [:set-value :cmd.rotaryplatform/set-elevation-value]],
-      :rotate-to [:map [:rotate-to :cmd.rotaryplatform/rotate-elevation-to]],
-      :rotate [:map [:rotate :cmd.rotaryplatform/rotate-elevation]],
+     {:set-value [:map [:set-value :cmd.rotary-platform/set-elevation-value]],
+      :rotate-to [:map [:rotate-to :cmd.rotary-platform/rotate-elevation-to]],
+      :rotate [:map [:rotate :cmd.rotary-platform/rotate-elevation]],
       :relative [:map
-                 [:relative :cmd.rotaryplatform/rotate-elevation-relative]],
+                 [:relative :cmd.rotary-platform/rotate-elevation-relative]],
       :relative-set [:map
                      [:relative-set
-                      :cmd.rotaryplatform/rotate-elevation-relative-set]],
-      :halt [:map [:halt :cmd.rotaryplatform/halt-elevation]]}]]])
+                      :cmd.rotary-platform/rotate-elevation-relative-set]],
+      :halt [:map [:halt :cmd.rotary-platform/halt-elevation]],
+      :error/message "This oneof field is required"}]]])
 
 (def set-use-rotary-as-compass-spec
   "Malli spec for set-use-rotary-as-compass message"
-  [:map [:flag [:maybe :boolean]]])
+  [:map [:flag {:optional true} :boolean]])
 
 (def rotate-to-gps-spec
   "Malli spec for rotate-to-gps message"
-  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
-   [:altitude [:maybe :float]]])
+  [:map [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} :float]])
 
 (def set-origin-gps-spec
   "Malli spec for set-origin-gps message"
-  [:map [:latitude [:maybe :float]] [:longitude [:maybe :float]]
-   [:altitude [:maybe :float]]])
+  [:map [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} :float]])
 
 (def rotate-to-ndc-spec
   "Malli spec for rotate-to-ndc message"
-  [:map [:channel [:maybe :ser/jon-gui-data-video-channel]] [:x [:maybe :float]]
-   [:y [:maybe :float]]])
+  [:map [:channel {:optional true} :ser/jon-gui-data-video-channel]
+   [:x {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:y {:optional true} [:and :float [:>= -1] [:<= 1]]]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.RotaryPlatform/root root-spec,
+   :cmd.RotaryPlatform/axis axis-spec,
+   :cmd.RotaryPlatform/set-mode set-mode-spec,
+   :cmd.RotaryPlatform/set-azimuth-value set-azimuth-value-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-to rotate-azimuth-to-spec,
+   :cmd.RotaryPlatform/rotate-azimuth rotate-azimuth-spec,
+   :cmd.RotaryPlatform/rotate-elevation rotate-elevation-spec,
+   :cmd.RotaryPlatform/set-elevation-value set-elevation-value-spec,
+   :cmd.RotaryPlatform/rotate-elevation-to rotate-elevation-to-spec,
+   :cmd.RotaryPlatform/rotate-elevation-relative rotate-elevation-relative-spec,
+   :cmd.RotaryPlatform/rotate-elevation-relative-set
+     rotate-elevation-relative-set-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-relative rotate-azimuth-relative-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-relative-set
+     rotate-azimuth-relative-set-spec,
+   :cmd.RotaryPlatform/set-platform-azimuth set-platform-azimuth-spec,
+   :cmd.RotaryPlatform/set-platform-elevation set-platform-elevation-spec,
+   :cmd.RotaryPlatform/set-platform-bank set-platform-bank-spec,
+   :cmd.RotaryPlatform/get-meteo get-meteo-spec,
+   :cmd.RotaryPlatform/azimuth azimuth-spec,
+   :cmd.RotaryPlatform/start start-spec,
+   :cmd.RotaryPlatform/stop stop-spec,
+   :cmd.RotaryPlatform/halt halt-spec,
+   :cmd.RotaryPlatform/scan-start scan-start-spec,
+   :cmd.RotaryPlatform/scan-stop scan-stop-spec,
+   :cmd.RotaryPlatform/scan-pause scan-pause-spec,
+   :cmd.RotaryPlatform/scan-unpause scan-unpause-spec,
+   :cmd.RotaryPlatform/halt-azimuth halt-azimuth-spec,
+   :cmd.RotaryPlatform/halt-elevation halt-elevation-spec,
+   :cmd.RotaryPlatform/scan-prev scan-prev-spec,
+   :cmd.RotaryPlatform/scan-next scan-next-spec,
+   :cmd.RotaryPlatform/scan-refresh-node-list scan-refresh-node-list-spec,
+   :cmd.RotaryPlatform/scan-select-node scan-select-node-spec,
+   :cmd.RotaryPlatform/scan-delete-node scan-delete-node-spec,
+   :cmd.RotaryPlatform/scan-update-node scan-update-node-spec,
+   :cmd.RotaryPlatform/scan-add-node scan-add-node-spec,
+   :cmd.RotaryPlatform/elevation elevation-spec,
+   :cmd.RotaryPlatform/set-use-rotary-as-compass set-use-rotary-as-compass-spec,
+   :cmd.RotaryPlatform/rotate-to-gps rotate-to-gps-spec,
+   :cmd.RotaryPlatform/set-origin-gps set-origin-gps-spec,
+   :cmd.RotaryPlatform/rotate-to-ndc rotate-to-ndc-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -356,7 +423,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field
@@ -373,14 +440,14 @@
                                      :scan-delete-node :scan-update-node
                                      :scan-add-node}
                                    k))
-                          m))]
+                          (:cmd m)))]
            (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-axis
        "Build a Axis protobuf message from a map."
        [m]
-       [axis-spec => #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Axis %)]
+       [axis-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Axis/newBuilder)]
          ;; Set regular fields
          (when (contains? m :azimuth)
@@ -392,86 +459,82 @@
 (>defn build-set-mode
        "Build a SetMode protobuf message from a map."
        [m]
-       [set-mode-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetMode %)]
+       [set-mode-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetMode/newBuilder)]
          ;; Set regular fields
          (when (contains? m :mode)
            (.setMode builder
-                     (get types/jon-gui-data-rotary-mode-values (get m :mode))))
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-rotary-mode-values v))))
          (.build builder)))
 
-(>defn build-set-azimuth-value
-       "Build a SetAzimuthValue protobuf message from a map."
-       [m]
-       [set-azimuth-value-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue %)]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :value) (.setValue builder (get m :value)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-set-azimuth-value
+  "Build a SetAzimuthValue protobuf message from a map."
+  [m]
+  [set-azimuth-value-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :value) (.setValue builder (get m :value)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
-(>defn build-rotate-azimuth-to
-       "Build a RotateAzimuthTo protobuf message from a map."
-       [m]
-       [rotate-azimuth-to-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo %)]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :target-value)
-           (.setTargetValue builder (get m :target-value)))
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-azimuth-to
+  "Build a RotateAzimuthTo protobuf message from a map."
+  [m]
+  [rotate-azimuth-to-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :target-value)
+      (.setTargetValue builder (get m :target-value)))
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn build-rotate-azimuth
        "Build a RotateAzimuth protobuf message from a map."
        [m]
-       [rotate-azimuth-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth %)]
+       [rotate-azimuth-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth/newBuilder)]
          ;; Set regular fields
          (when (contains? m :speed) (.setSpeed builder (get m :speed)))
          (when (contains? m :direction)
            (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
+                          (when-let [v (get m :direction)]
+                            (get types/jon-gui-data-rotary-direction-values
+                                 v))))
          (.build builder)))
 
-(>defn build-rotate-elevation
-       "Build a RotateElevation protobuf message from a map."
-       [m]
-       [rotate-elevation-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation %)]
-       (let
-         [builder
-            (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
-         ;; Set regular fields
-         (when (contains? m :speed) (.setSpeed builder (get m :speed)))
-         (when (contains? m :direction)
-           (.setDirection builder
-                          (get types/jon-gui-data-rotary-direction-values
-                               (get m :direction))))
-         (.build builder)))
+(>defn
+  build-rotate-elevation
+  "Build a RotateElevation protobuf message from a map."
+  [m]
+  [rotate-elevation-spec => any?]
+  (let [builder
+          (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation/newBuilder)]
+    ;; Set regular fields
+    (when (contains? m :speed) (.setSpeed builder (get m :speed)))
+    (when (contains? m :direction)
+      (.setDirection builder
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
+    (.build builder)))
 
 (>defn
   build-set-elevation-value
   "Build a SetElevationValue protobuf message from a map."
   [m]
-  [set-elevation-value-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue %)]
+  [set-elevation-value-spec => any?]
   (let [builder
           (cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue/newBuilder)]
     ;; Set regular fields
@@ -482,8 +545,7 @@
   build-rotate-elevation-to
   "Build a RotateElevationTo protobuf message from a map."
   [m]
-  [rotate-elevation-to-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo %)]
+  [rotate-elevation-to-spec => any?]
   (let [builder
           (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo/newBuilder)]
     ;; Set regular fields
@@ -496,8 +558,7 @@
   build-rotate-elevation-relative
   "Build a RotateElevationRelative protobuf message from a map."
   [m]
-  [rotate-elevation-relative-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative %)]
+  [rotate-elevation-relative-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative/newBuilder)]
@@ -506,17 +567,15 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
   build-rotate-elevation-relative-set
   "Build a RotateElevationRelativeSet protobuf message from a map."
   [m]
-  [rotate-elevation-relative-set-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet
-               %)]
+  [rotate-elevation-relative-set-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet/newBuilder)]
@@ -524,16 +583,15 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
   build-rotate-azimuth-relative
   "Build a RotateAzimuthRelative protobuf message from a map."
   [m]
-  [rotate-azimuth-relative-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative %)]
+  [rotate-azimuth-relative-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative/newBuilder)]
@@ -542,17 +600,15 @@
     (when (contains? m :speed) (.setSpeed builder (get m :speed)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
   build-rotate-azimuth-relative-set
   "Build a RotateAzimuthRelativeSet protobuf message from a map."
   [m]
-  [rotate-azimuth-relative-set-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet
-               %)]
+  [rotate-azimuth-relative-set-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet/newBuilder)]
@@ -560,16 +616,15 @@
     (when (contains? m :value) (.setValue builder (get m :value)))
     (when (contains? m :direction)
       (.setDirection builder
-                     (get types/jon-gui-data-rotary-direction-values
-                          (get m :direction))))
+                     (when-let [v (get m :direction)]
+                       (get types/jon-gui-data-rotary-direction-values v))))
     (.build builder)))
 
 (>defn
   build-set-platform-azimuth
   "Build a SetPlatformAzimuth protobuf message from a map."
   [m]
-  [set-platform-azimuth-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth %)]
+  [set-platform-azimuth-spec => any?]
   (let [builder
           (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth/newBuilder)]
     ;; Set regular fields
@@ -580,8 +635,7 @@
   build-set-platform-elevation
   "Build a SetPlatformElevation protobuf message from a map."
   [m]
-  [set-platform-elevation-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation %)]
+  [set-platform-elevation-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation/newBuilder)]
@@ -592,8 +646,7 @@
 (>defn build-set-platform-bank
        "Build a SetPlatformBank protobuf message from a map."
        [m]
-       [set-platform-bank-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank %)]
+       [set-platform-bank-spec => any?]
        (let
          [builder
             (cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank/newBuilder)]
@@ -604,8 +657,7 @@
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [get-meteo-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo %)]
+       [get-meteo-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$GetMeteo/newBuilder)]
          (.build builder)))
@@ -613,45 +665,42 @@
 (>defn build-azimuth
        "Build a Azimuth protobuf message from a map."
        [m]
-       [azimuth-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth %)]
+       [azimuth-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]]
                                                (#{:set-value :rotate-to :rotate
                                                   :relative :relative-set :halt}
                                                 k))
-                                       m))]
+                                       (:cmd m)))]
            (build-azimuth-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [start-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Start %)]
+       [start-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [stop-spec => #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Stop %)]
+       [stop-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-halt
        "Build a Halt protobuf message from a map."
        [m]
-       [halt-spec => #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Halt %)]
+       [halt-spec => any?]
        (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$Halt/newBuilder)]
          (.build builder)))
 
 (>defn build-scan-start
        "Build a ScanStart protobuf message from a map."
        [m]
-       [scan-start-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart %)]
+       [scan-start-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanStart/newBuilder)]
          (.build builder)))
@@ -659,8 +708,7 @@
 (>defn build-scan-stop
        "Build a ScanStop protobuf message from a map."
        [m]
-       [scan-stop-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop %)]
+       [scan-stop-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanStop/newBuilder)]
          (.build builder)))
@@ -668,8 +716,7 @@
 (>defn build-scan-pause
        "Build a ScanPause protobuf message from a map."
        [m]
-       [scan-pause-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause %)]
+       [scan-pause-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanPause/newBuilder)]
          (.build builder)))
@@ -677,8 +724,7 @@
 (>defn build-scan-unpause
        "Build a ScanUnpause protobuf message from a map."
        [m]
-       [scan-unpause-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause %)]
+       [scan-unpause-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanUnpause/newBuilder)]
          (.build builder)))
@@ -686,8 +732,7 @@
 (>defn build-halt-azimuth
        "Build a HaltAzimuth protobuf message from a map."
        [m]
-       [halt-azimuth-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth %)]
+       [halt-azimuth-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$HaltAzimuth/newBuilder)]
          (.build builder)))
@@ -695,8 +740,7 @@
 (>defn build-halt-elevation
        "Build a HaltElevation protobuf message from a map."
        [m]
-       [halt-elevation-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation %)]
+       [halt-elevation-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$HaltElevation/newBuilder)]
          (.build builder)))
@@ -704,8 +748,7 @@
 (>defn build-scan-prev
        "Build a ScanPrev protobuf message from a map."
        [m]
-       [scan-prev-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev %)]
+       [scan-prev-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanPrev/newBuilder)]
          (.build builder)))
@@ -713,8 +756,7 @@
 (>defn build-scan-next
        "Build a ScanNext protobuf message from a map."
        [m]
-       [scan-next-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext %)]
+       [scan-next-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$ScanNext/newBuilder)]
          (.build builder)))
@@ -723,8 +765,7 @@
   build-scan-refresh-node-list
   "Build a ScanRefreshNodeList protobuf message from a map."
   [m]
-  [scan-refresh-node-list-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList %)]
+  [scan-refresh-node-list-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$ScanRefreshNodeList/newBuilder)]
@@ -733,8 +774,7 @@
 (>defn build-scan-select-node
        "Build a ScanSelectNode protobuf message from a map."
        [m]
-       [scan-select-node-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode %)]
+       [scan-select-node-spec => any?]
        (let
          [builder
             (cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode/newBuilder)]
@@ -745,8 +785,7 @@
 (>defn build-scan-delete-node
        "Build a ScanDeleteNode protobuf message from a map."
        [m]
-       [scan-delete-node-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode %)]
+       [scan-delete-node-spec => any?]
        (let
          [builder
             (cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode/newBuilder)]
@@ -758,8 +797,7 @@
   build-scan-update-node
   "Build a ScanUpdateNode protobuf message from a map."
   [m]
-  [scan-update-node-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode %)]
+  [scan-update-node-spec => any?]
   (let [builder
           (cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode/newBuilder)]
     ;; Set regular fields
@@ -778,8 +816,7 @@
   build-scan-add-node
   "Build a ScanAddNode protobuf message from a map."
   [m]
-  [scan-add-node-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode %)]
+  [scan-add-node-spec => any?]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode/newBuilder)]
     ;; Set regular fields
     (when (contains? m :index) (.setIndex builder (get m :index)))
@@ -796,8 +833,7 @@
 (>defn build-elevation
        "Build a Elevation protobuf message from a map."
        [m]
-       [elevation-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation %)]
+       [elevation-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$Elevation/newBuilder)]
          ;; Handle oneof: cmd
@@ -805,7 +841,7 @@
                                                (#{:set-value :rotate-to :rotate
                                                   :relative :relative-set :halt}
                                                 k))
-                                       m))]
+                                       (:cmd m)))]
            (build-elevation-payload builder cmd-field))
          (.build builder)))
 
@@ -813,8 +849,7 @@
   build-set-use-rotary-as-compass
   "Build a setUseRotaryAsCompass protobuf message from a map."
   [m]
-  [set-use-rotary-as-compass-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass %)]
+  [set-use-rotary-as-compass-spec => any?]
   (let
     [builder
        (cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass/newBuilder)]
@@ -826,8 +861,7 @@
   build-rotate-to-gps
   "Build a RotateToGPS protobuf message from a map."
   [m]
-  [rotate-to-gps-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS %)]
+  [rotate-to-gps-spec => any?]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude) (.setLatitude builder (get m :latitude)))
@@ -839,8 +873,7 @@
   build-set-origin-gps
   "Build a SetOriginGPS protobuf message from a map."
   [m]
-  [set-origin-gps-spec =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS %)]
+  [set-origin-gps-spec => any?]
   (let [builder (cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS/newBuilder)]
     ;; Set regular fields
     (when (contains? m :latitude) (.setLatitude builder (get m :latitude)))
@@ -851,15 +884,14 @@
 (>defn build-rotate-to-ndc
        "Build a RotateToNDC protobuf message from a map."
        [m]
-       [rotate-to-ndc-spec =>
-        #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC %)]
+       [rotate-to-ndc-spec => any?]
        (let [builder
                (cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC/newBuilder)]
          ;; Set regular fields
          (when (contains? m :channel)
            (.setChannel builder
-                        (get types/jon-gui-data-video-channel-values
-                             (get m :channel))))
+                        (when-let [v (get m :channel)]
+                          (get types/jon-gui-data-video-channel-values v))))
          (when (contains? m :x) (.setX builder (get m :x)))
          (when (contains? m :y) (.setY builder (get m :y)))
          (.build builder)))
@@ -867,15 +899,15 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-axis
        "Parse a Axis protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Axis proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Axis %) => axis-spec]
+       [any? => axis-spec]
        (cond-> {}
          ;; Regular fields
          (.hasAzimuth proto) (assoc :azimuth
@@ -886,8 +918,7 @@
 (>defn parse-set-mode
        "Parse a SetMode protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetMode proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetMode %) =>
-        set-mode-spec]
+       [any? => set-mode-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :mode
@@ -897,8 +928,7 @@
 (>defn parse-set-azimuth-value
        "Parse a SetAzimuthValue protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetAzimuthValue %) =>
-        set-azimuth-value-spec]
+       [any? => set-azimuth-value-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))
@@ -909,8 +939,7 @@
 (>defn parse-rotate-azimuth-to
        "Parse a RotateAzimuthTo protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo %) =>
-        rotate-azimuth-to-spec]
+       [any? => rotate-azimuth-to-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :target-value (.getTargetValue proto))
@@ -922,8 +951,7 @@
 (>defn parse-rotate-azimuth
        "Parse a RotateAzimuth protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth %) =>
-        rotate-azimuth-spec]
+       [any? => rotate-azimuth-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :speed (.getSpeed proto))
@@ -934,8 +962,7 @@
 (>defn parse-rotate-elevation
        "Parse a RotateElevation protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevation %) =>
-        rotate-elevation-spec]
+       [any? => rotate-elevation-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :speed (.getSpeed proto))
@@ -946,8 +973,7 @@
 (>defn parse-set-elevation-value
        "Parse a SetElevationValue protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetElevationValue %)
-        => set-elevation-value-spec]
+       [any? => set-elevation-value-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -955,8 +981,7 @@
 (>defn parse-rotate-elevation-to
        "Parse a RotateElevationTo protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo %)
-        => rotate-elevation-to-spec]
+       [any? => rotate-elevation-to-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :target-value (.getTargetValue proto))
@@ -965,9 +990,7 @@
 (>defn parse-rotate-elevation-relative
        "Parse a RotateElevationRelative protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative proto]
-       [#(instance?
-           cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelative
-           %) => rotate-elevation-relative-spec]
+       [any? => rotate-elevation-relative-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))
@@ -979,9 +1002,7 @@
 (>defn parse-rotate-elevation-relative-set
        "Parse a RotateElevationRelativeSet protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet proto]
-       [#(instance?
-           cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationRelativeSet
-           %) => rotate-elevation-relative-set-spec]
+       [any? => rotate-elevation-relative-set-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))
@@ -992,8 +1013,7 @@
 (>defn parse-rotate-azimuth-relative
        "Parse a RotateAzimuthRelative protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelative
-                    %) => rotate-azimuth-relative-spec]
+       [any? => rotate-azimuth-relative-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))
@@ -1005,9 +1025,7 @@
 (>defn parse-rotate-azimuth-relative-set
        "Parse a RotateAzimuthRelativeSet protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet proto]
-       [#(instance?
-           cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthRelativeSet
-           %) => rotate-azimuth-relative-set-spec]
+       [any? => rotate-azimuth-relative-set-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))
@@ -1018,8 +1036,7 @@
 (>defn parse-set-platform-azimuth
        "Parse a SetPlatformAzimuth protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth %)
-        => set-platform-azimuth-spec]
+       [any? => set-platform-azimuth-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -1027,8 +1044,7 @@
 (>defn parse-set-platform-elevation
        "Parse a SetPlatformElevation protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation
-                    %) => set-platform-elevation-spec]
+       [any? => set-platform-elevation-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -1036,8 +1052,7 @@
 (>defn parse-set-platform-bank
        "Parse a SetPlatformBank protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformBank %) =>
-        set-platform-bank-spec]
+       [any? => set-platform-bank-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :value (.getValue proto))))
@@ -1051,11 +1066,11 @@
 (>defn parse-azimuth
        "Parse a Azimuth protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth %) =>
-        azimuth-spec]
+       [any? => azimuth-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-azimuth-payload proto))))
+         ;; Oneof: cmd
+         (parse-azimuth-payload proto) (assoc :cmd
+                                         (parse-azimuth-payload proto))))
 
 (>defn parse-start
        "Parse a Start protobuf message to a map."
@@ -1132,8 +1147,7 @@
 (>defn parse-scan-select-node
        "Parse a ScanSelectNode protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode %) =>
-        scan-select-node-spec]
+       [any? => scan-select-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))))
@@ -1141,8 +1155,7 @@
 (>defn parse-scan-delete-node
        "Parse a ScanDeleteNode protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanDeleteNode %) =>
-        scan-delete-node-spec]
+       [any? => scan-delete-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))))
@@ -1150,8 +1163,7 @@
 (>defn parse-scan-update-node
        "Parse a ScanUpdateNode protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanUpdateNode %) =>
-        scan-update-node-spec]
+       [any? => scan-update-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))
@@ -1165,8 +1177,7 @@
 (>defn parse-scan-add-node
        "Parse a ScanAddNode protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode %) =>
-        scan-add-node-spec]
+       [any? => scan-add-node-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :index (.getIndex proto))
@@ -1180,17 +1191,16 @@
 (>defn parse-elevation
        "Parse a Elevation protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation %) =>
-        elevation-spec]
+       [any? => elevation-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-elevation-payload proto))))
+         ;; Oneof: cmd
+         (parse-elevation-payload proto) (assoc :cmd
+                                           (parse-elevation-payload proto))))
 
 (>defn parse-set-use-rotary-as-compass
        "Parse a setUseRotaryAsCompass protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$setUseRotaryAsCompass
-                    %) => set-use-rotary-as-compass-spec]
+       [any? => set-use-rotary-as-compass-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :flag (.getFlag proto))))
@@ -1198,8 +1208,7 @@
 (>defn parse-rotate-to-gps
        "Parse a RotateToGPS protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateToGPS %) =>
-        rotate-to-gps-spec]
+       [any? => rotate-to-gps-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :latitude (.getLatitude proto))
@@ -1209,8 +1218,7 @@
 (>defn parse-set-origin-gps
        "Parse a SetOriginGPS protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$SetOriginGPS %) =>
-        set-origin-gps-spec]
+       [any? => set-origin-gps-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :latitude (.getLatitude proto))
@@ -1220,8 +1228,7 @@
 (>defn parse-rotate-to-ndc
        "Parse a RotateToNDC protobuf message to a map."
        [^cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC proto]
-       [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$RotateToNDC %) =>
-        rotate-to-ndc-spec]
+       [any? => rotate-to-ndc-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :channel
@@ -1234,9 +1241,7 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Root$Builder %)
-   [:tuple keyword? any?] =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Root$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :start (.setStart builder (build-start value))
     :stop (.setStop builder (build-stop value))
@@ -1276,9 +1281,7 @@
 (>defn- build-azimuth-payload
         "Build the oneof payload for Azimuth."
         [builder [field-key value]]
-        [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth$Builder %)
-         [:tuple keyword? any?] =>
-         #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth$Builder %)]
+        [any? [:tuple keyword? any?] => any?]
         (case field-key
           :set-value (.setSetValue builder (build-set-azimuth-value value))
           :rotate-to (.setRotateTo builder (build-rotate-azimuth-to value))
@@ -1294,9 +1297,7 @@
   build-elevation-payload
   "Build the oneof payload for Elevation."
   [builder [field-key value]]
-  [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation$Builder %)
-   [:tuple keyword? any?] =>
-   #(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :set-value (.setSetValue builder (build-set-elevation-value value))
     :rotate-to (.setRotateTo builder (build-rotate-elevation-to value))
@@ -1311,7 +1312,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
-  [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Root %) => (? map?)]
+  [any? => (? map?)]
   (cond
     (.hasStart proto) {:start (parse-start (.getStart proto))}
     (.hasStop proto) {:stop (parse-stop (.getStop proto))}
@@ -1355,36 +1356,36 @@
     (.hasScanAddNode proto) {:scan-add-node (parse-scan-add-node
                                               (.getScanAddNode proto))}))
 
-(>defn-
-  parse-azimuth-payload
-  "Parse the oneof payload from Azimuth."
-  [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
-  [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth %) => (? map?)]
-  (cond (.hasSetValue proto) {:set-value (parse-set-azimuth-value (.getSetValue
-                                                                    proto))}
-        (.hasRotateTo proto) {:rotate-to (parse-rotate-azimuth-to (.getRotateTo
-                                                                    proto))}
-        (.hasRotate proto) {:rotate (parse-rotate-azimuth (.getRotate proto))}
-        (.hasRelative proto) {:relative (parse-rotate-azimuth-relative
-                                          (.getRelative proto))}
-        (.hasRelativeSet proto) {:relative-set
-                                   (parse-rotate-azimuth-relative-set
-                                     (.getRelativeSet proto))}
-        (.hasHalt proto) {:halt (parse-halt-azimuth (.getHalt proto))}))
+(>defn- parse-azimuth-payload
+        "Parse the oneof payload from Azimuth."
+        [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
+        [any? => (? map?)]
+        (cond (.hasSetValue proto) {:set-value (parse-set-azimuth-value
+                                                 (.getSetValue proto))}
+              (.hasRotateTo proto) {:rotate-to (parse-rotate-azimuth-to
+                                                 (.getRotateTo proto))}
+              (.hasRotate proto) {:rotate (parse-rotate-azimuth (.getRotate
+                                                                  proto))}
+              (.hasRelative proto) {:relative (parse-rotate-azimuth-relative
+                                                (.getRelative proto))}
+              (.hasRelativeSet proto) {:relative-set
+                                         (parse-rotate-azimuth-relative-set
+                                           (.getRelativeSet proto))}
+              (.hasHalt proto) {:halt (parse-halt-azimuth (.getHalt proto))}))
 
-(>defn-
-  parse-elevation-payload
-  "Parse the oneof payload from Elevation."
-  [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
-  [#(instance? cmd.RotaryPlatform.JonSharedCmdRotary$Elevation %) => (? map?)]
-  (cond (.hasSetValue proto) {:set-value (parse-set-elevation-value
-                                           (.getSetValue proto))}
-        (.hasRotateTo proto) {:rotate-to (parse-rotate-elevation-to
-                                           (.getRotateTo proto))}
-        (.hasRotate proto) {:rotate (parse-rotate-elevation (.getRotate proto))}
-        (.hasRelative proto) {:relative (parse-rotate-elevation-relative
-                                          (.getRelative proto))}
-        (.hasRelativeSet proto) {:relative-set
-                                   (parse-rotate-elevation-relative-set
-                                     (.getRelativeSet proto))}
-        (.hasHalt proto) {:halt (parse-halt-elevation (.getHalt proto))}))
+(>defn- parse-elevation-payload
+        "Parse the oneof payload from Elevation."
+        [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
+        [any? => (? map?)]
+        (cond (.hasSetValue proto) {:set-value (parse-set-elevation-value
+                                                 (.getSetValue proto))}
+              (.hasRotateTo proto) {:rotate-to (parse-rotate-elevation-to
+                                                 (.getRotateTo proto))}
+              (.hasRotate proto) {:rotate (parse-rotate-elevation (.getRotate
+                                                                    proto))}
+              (.hasRelative proto) {:relative (parse-rotate-elevation-relative
+                                                (.getRelative proto))}
+              (.hasRelativeSet proto) {:relative-set
+                                         (parse-rotate-elevation-relative-set
+                                           (.getRelativeSet proto))}
+              (.hasHalt proto) {:halt (parse-halt-elevation (.getHalt proto))}))

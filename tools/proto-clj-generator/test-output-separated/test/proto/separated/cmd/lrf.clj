@@ -2,7 +2,9 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.proto.separated.ser.data :as types])
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
+            [test.proto.separated.ser :as types])
   (:import cmd.Lrf.JonSharedCmdLrf$Root
            cmd.Lrf.JonSharedCmdLrf$GetMeteo
            cmd.Lrf.JonSharedCmdLrf$Start
@@ -52,6 +54,7 @@
       :new-session [:map [:new-session :cmd.lrf/new-session]],
       :get-meteo [:map [:get-meteo :cmd.lrf/get-meteo]],
       :enable-fog-mode [:map [:enable-fog-mode :cmd.lrf/enable-fog-mode]],
+      :error/message "This oneof field is required",
       :target-designator-on-mode-a [:map
                                     [:target-designator-on-mode-a
                                      :cmd.lrf/target-designator-on-mode-a]]}]]])
@@ -90,9 +93,32 @@
 
 (def set-scan-mode-spec
   "Malli spec for set-scan-mode message"
-  [:map [:mode [:maybe :ser/jon-gui-data-lrf-scan-modes]]])
+  [:map [:mode {:optional true} :ser/jon-gui-data-lrf-scan-modes]])
 
 (def new-session-spec "Malli spec for new-session message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lrf/root root-spec,
+   :cmd.Lrf/get-meteo get-meteo-spec,
+   :cmd.Lrf/start start-spec,
+   :cmd.Lrf/stop stop-spec,
+   :cmd.Lrf/measure measure-spec,
+   :cmd.Lrf/scan-on scan-on-spec,
+   :cmd.Lrf/scan-off scan-off-spec,
+   :cmd.Lrf/refine-off refine-off-spec,
+   :cmd.Lrf/refine-on refine-on-spec,
+   :cmd.Lrf/target-designator-off target-designator-off-spec,
+   :cmd.Lrf/target-designator-on-mode-a target-designator-on-mode-a-spec,
+   :cmd.Lrf/target-designator-on-mode-b target-designator-on-mode-b-spec,
+   :cmd.Lrf/enable-fog-mode enable-fog-mode-spec,
+   :cmd.Lrf/disable-fog-mode disable-fog-mode-spec,
+   :cmd.Lrf/set-scan-mode set-scan-mode-spec,
+   :cmd.Lrf/new-session new-session-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -137,7 +163,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter
@@ -150,79 +176,77 @@
                                             :set-scan-mode :new-session
                                             :get-meteo :refine-on :refine-off}
                                           k))
-                                       m))]
+                                       (:cmd m)))]
            (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-get-meteo
        "Build a GetMeteo protobuf message from a map."
        [m]
-       [get-meteo-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$GetMeteo %)]
+       [get-meteo-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$GetMeteo/newBuilder)]
          (.build builder)))
 
 (>defn build-start
        "Build a Start protobuf message from a map."
        [m]
-       [start-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$Start %)]
+       [start-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$Start/newBuilder)]
          (.build builder)))
 
 (>defn build-stop
        "Build a Stop protobuf message from a map."
        [m]
-       [stop-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$Stop %)]
+       [stop-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$Stop/newBuilder)]
          (.build builder)))
 
 (>defn build-measure
        "Build a Measure protobuf message from a map."
        [m]
-       [measure-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$Measure %)]
+       [measure-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$Measure/newBuilder)]
          (.build builder)))
 
 (>defn build-scan-on
        "Build a ScanOn protobuf message from a map."
        [m]
-       [scan-on-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$ScanOn %)]
+       [scan-on-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$ScanOn/newBuilder)]
          (.build builder)))
 
 (>defn build-scan-off
        "Build a ScanOff protobuf message from a map."
        [m]
-       [scan-off-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$ScanOff %)]
+       [scan-off-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$ScanOff/newBuilder)]
          (.build builder)))
 
 (>defn build-refine-off
        "Build a RefineOff protobuf message from a map."
        [m]
-       [refine-off-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$RefineOff %)]
+       [refine-off-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$RefineOff/newBuilder)]
          (.build builder)))
 
 (>defn build-refine-on
        "Build a RefineOn protobuf message from a map."
        [m]
-       [refine-on-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$RefineOn %)]
+       [refine-on-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$RefineOn/newBuilder)]
          (.build builder)))
 
 (>defn build-target-designator-off
        "Build a TargetDesignatorOff protobuf message from a map."
        [m]
-       [target-designator-off-spec =>
-        #(instance? cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff %)]
+       [target-designator-off-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOff/newBuilder)]
          (.build builder)))
 
 (>defn build-target-designator-on-mode-a
        "Build a TargetDesignatorOnModeA protobuf message from a map."
        [m]
-       [target-designator-on-mode-a-spec =>
-        #(instance? cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA %)]
+       [target-designator-on-mode-a-spec => any?]
        (let [builder
                (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeA/newBuilder)]
          (.build builder)))
@@ -230,8 +254,7 @@
 (>defn build-target-designator-on-mode-b
        "Build a TargetDesignatorOnModeB protobuf message from a map."
        [m]
-       [target-designator-on-mode-b-spec =>
-        #(instance? cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB %)]
+       [target-designator-on-mode-b-spec => any?]
        (let [builder
                (cmd.Lrf.JonSharedCmdLrf$TargetDesignatorOnModeB/newBuilder)]
          (.build builder)))
@@ -239,45 +262,43 @@
 (>defn build-enable-fog-mode
        "Build a EnableFogMode protobuf message from a map."
        [m]
-       [enable-fog-mode-spec =>
-        #(instance? cmd.Lrf.JonSharedCmdLrf$EnableFogMode %)]
+       [enable-fog-mode-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$EnableFogMode/newBuilder)]
          (.build builder)))
 
 (>defn build-disable-fog-mode
        "Build a DisableFogMode protobuf message from a map."
        [m]
-       [disable-fog-mode-spec =>
-        #(instance? cmd.Lrf.JonSharedCmdLrf$DisableFogMode %)]
+       [disable-fog-mode-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$DisableFogMode/newBuilder)]
          (.build builder)))
 
-(>defn
-  build-set-scan-mode
-  "Build a SetScanMode protobuf message from a map."
-  [m]
-  [set-scan-mode-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$SetScanMode %)]
-  (let [builder (cmd.Lrf.JonSharedCmdLrf$SetScanMode/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :mode)
-      (.setMode builder
-                (get types/jon-gui-data-lrf-scan-modes-values (get m :mode))))
-    (.build builder)))
+(>defn build-set-scan-mode
+       "Build a SetScanMode protobuf message from a map."
+       [m]
+       [set-scan-mode-spec => any?]
+       (let [builder (cmd.Lrf.JonSharedCmdLrf$SetScanMode/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :mode)
+           (.setMode builder
+                     (when-let [v (get m :mode)]
+                       (get types/jon-gui-data-lrf-scan-modes-values v))))
+         (.build builder)))
 
 (>defn build-new-session
        "Build a NewSession protobuf message from a map."
        [m]
-       [new-session-spec => #(instance? cmd.Lrf.JonSharedCmdLrf$NewSession %)]
+       [new-session-spec => any?]
        (let [builder (cmd.Lrf.JonSharedCmdLrf$NewSession/newBuilder)]
          (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Lrf.JonSharedCmdLrf$Root proto]
-       [#(instance? cmd.Lrf.JonSharedCmdLrf$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-get-meteo
        "Parse a GetMeteo protobuf message to a map."
@@ -357,15 +378,15 @@
        [any? => disable-fog-mode-spec]
        {})
 
-(>defn
-  parse-set-scan-mode
-  "Parse a SetScanMode protobuf message to a map."
-  [^cmd.Lrf.JonSharedCmdLrf$SetScanMode proto]
-  [#(instance? cmd.Lrf.JonSharedCmdLrf$SetScanMode %) => set-scan-mode-spec]
-  (cond-> {}
-    ;; Regular fields
-    true (assoc :mode
-           (get types/jon-gui-data-lrf-scan-modes-keywords (.getMode proto)))))
+(>defn parse-set-scan-mode
+       "Parse a SetScanMode protobuf message to a map."
+       [^cmd.Lrf.JonSharedCmdLrf$SetScanMode proto]
+       [any? => set-scan-mode-spec]
+       (cond-> {}
+         ;; Regular fields
+         true (assoc :mode
+                (get types/jon-gui-data-lrf-scan-modes-keywords
+                     (.getMode proto)))))
 
 (>defn parse-new-session
        "Parse a NewSession protobuf message to a map."
@@ -377,8 +398,7 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [#(instance? cmd.Lrf.JonSharedCmdLrf$Root$Builder %) [:tuple keyword? any?] =>
-   #(instance? cmd.Lrf.JonSharedCmdLrf$Root$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :measure (.setMeasure builder (build-measure value))
     :scan-on (.setScanOn builder (build-scan-on value))
@@ -407,7 +427,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.Lrf.JonSharedCmdLrf$Root proto]
-  [#(instance? cmd.Lrf.JonSharedCmdLrf$Root %) => (? map?)]
+  [any? => (? map?)]
   (cond (.hasMeasure proto) {:measure (parse-measure (.getMeasure proto))}
         (.hasScanOn proto) {:scan-on (parse-scan-on (.getScanOn proto))}
         (.hasScanOff proto) {:scan-off (parse-scan-off (.getScanOff proto))}

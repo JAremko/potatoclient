@@ -1,7 +1,9 @@
 (ns test.enum.cmd.compass
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Compass.JonSharedCmdCompass$Root
            cmd.Compass.JonSharedCmdCompass$Start
            cmd.Compass.JonSharedCmdCompass$Stop
@@ -76,19 +78,39 @@
 
 (def set-magnetic-declination-spec
   "Malli spec for set-magnetic-declination message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -180] [:< 180]]]])
 
 (def set-offset-angle-azimuth-spec
   "Malli spec for set-offset-angle-azimuth message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -180] [:< 180]]]])
 
 (def set-offset-angle-elevation-spec
   "Malli spec for set-offset-angle-elevation message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -90] [:<= 90]]]])
 
 (def set-use-rotary-position-spec
   "Malli spec for set-use-rotary-position message"
-  [:map [:flag :boolean]])
+  [:map [:flag {:optional true} :boolean]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Compass/root root-spec,
+   :cmd.Compass/start start-spec,
+   :cmd.Compass/stop stop-spec,
+   :cmd.Compass/next next-spec,
+   :cmd.Compass/calibrate-start-long calibrate-start-long-spec,
+   :cmd.Compass/calibrate-start-short calibrate-start-short-spec,
+   :cmd.Compass/calibrate-next calibrate-next-spec,
+   :cmd.Compass/calibrate-cencel calibrate-cencel-spec,
+   :cmd.Compass/get-meteo get-meteo-spec,
+   :cmd.Compass/set-magnetic-declination set-magnetic-declination-spec,
+   :cmd.Compass/set-offset-angle-azimuth set-offset-angle-azimuth-spec,
+   :cmd.Compass/set-offset-angle-elevation set-offset-angle-elevation-spec,
+   :cmd.Compass/set-use-rotary-position set-use-rotary-position-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -141,7 +163,7 @@
                                           :calibrate-cencel :get-meteo}
                                         k))
                                (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
@@ -252,8 +274,8 @@
        [^cmd.Compass.JonSharedCmdCompass$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-start
        "Parse a Start protobuf message to a map."

@@ -188,7 +188,7 @@
 (defn generate-builder
   "Generate builder function for a message."
   [message type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "builder-guardrails.clj" "builder.clj"))
+  (let [template (load-template-string "builder-guardrails.clj")
         regular-fields (remove :oneof-index (:fields message))
         fn-name (str "build-" (name (:name message)))
         
@@ -198,23 +198,30 @@
                                              (map #(generate-field-setter % current-package type-lookup) 
                                                   regular-fields))))
         
-        ;; Generate oneof handling for each oneof
+        ;; Generate oneof handling - collect ALL oneof fields from all oneofs
         oneof-payloads (when (seq (:oneofs message))
-                        (str/join "\n" 
-                                 (map (fn [oneof]
-                                       (let [oneof-field-names (map :name (:fields oneof))
-                                             var-name (str (name (:name oneof)) "-field")]
-                                         (str "\n    ;; Handle oneof: " (:proto-name oneof) "\n"
-                                              "    (when-let [" var-name "\n"
-                                              "                 (first (filter (fn [[k v]]\n"
-                                              "                                  (#{"
-                                              (str/join " " (map pr-str oneof-field-names))
-                                              "}\n"
-                                              "                                   k))\n"
-                                              "                          (:" (name (:name oneof)) " m)))]\n"
-                                              "      (build-" (csk/->kebab-case (:proto-name message))
-                                              "-payload builder " var-name "))")))
-                                      (:oneofs message))))
+                        (let [all-oneof-fields (mapcat (fn [oneof]
+                                                        (map (fn [field]
+                                                              {:field field
+                                                               :oneof oneof})
+                                                             (:fields oneof)))
+                                                      (:oneofs message))
+                              ;; Group by oneof to generate handling code
+                              oneofs-code (map (fn [oneof]
+                                                (let [oneof-field-names (map :name (:fields oneof))
+                                                      var-name (str (name (:name oneof)) "-field")]
+                                                  (str "\n    ;; Handle oneof: " (:proto-name oneof) "\n"
+                                                       "    (when-let [" var-name "\n"
+                                                       "                 (first (filter (fn [[k v]]\n"
+                                                       "                                  (#{"
+                                                       (str/join " " (map pr-str oneof-field-names))
+                                                       "}\n"
+                                                       "                                   k))\n"
+                                                       "                          (:" (name (:name oneof)) " m)))]\n"
+                                                       "      (build-" (csk/->kebab-case (:proto-name message))
+                                                       "-payload builder " var-name "))")))
+                                              (:oneofs message))]
+                          (str/join "\n" oneofs-code)))
         
         spec-name (spec-gen/message->spec-name message)
         replacements {"BUILD-FN-NAME" fn-name
@@ -235,7 +242,7 @@
         
         ;; For empty messages, use a simpler template
         template (if has-fields?
-                   (load-template-string (if guardrails? "parser-guardrails.clj" "parser.clj"))
+                   (load-template-string "parser-guardrails.clj")
                    (str "(>defn " fn-name "\n"
                         "  \"Parse a " (:proto-name message) " protobuf message to a map.\"\n"
                         "  [^" (:java-class message) " proto]\n"
@@ -249,10 +256,17 @@
                                           regular-fields))))
         
         oneof-payload (when (seq (:oneofs message))
-                       (str "\n    ;; Oneof payload\n"
-                            "    true (merge (parse-" 
-                            (csk/->kebab-case (:proto-name message)) 
-                            "-payload proto))"))
+                       (let [oneof-parsers (map (fn [oneof]
+                                                 (let [oneof-var (str (name (:name oneof)) "-val")
+                                                       payload-fn (str "parse-" 
+                                                                      (csk/->kebab-case (:proto-name message)) 
+                                                                      "-payload")]
+                                                   (str "\n    ;; Oneof: " (:proto-name oneof) "\n"
+                                                        "    (" payload-fn " proto) "
+                                                        "(assoc :" (name (:name oneof)) " (" 
+                                                        payload-fn " proto))")))
+                                               (:oneofs message))]
+                         (str/join "\n    " oneof-parsers)))
         
         replacements {"PARSE-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
@@ -349,35 +363,38 @@
          value-expr
          "}")))
 
-(defn generate-oneof-builder
-  "Generate oneof builder function."
-  [message oneof type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "oneof-builder-guardrails.clj" "oneof-builder.clj"))
+(defn generate-combined-oneof-builder
+  "Generate a single payload builder function that handles ALL oneofs in a message."
+  [message type-lookup current-package guardrails?]
+  (let [template (load-template-string "oneof-builder-guardrails.clj")
         fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
-        ;; Use fields from the oneof structure itself
-        oneof-fields (:fields oneof)
+        ;; Collect all fields from all oneofs
+        all-oneof-fields (mapcat :fields (:oneofs message))
         
         cases (str/join "\n    " 
                        (map #(generate-oneof-builder-case % message type-lookup current-package) 
-                            oneof-fields))
+                            all-oneof-fields))
+        
+        ;; For the error message, collect all oneof names
+        oneof-names (str/join ", " (map #(pr-str (:name %)) (:oneofs message)))
         
         replacements {"ONEOF-BUILD-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
-                     "ONEOF-NAME" (pr-str (:name oneof))
+                     "ONEOF-NAME" oneof-names
                      "ONEOF-CASES" cases}]
     (replace-in-template template replacements)))
 
-(defn generate-oneof-parser
-  "Generate oneof parser function."
-  [message oneof type-lookup current-package guardrails?]
-  (let [template (load-template-string (if guardrails? "oneof-parser-guardrails.clj" "oneof-parser.clj"))
+(defn generate-combined-oneof-parser
+  "Generate a single payload parser function that handles ALL oneofs in a message."
+  [message type-lookup current-package guardrails?]
+  (let [template (load-template-string "oneof-parser-guardrails.clj")
         fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
-        ;; Use fields from the oneof structure itself
-        oneof-fields (:fields oneof)
+        ;; Collect all fields from all oneofs
+        all-oneof-fields (mapcat :fields (:oneofs message))
         
         cases (str/join "\n    " 
                        (map #(generate-oneof-parser-case % message type-lookup current-package) 
-                            oneof-fields))
+                            all-oneof-fields))
         
         replacements {"ONEOF-PARSE-FN-NAME" fn-name
                      "PROTO-NAME" (:proto-name message)
@@ -409,28 +426,15 @@
    (generate-namespace ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? nil))
   ([ns-name imports enums messages type-lookup require-specs guardrails? generate-specs? proto-package]
    (let [template (cond
-                    ;; Specs + guardrails + requires
-                    (and generate-specs? guardrails? (seq require-specs))
-                    (load-template-string "namespace-with-specs-guardrails.clj")
-                    
-                    ;; Specs + guardrails (no requires) 
-                    (and generate-specs? guardrails?)
-                    (load-template-string "namespace-with-specs-guardrails.clj")
-                    
-                    ;; Specs + requires (no guardrails)
+                    ;; Always use guardrails templates since we removed non-guardrails ones
                     (and generate-specs? (seq require-specs))
-                    (load-template-string "namespace-with-specs.clj")
+                    (load-template-string "namespace-with-specs-guardrails.clj")
                     
-                    ;; Specs only
                     generate-specs?
-                    (load-template-string "namespace-with-specs.clj")
+                    (load-template-string "namespace-with-specs-guardrails.clj")
                     
-                    ;; Original templates without specs
-                    (and guardrails? (seq require-specs))
+                    (seq require-specs)
                     (load-template-string "namespace-with-requires-guardrails.clj")
-                    
-                    guardrails?
-                    (load-template-string "namespace-guardrails.clj")
                     
                     :else
                     (load-template-string "namespace-guardrails.clj"))
@@ -482,12 +486,14 @@
                        (generate-builder msg type-lookup current-package guardrails?))
          all-parsers (for [msg sorted-messages]
                       (generate-parser msg type-lookup current-package guardrails?))
+         ;; Generate ONE payload function per message that has oneofs
+         ;; This function handles ALL oneofs in that message
          all-oneof-builders (for [msg sorted-messages
-                                 oneof (:oneofs msg)]
-                             (generate-oneof-builder msg oneof type-lookup current-package guardrails?))
+                                 :when (seq (:oneofs msg))]
+                             (generate-combined-oneof-builder msg type-lookup current-package guardrails?))
          all-oneof-parsers (for [msg sorted-messages
-                                oneof (:oneofs msg)]
-                            (generate-oneof-parser msg oneof type-lookup current-package guardrails?))
+                                :when (seq (:oneofs msg))]
+                            (generate-combined-oneof-parser msg type-lookup current-package guardrails?))
          
          messages-code (when (seq sorted-messages)
                        (str/join "\n\n" 
@@ -505,7 +511,10 @@
          specs-code (when generate-specs?
                      (let [{:keys [enum-specs message-specs]} 
                            (spec-gen/generate-specs-for-namespace 
-                            {:messages messages :enums enums})]
+                            {:messages messages 
+                             :enums enums
+                             :current-package current-package
+                             :require-specs require-specs})]
                        (str (when (seq enum-specs)
                              (str enum-specs "\n\n"))
                             (when (seq message-specs)
@@ -515,11 +524,34 @@
          validation-code (when (and generate-specs? guardrails?)
                           (validation/generate-namespace-validation-helpers messages))
          
+         ;; Generate registry setup for both enum and message specs
+         registry-code (when generate-specs?
+                        (let [enum-mappings (distinct  ; Ensure no duplicates
+                                            (for [enum enums]
+                                             (let [enum-name (name (:name enum))
+                                                   spec-name (str (csk/->kebab-case enum-name) "-spec")
+                                                   ;; Create the namespaced keyword that will be referenced
+                                                   ns-keyword (keyword current-package (csk/->kebab-case enum-name))]
+                                               (str "   " (pr-str ns-keyword) " " spec-name))))
+                              message-mappings (distinct  ; Ensure no duplicates
+                                               (for [msg messages]
+                                                (let [msg-name (name (:name msg))
+                                                      spec-name (str (csk/->kebab-case msg-name) "-spec")
+                                                      ;; Create the namespaced keyword that will be referenced
+                                                      ns-keyword (keyword current-package (csk/->kebab-case msg-name))]
+                                                  (str "   " (pr-str ns-keyword) " " spec-name))))
+                              all-mappings (concat enum-mappings message-mappings)]
+                          (when (seq all-mappings)
+                            (str ";; Registry for enum and message specs in this namespace\n"
+                                 "(def registry\n"
+                                 "  {" (str/join "\n" all-mappings) "})"))))
+         
          replacements {"NAMESPACE-PLACEHOLDER" ns-name
                      "REQUIRE-PLACEHOLDER" (or require-clause "")
                      "IMPORTS-PLACEHOLDER" (generate-imports imports)
                      "ENUMS-PLACEHOLDER" (or enums-code ";; No enums")
                      "SPECS-PLACEHOLDER" (or specs-code ";; No specs")
+                     "REGISTRY-PLACEHOLDER" (or registry-code ";; No enum registry needed")
                      "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages") validation-code)}]
     (replace-in-template template replacements))))
 

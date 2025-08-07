@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.roundtrip.ser :as types])
   (:import cmd.Lrf.JonSharedCmdLrf$Root
            cmd.Lrf.JonSharedCmdLrf$GetMeteo
@@ -91,9 +93,34 @@
 
 (def set-scan-mode-spec
   "Malli spec for set-scan-mode message"
-  [:map [:mode :ser/jon-gui-data-lrf-scan-modes]])
+  [:map
+   [:mode {:optional true} [test.roundtrip.ser :as types]
+    /jon-gui-data-lrf-scan-modes-spec]])
 
 (def new-session-spec "Malli spec for new-session message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lrf/root root-spec,
+   :cmd.Lrf/get-meteo get-meteo-spec,
+   :cmd.Lrf/start start-spec,
+   :cmd.Lrf/stop stop-spec,
+   :cmd.Lrf/measure measure-spec,
+   :cmd.Lrf/scan-on scan-on-spec,
+   :cmd.Lrf/scan-off scan-off-spec,
+   :cmd.Lrf/refine-off refine-off-spec,
+   :cmd.Lrf/refine-on refine-on-spec,
+   :cmd.Lrf/target-designator-off target-designator-off-spec,
+   :cmd.Lrf/target-designator-on-mode-a target-designator-on-mode-a-spec,
+   :cmd.Lrf/target-designator-on-mode-b target-designator-on-mode-b-spec,
+   :cmd.Lrf/enable-fog-mode enable-fog-mode-spec,
+   :cmd.Lrf/disable-fog-mode disable-fog-mode-spec,
+   :cmd.Lrf/set-scan-mode set-scan-mode-spec,
+   :cmd.Lrf/new-session new-session-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -272,8 +299,8 @@
        [^cmd.Lrf.JonSharedCmdLrf$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-get-meteo
        "Parse a GetMeteo protobuf message to a map."

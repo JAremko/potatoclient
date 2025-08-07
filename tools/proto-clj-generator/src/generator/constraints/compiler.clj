@@ -231,7 +231,8 @@
      :type-fixed64 :type-fixed32 :type-uint32 
      :type-sfixed32 :type-sfixed64 
      :type-sint32 :type-sint64
-     :type-uint-32 :type-uint-64) :numeric
+     :type-uint-32 :type-uint-64 
+     :type-int-32 :type-int-64) :numeric
     
     ;; String and bytes
     (:type-string :type-bytes) :string
@@ -284,6 +285,9 @@
           actual-type (cond
                        ;; Direct scalar type
                        (keyword? type) type
+                       ;; Scalar type from backend
+                       (and (map? type) (:scalar type))
+                       (keyword (str "type-" (name (:scalar type))))
                        ;; Unknown type with proto-type
                        (and (map? type) (:unknown type))
                        (get-in type [:unknown :proto-type])

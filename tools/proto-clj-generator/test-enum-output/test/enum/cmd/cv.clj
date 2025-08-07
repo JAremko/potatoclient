@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.enum.ser :as types])
   (:import cmd.CV.JonSharedCmdCv$Root
            cmd.CV.JonSharedCmdCv$VampireModeEnable
@@ -67,14 +69,34 @@
 
 (def set-auto-focus-spec
   "Malli spec for set-auto-focus message"
-  [:map [:channel :ser/jon-gui-data-video-channel] [:value :boolean]])
+  [:map [:channel {:optional true} :ser/jon-gui-data-video-channel]
+   [:value {:optional true} :boolean]])
 
 (def start-track-ndc-spec
   "Malli spec for start-track-ndc message"
-  [:map [:channel :ser/jon-gui-data-video-channel] [:x :float] [:y :float]
-   [:frame-time :int]])
+  [:map [:channel {:optional true} :ser/jon-gui-data-video-channel]
+   [:x {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:y {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:frame-time {:optional true} :int]])
 
 (def stop-track-spec "Malli spec for stop-track message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.CV/root root-spec,
+   :cmd.CV/vampire-mode-enable vampire-mode-enable-spec,
+   :cmd.CV/dump-start dump-start-spec,
+   :cmd.CV/dump-stop dump-stop-spec,
+   :cmd.CV/vampire-mode-disable vampire-mode-disable-spec,
+   :cmd.CV/stabilization-mode-enable stabilization-mode-enable-spec,
+   :cmd.CV/stabilization-mode-disable stabilization-mode-disable-spec,
+   :cmd.CV/set-auto-focus set-auto-focus-spec,
+   :cmd.CV/start-track-ndc start-track-ndc-spec,
+   :cmd.CV/stop-track stop-track-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -120,7 +142,7 @@
                                                   :dump-start :dump-stop}
                                                 k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-vampire-mode-enable
@@ -207,8 +229,8 @@
        [^cmd.CV.JonSharedCmdCv$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-vampire-mode-enable
        "Parse a VampireModeEnable protobuf message to a map."

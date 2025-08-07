@@ -1,7 +1,9 @@
 (ns test.enum.ser
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import
     ser.JonSharedDataTypes$JonGuiDataMeteo
     ser.JonSharedDataTime$JonGuiDataTime
@@ -1331,134 +1333,258 @@
 
 (def jon-gui-data-meteo-spec
   "Malli spec for jon-gui-data-meteo message"
-  [:map [:temperature :float] [:humidity :float] [:pressure :float]])
+  [:map [:temperature {:optional true} :float]
+   [:humidity {:optional true} :float] [:pressure {:optional true} :float]])
 
 (def jon-gui-data-meteo-spec
   "Malli spec for jon-gui-data-meteo message"
-  [:map [:temperature :float] [:humidity :float] [:pressure :float]])
+  [:map [:temperature {:optional true} :float]
+   [:humidity {:optional true} :float] [:pressure {:optional true} :float]])
 
 (def jon-gui-data-time-spec
   "Malli spec for jon-gui-data-time message"
-  [:map [:timestamp :int] [:manual-timestamp :int] [:zone-id :int]
-   [:use-manual-time :boolean]])
+  [:map [:timestamp {:optional true} :int]
+   [:manual-timestamp {:optional true} :int] [:zone-id {:optional true} :int]
+   [:use-manual-time {:optional true} :boolean]])
 
 (def jon-gui-data-system-spec
   "Malli spec for jon-gui-data-system message"
-  [:map [:cpu-temperature :float] [:gpu-temperature :float] [:gpu-load :float]
-   [:cpu-load :float] [:power-consumption :float]
-   [:loc :ser/jon-gui-data-system-localizations] [:cur-video-rec-dir-year :int]
-   [:cur-video-rec-dir-month :int] [:cur-video-rec-dir-day :int]
-   [:cur-video-rec-dir-hour :int] [:cur-video-rec-dir-minute :int]
-   [:cur-video-rec-dir-second :int] [:rec-enabled :boolean]
-   [:important-rec-enabled :boolean] [:low-disk-space :boolean]
-   [:no-disk-space :boolean] [:disk-space :int] [:tracking :boolean]
-   [:vampire-mode :boolean] [:stabilization-mode :boolean]
-   [:geodesic-mode :boolean] [:cv-dumping :boolean]])
+  [:map
+   [:cpu-temperature {:optional true} [:and :float [:>= -273.15] [:<= 150]]]
+   [:gpu-temperature {:optional true} [:and :float [:>= -273.15] [:<= 150]]]
+   [:gpu-load {:optional true} [:and :float [:>= 0] [:<= 100]]]
+   [:cpu-load {:optional true} [:and :float [:>= 0] [:<= 100]]]
+   [:power-consumption {:optional true} [:and :float [:>= 0] [:<= 1000]]]
+   [:loc {:optional true} :ser/jon-gui-data-system-localizations]
+   [:cur-video-rec-dir-year {:optional true} :int]
+   [:cur-video-rec-dir-month {:optional true} :int]
+   [:cur-video-rec-dir-day {:optional true} :int]
+   [:cur-video-rec-dir-hour {:optional true} :int]
+   [:cur-video-rec-dir-minute {:optional true} :int]
+   [:cur-video-rec-dir-second {:optional true} :int]
+   [:rec-enabled {:optional true} :boolean]
+   [:important-rec-enabled {:optional true} :boolean]
+   [:low-disk-space {:optional true} :boolean]
+   [:no-disk-space {:optional true} :boolean]
+   [:disk-space {:optional true} :int] [:tracking {:optional true} :boolean]
+   [:vampire-mode {:optional true} :boolean]
+   [:stabilization-mode {:optional true} :boolean]
+   [:geodesic-mode {:optional true} :boolean]
+   [:cv-dumping {:optional true} :boolean]])
 
 (def jon-gui-data-lrf-spec
   "Malli spec for jon-gui-data-lrf message"
-  [:map [:is-scanning :boolean] [:is-measuring :boolean] [:measure-id :int]
-   [:target :ser/jon-gui-data-target]
-   [:pointer-mode :ser/jon-gui-datat-lrf-laser-pointer-modes]
-   [:fog-mode-enabled :boolean] [:is-refining :boolean]])
+  [:map [:is-scanning {:optional true} :boolean]
+   [:is-measuring {:optional true} :boolean] [:measure-id {:optional true} :int]
+   [:target {:optional true} :ser/jon-gui-data-target]
+   [:pointer-mode {:optional true} :ser/jon-gui-datat-lrf-laser-pointer-modes]
+   [:fog-mode-enabled {:optional true} :boolean]
+   [:is-refining {:optional true} :boolean]])
 
 (def jon-gui-data-target-spec
   "Malli spec for jon-gui-data-target message"
-  [:map [:timestamp :int] [:target-longitude :double] [:target-latitude :double]
-   [:target-altitude :double] [:observer-longitude :double]
-   [:observer-latitude :double] [:observer-altitude :double]
-   [:observer-azimuth :double] [:observer-elevation :double]
-   [:observer-bank :double] [:distance-2d :double] [:distance-3b :double]
-   [:observer-fix-type :ser/jon-gui-data-gps-fix-type] [:session-id :int]
-   [:target-id :int] [:target-color :ser/rgb-color] [:type :int]
-   [:uuid-part-1 :int] [:uuid-part-2 :int] [:uuid-part-3 :int]
-   [:uuid-part-4 :int]])
+  [:map [:timestamp {:optional true} :int]
+   [:target-longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:target-latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:target-altitude {:optional true} :double]
+   [:observer-longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:observer-latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:observer-altitude {:optional true} :double]
+   [:observer-azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:observer-elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:observer-bank {:optional true} [:and :double [:>= -180] [:< 180]]]
+   [:distance-2d {:optional true} [:and :double [:>= 0] [:<= 500000]]]
+   [:distance-3b {:optional true} [:and :double [:>= 0] [:<= 500000]]]
+   [:observer-fix-type {:optional true} :ser/jon-gui-data-gps-fix-type]
+   [:session-id {:optional true} :int] [:target-id {:optional true} :int]
+   [:target-color {:optional true} :ser/rgb-color] [:type {:optional true} :int]
+   [:uuid-part-1 {:optional true} :int] [:uuid-part-2 {:optional true} :int]
+   [:uuid-part-3 {:optional true} :int] [:uuid-part-4 {:optional true} :int]])
 
 (def rgb-color-spec
   "Malli spec for rgb-color message"
-  [:map [:red [:and :int [:>= 0] [:<= 255]]]
-   [:green [:and :int [:>= 0] [:<= 255]]]
-   [:blue [:and :int [:>= 0] [:<= 255]]]])
+  [:map [:red {:optional true} [:and :int [:>= 0] [:<= 255]]]
+   [:green {:optional true} [:and :int [:>= 0] [:<= 255]]]
+   [:blue {:optional true} [:and :int [:>= 0] [:<= 255]]]])
 
 (def jon-gui-data-gps-spec
   "Malli spec for jon-gui-data-gps message"
-  [:map [:longitude :double] [:latitude :double] [:altitude :double]
-   [:manual-longitude :double] [:manual-latitude :double]
-   [:manual-altitude :double] [:fix-type :ser/jon-gui-data-gps-fix-type]
-   [:use-manual :boolean]])
+  [:map [:longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:altitude {:optional true} [:and :double [:>= -433] [:<= 8848.86]]]
+   [:manual-longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:manual-latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:manual-altitude {:optional true} [:and :double [:>= -433] [:<= 8848.86]]]
+   [:fix-type {:optional true} :ser/jon-gui-data-gps-fix-type]
+   [:use-manual {:optional true} :boolean]])
 
 (def jon-gui-data-compass-spec
   "Malli spec for jon-gui-data-compass message"
-  [:map [:azimuth :double] [:elevation :double] [:bank :double]
-   [:offset-azimuth :double] [:offset-elevation :double]
-   [:magnetic-declination :double] [:calibrating :boolean]])
+  [:map [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:bank {:optional true} [:and :double [:>= -180] [:< 180]]]
+   [:offset-azimuth {:optional true} [:and :double [:>= -180] [:< 180]]]
+   [:offset-elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:magnetic-declination {:optional true} [:and :double [:>= -180] [:< 180]]]
+   [:calibrating {:optional true} :boolean]])
 
 (def jon-gui-data-compass-calibration-spec
   "Malli spec for jon-gui-data-compass-calibration message"
-  [:map [:stage [:and :int [:>= 0]]] [:final-stage [:and :int [:> 0]]]
-   [:target-azimuth :double] [:target-elevation :double] [:target-bank :double]
-   [:status :ser/jon-gui-data-compass-calibrate-status]])
+  [:map [:stage {:optional true} [:and :int [:>= 0]]]
+   [:final-stage {:optional true} [:and :int [:> 0]]]
+   [:target-azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:target-elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:target-bank {:optional true} [:and :double [:>= -180] [:< 180]]]
+   [:status {:optional true} :ser/jon-gui-data-compass-calibrate-status]])
 
 (def jon-gui-data-rotary-spec
   "Malli spec for jon-gui-data-rotary message"
-  [:map [:azimuth :float] [:azimuth-speed :float] [:elevation :float]
-   [:elevation-speed :float] [:platform-azimuth :float]
-   [:platform-elevation :float] [:platform-bank :float] [:is-moving :boolean]
-   [:mode :ser/jon-gui-data-rotary-mode] [:is-scanning :boolean]
-   [:is-scanning-paused :boolean] [:use-rotary-as-compass :boolean]
-   [:scan-target :int] [:scan-target-max :int] [:sun-azimuth :float]
-   [:sun-elevation :float] [:current-scan-node :ser/scan-node]])
+  [:map [:azimuth {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:azimuth-speed {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:elevation {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:elevation-speed {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:platform-azimuth {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:platform-elevation {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:platform-bank {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:is-moving {:optional true} :boolean]
+   [:mode {:optional true} :ser/jon-gui-data-rotary-mode]
+   [:is-scanning {:optional true} :boolean]
+   [:is-scanning-paused {:optional true} :boolean]
+   [:use-rotary-as-compass {:optional true} :boolean]
+   [:scan-target {:optional true} :int] [:scan-target-max {:optional true} :int]
+   [:sun-azimuth {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:sun-elevation {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:current-scan-node {:optional true} :ser/scan-node]])
 
 (def scan-node-spec
   "Malli spec for scan-node message"
-  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
-   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
+  [:map [:index {:optional true} :int]
+   [:day-zoom-table-value {:optional true} :int]
+   [:heat-zoom-table-value {:optional true} :int]
+   [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:linger {:optional true} [:and :double [:>= 0]]]
+   [:speed {:optional true} [:and :double [:> 0] [:<= 1]]]])
 
 (def jon-gui-data-camera-day-spec
   "Malli spec for jon-gui-data-camera-day message"
-  [:map [:focus-pos :float] [:zoom-pos :float] [:iris-pos :float]
-   [:infrared-filter :boolean] [:zoom-table-pos :int] [:zoom-table-pos-max :int]
-   [:fx-mode :ser/jon-gui-data-fx-mode-day] [:auto-focus :boolean]
-   [:auto-iris :boolean] [:digital-zoom-level :float] [:clahe-level :float]])
+  [:map [:focus-pos {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:zoom-pos {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:iris-pos {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:infrared-filter {:optional true} :boolean]
+   [:zoom-table-pos {:optional true} :int]
+   [:zoom-table-pos-max {:optional true} :int]
+   [:fx-mode {:optional true} :ser/jon-gui-data-fx-mode-day]
+   [:auto-focus {:optional true} :boolean]
+   [:auto-iris {:optional true} :boolean]
+   [:digital-zoom-level {:optional true} [:and :float [:>= 1]]]
+   [:clahe-level {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def jon-gui-data-camera-heat-spec
   "Malli spec for jon-gui-data-camera-heat message"
-  [:map [:zoom-pos :float]
-   [:agc-mode :ser/jon-gui-data-video-channel-heat-agc-modes]
-   [:filter :ser/jon-gui-data-video-channel-heat-filters] [:auto-focus :boolean]
-   [:zoom-table-pos :int] [:zoom-table-pos-max :int] [:dde-level :int]
-   [:dde-enabled :boolean] [:fx-mode :ser/jon-gui-data-fx-mode-heat]
-   [:digital-zoom-level :float] [:clahe-level :float]])
+  [:map [:zoom-pos {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:agc-mode {:optional true} :ser/jon-gui-data-video-channel-heat-agc-modes]
+   [:filter {:optional true} :ser/jon-gui-data-video-channel-heat-filters]
+   [:auto-focus {:optional true} :boolean]
+   [:zoom-table-pos {:optional true} :int]
+   [:zoom-table-pos-max {:optional true} :int]
+   [:dde-level {:optional true} :int] [:dde-enabled {:optional true} :boolean]
+   [:fx-mode {:optional true} :ser/jon-gui-data-fx-mode-heat]
+   [:digital-zoom-level {:optional true} [:and :float [:>= 1]]]
+   [:clahe-level {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def jon-gui-data-rec-osd-spec
   "Malli spec for jon-gui-data-rec-osd message"
-  [:map [:screen :ser/jon-gui-data-rec-osd-screen] [:heat-osd-enabled :boolean]
-   [:day-osd-enabled :boolean] [:heat-crosshair-offset-horizontal :int]
-   [:heat-crosshair-offset-vertical :int]
-   [:day-crosshair-offset-horizontal :int]
-   [:day-crosshair-offset-vertical :int]])
+  [:map [:screen {:optional true} :ser/jon-gui-data-rec-osd-screen]
+   [:heat-osd-enabled {:optional true} :boolean]
+   [:day-osd-enabled {:optional true} :boolean]
+   [:heat-crosshair-offset-horizontal {:optional true} :int]
+   [:heat-crosshair-offset-vertical {:optional true} :int]
+   [:day-crosshair-offset-horizontal {:optional true} :int]
+   [:day-crosshair-offset-vertical {:optional true} :int]])
 
 (def jon-gui-data-day-cam-glass-heater-spec
   "Malli spec for jon-gui-data-day-cam-glass-heater message"
-  [:map [:temperature :double] [:status :boolean]])
+  [:map
+   [:temperature {:optional true} [:and :double [:>= -273.15] [:<= 660.32]]]
+   [:status {:optional true} :boolean]])
 
 (def jon-gui-data-actual-space-time-spec
   "Malli spec for jon-gui-data-actual-space-time message"
-  [:map [:azimuth :float] [:elevation :float] [:bank :float] [:latitude :float]
-   [:longitude :float] [:altitude :double] [:timestamp :int]])
+  [:map [:azimuth {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:bank {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} [:and :double [:>= -433] [:<= 8848.86]]]
+   [:timestamp {:optional true} :int]])
 
 (def jon-gui-state-spec
   "Malli spec for jon-gui-state message"
-  [:map [:protocol-version [:and :int [:> 0]]]
-   [:system :ser/jon-gui-data-system] [:meteo-internal :ser/jon-gui-data-meteo]
-   [:lrf :ser/jon-gui-data-lrf] [:time :ser/jon-gui-data-time]
-   [:gps :ser/jon-gui-data-gps] [:compass :ser/jon-gui-data-compass]
-   [:rotary :ser/jon-gui-data-rotary] [:camera-day :ser/jon-gui-data-camera-day]
-   [:camera-heat :ser/jon-gui-data-camera-heat]
-   [:compass-calibration :ser/jon-gui-data-compass-calibration]
-   [:rec-osd :ser/jon-gui-data-rec-osd]
-   [:day-cam-glass-heater :ser/jon-gui-data-day-cam-glass-heater]
-   [:actual-space-time :ser/jon-gui-data-actual-space-time]])
+  [:map [:protocol-version {:optional true} [:and :int [:> 0]]]
+   [:system {:optional true} :ser/jon-gui-data-system]
+   [:meteo-internal {:optional true} :ser/jon-gui-data-meteo]
+   [:lrf {:optional true} :ser/jon-gui-data-lrf]
+   [:time {:optional true} :ser/jon-gui-data-time]
+   [:gps {:optional true} :ser/jon-gui-data-gps]
+   [:compass {:optional true} :ser/jon-gui-data-compass]
+   [:rotary {:optional true} :ser/jon-gui-data-rotary]
+   [:camera-day {:optional true} :ser/jon-gui-data-camera-day]
+   [:camera-heat {:optional true} :ser/jon-gui-data-camera-heat]
+   [:compass-calibration {:optional true} :ser/jon-gui-data-compass-calibration]
+   [:rec-osd {:optional true} :ser/jon-gui-data-rec-osd]
+   [:day-cam-glass-heater {:optional true}
+    :ser/jon-gui-data-day-cam-glass-heater]
+   [:actual-space-time {:optional true} :ser/jon-gui-data-actual-space-time]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:ser/jon-gui-data-video-channel-heat-filters
+     jon-gui-data-video-channel-heat-filters-spec,
+   :ser/jon-gui-data-video-channel-heat-agc-modes
+     jon-gui-data-video-channel-heat-agc-modes-spec,
+   :ser/jon-gui-data-gps-units jon-gui-data-gps-units-spec,
+   :ser/jon-gui-data-gps-fix-type jon-gui-data-gps-fix-type-spec,
+   :ser/jon-gui-data-compass-units jon-gui-data-compass-units-spec,
+   :ser/jon-gui-data-accumulator-state-idx
+     jon-gui-data-accumulator-state-idx-spec,
+   :ser/jon-gui-data-time-formats jon-gui-data-time-formats-spec,
+   :ser/jon-gui-data-rotary-direction jon-gui-data-rotary-direction-spec,
+   :ser/jon-gui-data-lrf-scan-modes jon-gui-data-lrf-scan-modes-spec,
+   :ser/jon-gui-datat-lrf-laser-pointer-modes
+     jon-gui-datat-lrf-laser-pointer-modes-spec,
+   :ser/jon-gui-data-compass-calibrate-status
+     jon-gui-data-compass-calibrate-status-spec,
+   :ser/jon-gui-data-rotary-mode jon-gui-data-rotary-mode-spec,
+   :ser/jon-gui-data-video-channel jon-gui-data-video-channel-spec,
+   :ser/jon-gui-data-rec-osd-screen jon-gui-data-rec-osd-screen-spec,
+   :ser/jon-gui-data-fx-mode-day jon-gui-data-fx-mode-day-spec,
+   :ser/jon-gui-data-fx-mode-heat jon-gui-data-fx-mode-heat-spec,
+   :ser/jon-gui-data-system-localizations
+     jon-gui-data-system-localizations-spec,
+   :ser/jon-gui-data-client-type jon-gui-data-client-type-spec,
+   :ser/jon-gui-data-meteo jon-gui-data-meteo-spec,
+   :ser/jon-gui-data-time jon-gui-data-time-spec,
+   :ser/jon-gui-data-system jon-gui-data-system-spec,
+   :ser/jon-gui-data-lrf jon-gui-data-lrf-spec,
+   :ser/jon-gui-data-target jon-gui-data-target-spec,
+   :ser/rgb-color rgb-color-spec,
+   :ser/jon-gui-data-gps jon-gui-data-gps-spec,
+   :ser/jon-gui-data-compass jon-gui-data-compass-spec,
+   :ser/jon-gui-data-compass-calibration jon-gui-data-compass-calibration-spec,
+   :ser/jon-gui-data-rotary jon-gui-data-rotary-spec,
+   :ser/scan-node scan-node-spec,
+   :ser/jon-gui-data-camera-day jon-gui-data-camera-day-spec,
+   :ser/jon-gui-data-camera-heat jon-gui-data-camera-heat-spec,
+   :ser/jon-gui-data-rec-osd jon-gui-data-rec-osd-spec,
+   :ser/jon-gui-data-day-cam-glass-heater
+     jon-gui-data-day-cam-glass-heater-spec,
+   :ser/jon-gui-data-actual-space-time jon-gui-data-actual-space-time-spec,
+   :ser/jon-gui-state jon-gui-state-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers

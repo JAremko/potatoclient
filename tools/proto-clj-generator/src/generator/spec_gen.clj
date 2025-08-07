@@ -69,7 +69,24 @@
 ;; Enum references
 (defmethod process-field-type :enum
   [field context]
-  (type-name->keyword (get-in field [:type :enum :type-ref])))
+  (let [type-ref (get-in field [:type :enum :type-ref])
+        type-keyword (type-name->keyword type-ref)
+        ;; Check if this is a cross-namespace reference
+        current-package (:current-package context)
+        ns-aliases (:ns-aliases context)
+        ;; Extract namespace from keyword
+        enum-ns (namespace type-keyword)]
+    (if (and enum-ns 
+             (not= enum-ns current-package)
+             (contains? ns-aliases enum-ns))
+      ;; Cross-namespace reference - use alias
+      (let [alias-name (get ns-aliases enum-ns)
+            enum-name (name type-keyword)
+            spec-var-name (str (csk/->kebab-case enum-name) "-spec")]
+        ;; Return a symbol that references the spec through the alias
+        (symbol (str alias-name "/" spec-var-name)))
+      ;; Same namespace or no alias - use keyword as before
+      type-keyword)))
 
 ;; Unknown types (from backend when it can't resolve)
 (defmethod process-field-type :unknown
@@ -141,15 +158,19 @@
                          (map (fn [field]
                                 (let [field-key (keyword (:name field))]
                                   [field-key [:map [field-key (process-field-schema field context)]]]))
-                              oneof-fields))]
-    ;; Return just the key and schema pair, not wrapped in [:map ...]
-    [(keyword oneof-name)
-     ;; Use :oneof with properties containing field definitions
-     (if-let [constraints (:constraints oneof-decl)]
+                              oneof-fields))
+        ;; Check if this oneof is required based on constraints
+        required? (get-in oneof-decl [:constraints :required])]
+    ;; Return the key, optional metadata (if not required), and schema
+    (if required?
+      [(keyword oneof-name)
+       ;; Required oneof
        [:oneof (merge field-specs
-                     {:error/message (or (when (:required constraints) "This oneof field is required")
-                                       "Exactly one field must be set")})]
-       [:oneof field-specs])]))
+                     {:error/message "This oneof field is required"})]]
+      ;; Optional oneof (default in proto3)
+      [(keyword oneof-name)
+       {:optional true}
+       [:oneof field-specs]])))
 
 ;; =============================================================================
 ;; Message Processing
@@ -161,9 +182,10 @@
   (let [regular-fields (remove :oneof-index (:fields message))
         oneofs (:oneofs message)]
     (concat
-     ;; Regular fields
+     ;; Regular fields - in proto3 all fields are optional
      (map (fn [field]
             [(keyword (:name field))
+             {:optional true}
              (process-field-schema field context)])
           regular-fields)
      ;; Oneof fields - each returns a [key schema] pair
@@ -230,8 +252,17 @@
 
 (defn generate-specs-for-namespace
   "Generate all Malli specs for messages and enums in a namespace"
-  [{:keys [messages enums] :as namespace-data}]
-  (let [context {}  ; Can add type lookup, etc. here
+  [{:keys [messages enums current-package require-specs] :as namespace-data}]
+  (let [;; Build a map of namespace aliases from require-specs
+        ;; e.g. [[test.roundtrip.ser :as types]] -> {"ser" "types"}
+        ns-aliases (into {}
+                        (for [[ns-sym :as alias-sym] require-specs
+                              :let [ns-str (str ns-sym)
+                                    ;; Extract the last part of namespace (e.g. "ser" from "test.roundtrip.ser")
+                                    ns-suffix (last (str/split ns-str #"\."))]]
+                          [ns-suffix (str alias-sym)]))
+        context {:current-package current-package
+                 :ns-aliases ns-aliases}  ; Pass aliases to context
         
         ;; Generate specs for enums
         enum-specs (map (fn [enum-type]

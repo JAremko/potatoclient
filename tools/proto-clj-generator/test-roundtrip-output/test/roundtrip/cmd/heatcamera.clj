@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.roundtrip.ser :as types])
   (:import
     cmd.HeatCamera.JonSharedCmdHeatCamera$Root
@@ -99,15 +101,17 @@
 
 (def set-fx-mode-spec
   "Malli spec for set-fx-mode message"
-  [:map [:mode :ser/jon-gui-data-fx-mode-heat]])
+  [:map
+   [:mode {:optional true} [test.roundtrip.ser :as types]
+    /jon-gui-data-fx-mode-heat-spec]])
 
 (def set-clahe-level-spec
   "Malli spec for set-clahe-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def shift-clahe-level-spec
   "Malli spec for shift-clahe-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -1] [:<= 1]]]])
 
 (def next-fx-mode-spec "Malli spec for next-fx-mode message" [:map])
 
@@ -119,17 +123,21 @@
 
 (def disable-dde-spec "Malli spec for disable-dde message" [:map])
 
-(def set-value-spec "Malli spec for set-value message" [:map [:value :float]])
+(def set-value-spec
+  "Malli spec for set-value message"
+  [:map [:value {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def set-dde-level-spec
   "Malli spec for set-dde-level message"
-  [:map [:value :int]])
+  [:map [:value {:optional true} :int]])
 
 (def set-digital-zoom-level-spec
   "Malli spec for set-digital-zoom-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= 1]]]])
 
-(def shift-dde-spec "Malli spec for shift-dde message" [:map [:value :int]])
+(def shift-dde-spec
+  "Malli spec for shift-dde message"
+  [:map [:value {:optional true} :int]])
 
 (def zoom-in-spec "Malli spec for zoom-in message" [:map])
 
@@ -174,15 +182,19 @@
 
 (def set-zoom-table-value-spec
   "Malli spec for set-zoom-table-value message"
-  [:map [:value :int]])
+  [:map [:value {:optional true} :int]])
 
 (def set-agc-spec
   "Malli spec for set-agc message"
-  [:map [:value :ser/jon-gui-data-video-channel-heat-agc-modes]])
+  [:map
+   [:value {:optional true} [test.roundtrip.ser :as types]
+    /jon-gui-data-video-channel-heat-agc-modes-spec]])
 
 (def set-filters-spec
   "Malli spec for set-filters message"
-  [:map [:value :ser/jon-gui-data-video-channel-heat-filters]])
+  [:map
+   [:value {:optional true} [test.roundtrip.ser :as types]
+    /jon-gui-data-video-channel-heat-filters-spec]])
 
 (def start-spec "Malli spec for start message" [:map])
 
@@ -196,11 +208,55 @@
 
 (def set-auto-focus-spec
   "Malli spec for set-auto-focus message"
-  [:map [:value :boolean]])
+  [:map [:value {:optional true} :boolean]])
 
 (def reset-zoom-spec "Malli spec for reset-zoom message" [:map])
 
 (def save-to-table-spec "Malli spec for save-to-table message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.HeatCamera/root root-spec,
+   :cmd.HeatCamera/set-fx-mode set-fx-mode-spec,
+   :cmd.HeatCamera/set-clahe-level set-clahe-level-spec,
+   :cmd.HeatCamera/shift-clahe-level shift-clahe-level-spec,
+   :cmd.HeatCamera/next-fx-mode next-fx-mode-spec,
+   :cmd.HeatCamera/prev-fx-mode prev-fx-mode-spec,
+   :cmd.HeatCamera/refresh-fx-mode refresh-fx-mode-spec,
+   :cmd.HeatCamera/enable-dde enable-dde-spec,
+   :cmd.HeatCamera/disable-dde disable-dde-spec,
+   :cmd.HeatCamera/set-value set-value-spec,
+   :cmd.HeatCamera/set-dde-level set-dde-level-spec,
+   :cmd.HeatCamera/set-digital-zoom-level set-digital-zoom-level-spec,
+   :cmd.HeatCamera/shift-dde shift-dde-spec,
+   :cmd.HeatCamera/zoom-in zoom-in-spec,
+   :cmd.HeatCamera/zoom-out zoom-out-spec,
+   :cmd.HeatCamera/zoom-stop zoom-stop-spec,
+   :cmd.HeatCamera/focus-in focus-in-spec,
+   :cmd.HeatCamera/focus-out focus-out-spec,
+   :cmd.HeatCamera/focus-stop focus-stop-spec,
+   :cmd.HeatCamera/focus-step-plus focus-step-plus-spec,
+   :cmd.HeatCamera/focus-step-minus focus-step-minus-spec,
+   :cmd.HeatCamera/calibrate calibrate-spec,
+   :cmd.HeatCamera/zoom zoom-spec,
+   :cmd.HeatCamera/next-zoom-table-pos next-zoom-table-pos-spec,
+   :cmd.HeatCamera/prev-zoom-table-pos prev-zoom-table-pos-spec,
+   :cmd.HeatCamera/set-calib-mode set-calib-mode-spec,
+   :cmd.HeatCamera/set-zoom-table-value set-zoom-table-value-spec,
+   :cmd.HeatCamera/set-agc set-agc-spec,
+   :cmd.HeatCamera/set-filters set-filters-spec,
+   :cmd.HeatCamera/start start-spec,
+   :cmd.HeatCamera/stop stop-spec,
+   :cmd.HeatCamera/halt halt-spec,
+   :cmd.HeatCamera/photo photo-spec,
+   :cmd.HeatCamera/get-meteo get-meteo-spec,
+   :cmd.HeatCamera/set-auto-focus set-auto-focus-spec,
+   :cmd.HeatCamera/reset-zoom reset-zoom-spec,
+   :cmd.HeatCamera/save-to-table save-to-table-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -642,8 +698,8 @@
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-set-fx-mode
        "Parse a SetFxMode protobuf message to a map."
@@ -792,8 +848,8 @@
        [^cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom proto]
        [any? => zoom-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-zoom-payload proto))))
+         ;; Oneof: cmd
+         (parse-zoom-payload proto) (assoc :cmd (parse-zoom-payload proto))))
 
 (>defn parse-next-zoom-table-pos
        "Parse a NextZoomTablePos protobuf message to a map."

@@ -5,8 +5,8 @@
             [malli.generator :as mg]
             [malli.registry :as mr]
             [potatoclient.specs.malli-oneof :as oneof]
-            [potatoclient.proto.command :as cmd-gen]
-            [potatoclient.proto.state :as state-gen]
+            [test.roundtrip.cmd :as cmd-gen]
+            [test.roundtrip.ser :as state-gen]
             [test-utils.diff :as diff])
   (:import [cmd JonSharedCmd JonSharedCmd$Root JonSharedCmd$Root$PayloadCase]
            [ser JonSharedData JonSharedData$JonGUIState]))

@@ -58,20 +58,18 @@ The proto-clj-generator MUST have a comprehensive test that validates the entire
 - Handles multiple oneofs in a single message gracefully
 - Separates the concept of "payload handling" from specific field names
 
-**CRITICAL BUG FOUND**: 
-The current implementation has a bug with multiple oneofs:
+**FIXED**: Multiple Oneofs Bug
+The implementation has been updated to generate ONE payload function per message that handles ALL oneofs:
 ```clojure
-;; Current code generates a separate function for EACH oneof:
+;; Fixed code generates one function per message with oneofs:
 (for [msg sorted-messages
-      oneof (:oneofs msg)]
-  (generate-oneof-builder msg oneof ...))
+      :when (seq (:oneofs msg))]
+  (generate-combined-oneof-builder msg type-lookup current-package guardrails?))
 ```
-This would generate duplicate functions if a message has multiple oneofs! 
-
-**Required Fix**: 
-- Generate ONE payload function per message that handles ALL oneofs
-- The function should handle each oneof field appropriately
-- Test with protobuf schemas that have multiple oneofs per message
+This correctly handles messages with multiple oneofs by:
+- Generating a single `build-<message>-payload` function
+- Collecting all fields from all oneofs in that message
+- Handling each oneof field appropriately in the combined function
 
 ## TODOs in Source Code
 
@@ -240,12 +238,13 @@ Based on TODO-GUARDRAILS.md requirements:
 - ✅ Fixed oneof code generation to properly nest fields under their parent field (e.g., `:payload`)
 - ✅ Removed :maybe wrappers from proto3 fields (they always have defaults)
 - ✅ Created full_roundtrip_validation_basic_test.clj with working test structure
+- ✅ Fixed multiple oneofs bug - now generates ONE payload function per message
+- ✅ Fixed namespace resolution issues - using pre-generation approach
+- ✅ Fixed enum value lookups - using when-let to handle nil
 
 ### In Progress
-- 🔄 Working on enabling full roundtrip validation test
-- 🔄 Fixing namespace resolution issues in test
 - 🔄 Handling enum not_in constraints to prevent default values
-- 🔄 Fixing enum value lookups (NPE in generated code)
+- 🔄 Enabling guardrails validation in test environment
 
 ### Key Discoveries
 1. **Proto3 Default Values**: All fields in proto3 have defaults (0 for numbers, false for bools, empty string, etc.)

@@ -2,19 +2,21 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
-            [test.proto.separated.lira :as lira]
-            [test.proto.separated.rotaryplatform :as rotaryplatform]
-            [test.proto.separated.system :as system]
-            [test.proto.separated.lrf_calib :as lrf_calib]
-            [test.proto.separated.gps :as gps]
-            [test.proto.separated.heatcamera :as heatcamera]
-            [test.proto.separated.cv :as cv]
-            [test.proto.separated.daycamera :as daycamera]
-            [test.proto.separated.daycamglassheater :as daycamglassheater]
-            [test.proto.separated.lrf :as lrf]
-            [test.proto.separated.compass :as compass]
-            [test.proto.separated.ser.data :as types]
-            [test.proto.separated.osd :as osd])
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
+            [test.proto.separated.cmd.lira :as lira]
+            [test.proto.separated.cmd.rotaryplatform :as rotaryplatform]
+            [test.proto.separated.cmd.system :as system]
+            [test.proto.separated.cmd.lrf-calib :as lrf-calib]
+            [test.proto.separated.cmd.gps :as gps]
+            [test.proto.separated.cmd.heatcamera :as heatcamera]
+            [test.proto.separated.cmd.cv :as cv]
+            [test.proto.separated.cmd.daycamera :as daycamera]
+            [test.proto.separated.cmd.daycamglassheater :as daycamglassheater]
+            [test.proto.separated.cmd.lrf :as lrf]
+            [test.proto.separated.cmd.compass :as compass]
+            [test.proto.separated.ser :as types]
+            [test.proto.separated.cmd.osd :as osd])
   (:import cmd.JonSharedCmd$Root
            cmd.JonSharedCmd$Ping
            cmd.JonSharedCmd$Noop
@@ -32,9 +34,10 @@
 
 (def root-spec
   "Malli spec for root message"
-  [:map [:protocol-version [:maybe :int]] [:session-id [:maybe :int]]
-   [:important [:maybe :boolean]] [:from-cv-subsystem [:maybe :boolean]]
-   [:client-type [:maybe :ser/jon-gui-data-client-type]]
+  [:map [:protocol-version {:optional true} [:and :int [:> 0]]]
+   [:session-id {:optional true} :int] [:important {:optional true} :boolean]
+   [:from-cv-subsystem {:optional true} :boolean]
+   [:client-type {:optional true} :ser/jon-gui-data-client-type]
    [:payload
     [:oneof
      {:osd [:map [:osd :cmd.osd/root]],
@@ -45,12 +48,13 @@
       :gps [:map [:gps :cmd.gps/root]],
       :lrf [:map [:lrf :cmd.lrf/root]],
       :day-cam-glass-heater
-        [:map [:day-cam-glass-heater :cmd.daycamglassheater/root]],
-      :day-camera [:map [:day-camera :cmd.daycamera/root]],
-      :heat-camera [:map [:heat-camera :cmd.heatcamera/root]],
+        [:map [:day-cam-glass-heater :cmd.day-cam-glass-heater/root]],
+      :day-camera [:map [:day-camera :cmd.day-camera/root]],
+      :heat-camera [:map [:heat-camera :cmd.heat-camera/root]],
       :lira [:map [:lira :cmd.lira/root]],
-      :lrf-calib [:map [:lrf-calib :cmd.lrf_calib/root]],
-      :rotary [:map [:rotary :cmd.rotaryplatform/root]],
+      :lrf-calib [:map [:lrf-calib :cmd.lrf-calib/root]],
+      :rotary [:map [:rotary :cmd.rotary-platform/root]],
+      :error/message "This oneof field is required",
       :compass [:map [:compass :cmd.compass/root]],
       :frozen [:map [:frozen :cmd/frozen]]}]]])
 
@@ -59,6 +63,17 @@
 (def noop-spec "Malli spec for noop message" [:map])
 
 (def frozen-spec "Malli spec for frozen message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd/root root-spec,
+   :cmd/ping ping-spec,
+   :cmd/noop noop-spec,
+   :cmd/frozen frozen-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -80,7 +95,7 @@
   build-root
   "Build a Root protobuf message from a map."
   [m]
-  [root-spec => #(instance? cmd.JonSharedCmd$Root %)]
+  [root-spec => any?]
   (let [builder (cmd.JonSharedCmd$Root/newBuilder)]
     ;; Set regular fields
     (when (contains? m :protocol-version)
@@ -91,8 +106,8 @@
       (.setFromCvSubsystem builder (get m :from-cv-subsystem)))
     (when (contains? m :client-type)
       (.setClientType builder
-                      (get types/jon-gui-data-client-type-values
-                           (get m :client-type))))
+                      (when-let [v (get m :client-type)]
+                        (get types/jon-gui-data-client-type-values v))))
     ;; Handle oneof: payload
     (when-let [payload-field
                  (first (filter (fn [[k v]]
@@ -100,43 +115,43 @@
                                      :lrf-calib :rotary :osd :ping :noop :frozen
                                      :system :cv :day-cam-glass-heater :lira}
                                    k))
-                          m))]
+                          (:payload m)))]
       (build-root-payload builder payload-field))
     (.build builder)))
 
 (>defn build-ping
        "Build a Ping protobuf message from a map."
        [m]
-       [ping-spec => #(instance? cmd.JonSharedCmd$Ping %)]
+       [ping-spec => any?]
        (let [builder (cmd.JonSharedCmd$Ping/newBuilder)] (.build builder)))
 
 (>defn build-noop
        "Build a Noop protobuf message from a map."
        [m]
-       [noop-spec => #(instance? cmd.JonSharedCmd$Noop %)]
+       [noop-spec => any?]
        (let [builder (cmd.JonSharedCmd$Noop/newBuilder)] (.build builder)))
 
 (>defn build-frozen
        "Build a Frozen protobuf message from a map."
        [m]
-       [frozen-spec => #(instance? cmd.JonSharedCmd$Frozen %)]
+       [frozen-spec => any?]
        (let [builder (cmd.JonSharedCmd$Frozen/newBuilder)] (.build builder)))
 
-(>defn parse-root
-       "Parse a Root protobuf message to a map."
-       [^cmd.JonSharedCmd$Root proto]
-       [#(instance? cmd.JonSharedCmd$Root %) => root-spec]
-       (cond-> {}
-         ;; Regular fields
-         true (assoc :protocol-version (.getProtocolVersion proto))
-         true (assoc :session-id (.getSessionId proto))
-         true (assoc :important (.getImportant proto))
-         true (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
-         true (assoc :client-type
-                (get types/jon-gui-data-client-type-keywords
-                     (.getClientType proto)))
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+(>defn
+  parse-root
+  "Parse a Root protobuf message to a map."
+  [^cmd.JonSharedCmd$Root proto]
+  [any? => root-spec]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :protocol-version (.getProtocolVersion proto))
+    true (assoc :session-id (.getSessionId proto))
+    true (assoc :important (.getImportant proto))
+    true (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
+    true (assoc :client-type
+           (get types/jon-gui-data-client-type-keywords (.getClientType proto)))
+    ;; Oneof: payload
+    (parse-root-payload proto) (assoc :payload (parse-root-payload proto))))
 
 (>defn parse-ping
        "Parse a Ping protobuf message to a map."
@@ -159,15 +174,14 @@
 (>defn- build-root-payload
         "Build the oneof payload for Root."
         [builder [field-key value]]
-        [#(instance? cmd.JonSharedCmd$Root$Builder %) [:tuple keyword? any?] =>
-         #(instance? cmd.JonSharedCmd$Root$Builder %)]
+        [any? [:tuple keyword? any?] => any?]
         (case field-key
           :day-camera (.setDayCamera builder (daycamera/build-root value))
           :heat-camera (.setHeatCamera builder (heatcamera/build-root value))
           :gps (.setGps builder (gps/build-root value))
           :compass (.setCompass builder (compass/build-root value))
           :lrf (.setLrf builder (lrf/build-root value))
-          :lrf-calib (.setLrfCalib builder (lrf_calib/build-root value))
+          :lrf-calib (.setLrfCalib builder (lrf-calib/build-root value))
           :rotary (.setRotary builder (rotaryplatform/build-root value))
           :osd (.setOsd builder (osd/build-root value))
           :ping (.setPing builder (build-ping value))
@@ -185,7 +199,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.JonSharedCmd$Root proto]
-  [#(instance? cmd.JonSharedCmd$Root %) => (? map?)]
+  [any? => (? map?)]
   (cond (.hasDayCamera proto) {:day-camera (daycamera/parse-root (.getDayCamera
                                                                    proto))}
         (.hasHeatCamera proto) {:heat-camera (heatcamera/parse-root
@@ -193,7 +207,7 @@
         (.hasGps proto) {:gps (gps/parse-root (.getGps proto))}
         (.hasCompass proto) {:compass (compass/parse-root (.getCompass proto))}
         (.hasLrf proto) {:lrf (lrf/parse-root (.getLrf proto))}
-        (.hasLrfCalib proto) {:lrf-calib (lrf_calib/parse-root (.getLrfCalib
+        (.hasLrfCalib proto) {:lrf-calib (lrf-calib/parse-root (.getLrfCalib
                                                                  proto))}
         (.hasRotary proto) {:rotary (rotaryplatform/parse-root (.getRotary
                                                                  proto))}

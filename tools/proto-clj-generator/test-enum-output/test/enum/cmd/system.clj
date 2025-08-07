@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.enum.ser :as types])
   (:import cmd.System.JonSharedCmdSystem$Root
            cmd.System.JonSharedCmdSystem$StartALl
@@ -84,7 +86,28 @@
 
 (def set-localization-spec
   "Malli spec for set-localization message"
-  [:map [:loc :ser/jon-gui-data-system-localizations]])
+  [:map [:loc {:optional true} :ser/jon-gui-data-system-localizations]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.System/root root-spec,
+   :cmd.System/start-a-ll start-a-ll-spec,
+   :cmd.System/stop-a-ll stop-a-ll-spec,
+   :cmd.System/reboot reboot-spec,
+   :cmd.System/power-off power-off-spec,
+   :cmd.System/reset-configs reset-configs-spec,
+   :cmd.System/start-rec start-rec-spec,
+   :cmd.System/stop-rec stop-rec-spec,
+   :cmd.System/mark-rec-important mark-rec-important-spec,
+   :cmd.System/unmark-rec-important unmark-rec-important-spec,
+   :cmd.System/enter-transport enter-transport-spec,
+   :cmd.System/enable-geodesic-mode enable-geodesic-mode-spec,
+   :cmd.System/disable-geodesic-mode disable-geodesic-mode-spec,
+   :cmd.System/set-localization set-localization-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -139,7 +162,7 @@
                                                   :geodesic-mode-disable}
                                                 k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start-a-ll
@@ -247,8 +270,8 @@
        [^cmd.System.JonSharedCmdSystem$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-start-a-ll
        "Parse a StartALl protobuf message to a map."

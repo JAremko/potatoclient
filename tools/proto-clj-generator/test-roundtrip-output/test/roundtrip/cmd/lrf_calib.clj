@@ -1,7 +1,9 @@
 (ns test.roundtrip.cmd.lrf-calib
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Lrf_calib.JonSharedCmdLrfAlign$Root
            cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets
            cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets
@@ -22,7 +24,7 @@
 (def root-spec
   "Malli spec for root message"
   [:map
-   [:channel
+   [:channel {:optional true}
     [:oneof
      {:day [:map [:day :cmd.lrf-calib/offsets]],
       :heat [:map [:heat :cmd.lrf-calib/offsets]]}]]])
@@ -40,15 +42,28 @@
 
 (def set-offsets-spec
   "Malli spec for set-offsets message"
-  [:map [:x :int] [:y :int]])
+  [:map [:x {:optional true} :int] [:y {:optional true} :int]])
 
 (def shift-offsets-by-spec
   "Malli spec for shift-offsets-by message"
-  [:map [:x :int] [:y :int]])
+  [:map [:x {:optional true} :int] [:y {:optional true} :int]])
 
 (def reset-offsets-spec "Malli spec for reset-offsets message" [:map])
 
 (def save-offsets-spec "Malli spec for save-offsets message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lrf_calib/root root-spec,
+   :cmd.Lrf_calib/offsets offsets-spec,
+   :cmd.Lrf_calib/set-offsets set-offsets-spec,
+   :cmd.Lrf_calib/shift-offsets-by shift-offsets-by-spec,
+   :cmd.Lrf_calib/reset-offsets reset-offsets-spec,
+   :cmd.Lrf_calib/save-offsets save-offsets-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -137,16 +152,18 @@
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: channel
+         (parse-root-payload proto) (assoc :channel
+                                      (parse-root-payload proto))))
 
 (>defn parse-offsets
        "Parse a Offsets protobuf message to a map."
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
        [any? => offsets-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-offsets-payload proto))))
+         ;; Oneof: cmd
+         (parse-offsets-payload proto) (assoc :cmd
+                                         (parse-offsets-payload proto))))
 
 (>defn parse-set-offsets
        "Parse a SetOffsets protobuf message to a map."

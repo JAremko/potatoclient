@@ -1,15 +1,19 @@
 (ns generator.basic-roundtrip-test
   "Basic roundtrip tests without Malli validation"
   (:require [clojure.test :refer :all]
-            [potatoclient.proto.cmd :as cmd]
-            [potatoclient.proto.ser :as ser]
-            [potatoclient.proto.cmd.daycamera :as daycamera]
-            [potatoclient.proto.cmd.heatcamera :as heatcamera]
-            [potatoclient.proto.cmd.system :as system])
+            [test.roundtrip.cmd :as cmd]
+            [test.roundtrip.ser :as ser]
+            [test.roundtrip.cmd.daycamera :as daycamera]
+            [test.roundtrip.cmd.heatcamera :as heatcamera]
+            [test.roundtrip.cmd.system :as system]
+            [generator.test-registry :as test-registry])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [cmd.System JonSharedCmdSystem$Root]
            [cmd.DayCamera JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$SetValue]
            [ser JonSharedData JonSharedData$JonGUIState]))
+
+;; Setup combined registry for all tests
+(test-registry/setup-registry!)
 
 (deftest empty-message-roundtrip
   (testing "Empty messages roundtrip correctly"
@@ -138,12 +142,15 @@
       (is (= 0.0 (:speed roundtrip)))))
   
   (testing "Boolean default is false"
-    (let [original {}
+    ;; cmd Root requires a payload, so provide a minimal one (ping is empty)
+    (let [original {:payload {:ping {}}}
           proto (cmd/build-root original)
           roundtrip (cmd/parse-root proto)]
       ;; These boolean fields should default to false
       (is (false? (:important roundtrip)))
-      (is (false? (:from-cv-subsystem roundtrip))))))
+      (is (false? (:from-cv-subsystem roundtrip)))
+      ;; Verify the ping payload is preserved
+      (is (= {:payload {:ping {}}} (select-keys roundtrip [:payload]))))))
 
 (deftest complete-cmd-root-roundtrip
   (testing "Complete command root message"
@@ -152,7 +159,7 @@
                    :important true
                    :from-cv-subsystem false
                    :client-type :jon-gui-data-client-type-local-network
-                   :ping {}}
+                   :payload {:ping {}}}
           proto (cmd/build-root original)
           roundtrip (cmd/parse-root proto)]
       (is (= original roundtrip))))
@@ -161,7 +168,7 @@
     (let [original {:protocol-version 2
                    :session-id 54321
                    :client-type :jon-gui-data-client-type-internal-cv
-                   :noop {}}
+                   :payload {:noop {}}}
           proto (cmd/build-root original)
           roundtrip (cmd/parse-root proto)]
       ;; Protobuf adds default values for unset fields

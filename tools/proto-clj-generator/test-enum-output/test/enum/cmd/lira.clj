@@ -1,7 +1,9 @@
 (ns test.enum.cmd.lira
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Lira.JonSharedCmdLira$Root
            cmd.Lira.JonSharedCmdLira$Refine_target
            cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget))
@@ -26,14 +28,29 @@
 
 (def refine-target-spec
   "Malli spec for refine-target message"
-  [:map [:target :cmd.lira/jon-gui-data-lira-target]])
+  [:map [:target {:optional true} :cmd.lira/jon-gui-data-lira-target]])
 
 (def jon-gui-data-lira-target-spec
   "Malli spec for jon-gui-data-lira-target message"
-  [:map [:timestamp :int] [:target-longitude :double] [:target-latitude :double]
-   [:target-altitude :double] [:target-azimuth :double]
-   [:target-elevation :double] [:distance :double] [:uuid-part-1 :int]
-   [:uuid-part-2 :int] [:uuid-part-3 :int] [:uuid-part-4 :int]])
+  [:map [:timestamp {:optional true} :int]
+   [:target-longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:target-latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:target-altitude {:optional true} :double]
+   [:target-azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:target-elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:distance {:optional true} [:and :double [:>= 0]]]
+   [:uuid-part-1 {:optional true} :int] [:uuid-part-2 {:optional true} :int]
+   [:uuid-part-3 {:optional true} :int] [:uuid-part-4 {:optional true} :int]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lira/root root-spec,
+   :cmd.Lira/refine-target refine-target-spec,
+   :cmd.Lira/jon-gui-data-lira-target jon-gui-data-lira-target-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -57,7 +74,7 @@
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]] (#{:refine-target} k))
                                        (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-refine-target
@@ -105,8 +122,8 @@
        [^cmd.Lira.JonSharedCmdLira$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-refine-target
        "Parse a Refine_target protobuf message to a map."

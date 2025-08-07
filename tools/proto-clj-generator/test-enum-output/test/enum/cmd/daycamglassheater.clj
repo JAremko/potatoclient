@@ -1,7 +1,9 @@
 (ns test.enum.cmd.daycamglassheater
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root
            cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start
            cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop
@@ -42,6 +44,19 @@
 (def get-meteo-spec "Malli spec for get-meteo message" [:map])
 
 ;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.DayCamGlassHeater/root root-spec,
+   :cmd.DayCamGlassHeater/start start-spec,
+   :cmd.DayCamGlassHeater/stop stop-spec,
+   :cmd.DayCamGlassHeater/turn-on turn-on-spec,
+   :cmd.DayCamGlassHeater/turn-off turn-off-spec,
+   :cmd.DayCamGlassHeater/get-meteo get-meteo-spec})
+
+;; =============================================================================
 ;; Builders and Parsers
 ;; =============================================================================
 
@@ -74,7 +89,7 @@
                                              :get-meteo}
                                            k))
                                   (:cmd m)))]
-      (build-root-cmd builder cmd-field))
+      (build-root-payload builder cmd-field))
     (.build builder)))
 
 (>defn
@@ -131,8 +146,8 @@
        [^cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-start
        "Parse a Start protobuf message to a map."

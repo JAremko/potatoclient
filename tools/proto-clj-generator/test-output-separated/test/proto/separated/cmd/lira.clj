@@ -1,7 +1,9 @@
 (ns test.proto.separated.cmd.lira
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Lira.JonSharedCmdLira$Root
            cmd.Lira.JonSharedCmdLira$Refine_target
            cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget))
@@ -20,20 +22,35 @@
   "Malli spec for root message"
   [:map
    [:cmd
-    [:oneof {:refine-target [:map [:refine-target :cmd.lira/refine-target]]}]]])
+    [:oneof
+     {:refine-target [:map [:refine-target :cmd.lira/refine-target]],
+      :error/message "This oneof field is required"}]]])
 
 (def refine-target-spec
   "Malli spec for refine-target message"
-  [:map [:target [:maybe :cmd.lira/jon-gui-data-lira-target]]])
+  [:map [:target {:optional true} :cmd.lira/jon-gui-data-lira-target]])
 
 (def jon-gui-data-lira-target-spec
   "Malli spec for jon-gui-data-lira-target message"
-  [:map [:timestamp [:maybe :int]] [:target-longitude [:maybe :double]]
-   [:target-latitude [:maybe :double]] [:target-altitude [:maybe :double]]
-   [:target-azimuth [:maybe :double]] [:target-elevation [:maybe :double]]
-   [:distance [:maybe :double]] [:uuid-part-1 [:maybe :int]]
-   [:uuid-part-2 [:maybe :int]] [:uuid-part-3 [:maybe :int]]
-   [:uuid-part-4 [:maybe :int]]])
+  [:map [:timestamp {:optional true} :int]
+   [:target-longitude {:optional true} [:and :double [:>= -180] [:<= 180]]]
+   [:target-latitude {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:target-altitude {:optional true} :double]
+   [:target-azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:target-elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:distance {:optional true} [:and :double [:>= 0]]]
+   [:uuid-part-1 {:optional true} :int] [:uuid-part-2 {:optional true} :int]
+   [:uuid-part-3 {:optional true} :int] [:uuid-part-4 {:optional true} :int]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lira/root root-spec,
+   :cmd.Lira/refine-target refine-target-spec,
+   :cmd.Lira/jon-gui-data-lira-target jon-gui-data-lira-target-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -52,31 +69,30 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.Lira.JonSharedCmdLira$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.Lira.JonSharedCmdLira$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]] (#{:refine-target} k))
-                                       m))]
+                                       (:cmd m)))]
            (build-root-payload builder cmd-field))
          (.build builder)))
 
-(>defn
-  build-refine-target
-  "Build a Refine_target protobuf message from a map."
-  [m]
-  [refine-target-spec => #(instance? cmd.Lira.JonSharedCmdLira$Refine_target %)]
-  (let [builder (cmd.Lira.JonSharedCmdLira$Refine_target/newBuilder)]
-    ;; Set regular fields
-    (when (contains? m :target)
-      (.setTarget builder (build-jon-gui-data-lira-target (get m :target))))
-    (.build builder)))
+(>defn build-refine-target
+       "Build a Refine_target protobuf message from a map."
+       [m]
+       [refine-target-spec => any?]
+       (let [builder (cmd.Lira.JonSharedCmdLira$Refine_target/newBuilder)]
+         ;; Set regular fields
+         (when (contains? m :target)
+           (.setTarget builder
+                       (build-jon-gui-data-lira-target (get m :target))))
+         (.build builder)))
 
 (>defn
   build-jon-gui-data-lira-target
   "Build a JonGuiDataLiraTarget protobuf message from a map."
   [m]
-  [jon-gui-data-lira-target-spec =>
-   #(instance? cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget %)]
+  [jon-gui-data-lira-target-spec => any?]
   (let [builder (cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget/newBuilder)]
     ;; Set regular fields
     (when (contains? m :timestamp) (.setTimestamp builder (get m :timestamp)))
@@ -104,16 +120,15 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Lira.JonSharedCmdLira$Root proto]
-       [#(instance? cmd.Lira.JonSharedCmdLira$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-refine-target
        "Parse a Refine_target protobuf message to a map."
        [^cmd.Lira.JonSharedCmdLira$Refine_target proto]
-       [#(instance? cmd.Lira.JonSharedCmdLira$Refine_target %) =>
-        refine-target-spec]
+       [any? => refine-target-spec]
        (cond-> {}
          ;; Regular fields
          (.hasTarget proto)
@@ -122,8 +137,7 @@
 (>defn parse-jon-gui-data-lira-target
        "Parse a JonGuiDataLiraTarget protobuf message to a map."
        [^cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget proto]
-       [#(instance? cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget %) =>
-        jon-gui-data-lira-target-spec]
+       [any? => jon-gui-data-lira-target-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :timestamp (.getTimestamp proto))
@@ -138,20 +152,19 @@
          true (assoc :uuid-part-3 (.getUuidPart3 proto))
          true (assoc :uuid-part-4 (.getUuidPart4 proto))))
 
-(>defn-
-  build-root-payload
-  "Build the oneof payload for Root."
-  [builder [field-key value]]
-  [#(instance? cmd.Lira.JonSharedCmdLira$Root$Builder %) [:tuple keyword? any?]
-   => #(instance? cmd.Lira.JonSharedCmdLira$Root$Builder %)]
-  (case field-key
-    :refine-target (.setRefineTarget builder (build-refine-target value))
-    (throw (ex-info "Unknown oneof field" {:field field-key, :oneof ":cmd"}))))
+(>defn- build-root-payload
+        "Build the oneof payload for Root."
+        [builder [field-key value]]
+        [any? [:tuple keyword? any?] => any?]
+        (case field-key
+          :refine-target (.setRefineTarget builder (build-refine-target value))
+          (throw (ex-info "Unknown oneof field"
+                          {:field field-key, :oneof ":cmd"}))))
 
 (>defn- parse-root-payload
         "Parse the oneof payload from Root."
         [^cmd.Lira.JonSharedCmdLira$Root proto]
-        [#(instance? cmd.Lira.JonSharedCmdLira$Root %) => (? map?)]
+        [any? => (? map?)]
         (cond (.hasRefineTarget proto) {:refine-target (parse-refine-target
                                                          (.getRefineTarget
                                                            proto))}))

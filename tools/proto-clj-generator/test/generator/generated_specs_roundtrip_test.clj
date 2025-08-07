@@ -3,11 +3,11 @@
   (:require [clojure.test :refer :all]
             [malli.core :as m]
             [malli.generator :as mg]
-            [potatoclient.proto.cmd :as cmd]
-            [potatoclient.proto.ser :as ser]
-            [potatoclient.proto.cmd.daycamera :as daycamera]
-            [potatoclient.proto.cmd.heatcamera :as heatcamera]
-            [potatoclient.proto.cmd.system :as system])
+            [test.roundtrip.cmd :as cmd]
+            [test.roundtrip.ser :as ser]
+            [test.roundtrip.cmd.daycamera :as daycamera]
+            [test.roundtrip.cmd.heatcamera :as heatcamera]
+            [test.roundtrip.cmd.system :as system])
   (:import [cmd JonSharedCmd JonSharedCmd$Root]
            [cmd.System JonSharedCmdSystem$Root]
            [cmd.DayCamera JonSharedCmdDayCamera$Root]

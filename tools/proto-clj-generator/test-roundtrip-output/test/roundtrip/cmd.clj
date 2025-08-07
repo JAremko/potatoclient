@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.roundtrip.cmd.lira :as lira]
             [test.roundtrip.cmd.rotaryplatform :as rotaryplatform]
             [test.roundtrip.cmd.system :as system]
@@ -32,9 +34,11 @@
 
 (def root-spec
   "Malli spec for root message"
-  [:map [:protocol-version [:and :int [:> 0]]] [:session-id :int]
-   [:important :boolean] [:from-cv-subsystem :boolean]
-   [:client-type :ser/jon-gui-data-client-type]
+  [:map [:protocol-version {:optional true} [:and :int [:> 0]]]
+   [:session-id {:optional true} :int] [:important {:optional true} :boolean]
+   [:from-cv-subsystem {:optional true} :boolean]
+   [:client-type {:optional true} [test.roundtrip.ser :as types]
+    /jon-gui-data-client-type-spec]
    [:payload
     [:oneof
      {:osd [:map [:osd :cmd.osd/root]],
@@ -60,6 +64,17 @@
 (def noop-spec "Malli spec for noop message" [:map])
 
 (def frozen-spec "Malli spec for frozen message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd/root root-spec,
+   :cmd/ping ping-spec,
+   :cmd/noop noop-spec,
+   :cmd/frozen frozen-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -123,21 +138,21 @@
        [frozen-spec => any?]
        (let [builder (cmd.JonSharedCmd$Frozen/newBuilder)] (.build builder)))
 
-(>defn parse-root
-       "Parse a Root protobuf message to a map."
-       [^cmd.JonSharedCmd$Root proto]
-       [any? => root-spec]
-       (cond-> {}
-         ;; Regular fields
-         true (assoc :protocol-version (.getProtocolVersion proto))
-         true (assoc :session-id (.getSessionId proto))
-         true (assoc :important (.getImportant proto))
-         true (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
-         true (assoc :client-type
-                (get types/jon-gui-data-client-type-keywords
-                     (.getClientType proto)))
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+(>defn
+  parse-root
+  "Parse a Root protobuf message to a map."
+  [^cmd.JonSharedCmd$Root proto]
+  [any? => root-spec]
+  (cond-> {}
+    ;; Regular fields
+    true (assoc :protocol-version (.getProtocolVersion proto))
+    true (assoc :session-id (.getSessionId proto))
+    true (assoc :important (.getImportant proto))
+    true (assoc :from-cv-subsystem (.getFromCvSubsystem proto))
+    true (assoc :client-type
+           (get types/jon-gui-data-client-type-keywords (.getClientType proto)))
+    ;; Oneof: payload
+    (parse-root-payload proto) (assoc :payload (parse-root-payload proto))))
 
 (>defn parse-ping
        "Parse a Ping protobuf message to a map."

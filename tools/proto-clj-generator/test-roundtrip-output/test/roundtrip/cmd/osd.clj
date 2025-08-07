@@ -1,7 +1,9 @@
 (ns test.roundtrip.cmd.osd
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.OSD.JonSharedCmdOsd$Root
            cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen
            cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen
@@ -66,6 +68,23 @@
 (def enable-day-osd-spec "Malli spec for enable-day-osd message" [:map])
 
 (def disable-day-osd-spec "Malli spec for disable-day-osd message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.OSD/root root-spec,
+   :cmd.OSD/show-default-screen show-default-screen-spec,
+   :cmd.OSD/show-lrf-measure-screen show-lrf-measure-screen-spec,
+   :cmd.OSD/show-lrf-result-screen show-lrf-result-screen-spec,
+   :cmd.OSD/show-lrf-result-simplified-screen
+     show-lrf-result-simplified-screen-spec,
+   :cmd.OSD/enable-heat-osd enable-heat-osd-spec,
+   :cmd.OSD/disable-heat-osd disable-heat-osd-spec,
+   :cmd.OSD/enable-day-osd enable-day-osd-spec,
+   :cmd.OSD/disable-day-osd disable-day-osd-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -175,8 +194,8 @@
        [^cmd.OSD.JonSharedCmdOsd$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-show-default-screen
        "Parse a ShowDefaultScreen protobuf message to a map."

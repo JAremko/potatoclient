@@ -59,7 +59,7 @@
                   (cmd-gen/build-root {:protocol-version 1
                                       :client-type :jon-gui-data-client-type-local-network
                                       :payload {:ping {:ping {}}
-                                               :system {:system {:start-rec {:start-rec {}}}}}}))))))
+                                               :system {:system {:start-rec {:start-rec {}}}}}})))))
 
 (deftest test-state-roundtrip
   (testing "State message roundtrip"
@@ -101,6 +101,7 @@
 (deftest test-constraint-validation
   (testing "Constraints are enforced"
     (testing "Protocol version must be > 0"
+      ;; Guardrails should be enabled via JVM opts
       (is (thrown? Exception
                   (cmd-gen/build-root {:protocol-version -1
                                       :client-type :jon-gui-data-client-type-local-network
@@ -114,4 +115,4 @@
       ;; Valid case
       (is (some? (cmd-gen/build-root {:protocol-version 1
                                      :client-type :jon-gui-data-client-type-local-network
-                                     :payload {:ping {:ping {}}}}))))))
+                                     :payload {:ping {:ping {}}}})))))))

@@ -1,7 +1,9 @@
 (ns test.proto.ns.cmd.osd
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.OSD.JonSharedCmdOsd$Root
            cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen
            cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen
@@ -27,20 +29,21 @@
   [:map
    [:cmd
     [:oneof
-     {:show-default-screen
-        [:map [:show-default-screen :cmd.osd/show-default-screen]],
-      :show-lrf-measure-screen
-        [:map [:show-lrf-measure-screen :cmd.osd/show-lrf-measure-screen]],
-      :show-lrf-result-screen
-        [:map [:show-lrf-result-screen :cmd.osd/show-lrf-result-screen]],
-      :show-lrf-result-simplified-screen
+     {:show-lrf-result-simplified-screen
         [:map
          [:show-lrf-result-simplified-screen
           :cmd.osd/show-lrf-result-simplified-screen]],
-      :enable-heat-osd [:map [:enable-heat-osd :cmd.osd/enable-heat-osd]],
+      :show-lrf-measure-screen
+        [:map [:show-lrf-measure-screen :cmd.osd/show-lrf-measure-screen]],
       :disable-heat-osd [:map [:disable-heat-osd :cmd.osd/disable-heat-osd]],
-      :enable-day-osd [:map [:enable-day-osd :cmd.osd/enable-day-osd]],
-      :disable-day-osd [:map [:disable-day-osd :cmd.osd/disable-day-osd]]}]]])
+      :disable-day-osd [:map [:disable-day-osd :cmd.osd/disable-day-osd]],
+      :show-lrf-result-screen
+        [:map [:show-lrf-result-screen :cmd.osd/show-lrf-result-screen]],
+      :enable-heat-osd [:map [:enable-heat-osd :cmd.osd/enable-heat-osd]],
+      :error/message "This oneof field is required",
+      :show-default-screen
+        [:map [:show-default-screen :cmd.osd/show-default-screen]],
+      :enable-day-osd [:map [:enable-day-osd :cmd.osd/enable-day-osd]]}]]])
 
 (def show-default-screen-spec
   "Malli spec for show-default-screen message"
@@ -65,6 +68,23 @@
 (def enable-day-osd-spec "Malli spec for enable-day-osd message" [:map])
 
 (def disable-day-osd-spec "Malli spec for disable-day-osd message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.OSD/root root-spec,
+   :cmd.OSD/show-default-screen show-default-screen-spec,
+   :cmd.OSD/show-lrf-measure-screen show-lrf-measure-screen-spec,
+   :cmd.OSD/show-lrf-result-screen show-lrf-result-screen-spec,
+   :cmd.OSD/show-lrf-result-simplified-screen
+     show-lrf-result-simplified-screen-spec,
+   :cmd.OSD/enable-heat-osd enable-heat-osd-spec,
+   :cmd.OSD/disable-heat-osd disable-heat-osd-spec,
+   :cmd.OSD/enable-day-osd enable-day-osd-spec,
+   :cmd.OSD/disable-day-osd disable-day-osd-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -95,7 +115,7 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.OSD.JonSharedCmdOsd$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$Root/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter
@@ -107,39 +127,35 @@
                                             :enable-heat-osd :disable-heat-osd
                                             :enable-day-osd :disable-day-osd}
                                           k))
-                                       m))]
+                                       (:cmd m)))]
            (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-show-default-screen
        "Build a ShowDefaultScreen protobuf message from a map."
        [m]
-       [show-default-screen-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen %)]
+       [show-default-screen-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-measure-screen
        "Build a ShowLRFMeasureScreen protobuf message from a map."
        [m]
-       [show-lrf-measure-screen-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen %)]
+       [show-lrf-measure-screen-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFMeasureScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-result-screen
        "Build a ShowLRFResultScreen protobuf message from a map."
        [m]
-       [show-lrf-result-screen-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen %)]
+       [show-lrf-result-screen-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$ShowLRFResultScreen/newBuilder)]
          (.build builder)))
 
 (>defn build-show-lrf-result-simplified-screen
        "Build a ShowLRFResultSimplifiedScreen protobuf message from a map."
        [m]
-       [show-lrf-result-simplified-screen-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen %)]
+       [show-lrf-result-simplified-screen-spec => any?]
        (let
          [builder
             (cmd.OSD.JonSharedCmdOsd$ShowLRFResultSimplifiedScreen/newBuilder)]
@@ -148,42 +164,38 @@
 (>defn build-enable-heat-osd
        "Build a EnableHeatOSD protobuf message from a map."
        [m]
-       [enable-heat-osd-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$EnableHeatOSD %)]
+       [enable-heat-osd-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$EnableHeatOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-disable-heat-osd
        "Build a DisableHeatOSD protobuf message from a map."
        [m]
-       [disable-heat-osd-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$DisableHeatOSD %)]
+       [disable-heat-osd-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$DisableHeatOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-enable-day-osd
        "Build a EnableDayOSD protobuf message from a map."
        [m]
-       [enable-day-osd-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$EnableDayOSD %)]
+       [enable-day-osd-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$EnableDayOSD/newBuilder)]
          (.build builder)))
 
 (>defn build-disable-day-osd
        "Build a DisableDayOSD protobuf message from a map."
        [m]
-       [disable-day-osd-spec =>
-        #(instance? cmd.OSD.JonSharedCmdOsd$DisableDayOSD %)]
+       [disable-day-osd-spec => any?]
        (let [builder (cmd.OSD.JonSharedCmdOsd$DisableDayOSD/newBuilder)]
          (.build builder)))
 
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.OSD.JonSharedCmdOsd$Root proto]
-       [#(instance? cmd.OSD.JonSharedCmdOsd$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-show-default-screen
        "Parse a ShowDefaultScreen protobuf message to a map."
@@ -237,8 +249,7 @@
   build-root-payload
   "Build the oneof payload for Root."
   [builder [field-key value]]
-  [#(instance? cmd.OSD.JonSharedCmdOsd$Root$Builder %) [:tuple keyword? any?] =>
-   #(instance? cmd.OSD.JonSharedCmdOsd$Root$Builder %)]
+  [any? [:tuple keyword? any?] => any?]
   (case field-key
     :show-default-screen
       (.setShowDefaultScreen builder (build-show-default-screen value))
@@ -261,7 +272,7 @@
   parse-root-payload
   "Parse the oneof payload from Root."
   [^cmd.OSD.JonSharedCmdOsd$Root proto]
-  [#(instance? cmd.OSD.JonSharedCmdOsd$Root %) => (? map?)]
+  [any? => (? map?)]
   (cond (.hasShowDefaultScreen proto) {:show-default-screen
                                          (parse-show-default-screen
                                            (.getShowDefaultScreen proto))}

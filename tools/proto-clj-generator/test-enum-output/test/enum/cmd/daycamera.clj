@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.enum.ser :as types])
   (:import cmd.DayCamera.JonSharedCmdDayCamera$SetValue
            cmd.DayCamera.JonSharedCmdDayCamera$Move
@@ -44,21 +46,26 @@
 ;; Malli Specs
 ;; =============================================================================
 
-(def set-value-spec "Malli spec for set-value message" [:map [:value :float]])
+(def set-value-spec
+  "Malli spec for set-value message"
+  [:map [:value {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def move-spec
   "Malli spec for move message"
-  [:map [:target-value :float] [:speed :float]])
+  [:map [:target-value {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
-(def offset-spec "Malli spec for offset message" [:map [:offset-value :float]])
+(def offset-spec
+  "Malli spec for offset message"
+  [:map [:offset-value {:optional true} [:and :float [:>= -1] [:<= 1]]]])
 
 (def set-clahe-level-spec
   "Malli spec for set-clahe-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def shift-clahe-level-spec
   "Malli spec for shift-clahe-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -1] [:<= 1]]]])
 
 (def root-spec
   "Malli spec for root message"
@@ -101,11 +108,11 @@
 
 (def set-fx-mode-spec
   "Malli spec for set-fx-mode message"
-  [:map [:mode :ser/jon-gui-data-fx-mode-day]])
+  [:map [:mode {:optional true} :ser/jon-gui-data-fx-mode-day]])
 
 (def set-digital-zoom-level-spec
   "Malli spec for set-digital-zoom-level message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= 1]]]])
 
 (def focus-spec
   "Malli spec for focus message"
@@ -148,19 +155,21 @@
   "Malli spec for prev-zoom-table-pos message"
   [:map])
 
-(def set-iris-spec "Malli spec for set-iris message" [:map [:value :float]])
+(def set-iris-spec
+  "Malli spec for set-iris message"
+  [:map [:value {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def set-infra-red-filter-spec
   "Malli spec for set-infra-red-filter message"
-  [:map [:value :boolean]])
+  [:map [:value {:optional true} :boolean]])
 
 (def set-auto-iris-spec
   "Malli spec for set-auto-iris message"
-  [:map [:value :boolean]])
+  [:map [:value {:optional true} :boolean]])
 
 (def set-zoom-table-value-spec
   "Malli spec for set-zoom-table-value message"
-  [:map [:value :int]])
+  [:map [:value {:optional true} :int]])
 
 (def stop-spec "Malli spec for stop message" [:map])
 
@@ -181,6 +190,43 @@
 (def save-to-table-focus-spec
   "Malli spec for save-to-table-focus message"
   [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.DayCamera/set-value set-value-spec,
+   :cmd.DayCamera/move move-spec,
+   :cmd.DayCamera/offset offset-spec,
+   :cmd.DayCamera/set-clahe-level set-clahe-level-spec,
+   :cmd.DayCamera/shift-clahe-level shift-clahe-level-spec,
+   :cmd.DayCamera/root root-spec,
+   :cmd.DayCamera/get-pos get-pos-spec,
+   :cmd.DayCamera/next-fx-mode next-fx-mode-spec,
+   :cmd.DayCamera/prev-fx-mode prev-fx-mode-spec,
+   :cmd.DayCamera/refresh-fx-mode refresh-fx-mode-spec,
+   :cmd.DayCamera/halt-all halt-all-spec,
+   :cmd.DayCamera/set-fx-mode set-fx-mode-spec,
+   :cmd.DayCamera/set-digital-zoom-level set-digital-zoom-level-spec,
+   :cmd.DayCamera/focus focus-spec,
+   :cmd.DayCamera/zoom zoom-spec,
+   :cmd.DayCamera/next-zoom-table-pos next-zoom-table-pos-spec,
+   :cmd.DayCamera/prev-zoom-table-pos prev-zoom-table-pos-spec,
+   :cmd.DayCamera/set-iris set-iris-spec,
+   :cmd.DayCamera/set-infra-red-filter set-infra-red-filter-spec,
+   :cmd.DayCamera/set-auto-iris set-auto-iris-spec,
+   :cmd.DayCamera/set-zoom-table-value set-zoom-table-value-spec,
+   :cmd.DayCamera/stop stop-spec,
+   :cmd.DayCamera/start start-spec,
+   :cmd.DayCamera/photo photo-spec,
+   :cmd.DayCamera/halt halt-spec,
+   :cmd.DayCamera/get-meteo get-meteo-spec,
+   :cmd.DayCamera/reset-zoom reset-zoom-spec,
+   :cmd.DayCamera/reset-focus reset-focus-spec,
+   :cmd.DayCamera/save-to-table save-to-table-spec,
+   :cmd.DayCamera/save-to-table-focus save-to-table-focus-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -321,7 +367,7 @@
                                        :set-clahe-level :shift-clahe-level}
                                      k))
                                   (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-get-pos
@@ -397,7 +443,7 @@
                                                   :save-to-table-focus}
                                                 k))
                                        (:cmd m)))]
-           (build-focus-cmd builder cmd-field))
+           (build-focus-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-zoom
@@ -414,7 +460,7 @@
                                                   :reset-zoom :save-to-table}
                                                 k))
                                        (:cmd m)))]
-           (build-zoom-cmd builder cmd-field))
+           (build-zoom-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-next-zoom-table-pos
@@ -589,8 +635,8 @@
        [^cmd.DayCamera.JonSharedCmdDayCamera$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-get-pos
        "Parse a GetPos protobuf message to a map."
@@ -645,16 +691,16 @@
        [^cmd.DayCamera.JonSharedCmdDayCamera$Focus proto]
        [any? => focus-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-focus-payload proto))))
+         ;; Oneof: cmd
+         (parse-focus-payload proto) (assoc :cmd (parse-focus-payload proto))))
 
 (>defn parse-zoom
        "Parse a Zoom protobuf message to a map."
        [^cmd.DayCamera.JonSharedCmdDayCamera$Zoom proto]
        [any? => zoom-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-zoom-payload proto))))
+         ;; Oneof: cmd
+         (parse-zoom-payload proto) (assoc :cmd (parse-zoom-payload proto))))
 
 (>defn parse-next-zoom-table-pos
        "Parse a NextZoomTablePos protobuf message to a map."

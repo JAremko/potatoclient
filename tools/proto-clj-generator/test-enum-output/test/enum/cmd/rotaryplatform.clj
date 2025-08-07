@@ -2,6 +2,8 @@
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof]
             [test.enum.ser :as types])
   (:import
     cmd.RotaryPlatform.JonSharedCmdRotary$Root
@@ -101,67 +103,76 @@
 
 (def axis-spec
   "Malli spec for axis message"
-  [:map [:azimuth :cmd.rotary-platform/azimuth]
-   [:elevation :cmd.rotary-platform/elevation]])
+  [:map [:azimuth {:optional true} :cmd.rotary-platform/azimuth]
+   [:elevation {:optional true} :cmd.rotary-platform/elevation]])
 
 (def set-mode-spec
   "Malli spec for set-mode message"
-  [:map [:mode :ser/jon-gui-data-rotary-mode]])
+  [:map [:mode {:optional true} :ser/jon-gui-data-rotary-mode]])
 
 (def set-azimuth-value-spec
   "Malli spec for set-azimuth-value message"
-  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:value {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-to-spec
   "Malli spec for rotate-azimuth-to message"
-  [:map [:target-value :float] [:speed :float]
-   [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:target-value {:optional true} [:and :float [:>= 0] [:< 360]]]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-spec
   "Malli spec for rotate-azimuth message"
-  [:map [:speed :float] [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-spec
   "Malli spec for rotate-elevation message"
-  [:map [:speed :float] [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def set-elevation-value-spec
   "Malli spec for set-elevation-value message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -90] [:<= 90]]]])
 
 (def rotate-elevation-to-spec
   "Malli spec for rotate-elevation-to message"
-  [:map [:target-value :float] [:speed :float]])
+  [:map [:target-value {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]])
 
 (def rotate-elevation-relative-spec
   "Malli spec for rotate-elevation-relative message"
-  [:map [:value :float] [:speed :float]
-   [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:value {:optional true} :float]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-elevation-relative-set-spec
   "Malli spec for rotate-elevation-relative-set message"
-  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:value {:optional true} :float]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-spec
   "Malli spec for rotate-azimuth-relative message"
-  [:map [:value :float] [:speed :float]
-   [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:value {:optional true} :float]
+   [:speed {:optional true} [:and :float [:>= 0] [:<= 1]]]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def rotate-azimuth-relative-set-spec
   "Malli spec for rotate-azimuth-relative-set message"
-  [:map [:value :float] [:direction :ser/jon-gui-data-rotary-direction]])
+  [:map [:value {:optional true} :float]
+   [:direction {:optional true} :ser/jon-gui-data-rotary-direction]])
 
 (def set-platform-azimuth-spec
   "Malli spec for set-platform-azimuth message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:> -360] [:< 360]]]])
 
 (def set-platform-elevation-spec
   "Malli spec for set-platform-elevation message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -90] [:<= 90]]]])
 
 (def set-platform-bank-spec
   "Malli spec for set-platform-bank message"
-  [:map [:value :float]])
+  [:map [:value {:optional true} [:and :float [:>= -180] [:< 180]]]])
 
 (def get-meteo-spec "Malli spec for get-meteo message" [:map])
 
@@ -207,21 +218,31 @@
 
 (def scan-select-node-spec
   "Malli spec for scan-select-node message"
-  [:map [:index :int]])
+  [:map [:index {:optional true} :int]])
 
 (def scan-delete-node-spec
   "Malli spec for scan-delete-node message"
-  [:map [:index :int]])
+  [:map [:index {:optional true} :int]])
 
 (def scan-update-node-spec
   "Malli spec for scan-update-node message"
-  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
-   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
+  [:map [:index {:optional true} :int]
+   [:day-zoom-table-value {:optional true} :int]
+   [:heat-zoom-table-value {:optional true} :int]
+   [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:linger {:optional true} [:and :double [:>= 0]]]
+   [:speed {:optional true} [:and :double [:> 0] [:<= 1]]]])
 
 (def scan-add-node-spec
   "Malli spec for scan-add-node message"
-  [:map [:index :int] [:day-zoom-table-value :int] [:heat-zoom-table-value :int]
-   [:azimuth :double] [:elevation :double] [:linger :double] [:speed :double]])
+  [:map [:index {:optional true} :int]
+   [:day-zoom-table-value {:optional true} :int]
+   [:heat-zoom-table-value {:optional true} :int]
+   [:azimuth {:optional true} [:and :double [:>= 0] [:< 360]]]
+   [:elevation {:optional true} [:and :double [:>= -90] [:<= 90]]]
+   [:linger {:optional true} [:and :double [:>= 0]]]
+   [:speed {:optional true} [:and :double [:> 0] [:<= 1]]]])
 
 (def elevation-spec
   "Malli spec for elevation message"
@@ -241,19 +262,73 @@
 
 (def set-use-rotary-as-compass-spec
   "Malli spec for set-use-rotary-as-compass message"
-  [:map [:flag :boolean]])
+  [:map [:flag {:optional true} :boolean]])
 
 (def rotate-to-gps-spec
   "Malli spec for rotate-to-gps message"
-  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
+  [:map [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} :float]])
 
 (def set-origin-gps-spec
   "Malli spec for set-origin-gps message"
-  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
+  [:map [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} :float]])
 
 (def rotate-to-ndc-spec
   "Malli spec for rotate-to-ndc message"
-  [:map [:channel :ser/jon-gui-data-video-channel] [:x :float] [:y :float]])
+  [:map [:channel {:optional true} :ser/jon-gui-data-video-channel]
+   [:x {:optional true} [:and :float [:>= -1] [:<= 1]]]
+   [:y {:optional true} [:and :float [:>= -1] [:<= 1]]]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.RotaryPlatform/root root-spec,
+   :cmd.RotaryPlatform/axis axis-spec,
+   :cmd.RotaryPlatform/set-mode set-mode-spec,
+   :cmd.RotaryPlatform/set-azimuth-value set-azimuth-value-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-to rotate-azimuth-to-spec,
+   :cmd.RotaryPlatform/rotate-azimuth rotate-azimuth-spec,
+   :cmd.RotaryPlatform/rotate-elevation rotate-elevation-spec,
+   :cmd.RotaryPlatform/set-elevation-value set-elevation-value-spec,
+   :cmd.RotaryPlatform/rotate-elevation-to rotate-elevation-to-spec,
+   :cmd.RotaryPlatform/rotate-elevation-relative rotate-elevation-relative-spec,
+   :cmd.RotaryPlatform/rotate-elevation-relative-set
+     rotate-elevation-relative-set-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-relative rotate-azimuth-relative-spec,
+   :cmd.RotaryPlatform/rotate-azimuth-relative-set
+     rotate-azimuth-relative-set-spec,
+   :cmd.RotaryPlatform/set-platform-azimuth set-platform-azimuth-spec,
+   :cmd.RotaryPlatform/set-platform-elevation set-platform-elevation-spec,
+   :cmd.RotaryPlatform/set-platform-bank set-platform-bank-spec,
+   :cmd.RotaryPlatform/get-meteo get-meteo-spec,
+   :cmd.RotaryPlatform/azimuth azimuth-spec,
+   :cmd.RotaryPlatform/start start-spec,
+   :cmd.RotaryPlatform/stop stop-spec,
+   :cmd.RotaryPlatform/halt halt-spec,
+   :cmd.RotaryPlatform/scan-start scan-start-spec,
+   :cmd.RotaryPlatform/scan-stop scan-stop-spec,
+   :cmd.RotaryPlatform/scan-pause scan-pause-spec,
+   :cmd.RotaryPlatform/scan-unpause scan-unpause-spec,
+   :cmd.RotaryPlatform/halt-azimuth halt-azimuth-spec,
+   :cmd.RotaryPlatform/halt-elevation halt-elevation-spec,
+   :cmd.RotaryPlatform/scan-prev scan-prev-spec,
+   :cmd.RotaryPlatform/scan-next scan-next-spec,
+   :cmd.RotaryPlatform/scan-refresh-node-list scan-refresh-node-list-spec,
+   :cmd.RotaryPlatform/scan-select-node scan-select-node-spec,
+   :cmd.RotaryPlatform/scan-delete-node scan-delete-node-spec,
+   :cmd.RotaryPlatform/scan-update-node scan-update-node-spec,
+   :cmd.RotaryPlatform/scan-add-node scan-add-node-spec,
+   :cmd.RotaryPlatform/elevation elevation-spec,
+   :cmd.RotaryPlatform/set-use-rotary-as-compass set-use-rotary-as-compass-spec,
+   :cmd.RotaryPlatform/rotate-to-gps rotate-to-gps-spec,
+   :cmd.RotaryPlatform/set-origin-gps set-origin-gps-spec,
+   :cmd.RotaryPlatform/rotate-to-ndc rotate-to-ndc-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -366,7 +441,7 @@
                                      :scan-add-node}
                                    k))
                           (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-axis
@@ -598,7 +673,7 @@
                                                   :relative :relative-set :halt}
                                                 k))
                                        (:cmd m)))]
-           (build-azimuth-cmd builder cmd-field))
+           (build-azimuth-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
@@ -767,7 +842,7 @@
                                                   :relative :relative-set :halt}
                                                 k))
                                        (:cmd m)))]
-           (build-elevation-cmd builder cmd-field))
+           (build-elevation-payload builder cmd-field))
          (.build builder)))
 
 (>defn
@@ -826,8 +901,8 @@
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-axis
        "Parse a Axis protobuf message to a map."
@@ -993,8 +1068,9 @@
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Azimuth proto]
        [any? => azimuth-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-azimuth-payload proto))))
+         ;; Oneof: cmd
+         (parse-azimuth-payload proto) (assoc :cmd
+                                         (parse-azimuth-payload proto))))
 
 (>defn parse-start
        "Parse a Start protobuf message to a map."
@@ -1117,8 +1193,9 @@
        [^cmd.RotaryPlatform.JonSharedCmdRotary$Elevation proto]
        [any? => elevation-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-elevation-payload proto))))
+         ;; Oneof: cmd
+         (parse-elevation-payload proto) (assoc :cmd
+                                           (parse-elevation-payload proto))))
 
 (>defn parse-set-use-rotary-as-compass
        "Parse a setUseRotaryAsCompass protobuf message to a map."

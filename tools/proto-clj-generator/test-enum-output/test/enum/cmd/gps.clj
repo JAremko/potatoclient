@@ -1,7 +1,9 @@
 (ns test.enum.cmd.gps
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Gps.JonSharedCmdGps$Root
            cmd.Gps.JonSharedCmdGps$Start
            cmd.Gps.JonSharedCmdGps$Stop
@@ -41,11 +43,26 @@
 
 (def set-use-manual-position-spec
   "Malli spec for set-use-manual-position message"
-  [:map [:flag :boolean]])
+  [:map [:flag {:optional true} :boolean]])
 
 (def set-manual-position-spec
   "Malli spec for set-manual-position message"
-  [:map [:latitude :float] [:longitude :float] [:altitude :float]])
+  [:map [:latitude {:optional true} [:and :float [:>= -90] [:<= 90]]]
+   [:longitude {:optional true} [:and :float [:>= -180] [:< 180]]]
+   [:altitude {:optional true} [:and :float [:>= -432] [:<= 8848]]]])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Gps/root root-spec,
+   :cmd.Gps/start start-spec,
+   :cmd.Gps/stop stop-spec,
+   :cmd.Gps/get-meteo get-meteo-spec,
+   :cmd.Gps/set-use-manual-position set-use-manual-position-spec,
+   :cmd.Gps/set-manual-position set-manual-position-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -79,7 +96,7 @@
                                           :set-use-manual-position :get-meteo}
                                         k))
                                (:cmd m)))]
-           (build-root-cmd builder cmd-field))
+           (build-root-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-start
@@ -129,8 +146,8 @@
        [^cmd.Gps.JonSharedCmdGps$Root proto]
        [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: cmd
+         (parse-root-payload proto) (assoc :cmd (parse-root-payload proto))))
 
 (>defn parse-start
        "Parse a Start protobuf message to a map."

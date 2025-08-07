@@ -1,7 +1,9 @@
-(ns test.proto.separated.cmd.Lrf_calib.cmd-lrf-align
+(ns test.proto.separated.cmd.lrf-calib
   "Generated protobuf functions."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [malli.core :as m])
+            [malli.core :as m]
+            [malli.registry :as mr]
+            [potatoclient.specs.malli-oneof :as oneof])
   (:import cmd.Lrf_calib.JonSharedCmdLrfAlign$Root
            cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets
            cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets
@@ -22,32 +24,46 @@
 (def root-spec
   "Malli spec for root message"
   [:map
-   [:channel
+   [:channel {:optional true}
     [:oneof
-     {:day [:map [:day :cmd.lrf_calib/offsets]],
-      :heat [:map [:heat :cmd.lrf_calib/offsets]]}]]])
+     {:day [:map [:day :cmd.lrf-calib/offsets]],
+      :heat [:map [:heat :cmd.lrf-calib/offsets]]}]]])
 
 (def offsets-spec
   "Malli spec for offsets message"
   [:map
    [:cmd
     [:oneof
-     {:set [:map [:set :cmd.lrf_calib/set-offsets]],
-      :save [:map [:save :cmd.lrf_calib/save-offsets]],
-      :reset [:map [:reset :cmd.lrf_calib/reset-offsets]],
-      :shift [:map [:shift :cmd.lrf_calib/shift-offsets-by]]}]]])
+     {:set [:map [:set :cmd.lrf-calib/set-offsets]],
+      :save [:map [:save :cmd.lrf-calib/save-offsets]],
+      :reset [:map [:reset :cmd.lrf-calib/reset-offsets]],
+      :shift [:map [:shift :cmd.lrf-calib/shift-offsets-by]],
+      :error/message "This oneof field is required"}]]])
 
 (def set-offsets-spec
   "Malli spec for set-offsets message"
-  [:map [:x [:maybe :int]] [:y [:maybe :int]]])
+  [:map [:x {:optional true} :int] [:y {:optional true} :int]])
 
 (def shift-offsets-by-spec
   "Malli spec for shift-offsets-by message"
-  [:map [:x [:maybe :int]] [:y [:maybe :int]]])
+  [:map [:x {:optional true} :int] [:y {:optional true} :int]])
 
 (def reset-offsets-spec "Malli spec for reset-offsets message" [:map])
 
 (def save-offsets-spec "Malli spec for save-offsets message" [:map])
+
+;; =============================================================================
+;; Registry Setup
+;; =============================================================================
+
+;; Registry for enum and message specs in this namespace
+(def registry
+  {:cmd.Lrf_calib/root root-spec,
+   :cmd.Lrf_calib/offsets offsets-spec,
+   :cmd.Lrf_calib/set-offsets set-offsets-spec,
+   :cmd.Lrf_calib/shift-offsets-by shift-offsets-by-spec,
+   :cmd.Lrf_calib/reset-offsets reset-offsets-spec,
+   :cmd.Lrf_calib/save-offsets save-offsets-spec})
 
 ;; =============================================================================
 ;; Builders and Parsers
@@ -74,32 +90,30 @@
 (>defn build-root
        "Build a Root protobuf message from a map."
        [m]
-       [root-spec => #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Root %)]
+       [root-spec => any?]
        (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Root/newBuilder)]
          ;; Handle oneof: channel
          (when-let [channel-field (first (filter (fn [[k v]] (#{:day :heat} k))
-                                           m))]
+                                           (:channel m)))]
            (build-root-payload builder channel-field))
          (.build builder)))
 
 (>defn build-offsets
        "Build a Offsets protobuf message from a map."
        [m]
-       [offsets-spec =>
-        #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets %)]
+       [offsets-spec => any?]
        (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets/newBuilder)]
          ;; Handle oneof: cmd
          (when-let [cmd-field (first (filter (fn [[k v]]
                                                (#{:set :save :reset :shift} k))
-                                       m))]
+                                       (:cmd m)))]
            (build-offsets-payload builder cmd-field))
          (.build builder)))
 
 (>defn build-set-offsets
        "Build a SetOffsets protobuf message from a map."
        [m]
-       [set-offsets-spec =>
-        #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets %)]
+       [set-offsets-spec => any?]
        (let [builder (cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets/newBuilder)]
          ;; Set regular fields
          (when (contains? m :x) (.setX builder (get m :x)))
@@ -109,8 +123,7 @@
 (>defn build-shift-offsets-by
        "Build a ShiftOffsetsBy protobuf message from a map."
        [m]
-       [shift-offsets-by-spec =>
-        #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy %)]
+       [shift-offsets-by-spec => any?]
        (let [builder
                (cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy/newBuilder)]
          ;; Set regular fields
@@ -121,8 +134,7 @@
 (>defn build-reset-offsets
        "Build a ResetOffsets protobuf message from a map."
        [m]
-       [reset-offsets-spec =>
-        #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets %)]
+       [reset-offsets-spec => any?]
        (let [builder
                (cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets/newBuilder)]
          (.build builder)))
@@ -130,8 +142,7 @@
 (>defn build-save-offsets
        "Build a SaveOffsets protobuf message from a map."
        [m]
-       [save-offsets-spec =>
-        #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets %)]
+       [save-offsets-spec => any?]
        (let [builder
                (cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets/newBuilder)]
          (.build builder)))
@@ -139,25 +150,25 @@
 (>defn parse-root
        "Parse a Root protobuf message to a map."
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
-       [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Root %) => root-spec]
+       [any? => root-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-root-payload proto))))
+         ;; Oneof: channel
+         (parse-root-payload proto) (assoc :channel
+                                      (parse-root-payload proto))))
 
 (>defn parse-offsets
        "Parse a Offsets protobuf message to a map."
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
-       [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets %) =>
-        offsets-spec]
+       [any? => offsets-spec]
        (cond-> {}
-         ;; Oneof payload
-         true (merge (parse-offsets-payload proto))))
+         ;; Oneof: cmd
+         (parse-offsets-payload proto) (assoc :cmd
+                                         (parse-offsets-payload proto))))
 
 (>defn parse-set-offsets
        "Parse a SetOffsets protobuf message to a map."
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets proto]
-       [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets %) =>
-        set-offsets-spec]
+       [any? => set-offsets-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :x (.getX proto))
@@ -166,8 +177,7 @@
 (>defn parse-shift-offsets-by
        "Parse a ShiftOffsetsBy protobuf message to a map."
        [^cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy proto]
-       [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy %) =>
-        shift-offsets-by-spec]
+       [any? => shift-offsets-by-spec]
        (cond-> {}
          ;; Regular fields
          true (assoc :x (.getX proto))
@@ -188,9 +198,7 @@
 (>defn- build-root-payload
         "Build the oneof payload for Root."
         [builder [field-key value]]
-        [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Root$Builder %)
-         [:tuple keyword? any?] =>
-         #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Root$Builder %)]
+        [any? [:tuple keyword? any?] => any?]
         (case field-key
           :day (.setDay builder (build-offsets value))
           :heat (.setHeat builder (build-offsets value))
@@ -200,9 +208,7 @@
 (>defn- build-offsets-payload
         "Build the oneof payload for Offsets."
         [builder [field-key value]]
-        [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets$Builder %)
-         [:tuple keyword? any?] =>
-         #(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets$Builder %)]
+        [any? [:tuple keyword? any?] => any?]
         (case field-key
           :set (.setSet builder (build-set-offsets value))
           :save (.setSave builder (build-save-offsets value))
@@ -214,14 +220,14 @@
 (>defn- parse-root-payload
         "Parse the oneof payload from Root."
         [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Root proto]
-        [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Root %) => (? map?)]
+        [any? => (? map?)]
         (cond (.hasDay proto) {:day (parse-offsets (.getDay proto))}
               (.hasHeat proto) {:heat (parse-offsets (.getHeat proto))}))
 
 (>defn- parse-offsets-payload
         "Parse the oneof payload from Offsets."
         [^cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets proto]
-        [#(instance? cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets %) => (? map?)]
+        [any? => (? map?)]
         (cond (.hasSet proto) {:set (parse-set-offsets (.getSet proto))}
               (.hasSave proto) {:save (parse-save-offsets (.getSave proto))}
               (.hasReset proto) {:reset (parse-reset-offsets (.getReset proto))}
