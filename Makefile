@@ -34,6 +34,9 @@ help: ## Show all available commands with detailed descriptions
 	@echo "CODE QUALITY:"
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
+	@echo "PROTO INSPECTION:"
+	@grep -E '^(print-tree-cmd|print-tree-state|print-trees):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@echo ""
 	@echo "OTHER TOOLS:"
 	@grep -E '^(test|report-unspecced|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
@@ -92,6 +95,37 @@ generate-keyword-tree-state: ## Generate keyword tree mapping for state protos
 # Generate both keyword trees
 .PHONY: generate-keyword-trees
 generate-keyword-trees: generate-keyword-tree-cmd generate-keyword-tree-state ## Generate keyword trees for both commands and state
+
+# Compile pronto Java classes if needed
+.PHONY: ensure-pronto
+ensure-pronto: ## Ensure pronto Java classes are compiled
+	@if [ ! -d "examples/pronto/target/classes/pronto" ]; then \
+		echo "Compiling pronto Java classes..."; \
+		cd examples/pronto && \
+		mkdir -p target/classes && \
+		javac -cp "$$(clojure -Spath)" -d target/classes src/java/pronto/*.java; \
+		echo "Pronto compilation successful"; \
+	else \
+		echo "Pronto classes already compiled"; \
+	fi
+
+# Print proto tree for commands
+.PHONY: print-tree-cmd
+print-tree-cmd: ensure-compiled ensure-pronto ## Print full EDN structure for command (cmd) root message using pronto
+	@echo "Printing command proto EDN structure..."
+	@cd tools/proto-tree-printer && $(MAKE) print-cmd
+
+# Print proto tree for state
+.PHONY: print-tree-state
+print-tree-state: ensure-compiled ensure-pronto ## Print full EDN structure for state (ser) root message using pronto
+	@echo "Printing state proto EDN structure..."
+	@cd tools/proto-tree-printer && $(MAKE) print-state
+
+# Print both proto trees
+.PHONY: print-trees
+print-trees: ensure-compiled ensure-pronto ## Print full EDN structure for both cmd and state root messages using pronto
+	@echo "Printing both command and state proto EDN structures..."
+	@cd tools/proto-tree-printer && $(MAKE) print-both
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin
