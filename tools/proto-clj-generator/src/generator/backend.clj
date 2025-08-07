@@ -193,11 +193,16 @@
                    (remove #(some? (:oneofIndex %)) fields))
      :oneofs (vec (map-indexed 
                    (fn [idx oneof-decl]
-                     {:name (csk/->kebab-case-keyword (:name oneof-decl))
-                      :proto-name (:name oneof-decl)
-                      :index idx
-                      :fields (mapv field->edn
-                                   (filter #(= (:oneofIndex %) idx) fields))})
+                     (let [base {:name (csk/->kebab-case-keyword (:name oneof-decl))
+                                :proto-name (:name oneof-decl)
+                                :index idx
+                                :fields (mapv field->edn
+                                             (filter #(= (:oneofIndex %) idx) fields))}
+                           ;; Extract oneof constraints if present
+                           constraints (extractor/extract-oneof-constraints oneof-decl)]
+                       (if constraints
+                         (assoc base :constraints constraints)
+                         base)))
                    oneof-decls))
      :nested-types (vec (concat nested-messages nested-enums))}))
 

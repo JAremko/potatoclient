@@ -137,15 +137,21 @@
   [oneof-decl fields context]
   (let [oneof-index (:index oneof-decl)
         oneof-fields (:fields oneof-decl)
-        oneof-name (:name oneof-decl)]
+        oneof-name (:name oneof-decl)
+        ;; For now, use :altn which is proven to work
+        ;; TODO: Switch to custom :oneof spec once we debug the registry issues
+        field-specs (into {}
+                         (map (fn [field]
+                                (let [field-key (keyword (:name field))]
+                                  [field-key [:map [field-key (process-field-schema field context)]]]))
+                              oneof-fields))]
     ;; Return just the key and schema pair, not wrapped in [:map ...]
     [(keyword oneof-name)
-     [:altn
-      (into {}
-            (map (fn [field]
-                   (let [field-key (keyword (:name field))]
-                     [field-key [:map [field-key (process-field-schema field context)]]]))
-                 oneof-fields))]]))
+     ;; Use :altn for now, with constraint metadata in properties
+     (if-let [constraints (:constraints oneof-decl)]
+       [:altn {:error/message (when (:required constraints) "This oneof field is required")}
+        field-specs]
+       [:altn field-specs])]))
 
 ;; =============================================================================
 ;; Message Processing
