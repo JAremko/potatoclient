@@ -276,8 +276,12 @@ The goal is not just working code, but **bulletproof** code that handles any val
 
 ## 🚦 Next Immediate Steps
 
-1. **Fix integration test failures** - Enriched IR validation errors
-2. **Update spec generation** - Use enriched metadata for cross-namespace refs
-3. **Test with real protos** - cmd/ser cross-namespace usage
-4. **Add property tests** - Random graph/type generation
-5. **Performance profiling** - Measure IR enrichment overhead
+1. ✅ **Fix integration test failures** - Enriched IR validation errors
+2. ✅ **Update spec generation** - Use enriched metadata for cross-namespace refs
+3. ✅ **Test with real protos** - cmd/ser cross-namespace usage
+4. ✅ **Add property tests** - Random graph/type generation
+   - Added type hierarchy property tests
+   - Added code generation property tests  
+   - Added full EDN->Binary->EDN roundtrip tests
+   - Added string conversion roundtrip tests
+5. **Performance profiling** - Measure IR enrichment overhead (skipped - not needed with few proto files)
