@@ -2,6 +2,15 @@
 
 # !!! IMPORTANT! ALWAYS READ THE WHOLE DOCUMENT !!!!
 
+## 📊 Progress Update
+- **Phase -1**: ✅ Development Environment Setup (Complete)
+- **Phase 0**: ⏳ Clean Architecture (Pending - Low Priority)
+- **Phase 1**: ✅ Naming System Foundation (Complete)
+- **Phase 2**: ✅ Type System & Constraint Extraction (Complete)
+- **Phase 3**: ✅ Unified IR with Specs & Constraints (Complete)
+- **Phase 4**: ✅ Integrated Code Generation (Complete - December 2024)
+- **Phase 5**: ⏳ Comprehensive Testing Suite (Next)
+
 ## 🎯 Core Principles
 
 ### NO BACKWARD COMPATIBILITY
@@ -575,18 +584,18 @@ Based on analysis of `/home/jare/git/potatoclient/examples/protogen/docs/json-de
 
 ## 🎯 Actionable Improvements for proto-clj-generator
 
-### Phase 1: Port Core Constraint Features
-1. **Create constraint extraction namespace**
+### Phase 1: Port Core Constraint Features ✅
+1. **Create constraint extraction namespace** ✅
    - Port `buf_validate_extractor.clj` concepts
    - Extract constraints from JSON descriptor options
    - Build constraint maps for each field
 
-2. **Implement constraint compiler**
+2. **Implement constraint compiler** ✅
    - Port multimethod approach from `constraints/compiler.clj`
    - Generate Malli schema fragments from constraints
    - Include generator hints for property testing
 
-3. **Enhance spec generation in templates**
+3. **Enhance spec generation in templates** ✅
    - Modify guardrails templates to include constraint specs
    - Generate validation predicates for runtime checks
    - Add constraint documentation to generated functions
@@ -641,20 +650,20 @@ The key insight from proto-explorer is that treating these as separate concerns 
 
 # 📝 Detailed Implementation Tasks
 
-## Phase -1: Development Environment Setup
-- [ ] Copy/adapt `.clj-kondo/` config from main app
+## Phase -1: Development Environment Setup ✅
+- [x] Copy/adapt `.clj-kondo/` config from main app
   - Copy config/clj-kondo/hooks/ directory
   - Copy .clj-kondo/config.edn with guardrails setup
   - Ensure hooks handle >defn and >defn- macros
-- [ ] Configure for guardrails macros (`>defn`, `>defn-`)
+- [x] Configure for guardrails macros (`>defn`, `>defn-`)
   - Add :lint-as rules for guardrails macros
   - Configure :unresolved-symbol exceptions
   - Handle => and ? symbols from guardrails
-- [ ] Setup reporting to prevent false positives
+- [x] Setup reporting to prevent false positives
   - Filter out guardrails-specific warnings
   - Add custom linters for our patterns
   - Create make lint-report-filtered target
-- [ ] Ensure generated code passes linting
+- [x] Ensure generated code passes linting
   - Run clj-kondo on generated output
   - Fix any legitimate warnings
   - Document any necessary suppressions
@@ -707,98 +716,104 @@ The key insight from proto-explorer is that treating these as separate concerns 
 - [ ] All proto files generate correctly and compile
 - [ ] Zero namespace conflicts in generated code
 
-### Phase 2: Enhanced Backend - Type System & Constraint Extraction
+### Phase 2: Enhanced Backend - Type System & Constraint Extraction ✅
 **Goal**: Complete type understanding with buf.validate constraint extraction
 
 1. **Type Registry & Resolution**
-   - [ ] Parse all type information from JSON descriptors
-   - [ ] Build global type registry with fully qualified names
-   - [ ] Implement cross-file type resolution
-   - [ ] Create dependency graph with topological sort
+   - [x] Parse all type information from JSON descriptors
+   - [x] Build global type registry with fully qualified names
+   - [x] Implement cross-file type resolution
+   - [x] Create dependency graph with topological sort
 
 2. **Constraint Extraction (Port from proto-explorer)**
-   - [ ] Port `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/buf_validate_extractor.clj`
-   - [ ] Extract constraints from `options["[buf.validate.field]"]` in JSON descriptors
-   - [ ] Parse numeric, string, collection, message constraints
-   - [ ] Handle CEL expressions for complex validations
-   - [ ] Build constraint maps for each field type
-   - [ ] Create `src/generator/constraints/extractor.clj` based on proto-explorer implementation
+   - [x] Port `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/buf_validate_extractor.clj`
+   - [x] Extract constraints from `options["[buf.validate.field]"]` in JSON descriptors
+   - [x] Parse numeric, string, collection, message constraints
+   - [x] Handle CEL expressions for complex validations
+   - [x] Build constraint maps for each field type
+   - [x] Create `src/generator/constraints/extractor.clj` based on proto-explorer implementation
 
 3. **Testing**
-   - [ ] Test type resolution across file boundaries
-   - [ ] Test constraint extraction for all types
-   - [ ] Property tests for type/constraint combinations
-   - [ ] Integration tests with real proto files
+   - [x] Test type resolution across file boundaries
+   - [x] Test constraint extraction for all types
+   - [x] Property tests for type/constraint combinations
+   - [x] Integration tests with real proto files
 
 **Validation Gates**:
-- [ ] All types resolvable across files
-- [ ] All buf.validate constraints extracted
-- [ ] Dependency graph handles circular refs
-- [ ] ~100% test coverage
+- [x] All types resolvable across files
+- [x] All buf.validate constraints extracted
+- [x] Dependency graph handles circular refs
+- [x] ~100% test coverage
 
-### Phase 3: Unified IR with Specs & Constraints
+### Phase 3: Unified IR with Specs & Constraints ✅
 **Goal**: Rich IR that integrates type info, Malli specs, and constraints
 
 1. **Enhanced IR Design**
-   - [ ] Define Malli specs for IR structure
-   - [ ] Include extracted buf.validate constraints
-   - [ ] Add spec generation metadata
-   - [ ] Include binding generation hints
+   - [x] Define Malli specs for IR structure
+   - [x] Include extracted buf.validate constraints
+   - [x] Add spec generation metadata
+   - [x] Include binding generation hints
 
 2. **Spec Generation in IR (Port from proto-explorer)**
-   - [ ] Port `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/spec_generator.clj`
-   - [ ] Generate Malli specs from proto types using multimethod dispatch
-   - [ ] Apply field modifiers (repeated, optional)
-   - [ ] Handle oneof using our custom `:oneof` spec from `/home/jare/git/potatoclient/shared/specs/custom/potatoclient/specs/malli_oneof.clj`
-   - [ ] Port constraint compiler from `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/constraints/compiler.clj`
-   - [ ] Compile constraints into spec predicates with generator hints
-   - [ ] Create `src/generator/constraints/compiler.clj` for constraint->Malli compilation
+   - [x] Port `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/spec_generator.clj`
+   - [x] Generate Malli specs from proto types using multimethod dispatch
+   - [x] Apply field modifiers (repeated, optional)
+   - [x] Handle oneof using our custom `:oneof` spec from `/home/jare/git/potatoclient/shared/specs/custom/potatoclient/specs/malli_oneof.clj`
+   - [x] Port constraint compiler from `/home/jare/git/potatoclient/tools/proto-explorer/src/proto_explorer/constraints/compiler.clj`
+   - [x] Compile constraints into spec predicates with generator hints
+   - [x] Create `src/generator/constraints/compiler.clj` for constraint->Malli compilation
 
 3. **IR Implementation**
-   - [ ] Parse JSON descriptors into enriched IR
-   - [ ] Generate specs as part of IR creation
-   - [ ] Validate IR against meta-specs
-   - [ ] Add performance hints for binding generation
+   - [x] Parse JSON descriptors into enriched IR
+   - [x] Generate specs as part of IR creation
+   - [x] Validate IR against meta-specs
+   - [x] Add performance hints for binding generation
 
 **Validation Gates**:
-- [ ] IR includes complete specs with constraints
-- [ ] Specs validate sample data correctly
-- [ ] IR contains all info for binding generation
-- [ ] Roundtrip preservation verified
+- [x] IR includes complete specs with constraints
+- [x] Specs validate sample data correctly
+- [x] IR contains all info for binding generation
+- [x] Roundtrip preservation verified
 
-### Phase 4: Integrated Code Generation - Bindings & Specs
+### Phase 4: Integrated Code Generation - Bindings & Specs ✅
 **Goal**: Generate guardrails-enabled bindings with constraint-aware specs
 
 1. **Unified Generation Pipeline**
-   - [ ] Generate builder functions with guardrails specs including buf.validate constraints
-   - [ ] Generate parser functions with return specs that enforce constraints
-   - [ ] Example: `[[:map [:latitude [:and :double [:>= -90.0] [:<= 90.0]]]] => #(instance? Coordinate %)]`
-   - [ ] Generate oneof handlers using custom `:oneof` spec with proper validation
+   - [x] Generate builder functions with guardrails specs including buf.validate constraints
+   - [x] Generate parser functions with return specs that enforce constraints
+   - [x] Example: `[[:map [:latitude [:and :double [:>= -90.0] [:<= 90.0]]]] => #(instance? Coordinate %)]`
+   - [x] Generate oneof handlers using custom `:oneof` spec with proper validation
 
 2. **Constraint-Aware Templates**
-   - [ ] Update `templates/builder-guardrails.clj` to include constraint specs from IR
-   - [ ] Update `templates/parser-guardrails.clj` with constraint validation
-   - [ ] Generate validation helper functions (e.g., `valid-latitude?`)
-   - [ ] Add runtime constraint checking that matches buf.validate rules
-   - [ ] **CRITICAL**: Without constraints, generated test data will fail buf.validate checks
+   - [x] Update `templates/builder-guardrails.clj` to include constraint specs from IR
+   - [x] Update `templates/parser-guardrails.clj` with constraint validation
+   - [x] Generate validation helper functions (e.g., `valid-latitude?`)
+   - [x] Add runtime constraint checking that matches buf.validate rules
+   - [x] **CRITICAL**: Without constraints, generated test data will fail buf.validate checks
 
 3. **Spec Integration**
-   - [ ] Use generated specs from IR
-   - [ ] Reference shared specs when available
-   - [ ] Generate fallback specs for unmapped types
-   - [ ] Include generator hints for testing
+   - [x] Use generated specs from IR
+   - [x] Reference shared specs when available
+   - [x] Generate fallback specs for unmapped types
+   - [x] Include generator hints for testing
 
 4. **Testing**
-   - [ ] Test generated code compilation
-   - [ ] Test constraint enforcement
-   - [ ] Property tests using constraint generators
-   - [ ] Roundtrip tests with validation
+   - [x] Test generated code compilation
+   - [x] Test constraint enforcement
+   - [x] Property tests using constraint generators
+   - [x] Roundtrip tests with validation
 
 **Validation Gates**:
-- [ ] All generated functions use >defn
-- [ ] Constraints enforced at runtime
-- [ ] Invalid data rejected with clear errors
-- [ ] Property tests respect constraints
+- [x] All generated functions use >defn
+- [x] Constraints enforced at runtime
+- [x] Invalid data rejected with clear errors
+- [x] Property tests respect constraints
+
+**Implementation Notes**:
+- Validation helpers are generated for all fields with constraints
+- Functions follow pattern `valid-{message}-{field}?`
+- Specs include all buf.validate constraints (e.g., `[:> 0]`, `[:>= 0] [:<= 255]`)
+- Runtime validation happens automatically via guardrails when enabled
 
 ### Phase 5: Testing & Validation Suite
 **Goal**: Comprehensive testing using generated specs and constraints
@@ -1328,18 +1343,18 @@ Based on analysis of `/home/jare/git/potatoclient/examples/protogen/docs/json-de
 
 ## 🎯 Actionable Improvements for proto-clj-generator
 
-### Phase 1: Port Core Constraint Features
-1. **Create constraint extraction namespace**
+### Phase 1: Port Core Constraint Features ✅
+1. **Create constraint extraction namespace** ✅
    - Port `buf_validate_extractor.clj` concepts
    - Extract constraints from JSON descriptor options
    - Build constraint maps for each field
 
-2. **Implement constraint compiler**
+2. **Implement constraint compiler** ✅
    - Port multimethod approach from `constraints/compiler.clj`
    - Generate Malli schema fragments from constraints
    - Include generator hints for property testing
 
-3. **Enhance spec generation in templates**
+3. **Enhance spec generation in templates** ✅
    - Modify guardrails templates to include constraint specs
    - Generate validation predicates for runtime checks
    - Add constraint documentation to generated functions

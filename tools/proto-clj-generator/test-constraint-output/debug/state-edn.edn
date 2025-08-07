@@ -1,0 +1,1972 @@
+{:type :descriptor-set,
+ :files
+ [{:type :file,
+   :name "jon_shared_data_types.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataTypes",
+   :dependencies [],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-meteo,
+     :proto-name "JonGuiDataMeteo",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataMeteo",
+     :package "ser",
+     :fields
+     [{:name :temperature,
+       :proto-name "temperature",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true}
+      {:name :humidity,
+       :proto-name "humidity",
+       :number 2,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true}
+      {:name :pressure,
+       :proto-name "pressure",
+       :number 3,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums
+   [{:type :enum,
+     :name :jon-gui-data-video-channel-heat-filters,
+     :proto-name "JonGuiDataVideoChannelHeatFilters",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatFilters",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-video-channel-heat-filter-unspecified,
+       :proto-name
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-video-channel-heat-filter-hot-white,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE",
+       :number 1}
+      {:name :jon-gui-data-video-channel-heat-filter-hot-black,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK",
+       :number 2}
+      {:name :jon-gui-data-video-channel-heat-filter-sepia,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA",
+       :number 3}
+      {:name :jon-gui-data-video-channel-heat-filter-sepia-inverse,
+       :proto-name
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE",
+       :number 4}]}
+    {:type :enum,
+     :name :jon-gui-data-video-channel-heat-agc-modes,
+     :proto-name "JonGuiDataVideoChannelHeatAGCModes",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDataVideoChannelHeatAGCModes",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-video-channel-heat-agc-mode-unspecified,
+       :proto-name
+       "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-video-channel-heat-agc-mode-1,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1",
+       :number 1}
+      {:name :jon-gui-data-video-channel-heat-agc-mode-2,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2",
+       :number 2}
+      {:name :jon-gui-data-video-channel-heat-agc-mode-3,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3",
+       :number 3}]}
+    {:type :enum,
+     :name :jon-gui-data-gps-units,
+     :proto-name "JonGuiDataGpsUnits",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataGpsUnits",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-gps-units-unspecified,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-gps-units-decimal-degrees,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES",
+       :number 1}
+      {:name :jon-gui-data-gps-units-degrees-minutes-seconds,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS",
+       :number 2}
+      {:name :jon-gui-data-gps-units-degrees-decimal-minutes,
+       :proto-name "JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES",
+       :number 3}]}
+    {:type :enum,
+     :name :jon-gui-data-gps-fix-type,
+     :proto-name "JonGuiDataGpsFixType",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataGpsFixType",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-gps-fix-type-unspecified,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-gps-fix-type-none,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_NONE",
+       :number 1}
+      {:name :jon-gui-data-gps-fix-type-1d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_1D",
+       :number 2}
+      {:name :jon-gui-data-gps-fix-type-2d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_2D",
+       :number 3}
+      {:name :jon-gui-data-gps-fix-type-3d,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_3D",
+       :number 4}
+      {:name :jon-gui-data-gps-fix-type-manual,
+       :proto-name "JON_GUI_DATA_GPS_FIX_TYPE_MANUAL",
+       :number 5}]}
+    {:type :enum,
+     :name :jon-gui-data-compass-units,
+     :proto-name "JonGuiDataCompassUnits",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataCompassUnits",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-compass-units-unspecified,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-compass-units-degrees,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_DEGREES",
+       :number 1}
+      {:name :jon-gui-data-compass-units-mils,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_MILS",
+       :number 2}
+      {:name :jon-gui-data-compass-units-grad,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_GRAD",
+       :number 3}
+      {:name :jon-gui-data-compass-units-mrad,
+       :proto-name "JON_GUI_DATA_COMPASS_UNITS_MRAD",
+       :number 4}]}
+    {:type :enum,
+     :name :jon-gui-data-accumulator-state-idx,
+     :proto-name "JonGuiDataAccumulatorStateIdx",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDataAccumulatorStateIdx",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-accumulator-state-unspecified,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-accumulator-state-unknown,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN",
+       :number 1}
+      {:name :jon-gui-data-accumulator-state-empty,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY",
+       :number 2}
+      {:name :jon-gui-data-accumulator-state-1,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_1",
+       :number 3}
+      {:name :jon-gui-data-accumulator-state-2,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_2",
+       :number 4}
+      {:name :jon-gui-data-accumulator-state-3,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_3",
+       :number 5}
+      {:name :jon-gui-data-accumulator-state-4,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_4",
+       :number 6}
+      {:name :jon-gui-data-accumulator-state-5,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_5",
+       :number 7}
+      {:name :jon-gui-data-accumulator-state-6,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_6",
+       :number 8}
+      {:name :jon-gui-data-accumulator-state-full,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_FULL",
+       :number 9}
+      {:name :jon-gui-data-accumulator-state-charging,
+       :proto-name "JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING",
+       :number 10}]}
+    {:type :enum,
+     :name :jon-gui-data-time-formats,
+     :proto-name "JonGuiDataTimeFormats",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataTimeFormats",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-time-format-unspecified,
+       :proto-name "JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-time-format-h-m-s,
+       :proto-name "JON_GUI_DATA_TIME_FORMAT_H_M_S",
+       :number 1}
+      {:name :jon-gui-data-time-format-y-m-d-h-m-s,
+       :proto-name "JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S",
+       :number 2}]}
+    {:type :enum,
+     :name :jon-gui-data-rotary-direction,
+     :proto-name "JonGuiDataRotaryDirection",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryDirection",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-rotary-direction-unspecified,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-rotary-direction-clockwise,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE",
+       :number 1}
+      {:name :jon-gui-data-rotary-direction-counter-clockwise,
+       :proto-name "JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE",
+       :number 2}]}
+    {:type :enum,
+     :name :jon-gui-data-lrf-scan-modes,
+     :proto-name "JonGuiDataLrfScanModes",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataLrfScanModes",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-lrf-scan-mode-unspecified,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-lrf-scan-mode-1-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS",
+       :number 1}
+      {:name :jon-gui-data-lrf-scan-mode-4-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS",
+       :number 2}
+      {:name :jon-gui-data-lrf-scan-mode-10-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS",
+       :number 3}
+      {:name :jon-gui-data-lrf-scan-mode-20-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS",
+       :number 4}
+      {:name :jon-gui-data-lrf-scan-mode-100-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS",
+       :number 5}
+      {:name :jon-gui-data-lrf-scan-mode-200-hz-continuous,
+       :proto-name "JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS",
+       :number 6}]}
+    {:type :enum,
+     :name :jon-gui-datat-lrf-laser-pointer-modes,
+     :proto-name "JonGuiDatatLrfLaserPointerModes",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDatatLrfLaserPointerModes",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-lrf-laser-pointer-mode-unspecified,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-lrf-laser-pointer-mode-off,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF",
+       :number 1}
+      {:name :jon-gui-data-lrf-laser-pointer-mode-on-1,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1",
+       :number 2}
+      {:name :jon-gui-data-lrf-laser-pointer-mode-on-2,
+       :proto-name "JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2",
+       :number 3}]}
+    {:type :enum,
+     :name :jon-gui-data-compass-calibrate-status,
+     :proto-name "JonGuiDataCompassCalibrateStatus",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDataCompassCalibrateStatus",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-compass-calibrate-status-unspecified,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-compass-calibrate-status-not-calibrating,
+       :proto-name
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING",
+       :number 1}
+      {:name :jon-gui-data-compass-calibrate-status-calibrating-short,
+       :proto-name
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT",
+       :number 2}
+      {:name :jon-gui-data-compass-calibrate-status-calibrating-long,
+       :proto-name
+       "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG",
+       :number 3}
+      {:name :jon-gui-data-compass-calibrate-status-finished,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED",
+       :number 4}
+      {:name :jon-gui-data-compass-calibrate-status-error,
+       :proto-name "JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR",
+       :number 5}]}
+    {:type :enum,
+     :name :jon-gui-data-rotary-mode,
+     :proto-name "JonGuiDataRotaryMode",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataRotaryMode",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-rotary-mode-unspecified,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-rotary-mode-initialization,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_INITIALIZATION",
+       :number 1}
+      {:name :jon-gui-data-rotary-mode-speed,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_SPEED",
+       :number 2}
+      {:name :jon-gui-data-rotary-mode-position,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_POSITION",
+       :number 3}
+      {:name :jon-gui-data-rotary-mode-stabilization,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_STABILIZATION",
+       :number 4}
+      {:name :jon-gui-data-rotary-mode-targeting,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_TARGETING",
+       :number 5}
+      {:name :jon-gui-data-rotary-mode-video-tracker,
+       :proto-name "JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER",
+       :number 6}]}
+    {:type :enum,
+     :name :jon-gui-data-video-channel,
+     :proto-name "JonGuiDataVideoChannel",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataVideoChannel",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-video-channel-unspecified,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-video-channel-heat,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_HEAT",
+       :number 1}
+      {:name :jon-gui-data-video-channel-day,
+       :proto-name "JON_GUI_DATA_VIDEO_CHANNEL_DAY",
+       :number 2}]}
+    {:type :enum,
+     :name :jon-gui-data-rec-osd-screen,
+     :proto-name "JonGuiDataRecOsdScreen",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataRecOsdScreen",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-rec-osd-screen-unspecified,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-rec-osd-screen-main,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_MAIN",
+       :number 1}
+      {:name :jon-gui-data-rec-osd-screen-lrf-measure,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE",
+       :number 2}
+      {:name :jon-gui-data-rec-osd-screen-lrf-result,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT",
+       :number 3}
+      {:name :jon-gui-data-rec-osd-screen-lrf-result-simplified,
+       :proto-name "JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED",
+       :number 4}]}
+    {:type :enum,
+     :name :jon-gui-data-fx-mode-day,
+     :proto-name "JonGuiDataFxModeDay",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeDay",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-fx-mode-day-default,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_DEFAULT",
+       :number 0}
+      {:name :jon-gui-data-fx-mode-day-a,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_A",
+       :number 1}
+      {:name :jon-gui-data-fx-mode-day-b,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_B",
+       :number 2}
+      {:name :jon-gui-data-fx-mode-day-c,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_C",
+       :number 3}
+      {:name :jon-gui-data-fx-mode-day-d,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_D",
+       :number 4}
+      {:name :jon-gui-data-fx-mode-day-e,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_E",
+       :number 5}
+      {:name :jon-gui-data-fx-mode-day-f,
+       :proto-name "JON_GUI_DATA_FX_MODE_DAY_F",
+       :number 6}]}
+    {:type :enum,
+     :name :jon-gui-data-fx-mode-heat,
+     :proto-name "JonGuiDataFxModeHeat",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataFxModeHeat",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-fx-mode-heat-default,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_DEFAULT",
+       :number 0}
+      {:name :jon-gui-data-fx-mode-heat-a,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_A",
+       :number 1}
+      {:name :jon-gui-data-fx-mode-heat-b,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_B",
+       :number 2}
+      {:name :jon-gui-data-fx-mode-heat-c,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_C",
+       :number 3}
+      {:name :jon-gui-data-fx-mode-heat-d,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_D",
+       :number 4}
+      {:name :jon-gui-data-fx-mode-heat-e,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_E",
+       :number 5}
+      {:name :jon-gui-data-fx-mode-heat-f,
+       :proto-name "JON_GUI_DATA_FX_MODE_HEAT_F",
+       :number 6}]}
+    {:type :enum,
+     :name :jon-gui-data-system-localizations,
+     :proto-name "JonGuiDataSystemLocalizations",
+     :java-class
+     "ser.JonSharedDataTypes$JonGuiDataSystemLocalizations",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-system-localization-unspecified,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-system-localization-en,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_EN",
+       :number 1}
+      {:name :jon-gui-data-system-localization-ua,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_UA",
+       :number 2}
+      {:name :jon-gui-data-system-localization-ar,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_AR",
+       :number 3}
+      {:name :jon-gui-data-system-localization-cs,
+       :proto-name "JON_GUI_DATA_SYSTEM_LOCALIZATION_CS",
+       :number 4}]}
+    {:type :enum,
+     :name :jon-gui-data-client-type,
+     :proto-name "JonGuiDataClientType",
+     :java-class "ser.JonSharedDataTypes$JonGuiDataClientType",
+     :package "ser",
+     :values
+     [{:name :jon-gui-data-client-type-unspecified,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED",
+       :number 0}
+      {:name :jon-gui-data-client-type-internal-cv,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV",
+       :number 1}
+      {:name :jon-gui-data-client-type-local-network,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK",
+       :number 2}
+      {:name :jon-gui-data-client-type-certificate-protected,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED",
+       :number 3}
+      {:name :jon-gui-data-client-type-lira,
+       :proto-name "JON_GUI_DATA_CLIENT_TYPE_LIRA",
+       :number 4}]}]}
+  {:type :file,
+   :name "jon_shared_data_time.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataTime",
+   :dependencies [],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-time,
+     :proto-name "JonGuiDataTime",
+     :java-class "ser.JonSharedDataTime$JonGuiDataTime",
+     :package "ser",
+     :fields
+     [{:name :timestamp,
+       :proto-name "timestamp",
+       :number 1,
+       :type {:unknown {:proto-type :type-int-64}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte "0"},
+        :raw {:field {:gte "0"}, :repeated nil}}}
+      {:name :manual-timestamp,
+       :proto-name "manual_timestamp",
+       :number 2,
+       :type {:unknown {:proto-type :type-int-64}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte "0"},
+        :raw {:field {:gte "0"}, :repeated nil}}}
+      {:name :zone-id,
+       :proto-name "zone_id",
+       :number 3,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :use-manual-time,
+       :proto-name "use_manual_time",
+       :number 4,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_system.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataSystem",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-system,
+     :proto-name "JonGuiDataSystem",
+     :java-class "ser.JonSharedDataSystem$JonGuiDataSystem",
+     :package "ser",
+     :fields
+     [{:name :cpu-temperature,
+       :proto-name "cpu_temperature",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -273.15, :lte 150},
+        :raw
+        {:field {:lte 150, :gte -273.15, :example [25.5 60 80.5]},
+         :repeated nil}}}
+      {:name :gpu-temperature,
+       :proto-name "gpu_temperature",
+       :number 2,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -273.15, :lte 150},
+        :raw
+        {:field {:lte 150, :gte -273.15, :example [30 70 85.5]},
+         :repeated nil}}}
+      {:name :gpu-load,
+       :proto-name "gpu_load",
+       :number 3,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 100},
+        :raw
+        {:field {:lte 100, :gte 0, :example [0 50 100]},
+         :repeated nil}}}
+      {:name :cpu-load,
+       :proto-name "cpu_load",
+       :number 4,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 100},
+        :raw
+        {:field {:lte 100, :gte 0, :example [0 25 75 100]},
+         :repeated nil}}}
+      {:name :power-consumption,
+       :proto-name "power_consumption",
+       :number 5,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1000},
+        :raw
+        {:field {:lte 1000, :gte 0, :example [5 50 200]},
+         :repeated nil}}}
+      {:name :loc,
+       :proto-name "loc",
+       :number 6,
+       :type {:enum {:type-ref ".ser.JonGuiDataSystemLocalizations"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :cur-video-rec-dir-year,
+       :proto-name "cur_video_rec_dir_year",
+       :number 7,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :cur-video-rec-dir-month,
+       :proto-name "cur_video_rec_dir_month",
+       :number 8,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :cur-video-rec-dir-day,
+       :proto-name "cur_video_rec_dir_day",
+       :number 9,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :cur-video-rec-dir-hour,
+       :proto-name "cur_video_rec_dir_hour",
+       :number 10,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :cur-video-rec-dir-minute,
+       :proto-name "cur_video_rec_dir_minute",
+       :number 11,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :cur-video-rec-dir-second,
+       :proto-name "cur_video_rec_dir_second",
+       :number 12,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :rec-enabled,
+       :proto-name "rec_enabled",
+       :number 13,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :important-rec-enabled,
+       :proto-name "important_rec_enabled",
+       :number 14,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :low-disk-space,
+       :proto-name "low_disk_space",
+       :number 15,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :no-disk-space,
+       :proto-name "no_disk_space",
+       :number 16,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :disk-space,
+       :proto-name "disk_space",
+       :number 17,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:lte 100, :gte 0},
+        :raw {:field {:lte 100, :gte 0}, :repeated nil}}}
+      {:name :tracking,
+       :proto-name "tracking",
+       :number 18,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :vampire-mode,
+       :proto-name "vampire_mode",
+       :number 19,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :stabilization-mode,
+       :proto-name "stabilization_mode",
+       :number 20,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :geodesic-mode,
+       :proto-name "geodesic_mode",
+       :number 21,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :cv-dumping,
+       :proto-name "cv_dumping",
+       :number 22,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_lrf.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataLrf",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-lrf,
+     :proto-name "JonGuiDataLrf",
+     :java-class "ser.JonSharedDataLrf$JonGuiDataLrf",
+     :package "ser",
+     :fields
+     [{:name :is-scanning,
+       :proto-name "is_scanning",
+       :number 1,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :is-measuring,
+       :proto-name "is_measuring",
+       :number 2,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :measure-id,
+       :proto-name "measure_id",
+       :number 3,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :target,
+       :proto-name "target",
+       :number 4,
+       :type {:message {:type-ref ".ser.JonGuiDataTarget"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :pointer-mode,
+       :proto-name "pointer_mode",
+       :number 5,
+       :type
+       {:enum {:type-ref ".ser.JonGuiDatatLrfLaserPointerModes"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true}, :repeated nil}}}
+      {:name :fog-mode-enabled,
+       :proto-name "fogModeEnabled",
+       :number 6,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :is-refining,
+       :proto-name "is_refining",
+       :number 7,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}
+    {:type :message,
+     :name :jon-gui-data-target,
+     :proto-name "JonGuiDataTarget",
+     :java-class "ser.JonSharedDataLrf$JonGuiDataTarget",
+     :package "ser",
+     :fields
+     [{:name :timestamp,
+       :proto-name "timestamp",
+       :number 1,
+       :type {:unknown {:proto-type :type-int-64}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte "0"},
+        :raw {:field {:gte "0"}, :repeated nil}}}
+      {:name :target-longitude,
+       :proto-name "target_longitude",
+       :number 2,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lte 180},
+        :raw {:field {:lte 180, :gte -180}, :repeated nil}}}
+      {:name :target-latitude,
+       :proto-name "target_latitude",
+       :number 3,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :target-altitude,
+       :proto-name "target_altitude",
+       :number 4,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true}
+      {:name :observer-longitude,
+       :proto-name "observer_longitude",
+       :number 5,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lte 180},
+        :raw {:field {:lte 180, :gte -180}, :repeated nil}}}
+      {:name :observer-latitude,
+       :proto-name "observer_latitude",
+       :number 6,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :observer-altitude,
+       :proto-name "observer_altitude",
+       :number 7,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true}
+      {:name :observer-azimuth,
+       :proto-name "observer_azimuth",
+       :number 8,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw {:field {:lt 360, :gte 0}, :repeated nil}}}
+      {:name :observer-elevation,
+       :proto-name "observer_elevation",
+       :number 9,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :observer-bank,
+       :proto-name "observer_bank",
+       :number 10,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw {:field {:lt 180, :gte -180}, :repeated nil}}}
+      {:name :distance-2d,
+       :proto-name "distance_2d",
+       :number 11,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 500000},
+        :raw {:field {:lte 500000, :gte 0}, :repeated nil}}}
+      {:name :distance-3b,
+       :proto-name "distance_3b",
+       :number 12,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 500000},
+        :raw {:field {:lte 500000, :gte 0}, :repeated nil}}}
+      {:name :observer-fix-type,
+       :proto-name "observer_fix_type",
+       :number 13,
+       :type {:enum {:type-ref ".ser.JonGuiDataGpsFixType"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :session-id,
+       :proto-name "session_id",
+       :number 14,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :target-id,
+       :proto-name "target_id",
+       :number 15,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :target-color,
+       :proto-name "target_color",
+       :number 16,
+       :type {:message {:type-ref ".ser.RgbColor"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :type,
+       :proto-name "type",
+       :number 17,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :uuid-part-1,
+       :proto-name "uuid_part1",
+       :number 18,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :uuid-part-2,
+       :proto-name "uuid_part2",
+       :number 19,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :uuid-part-3,
+       :proto-name "uuid_part3",
+       :number 20,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :uuid-part-4,
+       :proto-name "uuid_part4",
+       :number 21,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}
+    {:type :message,
+     :name :rgb-color,
+     :proto-name "RgbColor",
+     :java-class "ser.JonSharedDataLrf$RgbColor",
+     :package "ser",
+     :fields
+     [{:name :red,
+       :proto-name "red",
+       :number 1,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:lte 255, :gte 0},
+        :raw {:field {:lte 255, :gte 0}, :repeated nil}}}
+      {:name :green,
+       :proto-name "green",
+       :number 2,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:lte 255, :gte 0},
+        :raw {:field {:lte 255, :gte 0}, :repeated nil}}}
+      {:name :blue,
+       :proto-name "blue",
+       :number 3,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:lte 255, :gte 0},
+        :raw {:field {:lte 255, :gte 0}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_gps.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataGps",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-gps,
+     :proto-name "JonGuiDataGps",
+     :java-class "ser.JonSharedDataGps$JonGuiDataGps",
+     :package "ser",
+     :fields
+     [{:name :longitude,
+       :proto-name "longitude",
+       :number 1,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lte 180},
+        :raw {:field {:lte 180, :gte -180}, :repeated nil}}}
+      {:name :latitude,
+       :proto-name "latitude",
+       :number 2,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :altitude,
+       :proto-name "altitude",
+       :number 3,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -433, :lte 8848.86},
+        :raw {:field {:lte 8848.86, :gte -433}, :repeated nil}}}
+      {:name :manual-longitude,
+       :proto-name "manual_longitude",
+       :number 4,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lte 180},
+        :raw {:field {:lte 180, :gte -180}, :repeated nil}}}
+      {:name :manual-latitude,
+       :proto-name "manual_latitude",
+       :number 5,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :manual-altitude,
+       :proto-name "manual_altitude",
+       :number 6,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -433, :lte 8848.86},
+        :raw {:field {:lte 8848.86, :gte -433}, :repeated nil}}}
+      {:name :fix-type,
+       :proto-name "fix_type",
+       :number 7,
+       :type {:enum {:type-ref ".ser.JonGuiDataGpsFixType"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :use-manual,
+       :proto-name "use_manual",
+       :number 8,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_compass.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataCompass",
+   :dependencies [],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-compass,
+     :proto-name "JonGuiDataCompass",
+     :java-class "ser.JonSharedDataCompass$JonGuiDataCompass",
+     :package "ser",
+     :fields
+     [{:name :azimuth,
+       :proto-name "azimuth",
+       :number 1,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90.5 180 270]},
+         :repeated nil}}}
+      {:name :elevation,
+       :proto-name "elevation",
+       :number 2,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :bank,
+       :proto-name "bank",
+       :number 3,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-90 0 90]},
+         :repeated nil}}}
+      {:name :offset-azimuth,
+       :proto-name "offsetAzimuth",
+       :number 4,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :offset-elevation,
+       :proto-name "offsetElevation",
+       :number 5,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-30 0 30]},
+         :repeated nil}}}
+      {:name :magnetic-declination,
+       :proto-name "magneticDeclination",
+       :number 6,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-15 0 15]},
+         :repeated nil}}}
+      {:name :calibrating,
+       :proto-name "calibrating",
+       :number 7,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_compass_calibration.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataCompassCalibration",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-compass-calibration,
+     :proto-name "JonGuiDataCompassCalibration",
+     :java-class
+     "ser.JonSharedDataCompassCalibration$JonGuiDataCompassCalibration",
+     :package "ser",
+     :fields
+     [{:name :stage,
+       :proto-name "stage",
+       :number 1,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :final-stage,
+       :proto-name "final_stage",
+       :number 2,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gt 0},
+        :raw {:field {:gt 0}, :repeated nil}}}
+      {:name :target-azimuth,
+       :proto-name "target_azimuth",
+       :number 3,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw {:field {:lt 360, :gte 0}, :repeated nil}}}
+      {:name :target-elevation,
+       :proto-name "target_elevation",
+       :number 4,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :target-bank,
+       :proto-name "target_bank",
+       :number 5,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw {:field {:lt 180, :gte -180}, :repeated nil}}}
+      {:name :status,
+       :proto-name "status",
+       :number 6,
+       :type
+       {:enum {:type-ref ".ser.JonGuiDataCompassCalibrateStatus"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw
+        {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_rotary.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataRotary",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-rotary,
+     :proto-name "JonGuiDataRotary",
+     :java-class "ser.JonSharedDataRotary$JonGuiDataRotary",
+     :package "ser",
+     :fields
+     [{:name :azimuth,
+       :proto-name "azimuth",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90 180 270]},
+         :repeated nil}}}
+      {:name :azimuth-speed,
+       :proto-name "azimuth_speed",
+       :number 2,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -1, :lte 1},
+        :raw
+        {:field {:lte 1, :gte -1, :example [-1 -0.5 0 0.5 1]},
+         :repeated nil}}}
+      {:name :elevation,
+       :proto-name "elevation",
+       :number 3,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :elevation-speed,
+       :proto-name "elevation_speed",
+       :number 4,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -1, :lte 1},
+        :raw
+        {:field {:lte 1, :gte -1, :example [-1 -0.5 0 0.5 1]},
+         :repeated nil}}}
+      {:name :platform-azimuth,
+       :proto-name "platform_azimuth",
+       :number 5,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90 180 270]},
+         :repeated nil}}}
+      {:name :platform-elevation,
+       :proto-name "platform_elevation",
+       :number 6,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :platform-bank,
+       :proto-name "platform_bank",
+       :number 7,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-90 0 90]},
+         :repeated nil}}}
+      {:name :is-moving,
+       :proto-name "is_moving",
+       :number 8,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :mode,
+       :proto-name "mode",
+       :number 9,
+       :type {:enum {:type-ref ".ser.JonGuiDataRotaryMode"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :is-scanning,
+       :proto-name "is_scanning",
+       :number 10,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :is-scanning-paused,
+       :proto-name "is_scanning_paused",
+       :number 11,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :use-rotary-as-compass,
+       :proto-name "use_rotary_as_compass",
+       :number 12,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :scan-target,
+       :proto-name "scan_target",
+       :number 13,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :example [1 2 3]},
+        :raw {:field {:gte 0, :example [1 2 3]}, :repeated nil}}}
+      {:name :scan-target-max,
+       :proto-name "scan_target_max",
+       :number 14,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :example [1 2 3]},
+        :raw {:field {:gte 0, :example [1 2 3]}, :repeated nil}}}
+      {:name :sun-azimuth,
+       :proto-name "sun_azimuth",
+       :number 15,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90 180 270]},
+         :repeated nil}}}
+      {:name :sun-elevation,
+       :proto-name "sun_elevation",
+       :number 16,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90 180 270]},
+         :repeated nil}}}
+      {:name :current-scan-node,
+       :proto-name "current_scan_node",
+       :number 17,
+       :type {:message {:type-ref ".ser.ScanNode"}},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}
+    {:type :message,
+     :name :scan-node,
+     :proto-name "ScanNode",
+     :java-class "ser.JonSharedDataRotary$ScanNode",
+     :package "ser",
+     :fields
+     [{:name :index,
+       :proto-name "index",
+       :number 1,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :day-zoom-table-value,
+       :proto-name "DayZoomTableValue",
+       :number 2,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :heat-zoom-table-value,
+       :proto-name "HeatZoomTableValue",
+       :number 3,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :azimuth,
+       :proto-name "azimuth",
+       :number 4,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw {:field {:lt 360, :gte 0}, :repeated nil}}}
+      {:name :elevation,
+       :proto-name "elevation",
+       :number 5,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw {:field {:lte 90, :gte -90}, :repeated nil}}}
+      {:name :linger,
+       :proto-name "linger",
+       :number 6,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :speed,
+       :proto-name "speed",
+       :number 7,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gt 0, :lte 1},
+        :raw {:field {:lte 1, :gt 0}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_camera_day.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataCameraDay",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-camera-day,
+     :proto-name "JonGuiDataCameraDay",
+     :java-class "ser.JonSharedDataCameraDay$JonGuiDataCameraDay",
+     :package "ser",
+     :fields
+     [{:name :focus-pos,
+       :proto-name "focus_pos",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}
+      {:name :zoom-pos,
+       :proto-name "zoom_pos",
+       :number 2,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}
+      {:name :iris-pos,
+       :proto-name "iris_pos",
+       :number 3,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}
+      {:name :infrared-filter,
+       :proto-name "infrared_filter",
+       :number 4,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :zoom-table-pos,
+       :proto-name "zoom_table_pos",
+       :number 5,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :zoom-table-pos-max,
+       :proto-name "zoom_table_pos_max",
+       :number 6,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :fx-mode,
+       :proto-name "fx_mode",
+       :number 7,
+       :type {:enum {:type-ref ".ser.JonGuiDataFxModeDay"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true}, :repeated nil}}}
+      {:name :auto-focus,
+       :proto-name "auto_focus",
+       :number 8,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :auto-iris,
+       :proto-name "auto_iris",
+       :number 9,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :digital-zoom-level,
+       :proto-name "digital_zoom_level",
+       :number 10,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 1},
+        :raw {:field {:gte 1}, :repeated nil}}}
+      {:name :clahe-level,
+       :proto-name "clahe_level",
+       :number 11,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_camera_heat.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataCameraHeat",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-camera-heat,
+     :proto-name "JonGuiDataCameraHeat",
+     :java-class "ser.JonSharedDataCameraHeat$JonGuiDataCameraHeat",
+     :package "ser",
+     :fields
+     [{:name :zoom-pos,
+       :proto-name "zoom_pos",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}
+      {:name :agc-mode,
+       :proto-name "agc_mode",
+       :number 2,
+       :type
+       {:enum {:type-ref ".ser.JonGuiDataVideoChannelHeatAGCModes"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :filter,
+       :proto-name "filter",
+       :number 3,
+       :type
+       {:enum {:type-ref ".ser.JonGuiDataVideoChannelHeatFilters"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :auto-focus,
+       :proto-name "auto_focus",
+       :number 4,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :zoom-table-pos,
+       :proto-name "zoom_table_pos",
+       :number 5,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :zoom-table-pos-max,
+       :proto-name "zoom_table_pos_max",
+       :number 6,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0},
+        :raw {:field {:gte 0}, :repeated nil}}}
+      {:name :dde-level,
+       :proto-name "dde_level",
+       :number 7,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:lte 512, :gte 0},
+        :raw {:field {:lte 512, :gte 0}, :repeated nil}}}
+      {:name :dde-enabled,
+       :proto-name "dde_enabled",
+       :number 8,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :fx-mode,
+       :proto-name "fx_mode",
+       :number 9,
+       :type {:enum {:type-ref ".ser.JonGuiDataFxModeHeat"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true}, :repeated nil}}}
+      {:name :digital-zoom-level,
+       :proto-name "digital_zoom_level",
+       :number 10,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 1},
+        :raw {:field {:gte 1}, :repeated nil}}}
+      {:name :clahe-level,
+       :proto-name "clahe_level",
+       :number 11,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lte 1},
+        :raw {:field {:lte 1, :gte 0}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_rec_osd.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataRecOsd",
+   :dependencies ["jon_shared_data_types.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-rec-osd,
+     :proto-name "JonGuiDataRecOsd",
+     :java-class "ser.JonSharedDataRecOsd$JonGuiDataRecOsd",
+     :package "ser",
+     :fields
+     [{:name :screen,
+       :proto-name "screen",
+       :number 1,
+       :type {:enum {:type-ref ".ser.JonGuiDataRecOsdScreen"}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {},
+        :raw {:field {:definedOnly true, :notIn [0]}, :repeated nil}}}
+      {:name :heat-osd-enabled,
+       :proto-name "heat_osd_enabled",
+       :number 2,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :day-osd-enabled,
+       :proto-name "day_osd_enabled",
+       :number 3,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}
+      {:name :heat-crosshair-offset-horizontal,
+       :proto-name "heat_crosshair_offset_horizontal",
+       :number 4,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :heat-crosshair-offset-vertical,
+       :proto-name "heat_crosshair_offset_vertical",
+       :number 5,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :day-crosshair-offset-horizontal,
+       :proto-name "day_crosshair_offset_horizontal",
+       :number 6,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}
+      {:name :day-crosshair-offset-vertical,
+       :proto-name "day_crosshair_offset_vertical",
+       :number 7,
+       :type {:unknown {:proto-type :type-int-32}},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_day_cam_glass_heater.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataDayCamGlassHeater",
+   :dependencies [],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-day-cam-glass-heater,
+     :proto-name "JonGuiDataDayCamGlassHeater",
+     :java-class
+     "ser.JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater",
+     :package "ser",
+     :fields
+     [{:name :temperature,
+       :proto-name "temperature",
+       :number 1,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -273.15, :lte 660.32},
+        :raw
+        {:field {:lte 660.32, :gte -273.15, :example [-20 0 25 100]},
+         :repeated nil}}}
+      {:name :status,
+       :proto-name "status",
+       :number 2,
+       :type {:scalar :bool},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data_actual_space_time.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedDataActualSpaceTime",
+   :dependencies [],
+   :messages
+   [{:type :message,
+     :name :jon-gui-data-actual-space-time,
+     :proto-name "JonGuiDataActualSpaceTime",
+     :java-class
+     "ser.JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime",
+     :package "ser",
+     :fields
+     [{:name :azimuth,
+       :proto-name "azimuth",
+       :number 1,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte 0, :lt 360},
+        :raw
+        {:field {:lt 360, :gte 0, :example [0 90 180 270]},
+         :repeated nil}}}
+      {:name :elevation,
+       :proto-name "elevation",
+       :number 2,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :bank,
+       :proto-name "bank",
+       :number 3,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-90 0 90]},
+         :repeated nil}}}
+      {:name :latitude,
+       :proto-name "latitude",
+       :number 4,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -90, :lte 90},
+        :raw
+        {:field {:lte 90, :gte -90, :example [-45 0 45]},
+         :repeated nil}}}
+      {:name :longitude,
+       :proto-name "longitude",
+       :number 5,
+       :type {:scalar :float},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -180, :lt 180},
+        :raw
+        {:field {:lt 180, :gte -180, :example [-90 0 90]},
+         :repeated nil}}}
+      {:name :altitude,
+       :proto-name "altitude",
+       :number 6,
+       :type {:scalar :double},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte -433, :lte 8848.86},
+        :raw {:field {:lte 8848.86, :gte -433}, :repeated nil}}}
+      {:name :timestamp,
+       :proto-name "timestamp",
+       :number 7,
+       :type {:unknown {:proto-type :type-int-64}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gte "0"},
+        :raw {:field {:gte "0"}, :repeated nil}}}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}
+  {:type :file,
+   :name "jon_shared_data.proto",
+   :package "ser",
+   :java-package nil,
+   :java-outer-classname "JonSharedData",
+   :dependencies
+   ["jon_shared_data_types.proto"
+    "jon_shared_data_time.proto"
+    "jon_shared_data_system.proto"
+    "jon_shared_data_lrf.proto"
+    "jon_shared_data_gps.proto"
+    "jon_shared_data_compass.proto"
+    "jon_shared_data_compass_calibration.proto"
+    "jon_shared_data_rotary.proto"
+    "jon_shared_data_camera_day.proto"
+    "jon_shared_data_camera_heat.proto"
+    "jon_shared_data_rec_osd.proto"
+    "jon_shared_data_day_cam_glass_heater.proto"
+    "jon_shared_data_actual_space_time.proto"],
+   :messages
+   [{:type :message,
+     :name :jon-gui-state,
+     :proto-name "JonGUIState",
+     :java-class "ser.JonSharedData$JonGUIState",
+     :package "ser",
+     :fields
+     [{:name :protocol-version,
+       :proto-name "protocol_version",
+       :number 1,
+       :type {:unknown {:proto-type :type-uint-32}},
+       :label :label-optional,
+       :optional? true,
+       :constraints
+       {:field-constraints {:gt 0},
+        :raw {:field {:gt 0}, :repeated nil}}}
+      {:name :system,
+       :proto-name "system",
+       :number 2,
+       :type {:message {:type-ref ".ser.JonGuiDataSystem"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :meteo-internal,
+       :proto-name "meteo_internal",
+       :number 3,
+       :type {:message {:type-ref ".ser.JonGuiDataMeteo"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :lrf,
+       :proto-name "lrf",
+       :number 4,
+       :type {:message {:type-ref ".ser.JonGuiDataLrf"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :time,
+       :proto-name "time",
+       :number 5,
+       :type {:message {:type-ref ".ser.JonGuiDataTime"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :gps,
+       :proto-name "gps",
+       :number 6,
+       :type {:message {:type-ref ".ser.JonGuiDataGps"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :compass,
+       :proto-name "compass",
+       :number 7,
+       :type {:message {:type-ref ".ser.JonGuiDataCompass"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :rotary,
+       :proto-name "rotary",
+       :number 8,
+       :type {:message {:type-ref ".ser.JonGuiDataRotary"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :camera-day,
+       :proto-name "camera_day",
+       :number 9,
+       :type {:message {:type-ref ".ser.JonGuiDataCameraDay"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :camera-heat,
+       :proto-name "camera_heat",
+       :number 10,
+       :type {:message {:type-ref ".ser.JonGuiDataCameraHeat"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :compass-calibration,
+       :proto-name "compass_calibration",
+       :number 11,
+       :type
+       {:message {:type-ref ".ser.JonGuiDataCompassCalibration"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :rec-osd,
+       :proto-name "rec_osd",
+       :number 12,
+       :type {:message {:type-ref ".ser.JonGuiDataRecOsd"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :day-cam-glass-heater,
+       :proto-name "day_cam_glass_heater",
+       :number 13,
+       :type {:message {:type-ref ".ser.JonGuiDataDayCamGlassHeater"}},
+       :label :label-optional,
+       :optional? true}
+      {:name :actual-space-time,
+       :proto-name "actual_space_time",
+       :number 14,
+       :type {:message {:type-ref ".ser.JonGuiDataActualSpaceTime"}},
+       :label :label-optional,
+       :optional? true}],
+     :oneofs [],
+     :nested-types []}],
+   :enums []}],
+ :file nil}

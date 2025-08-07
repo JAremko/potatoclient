@@ -9,7 +9,8 @@
             [rewrite-clj.parser :as p]
             [rewrite-clj.node :as n]
             [generator.type-resolution :as type-res]
-            [generator.spec-gen :as spec-gen]))
+            [generator.spec-gen :as spec-gen]
+            [generator.validation-helpers :as validation]))
 
 ;; =============================================================================
 ;; Template Loading
@@ -514,12 +515,16 @@
                             (when (seq message-specs)
                              message-specs))))
          
+         ;; Generate validation helpers if we have specs and guardrails
+         validation-code (when (and generate-specs? guardrails?)
+                          (validation/generate-namespace-validation-helpers messages))
+         
          replacements {"NAMESPACE-PLACEHOLDER" ns-name
                      "REQUIRE-PLACEHOLDER" (or require-clause "")
                      "IMPORTS-PLACEHOLDER" (generate-imports imports)
                      "ENUMS-PLACEHOLDER" (or enums-code ";; No enums")
                      "SPECS-PLACEHOLDER" (or specs-code ";; No specs")
-                     "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages"))}]
+                     "BUILDERS-AND-PARSERS-PLACEHOLDER" (str forward-decls "\n" (or messages-code ";; No messages") validation-code)}]
     (replace-in-template template replacements))))
 
 ;; =============================================================================
