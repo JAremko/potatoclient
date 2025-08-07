@@ -20,15 +20,16 @@
   Returns {:name 'enum-name' :qualified? true/false :ns-alias 'alias'}"
   [enum-type-ref current-package type-lookup]
   (let [enum-package (type-ref->package enum-type-ref)
-        enum-info (get type-lookup (keyword enum-type-ref))
-        enum-name (if enum-info
-                   (str (name (:name enum-info)) "-values")
+        enum-info (get type-lookup enum-type-ref)
+        enum-name (if-let [enum-def (or (:definition enum-info) enum-info)]
+                   (str (name (:name enum-def)) "-values")
                    ;; Fallback: extract from type ref
                    (str (-> enum-type-ref
                            (str/replace #"^\." "")
                            (str/split #"\.")
                            last
-                           (comp name conv/string->keyword))
+                           conv/string->keyword
+                           name)
                        "-values"))]
     (if (or (nil? enum-package) 
             (= enum-package current-package))

@@ -79,10 +79,19 @@
             ;; Write each generated file
             (doseq [[file-path content] generated]
               (let [full-path (io/file output-dir ns-path file-path)
-                    ;; Format with cljfmt first
-                    cljfmt-formatted (cljfmt/reformat-string content format-opts)
+                    ;; Try to format with cljfmt first, but if it fails, use the content as-is
+                    cljfmt-formatted (try
+                                       (cljfmt/reformat-string content format-opts)
+                                       (catch Exception e
+                                         (log/warn "cljfmt failed for" file-path "-" (.getMessage e))
+                                         (log/warn "Problematic code snippet:" (subs content 0 (min 500 (count content))))
+                                         content))
                     ;; Then format with zprint for line width
-                    formatted (zp/zprint-file-str cljfmt-formatted (.getName full-path) zprint-opts)]
+                    formatted (try
+                                (zp/zprint-file-str cljfmt-formatted (.getName full-path) zprint-opts)
+                                (catch Exception e
+                                  (log/warn "zprint failed for" file-path "-" (.getMessage e))
+                                  cljfmt-formatted))]
                 (.mkdirs (.getParentFile full-path))
                 (spit full-path formatted)
                 (log/info "Generated" (.getPath full-path))
@@ -101,10 +110,26 @@
                             :alias-map {}}
                 zprint-opts {:width line-width}
                 ;; Format with cljfmt first, then zprint for line width
-                cljfmt-command (cljfmt/reformat-string (:command generated) format-opts)
-                cljfmt-state (cljfmt/reformat-string (:state generated) format-opts)
-                formatted-command (zp/zprint-file-str cljfmt-command "command.clj" zprint-opts)
-                formatted-state (zp/zprint-file-str cljfmt-state "state.clj" zprint-opts)]
+                cljfmt-command (try
+                                 (cljfmt/reformat-string (:command generated) format-opts)
+                                 (catch Exception e
+                                   (log/warn "cljfmt failed for command.clj -" (.getMessage e))
+                                   (:command generated)))
+                cljfmt-state (try
+                               (cljfmt/reformat-string (:state generated) format-opts)
+                               (catch Exception e
+                                 (log/warn "cljfmt failed for state.clj -" (.getMessage e))
+                                 (:state generated)))
+                formatted-command (try
+                                    (zp/zprint-file-str cljfmt-command "command.clj" zprint-opts)
+                                    (catch Exception e
+                                      (log/warn "zprint failed for command.clj -" (.getMessage e))
+                                      cljfmt-command))
+                formatted-state (try
+                                  (zp/zprint-file-str cljfmt-state "state.clj" zprint-opts)
+                                  (catch Exception e
+                                    (log/warn "zprint failed for state.clj -" (.getMessage e))
+                                    cljfmt-state))]
             
             ;; Step 5: Write generated code
             (log/info "Writing generated code...")
