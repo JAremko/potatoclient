@@ -368,9 +368,9 @@
                    (some #(= filename (:name %)) (:files descriptor)))
                  (:sorted-files enriched))
          
-         ;; 3. Symbol registry contains only valid FQNs
+         ;; 3. Symbol registry contains only valid FQNs (starting with dot)
          (every? (fn [[fqn _]]
-                   (re-matches #"^[a-zA-Z][a-zA-Z0-9_.]*$" fqn))
+                   (re-matches #"^\.[a-zA-Z][a-zA-Z0-9_.]*$" fqn))
                  (:symbol-registry enriched))
          
          ;; 4. No nil values in enriched structure

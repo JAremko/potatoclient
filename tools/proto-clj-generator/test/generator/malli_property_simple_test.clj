@@ -1,0 +1,135 @@
+(ns generator.malli_property_simple_test
+  "Simplified property tests using constrained Malli specs"
+  (:require [clojure.test :refer [deftest is testing]]
+            [clojure.test.check.clojure-test :refer [defspec]]
+            [clojure.test.check.properties :as prop]
+            [malli.core :as m]
+            [malli.generator :as mg]
+            [generator.deps :as deps]
+            [generator.specs :as specs]
+            [generator.malli-constrained-specs :as test-specs]))
+
+;; First, let's test that we can generate valid data
+(deftest test-can-generate-valid-test-data
+  (testing "Can generate valid descriptor sets"
+    (let [samples (mg/sample test-specs/TestDescriptorSet 
+                            {:size 5 :registry test-specs/test-registry})]
+      (is (= 5 (count samples)))
+      (doseq [sample samples]
+        (is (m/validate test-specs/TestDescriptorSet sample {:registry test-specs/test-registry}))
+        (is (m/validate specs/DescriptorSet sample {:registry specs/registry})
+            "Test data should also validate against original spec")))))
+
+;; Simple property test with constrained specs
+(defspec basic-enrichment-with-constrained-specs
+  20
+  (prop/for-all [descriptor (mg/generator test-specs/TestDescriptorSet 
+                                         {:registry test-specs/test-registry})]
+    (try
+      ;; Filter out self-dependencies before enrichment
+      (let [cleaned (update descriptor :files
+                           (fn [files]
+                             (mapv (fn [file]
+                                     (update file :dependencies
+                                             (fn [deps]
+                                               (vec (remove #(= % (:name file)) deps)))))
+                                   files)))
+            enriched (deps/enrich-descriptor-set cleaned)]
+        (and (= :combined (:type enriched))
+             (map? enriched)
+             (contains? enriched :files)))
+      (catch Exception e
+        ;; Log the error for debugging
+        (println "Enrichment failed for:" descriptor)
+        (println "Error:" (.getMessage e))
+        false))))
+
+;; Test that enrichment preserves file count
+(defspec enrichment-preserves-file-count
+  20
+  (prop/for-all [descriptor (mg/generator test-specs/TestDescriptorSet
+                                         {:registry test-specs/test-registry})]
+    (try
+      (let [cleaned (update descriptor :files
+                           (fn [files]
+                             (mapv (fn [file]
+                                     (update file :dependencies
+                                             (fn [deps]
+                                               (vec (remove #(= % (:name file)) deps)))))
+                                   files)))
+            enriched (deps/enrich-descriptor-set cleaned)]
+        (= (count (:files cleaned))
+           (count (:files enriched))))
+      (catch Exception e
+        (re-find #"[Cc]ircular" (.getMessage e))))))
+
+;; Create an even simpler descriptor for testing
+(def SimpleField
+  [:map
+   [:name [:enum :id :name :value]]
+   [:proto-name [:enum "id" "name" "value"]]
+   [:number [:int {:min 1 :max 10}]]
+   [:label [:enum :label-optional]]
+   [:type [:map [:scalar [:enum :string :int32]]]]])
+
+(def SimpleEnumValue
+  [:map
+   [:name [:enum :unknown :success :failure]]
+   [:proto-name [:enum "UNKNOWN" "SUCCESS" "FAILURE"]]
+   [:number [:int {:min 0 :max 10}]]])
+
+(def SimpleMessage
+  [:map
+   [:type [:= :message]]
+   [:name [:enum :request :response :data]]
+   [:proto-name [:enum "Request" "Response" "Data"]]
+   [:package [:enum "com.test" "com.api" "com.types"]]
+   [:fields [:vector SimpleField]]])
+
+(def SimpleEnum
+  [:map
+   [:type [:= :enum]]
+   [:name [:enum :status :type]]
+   [:proto-name [:enum "Status" "Type"]]
+   [:package [:enum "com.test" "com.api" "com.types"]]
+   [:values [:vector SimpleEnumValue]]])
+
+(def SimpleFile
+  [:map
+   [:type [:= :file]]
+   [:name [:enum "test.proto" "api.proto" "types.proto"]]
+   [:package [:enum "com.test" "com.api" "com.types"]]
+   [:dependencies [:vector [:enum "test.proto" "api.proto" "types.proto"]]]
+   [:messages [:vector SimpleMessage]]
+   [:enums [:vector SimpleEnum]]])
+
+(def SimpleDescriptor
+  [:map
+   [:type [:= :descriptor-set]]
+   [:files [:vector SimpleFile]]])
+
+(deftest test-simple-descriptor-generation
+  (testing "Can generate simple descriptors"
+    (let [samples (mg/sample SimpleDescriptor {:size 5})]
+      (is (= 5 (count samples)))
+      (doseq [sample samples]
+        (is (m/validate SimpleDescriptor sample))))))
+
+(defspec enrichment-with-simple-descriptors
+  30
+  (prop/for-all [descriptor (mg/generator SimpleDescriptor)]
+    (try
+      (let [;; Filter out self-dependencies
+            cleaned (update descriptor :files
+                           (fn [files]
+                             (mapv (fn [file]
+                                     (update file :dependencies
+                                             (fn [deps]
+                                               (vec (remove #(= % (:name file)) deps)))))
+                                   files)))
+            enriched (deps/enrich-descriptor-set cleaned)]
+        (and (= :combined (:type enriched))
+             (= (count (:files cleaned))
+                (count (:files enriched)))))
+      (catch Exception e
+        (re-find #"[Cc]ircular" (.getMessage e))))))

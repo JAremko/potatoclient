@@ -164,12 +164,13 @@
                        (map (fn [f] [(:name f) f])
                             (:files descriptor-set)))]
     (reduce (fn [registry filename]
-              (let [file (get file-map filename)
-                    symbols (collect-file-symbols file)]
-                (reduce (fn [reg sym]
-                          (assoc reg (:fqn sym) sym))
-                        registry
-                        symbols)))
+              (if-let [file (get file-map filename)]
+                (let [symbols (collect-file-symbols file)]
+                  (reduce (fn [reg sym]
+                            (assoc reg (:fqn sym) sym))
+                          registry
+                          symbols))
+                registry))
             {}
             sorted-files)))
 
