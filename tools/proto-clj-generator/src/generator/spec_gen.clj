@@ -64,28 +64,39 @@
 ;; Message type references
 (defmethod process-field-type :message
   [field context]
-  (type-name->keyword (get-in field [:type :message :type-ref])))
+  (let [message-type (get-in field [:type :message])
+        type-ref (:type-ref message-type)
+        type-keyword (type-name->keyword type-ref)]
+    ;; Check if enriched IR has cross-namespace info
+    (if (:cross-namespace message-type)
+      ;; For cross-namespace messages, we typically use :any since we don't
+      ;; generate specs for messages from other namespaces
+      :any
+      ;; Same namespace - use keyword reference
+      type-keyword)))
 
 ;; Enum references
 (defmethod process-field-type :enum
   [field context]
-  (let [type-ref (get-in field [:type :enum :type-ref])
-        type-keyword (type-name->keyword type-ref)
-        ;; Check if this is a cross-namespace reference
-        current-package (:current-package context)
-        ns-aliases (:ns-aliases context)
-        ;; Extract namespace from keyword
-        enum-ns (namespace type-keyword)]
-    (if (and enum-ns 
-             (not= enum-ns current-package)
-             (contains? ns-aliases enum-ns))
-      ;; Cross-namespace reference - use alias
-      (let [alias-name (get ns-aliases enum-ns)
-            enum-name (name type-keyword)
-            spec-var-name (str (csk/->kebab-case enum-name) "-spec")]
-        ;; Return a symbol that references the spec through the alias
-        (symbol (str alias-name "/" spec-var-name)))
-      ;; Same namespace or no alias - use keyword as before
+  (let [enum-type (get-in field [:type :enum])
+        type-ref (:type-ref enum-type)
+        type-keyword (type-name->keyword type-ref)]
+    ;; Check if enriched IR has cross-namespace info
+    (if (:cross-namespace enum-type)
+      ;; Use enriched metadata for cross-namespace handling
+      (let [target-package (:target-package enum-type)
+            ns-aliases (:ns-aliases context)
+            ;; Look up alias for target package
+            alias-name (get ns-aliases target-package)]
+        (if alias-name
+          ;; Cross-namespace reference with alias - use alias
+          (let [enum-name (name type-keyword)
+                spec-var-name (str (csk/->kebab-case enum-name) "-spec")]
+            ;; Return a symbol that references the spec through the alias
+            (symbol (str alias-name "/" spec-var-name)))
+          ;; Cross-namespace but no alias found - fall back to keyword
+          type-keyword))
+      ;; Same namespace - use keyword as before
       type-keyword)))
 
 ;; Unknown types (from backend when it can't resolve)
@@ -253,14 +264,21 @@
 (defn generate-specs-for-namespace
   "Generate all Malli specs for messages and enums in a namespace"
   [{:keys [messages enums current-package require-specs] :as namespace-data}]
-  (let [;; Build a map of namespace aliases from require-specs
-        ;; e.g. [[test.roundtrip.ser :as types]] -> {"ser" "types"}
-        ns-aliases (into {}
-                        (for [[ns-sym :as alias-sym] require-specs
-                              :let [ns-str (str ns-sym)
-                                    ;; Extract the last part of namespace (e.g. "ser" from "test.roundtrip.ser")
-                                    ns-suffix (last (str/split ns-str #"\."))]]
-                          [ns-suffix (str alias-sym)]))
+  (let [;; Build a map of package names to namespace aliases
+        ;; If we have enriched data with package mappings, use that
+        ;; Otherwise fall back to namespace suffix mapping
+        ns-aliases (if-let [package-mappings (:package-mappings namespace-data)]
+                     ;; Use enriched package mappings
+                     ;; e.g. {"other.package" "other-alias"}
+                     package-mappings
+                     ;; Fall back to old behavior for non-enriched IR
+                     ;; e.g. [[test.roundtrip.ser :as types]] -> {"ser" "types"}
+                     (into {}
+                           (for [[ns-sym :as alias-sym] require-specs
+                                 :let [ns-str (str ns-sym)
+                                       ;; Extract the last part of namespace (e.g. "ser" from "test.roundtrip.ser")
+                                       ns-suffix (last (str/split ns-str #"\."))]]
+                             [ns-suffix (str alias-sym)])))
         context {:current-package current-package
                  :ns-aliases ns-aliases}  ; Pass aliases to context
         

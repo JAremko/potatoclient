@@ -12,7 +12,26 @@ This tool generates Clojure code that can:
 - Generate Malli specs alongside protobuf bindings
 - Support namespace separation (each protobuf package gets its own namespace)
 - Generate enum↔keyword conversion maps
-- Handle cross-namespace type references
+- **Handle cross-namespace type references with dependency resolution**
+- **Validate data at each stage of IR transformation**
+
+## Key Features
+
+### Multi-Pass IR Generation
+The generator uses a sophisticated multi-pass approach to handle complex dependencies:
+
+1. **Parse Phase**: Convert JSON descriptors to basic IR
+2. **Dependency Analysis**: Build dependency graph and topologically sort files  
+3. **Symbol Collection**: Build global registry of all types (enums, messages)
+4. **Type Resolution**: Enrich IR with resolved type references
+5. **Code Generation**: Generate code with full cross-namespace awareness
+
+### Robust Validation
+Every data structure is validated using Malli specs:
+- Input JSON descriptors
+- Intermediate representations at each transformation
+- Final generated code structure
+- Runtime validation in generated code
 
 ## Usage
 
@@ -180,6 +199,143 @@ Oneof fields correctly reference builders in other namespaces:
       cmd/parse-root))  ; Returns validated Clojure map
 ```
 
+## Architecture
+
+### Module Structure
+
+```
+src/generator/
+├── backend.clj           # JSON descriptor parsing & IR generation
+├── deps.clj              # Dependency resolution & IR enrichment (Specter + core.match)
+├── specs.clj             # Malli specs for all data structures
+├── frontend.clj          # Code generation for single-file mode
+├── frontend_namespaced.clj # Code generation for namespace-separated mode
+├── spec_gen.clj          # Malli spec generation from IR
+├── type_resolution.clj   # Type reference resolution
+└── validation_helpers.clj # Constraint compilation helpers
+```
+
+### Data Flow
+
+```
+JSON Descriptors
+    ↓ (backend/parse-descriptor-set)
+Basic IR
+    ↓ (deps/enrich-descriptor-set) 
+Enriched IR with:
+  - Dependency graph
+  - Sorted file order
+  - Symbol registry
+  - Resolved type refs
+    ↓ (frontend/generate-*)
+Generated Clojure Code
+```
+
+### Key Data Structures
+
+All data structures are defined and validated in `generator.specs`:
+
+- **DescriptorSet**: Raw parsed protobuf descriptors
+- **EnrichedDescriptorSet**: Descriptors with dependency info and resolved types
+- **DependencyGraph**: DAG of file dependencies  
+- **SymbolRegistry**: Global FQN → type definition mapping
+- **EnrichedField**: Field with resolved cross-namespace references
+
+## Crucial Findings and Implementation Details
+
+### 1. Dependency Graph Building with Stuart Sierra's Library
+
+We use `com.stuartsierra/dependency` for robust graph algorithms. A crucial finding was handling files with no dependencies:
+
+```clojure
+;; Files with no dependencies aren't automatically added as nodes
+;; Solution: Add dummy dependency then remove it
+(if (empty? (:depends-on node))
+  (-> g
+      (dep/depend filename ::dummy)
+      (dep/remove-edge filename ::dummy)
+      (dep/remove-all ::dummy))
+  ;; Normal dependency addition
+  (reduce #(dep/depend %1 filename %2) g (:depends-on node)))
+```
+
+### 2. Specter for Nested Transformations
+
+Specter dramatically simplifies nested data transformations. Key patterns:
+
+```clojure
+;; Define reusable paths
+(def ALL-FIELDS-PATH
+  [:messages sp/ALL :fields sp/ALL])
+
+;; Transform all fields in one pass
+(sp/transform ALL-FIELDS-PATH
+              (fn [field]
+                (update field :type enrich-fn))
+              file)
+```
+
+### 3. Core.match for Type Pattern Matching
+
+Instead of complex nested conditionals, we use core.match for clear type handling:
+
+```clojure
+(match field-type
+  ;; Scalar type - return as-is
+  {:scalar _} field-type
+  
+  ;; Message type with type-ref
+  {:message msg-type} 
+  (if-let [type-ref (:type-ref msg-type)]
+    {:message (merge msg-type (enrich-type-reference type-ref ...))}
+    field-type)
+  
+  ;; Enum type with type-ref
+  {:enum enum-type}
+  (if-let [type-ref (:type-ref enum-type)]
+    {:enum (merge enum-type (enrich-type-reference type-ref ...))}
+    field-type)
+  
+  ;; Any other structure
+  :else field-type)
+```
+
+### 4. Malli-based Guardrails
+
+We use `com.fulcrologic.guardrails.malli.core` for better schema integration:
+
+```clojure
+(require '[com.fulcrologic.guardrails.malli.core :refer [>defn =>]])
+
+(>defn enrich-field
+  [field symbol-registry current-package]
+  [[:map [:name keyword?] [:type map?]]
+   [:map-of string? any?]
+   string? 
+   => 
+   map?]
+  ;; Implementation
+  )
+```
+
+### 5. Granular Testing Strategy
+
+Comprehensive unit tests make debugging much easier:
+
+```clojure
+;; Test individual functions
+(deftest test-extract-file-dependencies ...)
+(deftest test-build-dependency-graph ...)
+(deftest test-topological-sort ...)
+
+;; Test edge cases
+(deftest test-circular-dependency-detection ...)
+(deftest test-empty-and-nil-handling ...)
+
+;; Performance sanity checks
+(deftest test-performance-sanity ...)
+```
+
 ## Guardrails Integration
 
 The generated code integrates with the project's guardrails setup:
@@ -274,6 +430,79 @@ This tool is part of the WebSocket refactoring effort to replace Kotlin subproce
 2. **Better Errors**: Malli specs provide detailed validation errors
 3. **REPL-Friendly**: All generated code is pure Clojure, easy to test at REPL
 4. **Performance**: No reflection, direct Java interop with type hints
+
+## Documentation
+
+### Core Documentation
+- [TODO.md](TODO.md) - Current tasks and roadmap
+- [DEPENDENCY-RESOLUTION-DESIGN.md](DEPENDENCY-RESOLUTION-DESIGN.md) - Multi-pass IR system design
+- [Multi-Pass IR Generation](docs/MULTI-PASS-IR-GENERATION.md) - Detailed IR transformation pipeline
+
+### Module Documentation
+- `generator.specs` - Malli specifications for all data structures
+- `generator.deps` - Dependency resolution and IR enrichment
+- `generator.constraints.*` - buf.validate constraint extraction and compilation
+
+## Testing
+
+### Run All Tests
+```bash
+make test  # Generates code and runs full test suite
+```
+
+### Run Specific Tests
+```bash
+# Dependency resolution tests
+clojure -X:test :nses '[generator.deps-test generator.deps-integration-test]'
+
+# Constraint tests  
+clojure -X:test :nses '[generator.constraints-test generator.constraint-integration-test]'
+
+# Roundtrip tests
+clojure -X:test :nses '[generator.comprehensive-roundtrip-test]'
+```
+
+### Test Coverage
+The generator includes comprehensive testing:
+- Unit tests for all modules
+- Integration tests for the full pipeline
+- Property-based tests using Malli generators
+- Roundtrip validation tests (Proto → Map → Proto)
+- Constraint boundary testing
+
+## Current Status (January 2025)
+
+### ✅ Completed Features
+- **Multi-pass IR generation** with dependency resolution
+- **Cross-namespace type references** with proper imports
+- **buf.validate constraint extraction** and Malli compilation
+- **Guardrails integration** for runtime validation
+- **Custom :oneof schema** support
+- **Comprehensive Malli specs** for all data structures
+- **Property-based testing** infrastructure
+
+### 🚧 In Progress
+- Updating spec generation to use enriched IR metadata
+- Testing cross-namespace resolution with new system
+
+### 📋 Planned
+- Performance optimizations (parallel processing, caching)
+- Enhanced error messages with source locations
+- IDE integration support
+
+## Contributing
+
+### Code Quality Standards
+- All functions must use `>defn` or `>defn-` (guardrails)
+- All data structures must have Malli specs
+- 100% test coverage for new code
+- Clean separation of concerns
+
+### Testing Requirements
+- Unit tests for all public functions
+- Integration tests for cross-module interactions
+- Property-based tests for data transformations
+- Roundtrip validation for generated code
 
 ## Troubleshooting
 

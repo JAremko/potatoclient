@@ -7,7 +7,8 @@
             [camel-snake-kebab.core :as csk]
             [com.rpl.specter :as sp]
             [taoensso.timbre :as log]
-            [generator.constraints.extractor :as extractor]))
+            [generator.constraints.extractor :as extractor]
+            [generator.deps :as deps]))
 
 ;; =============================================================================
 ;; Specter Paths
@@ -391,6 +392,13 @@
     (let [cmd-edn (parse-descriptor-set (.getPath cmd-file))
           state-edn (parse-descriptor-set (.getPath state-file))
           
+          ;; Combine all files for dependency resolution
+          combined-descriptor {:type :combined
+                               :files (concat (:files cmd-edn) (:files state-edn))}
+          
+          ;; Enrich with dependency information
+          enriched (deps/enrich-descriptor-set combined-descriptor)
+          
           ;; Filter internal packages from output
           filter-internal (fn [descriptor-set]
                            (sp/setval [ALL-FILES 
@@ -400,10 +408,19 @@
                                      sp/NONE
                                      descriptor-set))
           
-          ;; Build type lookup from all files
-          all-files (concat (:files cmd-edn) (:files state-edn))
-          type-lookup (build-type-lookup {:type :combined :files all-files})]
+          ;; Split back into command and state
+          cmd-files (set (map :name (:files cmd-edn)))
+          state-files (set (map :name (:files state-edn)))
+          
+          enriched-cmd-files (filter #(contains? cmd-files (:name %)) 
+                                     (:files enriched))
+          enriched-state-files (filter #(contains? state-files (:name %))
+                                       (:files enriched))]
       
-      {:command (filter-internal cmd-edn)
-       :state (filter-internal state-edn)
-       :type-lookup type-lookup})))
+      {:command (filter-internal {:type :descriptor-set 
+                                   :files enriched-cmd-files})
+       :state (filter-internal {:type :descriptor-set
+                                :files enriched-state-files})
+       :type-lookup (:symbol-registry enriched)
+       :dependency-graph (:dependency-graph enriched)
+       :sorted-files (:sorted-files enriched)})))
