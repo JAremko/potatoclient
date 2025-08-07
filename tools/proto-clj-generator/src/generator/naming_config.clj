@@ -2,7 +2,7 @@
   "Configuration for naming conventions and transformations.
   This provides a flexible, data-driven approach to namespace generation."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]))
+            [potatoclient.proto.conversion :as conv]))
 
 (def default-config
   "Default naming convention configuration.
@@ -14,7 +14,7 @@
    [{:name "Command packages"
      :pattern #"^cmd\.(.+)$"
      :transform (fn [match]
-                 (str "cmd." (csk/->kebab-case (second match))))}
+                 (str "cmd." (name (conv/string->keyword (second match)))))}
     
     {:name "Serialization root package"
      :pattern #"^ser$"
@@ -23,7 +23,7 @@
     {:name "Serialization sub-packages"
      :pattern #"^ser\.(.+)$"
      :transform (fn [match]
-                 (str "ser." (csk/->kebab-case (second match))))}
+                 (str "ser." (name (conv/string->keyword (second match)))))}
     
     {:name "Default transformation"
      :pattern #"(.+)"
@@ -39,15 +39,13 @@
      :transform (fn [match]
                  (-> (second match)
                      (str/replace #"^(cmd_|data_)" "")
-                     csk/->kebab-case
-                     keyword))}
+                     conv/string->keyword))}
     
     {:name "Default alias from filename"
      :pattern #"^(.+)\.proto$"
      :transform (fn [match]
                  (-> (second match)
-                     csk/->kebab-case
-                     keyword))}]
+                     conv/string->keyword))}]
    
    ;; Type name transformations
    :type-transforms

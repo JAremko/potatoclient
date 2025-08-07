@@ -1,7 +1,7 @@
 (ns generator.type-resolution
   "Utilities for resolving type references across namespaces."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]))
+            [potatoclient.proto.conversion :as conv]))
 
 (defn type-ref->package
   "Extract package from a type reference.
@@ -28,7 +28,7 @@
                            (str/replace #"^\." "")
                            (str/split #"\.")
                            last
-                           csk/->kebab-case)
+                           (comp name conv/string->keyword))
                        "-values"))]
     (if (or (nil? enum-package) 
             (= enum-package current-package))

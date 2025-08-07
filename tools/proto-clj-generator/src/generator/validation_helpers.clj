@@ -1,7 +1,7 @@
 (ns generator.validation-helpers
   "Generate validation helper functions for fields with constraints"
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]))
+            [potatoclient.proto.conversion :as conv]))
 
 ;; =============================================================================
 ;; Helper Functions
@@ -63,7 +63,7 @@
 (defn field->spec-name
   "Generate spec def name for a field with constraints"
   [field message]
-  (str (csk/->kebab-case (:proto-name message)) "-" (name (:name field)) "-spec"))
+  (str (name (conv/string->keyword (:proto-name message))) "-" (name (:name field)) "-spec"))
 
 ;; =============================================================================
 ;; Code Generation

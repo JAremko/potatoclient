@@ -5,7 +5,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [generator.specs :as specs]
-            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => ?]]
+            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
             [com.stuartsierra.dependency :as dep]
             [com.rpl.specter :as sp]
             [clojure.core.match :refer [match]]

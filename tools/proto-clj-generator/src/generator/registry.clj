@@ -3,7 +3,9 @@
   This ensures all schemas can reference each other and built-in schemas like :map."
   (:require [malli.core :as m]
             [malli.registry :as mr]
-            [potatoclient.specs.malli-oneof :as oneof]))
+            [com.fulcrologic.guardrails.malli.registry :as gr.reg]
+            [potatoclient.specs.malli-oneof :as oneof]
+            [potatoclient.proto.string-conversion-specs :as str-specs]))
 
 (defonce registry-atom (atom nil))
 
@@ -16,10 +18,15 @@
                                ;; Built-in Malli schemas (:map, :vector, :string, etc.)
                                (m/default-schemas)
                                ;; Custom :oneof schema from shared specs
-                               {:oneof oneof/-oneof-schema})]
+                               {:oneof oneof/-oneof-schema}
+                               ;; String conversion specs with generators
+                               str-specs/string-conversion-schemas)]
       (reset! registry-atom composite-registry)
-      ;; Set as the default registry
-      (mr/set-default-registry! composite-registry))))
+      ;; Set as the default Malli registry
+      (mr/set-default-registry! composite-registry)
+      ;; Also merge into guardrails registry
+      (gr.reg/merge-schemas! {:oneof oneof/-oneof-schema}
+                             str-specs/string-conversion-schemas)))))
 
 (defn sanity-check-registry!
   "Run sanity checks to ensure the registry is properly configured."
@@ -30,6 +37,11 @@
           "Cannot create basic map schema")
   (assert (m/validate [:map [:foo :string]] {:foo "bar"})
           "Cannot validate basic map")
+  ;; Check string conversion specs are available
+  (assert (m/schema? (m/schema :potatoclient.proto.string-conversion-specs/KebabCaseString))
+          "Cannot resolve KebabCaseString schema")
+  (assert (m/validate :potatoclient.proto.string-conversion-specs/KebabCaseString "kebab-case")
+          "Cannot validate kebab-case string")
   (println "Registry sanity checks passed!")
   true)
 

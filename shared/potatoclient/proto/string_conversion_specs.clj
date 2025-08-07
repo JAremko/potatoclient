@@ -3,6 +3,7 @@
   These specs are used both for guardrails and property-based testing."
   (:require [malli.core :as m]
             [malli.generator :as mg]
+            [malli.registry :as mr]
             [lambdaisland.regal :as regal]
             [lambdaisland.regal.generator :as regal-gen]))
 
@@ -149,7 +150,6 @@
 (def StringToKebabCase
   "Spec for ->kebab-case function"
   [:function
-   [:=> [:cat [:or :string :nil]] [:or KebabCaseString :nil]]
    [::m/gen #(mg/generator
               [:function
                [:=> [:cat MixedCaseString] KebabCaseString]])]])
@@ -157,7 +157,6 @@
 (def StringToKebabCaseKeyword
   "Spec for ->kebab-case-keyword function"
   [:function
-   [:=> [:cat [:or :string :nil]] [:or :keyword :nil]]
    [::m/gen #(mg/generator
               [:function
                [:=> [:cat MixedCaseString] :keyword]])]])
@@ -165,7 +164,6 @@
 (def StringToPascalCase
   "Spec for ->PascalCase function"
   [:function
-   [:=> [:cat [:or :string :nil]] [:or PascalCaseString :nil]]
    [::m/gen #(mg/generator
               [:function
                [:=> [:cat MixedCaseString] PascalCaseString]])]])
@@ -173,7 +171,6 @@
 (def StringToSnakeCase
   "Spec for ->snake_case function"
   [:function
-   [:=> [:cat [:or :string :nil]] [:or SnakeCaseString :nil]]
    [::m/gen #(mg/generator
               [:function
                [:=> [:cat MixedCaseString] SnakeCaseString]])]])
@@ -269,32 +266,44 @@
   [:=> [:cat :string] :keyword])
 
 ;; =============================================================================
-;; Registry Setup
+;; Global Registry Setup
 ;; =============================================================================
 
-(def registry
-  "Registry of all string conversion specs with generators"
-  {::CamelCaseString CamelCaseString
-   ::PascalCaseString PascalCaseString
-   ::SnakeCaseString SnakeCaseString
-   ::ProtoConstantString ProtoConstantString
-   ::KebabCaseString KebabCaseString
-   ::ProtoTypeConstantString ProtoTypeConstantString
-   ::NumericSuffixString NumericSuffixString
-   ::MixedCaseString MixedCaseString
-   ::FieldNameString FieldNameString
-   ::GetterMethodString GetterMethodString
-   ::SetterMethodString SetterMethodString
-   ::HasMethodString HasMethodString
-   ::StringToKebabCase StringToKebabCase
-   ::StringToKebabCaseKeyword StringToKebabCaseKeyword
-   ::StringToPascalCase StringToPascalCase
-   ::StringToSnakeCase StringToSnakeCase
-   ::ProtoNameToClojureName ProtoNameToClojureName
-   ::ClojureNameToProtoName ClojureNameToProtoName
-   ::JsonKeyToClojureKey JsonKeyToClojureKey
-   ::GetterMethodName GetterMethodName
-   ::SetterMethodName SetterMethodName
-   ::HasMethodName HasMethodName
-   ::AddMethodName AddMethodName
-   ::AddAllMethodName AddAllMethodName})
+(def string-conversion-schemas
+  "All string conversion schemas to add to global registry"
+  {:potatoclient.proto.string-conversion-specs/CamelCaseString CamelCaseString
+   :potatoclient.proto.string-conversion-specs/PascalCaseString PascalCaseString
+   :potatoclient.proto.string-conversion-specs/SnakeCaseString SnakeCaseString
+   :potatoclient.proto.string-conversion-specs/ProtoConstantString ProtoConstantString
+   :potatoclient.proto.string-conversion-specs/KebabCaseString KebabCaseString
+   :potatoclient.proto.string-conversion-specs/ProtoTypeConstantString ProtoTypeConstantString
+   :potatoclient.proto.string-conversion-specs/NumericSuffixString NumericSuffixString
+   :potatoclient.proto.string-conversion-specs/MixedCaseString MixedCaseString
+   :potatoclient.proto.string-conversion-specs/FieldNameString FieldNameString
+   :potatoclient.proto.string-conversion-specs/GetterMethodString GetterMethodString
+   :potatoclient.proto.string-conversion-specs/SetterMethodString SetterMethodString
+   :potatoclient.proto.string-conversion-specs/HasMethodString HasMethodString
+   :potatoclient.proto.string-conversion-specs/StringToKebabCase StringToKebabCase
+   :potatoclient.proto.string-conversion-specs/StringToKebabCaseKeyword StringToKebabCaseKeyword
+   :potatoclient.proto.string-conversion-specs/StringToPascalCase StringToPascalCase
+   :potatoclient.proto.string-conversion-specs/StringToSnakeCase StringToSnakeCase
+   :potatoclient.proto.string-conversion-specs/ProtoNameToClojureName ProtoNameToClojureName
+   :potatoclient.proto.string-conversion-specs/ClojureNameToProtoName ClojureNameToProtoName
+   :potatoclient.proto.string-conversion-specs/JsonKeyToClojureKey JsonKeyToClojureKey
+   :potatoclient.proto.string-conversion-specs/GetterMethodName GetterMethodName
+   :potatoclient.proto.string-conversion-specs/SetterMethodName SetterMethodName
+   :potatoclient.proto.string-conversion-specs/HasMethodName HasMethodName
+   :potatoclient.proto.string-conversion-specs/AddMethodName AddMethodName
+   :potatoclient.proto.string-conversion-specs/AddAllMethodName AddAllMethodName})
+
+(defn register-string-conversion-schemas!
+  "Register all string conversion schemas in the global registry"
+  []
+  ;; Create composite registry with defaults and our schemas
+  (let [composite-registry (mr/composite-registry
+                            (m/default-schemas)
+                            string-conversion-schemas)]
+    (mr/set-default-registry! composite-registry)))
+
+;; Don't auto-register - let the consuming code decide when to register
+;; (register-string-conversion-schemas!)

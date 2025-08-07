@@ -4,7 +4,6 @@
   files like cmd/compass.clj, cmd/gps.clj, etc."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]
             [com.rpl.specter :as sp]
             [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]

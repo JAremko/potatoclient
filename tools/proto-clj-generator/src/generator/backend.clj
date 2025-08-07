@@ -9,7 +9,7 @@
             [generator.constraints.extractor :as extractor]
             [generator.deps :as deps]
             [potatoclient.proto.constants :as proto-const]
-            [potatoclient.proto.string-conversion :as conv]))
+            [potatoclient.proto.conversion :as conv]))
 
 ;; =============================================================================
 ;; Specter Paths
@@ -229,7 +229,8 @@
                                  (str/replace #"\.proto$" "")
                                  (conv/->PascalCase)))
         context {:package (:package file)
-                 :java-package (sp/select-first [:options :javaPackage] file)
+                 :java-package (or (sp/select-first [:options :javaPackage] file)
+                                   (:package file))
                  :java-outer-classname (or (sp/select-first [:options :javaOuterClassname] file)
                                           default-outer-class)}]
     {:type :file

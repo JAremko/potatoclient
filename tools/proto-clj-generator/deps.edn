@@ -1,10 +1,9 @@
-{:paths ["src" "resources"]
+{:paths ["src" "resources" "/home/jare/git/potatoclient/shared"]
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
         rewrite-clj/rewrite-clj {:mvn/version "1.1.48"}
         org.clojure/core.match {:mvn/version "1.1.0"}
         metosin/malli {:mvn/version "0.16.4"}
         cheshire/cheshire {:mvn/version "5.13.0"}
-        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
         com.rpl/specter {:mvn/version "1.1.4"}
         ;; For protobuf classes at generation time - using compatible version with protovalidate
         com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
@@ -19,7 +18,9 @@
         ;; For dependency graph algorithms
         com.stuartsierra/dependency {:mvn/version "1.0.0"}
         ;; For regex pattern generation
-        lambdaisland/regal {:mvn/version "0.0.143"}}
+        lambdaisland/regal {:mvn/version "0.0.143"}
+        ;; For guardrails
+        com.fulcrologic/guardrails {:mvn/version "1.2.4"}}
  
  :aliases
  {:dev {:extra-paths ["test" "resources" "/home/jare/git/potatoclient/shared"]
