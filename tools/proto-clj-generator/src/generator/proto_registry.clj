@@ -4,7 +4,7 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [cheshire.core :as json]
-            [camel-snake-kebab.core :as csk]
+            [potatoclient.proto.string-conversion :as conv]
             [generator.naming-config :as naming]))
 
 (defonce ^:private registry (atom {}))
@@ -129,12 +129,12 @@
         current-metadata (get-file-metadata current-file)
         config (get-naming-config)
         base-name (if enum-info
-                   (csk/->kebab-case (:name enum-info))
+                   (conv/->kebab-case (:name enum-info))
                    (-> enum-type-ref
                        (str/replace #"^\." "")
                        (str/split #"\.")
                        last
-                       csk/->kebab-case))
+                       conv/->kebab-case))
         enum-name (str base-name (naming/get-type-suffix config :enum-values-suffix))]
     (if (and enum-info current-metadata)
       (let [enum-ns (resolve-type-namespace enum-type-ref)

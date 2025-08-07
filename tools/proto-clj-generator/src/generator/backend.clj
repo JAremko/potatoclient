@@ -4,11 +4,12 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [cheshire.core :as json]
-            [camel-snake-kebab.core :as csk]
             [com.rpl.specter :as sp]
             [taoensso.timbre :as log]
             [generator.constraints.extractor :as extractor]
-            [generator.deps :as deps]))
+            [generator.deps :as deps]
+            [potatoclient.proto.constants :as proto-const]
+            [potatoclient.proto.string-conversion :as conv]))
 
 ;; =============================================================================
 ;; Specter Paths
@@ -56,15 +57,9 @@
 ;; =============================================================================
 
 (defn keywordize-value
-  "Convert protobuf constant values to keywords."
+  "Convert protobuf constant values to keywords using centralized conversion."
   [v]
-  (cond
-    (and (string? v) (re-matches #"[A-Z][A-Z0-9_]*" v))
-    (csk/->kebab-case-keyword v)
-    
-    (keyword? v) v
-    
-    :else v))
+  (proto-const/convert-value v))
 
 ;; =============================================================================
 ;; Type Resolution
@@ -131,7 +126,7 @@
   [{:keys [package java-package java-outer-classname]} type-name parent-names]
   (let [pkg (or java-package package)
         outer-class (or java-outer-classname 
-                       (csk/->PascalCase (last (str/split package #"\."))))
+                       (conv/->PascalCase (last (str/split package #"\."))))
         nested-path (if (seq parent-names)
                      (str "$" (str/join "$" parent-names) "$" type-name)
                      (str "$" type-name))]
@@ -147,7 +142,7 @@
 (defn field->edn
   "Convert a protobuf field to EDN representation."
   [field]
-  (let [base {:name (csk/->kebab-case-keyword (:name field))
+  (let [base {:name (conv/->kebab-case-keyword (:name field))
               :proto-name (:name field)
               :number (:number field)
               :type (resolve-field-type field)}
@@ -186,7 +181,7 @@
                               (get message :enumType [])))]
     
     {:type :message
-     :name (csk/->kebab-case-keyword (:name message))
+     :name (conv/->kebab-case-keyword (:name message))
      :proto-name (:name message)
      :java-class java-class
      :package (:package context)  ;; Include package info
@@ -194,7 +189,7 @@
                    (remove #(some? (:oneofIndex %)) fields))
      :oneofs (vec (map-indexed 
                    (fn [idx oneof-decl]
-                     (let [base {:name (csk/->kebab-case-keyword (:name oneof-decl))
+                     (let [base {:name (conv/->kebab-case-keyword (:name oneof-decl))
                                 :proto-name (:name oneof-decl)
                                 :index idx
                                 :fields (mapv field->edn
@@ -211,7 +206,7 @@
   "Convert a protobuf enum to EDN representation."
   [enum context parent-names]
   {:type :enum
-   :name (csk/->kebab-case-keyword (:name enum))
+   :name (conv/->kebab-case-keyword (:name enum))
    :proto-name (:name enum)
    :java-class (generate-java-class-name context (:name enum) parent-names)
    :package (:package context)  ;; Include package info
@@ -220,7 +215,7 @@
                              ;; Pre-process to handle special cases like 1D, 2D, 3D
                              (str/replace #"_(\d+)D" "_$1d")
                              (str/replace #"_(\d+)H" "_$1h")
-                             (csk/->kebab-case-keyword))
+                             (conv/->kebab-case-keyword))
                     :proto-name (:name v)
                     :number (:number v)})
                  (:value enum))})
@@ -232,7 +227,7 @@
         default-outer-class (when-let [filename (:name file)]
                              (-> filename
                                  (str/replace #"\.proto$" "")
-                                 (csk/->PascalCase)))
+                                 (conv/->PascalCase)))
         context {:package (:package file)
                  :java-package (sp/select-first [:options :javaPackage] file)
                  :java-outer-classname (or (sp/select-first [:options :javaOuterClassname] file)
@@ -350,12 +345,26 @@
     (vector? v) (mapv process-json-value v)
     :else v))
 
+(defn kebab-case-key
+  "Convert a JSON key to idiomatic Clojure kebab-case keyword.
+  Uses simple transformation: camelCase -> kebab-case"
+  [k]
+  (-> k
+      ;; Insert hyphens before capital letters (except at start)
+      (clojure.string/replace #"([a-z])([A-Z])" "$1-$2")
+      ;; Handle sequences of capitals (e.g., "XMLParser" -> "xml-parser")
+      (clojure.string/replace #"([A-Z]+)([A-Z][a-z])" "$1-$2")
+      ;; Convert to lowercase
+      (clojure.string/lower-case)
+      ;; Convert to keyword
+      keyword))
+
 (defn load-json-descriptor
   "Load and parse a JSON descriptor file."
   [path]
   (-> path
       io/reader
-      (json/parse-stream true)
+      (json/parse-stream kebab-case-key)
       process-json-value))
 
 ;; =============================================================================

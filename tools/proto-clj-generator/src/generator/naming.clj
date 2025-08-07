@@ -11,7 +11,7 @@
   
   All conversions are memoized and checked for collisions to guarantee 1-to-1 mappings."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]
+            [potatoclient.proto.string-conversion :as conv]
             [malli.core :as m]
             [malli.generator :as mg]))
 
@@ -203,7 +203,7 @@
   [proto-package]
   (let [parts (str/split proto-package #"\.")
         ;; Use kebab-case conversion to preserve word boundaries
-        result (csk/->kebab-case (last parts))]
+        result (conv/->kebab-case (last parts))]
     (check-and-cache! ::proto-package->clojure-alias proto-package result)))
 
 ;; =============================================================================
@@ -216,7 +216,7 @@
   e.g. 'SetDDELevel' -> 'set-dde-level'"
   {:malli/schema [:=> [:cat :string] :string]}
   [proto-name]
-  (let [base-result (csk/->kebab-case proto-name)
+  (let [base-result (conv/->kebab-case proto-name)
         ;; Handle edge cases where result might be empty, start with hyphen, or start with number
         intermediate (cond
                        (empty? base-result) "underscore"  ; "_" -> "underscore"
@@ -233,7 +233,7 @@
        'clientType' -> :client-type"
   {:malli/schema [:=> [:cat :string] keyword?]}
   [field-name]
-  (let [result (keyword (csk/->kebab-case field-name))]
+  (let [result (keyword (conv/->kebab-case field-name))]
     (check-and-cache! ::proto-field->clojure-key field-name result)))
 
 ;; =============================================================================
@@ -259,7 +259,7 @@
                        ns-str (->> ns-parts
                                    (map normalize-for-filesystem)
                                    (str/join "."))]
-                   (keyword ns-str (csk/->kebab-case name-part))))]
+                   (keyword ns-str (conv/->kebab-case name-part))))]
     (check-and-cache! ::proto-type->spec-keyword type-ref result)))
 
 ;; =============================================================================

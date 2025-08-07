@@ -4,12 +4,13 @@
             [generator.backend :as backend]
             [generator.frontend :as frontend]
             [generator.edn-specs :as specs]
-            ;; [generator.global-registry :as registry]
             [malli.core :as m]
+            [malli.registry :as mr]
             [malli.generator :as mg]
             [clojure.pprint :as pp]
             [clojure.string :as str]
-            [com.rpl.specter :as sp]))
+            [com.rpl.specter :as sp]
+            [generator.registry :as reg]))
 
 (deftest scalar-field-test
   (testing "Scalar field conversion to EDN"
@@ -195,8 +196,8 @@
     ;; Create a simple proto descriptor in memory
     (let [proto-desc {:file [{:name "test.proto"
                              :package "test"
-                             :options {:java-outer-classname "TestProto"}
-                             :message-type [{:name "TestMessage"
+                             :options {:javaOuterClassname "TestProto"}
+                             :messageType [{:name "TestMessage"
                                            :field [{:name "id"
                                                    :number 1
                                                    :label "LABEL_OPTIONAL"
@@ -205,7 +206,7 @@
                                                    :number 2
                                                    :label "LABEL_OPTIONAL"
                                                    :type "TYPE_STRING"}]}]
-                             :enum-type [{:name "TestEnum"
+                             :enumType [{:name "TestEnum"
                                         :value [{:name "UNKNOWN" :number 0}
                                                {:name "ACTIVE" :number 1}]}]}]}
           
@@ -220,7 +221,7 @@
       
       (when-not validation
         (println "Validation errors:")
-        (pp/pprint (m/explain specs/DescriptorSet edn-output)))
+        (pp/pprint (specs/explain-validation-error specs/DescriptorSet edn-output)))
       
       ;; Check structure
       (is (= :descriptor-set (:type edn-output)))

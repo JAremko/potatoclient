@@ -1,7 +1,8 @@
 (ns generator.edn-specs
   "Malli specifications for the EDN intermediate representation."
   (:require [malli.core :as m]
-            [malli.registry :as mr]))
+            [malli.registry :as mr]
+            [generator.registry :as reg]))
 
 ;; =============================================================================
 ;; Basic Types
@@ -12,7 +13,7 @@
    :bool :string :bytes :uint32 :sfixed32 :sfixed64 :sint32 :sint64])
 
 (def Label
-  [:enum :optional :required :repeated])
+  [:enum :label-optional :label-required :label-repeated])
 
 ;; =============================================================================
 ;; Type Specifications
@@ -171,25 +172,25 @@
 (defn validate-message
   "Validate a message definition."
   [message]
-  (m/validate MessageDef message {:registry registry}))
+  (m/validate MessageDef message))
 
 (defn validate-file
   "Validate a file definition."
   [file]
-  (m/validate FileDef file {:registry registry}))
+  (m/validate FileDef file))
 
 (defn validate-descriptor-set
   "Validate a descriptor set."
   [descriptor-set]
-  (m/validate DescriptorSet descriptor-set {:registry registry}))
+  (m/validate DescriptorSet descriptor-set))
 
 (defn validate-backend-output
   "Validate the complete backend output."
   [output]
-  (m/validate BackendOutput output {:registry registry}))
+  (m/validate BackendOutput output))
 
 (defn explain-validation-error
   "Get a human-readable explanation of validation errors."
   [spec data]
-  (when-not (m/validate spec data {:registry registry})
-    (m/explain spec data {:registry registry})))
+  (when-not (m/validate spec data)
+    (m/explain spec data)))

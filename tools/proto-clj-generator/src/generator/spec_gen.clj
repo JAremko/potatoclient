@@ -2,7 +2,7 @@
   "Generate Malli specs from protobuf EDN representation.
   Based on proto-explorer's approach but integrated into our generation pipeline."
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]
+            [potatoclient.proto.string-conversion :as conv]
             [generator.constraints.compiler :as compiler]))
 
 ;; =============================================================================
@@ -19,13 +19,13 @@
           parts (if (empty? (first parts)) (rest parts) parts)]
       (if (= 1 (count parts))
         ;; Single part - just kebab-case it
-        (keyword (csk/->kebab-case (last parts)))
+        (keyword (conv/->kebab-case (last parts)))
         ;; Multiple parts - namespace/name
         (let [ns-parts (butlast parts)
               name-part (last parts)
               ;; Convert each part to kebab-case
-              ns-str (str/join "." (map csk/->kebab-case ns-parts))]
-          (keyword ns-str (csk/->kebab-case name-part)))))))
+              ns-str (str/join "." (map conv/->kebab-case ns-parts))]
+          (keyword ns-str (conv/->kebab-case name-part)))))))
 
 (defmulti process-field-type
   "Process a field's type into a Malli schema"
@@ -91,7 +91,7 @@
         (if alias-name
           ;; Cross-namespace reference with alias - use alias
           (let [enum-name (name type-keyword)
-                spec-var-name (str (csk/->kebab-case enum-name) "-spec")]
+                spec-var-name (str (conv/->kebab-case enum-name) "-spec")]
             ;; Return a symbol that references the spec through the alias
             (symbol (str alias-name "/" spec-var-name)))
           ;; Cross-namespace but no alias found - fall back to keyword
@@ -218,7 +218,7 @@
   "Generate a Malli spec for an enum"
   [enum-type context]
   (let [values (map (fn [v]
-                     (keyword (csk/->kebab-case (or (:proto-name v) (:name v)))))
+                     (keyword (conv/->kebab-case (or (:proto-name v) (:name v)))))
                    (:values enum-type))]
     (if (empty? values)
       [:enum]  ; Empty enum (shouldn't happen but be defensive)
@@ -232,7 +232,7 @@
   "Generate spec def name for a message"
   [message]
   (-> (or (:proto-name message) (:name message))
-      csk/->kebab-case
+      conv/->kebab-case
       (str "-spec")
       symbol))
 
@@ -240,7 +240,7 @@
   "Generate spec def name for an enum"
   [enum-type]
   (-> (or (:proto-name enum-type) (:name enum-type))
-      csk/->kebab-case
+      conv/->kebab-case
       (str "-spec")
       symbol))
 

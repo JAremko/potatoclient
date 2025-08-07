@@ -3,7 +3,7 @@
   Uses templates as base and manipulates them via rewrite-clj."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [camel-snake-kebab.core :as csk]
+            [potatoclient.proto.string-conversion :as conv]
             [com.rpl.specter :as sp]
             [rewrite-clj.zip :as z]
             [rewrite-clj.parser :as p]
@@ -52,7 +52,7 @@
   (let [is-message? (get-in field [:type :message])
         is-enum? (and (not (:repeated? field))
                      (get-in field [:type :enum]))
-        field-name-pascal (csk/->PascalCase (:proto-name field))
+        field-name-pascal (conv/->PascalCase (:proto-name field))
         field-key (str (:name field))
         
         ;; For message types, we need to build them; for enums, convert from keywords
@@ -65,7 +65,7 @@
                                             (str/replace #"^\." "")
                                             (str/split #"\.")
                                             last
-                                            csk/->kebab-case))]
+                                            conv/->kebab-case))]
                       (str "(build-" message-name " (get m " field-key "))"))
                     
                     is-enum?
@@ -107,7 +107,7 @@
         ;; We'll use a simple heuristic: if it's not a message type, just get the value
         use-has-method? is-message?
         
-        field-name-pascal (csk/->PascalCase (:proto-name field))
+        field-name-pascal (conv/->PascalCase (:proto-name field))
         getter-expr (str ".get" field-name-pascal)
         
         ;; For messages, we need to parse them; for enums, convert to keywords
@@ -120,7 +120,7 @@
                                             (str/replace #"^\." "")
                                             (str/split #"\.")
                                             last
-                                            csk/->kebab-case))]
+                                            conv/->kebab-case))]
                       (str "(parse-" message-name " (" getter-expr " proto))"))
                     
                     is-enum?
@@ -169,8 +169,8 @@
 (defn generate-enum-def
   "Generate enum definition."
   [enum]
-  (let [values-name (str (csk/->kebab-case (:proto-name enum)) "-values")
-        keywords-name (str (csk/->kebab-case (:proto-name enum)) "-keywords")
+  (let [values-name (str (conv/->kebab-case (:proto-name enum)) "-values")
+        keywords-name (str (conv/->kebab-case (:proto-name enum)) "-keywords")
         value-entries (str/join "\n   " (map #(generate-enum-value-entry % enum) (:values enum)))
         keyword-entries (str/join "\n   " (map #(generate-enum-reverse-entry % enum) (:values enum)))]
     (str ";; Enum: " (:proto-name enum) "\n"
@@ -218,7 +218,7 @@
                                                        "}\n"
                                                        "                                   k))\n"
                                                        "                          (:" (name (:name oneof)) " m)))]\n"
-                                                       "      (build-" (csk/->kebab-case (:proto-name message))
+                                                       "      (build-" (conv/->kebab-case (:proto-name message))
                                                        "-payload builder " var-name "))")))
                                               (:oneofs message))]
                           (str/join "\n" oneofs-code)))
@@ -259,7 +259,7 @@
                        (let [oneof-parsers (map (fn [oneof]
                                                  (let [oneof-var (str (name (:name oneof)) "-val")
                                                        payload-fn (str "parse-" 
-                                                                      (csk/->kebab-case (:proto-name message)) 
+                                                                      (conv/->kebab-case (:proto-name message)) 
                                                                       "-payload")]
                                                    (str "\n    ;; Oneof: " (:proto-name oneof) "\n"
                                                         "    (" payload-fn " proto) "
@@ -323,7 +323,7 @@
                               (str "(get " qualified-ref " value)"))
                     :else "value")]
     (str (pr-str (:name field)) " "
-         "(." (str "set" (csk/->PascalCase (:proto-name field))) " builder "
+         "(." (str "set" (conv/->PascalCase (:proto-name field))) " builder "
          value-expr ")")))
 
 (defn generate-oneof-parser-case
@@ -350,7 +350,7 @@
                            (str ns-alias "/parse-" (name (:name type-def))))
                          ;; Same namespace, no qualification needed
                          (str "parse-" (name (:name type-def)))))))
-        getter-expr (str "(." (str "get" (csk/->PascalCase (:proto-name field))) " proto)")
+        getter-expr (str "(." (str "get" (conv/->PascalCase (:proto-name field))) " proto)")
         value-expr (cond
                     parser-fn (str "(" parser-fn " " getter-expr ")")
                     is-enum? (let [enum-ref (type-res/resolve-enum-keyword-map 
@@ -358,7 +358,7 @@
                                   qualified-ref (type-res/qualified-enum-ref enum-ref)]
                               (str "(get " qualified-ref " " getter-expr ")"))
                     :else getter-expr)]
-    (str "(." (str "has" (csk/->PascalCase (:proto-name field))) " proto) "
+    (str "(." (str "has" (conv/->PascalCase (:proto-name field))) " proto) "
          "{" (pr-str (:name field)) " "
          value-expr
          "}")))
@@ -367,7 +367,7 @@
   "Generate a single payload builder function that handles ALL oneofs in a message."
   [message type-lookup current-package guardrails?]
   (let [template (load-template-string "oneof-builder-guardrails.clj")
-        fn-name (str "build-" (csk/->kebab-case (:proto-name message)) "-payload")
+        fn-name (str "build-" (conv/->kebab-case (:proto-name message)) "-payload")
         ;; Collect all fields from all oneofs
         all-oneof-fields (mapcat :fields (:oneofs message))
         
@@ -388,7 +388,7 @@
   "Generate a single payload parser function that handles ALL oneofs in a message."
   [message type-lookup current-package guardrails?]
   (let [template (load-template-string "oneof-parser-guardrails.clj")
-        fn-name (str "parse-" (csk/->kebab-case (:proto-name message)) "-payload")
+        fn-name (str "parse-" (conv/->kebab-case (:proto-name message)) "-payload")
         ;; Collect all fields from all oneofs
         all-oneof-fields (mapcat :fields (:oneofs message))
         
@@ -450,7 +450,7 @@
                                   (if (= 1 (count package-parts))
                                     (first package-parts)
                                     (str (first package-parts) "." 
-                                         (csk/->PascalCase (last package-parts))))))))
+                                         (conv/->PascalCase (last package-parts))))))))
          
          enums-code (when (seq enums)
                       (str/join "\n\n" (map generate-enum-def enums)))
@@ -529,16 +529,16 @@
                         (let [enum-mappings (distinct  ; Ensure no duplicates
                                             (for [enum enums]
                                              (let [enum-name (name (:name enum))
-                                                   spec-name (str (csk/->kebab-case enum-name) "-spec")
+                                                   spec-name (str (conv/->kebab-case enum-name) "-spec")
                                                    ;; Create the namespaced keyword that will be referenced
-                                                   ns-keyword (keyword current-package (csk/->kebab-case enum-name))]
+                                                   ns-keyword (keyword current-package (conv/->kebab-case enum-name))]
                                                (str "   " (pr-str ns-keyword) " " spec-name))))
                               message-mappings (distinct  ; Ensure no duplicates
                                                (for [msg messages]
                                                 (let [msg-name (name (:name msg))
-                                                      spec-name (str (csk/->kebab-case msg-name) "-spec")
+                                                      spec-name (str (conv/->kebab-case msg-name) "-spec")
                                                       ;; Create the namespaced keyword that will be referenced
-                                                      ns-keyword (keyword current-package (csk/->kebab-case msg-name))]
+                                                      ns-keyword (keyword current-package (conv/->kebab-case msg-name))]
                                                   (str "   " (pr-str ns-keyword) " " spec-name))))
                               all-mappings (concat enum-mappings message-mappings)]
                           (when (seq all-mappings)
