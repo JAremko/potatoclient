@@ -5,7 +5,8 @@
    [malli.core :as m]
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]
-   [pronto.core :as p]))
+   [pronto.core :as p]
+   [clojure.string :as str]))
 
 (def -oneof-pronto-schema
   "Custom :oneof-pronto schema for validating Pronto proto-maps with oneof constraints."
@@ -14,14 +15,15 @@
     :min 0  ; Can have properties without children
     :type-properties {:generator true}
     :compile (fn [properties children options]
-               (let [{:keys [error/message proto-class proto-mapper]
-                      :or {message "Exactly one field must be set"}} properties
+               (let [{:keys [error/message proto-class proto-mapper oneof-name]
+                      :or {message "Exactly one field must be set"
+                           oneof-name :payload}} properties
                      _ (when-not proto-class
                          (m/-fail! ::missing-proto-class {:properties properties}))
                      _ (when-not proto-mapper
                          (m/-fail! ::missing-proto-mapper {:properties properties}))
                      field-map (if (and (empty? children) (map? properties))
-                                 (dissoc properties :error/message :proto-class :proto-mapper)
+                                 (dissoc properties :error/message :proto-class :proto-mapper :oneof-name)
                                  (if (seq children)
                                    (do
                                      (when (odd? (count children))
@@ -42,7 +44,7 @@
                             ;; Check if it's a Pronto proto-map
                             (when (p/proto-map? proto-map)
                               ;; Use Pronto's which-one-of to check active field
-                              (let [active-field (p/which-one-of proto-map)
+                              (let [active-field (p/which-one-of proto-map oneof-name)
                                     field-idx (when active-field
                                               (.indexOf field-names active-field))]
                                 (and
@@ -51,7 +53,17 @@
                                  (>= field-idx 0)
                                  (< field-idx (count field-validators))
                                  ;; Validate the active field's value
-                                 (let [field-value (p/one-of proto-map active-field)
+                                 (let [;; Use reflection to call the getter method
+                                       ;; Convert kebab-case keyword to camelCase getter
+                                       ;; :ping -> "getPing", :my-field -> "getMyField"
+                                       field-name-str (name active-field)
+                                       ;; Convert kebab-case to camelCase
+                                       parts (str/split field-name-str #"-")
+                                       camel-case (str/join "" (cons (first parts)
+                                                                    (map str/capitalize (rest parts))))
+                                       getter-name (str "get" (str/capitalize camel-case))
+                                       getter-method (.getMethod (.getClass proto-map) getter-name (into-array Class []))
+                                       field-value (.invoke getter-method proto-map (into-array Object []))
                                        field-validator (nth field-validators field-idx)]
                                    (if field-validator
                                      (field-validator field-value)
@@ -61,7 +73,8 @@
                   :type-properties {:error/message message
                                    :error/fields field-names
                                    :proto-class proto-class
-                                   :proto-mapper proto-mapper}
+                                   :proto-mapper proto-mapper
+                                   :oneof-name oneof-name}
                   :min 0
                   :max 0
                   :error/message message
@@ -70,7 +83,7 @@
                                 (not (p/proto-map? value)) "must be a Pronto proto-map"
                                 :else
                                 (try
-                                  (let [active-field (p/which-one-of value)]
+                                  (let [active-field (p/which-one-of value oneof-name)]
                                     (cond
                                       (nil? active-field) message
                                       (not (contains? (set field-names) active-field))
@@ -88,7 +101,8 @@
   (let [properties (m/properties schema)
         proto-class (:proto-class properties)
         proto-mapper (:proto-mapper properties)
-        field-map (dissoc properties :error/message :proto-class :proto-mapper)
+        oneof-name (:oneof-name properties :payload)
+        field-map (dissoc properties :error/message :proto-class :proto-mapper :oneof-name)
         field-names (vec (keys field-map))
         field-schemas (vec (vals field-map))]
     (if (or (empty? field-names) (nil? proto-class) (nil? proto-mapper))
@@ -98,13 +112,28 @@
        ;; Choose which field to generate
        (gen/elements (range (count field-names)))
        (fn [idx]
-         (let [field-name (nth field-names idx)
-               field-schema (nth field-schemas idx)]
-           ;; Generate value for that field and create proto-map
-           (gen/fmap (fn [value]
-                       ;; Create proto-map with the single field set
-                       (p/proto-map proto-mapper proto-class field-name value))
-                     (mg/generator field-schema options))))))))
+         (let [field-name (nth field-names idx)]
+           ;; Create a proto-map with an empty proto instance for the selected field
+           ;; Use reflection to find the field's proto class and create instance
+           (gen/return
+            (try
+              (let [base-proto (p/proto-map proto-mapper proto-class)
+                    ;; Get the field's proto class using reflection
+                    ;; Convert kebab-case to camelCase for the getter
+                    parts (str/split (name field-name) #"-")
+                    camel-case (str/join "" (cons (first parts)
+                                                 (map str/capitalize (rest parts))))
+                    getter-name (str "get" (str/capitalize camel-case))
+                    getter-method (.getMethod proto-class getter-name (into-array Class []))
+                    ;; Get the return type which should be the proto class for this field
+                    field-proto-class (.getReturnType getter-method)
+                    ;; Create an empty proto instance for this field
+                    field-value (p/proto-map proto-mapper field-proto-class)]
+                ;; Set the field with the generated proto instance
+                (assoc base-proto field-name field-value))
+              (catch Exception e
+                ;; Fallback - just return empty proto-map if reflection fails
+                (p/proto-map proto-mapper proto-class))))))))))
 
 (defn oneof-pronto
   "Create a oneof-pronto spec for Pronto proto-maps.
