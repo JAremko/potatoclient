@@ -1,7 +1,7 @@
 # CMD-Explorer Makefile
 # Tool for testing and exploring WebSocket command endpoints
 
-.PHONY: help deps extract extract-validate extract-dry-run test repl clean
+.PHONY: help deps proto compile-proto compile extract extract-validate extract-dry-run test repl clean
 
 # Default target
 .DEFAULT_GOAL := help
@@ -13,6 +13,9 @@ help:
 	@echo ""
 	@echo "SETUP:"
 	@echo "  deps              - Download dependencies"
+	@echo "  proto             - Generate Java sources from proto files"
+	@echo "  compile-proto     - Compile generated Java sources"
+	@echo "  compile           - Compile all Java sources (Pronto + proto)"
 	@echo "  extract           - Extract TypeScript functions and update TODO"
 	@echo "  extract-validate  - Validate extraction without updating"
 	@echo "  extract-dry-run   - Show what would be extracted"
@@ -33,6 +36,21 @@ deps:
 	@echo "Downloading dependencies..."
 	@clojure -P -M:extract
 	@echo "Dependencies ready."
+
+# Generate proto Java sources
+proto:
+	@echo "Generating proto Java sources..."
+	@clojure -T:build generate-proto
+
+# Compile proto Java sources
+compile-proto:
+	@echo "Compiling proto Java sources..."
+	@clojure -T:build compile-proto
+
+# Compile all Java sources (Pronto + proto)
+compile:
+	@echo "Compiling all Java sources..."
+	@clojure -T:build compile-all
 
 # Extract TypeScript functions and update TODO
 extract:

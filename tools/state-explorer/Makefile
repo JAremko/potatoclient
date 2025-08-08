@@ -56,19 +56,26 @@ help:
 
 # === BUILD TARGETS ===
 
-# Build protobuf classes locally by copying from main project
-# This ensures the tool can work independently
-build:
-	@./build_proto.sh
+# Generate proto Java sources using protogen Docker
+proto:
+	@echo "Generating proto Java sources..."
+	@clojure -T:build generate-proto
+
+# Compile all Java sources (Pronto + proto)
+compile:
+	@echo "Compiling all Java sources..."
+	@clojure -T:build compile-all
+
+# Build everything (generate + compile)
+build: proto compile
+	@echo "Build complete!"
 
 # Remove all build artifacts and captured files
 # Use this to start fresh
 clean-build:
 	@echo "Cleaning build artifacts..."
-	@rm -rf target proto bin output/*.bin output/*.edn
-
-# Alias for build - compile protobuf files
-proto: build
+	@clojure -T:build clean
+	@rm -rf output/*.bin output/*.edn
 
 # === CAPTURE TARGETS ===
 

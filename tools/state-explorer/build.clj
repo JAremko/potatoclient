@@ -2,7 +2,8 @@
   "Build script for state-explorer - compiles necessary protobuf files"
   (:require [clojure.java.io :as io]
             [clojure.java.shell :as shell]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.tools.build.api :as b]))
 
 (defn ensure-dir
   "Ensure directory exists"
@@ -12,140 +13,111 @@
       (.mkdirs dir)
       (println "Created directory:" path))))
 
-(defn copy-proto-files
-  "Copy proto files from protogen directory"
-  []
-  (println "Copying proto files...")
-  (ensure-dir "proto")
-  
-  ;; Copy only the state-related proto file we need
-  (let [proto-files ["jon_shared_data.proto"
-                     "jon_shared_data_camera_day.proto"
-                     "jon_shared_data_camera_heat.proto"
-                     "jon_shared_data_rotary.proto"
-                     "jon_shared_data_compass.proto"
-                     "jon_shared_data_gps.proto"
-                     "jon_shared_data_lrf.proto"
-                     "jon_shared_data_types.proto"
-                     "jon_shared_data_time.proto"
-                     "jon_shared_data_system.proto"
-                     "jon_shared_data_actual_space_time.proto"
-                     "jon_shared_data_rec_osd.proto"
-                     "jon_shared_data_day_cam_glass_heater.proto"
-                     "jon_shared_data_compass_calibration.proto"]
-        source-dir "../../examples/protogen/proto"
-        target-dir "proto"]
-    (doseq [file proto-files]
-      (let [source (io/file source-dir file)
-            target (io/file target-dir file)]
-        (when (.exists source)
-          (io/copy source target)
-          (println "  Copied" file))))))
+(def basis (b/create-basis {:project "deps.edn"}))
+(def class-dir "target/classes")
 
-(defn download-protoc
-  "Download protoc if not available"
-  []
-  (let [protoc-path "bin/protoc"]
-    (if (.exists (io/file protoc-path))
-      (println "protoc already available")
+(defn generate-proto
+  "Generate Java sources from proto files using protogen"
+  [_]
+  (println "Generating proto Java sources...")
+  (let [result (shell/sh "./scripts/generate-protos.sh" 
+                         :dir (System/getProperty "user.dir"))]
+    (if (zero? (:exit result))
+      (println "Proto generation successful")
       (do
-        (println "Downloading protoc...")
-        (ensure-dir "bin")
-        ;; Download protoc directly
-        (let [os (System/getProperty "os.name")
-              arch (System/getProperty "os.arch")
-              platform (cond
-                        (.contains os "Mac") "osx-x86_64"
-                        (.contains os "Linux") "linux-x86_64"
-                        :else "linux-x86_64")
-              url (str "https://github.com/protocolbuffers/protobuf/releases/download/v29.5/"
-                      "protoc-29.5-" platform ".zip")
-              result (shell/sh "bash" "-c"
-                              (str "cd /tmp && "
-                                   "wget -q " url " && "
-                                   "unzip -q protoc-29.5-" platform ".zip -d protoc-tmp && "
-                                   "cp protoc-tmp/bin/protoc " (System/getProperty "user.dir") "/bin/ && "
-                                   "chmod +x " (System/getProperty "user.dir") "/bin/protoc && "
-                                   "rm -rf protoc-tmp protoc-29.5-" platform ".zip"))]
-          (if (zero? (:exit result))
-            (println "protoc downloaded successfully")
-            (do
-              (println "Failed to download protoc, trying to use system protoc...")
-              ;; Try to use system protoc if available
-              (let [which-result (shell/sh "which" "protoc")]
-                (when (zero? (:exit which-result))
-                  (shell/sh "ln" "-sf" (str/trim (:out which-result)) "bin/protoc")
-                  (println "Using system protoc")))))))))
+        (println "Proto generation failed:")
+        (println (:err result))
+        (throw (ex-info "Proto generation failed" {:exit (:exit result)}))))))
 
-(defn compile-proto-files
-  "Compile proto files to Java"
-  []
-  (println "Compiling proto files...")
+(defn compile-proto
+  "Compile generated Java sources"
+  [_]
+  (println "Compiling proto Java sources...")
+  (let [java-src-dir "src/java"]
+    (if (.exists (io/file java-src-dir))
+      (b/javac {:src-dirs [java-src-dir]
+                :class-dir class-dir
+                :basis basis
+                :javac-opts ["-source" "11" "-target" "11"]})
+      (do
+        (println "Warning: No Java sources found in src/java/")
+        (println "Run 'clojure -T:build generate-proto' first")))))
+
+(defn compile-pronto
+  "Compile Pronto Java sources"
+  [_]
+  (println "Compiling Pronto Java sources...")
+  (let [pronto-src (str (System/getProperty "user.home") 
+                       "/.gitlibs/libs/com.appsflyer/pronto/0fb034bc9c943d6a04177b23eb97436f9ca817f7/src/java")]
+    (b/javac {:src-dirs [pronto-src]
+              :class-dir class-dir
+              :basis basis
+              :javac-opts ["-source" "11" "-target" "11"]})))
+
+(defn compile-all
+  "Compile all Java sources (Pronto + proto)"
+  [_]
   (ensure-dir "target/classes")
-  
-  (let [proto-files (filter #(.endsWith (.getName %) ".proto") 
-                            (file-seq (io/file "proto")))
-        protoc-cmd ["bin/protoc"
-                   "--java_out=target/classes"
-                   "--proto_path=proto"]]
-    
-    (doseq [proto-file proto-files]
-      (let [cmd (conj protoc-cmd (.getPath proto-file))
-            result (apply shell/sh cmd)]
-        (if (zero? (:exit result))
-          (println "  Compiled" (.getName proto-file))
-          (println "  Failed to compile" (.getName proto-file) ":" (:err result)))))))
+  (compile-pronto nil)
+  (compile-proto nil)
+  (println "All compilation complete!"))
 
+;; Keep legacy functions for compatibility
+(defn copy-proto-files
+  "Legacy function - no longer needed with new approach"
+  []
+  (println "Note: This function is deprecated. Use 'generate-proto' instead"))
+
+;; Legacy function - not needed with Docker-based approach
+(defn download-protoc
+  "Legacy function - protoc is now handled by Docker"
+  []
+  (println "Note: protoc is now handled by the Docker-based protogen approach"))
+
+;; Legacy function - replaced by new approach
+(defn compile-proto-files
+  "Legacy function - use 'generate-proto' and 'compile-proto' instead"
+  []
+  (println "Note: This function is deprecated. Use 'generate-proto' and 'compile-proto' instead"))
+
+;; Legacy function - replaced by tools.build approach
 (defn compile-java-files
-  "Compile generated Java files"
+  "Legacy function - use 'compile-proto' instead"
   []
-  (println "Compiling Java classes...")
-  (let [java-files (filter #(.endsWith (.getName %) ".java")
-                          (file-seq (io/file "target/classes")))
-        class-path (str/join ":" ["target/classes"
-                                  (System/getProperty "java.class.path")])]
-    
-    (when (seq java-files)
-      (let [files (map #(.getPath %) java-files)
-            cmd (concat ["javac" "-cp" class-path "-d" "target/classes"] files)
-            result (apply shell/sh cmd)]
-        (if (zero? (:exit result))
-          (println "Java compilation successful")
-          (println "Java compilation failed:" (:err result)))))))
+  (println "Note: This function is deprecated. Use 'compile-proto' instead"))
 
+;; Legacy function - Pronto is now compiled via compile-pronto
 (defn setup-pronto
-  "Set up Pronto dependency"
+  "Legacy function - use 'compile-pronto' instead"
   []
-  (println "Setting up Pronto...")
-  ;; For now, we'll skip Pronto and use basic proto parsing
-  ;; In the future, we can compile Pronto here
-  (println "Pronto setup skipped (will use basic proto parsing)"))
+  (println "Note: Use 'compile-pronto' to compile Pronto Java sources"))
 
 (defn build
-  "Main build function"
-  []
+  "Main build function - generates and compiles proto files"
+  [_]
   (println "Building state-explorer...")
-  (copy-proto-files)
-  (download-protoc)
-  (compile-proto-files)
-  (compile-java-files)
-  (setup-pronto)
+  (generate-proto nil)
+  (compile-all nil)
   (println "Build complete!"))
 
 (defn clean
   "Clean build artifacts"
-  []
+  [_]
   (println "Cleaning build artifacts...")
-  (let [dirs ["target" "proto" "bin"]]
-    (doseq [dir dirs]
-      (when (.exists (io/file dir))
-        (shell/sh "rm" "-rf" dir)
-        (println "  Removed" dir))))
+  (b/delete {:path "target"})
+  (b/delete {:path "src/java"})
+  ;; Clean legacy directories if they exist
+  (doseq [dir ["proto" "bin"]]
+    (when (.exists (io/file dir))
+      (b/delete {:path dir})
+      (println "  Removed legacy directory:" dir)))
   (println "Clean complete!"))
 
-;; Main entry point
+;; Main entry point for backwards compatibility
 (defn -main [& args]
   (case (first args)
-    "clean" (clean)
-    "build" (build)
-    (build)))
+    "clean" (clean nil)
+    "build" (build nil)
+    "generate-proto" (generate-proto nil)
+    "compile" (compile-all nil)
+    (build nil)))

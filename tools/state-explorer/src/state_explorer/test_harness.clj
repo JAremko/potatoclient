@@ -1,9 +1,7 @@
-(ns cmd-explorer.test-harness
+(ns state-explorer.test-harness
   "Test harness to ensure proto files are compiled and system is initialized.
    This should be required by all test namespaces."
   (:require
-   [cmd-explorer.registry :as registry]
-   [cmd-explorer.specs.oneof-payload :as oneof]
    [clojure.java.io :as io]
    [clojure.java.shell :as shell])
   (:import
@@ -12,14 +10,14 @@
 (defn proto-classes-compiled?
   "Check if protobuf classes are compiled and available."
   []
-  (let [cmd-class-dir (io/file "target/classes/cmd")
-        ser-class-dir (io/file "target/classes/ser")]
-    (and (.exists cmd-class-dir)
-         (.isDirectory cmd-class-dir)
-         (> (count (.listFiles cmd-class-dir)) 0)
-         (.exists ser-class-dir)
+  (let [ser-class-dir (io/file "target/classes/ser")
+        cmd-class-dir (io/file "target/classes/cmd")]
+    (and (.exists ser-class-dir)
          (.isDirectory ser-class-dir)
-         (> (count (.listFiles ser-class-dir)) 0))))
+         (> (count (.listFiles ser-class-dir)) 0)
+         (.exists cmd-class-dir)
+         (.isDirectory cmd-class-dir)
+         (> (count (.listFiles cmd-class-dir)) 0))))
 
 (defn pronto-classes-available?
   "Check if Pronto Java classes are compiled and available."
@@ -73,14 +71,6 @@
           (println (:err result))
           (throw (ex-info "Failed to compile proto" {:exit (:exit result)})))))))
 
-(defn setup-malli-registry!
-  "Configure Malli with global registry and register custom schemas."
-  []
-  (registry/setup-global-registry!
-   {:oneof-pronto (oneof/register-oneof-pronto-schema!)})
-  ;; Also load cmd-root specs
-  (require 'cmd-explorer.specs.cmd-root))
-
 (defn initialize!
   "Initialize the test harness.
    Ensures all prerequisites are met before running tests."
@@ -101,15 +91,10 @@
   (when-not (proto-classes-compiled?)
     (throw (ex-info "Proto classes not compiled after compilation" {})))
   
-  ;; Set up Malli registry with custom schemas
-  (setup-malli-registry!)
-  
   ;; Success message
-  (println "CMD-Explorer test harness initialized:")
+  (println "State-Explorer test harness initialized:")
   (println "  ✓ Pronto classes available")
   (println "  ✓ Protobuf classes compiled")
-  (println "  ✓ Malli global registry configured")
-  (println "  ✓ Custom oneof-pronto schema registered")
   (println "  ✓ Ready for testing"))
 
 ;; Auto-initialize when namespace is loaded
