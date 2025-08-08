@@ -114,3 +114,4 @@ $RECYCLE.BIN/
 # Tools
 /tools/kotlin-*/
 /tools/protoc-*/
+/tools/state-explorer/output/

@@ -1,0 +1,24 @@
+# Output directory for captured payloads
+output/
+
+# Clojure/Java artifacts
+*.class
+*.jar
+.cpcache/
+.nrepl-port
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+
+# Test output
+test-output/
