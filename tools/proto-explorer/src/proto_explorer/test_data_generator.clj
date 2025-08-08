@@ -5,8 +5,6 @@
   respects all buf.validate constraints embedded in the specs."
   (:require [malli.core :as m]
             [malli.generator :as mg]
-            [proto-explorer.generated-specs :as specs]
-            [potatoclient.specs.malli-oneof :as oneof]
             [clojure.string :as str]
             [clojure.test.check.generators :as gen]))
 

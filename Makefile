@@ -37,8 +37,11 @@ help: ## Show all available commands with detailed descriptions
 	@echo "PROTO INSPECTION:"
 	@grep -E '^(proto-search|proto-list|proto-info|proto-explorer):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
+	@echo "DEPENDENCY MANAGEMENT:"
+	@grep -E '^(deps-outdated|deps-upgrade|deps-upgrade-all|check-deps):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@echo ""
 	@echo "OTHER TOOLS:"
-	@grep -E '^(test|report-unspecced|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(test|report-unspecced|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "MCP SERVER (Claude integration):"
 	@grep -E '^(mcp-server|mcp-configure):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -360,6 +363,45 @@ check-deps: ## Check that required tools are installed
 	@command -v clojure >/dev/null 2>&1 || { echo "Error: clojure not found. Please install Clojure CLI."; exit 1; }
 	@command -v java >/dev/null 2>&1 || { echo "Error: java not found. Please install Java."; exit 1; }
 	@echo "All dependencies found!"
+
+# Check for outdated dependencies
+.PHONY: deps-outdated
+deps-outdated: ## Check for outdated dependencies using antq
+	@echo "Checking for outdated dependencies..."
+	@echo "  • Scans deps.edn for newer versions"
+	@echo "  • Shows available updates in a table"
+	@echo "  • Includes both direct and transitive dependencies"
+	@echo ""
+	@clojure -M:outdated
+
+# Interactively upgrade dependencies
+.PHONY: deps-upgrade
+deps-upgrade: ## Interactively upgrade outdated dependencies
+	@echo "Interactive dependency upgrade..."
+	@echo "  • Shows each outdated dependency"
+	@echo "  • Lets you choose which to upgrade"
+	@echo "  • Automatically updates deps.edn"
+	@echo "  • Downloads new dependencies"
+	@echo ""
+	@clojure -M:outdated-upgrade
+
+# Force upgrade all dependencies
+.PHONY: deps-upgrade-all
+deps-upgrade-all: ## Upgrade all outdated dependencies (non-interactive)
+	@echo "Upgrading all outdated dependencies..."
+	@echo "  ⚠️  This will automatically update ALL outdated dependencies"
+	@echo "  • Updates deps.edn without confirmation"
+	@echo "  • Downloads all new versions"
+	@echo "  • Remember to test after upgrading!"
+	@echo ""
+	@read -p "Are you sure? (y/N) " -n 1 -r; \
+	echo ""; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		clojure -M:outdated --upgrade --force; \
+		echo "✓ Dependencies upgraded. Remember to run 'make test' to verify!"; \
+	else \
+		echo "Upgrade cancelled."; \
+	fi
 
 # Quick rebuild
 .PHONY: rebuild

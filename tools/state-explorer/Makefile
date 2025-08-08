@@ -36,6 +36,8 @@ help:
 	@echo "  clean         - Remove captured files only"
 	@echo "  clean-build   - Remove all artifacts and captures"
 	@echo "  deps          - Download dependencies"
+	@echo "  deps-outdated - Check for outdated dependencies"
+	@echo "  deps-upgrade  - Interactively upgrade dependencies"
 	@echo ""
 	@echo "DEVELOPMENT:"
 	@echo "  repl          - Start Clojure REPL"
@@ -181,3 +183,13 @@ analyze:
 	else \
 		echo "No EDN files found to analyze"; \
 	fi
+
+# Check for outdated dependencies
+deps-outdated:
+	@echo "Checking for outdated dependencies..."
+	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core"]}}}' -M:outdated
+
+# Interactively upgrade dependencies
+deps-upgrade:
+	@echo "Interactive dependency upgrade..."
+	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core" "--upgrade"]}}}' -M:outdated

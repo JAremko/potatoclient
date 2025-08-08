@@ -24,6 +24,8 @@ help:
 	@echo "MAINTENANCE:"
 	@echo "  clean             - Remove generated files"
 	@echo "  backup-list       - List TODO backups"
+	@echo "  deps-outdated     - Check for outdated dependencies"
+	@echo "  deps-upgrade      - Interactively upgrade dependencies"
 	@echo ""
 
 # Download dependencies
@@ -81,3 +83,13 @@ restore-backup:
 		echo "File $(FILE) not found"; \
 		exit 1; \
 	fi
+
+# Check for outdated dependencies
+deps-outdated:
+	@echo "Checking for outdated dependencies..."
+	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core"]}}}' -M:outdated
+
+# Interactively upgrade dependencies
+deps-upgrade:
+	@echo "Interactive dependency upgrade..."
+	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core" "--upgrade"]}}}' -M:outdated
