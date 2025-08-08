@@ -4,6 +4,9 @@
 # Reference
 /examples
 
+# CMD-Explorer backup files
+/tools/cmd-explorer/bkp/
+
 /.clj-kondo
 
 /.cpcache
