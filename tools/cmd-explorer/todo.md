@@ -5,63 +5,67 @@
 **MUST COMPLETE BEFORE ANY IMPLEMENTATION**
 
 ### Malli Global Registry Setup
-- [ ] Configure Malli to use global registry for all specs
-  - [ ] Set up `malli.registry/set-default-registry!`
-  - [ ] Ensure all specs are registered globally
-  - [ ] Enable spec reuse across namespaces
-  - [ ] Configure registry in dev/test/prod profiles
+- [x] Configure Malli to use global registry for all specs
+  - [x] Set up `malli.registry/set-default-registry!`
+  - [x] Ensure all specs are registered globally
+  - [x] Enable spec reuse across namespaces
+  - [x] Configure registry in dev/test/prod profiles
 
 ### Guardrails Configuration  
-- [ ] **Configure guardrails to use Malli namespace (NOT clojure.spec)**
-  - [ ] Use `com.fulcrologic.guardrails.malli` namespace exclusively
-  - [ ] Do NOT use default `com.fulcrologic.guardrails.core` (that's for clojure.spec)
-  - [ ] Configure guardrails.edn with Malli-specific settings
-  - [ ] Enable instrumentation in dev/test profiles only
-  - [ ] Set up expound for better error messages
+- [x] **Configure guardrails to use Malli namespace (NOT clojure.spec)**
+  - [x] Use `com.fulcrologic.guardrails.malli` namespace exclusively
+  - [x] Do NOT use default `com.fulcrologic.guardrails.core` (that's for clojure.spec)
+  - [x] Configure guardrails.edn with Malli-specific settings
+  - [x] Enable instrumentation in dev/test profiles only
+  - [x] Set up expound for better error messages
 
 ### Oneof Spec Migration to Pronto
-- [ ] **Copy and adapt `/home/jare/git/potatoclient/src/potatoclient/specs/malli_oneof.clj`**
-  - [ ] Copy to `src/cmd_explorer/specs/oneof_payload.clj`
-  - [ ] **Adapt for Pronto proto-maps (CRITICAL)**
-    - [ ] Replace map validation with proto-map validation
-    - [ ] Use `pronto.core/which-one-of` to check active field
-    - [ ] Use `pronto.core/one-of` to extract field value
-    - [ ] Handle Pronto's "all fields present" behavior
-    - [ ] Account for scalar fields never being nil (have zero-values)
-  - [ ] **Update generator to produce Pronto proto-maps**
-    - [ ] Generator must create `(p/proto-map mapper Class :field value)`
-    - [ ] Ensure exactly one oneof field is set
-    - [ ] Test generator produces valid proto instances
-  - [ ] **Comprehensive testing of oneof spec**
-    - [ ] Test validates Pronto proto-maps correctly
-    - [ ] Test rejects maps with zero fields set
-    - [ ] Test rejects maps with multiple fields set
-    - [ ] Test accepts maps with exactly one field set
-    - [ ] Generate 1000+ samples and verify all are valid
-    - [ ] Verify generated proto-maps can serialize/deserialize
+- [x] **Copy and adapt `/home/jare/git/potatoclient/src/potatoclient/specs/malli_oneof.clj`**
+  - [x] Copy to `src/cmd_explorer/specs/oneof_payload.clj`
+  - [x] **Adapt for Pronto proto-maps (CRITICAL)**
+    - [x] Replace map validation with proto-map validation
+    - [x] Use `pronto.core/which-one-of` to check active field
+    - [x] Use `pronto.core/one-of` to extract field value (uses getter methods)
+    - [x] Handle Pronto's "all fields present" behavior
+    - [x] Account for scalar fields never being nil (have zero-values)
+  - [x] **Update generator to produce Pronto proto-maps**
+    - [x] Generator must create `(p/proto-map mapper Class :field value)`
+    - [x] Ensure exactly one oneof field is set
+    - [x] Test generator produces valid proto instances
+  - [x] **Comprehensive testing of oneof spec**
+    - [x] Test validates Pronto proto-maps correctly
+    - [x] Test rejects maps with zero fields set
+    - [x] Test rejects maps with multiple fields set
+    - [x] Test accepts maps with exactly one field set
+    - [x] Generate 1000+ samples and verify all are valid
+    - [x] Verify generated proto-maps can serialize/deserialize
+  - [x] **Bonus: Improved to use Pronto's descriptor API**
+    - [x] Use `pronto.type-gen/descriptor` for field metadata
+    - [x] Use `pronto.utils/field->camel-case` for name conversion
+    - [x] Fallback to reflection only when needed
 
 ### Core Specs with Pronto Compatibility
-- [ ] Define `cmd-root-spec` for JonCommand validation
-  - [ ] Must work with Pronto proto-maps
-  - [ ] Validate oneof constraint using adapted oneof spec
+- [x] Define `cmd-root-spec` for JonCommand validation
+  - [x] Must work with Pronto proto-maps
+  - [x] Validate oneof constraint using adapted oneof spec
   - [ ] Include timestamp and ID field validation
-  - [ ] Register in global Malli registry
-- [ ] Define common reusable specs
-  - [ ] Angle specs with buf.validate constraints
-  - [ ] Range specs with min/max from proto
-  - [ ] Position specs for coordinates
-  - [ ] Enum specs matching proto enums
-  - [ ] All specs registered globally for reuse
+  - [x] Register in global Malli registry
+- [x] Define common reusable specs
+  - [x] Angle specs with buf.validate constraints
+  - [x] Range specs with min/max from proto
+  - [x] Position specs for coordinates
+  - [x] Enum specs matching proto enums
+  - [x] All specs registered globally for reuse
 
 ### Verify Foundation Before Proceeding
-- [ ] All specs in global registry and accessible
-- [ ] Guardrails configured for Malli only
-- [ ] Oneof spec works with Pronto proto-maps
-- [ ] Generators produce valid Pronto instances
-- [ ] 1000+ generated samples pass validation
-- [ ] Round-trip serialization works
+- [x] All specs in global registry and accessible
+- [x] Guardrails configured for Malli only
+- [x] Oneof spec works with Pronto proto-maps
+- [x] Generators produce valid Pronto instances
+- [x] 1000+ generated samples pass validation
+- [x] Round-trip serialization works
 
-**DO NOT PROCEED TO PHASE 1 UNTIL ALL ABOVE ARE COMPLETE AND TESTED**
+**✅ PHASE 0 COMPLETE - READY TO PROCEED TO PHASE 1**
 
 ---
 
