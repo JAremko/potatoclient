@@ -1,4 +1,4 @@
-(ns cmd-explorer.pronto-malli
+(ns potatoclient.malli.pronto
   "Integration layer between Pronto proto-maps and Malli specs.
    Provides utilities for validating, generating, and converting between
    Pronto proto-maps and Malli specs."
@@ -7,7 +7,7 @@
    [malli.generator :as mg]
    [malli.error :as me]
    [pronto.core :as p]
-   [cmd-explorer.registry :as registry]
+   [potatoclient.malli.registry :as registry]
    [clojure.test.check.generators :as gen]))
 
 ;; ============================================================================

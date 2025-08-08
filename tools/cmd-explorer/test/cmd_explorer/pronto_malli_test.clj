@@ -3,9 +3,9 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [cmd-explorer.test-harness] ;; Auto-initializes on load
-   [cmd-explorer.pronto-malli :as pm]
-   [cmd-explorer.specs.shared :as shared]
-   [cmd-explorer.specs.cmd-root :as cmd-root]
+   [potatoclient.malli.pronto :as pm]
+   [potatoclient.specs.common :as shared]
+   [potatoclient.specs.cmd-root :as cmd-root]
    [malli.core :as m]
    [malli.generator :as mg]
    [pronto.core :as p])

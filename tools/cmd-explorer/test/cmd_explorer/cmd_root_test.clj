@@ -4,7 +4,7 @@
    [clojure.test :refer [deftest testing is]]
    [malli.core :as m]
    [cmd-explorer.test-harness] ;; Auto-initializes on load
-   [cmd-explorer.specs.cmd-root :as cmd-root]
+   [potatoclient.specs.cmd-root :as cmd-root]
    [pronto.core :as p])
   (:import
    [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]))

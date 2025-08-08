@@ -6,8 +6,8 @@
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]
    [cmd-explorer.test-harness] ;; Auto-initializes on load
-   [cmd-explorer.specs.oneof-payload :as oneof]
-   [cmd-explorer.specs.proto-generators :as pg]
+   [potatoclient.specs.oneof-pronto :as oneof]
+   [potatoclient.specs.proto-generators :as pg]
    [pronto.core :as p])
   (:import
    [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]))

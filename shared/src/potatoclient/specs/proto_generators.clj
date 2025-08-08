@@ -1,4 +1,4 @@
-(ns cmd-explorer.specs.proto-generators
+(ns potatoclient.specs.proto-generators
   "Generators for proto-map fields"
   (:require
    [clojure.test.check.generators :as gen]

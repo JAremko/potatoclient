@@ -2,8 +2,8 @@
   "Test harness to ensure proto files are compiled and system is initialized.
    This should be required by all test namespaces."
   (:require
-   [cmd-explorer.registry :as registry]
-   [cmd-explorer.specs.oneof-payload :as oneof]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-pronto :as oneof]
    [clojure.java.io :as io])
   (:import
    [java.io File]))
@@ -75,12 +75,8 @@
   []
   (registry/setup-global-registry!
    {:oneof-pronto (oneof/register-oneof-pronto-schema!)})
-  ;; Also load cmd-root specs if available
-  (try
-    (require 'cmd-explorer.specs.cmd-root)
-    (catch Exception e
-      ;; It's ok if cmd-root doesn't exist yet
-      nil)))
+  ;; Also load cmd-root specs
+  (require 'potatoclient.specs.cmd-root))
 
 (defn initialize!
   "Initialize the test harness.
