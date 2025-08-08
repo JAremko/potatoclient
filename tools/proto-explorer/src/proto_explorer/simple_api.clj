@@ -113,7 +113,14 @@
                        (catch Exception e
                          {:error (.getMessage e)}))
         
-        ;; 3. Field details from descriptor
+        ;; 3. Pronto Schema
+        schema-result (try
+                       (when-not (:error java-result)
+                         (pronto/find-and-get-schema simple-name))
+                       (catch Exception e
+                         {:error (.getMessage e)}))
+        
+        ;; 4. Field details from descriptor
         field-details (mapv (fn [field]
                              {:name (:name field)
                               :number (:number field)
@@ -136,11 +143,15 @@
      :pronto-edn (when (:success pronto-result)
                   (:edn-structure pronto-result))
      
+     :pronto-schema (when-not (:error schema-result)
+                     (:schema schema-result))
+     
      :fields field-details
      
      :errors (cond-> []
               (:error java-result) (conj {:type :java :message (:error java-result)})
-              (:error pronto-result) (conj {:type :pronto :message (:error pronto-result)}))}))
+              (:error pronto-result) (conj {:type :pronto :message (:error pronto-result)})
+              (:error schema-result) (conj {:type :schema :message (:error schema-result)}))}))
 
 ;; =============================================================================
 ;; Formatting
@@ -209,6 +220,10 @@
     (when (:pronto-edn info)
       (println "\n=== PRONTO EDN STRUCTURE ===")
       (pprint/pprint (:pronto-edn info)))
+    
+    (when (:pronto-schema info)
+      (println "\n=== PRONTO SCHEMA ===")
+      (pprint/pprint (:pronto-schema info)))
     
     (when (seq (:fields info))
       (println "\n=== FIELD DETAILS ===")

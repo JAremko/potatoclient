@@ -22,7 +22,7 @@ When working with Protocol Buffers in a Clojure/Java project, developers face se
 1. **Discovery**: Finding the right protobuf message among hundreds of definitions
 2. **Mapping**: Understanding how proto messages map to Java classes (e.g., `cmd.Root` → `cmd.JonSharedCmd$Root`)
 3. **Structure**: Visualizing message structure and field types
-4. **Integration**: Understanding how to work with messages in Clojure (via Pronto EDN)
+4. **Integration**: Understanding how to work with messages in Clojure (via Pronto EDN and schema)
 5. **Validation**: Seeing field constraints from buf.validate annotations
 
 Proto-Explorer solves these problems by providing a unified interface to search, discover, and inspect protobuf messages with all their representations in one place.
@@ -33,7 +33,7 @@ Proto-Explorer solves these problems by providing a unified interface to search,
 - **🔍 Unified Search**: Single command searches both message names and Java classes
 - **📋 Complete Listing**: Browse all messages organized by package
 - **🔗 Actionable Results**: Search results provide ready-to-use query strings
-- **📊 Comprehensive Info**: Java mappings, Pronto EDN, and field details in one view
+- **📊 Comprehensive Info**: Java mappings, Pronto EDN, Pronto schema, and field details in one view
 - **⚡ Fast & Simple**: Stateless tool with clear, predictable commands
 
 ## Installation
@@ -116,6 +116,7 @@ Provides comprehensive information about a message.
 - **Output**: 
   - Java class details (methods, fields)
   - Pronto EDN structure for Clojure
+  - Pronto schema showing field types and constraints
   - Field definitions with types and numbers
   - Proto file and package information
 
@@ -152,13 +153,16 @@ $ make proto-list FILTER=cmd.Compass
 $ make proto-info QUERY='cmd.Compass$SetMagneticDeclination'
 ```
 
-### Getting Pronto EDN for Clojure
+### Getting Pronto EDN and Schema for Clojure
 ```bash
-# The info command shows Pronto EDN structure
+# The info command shows both Pronto EDN structure and schema
 $ make proto-info QUERY='cmd.RotaryPlatform$RotateAzimuthTo'
 
 === PRONTO EDN STRUCTURE ===
 {:angle 0.0, :speed 0.0}
+
+=== PRONTO SCHEMA ===
+{:angle float, :speed float}
 ```
 
 ## Examples
@@ -187,6 +191,9 @@ Java Class: cmd.RotaryPlatform$RotateAzimuthTo
 
 === PRONTO EDN STRUCTURE ===
 {:angle 0.0, :speed 0.0}
+
+=== PRONTO SCHEMA ===
+{:angle float, :speed float}
 ```
 
 ### Search Examples
@@ -228,7 +235,7 @@ Proto-Explorer uses a stateless architecture that:
 - **simple-api**: Core API for search, list, and info operations
 - **cli-final**: Command-line interface and formatting
 - **java-class-info**: Java reflection utilities
-- **pronto-integration**: Pronto EDN conversion
+- **pronto-integration**: Pronto EDN conversion and schema extraction
 
 ### Proto to Java Mapping Rules
 

@@ -5,11 +5,11 @@
   (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]
            [ser JonSharedData$JonGUIState JonSharedDataTime$JonGuiDataTime
             JonSharedDataSystem$JonGuiDataSystem JonSharedDataGps$JonGuiDataGps
-            JonSharedDataCompass$JonGuiDataCompass JonSharedDataRotaryPlatform$JonGuiDataRotaryPlatform
+            JonSharedDataCompass$JonGuiDataCompass JonSharedDataRotary$JonGuiDataRotaryPlatform
             JonSharedDataCameraDay$JonGuiDataCameraDay JonSharedDataCameraHeat$JonGuiDataCameraHeat
-            JonSharedDataGlassHeater$JonGuiDataGlassHeater JonSharedDataMeteoInternal$JonGuiDataMeteoInternal
-            JonSharedDataLRF$JonGuiDataLRF JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
-            JonSharedDataRecOSD$JonGuiDataRecOSD JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime]))
+            JonSharedDataDayCamGlassHeater$JonGuiDataGlassHeater 
+            JonSharedDataLrf$JonGuiDataLRF JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
+            JonSharedDataRecOsd$JonGuiDataRecOSD JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime]))
 
 ;; ============================================================================
 ;; MAPPER DEFINITIONS

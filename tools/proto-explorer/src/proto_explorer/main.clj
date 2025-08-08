@@ -21,8 +21,9 @@
           (println "  java-class <message>       Get Java class info for a protobuf message")
           (println "  java-fields <message>      Get proto field to Java method mapping")
           (println "  java-builder <message>     Get Java builder info")
-          (println "  java-summary <message>     Get full summary with Java, Pronto EDN, and descriptor info")
+          (println "  java-summary <message>     Get full summary with Java, Pronto EDN, schema, and descriptor info")
           (println "  pronto-edn <message>       Get Pronto EDN representation of a message")
+          (println "  pronto-schema <message>    Get Pronto schema for a message")
           (println "  descriptor-info <message>  Get JSON descriptor with buf.validate constraints as EDN")
           (println "\nExamples:")
           (println "  proto-explorer java-summary Root")
@@ -42,7 +43,7 @@
       (cli-final/dispatch-command (first arguments) (rest arguments))
       
       ;; Legacy Java class info commands
-      (#{"java-class" "java-fields" "java-builder" "java-summary" "pronto-edn" "descriptor-info"} (first arguments))
+      (#{"java-class" "java-fields" "java-builder" "java-summary" "pronto-edn" "pronto-schema" "descriptor-info"} (first arguments))
       (cli-jvm/dispatch-command (first arguments) (rest arguments))
       
       :else
@@ -58,6 +59,7 @@
           (println "  java-builder <message>     Get Java builder info")
           (println "  java-summary <message>     Get full summary")
           (println "  pronto-edn <message>       Get Pronto EDN representation")
+          (println "  pronto-schema <message>    Get Pronto schema")
           (println "  descriptor-info <message>  Get JSON descriptor info")
           (println "\nExamples:")
           (println "  proto-explorer search root")

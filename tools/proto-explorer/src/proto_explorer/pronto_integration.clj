@@ -1,6 +1,7 @@
 (ns proto-explorer.pronto-integration
   "Integration with Pronto for generating EDN representations of protobuf messages"
   (:require [pronto.core :as pronto]
+            [pronto.schema :as pronto-schema]
             [clojure.pprint :as pprint]
             [proto-explorer.java-class-info :as java-info]
             [clojure.string :as str]))
@@ -93,6 +94,61 @@
       {:success false
        :error (.getMessage e)
        :parent parent-class-name})))
+
+(defn get-pronto-schema
+  "Get the pronto schema for a protobuf message class"
+  [class-name]
+  (try
+    (let [clazz (Class/forName class-name)
+          schema (pronto-schema/schema clazz)]
+      {:success true
+       :class-name class-name
+       :schema schema})
+    (catch Exception e
+      {:success false
+       :error (.getMessage e)
+       :class-name class-name})))
+
+(defn get-pronto-schema-for-field
+  "Get the pronto schema for a specific field of a protobuf message"
+  [class-name field-key]
+  (try
+    (let [clazz (Class/forName class-name)
+          schema (pronto-schema/schema clazz field-key)]
+      {:success true
+       :class-name class-name
+       :field field-key
+       :schema schema})
+    (catch Exception e
+      {:success false
+       :error (.getMessage e)
+       :class-name class-name
+       :field field-key})))
+
+(defn find-and-get-schema
+  "Find a message class by name and return its pronto schema"
+  [message-name]
+  (let [class-info (java-info/find-message-class message-name)]
+    (if (:error class-info)
+      {:error (:message class-info)
+       :message-name message-name}
+      (get-pronto-schema (get-in class-info [:class :name])))))
+
+(defn get-comprehensive-pronto-info
+  "Get both EDN representation and pronto schema for a message"
+  [message-name]
+  (let [edn-result (find-and-get-edn message-name)
+        schema-result (find-and-get-schema message-name)]
+    (if (or (:error edn-result) (:error schema-result))
+      {:error (or (:error edn-result) (:error schema-result))
+       :message-name message-name}
+      {:success true
+       :message-name message-name
+       :class-name (:class-name edn-result)
+       :edn-structure (:edn edn-result)
+       :pronto-schema (:schema schema-result)
+       :field-count (count (filter (fn [[k v]] (keyword? k)) (:edn edn-result)))
+       :fields (keys (:edn edn-result))})))
 
 (comment
   ;; Test with cmd.JonSharedCmd$Root

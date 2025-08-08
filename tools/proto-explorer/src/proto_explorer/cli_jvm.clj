@@ -111,6 +111,14 @@
             (if (:error pronto-info)
               (println "Error getting Pronto EDN:" (:error pronto-info))
               (pp/pprint (:edn-structure pronto-info))))
+          ;; Add Pronto schema
+          (println "\n=== PRONTO SCHEMA ===\n")
+          (let [schema-info (pronto-int/find-and-get-schema
+                             (or (get-in class-info [:class :simple-name])
+                                 message-or-spec))]
+            (if (:error schema-info)
+              (println "Error getting Pronto schema:" (:error schema-info))
+              (pp/pprint (:schema schema-info))))
           ;; Add descriptor info with constraints
           (println "\n=== DESCRIPTOR INFO (with buf.validate constraints) ===\n")
           (let [desc-info (desc-int/get-message-descriptor-info
@@ -132,6 +140,18 @@
                      :message-name message-name})
         (output-edn (:edn-structure pronto-info))))
     (output-edn {:error "Usage: clojure -M:run pronto-edn <message-name>"})))
+
+(defn pronto-schema
+  "Get Pronto schema for a protobuf message"
+  [args]
+  (init-proto-explorer!)
+  (if-let [message-name (first args)]
+    (let [schema-info (pronto-int/find-and-get-schema message-name)]
+      (if (:error schema-info)
+        (output-edn {:error (:error schema-info)
+                     :message-name message-name})
+        (output-edn (:schema schema-info))))
+    (output-edn {:error "Usage: clojure -M:run pronto-schema <message-name>"})))
 
 (defn descriptor-info
   "Get JSON descriptor info with buf.validate constraints as EDN"
@@ -155,9 +175,10 @@
     "java-builder" (java-builder-info args)
     "java-summary" (java-class-summary args)
     "pronto-edn" (pronto-edn args)
+    "pronto-schema" (pronto-schema args)
     "descriptor-info" (descriptor-info args)
     (output-edn {:error (str "Unknown command: " command)
-                 :available-commands ["java-class" "java-fields" "java-builder" "java-summary" "pronto-edn" "descriptor-info"]})))
+                 :available-commands ["java-class" "java-fields" "java-builder" "java-summary" "pronto-edn" "pronto-schema" "descriptor-info"]})))
 
 (comment
   ;; Test CLI commands
