@@ -3,13 +3,10 @@
   (:require
    [clojure.test :refer [deftest testing is]]
    [malli.core :as m]
-   [cmd-explorer.core :as core]
+   [cmd-explorer.test-harness] ;; Auto-initializes on load
    [pronto.core :as p])
   (:import
    [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]))
-
-;; Initialize the system
-(core/initialize!)
 
 ;; Define mapper for tests
 (p/defmapper test-mapper [JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen])

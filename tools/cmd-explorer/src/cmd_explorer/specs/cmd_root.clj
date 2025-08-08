@@ -23,8 +23,21 @@
    [ser JonSharedDataTypes$JonGuiDataClientType]))
 
 ;; Create Pronto mapper for command messages
+;; Include all subsystem root classes as well for complete mapping
 (p/defmapper cmd-mapper 
-  [JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen])
+  [JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen
+   JonSharedCmdDayCamera$Root
+   JonSharedCmdHeatCamera$Root
+   JonSharedCmdGps$Root
+   JonSharedCmdCompass$Root
+   JonSharedCmdLrf$Root
+   JonSharedCmdLrfAlign$Root
+   JonSharedCmdRotary$Root
+   JonSharedCmdOsd$Root
+   JonSharedCmdSystem$Root
+   JonSharedCmdCv$Root
+   JonSharedCmdDayCamGlassHeater$Root
+   JonSharedCmdLira$Root])
 
 ;; Client type enum spec
 (def client-type-spec
@@ -63,49 +76,79 @@
 (registry/register! :cmd/lira-root [:map])
 
 ;; Define the cmd-root-spec for JonCommand validation
-(def cmd-root-spec
-  [:map
-   [:protocol_version [:int {:min 1}]]
-   [:session_id [:int {:min 0}]]
-   [:important :boolean]
-   [:from_cv_subsystem :boolean]
-   [:client_type :cmd/client-type]
-   ;; The payload field uses our custom oneof-pronto spec
-   [:payload
-    [:oneof-pronto
-     {:proto-class JonSharedCmd$Root
-      :proto-mapper cmd-mapper
-      :day_camera :cmd/day-camera-root
-      :heat_camera :cmd/heat-camera-root
-      :gps :cmd/gps-root
-      :compass :cmd/compass-root
-      :lrf :cmd/lrf-root
-      :lrf_calib :cmd/lrf-calib-root
-      :rotary :cmd/rotary-root
-      :osd :cmd/osd-root
-      :ping :cmd/ping
-      :noop :cmd/noop
-      :frozen :cmd/frozen
-      :system :cmd/system-root
-      :cv :cmd/cv-root
-      :day_cam_glass_heater :cmd/day-cam-glass-heater-root
-      :lira :cmd/lira-root
-      :error/message "Exactly one command payload must be set"}]]])
+;; This spec validates the payload oneof field with proper instance checks
+(def cmd-root-proto-spec
+  "Spec for validating JonSharedCmd$Root proto-maps.
+   Uses oneof-pronto to ensure exactly one payload field is set."
+  [:fn
+   {:error/message "Must be a valid JonSharedCmd$Root proto-map"}
+   (fn [value]
+     (and (p/proto-map? value)
+          (instance? JonSharedCmd$Root (.pmap_getProto value))
+          ;; Must have exactly one payload field set
+          (some? (p/which-one-of value :payload))))])
 
-;; Register the cmd-root-spec globally
-(registry/register! :cmd/root cmd-root-spec)
+;; Payload oneof spec using instance checks for each field type
+(def cmd-payload-spec
+  [:oneof-pronto
+   {:proto-class JonSharedCmd$Root
+    :proto-mapper cmd-mapper
+    :oneof-name :payload
+    ;; Simple commands
+    :ping [:fn #(instance? JonSharedCmd$Ping %)]
+    :noop [:fn #(instance? JonSharedCmd$Noop %)]
+    :frozen [:fn #(instance? JonSharedCmd$Frozen %)]
+    ;; Subsystem commands
+    :day_camera [:fn #(instance? JonSharedCmdDayCamera$Root %)]
+    :heat_camera [:fn #(instance? JonSharedCmdHeatCamera$Root %)]
+    :gps [:fn #(instance? JonSharedCmdGps$Root %)]
+    :compass [:fn #(instance? JonSharedCmdCompass$Root %)]
+    :lrf [:fn #(instance? JonSharedCmdLrf$Root %)]
+    :lrf_calib [:fn #(instance? JonSharedCmdLrfAlign$Root %)]
+    :rotary [:fn #(instance? JonSharedCmdRotary$Root %)]
+    :osd [:fn #(instance? JonSharedCmdOsd$Root %)]
+    :system [:fn #(instance? JonSharedCmdSystem$Root %)]
+    :cv [:fn #(instance? JonSharedCmdCv$Root %)]
+    :day_cam_glass_heater [:fn #(instance? JonSharedCmdDayCamGlassHeater$Root %)]
+    :lira [:fn #(instance? JonSharedCmdLira$Root %)]
+    :error/message "Exactly one command payload must be set"}])
+
+;; Register specs globally
+(registry/register! :cmd/root-proto cmd-root-proto-spec)
+(registry/register! :cmd/payload cmd-payload-spec)
 
 (defn validate-cmd-root
   "Validate a JonCommand proto-map against the cmd-root-spec"
   [proto-map]
-  (m/validate :cmd/root proto-map))
+  (m/validate :cmd/root-proto proto-map))
 
 (defn explain-cmd-root
   "Explain validation errors for a JonCommand proto-map"
   [proto-map]
-  (m/explain :cmd/root proto-map))
+  (m/explain :cmd/root-proto proto-map))
 
-(defn generate-cmd-root
-  "Generate a sample JonCommand proto-map"
+(defn get-command-type
+  "Get the active command type from a JonSharedCmd$Root proto-map"
+  [proto-map]
+  (p/which-one-of proto-map :payload))
+
+(defn create-ping-command
+  "Create a simple ping command"
   []
-  (mg/generate :cmd/root))
+  (p/proto-map cmd-mapper JonSharedCmd$Root
+               :protocol_version 1
+               :ping (p/proto-map cmd-mapper JonSharedCmd$Ping)))
+
+(defn create-noop-command
+  "Create a simple noop command"
+  []
+  (p/proto-map cmd-mapper JonSharedCmd$Root
+               :protocol_version 1
+               :noop (p/proto-map cmd-mapper JonSharedCmd$Noop)))
+
+(defn create-frozen-command
+  "Create a simple frozen command"
+  []
+  (p/proto-map cmd-mapper JonSharedCmd$Root
+               :protocol_version 1
+               :frozen (p/proto-map cmd-mapper JonSharedCmd$Frozen)))

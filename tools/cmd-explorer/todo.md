@@ -277,22 +277,27 @@ Oneof spec adaptation for Pronto (see Phase 0):
 ## Implementation Todos
 
 ### Phase 1: Project Setup
-- [ ] Create deps.edn with dependencies (pronto, malli, guardrails, hato, protobuf, test.check)
-- [ ] Verify Phase 0 oneof spec is working correctly (already adapted in Phase 0)
-- [ ] Set up project structure (src/, test/, resources/, src/cmd_explorer/specs/)
-- [ ] Create Makefile with test and run targets
-- [ ] Copy protobuf classes from main project (like state-explorer)
+- [x] Create deps.edn with dependencies (pronto, malli, guardrails, hato, protobuf, test.check)
+- [x] Verify Phase 0 oneof spec is working correctly (already adapted in Phase 0)
+- [x] Set up project structure (src/, test/, resources/, src/cmd_explorer/specs/)
+- [x] Create Makefile with test and run targets
+- [x] Copy protobuf classes from main project (like state-explorer)
 - [ ] Set up logging configuration
-- [ ] Configure guardrails.edn with instrumentation settings
-- [ ] Enable guardrails instrumentation in dev/test profiles
+- [x] Configure guardrails.edn with instrumentation settings
+- [x] Enable guardrails instrumentation in dev/test profiles
 
 ### Phase 2: Core Infrastructure
-- [ ] Create shared specs directory (src/cmd_explorer/specs/shared.clj)
-- [ ] Define cmd-root-spec with oneof validation
-  - [ ] Use Pronto's `which-one-of` to determine active command type
-  - [ ] Use Pronto's `one-of` to extract the actual command payload
-  - [ ] Ensure exactly one command field is set in JonCommand oneof
-  - [ ] Create Malli spec that validates oneof constraints
+- [x] Create shared specs directory (src/cmd_explorer/specs/shared.clj)
+- [x] Define cmd-root-spec with oneof validation
+  - [x] Use Pronto's `which-one-of` to determine active command type
+  - [x] Use getter methods to extract the actual command payload
+  - [x] Ensure exactly one command field is set in JonCommand oneof
+  - [x] Create Malli spec that validates oneof constraints
+- [x] Create test harness for automatic proto compilation checking
+  - [x] Auto-compile Pronto Java sources if needed
+  - [x] Check protobuf classes are compiled
+  - [x] Register custom oneof-pronto schema
+  - [x] Initialize Malli global registry
 - [ ] Define common reusable specs (angles, ranges, positions, enums)
 - [ ] **Reconcile custom specs with proto-generated specs for Pronto compatibility**
   - [ ] Compare one-off custom specs with proto-explorer generated specs

@@ -5,7 +5,7 @@
    [malli.core :as m]
    [malli.registry :as mr]
    [malli.generator :as mg]
-   [cmd-explorer.core :as core]
+   [cmd-explorer.test-harness] ;; Auto-initializes on load
    [cmd-explorer.specs.oneof-payload :as oneof]
    [cmd-explorer.specs.cmd-root :as cmd-root]
    [cmd-explorer.specs.shared :as shared]
@@ -20,7 +20,8 @@
     ;; The :oneof-pronto is a schema type, not a registered schema
     ;; We can check that our registered schemas work instead
     (testing "Custom specs are registered"
-      (is (m/schema :cmd/root))
+      (is (m/schema :cmd/root-proto))
+      (is (m/schema :cmd/payload))
       (is (m/schema :angle/azimuth))
       (is (m/schema :range/normalized))
       (is (m/schema :position/latitude)))))
