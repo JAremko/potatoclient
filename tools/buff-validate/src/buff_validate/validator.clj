@@ -80,21 +80,41 @@
                       {:error (.getMessage e)
                        :type :unknown-error})))))
 
+(declare validate-message)
+
 (defn auto-detect-message-type
-  "Attempt to auto-detect whether a binary is a state or cmd message."
+  "Attempt to auto-detect whether a binary is a state or cmd message.
+   Uses validation to determine the correct type since protobuf parsing is lenient."
   [binary-data]
-  (try
-    ;; Try parsing as state first (more common)
-    (parse-state-message binary-data)
-    :state
-    (catch Exception _
-      ;; If state fails, try cmd
-      (try
-        (parse-cmd-message binary-data)
-        :cmd
-        (catch Exception _
-          ;; Neither worked
-          nil)))))
+  (let [validator (create-validator)]
+    ;; Try cmd first (simpler structure)
+    (try
+      (let [cmd-msg (parse-cmd-message binary-data)
+            cmd-result (validate-message cmd-msg validator)]
+        (if (:valid? cmd-result)
+          :cmd
+          ;; Try state if cmd validation fails
+          (try
+            (let [state-msg (parse-state-message binary-data)
+                  state-result (validate-message state-msg validator)]
+              (if (:valid? state-result)
+                :state
+                ;; Both parse but neither validates - return based on fewer violations
+                (if (<= (count (:violations cmd-result))
+                        (count (:violations state-result)))
+                  :cmd
+                  :state)))
+            (catch Exception _
+              ;; State parsing failed, return cmd
+              :cmd))))
+      (catch Exception _
+        ;; Cmd parsing failed, try state
+        (try
+          (parse-state-message binary-data)
+          :state
+          (catch Exception _
+            ;; Neither worked
+            nil))))))
 
 (defn validate-message
   "Validate a protobuf message using buf.validate.

@@ -17,8 +17,9 @@ shared/src/potatoclient/
 │   ├── common.clj        # Common reusable specs (angles, ranges, positions, enums)
 │   ├── oneof_pronto.clj  # Custom oneof schema for Pronto proto-maps
 │   └── proto_generators.clj # Proto-map field generators
-└── validation/
-    └── (future validation utilities)
+├── validation/ # (future validation utilities)
+├── proto/ # (future proto/pronto utilities)
+
 ```
 
 ## Usage

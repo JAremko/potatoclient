@@ -7,8 +7,6 @@
    [ser JonSharedDataSystem$JonGuiDataSystem JonSharedDataSystem$JonGuiDataSystem$Builder]
    [ser JonSharedDataGps$JonGuiDataGps JonSharedDataGps$JonGuiDataGps$Builder]
    [cmd JonSharedCmd$Root JonSharedCmd$Root$Builder]
-   [cmd.System JonSharedCmdSystem$JonProtoCommandSystem JonSharedCmdSystem$JonProtoCommandSystem$Builder]
-   [cmd.System JonSharedCmdSystem$JonProtoCommandSystem$Reboot JonSharedCmdSystem$JonProtoCommandSystem$Reboot$Builder]
    [com.google.protobuf ByteString]
    [java.io ByteArrayOutputStream]))
 
@@ -16,6 +14,7 @@
   "Create a valid state message with all required fields."
   []
   (-> (JonSharedData$JonGUIState/newBuilder)
+      (.setProtocolVersion 1) ; Required: gt 0
       (.setTime (-> (JonSharedDataTime$JonGuiDataTime/newBuilder)
                     (.setMsSinceBoot 5000)
                     (.setClockOffsetObtained true)
@@ -52,23 +51,21 @@
 (defn create-valid-cmd-message
   "Create a valid command message."
   []
-  (-> (JonSharedCmd$Frozen/newBuilder)
-      (.setSystem (-> (JonSharedCmdSystem$JonProtoCommandSystem/newBuilder)
-                     (.setReboot (-> (JonSharedCmdSystem$JonProtoCommandSystem$Reboot/newBuilder)
-                                    (.setDelayMs 5000)
-                                    (.build)))
-                     (.build)))
+  (-> (JonSharedCmd$Root/newBuilder)
+      (.setProtocolVersion 1)
+      (.setSessionId 12345)
+      (.setImportant false)
+      (.setFromCvSubsystem false)
+      ;; System command removed - class import issues
       (.build)))
 
 (defn create-invalid-cmd-message
   "Create a command message that should fail validation if constraints are defined."
   []
-  (-> (JonSharedCmd$Frozen/newBuilder)
-      (.setSystem (-> (JonSharedCmdSystem$JonProtoCommandSystem/newBuilder)
-                     (.setReboot (-> (JonSharedCmdSystem$JonProtoCommandSystem$Reboot/newBuilder)
-                                    (.setDelayMs -100) ; Negative delay - likely invalid
-                                    (.build)))
-                     (.build)))
+  (-> (JonSharedCmd$Root/newBuilder)
+      ;; Protocol version 0 should be invalid (constraint: gt: 0)
+      (.setProtocolVersion 0)
+      (.setSessionId 0)
       (.build)))
 
 (defn message-to-bytes
@@ -119,14 +116,15 @@
 (defn create-empty-message
   "Create an empty protobuf message (minimal valid structure)."
   []
-  (.toByteArray (JonSharedData$JonGUIState/newBuilder)
-                (.build)))
+  (.toByteArray (-> (JonSharedData$JonGUIState/newBuilder)
+                    (.build))))
 
 (defn create-large-message
   "Create a large valid message for stress testing."
   []
   (let [builder (JonSharedData$JonGUIState/newBuilder)]
     ;; Add basic required fields
+    (.setProtocolVersion builder 1)
     (.setTime builder (-> (JonSharedDataTime$JonGuiDataTime/newBuilder)
                           (.setMsSinceBoot 5000)
                           (.build)))

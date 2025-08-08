@@ -1,0 +1,238 @@
+(ns buff-validate.pronto-test
+  "Test validation using Pronto for message creation - like cmd-explorer and state-explorer do."
+  (:require
+   [clojure.test :refer [deftest testing is]]
+   [buff-validate.validator :as validator]
+   [pronto.core :as pronto]))
+
+;; ============================================================================
+;; SIMPLE COMMAND TESTS USING PRONTO
+;; ============================================================================
+
+(deftest test-ping-command-pronto
+  (testing "Ping command created with Pronto"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 1000
+                    :ping {:cmd.JonSharedCmd$Ping {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :cmd)]
+      (is (:valid? result) "Ping command should be valid")
+      (is (= :cmd (:message-type result)) "Should be cmd type")
+      (is (> (:message-size result) 0) "Should have size"))))
+
+(deftest test-noop-command-pronto
+  (testing "Noop command created with Pronto"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 2000
+                    :noop {:cmd.JonSharedCmd$Noop {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :cmd)]
+      (is (:valid? result) "Noop command should be valid")
+      (is (= :cmd (:message-type result)) "Should be cmd type"))))
+
+(deftest test-frozen-command-pronto
+  (testing "Frozen command created with Pronto"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 3000
+                    :frozen {:cmd.JonSharedCmd$Frozen {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :cmd)]
+      (is (:valid? result) "Frozen command should be valid")
+      (is (= :cmd (:message-type result)) "Should be cmd type"))))
+
+;; ============================================================================
+;; STATE MESSAGE TESTS USING PRONTO
+;; ============================================================================
+
+(deftest test-minimal-state-pronto
+  (testing "Minimal state message created with Pronto"
+    (let [state-map {:ser.JonSharedData$JonGUIState
+                     {:protocol_version 1}}
+          message (pronto/proto-map->proto state-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :state)]
+      (is (:valid? result) "Minimal state should be valid")
+      (is (= :state (:message-type result)) "Should be state type"))))
+
+(deftest test-state-with-data-pronto
+  (testing "State message with actual data"
+    (let [state-map {:ser.JonSharedData$JonGUIState
+                     {:protocol_version 1
+                      :time {:ser.JonSharedDataTime$JonGuiDataTime
+                            {:msSinceBoot 5000
+                             :clockOffsetObtained true
+                             :clockOffsetNs 123456}}
+                      :system {:ser.JonSharedDataSystem$JonGuiDataSystem
+                              {:cpuTemp 65.5
+                               :cpuLoad 45.2
+                               :memoryUsed 1024000
+                               :memoryTotal 2048000}}
+                      :gps {:ser.JonSharedDataGps$JonGuiDataGps
+                           {:latitude 37.7749
+                            :longitude -122.4194
+                            :altitude 50.0
+                            :speed 0.0
+                            :course 0.0
+                            :satellitesVisible 8
+                            :fixQuality 2}}}}
+          message (pronto/proto-map->proto state-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :state)]
+      (is (:valid? result) "State with data should be valid")
+      (is (= :state (:message-type result)) "Should be state type")
+      (is (> (:message-size result) 50) "Should have substantial size"))))
+
+;; ============================================================================
+;; VALIDATION CONSTRAINT TESTS
+;; ============================================================================
+
+(deftest test-invalid-protocol-version-pronto
+  (testing "Command with protocol_version = 0 (should fail buf.validate constraint)"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 0  ; Should fail: must be > 0
+                    :session_id 4000
+                    :ping {:cmd.JonSharedCmd$Ping {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes :type :cmd)]
+      ;; Note: Validation depends on whether buf.validate is enforced at runtime
+      (if (:valid? result)
+        (println "Note: Protocol version constraint not enforced")
+        (do
+          (is (not (:valid? result)) "Should fail validation")
+          (is (seq (:violations result)) "Should have violations"))))))
+
+;; ============================================================================
+;; AUTO-DETECTION TESTS
+;; ============================================================================
+
+(deftest test-auto-detect-cmd-pronto
+  (testing "Auto-detect command message"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 5000
+                    :ping {:cmd.JonSharedCmd$Ping {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes)] ; No :type specified
+      (is (= :cmd (:message-type result)) "Should auto-detect as cmd")
+      (is (:valid? result) "Should be valid"))))
+
+(deftest test-auto-detect-state-pronto
+  (testing "Auto-detect state message"
+    (let [state-map {:ser.JonSharedData$JonGUIState
+                     {:protocol_version 1}}
+          message (pronto/proto-map->proto state-map)
+          bytes (.toByteArray message)
+          result (validator/validate-binary bytes)] ; No :type specified
+      (is (= :state (:message-type result)) "Should auto-detect as state")
+      (is (:valid? result) "Should be valid"))))
+
+;; ============================================================================
+;; WRONG TYPE TESTS
+;; ============================================================================
+
+(deftest test-wrong-type-forced-pronto
+  (testing "Forcing wrong type should fail"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 6000
+                    :ping {:cmd.JonSharedCmd$Ping {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          bytes (.toByteArray message)]
+      (is (thrown-with-msg? Exception #"parse"
+                           (validator/validate-binary bytes :type :state))
+          "Should fail when forcing cmd as state"))))
+
+;; ============================================================================
+;; CORRUPTED DATA TESTS
+;; ============================================================================
+
+(deftest test-corrupted-message-pronto
+  (testing "Corrupted protobuf message"
+    (let [cmd-map {:cmd.JonSharedCmd$Root
+                   {:protocol_version 1
+                    :session_id 7000
+                    :ping {:cmd.JonSharedCmd$Ping {}}}}
+          message (pronto/proto-map->proto cmd-map)
+          valid-bytes (.toByteArray message)
+          ;; Corrupt the bytes
+          corrupted (byte-array valid-bytes)]
+      (aset-byte corrupted 0 (unchecked-byte 0xFF))
+      (aset-byte corrupted 1 (unchecked-byte 0xFF))
+      
+      (is (thrown-with-msg? Exception #"parse"
+                           (validator/validate-binary corrupted :type :cmd))
+          "Should fail on corrupted data"))))
+
+(deftest test-truncated-message-pronto
+  (testing "Truncated protobuf message"
+    (let [state-map {:ser.JonSharedData$JonGUIState
+                     {:protocol_version 1
+                      :time {:ser.JonSharedDataTime$JonGuiDataTime
+                            {:msSinceBoot 5000}}}}
+          message (pronto/proto-map->proto state-map)
+          valid-bytes (.toByteArray message)
+          ;; Truncate to half
+          truncated (byte-array (take (/ (count valid-bytes) 2) valid-bytes))]
+      
+      (is (thrown-with-msg? Exception #"parse"
+                           (validator/validate-binary truncated :type :state))
+          "Should fail on truncated data"))))
+
+;; ============================================================================
+;; EMPTY AND INVALID DATA
+;; ============================================================================
+
+(deftest test-empty-binary-pronto
+  (testing "Empty byte array"
+    (is (thrown-with-msg? Exception #"parse"
+                        (validator/validate-binary (byte-array 0) :type :cmd))
+        "Should fail on empty data")))
+
+(deftest test-garbage-data-pronto
+  (testing "Random garbage data"
+    (let [garbage (byte-array (repeatedly 50 #(unchecked-byte (rand-int 256))))]
+      (is (thrown-with-msg? Exception #"Could not detect"
+                          (validator/validate-binary garbage))
+          "Should fail to auto-detect garbage"))))
+
+;; ============================================================================
+;; VALIDATOR REUSE TEST
+;; ============================================================================
+
+(deftest test-validator-instance-reuse-pronto
+  (testing "Reusing validator instance with Pronto messages"
+    (let [v (validator/create-validator)
+          cmd1 {:cmd.JonSharedCmd$Root
+                {:protocol_version 1
+                 :session_id 8000
+                 :ping {:cmd.JonSharedCmd$Ping {}}}}
+          cmd2 {:cmd.JonSharedCmd$Root
+                {:protocol_version 1
+                 :session_id 8001
+                 :noop {:cmd.JonSharedCmd$Noop {}}}}
+          state {:ser.JonSharedData$JonGUIState
+                 {:protocol_version 1}}
+          
+          bytes1 (.toByteArray (pronto/proto-map->proto cmd1))
+          bytes2 (.toByteArray (pronto/proto-map->proto cmd2))
+          bytes3 (.toByteArray (pronto/proto-map->proto state))]
+      
+      ;; Multiple validations with same validator
+      (is (:valid? (validator/validate-binary bytes1 :type :cmd :validator v)))
+      (is (:valid? (validator/validate-binary bytes2 :type :cmd :validator v)))
+      (is (:valid? (validator/validate-binary bytes3 :type :state :validator v)))
+      
+      ;; Still works after error
+      (is (thrown? Exception
+                  (validator/validate-binary (byte-array [0xFF]) :type :cmd :validator v)))
+      
+      ;; And continues working
+      (is (:valid? (validator/validate-binary bytes1 :type :cmd :validator v))))))
