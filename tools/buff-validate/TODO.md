@@ -158,10 +158,20 @@ We have real Pronto EDN maps from state-explorer in `/home/jare/git/potatoclient
 
 ### Creating Test Data with Proto-Explorer
 
-1. **Get the Pronto shape** from proto-explorer:
+1. **Get the Pronto EDN shape and schema** from proto-explorer:
 ```bash
-make -C ../proto-explorer proto-info QUERY='cmd.JonSharedCmd$Ping'
-# Shows: {:cmd.JonSharedCmd$Ping {}}
+# Note: Use 'make info' not 'make proto-info'
+make -C ../proto-explorer info QUERY='cmd.JonSharedCmd$Root'
+
+# Shows both EDN structure and Pronto schema:
+# === PRONTO EDN STRUCTURE ===
+# {:osd nil, :ping nil, :client_type :JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED, ...}
+#
+# === PRONTO SCHEMA ===
+# {:client_type #{"JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK" ...},
+#  :protocol_version int,
+#  :session_id int,
+#  :payload/ping cmd.JonSharedCmd$Ping, ...}
 ```
 
 2. **Build test messages** using the shape:
@@ -172,6 +182,47 @@ make -C ../proto-explorer proto-info QUERY='cmd.JonSharedCmd$Ping'
     :session_id 1000
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
     :ping (p/proto-map cmd-mapper cmd.JonSharedCmd$Ping)))
+```
+
+### How Proto-Explorer's Pronto Schema Helps Us
+
+The **NEW Pronto Schema feature** in proto-explorer shows:
+
+1. **Field Types**: Exact Clojure/Pronto types for each field
+   - Scalars: `int`, `float`, `boolean`, `string`
+   - Enums: Sets of valid string values
+   - Messages: Full Java class names for nested messages
+   - Payloads: Marked with `payload/` prefix for one-of fields
+
+2. **Enum Values**: Complete set of valid enum values
+   ```
+   :client_type #{"JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK" 
+                  "JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV" ...}
+   ```
+
+3. **One-of Fields**: Clearly marked with `payload/` prefix
+   - Shows all possible payload types for cmd root
+   - Helps understand which fields are mutually exclusive
+
+4. **Default Values**: EDN structure shows defaults
+   - `nil` for unset message fields
+   - `0` for numeric fields
+   - `:UNSPECIFIED` for enums
+   - `false` for booleans
+
+5. **Validation Planning**: Schema helps identify:
+   - Which fields need validation
+   - What types to expect
+   - Which enums have UNSPECIFIED that shouldn't be used
+   - Required vs optional fields
+
+Example usage for test data creation:
+```bash
+# Get schema for any message type
+make -C ../proto-explorer info QUERY='ser.JonSharedDataGps$JonGuiDataGps'
+
+# Use the schema to create valid test data with all required fields
+# Use the EDN structure as a template for creating proto-maps
 ```
 
 ## Pronto Performance Best Practices 🚀

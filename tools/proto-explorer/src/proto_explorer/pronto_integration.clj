@@ -150,6 +150,25 @@
        :field-count (count (filter (fn [[k v]] (keyword? k)) (:edn edn-result)))
        :fields (keys (:edn edn-result))})))
 
+(defn get-pronto-info-by-class
+  "Get comprehensive Pronto information about a message using full class name"
+  [class-name]
+  (let [edn-result (get-message-edn class-name)]
+    (if (:error edn-result)
+      edn-result
+      (let [edn-data (:edn edn-result)]
+        {:success true
+         :class-name class-name
+         :edn-structure edn-data
+         :field-count (count (filter (fn [[k v]] (keyword? k)) edn-data))
+         :fields (keys edn-data)
+         :default-values (into {} (map (fn [[k v]] [k (if (nil? v) :nil v)]) edn-data))}))))
+
+(defn get-schema-by-class
+  "Get the pronto schema for a protobuf message using full class name"
+  [class-name]
+  (get-pronto-schema class-name))
+
 (comment
   ;; Test with cmd.JonSharedCmd$Root
   (find-and-get-edn "Root")

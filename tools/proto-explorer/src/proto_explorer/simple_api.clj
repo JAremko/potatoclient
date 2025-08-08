@@ -97,26 +97,26 @@
         _ (when-not msg-data
             (throw (ex-info "Message not found" {:java-class java-class-name})))
         
-        ;; Extract simple name for Java/Pronto lookups
+        ;; Extract simple name for display
         simple-name (last (str/split java-class-name #"\$"))
         
-        ;; 1. Java Class Info
+        ;; 1. Java Class Info - use full class name
         java-result (try 
-                      (java-info/find-message-class simple-name)
+                      (java-info/analyze-protobuf-class java-class-name)
                       (catch Exception e
                         {:error (.getMessage e)}))
         
-        ;; 2. Pronto EDN
+        ;; 2. Pronto EDN - use full class name
         pronto-result (try
                        (when-not (:error java-result)
-                         (pronto/get-pronto-info simple-name))
+                         (pronto/get-pronto-info-by-class java-class-name))
                        (catch Exception e
                          {:error (.getMessage e)}))
         
-        ;; 3. Pronto Schema
+        ;; 3. Pronto Schema - use full class name
         schema-result (try
                        (when-not (:error java-result)
-                         (pronto/find-and-get-schema simple-name))
+                         (pronto/get-schema-by-class java-class-name))
                        (catch Exception e
                          {:error (.getMessage e)}))
         
