@@ -1,0 +1,26 @@
+{:paths ["src" "scripts"]
+ 
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        ;; Parser for TypeScript function extraction
+        instaparse/instaparse {:mvn/version "1.4.12"}
+        ;; Markdown manipulation
+        markdown-clj/markdown-clj {:mvn/version "1.11.4"}
+        ;; File utilities
+        org.clojure/tools.cli {:mvn/version "1.0.219"}
+        ;; Logging
+        org.clojure/tools.logging {:mvn/version "1.2.4"}
+        ch.qos.logback/logback-classic {:mvn/version "1.4.11"}}
+ 
+ :aliases
+ {:extract {:main-opts ["-m" "cmd-explorer.extract-ts"]}
+  
+  :test {:extra-paths ["test"]
+         :extra-deps {io.github.cognitect-labs/test-runner 
+                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+         :main-opts ["-m" "cognitect.test-runner"
+                     "-d" "test"]}
+  
+  :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}
+                      cider/cider-nrepl {:mvn/version "0.28.5"}}
+         :main-opts ["-m" "nrepl.cmdline"
+                     "--middleware" "[cider.nrepl/cider-middleware]"]}}}
