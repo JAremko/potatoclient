@@ -3,8 +3,10 @@
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         
         ;; Protobuf support
-        com.appsflyer/pronto {:mvn/version "2.1.2"}
-        com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
+        pronto/pronto {:local/root "../../examples/pronto"}
+        potemkin/potemkin {:mvn/version "0.4.5"}
+        com.google.protobuf/protobuf-java {:mvn/version "4.29.2"}
+        com.google.protobuf/protobuf-java-util {:mvn/version "4.29.2"}
         
         ;; Parsing
         instaparse/instaparse {:mvn/version "1.4.12"}
@@ -25,7 +27,7 @@
         org.clojure/core.match {:mvn/version "1.0.1"}
         
         ;; Protobuf validation
-        build.buf/protovalidate {:mvn/version "0.1.8"}
+        build.buf/protovalidate {:mvn/version "0.3.2"}
         org.apache.commons/commons-lang3 {:mvn/version "3.14.0"}}
  
  :aliases
@@ -114,7 +116,8 @@
   
   :test-protos
   {:extra-paths ["../../target/classes"
-                 "../../src/potatoclient/java"]}
+                 "../../src/potatoclient/java"
+                 "../../examples/pronto/target/classes"]}
   
   :quick
   {:inherit [:test]

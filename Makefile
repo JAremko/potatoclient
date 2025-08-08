@@ -35,7 +35,7 @@ help: ## Show all available commands with detailed descriptions
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "PROTO INSPECTION:"
-	@grep -E '^(print-tree-cmd|print-tree-state|print-trees):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(proto-explorer|proto-inspect):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "OTHER TOOLS:"
 	@grep -E '^(test|report-unspecced|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -109,23 +109,23 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 		echo "Pronto classes already compiled"; \
 	fi
 
-# Print proto tree for commands
-.PHONY: print-tree-cmd
-print-tree-cmd: ensure-compiled ensure-pronto ## Print full EDN structure for command (cmd) root message using pronto
-	@echo "Printing command proto EDN structure..."
-	@cd tools/proto-tree-printer && $(MAKE) print-cmd
+# Proto Explorer - Message inspection and Pronto EDN
+.PHONY: proto-explorer
+proto-explorer: ensure-compiled ensure-pronto ## Run proto-explorer with arguments (e.g., make proto-explorer ARGS="pronto-edn Root")
+	@cd tools/proto-explorer && clojure -M:run:test-protos $(ARGS)
 
-# Print proto tree for state
-.PHONY: print-tree-state
-print-tree-state: ensure-compiled ensure-pronto ## Print full EDN structure for state (ser) root message using pronto
-	@echo "Printing state proto EDN structure..."
-	@cd tools/proto-tree-printer && $(MAKE) print-state
-
-# Print both proto trees
-.PHONY: print-trees
-print-trees: ensure-compiled ensure-pronto ## Print full EDN structure for both cmd and state root messages using pronto
-	@echo "Printing both command and state proto EDN structures..."
-	@cd tools/proto-tree-printer && $(MAKE) print-both
+# Inspect a protobuf message (interactive)
+.PHONY: proto-inspect
+proto-inspect: ensure-compiled ensure-pronto ## Inspect a protobuf message with Java info and Pronto EDN (e.g., make proto-inspect MSG=Root)
+	@if [ -z "$(MSG)" ]; then \
+		echo "Usage: make proto-inspect MSG=<message-name>"; \
+		echo "Example: make proto-inspect MSG=Root"; \
+		echo "Examples:"; \
+		echo "  make proto-inspect MSG=Root           # Command root"; \
+		echo "  make proto-inspect MSG=JonGUIState    # State root"; \
+		exit 1; \
+	fi
+	@cd tools/proto-explorer && clojure -M:run:test-protos java-summary $(MSG)
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin
