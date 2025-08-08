@@ -38,7 +38,7 @@ make nrepl
 
 ## 📋 Requirements
 
-- **Java 17+** with `--enable-native-access=ALL-UNNAMED`
+- **Java 17** (exactly) with `--enable-native-access=ALL-UNNAMED`
 - **Clojure CLI tools**
 - **GStreamer 1.0+** with H.264 support
 - **Hardware Decoder** (optional): NVIDIA, Intel QSV, or VA-API

@@ -2,7 +2,7 @@
 
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
         seesaw/seesaw {:mvn/version "1.5.0"}
-        org.clojure/data.json {:mvn/version "2.4.0"}
+        org.clojure/data.json {:mvn/version "2.5.1"}
         ;; Localization
         tongue/tongue {:mvn/version "0.4.4"}
         ;; Malli for data and function schema validation
@@ -10,16 +10,16 @@
         ;; Kotlin dependencies
         org.jetbrains.kotlin/kotlin-stdlib-jdk8 {:mvn/version "2.2.0"}
         org.jetbrains.kotlin/kotlin-reflect {:mvn/version "2.2.0"}
-        org.jetbrains.kotlinx/kotlinx-coroutines-core {:mvn/version "1.7.3"}
+        org.jetbrains.kotlinx/kotlinx-coroutines-core {:mvn/version "1.9.0"}
         ;; Java dependencies for the stream handler
-        com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.15.2"}
-        org.slf4j/slf4j-nop {:mvn/version "2.0.9"
+        com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.18.2"}
+        org.slf4j/slf4j-nop {:mvn/version "2.0.16"
                              :exclusions [org.slf4j/slf4j-api]}
         ;; GStreamer for video playback
         org.freedesktop.gstreamer/gst1-java-core {:mvn/version "1.4.0"
                                                   :exclusions [net.java.dev.jna/jna]}
         ;; Add specific JNA version to avoid version range warning
-        net.java.dev.jna/jna {:mvn/version "5.13.0"}
+        net.java.dev.jna/jna {:mvn/version "5.15.0"}
         ;; Pronto - Clojure wrapper for Protocol Buffers (our fork with v4 support)
         com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
                               :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"}
@@ -31,9 +31,9 @@
         ;; Function specs
         com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         ;; Telemere for logging
-        com.taoensso/telemere {:mvn/version "1.0.0-RC1"}
+        com.taoensso/telemere {:mvn/version "1.0.0"}
         ;; Buf validate - needed for generated Java code compilation and Kotlin validation
-        build.buf/protovalidate {:mvn/version "0.13.0"}
+        build.buf/protovalidate {:mvn/version "0.3.2"}
         ;; Java WebSocket client library
         org.java-websocket/Java-WebSocket {:mvn/version "1.5.7"}
         ;; Transit for efficient binary communication
