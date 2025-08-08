@@ -6,7 +6,30 @@
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]
    [pronto.core :as p]
-   [clojure.string :as str]))
+   [pronto.type-gen :as pt]
+   [pronto.utils :as pu]
+   [clojure.string :as str])
+  (:import [com.google.protobuf Descriptors$FieldDescriptor]))
+
+(defn- get-oneof-field-info
+  "Get field information for a oneof from the proto descriptor.
+   Returns a map of field-name -> {:getter getter-name :class field-class}"
+  [proto-class oneof-name]
+  (try
+    (let [descriptor (pt/descriptor proto-class)
+          oneofs (.getOneofs descriptor)
+          oneof (some #(when (= (.getName %) (name oneof-name)) %) oneofs)]
+      (when oneof
+        (into {}
+              (for [^Descriptors$FieldDescriptor fd (.getFields oneof)]
+                (let [field-name (keyword (str/replace (.getName fd) "_" "-"))
+                      ;; Get the actual field type using Pronto's field-type function
+                      field-class (pt/field-type proto-class fd)
+                      getter-name (str "get" (pu/field->camel-case fd))]
+                  [field-name {:getter getter-name
+                              :class field-class}])))))
+    (catch Exception e
+      nil)))
 
 (def -oneof-pronto-schema
   "Custom :oneof-pronto schema for validating Pronto proto-maps with oneof constraints."
@@ -38,7 +61,9 @@
                                               (m/validator % options)
                                               (catch Exception e
                                                 (constantly false)))
-                                          field-schemas)]
+                                          field-schemas)
+                     ;; Get field info from descriptor for more reliable access
+                     field-info (get-oneof-field-info proto-class oneof-name)]
                  {:pred (fn [proto-map]
                           (try
                             ;; Check if it's a Pronto proto-map
@@ -53,17 +78,22 @@
                                  (>= field-idx 0)
                                  (< field-idx (count field-validators))
                                  ;; Validate the active field's value
-                                 (let [;; Use reflection to call the getter method
-                                       ;; Convert kebab-case keyword to camelCase getter
-                                       ;; :ping -> "getPing", :my-field -> "getMyField"
-                                       field-name-str (name active-field)
-                                       ;; Convert kebab-case to camelCase
-                                       parts (str/split field-name-str #"-")
-                                       camel-case (str/join "" (cons (first parts)
-                                                                    (map str/capitalize (rest parts))))
-                                       getter-name (str "get" (str/capitalize camel-case))
-                                       getter-method (.getMethod (.getClass proto-map) getter-name (into-array Class []))
-                                       field-value (.invoke getter-method proto-map (into-array Object []))
+                                 (let [;; Use field info from descriptor if available, fallback to reflection
+                                       field-value (if-let [info (get field-info active-field)]
+                                                    ;; Use descriptor-based getter info
+                                                    (let [getter-method (.getMethod (.getClass proto-map) 
+                                                                                  (:getter info) 
+                                                                                  (into-array Class []))]
+                                                      (.invoke getter-method proto-map (into-array Object [])))
+                                                    ;; Fallback to reflection-based approach
+                                                    (let [field-name-str (name active-field)
+                                                          parts (str/split field-name-str #"-")
+                                                          camel-case (str/join "" (cons (first parts)
+                                                                                       (map str/capitalize (rest parts))))
+                                                          getter-name (str "get" (str/capitalize camel-case))
+                                                          getter-method (.getMethod (.getClass proto-map) getter-name 
+                                                                                  (into-array Class []))]
+                                                      (.invoke getter-method proto-map (into-array Object []))))
                                        field-validator (nth field-validators field-idx)]
                                    (if field-validator
                                      (field-validator field-value)
@@ -104,7 +134,9 @@
         oneof-name (:oneof-name properties :payload)
         field-map (dissoc properties :error/message :proto-class :proto-mapper :oneof-name)
         field-names (vec (keys field-map))
-        field-schemas (vec (vals field-map))]
+        field-schemas (vec (vals field-map))
+        ;; Get field info from descriptor
+        field-info (get-oneof-field-info proto-class oneof-name)]
     (if (or (empty? field-names) (nil? proto-class) (nil? proto-mapper))
       (gen/return nil)
       ;; Generate exactly one field
@@ -114,19 +146,20 @@
        (fn [idx]
          (let [field-name (nth field-names idx)]
            ;; Create a proto-map with an empty proto instance for the selected field
-           ;; Use reflection to find the field's proto class and create instance
            (gen/return
             (try
               (let [base-proto (p/proto-map proto-mapper proto-class)
-                    ;; Get the field's proto class using reflection
-                    ;; Convert kebab-case to camelCase for the getter
-                    parts (str/split (name field-name) #"-")
-                    camel-case (str/join "" (cons (first parts)
-                                                 (map str/capitalize (rest parts))))
-                    getter-name (str "get" (str/capitalize camel-case))
-                    getter-method (.getMethod proto-class getter-name (into-array Class []))
-                    ;; Get the return type which should be the proto class for this field
-                    field-proto-class (.getReturnType getter-method)
+                    ;; Use field info from descriptor if available
+                    field-proto-class (if-let [info (get field-info field-name)]
+                                        (:class info)
+                                        ;; Fallback to reflection
+                                        (let [parts (str/split (name field-name) #"-")
+                                              camel-case (str/join "" (cons (first parts)
+                                                                          (map str/capitalize (rest parts))))
+                                              getter-name (str "get" (str/capitalize camel-case))
+                                              getter-method (.getMethod proto-class getter-name 
+                                                                      (into-array Class []))]
+                                          (.getReturnType getter-method)))
                     ;; Create an empty proto instance for this field
                     field-value (p/proto-map proto-mapper field-proto-class)]
                 ;; Set the field with the generated proto instance

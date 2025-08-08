@@ -173,11 +173,12 @@ The TypeScript `cmdSenderShared.ts` file contains low-level infrastructure for m
 ### Key Components
 
 1. **Malli Specs**: Input/output validation with custom generators for property-based testing
-2. **Guardrails**: Compile-time and runtime function checking with instrumentation always enabled
-3. **Pronto**: EDN to Protobuf conversion
-4. **Buf.validate**: Protobuf constraint validation
-5. **Mock Server**: Testing infrastructure
-6. **Shared Specs**: Reusable specifications for common types (angles, ranges, positions)
+2. **Custom Oneof-Pronto Schema**: Specialized Malli schema type for protobuf oneofs (see below)
+3. **Guardrails**: Compile-time and runtime function checking with instrumentation always enabled
+4. **Pronto**: EDN to Protobuf conversion with proto-map abstraction
+5. **Buf.validate**: Protobuf constraint validation
+6. **Mock Server**: Testing infrastructure
+7. **Shared Specs**: Reusable specifications for common types (angles, ranges, positions)
 
 ### Function Design
 
@@ -246,14 +247,141 @@ make mock-server
 make test-mock
 ```
 
+## Custom Oneof-Pronto Schema
+
+We've developed a custom Malli schema type `:oneof-pronto` specifically for validating Protocol Buffer oneofs in Pronto proto-maps. This addresses a unique challenge with Pronto's proto-map representation of oneofs.
+
+### The Challenge
+
+In standard Clojure maps, a oneof would be represented with only the active field present. However, Pronto proto-maps always contain ALL fields with default values, making standard validation approaches inadequate.
+
+### Our Solution
+
+The `:oneof-pronto` schema:
+- Uses Pronto's `which-one-of` function to determine the active field
+- Leverages protobuf descriptors via `pronto.type-gen/descriptor` for field metadata
+- Validates that exactly one field is set in the oneof
+- Validates the value of the active field against its schema
+- Generates valid proto-maps with proper oneof constraints
+
+### Usage Example
+
+```clojure
+;; Define a oneof spec for command payloads
+(def command-spec
+  [:oneof-pronto
+   {:proto-class JonSharedCmd$Root
+    :proto-mapper cmd-mapper
+    :oneof-name :payload  ; The protobuf oneof field name
+    :ping [:fn #(instance? JonSharedCmd$Ping %)]
+    :noop [:fn #(instance? JonSharedCmd$Noop %)]
+    :frozen [:fn #(instance? JonSharedCmd$Frozen %)]}])
+
+;; Validate a proto-map
+(m/validate command-spec 
+  (p/proto-map cmd-mapper JonSharedCmd$Root
+    :ping (p/proto-map cmd-mapper JonSharedCmd$Ping)))
+;; => true
+
+;; Generate valid proto-maps
+(mg/generate command-spec)
+;; => Returns a proto-map with exactly one field set
+```
+
+### Key Features
+
+1. **Descriptor-Based Field Access**: Uses Pronto's descriptor API to get field types and getter methods
+2. **Automatic Name Conversion**: Handles kebab-case to camelCase conversion using Pronto utilities
+3. **Reflection Fallback**: Falls back to reflection if descriptor information is unavailable
+4. **Generator Support**: Generates valid proto-maps for property-based testing
+5. **Comprehensive Validation**: Validates both oneof constraint and field value types
+
+## Pronto Proto-Map Insights
+
+Through our implementation, we've gathered valuable insights about Pronto's proto-map behavior:
+
+### Field Access Patterns
+
+```clojure
+;; Proto-maps display as regular maps but have special behavior
+(def pm (p/proto-map mapper Root :field-name value))
+
+;; All fields are always present with defaults
+(keys pm)
+;; => (:field1 :field2 :field3 ...) ; ALL proto fields
+
+;; Oneof fields require special handling
+(p/which-one-of pm :oneof-name)
+;; => :active-field or nil
+
+;; Field values are accessed via getters, not get
+(.getFieldName pm)  ; Returns actual proto instance
+(get pm :field-name) ; Returns proto-map wrapper (for nested messages)
+```
+
+### Descriptor API Usage
+
+```clojure
+;; Get proto descriptor
+(require '[pronto.type-gen :as pt])
+(def descriptor (pt/descriptor ProtoClass))
+
+;; Get oneof information
+(def oneofs (.getOneofs descriptor))
+(def fields (.getFields (first oneofs)))
+
+;; Get field type for a field descriptor
+(pt/field-type ProtoClass field-descriptor)
+;; => Returns the Java class for the field
+```
+
+### Pronto's Case Conversion Utilities
+
+Pronto provides built-in utilities for converting between naming conventions, which is essential when working with protobuf (snake_case) and Java (camelCase) interop:
+
+```clojure
+(require '[pronto.utils :as pu])
+
+;; Field descriptor to camelCase
+(pu/field->camel-case field-descriptor)  ; Uses descriptor's name
+;; => "FieldName"
+
+;; String conversions
+(pu/->kebab-case "field_name")          ; snake_case to kebab-case
+;; => "field-name"
+
+(pu/->camel-case "field_name")          ; snake_case to camelCase
+;; => "fieldName"
+
+;; Pronto's camelCase conversion follows protobuf's Java conventions:
+;; - Preserves existing uppercase letters
+;; - Capitalizes after underscores
+;; - Capitalizes after digits
+;; Example: "field_2_name" -> "field2Name"
+```
+
+These utilities are crucial for:
+- Converting protobuf field names (snake_case) to Clojure keywords (kebab-case)
+- Generating Java getter/setter method names from field descriptors
+- Maintaining naming consistency across the protobuf/Clojure/Java boundary
+
+### Proto-Map Characteristics
+
+1. **Immutable**: Proto-maps are immutable Clojure data structures
+2. **Lazy**: Field values are computed on access
+3. **Type-Safe**: Maintains protobuf type safety
+4. **Serializable**: Can be converted to/from protobuf bytes
+5. **EDN-Compatible**: Can be printed and read as EDN
+
 ## Validation Rules
 
 The tool enforces validation at multiple levels:
 
-1. **Malli Specs**: Type and range validation
+1. **Malli Specs**: Type and range validation including custom oneof validation
 2. **Buf.validate**: Protobuf field constraints
 3. **Business Logic**: Command-specific rules
 4. **Wire Format**: Binary compatibility
+5. **Oneof Constraints**: Exactly-one-field validation for protobuf oneofs
 
 Example validation for zoom command:
 ```clojure
@@ -266,6 +394,12 @@ Example validation for zoom command:
 ;; Business logic
 (when (> value current-max-zoom)
   (throw (ex-info "Zoom exceeds current limit" {:value value})))
+
+;; Oneof validation
+[:oneof-pronto {:proto-class Root
+                :proto-mapper mapper
+                :oneof-name :command
+                :zoom [:map [:value [:double]]]}]
 ```
 
 ## Project Structure
@@ -280,6 +414,10 @@ cmd-explorer/
 │   │   ├── rotary.clj
 │   │   └── ...
 │   ├── specs/                   # Malli specifications
+│   │   ├── oneof_payload.clj   # Custom oneof-pronto schema
+│   │   ├── shared.clj          # Common reusable specs
+│   │   └── proto_generators.clj # Proto-map generators
+│   ├── registry.clj            # Global Malli registry
 │   ├── validation/              # Buf.validate integration
 │   ├── websocket.clj           # WebSocket client
 │   └── mock_server.clj         # Testing server
