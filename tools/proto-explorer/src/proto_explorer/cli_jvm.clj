@@ -2,6 +2,7 @@
   "JVM-based CLI commands for proto-explorer (includes Java reflection features)"
   (:require [proto-explorer.java-class-info :as java-info]
             [proto-explorer.pronto-integration :as pronto-int]
+            [proto-explorer.descriptor-integration :as desc-int]
             [clojure.string :as str]
             [clojure.edn :as edn]
             [clojure.pprint :as pp]))
@@ -90,7 +91,7 @@
     (output-edn {:error "Usage: clojure -M:run java-builder <message-name-or-spec>"})))
 
 (defn java-class-summary
-  "Get human-readable Java class summary with Pronto EDN"
+  "Get human-readable Java class summary with Pronto EDN and descriptor info"
   [args]
   (init-proto-explorer!)
   (if-let [spec-name (first args)]
@@ -109,7 +110,15 @@
                                  message-or-spec))]
             (if (:error pronto-info)
               (println "Error getting Pronto EDN:" (:error pronto-info))
-              (pp/pprint (:edn-structure pronto-info)))))))
+              (pp/pprint (:edn-structure pronto-info))))
+          ;; Add descriptor info with constraints
+          (println "\n=== DESCRIPTOR INFO (with buf.validate constraints) ===\n")
+          (let [desc-info (desc-int/get-message-descriptor-info
+                           (or (get-in class-info [:class :simple-name])
+                               message-or-spec))]
+            (if (:error desc-info)
+              (println "Error getting descriptor:" (:error desc-info))
+              (pp/pprint (:descriptor-info desc-info)))))))
     (println "Usage: clojure -M:run java-summary <message-name-or-spec>")))
 
 (defn pronto-edn
@@ -124,6 +133,18 @@
         (output-edn (:edn-structure pronto-info))))
     (output-edn {:error "Usage: clojure -M:run pronto-edn <message-name>"})))
 
+(defn descriptor-info
+  "Get JSON descriptor info with buf.validate constraints as EDN"
+  [args]
+  (init-proto-explorer!)
+  (if-let [message-name (first args)]
+    (let [desc-info (desc-int/get-message-descriptor-info message-name)]
+      (if (:error desc-info)
+        (output-edn {:error (:error desc-info)
+                     :message-name message-name})
+        (output-edn (:descriptor-info desc-info))))
+    (output-edn {:error "Usage: clojure -M:run descriptor-info <message-name>"})))
+
 ;; Dispatch function for CLI commands
 (defn dispatch-command
   "Dispatch to appropriate command handler"
@@ -134,8 +155,9 @@
     "java-builder" (java-builder-info args)
     "java-summary" (java-class-summary args)
     "pronto-edn" (pronto-edn args)
+    "descriptor-info" (descriptor-info args)
     (output-edn {:error (str "Unknown command: " command)
-                 :available-commands ["java-class" "java-fields" "java-builder" "java-summary" "pronto-edn"]})))
+                 :available-commands ["java-class" "java-fields" "java-builder" "java-summary" "pronto-edn" "descriptor-info"]})))
 
 (comment
   ;; Test CLI commands

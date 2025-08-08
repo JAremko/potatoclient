@@ -35,7 +35,7 @@ help: ## Show all available commands with detailed descriptions
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "PROTO INSPECTION:"
-	@grep -E '^(proto-explorer|proto-inspect):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(proto-search|proto-list|proto-info|proto-explorer):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "OTHER TOOLS:"
 	@grep -E '^(test|report-unspecced|check-deps|build-macos-dev):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -109,23 +109,56 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 		echo "Pronto classes already compiled"; \
 	fi
 
-# Proto Explorer - Message inspection and Pronto EDN
+###############################################################################
+# PROTO EXPLORER - Protobuf Message Discovery and Inspection
+# 
+# Proto-Explorer helps you:
+# - Find protobuf messages among hundreds of definitions
+# - Understand proto to Java class mappings (cmd.Root -> cmd.JonSharedCmd$Root)
+# - View message structure and field types
+# - See Pronto EDN representations for Clojure integration
+#
+# Workflow: 1) Search/List to find messages  2) Get info using Java class name
+###############################################################################
+
+# Proto Explorer - Direct CLI access
 .PHONY: proto-explorer
-proto-explorer: ensure-compiled ensure-pronto ## Run proto-explorer with arguments (e.g., make proto-explorer ARGS="pronto-edn Root")
+proto-explorer: ensure-compiled ensure-pronto ## Run proto-explorer CLI directly (e.g., make proto-explorer ARGS="search root")
 	@cd tools/proto-explorer && clojure -M:run:test-protos $(ARGS)
 
-# Inspect a protobuf message (interactive)
-.PHONY: proto-inspect
-proto-inspect: ensure-compiled ensure-pronto ## Inspect a protobuf message with Java info and Pronto EDN (e.g., make proto-inspect MSG=Root)
-	@if [ -z "$(MSG)" ]; then \
-		echo "Usage: make proto-inspect MSG=<message-name>"; \
-		echo "Example: make proto-inspect MSG=Root"; \
+# Search for protobuf messages with smart matching
+.PHONY: proto-search
+proto-search: ensure-pronto ## Smart search for protobuf messages - case-insensitive substring with fuzzy fallback (e.g., make proto-search QUERY=gps)
+	@if [ -z "$(QUERY)" ]; then \
+		echo "Usage: make proto-search QUERY=<search-term>"; \
+		echo ""; \
 		echo "Examples:"; \
-		echo "  make proto-inspect MSG=Root           # Command root"; \
-		echo "  make proto-inspect MSG=JonGUIState    # State root"; \
+		echo "  make proto-search QUERY=gps        # Find GPS-related messages"; \
+		echo "  make proto-search QUERY=set        # Find all Set* commands"; \
+		echo "  make proto-search QUERY=compass    # Find compass messages"; \
+		echo ""; \
+		echo "Search is case-insensitive and finds substrings."; \
+		echo "Also handles typos with fuzzy matching."; \
 		exit 1; \
 	fi
-	@cd tools/proto-explorer && clojure -M:run:test-protos java-summary $(MSG)
+	@cd tools/proto-explorer && clojure -M:run:test-protos search $(QUERY)
+
+# List all protobuf messages organized by package
+.PHONY: proto-list
+proto-list: ensure-pronto ## List all protobuf messages grouped by package (e.g., make proto-list FILTER=cmd.System)
+	@cd tools/proto-explorer && clojure -M:run:test-protos list $(FILTER)
+
+# Get comprehensive info about a protobuf message
+.PHONY: proto-info
+proto-info: ensure-pronto ## Get Java class info, Pronto EDN, and field details for a message (e.g., make proto-info CLASS='cmd.JonSharedCmd$$Root')
+	@if [ -z "$(CLASS)" ]; then \
+		echo "Usage: make proto-info CLASS=<full-class-name>"; \
+		echo "Example: make proto-info CLASS='cmd.JonSharedCmd\$$Root'"; \
+		echo "Note: Use full class name from 'make proto-search' output"; \
+		echo "Note: For inner classes with $$, use single quotes around the class name"; \
+		exit 1; \
+	fi
+	@cd tools/proto-explorer && clojure -M:run:test-protos info "$(CLASS)"
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin
