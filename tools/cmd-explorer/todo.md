@@ -298,7 +298,7 @@ Oneof spec adaptation for Pronto (see Phase 0):
   - [x] Check protobuf classes are compiled
   - [x] Register custom oneof-pronto schema
   - [x] Initialize Malli global registry
-- [ ] Define common reusable specs (angles, ranges, positions, enums)
+- [x] Define common reusable specs (angles, ranges, positions, enums)
 - [ ] **Reconcile custom specs with proto-generated specs for Pronto compatibility**
   - [ ] Compare one-off custom specs with proto-explorer generated specs
   - [ ] Identify discrepancies between manual specs and proto definitions
@@ -319,10 +319,10 @@ Oneof spec adaptation for Pronto (see Phase 0):
     - [ ] Verify generated data can round-trip through protobuf serialization
   - [ ] Validate spec coercion matches protobuf type system
   - [ ] Handle oneof fields properly in specs (only one field should be set)
-- [ ] Attach custom generators to all specs
-- [ ] **Create Pronto-Malli integration layer**
-  - [ ] Helper function to validate Pronto proto-map with Malli spec
-  - [ ] Helper function to generate Pronto proto-map from Malli spec
+- [x] Attach custom generators to all specs
+- [x] **Create Pronto-Malli integration layer**
+  - [x] Helper function to validate Pronto proto-map with Malli spec
+  - [x] Helper function to generate Pronto proto-map from Malli spec
   - [ ] Ensure generators produce valid Pronto instances, not plain maps
   - [ ] Create test suite specifically for Pronto-Malli integration
     - [ ] Test that `(m/validate spec (p/proto-map ...))` works correctly

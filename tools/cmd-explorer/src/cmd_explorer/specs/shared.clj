@@ -4,7 +4,17 @@
    [malli.core :as m]
    [malli.generator :as mg]
    [cmd-explorer.registry :as registry]
-   [clojure.test.check.generators :as gen]))
+   [clojure.test.check.generators :as gen])
+  (:import
+   [ser JonSharedDataTypes$JonGuiDataClientType
+    JonSharedDataTypes$JonGuiDataGpsFixType
+    JonSharedDataTypes$JonGuiDataRotaryDirection
+    JonSharedDataTypes$JonGuiDataRotaryMode
+    JonSharedDataTypes$JonGuiDataVideoChannel
+    JonSharedDataTypes$JonGuiDataFxModeDay
+    JonSharedDataTypes$JonGuiDataFxModeHeat
+    JonSharedDataTypes$JonGuiDataLrfScanModes
+    JonSharedDataTypes$JonGuiDataCompassCalibrateStatus]))
 
 ;; Angle specs (degrees)
 (def azimuth-spec
@@ -143,6 +153,125 @@
 
 ;; Register percentage spec
 (registry/register! :percentage percentage-spec)
+
+;; Enum specs (Proto enums)
+(def client-type-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA])
+
+(def gps-fix-type-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D
+   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL])
+
+(def rotary-direction-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE])
+
+(def rotary-mode-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
+   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER])
+
+(def video-channel-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY])
+
+(def fx-mode-day-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
+   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F])
+
+(def fx-mode-heat-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
+   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F])
+
+(def lrf-scan-modes-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS])
+
+(def compass-calibrate-status-enum-spec
+  [:enum
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
+   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR])
+
+;; Register enum specs
+(registry/register! :enum/client-type client-type-enum-spec)
+(registry/register! :enum/gps-fix-type gps-fix-type-enum-spec)
+(registry/register! :enum/rotary-direction rotary-direction-enum-spec)
+(registry/register! :enum/rotary-mode rotary-mode-enum-spec)
+(registry/register! :enum/video-channel video-channel-enum-spec)
+(registry/register! :enum/fx-mode-day fx-mode-day-enum-spec)
+(registry/register! :enum/fx-mode-heat fx-mode-heat-enum-spec)
+(registry/register! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
+(registry/register! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
+
+;; Composite specs (combining basic specs)
+(def gps-position-spec
+  [:map
+   [:latitude :position/latitude]
+   [:longitude :position/longitude]
+   [:altitude :position/altitude]])
+
+(def compass-orientation-spec
+  [:map
+   [:azimuth :angle/azimuth]
+   [:elevation :angle/elevation]
+   [:bank :angle/bank]])
+
+(def screen-point-ndc-spec
+  [:map
+   [:x :screen/ndc-x]
+   [:y :screen/ndc-y]])
+
+(def screen-point-pixel-spec
+  [:map
+   [:x :screen/pixel-x]
+   [:y :screen/pixel-y]])
+
+;; Register composite specs
+(registry/register! :composite/gps-position gps-position-spec)
+(registry/register! :composite/compass-orientation compass-orientation-spec)
+(registry/register! :composite/screen-point-ndc screen-point-ndc-spec)
+(registry/register! :composite/screen-point-pixel screen-point-pixel-spec)
 
 ;; Helper functions for validation
 (defn validate-spec
