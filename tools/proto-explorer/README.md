@@ -1,6 +1,6 @@
 # Proto-Explorer
 
-A powerful Clojure tool for exploring and inspecting Protocol Buffer message definitions in your codebase. Proto-Explorer provides comprehensive information about protobuf messages including Java class mappings, Pronto EDN representations, and field details from descriptors.
+A streamlined 2-step tool for exploring Protocol Buffer messages in your codebase. Search for messages, then get comprehensive details including Java class mappings, Pronto EDN representations, and field information.
 
 ## Table of Contents
 
@@ -29,14 +29,12 @@ Proto-Explorer solves these problems by providing a unified interface to search,
 
 ## Features
 
-- **🔍 Smart Search**: Searches both message names and Java class names with intelligent matching
+- **🎯 2-Step Workflow**: Search first, then get details with the exact query string
+- **🔍 Unified Search**: Single command searches both message names and Java classes
 - **📋 Complete Listing**: Browse all messages organized by package
-- **🔗 Java Mapping**: Automatic mapping between proto definitions and Java classes
-- **📊 Pronto EDN**: View Clojure-friendly EDN representations via Pronto
-- **📝 Field Details**: Complete field information including types and constraints
-- **⚡ Fast**: Stateless tool that starts and responds quickly
-- **🎯 Focused**: Two-step workflow - search/list then inspect
-- **🔧 Flexible**: Auto-detects descriptor locations for seamless operation
+- **🔗 Actionable Results**: Search results provide ready-to-use query strings
+- **📊 Comprehensive Info**: Java mappings, Pronto EDN, and field details in one view
+- **⚡ Fast & Simple**: Stateless tool with clear, predictable commands
 
 ## Installation
 
@@ -50,259 +48,138 @@ Proto-Explorer is included in the PotatoClient project. No separate installation
 - Pronto library for EDN conversion
 - JSON descriptors in `output/json-descriptors/`
 
-## Usage
+## Usage: 2-Step Workflow
 
-### Command Line Interface
-
-Proto-Explorer provides a simple two-step workflow:
-
-1. **Find messages** using search or list
-2. **Get details** using the Java class name
-
-#### Direct CLI Usage
-
-From the `tools/proto-explorer` directory:
+### Step 1: Search or List Messages
 
 ```bash
-# Search for messages
-clojure -M:run:test-protos search <query> [limit]
-
-# Search specifically by Java class name
-clojure -M:run:test-protos search-java <query> [limit]
-
-# List all messages
-clojure -M:run:test-protos list [package-filter]
-
-# Get detailed info
-clojure -M:run:test-protos info <java-class-name>
-
-# Get info as EDN (for programmatic use)
-clojure -M:run:test-protos info-edn <java-class-name>
-```
-
-### Makefile Integration (Recommended)
-
-The preferred way to use Proto-Explorer is through the main Makefile:
-
-```bash
-# Search for protobuf messages
+# Search by message name or Java class
+make proto-search QUERY=root
 make proto-search QUERY=gps
+make proto-search QUERY=JonSharedCmd
 
-# Search specifically by Java class name
-make proto-search-java QUERY=Compass
-
-# List all messages (optional filter)
+# OR list all messages (with optional filter)
 make proto-list
-make proto-list FILTER=cmd.System
-
-# Get comprehensive info about a message
-make proto-info CLASS='cmd.JonSharedCmd$Root'
+make proto-list FILTER=cmd
 ```
 
-**Note**: For inner classes with `$`, use single quotes in the Makefile to prevent shell expansion.
+### Step 2: Get Detailed Information
+
+Use the exact query string shown in the search results:
+
+```bash
+# Copy the query string from step 1 results
+make proto-info QUERY='cmd.JonSharedCmd$Root'
+```
+
+**Note**: Use single quotes for inner classes with `$` to prevent shell expansion.
+
+### Example Workflow
+
+```bash
+# Step 1: Search
+$ make proto-search QUERY=root
+
+Search results for: "root"
+ 1. Root    cmd.JonSharedCmd$Root (score: 0.85)
+    → Query: cmd.JonSharedCmd$Root
+
+# Step 2: Get details (copy-paste the query string)
+$ make proto-info QUERY='cmd.JonSharedCmd$Root'
+
+[Detailed message information...]
+```
 
 ## API Reference
 
-### Primary Commands
+### Step 1: Search
 
-#### `search <query> [limit]`
-Searches for protobuf messages using smart matching algorithm.
+#### `make proto-search QUERY=<term>`
+Searches for protobuf messages by name or Java class.
 
-- **query**: Search term (case-insensitive)
-- **limit**: Maximum results to return (default: 10)
-- **Returns**: Ranked list of matching messages with scores
+- **Input**: Search term (case-insensitive)
+- **Output**: Ranked results with query strings for step 2
+- **Algorithm**: Checks both message names and Java class names
 
-**Matching Algorithm**:
-1. Exact match (score: 1.00)
-2. Prefix match (score: 0.95)
-3. Suffix match (score: 0.90)
-4. Word boundary match (score: 0.85)
-5. Substring match (score: 0.80, adjusted by position)
-6. Fuzzy match for typos (score: 0.50 * similarity)
+#### `make proto-list [FILTER=<package>]`
+Lists all protobuf messages, optionally filtered by package.
 
-**Search Scope**: The search algorithm checks both:
-- Message names (e.g., "Root", "Ping", "SetOriginGPS")
-- Full Java class names (e.g., "cmd.JonSharedCmd$Root", "ser.JonSharedData$JonGUIState")
+- **Input**: Optional package prefix filter
+- **Output**: All messages with Java class names for step 2
 
-#### `search-java <query> [limit]`
-Searches specifically by Java class name, focusing only on the Java class field.
+### Step 2: Get Information
 
-- **query**: Java class search term (case-insensitive)
-- **limit**: Maximum results to return (default: 10)
-- **Returns**: Ranked list of matching messages with scores
+#### `make proto-info QUERY='<result>'`
+Provides comprehensive information about a message.
 
-**Key Differences from `search`**:
-- Only searches in Java class names, not message names
-- Better for finding messages by their Java implementation
-- Prioritizes inner class name matches (after the `$`)
-- Useful when you know the Java class pattern
-
-#### `list [package-filter]`
-Lists all protobuf messages, optionally filtered by package prefix.
-
-- **package-filter**: Optional package prefix (e.g., "cmd", "cmd.System")
-- **Returns**: All messages grouped by package with field counts
-
-#### `info <java-class-name>`
-Provides comprehensive information about a specific message.
-
-- **java-class-name**: Full Java class name (e.g., `cmd.JonSharedCmd$Root`)
-- **Returns**: 
+- **Input**: Query string from step 1 (usually a Java class name)
+- **Output**: 
   - Java class details (methods, fields)
-  - Pronto EDN structure
-  - Field definitions with types
-  - Proto file location
-  - Package information
+  - Pronto EDN structure for Clojure
+  - Field definitions with types and numbers
+  - Proto file and package information
 
-#### `info-edn <java-class-name>`
-Same as `info` but returns raw EDN data for programmatic processing.
+## Common Use Cases
 
-### Legacy Commands
-
-These commands are available for specific use cases:
-
-- `java-class <message>` - Raw Java class information
-- `java-fields <message>` - Proto field to Java method mapping
-- `java-builder <message>` - Java builder information
-- `java-summary <message>` - Human-readable Java class summary
-- `pronto-edn <message>` - Just the Pronto EDN representation
-- `descriptor-info <message>` - JSON descriptor information
-
-## Use Cases
-
-### 1. Finding the Right Message
-
-**Problem**: "I need to send a GPS-related command but don't know the exact message name."
-
-**Solution**:
+### Finding GPS-Related Messages
 ```bash
+# Step 1: Search
 $ make proto-search QUERY=gps
+ 1. RotateToGPS    cmd.RotaryPlatform$RotateToGPS
+    → Query: cmd.RotaryPlatform$RotateToGPS
 
-Search results for: "gps"
- 1. RotateToGPS               cmd.RotaryPlatform$RotateToGPS (score: 0.90)
- 2. SetOriginGPS              cmd.RotaryPlatform$SetOriginGPS (score: 0.90)
- 3. JonGuiDataGps             ser$JonGuiDataGps (score: 0.90)
+# Step 2: Get details
+$ make proto-info QUERY='cmd.RotaryPlatform$RotateToGPS'
 ```
 
-### 2. Understanding Message Structure
-
-**Problem**: "What fields does the main command root message have?"
-
-**Solution**:
+### Understanding the Main Root Message
 ```bash
-$ make proto-info CLASS='cmd.JonSharedCmd$Root'
+# Step 1: Search for root messages
+$ make proto-search QUERY=JonSharedCmd
+ 1. Root    cmd.JonSharedCmd$Root
+    → Query: cmd.JonSharedCmd$Root
 
-=== FIELD DETAILS ===
-  [ 1] protocol_version          : type-uint32
-  [ 2] session_id                : type-uint32
-  [20] day_camera                : type-message    .cmd.DayCamera.Root
-  [21] heat_camera               : type-message    .cmd.HeatCamera.Root
-  ...
+# Step 2: Get complete structure
+$ make proto-info QUERY='cmd.JonSharedCmd$Root'
 ```
 
-### 3. Generating Clojure Code
-
-**Problem**: "How do I create this message in Clojure with Pronto?"
-
-**Solution**:
+### Exploring a Subsystem
 ```bash
-$ make proto-info CLASS='cmd.JonSharedCmd$Ping'
-
-=== PRONTO EDN STRUCTURE ===
-{}  ; Empty message, no required fields
-```
-
-For a more complex example:
-```bash
-$ make proto-info CLASS='cmd.RotaryPlatform$RotateAzimuthTo'
-
-=== PRONTO EDN STRUCTURE ===
-{:angle 0.0, :speed 0.0}  ; Shows default values and field names
-```
-
-### 4. Exploring a Subsystem
-
-**Problem**: "What commands are available for the compass subsystem?"
-
-**Solution**:
-```bash
+# Step 1: List messages for a specific package
 $ make proto-list FILTER=cmd.Compass
 
-=== cmd.Compass (13 messages) ===
-  CalibrateCencel                cmd.Compass$CalibrateCencel (fields: 0)
-  CalibrateNext                  cmd.Compass$CalibrateNext (fields: 0)
-  CalibrateStartLong             cmd.Compass$CalibrateStartLong (fields: 0)
-  SetMagneticDeclination         cmd.Compass$SetMagneticDeclination (fields: 1)
-  ...
+# Step 2: Get details for any message
+$ make proto-info QUERY='cmd.Compass$SetMagneticDeclination'
 ```
 
-### 5. Mapping Proto to Java
-
-**Problem**: "The error mentions 'cmd.Root' but I need the Java class name."
-
-**Solution**:
+### Getting Pronto EDN for Clojure
 ```bash
-$ make proto-search QUERY=root
-
-# Shows: Root -> cmd.JonSharedCmd$Root
-```
-
-### 6. Creating Malli Specs
-
-**Problem**: "I need to create Malli specs that match the protobuf structure."
-
-**Solution**:
-```bash
-$ make proto-info CLASS='cmd.RotaryPlatform$SetOriginGPS'
+# The info command shows Pronto EDN structure
+$ make proto-info QUERY='cmd.RotaryPlatform$RotateAzimuthTo'
 
 === PRONTO EDN STRUCTURE ===
-{:latitude 0.0, :longitude 0.0, :altitude 0.0}
-
-# Use this to create your Malli spec:
-(def SetOriginGPS
-  [:map
-   [:latitude float?]
-   [:longitude float?]
-   [:altitude float?]])
-```
-
-### 7. Debugging Serialization Issues
-
-**Problem**: "My protobuf message isn't serializing correctly."
-
-**Solution**:
-```bash
-# Check field mappings and types
-$ make proto-info CLASS='your.Message$Name'
-
-# Look at:
-# - Field numbers (must match proto definition)
-# - Field types (ensure correct type conversion)
-# - Java getter methods (for manual serialization)
+{:angle 0.0, :speed 0.0}
 ```
 
 ## Examples
 
-### Example 1: Complete Workflow
+### Complete 2-Step Workflow
 
 ```bash
 # Step 1: Search for azimuth-related messages
 $ make proto-search QUERY=azimuth
 
 Search results for: "azimuth"
- 1. Azimuth                   cmd.RotaryPlatform$Azimuth (score: 1.00)
- 2. HaltAzimuth               cmd.RotaryPlatform$HaltAzimuth (score: 1.00)
- 3. RotateAzimuthTo           cmd.RotaryPlatform$RotateAzimuthTo (score: 0.98)
+ 1. Azimuth                   cmd.RotaryPlatform$Azimuth
+    → Query: cmd.RotaryPlatform$Azimuth
+ 2. RotateAzimuthTo           cmd.RotaryPlatform$RotateAzimuthTo
+    → Query: cmd.RotaryPlatform$RotateAzimuthTo
 
-# Step 2: Get details about RotateAzimuthTo
-$ make proto-info CLASS='cmd.RotaryPlatform$RotateAzimuthTo'
+# Step 2: Get details (copy-paste query string)
+$ make proto-info QUERY='cmd.RotaryPlatform$RotateAzimuthTo'
 
-================================================================================
 PROTOBUF MESSAGE: RotateAzimuthTo
 Java Class: cmd.RotaryPlatform$RotateAzimuthTo
-Proto Package: cmd.RotaryPlatform
-Proto File: jon_shared_cmd_rotary.proto
-================================================================================
 
 === FIELD DETAILS ===
   [ 1] angle                     : type-float
@@ -312,102 +189,25 @@ Proto File: jon_shared_cmd_rotary.proto
 {:angle 0.0, :speed 0.0}
 ```
 
-### Example 2: Exploring Data Messages
+### Search Examples
 
 ```bash
-# List all data serialization messages
-$ make proto-list FILTER=ser
-
-=== ser (17 messages) ===
-  JonGUIState                    ser.JonSharedData$JonGUIState (fields: 14)
-  JonGuiDataCameraDay            ser$JonGuiDataCameraDay (fields: 11)
-  JonGuiDataGps                  ser$JonGuiDataGps (fields: 8)
-  ...
-
-# Inspect the main GUI state message
-$ make proto-info CLASS='ser.JonSharedData$JonGUIState'
+# Search is case-insensitive and handles substrings
+make proto-search QUERY=gps
+make proto-search QUERY=GPS
+make proto-search QUERY=set        # Finds all Set* commands
+make proto-search QUERY=JonShared  # Finds by Java class pattern
 ```
 
-### Example 3: Finding Messages with Typos
+### List Examples
 
 ```bash
-# Even with typos, the fuzzy search helps
-$ make proto-search QUERY=compas
+# List all messages
+make proto-list
 
-Search results for: "compas"
- 1. setUseRotaryAsCompass     cmd.RotaryPlatform$setUseRotaryAsCompass (score: 0.85)
- 2. JonGuiDataCompass         ser$JonGuiDataCompass (score: 0.85)
-```
-
-### Example 4: Working with Substrings
-
-```bash
-# Find anything with "GPS" in the name
-$ make proto-search QUERY=gps
-
-# Find all "Set" commands
-$ make proto-search QUERY=set
-
-# Case doesn't matter
-$ make proto-search QUERY=GPS
-$ make proto-search QUERY=gPs
-$ make proto-search QUERY=gps
-# All return the same results
-```
-
-### Example 5: Searching by Java Class Names
-
-```bash
-# Search for messages from JonSharedCmd outer class
-$ make proto-search QUERY=JonSharedCmd
-
-Search results for: "JonSharedCmd"
- 1. Root                      cmd.JonSharedCmd$Root (score: 0.85)
- 2. Ping                      cmd.JonSharedCmd$Ping (score: 0.85)
- 3. Noop                      cmd.JonSharedCmd$Noop (score: 0.85)
- 4. Frozen                    cmd.JonSharedCmd$Frozen (score: 0.85)
-
-# Search with full package prefix
-$ make proto-search QUERY=cmd.JonSharedCmd
-
-Search results for: "cmd.JonSharedCmd"
- 1. Root                      cmd.JonSharedCmd$Root (score: 0.95)
- 2. Ping                      cmd.JonSharedCmd$Ping (score: 0.95)
- 3. Noop                      cmd.JonSharedCmd$Noop (score: 0.95)
- 4. Frozen                    cmd.JonSharedCmd$Frozen (score: 0.95)
-
-# Search for JonSharedData messages
-$ make proto-search QUERY=JonSharedData
-
-Search results for: "JonSharedData"
- 1. JonGUIState               ser.JonSharedData$JonGUIState (score: 0.85)
-```
-
-### Example 6: Using Java-Specific Search
-
-```bash
-# Use search-java to focus only on Java class names
-$ make proto-search-java QUERY=Compass
-
-Search results for: "Compass"
- 1. setUseRotaryAsCompass     cmd.RotaryPlatform$setUseRotaryAsCompass (score: 0.90)
- 2. JonGuiDataCompass         ser$JonGuiDataCompass (score: 0.90)
- 3. Root                      cmd.Compass$Root (score: 0.85)
- 4. Start                     cmd.Compass$Start (score: 0.85)
- 5. Stop                      cmd.Compass$Stop (score: 0.85)
-
-# Compare with regular search which also matches message names
-$ make proto-search QUERY=Compass
-
-# search-java is more precise for finding by inner class name
-$ make proto-search-java QUERY=Root
-
-Search results for: "Root"
- 1. Root                      cmd.Compass$Root (score: 0.98)
- 2. Root                      cmd.Gps$Root (score: 0.98)
- 3. Root                      cmd.Lrf$Root (score: 0.98)
- 4. Root                      cmd.DayCamera$Root (score: 0.98)
- 5. Root                      cmd.HeatCamera$Root (score: 0.98)
+# List messages in specific package
+make proto-list FILTER=cmd.Compass
+make proto-list FILTER=ser
 ```
 
 ## Implementation Details

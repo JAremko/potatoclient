@@ -1,16 +1,18 @@
 (ns proto-explorer.cli-final
-  "Final simplified CLI - 2-step process with descriptor-set.json"
+  "Streamlined 2-step CLI for proto exploration"
   (:require [proto-explorer.simple-api :as api]
-            [clojure.pprint :as pp]))
+            [clojure.pprint :as pp]
+            [clojure.string :as str]))
 
 (defn search
-  "Fuzzy search for protobuf messages"
+  "Step 1: Search for protobuf messages by name or Java class.
+   Returns list with ready-to-use query strings for step 2."
   [args]
   (if-let [query (first args)]
     (let [limit (if-let [l (second args)]
                   (try (Integer/parseInt l) (catch Exception _ 10))
                   10)
-          results (api/search-messages query limit)]
+          results (api/search query limit)]
       (println (api/format-search-results results)))
     (println "Usage: proto-explorer search <query> [limit]")))
 
@@ -26,7 +28,7 @@
     (println "Usage: proto-explorer search-java <query> [limit]")))
 
 (defn list-messages
-  "List all protobuf messages, optionally filtered by package"
+  "Step 1 Alternative: List all protobuf messages, optionally filtered by package"
   [args]
   (let [package-filter (first args)
         results (if package-filter
@@ -35,15 +37,26 @@
     (println (api/format-list-results results))))
 
 (defn info
-  "Get comprehensive information about a protobuf message by Java class name"
+  "Step 2: Get comprehensive information about a protobuf message.
+   Use the query string from search results."
   [args]
-  (if-let [java-class (first args)]
+  (if-let [query (first args)]
     (try
-      (let [info (api/get-message-info java-class)]
+      ;; Handle both full Java class names and simple message names
+      (let [java-class (if (str/includes? query "$")
+                         query  ; Already a full Java class name
+                         ;; Try to find by message name
+                         (let [search-results (api/search query 1)
+                               matches (:matches search-results)]
+                           (if (seq matches)
+                             (:java-class (first matches))
+                             query)))  ; Fall back to original query
+            info (api/get-message-info java-class)]
         (println (api/format-message-info info)))
       (catch Exception e
-        (println "Error:" (.getMessage e))))
-    (println "Usage: proto-explorer info <java-class-name>")))
+        (println "Error:" (.getMessage e))
+        (println "\nTip: Use the exact query string from search results.")))
+    (println "Usage: proto-explorer info <query-from-search>")))
 
 (defn info-edn
   "Get comprehensive information as EDN (for programmatic use)"
@@ -64,10 +77,18 @@
     "list" (list-messages args)
     "info" (info args)
     "info-edn" (info-edn args)
-    (println (str "Unknown command: " command "\n"
-                 "Available commands:\n"
-                 "  search <query> [limit]       - Fuzzy search for protobuf messages\n"
-                 "  search-java <query> [limit]  - Search specifically by Java class name\n"
-                 "  list [package-prefix]        - List all messages (optionally filtered)\n"
-                 "  info <java-class>            - Get info by Java class name\n"
-                 "  info-edn <java-class>        - Get info as EDN"))))
+    ;; Help and default
+    ("help" "--help" "-h" nil)
+    (println (str "Proto-Explorer - Streamlined 2-Step Workflow\n"
+                 "================================================\n\n"
+                 "STEP 1: Search or List\n"
+                 "  search <query> [limit]       - Search by message name or Java class\n"
+                 "  list [package-prefix]        - List all messages\n\n"
+                 "STEP 2: Get Details\n"
+                 "  info <query-from-step1>      - Get comprehensive message info\n\n"
+                 "Alternative commands:\n"
+                 "  search-java <query> [limit]  - Search only Java class names\n"
+                 "  info-edn <query>             - Get info as EDN (for scripting)\n\n"
+                 "Examples:\n"
+                 "  proto-explorer search root\n"
+                 "  proto-explorer info 'cmd.JonSharedCmd$Root'"))))

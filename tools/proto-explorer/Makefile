@@ -9,51 +9,52 @@
 .DEFAULT_GOAL := help
 
 .PHONY: help
-help: ## Show all available commands
-	@echo "Proto Explorer - Protobuf Message Discovery Tool"
-	@echo "================================================"
+help: ## Show 2-step workflow
+	@echo "Proto Explorer - 2-Step Workflow"
+	@echo "================================="
 	@echo ""
-	@echo "Available commands:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@echo "STEP 1: Search for messages"
+	@echo "  make search QUERY=<term>       # Search by name or Java class"
+	@echo "  make list [FILTER=<package>]   # List all messages"
 	@echo ""
-	@echo "Usage examples:"
-	@echo "  make search QUERY=gps          # Find GPS-related messages"
-	@echo "  make search-java QUERY=Compass # Find messages by Java class name"
-	@echo "  make info CLASS='cmd.JonSharedCmd\$$Root'"
+	@echo "STEP 2: Get details"
+	@echo "  make info QUERY='<result>'     # Use query string from step 1"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make search QUERY=root"
+	@echo "  make info QUERY='cmd.JonSharedCmd\$$Root'"
+	@echo ""
+	@echo "Development:"
 	@echo "  make test                       # Run tests"
-	@echo "  make deps-outdated              # Check for outdated dependencies"
+	@echo "  make repl                       # Start REPL"
 
 .PHONY: search
-search: ## Search for protobuf messages (e.g., make search QUERY=gps)
+search: ## [STEP 1] Search for protobuf messages
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make search QUERY=<search-term>"; \
-		echo "Example: make search QUERY=gps"; \
+		echo ""; \
+		echo "Examples:"; \
+		echo "  make search QUERY=root         # Find all Root messages"; \
+		echo "  make search QUERY=gps          # Find GPS-related messages"; \
+		echo "  make search QUERY=JonSharedCmd # Find by Java class"; \
 		exit 1; \
 	fi
 	@clojure -M:run:test-protos search $(QUERY)
 
-.PHONY: search-java
-search-java: ## Search specifically by Java class name (e.g., make search-java QUERY=JonSharedCmd)
-	@if [ -z "$(QUERY)" ]; then \
-		echo "Usage: make search-java QUERY=<java-class-term>"; \
-		echo "Example: make search-java QUERY=JonSharedCmd"; \
-		exit 1; \
-	fi
-	@clojure -M:run:test-protos search-java $(QUERY)
-
 .PHONY: list
-list: ## List all protobuf messages (optionally filter: make list FILTER=cmd.System)
+list: ## [STEP 1] List all protobuf messages
 	@clojure -M:run:test-protos list $(FILTER)
 
 .PHONY: info
-info: ## Get info about a protobuf message (e.g., make info CLASS='cmd.JonSharedCmd$$Root')
-	@if [ -z "$(CLASS)" ]; then \
-		echo "Usage: make info CLASS=<full-class-name>"; \
-		echo "Example: make info CLASS='cmd.JonSharedCmd\$$Root'"; \
-		echo "Note: Use single quotes for classes with \$$"; \
+info: ## [STEP 2] Get detailed info using query from step 1
+	@if [ -z "$(QUERY)" ]; then \
+		echo "Usage: make info QUERY='<result-from-search>'"; \
+		echo ""; \
+		echo "Use the query string shown in search results."; \
+		echo "Example: make info QUERY='cmd.JonSharedCmd\$$Root'"; \
 		exit 1; \
 	fi
-	@clojure -M:run:test-protos info "$(CLASS)"
+	@clojure -M:run:test-protos info "$(QUERY)"
 
 .PHONY: repl
 repl: ## Start a REPL for interactive exploration

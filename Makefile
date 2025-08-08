@@ -34,8 +34,11 @@ help: ## Show all available commands with detailed descriptions
 	@echo "CODE QUALITY:"
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
-	@echo "PROTO INSPECTION:"
-	@grep -E '^(proto-search|proto-list|proto-info|proto-explorer):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@echo "PROTO EXPLORER (2-step workflow):"
+	@echo "  Step 1: Search or list messages"
+	@grep -E '^(proto-search|proto-list):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    %-18s %s\n", $$1, $$2}'
+	@echo "  Step 2: Get detailed information"
+	@grep -E '^(proto-info):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    %-18s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "DEPENDENCY MANAGEMENT:"
 	@grep -E '^(deps-outdated|deps-upgrade|deps-upgrade-all|check-deps):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -124,44 +127,45 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 # Workflow: 1) Search/List to find messages  2) Get info using Java class name
 ###############################################################################
 
-# Proto Explorer - Direct CLI access
-.PHONY: proto-explorer
-proto-explorer: ensure-compiled ensure-pronto ## Run proto-explorer CLI directly (e.g., make proto-explorer ARGS="search root")
-	@cd tools/proto-explorer && clojure -M:run:test-protos $(ARGS)
+# PROTO EXPLORER - 2-Step Workflow
+# Step 1: Search for messages, Step 2: Get details with query string from step 1
 
-# Search for protobuf messages with smart matching
+# STEP 1: Search for protobuf messages (returns query strings for step 2)
 .PHONY: proto-search
-proto-search: ensure-pronto ## Smart search for protobuf messages - case-insensitive substring with fuzzy fallback (e.g., make proto-search QUERY=gps)
+proto-search: ensure-pronto ## Search messages by name or Java class
 	@if [ -z "$(QUERY)" ]; then \
-		echo "Usage: make proto-search QUERY=<search-term>"; \
+		echo "Proto-Explorer: 2-Step Workflow"; \
+		echo "================================"; \
+		echo ""; \
+		echo "STEP 1: make proto-search QUERY=<term>"; \
+		echo "STEP 2: make proto-info QUERY='<result-from-step1>'"; \
 		echo ""; \
 		echo "Examples:"; \
+		echo "  make proto-search QUERY=root       # Find all root messages"; \
 		echo "  make proto-search QUERY=gps        # Find GPS-related messages"; \
-		echo "  make proto-search QUERY=set        # Find all Set* commands"; \
-		echo "  make proto-search QUERY=compass    # Find compass messages"; \
-		echo ""; \
-		echo "Search is case-insensitive and finds substrings."; \
-		echo "Also handles typos with fuzzy matching."; \
+		echo "  make proto-search QUERY=JonShared  # Find by Java class pattern"; \
 		exit 1; \
 	fi
 	@cd tools/proto-explorer && clojure -M:run:test-protos search $(QUERY)
 
-# List all protobuf messages organized by package
+# STEP 1 Alternative: List all protobuf messages
 .PHONY: proto-list
-proto-list: ensure-pronto ## List all protobuf messages grouped by package (e.g., make proto-list FILTER=cmd.System)
+proto-list: ensure-pronto ## List all messages (optional FILTER=package)
 	@cd tools/proto-explorer && clojure -M:run:test-protos list $(FILTER)
 
-# Get comprehensive info about a protobuf message
+# STEP 2: Get comprehensive info about a protobuf message
 .PHONY: proto-info
-proto-info: ensure-pronto ## Get Java class info, Pronto EDN, and field details for a message (e.g., make proto-info CLASS='cmd.JonSharedCmd$$Root')
-	@if [ -z "$(CLASS)" ]; then \
-		echo "Usage: make proto-info CLASS=<full-class-name>"; \
-		echo "Example: make proto-info CLASS='cmd.JonSharedCmd\$$Root'"; \
-		echo "Note: Use full class name from 'make proto-search' output"; \
-		echo "Note: For inner classes with $$, use single quotes around the class name"; \
+proto-info: ensure-pronto ## Get detailed info using query from step 1
+	@if [ -z "$(QUERY)" ]; then \
+		echo "Usage: make proto-info QUERY='<result-from-search>'"; \
+		echo ""; \
+		echo "Use the exact query string shown in search results."; \
+		echo ""; \
+		echo "Example: make proto-info QUERY='cmd.JonSharedCmd\$$Root'"; \
+		echo "Note: Use single quotes for inner classes with $$"; \
 		exit 1; \
 	fi
-	@cd tools/proto-explorer && clojure -M:run:test-protos info "$(CLASS)"
+	@cd tools/proto-explorer && clojure -M:run:test-protos info "$(QUERY)"
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin

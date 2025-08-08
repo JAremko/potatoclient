@@ -8,20 +8,50 @@
             [clojure.pprint :as pprint]))
 
 ;; =============================================================================
-;; Step 1: Search / List
+;; Step 1: Search / List - Returns actionable results
 ;; =============================================================================
 
 (defn search-messages
-  "Fuzzy search for protobuf messages"
+  "Search for protobuf messages by name or Java class.
+   Returns results with ready-to-use query strings for step 2."
   ([query] (search-messages query 10))
   ([query limit]
-   (search/fuzzy-search-messages query limit)))
+   (let [results (search/fuzzy-search-messages query limit)
+         matches (:matches results)]
+     (assoc results
+            :matches (mapv (fn [r]
+                            (assoc r 
+                                   :query-command (str "make proto-info QUERY='" (:java-class r) "'")
+                                   :query-string (:java-class r)))
+                          matches)))))
 
 (defn search-by-java-class
-  "Search specifically by Java class name"
+  "Search specifically by Java class name.
+   Returns results with ready-to-use query strings for step 2."
   ([query] (search-by-java-class query 10))
   ([query limit]
-   (search/search-java-classes query limit)))
+   (let [results (search/search-java-classes query limit)
+         matches (:matches results)]
+     (assoc results
+            :matches (mapv (fn [r]
+                            (assoc r
+                                   :query-command (str "make proto-info QUERY='" (:java-class r) "'")
+                                   :query-string (:java-class r)))
+                          matches)))))
+
+(defn search
+  "Unified search that checks both message names and Java classes.
+   Returns results with ready-to-use query strings for step 2."
+  ([query] (search query 10))
+  ([query limit]
+   (let [results (search/fuzzy-search-messages query limit)
+         matches (:matches results)]
+     (assoc results
+            :matches (mapv (fn [r]
+                            (assoc r
+                                   :query-command (str "make proto-info QUERY='" (:java-class r) "'")
+                                   :query-string (:java-class r)))
+                          matches)))))
 
 (defn list-all-messages
   "List all available protobuf messages, optionally filtered by package"
@@ -117,7 +147,7 @@
 ;; =============================================================================
 
 (defn format-list-results
-  "Format list results for display"
+  "Format list results for display with query strings"
   [results]
   (str "PROTOBUF MESSAGES - Total: " (:total results) "\n"
        (if (:filter results)
@@ -125,36 +155,39 @@
          "")
        "Packages: " (str/join ", " (:packages results)) "\n"
        "\n"
-       (str/join "\n"
+       (str/join "\n\n"
                 (map (fn [[pkg messages]]
                       (str "=== " pkg " (" (count messages) " messages) ===\n"
                           (str/join "\n"
                                    (map (fn [msg]
-                                         (format "  %-30s %s (fields: %d)"
+                                         (format "  %-30s → %s\n  %-30s   (fields: %d)"
                                                 (:message-name msg)
                                                 (:java-class msg)
+                                                ""
                                                 (:field-count msg)))
                                        messages))))
-                    (:by-package results)))))
+                    (:by-package results)))
+       "\n\nTo get details, use: make proto-info QUERY='<java-class-from-above>'"))
 
 (defn format-search-results
-  "Format search results for display"
+  "Format search results for display with actionable query strings"
   [results]
   (str "Search results for: \"" (:query results) "\"\n\n"
-       (str/join "\n" 
+       (str/join "\n\n" 
                 (map-indexed 
                  (fn [idx match]
-                   (format "%2d. %-25s %s (score: %s)\n    Package: %-20s Proto: %s"
+                   (format "%2d. %-25s %s (score: %s)\n    Package: %-20s\n    Proto: %s\n    → Query: %s"
                           (inc idx)
                           (:message-name match)
                           (:java-class match)
                           (:score match)
                           (:proto-package match)
-                          (:proto-file match)))
+                          (:proto-file match)
+                          (or (:query-string match) (:java-class match))))
                  (:matches results)))
-       "\n\nUse the Java class name (e.g., " 
-       (-> results :matches first :java-class) 
-       ") with the 'info' command for details."))
+       "\n\n" 
+       "To get details, use:\n"
+       "  make proto-info QUERY='<query-string-from-above>'"))
 
 (defn format-message-info
   "Format message info for display"
