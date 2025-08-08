@@ -159,3 +159,75 @@
     (first (filter #(and (= (:proto-package %) proto-package)
                         (= (:message-name %) message-name)) 
                   all-messages))))
+
+(defn search-java-classes
+  "Search specifically by Java class name, focusing only on the Java class field"
+  ([query] (search-java-classes query 10))
+  ([query limit]
+   (let [all-messages (load-all-messages)
+         query-lower (str/lower-case query)
+         ;; Calculate scores for each message based on Java class only
+         scored (map (fn [msg-info]
+                      (let [java-class (:java-class msg-info)
+                            class-lower (str/lower-case java-class)
+                            ;; Check only Java class name
+                            contains-query? (str/includes? class-lower query-lower)
+                            ;; Position of match (earlier is better)
+                            match-position (if contains-query?
+                                             (str/index-of class-lower query-lower)
+                                             Integer/MAX_VALUE)
+                            ;; Exact match
+                            exact-match? (= class-lower query-lower)
+                            ;; Starts with query
+                            starts-with? (str/starts-with? class-lower query-lower)
+                            ;; Ends with query
+                            ends-with? (str/ends-with? class-lower query-lower)
+                            ;; Check if query matches after $ (inner class name)
+                            inner-class-name (last (str/split java-class #"\$"))
+                            inner-class-lower (str/lower-case inner-class-name)
+                            inner-exact? (= inner-class-lower query-lower)
+                            inner-starts? (str/starts-with? inner-class-lower query-lower)
+                            inner-contains? (str/includes? inner-class-lower query-lower)
+                            ;; Word boundary match
+                            word-boundary-match? (and contains-query?
+                                                     (or (re-find (re-pattern (str "(?i)\\b" query "\\b")) java-class)
+                                                         (re-find (re-pattern (str "(?i)\\$" query)) java-class)))
+                            ;; Fuzzy match for typos (fallback)
+                            fuzzy-score (fuzzy/jaro-winkler query-lower class-lower)
+                            ;; Calculate final score
+                            score (cond
+                                   exact-match?      1.0
+                                   inner-exact?      0.98
+                                   starts-with?      0.95
+                                   inner-starts?     0.93
+                                   ends-with?        0.90
+                                   word-boundary-match? 0.85
+                                   inner-contains?   0.82
+                                   contains-query?   (- 0.80 (* 0.001 match-position))
+                                   :else            (* 0.5 fuzzy-score))]
+                        (assoc msg-info 
+                               :score score
+                               :match-type (cond
+                                           exact-match? "exact"
+                                           inner-exact? "inner-exact"
+                                           starts-with? "prefix"
+                                           inner-starts? "inner-prefix"
+                                           ends-with? "suffix"
+                                           contains-query? "substring"
+                                           (> fuzzy-score 0.7) "fuzzy"
+                                           :else "none"))))
+                    all-messages)
+         ;; Filter out very low scores and sort
+         top-matches (->> scored
+                         (filter #(> (:score %) 0.3))
+                         (sort-by :score >)
+                         (take limit))]
+     {:query query
+      :matches (mapv (fn [match]
+                      {:message-name (:message-name match)
+                       :java-class (:java-class match)
+                       :proto-package (:proto-package match)
+                       :proto-file (:proto-file match)
+                       :field-count (:field-count match)
+                       :score (format "%.2f" (:score match))})
+                    top-matches)})))

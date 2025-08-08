@@ -14,6 +14,17 @@
       (println (api/format-search-results results)))
     (println "Usage: proto-explorer search <query> [limit]")))
 
+(defn search-java
+  "Search specifically by Java class name"
+  [args]
+  (if-let [query (first args)]
+    (let [limit (if-let [l (second args)]
+                  (try (Integer/parseInt l) (catch Exception _ 10))
+                  10)
+          results (api/search-by-java-class query limit)]
+      (println (api/format-search-results results)))
+    (println "Usage: proto-explorer search-java <query> [limit]")))
+
 (defn list-messages
   "List all protobuf messages, optionally filtered by package"
   [args]
@@ -49,12 +60,14 @@
   [command args]
   (case command
     "search" (search args)
+    "search-java" (search-java args)
     "list" (list-messages args)
     "info" (info args)
     "info-edn" (info-edn args)
     (println (str "Unknown command: " command "\n"
                  "Available commands:\n"
-                 "  search <query> [limit]  - Fuzzy search for protobuf messages\n"
-                 "  list [package-prefix]   - List all messages (optionally filtered)\n"
-                 "  info <java-class>       - Get info by Java class name\n"
-                 "  info-edn <java-class>   - Get info as EDN"))))
+                 "  search <query> [limit]       - Fuzzy search for protobuf messages\n"
+                 "  search-java <query> [limit]  - Search specifically by Java class name\n"
+                 "  list [package-prefix]        - List all messages (optionally filtered)\n"
+                 "  info <java-class>            - Get info by Java class name\n"
+                 "  info-edn <java-class>        - Get info as EDN"))))

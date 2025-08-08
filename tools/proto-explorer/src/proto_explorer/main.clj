@@ -38,7 +38,7 @@
           (System/exit 1))
       
       ;; Main commands
-      (#{"search" "list" "info" "info-edn"} (first arguments))
+      (#{"search" "search-java" "list" "info" "info-edn"} (first arguments))
       (cli-final/dispatch-command (first arguments) (rest arguments))
       
       ;; Legacy Java class info commands
@@ -49,6 +49,7 @@
       (do (println "Usage: proto-explorer COMMAND [options]")
           (println "\n=== MAIN COMMANDS ===")
           (println "  search <query>        Fuzzy search for protobuf message classes")
+          (println "  search-java <query>   Search specifically by Java class name")
           (println "  info <class-name>     Get all information about a class (use full name from search)")
           (println "  info-edn <class-name> Get all information as EDN")
           (println "\n=== LEGACY COMMANDS ===")
@@ -60,5 +61,6 @@
           (println "  descriptor-info <message>  Get JSON descriptor info")
           (println "\nExamples:")
           (println "  proto-explorer search root")
+          (println "  proto-explorer search-java JonSharedCmd")
           (println "  proto-explorer info 'cmd.JonSharedCmd$Root'")
           (println "\nRun 'proto-explorer --help' for more information")))))

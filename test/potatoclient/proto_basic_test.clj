@@ -7,7 +7,7 @@
     ;; Try loading the classes dynamically
     (let [rotary-class (Class/forName "cmd.RotaryPlatform.JonSharedCmdRotary")
           halt-class (Class/forName "cmd.RotaryPlatform.JonSharedCmdRotary$Halt")
-          gps-class (Class/forName "ser.JonSharedDataGps$GetGpsNavData")]
+          gps-class (Class/forName "ser.JonSharedDataGps$JonGuiDataGps")]
       
       (is (not (nil? rotary-class)))
       (is (not (nil? halt-class)))
@@ -24,7 +24,7 @@
 (deftest basic-proto-operations-test
   (testing "Can perform basic protobuf operations"
     (let [;; Load GPS data class
-          gps-class (Class/forName "ser.JonSharedDataGps$GetGpsNavData")
+          gps-class (Class/forName "ser.JonSharedDataGps$JonGuiDataGps")
           ;; Get newBuilder method
           builder-method (.getMethod gps-class "newBuilder" (make-array Class 0))
           ;; Create builder

@@ -17,10 +17,11 @@ help: ## Show all available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Usage examples:"
-	@echo "  make search QUERY=gps     # Find GPS-related messages"
+	@echo "  make search QUERY=gps          # Find GPS-related messages"
+	@echo "  make search-java QUERY=Compass # Find messages by Java class name"
 	@echo "  make info CLASS='cmd.JonSharedCmd\$$Root'"
-	@echo "  make test                  # Run tests"
-	@echo "  make deps-outdated         # Check for outdated dependencies"
+	@echo "  make test                       # Run tests"
+	@echo "  make deps-outdated              # Check for outdated dependencies"
 
 .PHONY: search
 search: ## Search for protobuf messages (e.g., make search QUERY=gps)
@@ -30,6 +31,15 @@ search: ## Search for protobuf messages (e.g., make search QUERY=gps)
 		exit 1; \
 	fi
 	@clojure -M:run:test-protos search $(QUERY)
+
+.PHONY: search-java
+search-java: ## Search specifically by Java class name (e.g., make search-java QUERY=JonSharedCmd)
+	@if [ -z "$(QUERY)" ]; then \
+		echo "Usage: make search-java QUERY=<java-class-term>"; \
+		echo "Example: make search-java QUERY=JonSharedCmd"; \
+		exit 1; \
+	fi
+	@clojure -M:run:test-protos search-java $(QUERY)
 
 .PHONY: list
 list: ## List all protobuf messages (optionally filter: make list FILTER=cmd.System)

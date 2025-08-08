@@ -4,28 +4,30 @@
             [clojure.java.io :as io])
   (:import [cmd JonSharedCmd]
            [cmd.RotaryPlatform JonSharedCmdRotary JonSharedCmdRotary$Halt 
-            JonSharedCmdRotary$GotoAzEl JonSharedCmdRotary$Root JonSharedCmdRotary$Root$RootCase]
-           [ser JonSharedData JonSharedDataGps$GetGpsNavData 
-            JonSharedDataCompass$GetCompassData]))
+            JonSharedCmdRotary$RotateAzimuthTo JonSharedCmdRotary$RotateElevationTo
+            JonSharedCmdRotary$Root JonSharedCmdRotary$Root$CmdCase]
+           [ser JonSharedData JonSharedDataGps$JonGuiDataGps 
+            JonSharedDataCompass$JonGuiDataCompass]))
 
 (deftest protobuf-classes-exist-test
   (testing "Generated protobuf classes are available"
     (is (class? JonSharedCmd))
     (is (class? JonSharedCmdRotary$Halt))
-    (is (class? JonSharedCmdRotary$GotoAzEl))
-    (is (class? JonSharedDataGps$GetGpsNavData))
-    (is (class? JonSharedDataCompass$GetCompassData))))
+    (is (class? JonSharedCmdRotary$RotateAzimuthTo))
+    (is (class? JonSharedCmdRotary$RotateElevationTo))
+    (is (class? JonSharedDataGps$JonGuiDataGps))
+    (is (class? JonSharedDataCompass$JonGuiDataCompass))))
 
 (deftest protobuf-basic-creation-test
   (testing "Can create protobuf instances using builders"
     (let [;; Create a GPS data message using the builder pattern
-          gps-builder (JonSharedDataGps$GetGpsNavData/newBuilder)
+          gps-builder (JonSharedDataGps$JonGuiDataGps/newBuilder)
           gps-data (-> gps-builder
                       (.setLatitude 37.7749)
                       (.setLongitude -122.4194)
                       (.setAltitude 52.0)
                       (.build))]
-      (is (instance? JonSharedDataGps$GetGpsNavData gps-data))
+      (is (instance? JonSharedDataGps$JonGuiDataGps gps-data))
       (is (= 37.7749 (.getLatitude gps-data)))
       (is (= -122.4194 (.getLongitude gps-data)))
       (is (= 52.0 (.getAltitude gps-data))))))
@@ -33,15 +35,15 @@
 (deftest protobuf-serialization-test
   (testing "Can serialize and deserialize protobuf messages"
     (let [;; Create a compass data message
-          compass-data (-> (JonSharedDataCompass$GetCompassData/newBuilder)
+          compass-data (-> (JonSharedDataCompass$JonGuiDataCompass/newBuilder)
                           (.setAzimuth 180.0)
-                          (.setPitch 15.0)
-                          (.setRoll -5.0)
+                          (.setElevation 15.0)
+                          (.setBank -5.0)
                           (.build))
           ;; Serialize to bytes
           bytes (.toByteArray compass-data)
           ;; Deserialize back
-          restored (JonSharedDataCompass$GetCompassData/parseFrom bytes)]
+          restored (JonSharedDataCompass$JonGuiDataCompass/parseFrom bytes)]
       
       (testing "Serialization produces bytes"
         (is (bytes? bytes))
@@ -49,26 +51,32 @@
       
       (testing "Deserialization restores values"
         (is (= 180.0 (.getAzimuth restored)))
-        (is (= 15.0 (.getPitch restored)))
-        (is (= -5.0 (.getRoll restored)))))))
+        (is (= 15.0 (.getElevation restored)))
+        (is (= -5.0 (.getBank restored)))))))
 
 (deftest rotary-command-creation-test
   (testing "Can create rotary platform commands"
     (let [;; Create a Halt command
           halt-cmd (.build (JonSharedCmdRotary$Halt/newBuilder))
-          ;; Create a GotoAzEl command
-          goto-cmd (-> (JonSharedCmdRotary$GotoAzEl/newBuilder)
-                      (.setAz 45.0)
-                      (.setEl 30.0)
-                      (.build))]
+          ;; Create a RotateAzimuthTo command
+          az-cmd (-> (JonSharedCmdRotary$RotateAzimuthTo/newBuilder)
+                     (.setTargetValue 45.0)
+                     (.build))
+          ;; Create a RotateElevationTo command
+          el-cmd (-> (JonSharedCmdRotary$RotateElevationTo/newBuilder)
+                     (.setTargetValue 30.0)
+                     (.build))]
       
       (testing "Halt command creation"
         (is (instance? JonSharedCmdRotary$Halt halt-cmd)))
       
-      (testing "GotoAzEl command with values"
-        (is (instance? JonSharedCmdRotary$GotoAzEl goto-cmd))
-        (is (= 45.0 (.getAz goto-cmd)))
-        (is (= 30.0 (.getEl goto-cmd)))))))
+      (testing "RotateAzimuthTo command with values"
+        (is (instance? JonSharedCmdRotary$RotateAzimuthTo az-cmd))
+        (is (= 45.0 (.getTargetValue az-cmd))))
+      
+      (testing "RotateElevationTo command with values"
+        (is (instance? JonSharedCmdRotary$RotateElevationTo el-cmd))
+        (is (= 30.0 (.getTargetValue el-cmd)))))))
 
 (deftest nested-message-test
   (testing "Can work with nested/oneof messages"
@@ -85,12 +93,14 @@
         (is (instance? JonSharedCmdRotary$Halt (.getHalt root-msg))))
       
       (testing "Oneof case is set correctly"
-        (is (= JonSharedCmdRotary$Root$RootCase/HALT 
-               (.getRootCase root-msg)))))))
+        (is (= JonSharedCmdRotary$Root$CmdCase/HALT 
+               (.getCmdCase root-msg)))))))
 
 (deftest descriptor-inspection-test
   (testing "Can inspect protobuf descriptors"
-    (let [descriptor (.getDescriptor JonSharedDataGps$GetGpsNavData)
+    (let [;; getDescriptor is a static method, not an instance method
+          descriptor-method (.getMethod JonSharedDataGps$JonGuiDataGps "getDescriptor" (make-array Class 0))
+          descriptor (.invoke descriptor-method nil (make-array Object 0))
           fields (.getFields descriptor)]
       (is (not (nil? descriptor)))
       (is (> (.size fields) 0))
@@ -104,12 +114,12 @@
 (defn validate-setup []
   (try
     (println "\n=== Protobuf Setup Validation ===")
-    (println "✓ JonSharedDataGps available:" (class? JonSharedDataGps))
+    (println "✓ JonSharedDataGps$JonGuiDataGps available:" (class? JonSharedDataGps$JonGuiDataGps))
     (println "✓ JonSharedCmdRotary available:" (class? JonSharedCmdRotary))
-    (let [test-msg (-> (JonSharedDataGps$GetGpsNavData/newBuilder)
+    (let [test-msg (-> (JonSharedDataGps$JonGuiDataGps/newBuilder)
                        (.setLatitude 1.0)
                        (.build))]
-      (println "✓ Can create protobuf instances:" (instance? JonSharedDataGps$GetGpsNavData test-msg))
+      (println "✓ Can create protobuf instances:" (instance? JonSharedDataGps$JonGuiDataGps test-msg))
       (println "✓ Can serialize to bytes:" (> (alength (.toByteArray test-msg)) 0)))
     (println "=================================\n")
     true

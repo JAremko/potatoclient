@@ -67,6 +67,9 @@ From the `tools/proto-explorer` directory:
 # Search for messages
 clojure -M:run:test-protos search <query> [limit]
 
+# Search specifically by Java class name
+clojure -M:run:test-protos search-java <query> [limit]
+
 # List all messages
 clojure -M:run:test-protos list [package-filter]
 
@@ -84,6 +87,9 @@ The preferred way to use Proto-Explorer is through the main Makefile:
 ```bash
 # Search for protobuf messages
 make proto-search QUERY=gps
+
+# Search specifically by Java class name
+make proto-search-java QUERY=Compass
 
 # List all messages (optional filter)
 make proto-list
@@ -117,6 +123,19 @@ Searches for protobuf messages using smart matching algorithm.
 **Search Scope**: The search algorithm checks both:
 - Message names (e.g., "Root", "Ping", "SetOriginGPS")
 - Full Java class names (e.g., "cmd.JonSharedCmd$Root", "ser.JonSharedData$JonGUIState")
+
+#### `search-java <query> [limit]`
+Searches specifically by Java class name, focusing only on the Java class field.
+
+- **query**: Java class search term (case-insensitive)
+- **limit**: Maximum results to return (default: 10)
+- **Returns**: Ranked list of matching messages with scores
+
+**Key Differences from `search`**:
+- Only searches in Java class names, not message names
+- Better for finding messages by their Java implementation
+- Prioritizes inner class name matches (after the `$`)
+- Useful when you know the Java class pattern
 
 #### `list [package-filter]`
 Lists all protobuf messages, optionally filtered by package prefix.
@@ -362,6 +381,33 @@ $ make proto-search QUERY=JonSharedData
 
 Search results for: "JonSharedData"
  1. JonGUIState               ser.JonSharedData$JonGUIState (score: 0.85)
+```
+
+### Example 6: Using Java-Specific Search
+
+```bash
+# Use search-java to focus only on Java class names
+$ make proto-search-java QUERY=Compass
+
+Search results for: "Compass"
+ 1. setUseRotaryAsCompass     cmd.RotaryPlatform$setUseRotaryAsCompass (score: 0.90)
+ 2. JonGuiDataCompass         ser$JonGuiDataCompass (score: 0.90)
+ 3. Root                      cmd.Compass$Root (score: 0.85)
+ 4. Start                     cmd.Compass$Start (score: 0.85)
+ 5. Stop                      cmd.Compass$Stop (score: 0.85)
+
+# Compare with regular search which also matches message names
+$ make proto-search QUERY=Compass
+
+# search-java is more precise for finding by inner class name
+$ make proto-search-java QUERY=Root
+
+Search results for: "Root"
+ 1. Root                      cmd.Compass$Root (score: 0.98)
+ 2. Root                      cmd.Gps$Root (score: 0.98)
+ 3. Root                      cmd.Lrf$Root (score: 0.98)
+ 4. Root                      cmd.DayCamera$Root (score: 0.98)
+ 5. Root                      cmd.HeatCamera$Root (score: 0.98)
 ```
 
 ## Implementation Details

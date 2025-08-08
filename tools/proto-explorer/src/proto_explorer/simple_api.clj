@@ -17,6 +17,12 @@
   ([query limit]
    (search/fuzzy-search-messages query limit)))
 
+(defn search-by-java-class
+  "Search specifically by Java class name"
+  ([query] (search-by-java-class query 10))
+  ([query limit]
+   (search/search-java-classes query limit)))
+
 (defn list-all-messages
   "List all available protobuf messages, optionally filtered by package"
   ([]
