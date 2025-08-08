@@ -34,12 +34,6 @@ help: ## Show all available commands with detailed descriptions
 	@echo "CODE QUALITY:"
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
-	@echo "PROTO EXPLORER (2-step workflow):"
-	@echo "  Step 1: Search or list messages"
-	@grep -E '^(proto-search|proto-list):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    %-18s %s\n", $$1, $$2}'
-	@echo "  Step 2: Get detailed information"
-	@grep -E '^(proto-info):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    %-18s %s\n", $$1, $$2}'
-	@echo ""
 	@echo "DEPENDENCY MANAGEMENT:"
 	@grep -E '^(deps-outdated|deps-upgrade|deps-upgrade-all|check-deps):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
@@ -74,33 +68,7 @@ proto: ## Regenerate protobuf classes from protogen repository - always fresh
 	@echo "  • Custom kebab-case conversion for Clojure idioms"
 	@echo "  • Cleans up Docker images after generation to save space"
 	./scripts/generate-protos.sh
-	@$(MAKE) generate-keyword-trees
 
-# Generate keyword tree for commands
-.PHONY: generate-keyword-tree-cmd
-generate-keyword-tree-cmd: ## Generate keyword tree mapping for command protos
-	@echo "Generating command keyword tree mapping..."
-	@echo "  • Extracts all command message types from proto descriptors"
-	@echo "  • Maps EDN keywords to Java protobuf classes"
-	@echo "  • Includes field mappings with setter methods and types"
-	@echo "  • Generates static Clojure data structure (no runtime reflection)"
-	cd tools/proto-explorer && bb generate-keyword-tree-cmd ../../examples/protogen/output/json-descriptors
-	@echo "Generated: shared/specs/protobuf/proto_keyword_tree_cmd.clj"
-
-# Generate keyword tree for state
-.PHONY: generate-keyword-tree-state
-generate-keyword-tree-state: ## Generate keyword tree mapping for state protos
-	@echo "Generating state keyword tree mapping..."
-	@echo "  • Extracts all state message types from proto descriptors"
-	@echo "  • Maps EDN keywords to Java protobuf classes"
-	@echo "  • Includes field mappings with setter methods and types"
-	@echo "  • Generates static Clojure data structure (no runtime reflection)"
-	cd tools/proto-explorer && bb generate-keyword-tree-state ../../examples/protogen/output/json-descriptors
-	@echo "Generated: shared/specs/protobuf/proto_keyword_tree_state.clj"
-
-# Generate both keyword trees
-.PHONY: generate-keyword-trees
-generate-keyword-trees: generate-keyword-tree-cmd generate-keyword-tree-state ## Generate keyword trees for both commands and state
 
 # Compile pronto Java classes if needed
 .PHONY: ensure-pronto
@@ -115,57 +83,6 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 		echo "Pronto classes already compiled"; \
 	fi
 
-###############################################################################
-# PROTO EXPLORER - Protobuf Message Discovery and Inspection
-# 
-# Proto-Explorer helps you:
-# - Find protobuf messages among hundreds of definitions
-# - Understand proto to Java class mappings (cmd.Root -> cmd.JonSharedCmd$Root)
-# - View message structure and field types
-# - See Pronto EDN representations for Clojure integration
-#
-# Workflow: 1) Search/List to find messages  2) Get info using Java class name
-###############################################################################
-
-# PROTO EXPLORER - 2-Step Workflow
-# Step 1: Search for messages, Step 2: Get details with query string from step 1
-
-# STEP 1: Search for protobuf messages (returns query strings for step 2)
-.PHONY: proto-search
-proto-search: ensure-pronto ## Search messages by name or Java class
-	@if [ -z "$(QUERY)" ]; then \
-		echo "Proto-Explorer: 2-Step Workflow"; \
-		echo "================================"; \
-		echo ""; \
-		echo "STEP 1: make proto-search QUERY=<term>"; \
-		echo "STEP 2: make proto-info QUERY='<result-from-step1>'"; \
-		echo ""; \
-		echo "Examples:"; \
-		echo "  make proto-search QUERY=root       # Find all root messages"; \
-		echo "  make proto-search QUERY=gps        # Find GPS-related messages"; \
-		echo "  make proto-search QUERY=JonShared  # Find by Java class pattern"; \
-		exit 1; \
-	fi
-	@cd tools/proto-explorer && clojure -M:run:test-protos search $(QUERY)
-
-# STEP 1 Alternative: List all protobuf messages
-.PHONY: proto-list
-proto-list: ensure-pronto ## List all messages (optional FILTER=package)
-	@cd tools/proto-explorer && clojure -M:run:test-protos list $(FILTER)
-
-# STEP 2: Get comprehensive info about a protobuf message
-.PHONY: proto-info
-proto-info: ensure-pronto ## Get detailed info using query from step 1
-	@if [ -z "$(QUERY)" ]; then \
-		echo "Usage: make proto-info QUERY='<result-from-search>'"; \
-		echo ""; \
-		echo "Use the exact query string shown in search results."; \
-		echo ""; \
-		echo "Example: make proto-info QUERY='cmd.JonSharedCmd\$$Root'"; \
-		echo "Note: Use single quotes for inner classes with $$"; \
-		exit 1; \
-	fi
-	@cd tools/proto-explorer && clojure -M:run:test-protos info "$(QUERY)"
 
 # Compile Kotlin sources
 .PHONY: compile-kotlin

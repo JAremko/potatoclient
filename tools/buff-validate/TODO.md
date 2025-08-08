@@ -184,9 +184,14 @@ make -C ../proto-explorer info QUERY='cmd.JonSharedCmd$Root'
     :ping (p/proto-map cmd-mapper cmd.JonSharedCmd$Ping)))
 ```
 
-### How Proto-Explorer's Pronto Schema Helps Us
+### How Proto-Explorer's Pronto Schema Helps Us (FULLY WORKING WITH NESTED MESSAGES!)
 
-The **NEW Pronto Schema feature** in proto-explorer shows:
+The **ENHANCED Pronto Schema feature** in proto-explorer now includes:
+- **Deep nesting support** - correctly handles all nested message types
+- **Smart class resolution** - automatically finds correct Java classes with fuzzy matching
+- **Robust & foolproof** - automatic compilation and intelligent fallbacks
+
+The tool shows:
 
 1. **Field Types**: Exact Clojure/Pronto types for each field
    - Scalars: `int`, `float`, `boolean`, `string`
@@ -218,12 +223,38 @@ The **NEW Pronto Schema feature** in proto-explorer shows:
 
 Example usage for test data creation:
 ```bash
-# Get schema for any message type
+# Get complete schema for state root (FULLY WORKING!)
+make -C ../proto-explorer info QUERY='ser.JonSharedData$JonGUIState'
+# Shows all nested message types with correct Java class names:
+# :gps ser.JonSharedDataGps$JonGuiDataGps
+# :system ser.JonSharedDataSystem$JonGuiDataSystem
+# :rotary ser.JonSharedDataRotary$JonGuiDataRotary
+# etc.
+
+# Get detailed info for ANY nested message (NEW!)
 make -C ../proto-explorer info QUERY='ser.JonSharedDataGps$JonGuiDataGps'
+# Shows complete EDN structure and Pronto schema with:
+# - All fields with default values
+# - Enum values (e.g., GPS fix types)
+# - Field types (double, boolean, etc.)
+
+# Get complete schema for cmd root
+make -C ../proto-explorer info QUERY='cmd.JonSharedCmd$Root'
+# Shows all payload types and enum values
 
 # Use the schema to create valid test data with all required fields
 # Use the EDN structure as a template for creating proto-maps
 ```
+
+**Important Discoveries**: 
+1. Proto-explorer now correctly handles **ALL nested messages** - you can query any deeply nested type
+2. The Pronto schema shows exact Java class names for imports (e.g., `ser.JonSharedDataGps$JonGuiDataGps`)
+3. We can directly copy these class names to fix our import statements
+4. The tool has **smart class resolution** with fuzzy matching - it will find the right class even with slight variations
+5. **Note**: Some class names may differ slightly from expectations:
+   - Expected: `JonGuiDataRotaryPlatform` 
+   - Actual: `JonGuiDataRotary`
+   - Use proto-explorer to verify exact names!
 
 ## Pronto Performance Best Practices 🚀
 

@@ -28,8 +28,18 @@ help: ## Show 2-step workflow
 	@echo "  make test                       # Run tests"
 	@echo "  make repl                       # Start REPL"
 
+# Ensure proto classes are compiled
+.PHONY: ensure-proto-classes
+ensure-proto-classes:
+	@if [ ! -d "../../target/classes/ser" ] || [ ! -d "../../target/classes/cmd" ]; then \
+		echo "Proto classes missing, compiling..."; \
+		cd ../.. && make compile-java-proto; \
+	else \
+		echo "Proto classes already compiled"; \
+	fi
+
 .PHONY: search
-search: ## [STEP 1] Search for protobuf messages
+search: ensure-proto-classes ## [STEP 1] Search for protobuf messages
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make search QUERY=<search-term>"; \
 		echo ""; \
@@ -42,11 +52,11 @@ search: ## [STEP 1] Search for protobuf messages
 	@clojure -M:run:test-protos search $(QUERY)
 
 .PHONY: list
-list: ## [STEP 1] List all protobuf messages
+list: ensure-proto-classes ## [STEP 1] List all protobuf messages
 	@clojure -M:run:test-protos list $(FILTER)
 
 .PHONY: info
-info: ## [STEP 2] Get detailed info using query from step 1
+info: ensure-proto-classes ## [STEP 2] Get detailed info using query from step 1
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make info QUERY='<result-from-search>'"; \
 		echo ""; \
@@ -103,12 +113,3 @@ clean: ## Clean build artifacts
 	@echo "Cleaning..."
 	@rm -rf target/ .cpcache/
 
-.PHONY: generate-keyword-tree-cmd
-generate-keyword-tree-cmd: ## Generate command keyword tree mapping
-	@echo "Generating command keyword tree..."
-	@bb generate-keyword-tree-cmd ../../examples/protogen/output/json-descriptors
-
-.PHONY: generate-keyword-tree-state
-generate-keyword-tree-state: ## Generate state keyword tree mapping
-	@echo "Generating state keyword tree..."
-	@bb generate-keyword-tree-state ../../examples/protogen/output/json-descriptors

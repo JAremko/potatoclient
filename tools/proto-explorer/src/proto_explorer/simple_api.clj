@@ -4,6 +4,7 @@
             [proto-explorer.java-class-info :as java-info]
             [proto-explorer.pronto-integration :as pronto]
             [proto-explorer.descriptor-integration :as desc-int]
+            [proto-explorer.class-resolver :as resolver]
             [clojure.string :as str]
             [clojure.pprint :as pprint]))
 
@@ -98,25 +99,39 @@
             (throw (ex-info "Message not found" {:java-class java-class-name})))
         
         ;; Extract simple name for display
-        simple-name (last (str/split java-class-name #"\$"))
+        simple-name (or (:message-name msg-data)
+                       (last (str/split java-class-name #"\$")))
         
-        ;; 1. Java Class Info - use full class name
+        ;; Resolve the actual Java class with fallbacks
+        class-resolution (resolver/resolve-class java-class-name 
+                                                 (:proto-package msg-data)
+                                                 (:proto-file msg-data)
+                                                 simple-name)
+        
+        actual-class-name (if (:success class-resolution)
+                           (:resolved-name class-resolution)
+                           java-class-name)
+        
+        ;; 1. Java Class Info - use resolved class name
         java-result (try 
-                      (java-info/analyze-protobuf-class java-class-name)
+                      (if (:success class-resolution)
+                        (java-info/analyze-protobuf-class actual-class-name)
+                        {:error (str "Class not found. Tried: " 
+                                   (str/join ", " (:tried-names class-resolution)))})
                       (catch Exception e
                         {:error (.getMessage e)}))
         
-        ;; 2. Pronto EDN - use full class name
+        ;; 2. Pronto EDN - use resolved class name
         pronto-result (try
-                       (when-not (:error java-result)
-                         (pronto/get-pronto-info-by-class java-class-name))
+                       (when (and (:success class-resolution) (not (:error java-result)))
+                         (pronto/get-pronto-info-by-class actual-class-name))
                        (catch Exception e
                          {:error (.getMessage e)}))
         
-        ;; 3. Pronto Schema - use full class name
+        ;; 3. Pronto Schema - use resolved class name
         schema-result (try
-                       (when-not (:error java-result)
-                         (pronto/get-schema-by-class java-class-name))
+                       (when (and (:success class-resolution) (not (:error java-result)))
+                         (pronto/get-schema-by-class actual-class-name))
                        (catch Exception e
                          {:error (.getMessage e)}))
         
@@ -130,10 +145,18 @@
                            (:fields msg-data))]
     
     {:java-class java-class-name
+     :resolved-class (when (:success class-resolution) actual-class-name)
      :message-name simple-name
      :proto-package (:proto-package msg-data)
      :proto-file (:proto-file msg-data)
      :field-count (:field-count msg-data)
+     
+     ;; Include resolution info for transparency
+     :resolution-info (when class-resolution
+                       {:method (:resolution-method class-resolution)
+                        :warning (:warning class-resolution)
+                        :match-score (:match-score class-resolution)
+                        :match-type (:match-type class-resolution)})
      
      :java-info (when-not (:error java-result)
                  {:package (get-in java-result [:class :package])
@@ -149,7 +172,11 @@
      :fields field-details
      
      :errors (cond-> []
-              (:error java-result) (conj {:type :java :message (:error java-result)})
+              (and (not (:success class-resolution))
+                   (not (:java-info java-result))) 
+              (conj {:type :java 
+                     :message (or (:error java-result)
+                                (str "Class not found. " (:warning class-resolution)))})
               (:error pronto-result) (conj {:type :pronto :message (:error pronto-result)})
               (:error schema-result) (conj {:type :schema :message (:error schema-result)}))}))
 
@@ -207,10 +234,26 @@
     (println "================================================================================")
     (println "PROTOBUF MESSAGE:" (:message-name info))
     (println "Java Class:" (:java-class info))
+    (when (and (:resolved-class info) 
+               (not= (:resolved-class info) (:java-class info)))
+      (println "Resolved to:" (:resolved-class info)))
     (println "Proto Package:" (:proto-package info))
     (println "Proto File:" (:proto-file info))
     (println "Total Fields:" (:field-count info))
     (println "================================================================================")
+    
+    ;; Show resolution warnings if any
+    (when-let [res-info (:resolution-info info)]
+      (when (:warning res-info)
+        (println "\n⚠️  RESOLUTION WARNING:")
+        (println (:warning res-info))
+        (when (:match-score res-info)
+          (println (format "Match Score: %.2f, Type: %s" 
+                          (:match-score res-info) 
+                          (name (:match-type res-info))))))
+      (when (and (not (:warning res-info)) 
+                 (= (:method res-info) :variation))
+        (println "\nℹ️  Class resolved using naming variation")))
     
     (when-let [java-info (:java-info info)]
       (println "\n=== JAVA CLASS INFO ===")

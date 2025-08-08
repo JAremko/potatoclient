@@ -19,26 +19,48 @@
 (def descriptor-set-path (or (find-descriptor-set-path)
                              "output/json-descriptors/descriptor-set.json"))
 
+(defn proto-file-to-java-outer-class
+  "Convert proto file name to Java outer class name.
+   Examples:
+   - jon_shared_cmd.proto -> JonSharedCmd
+   - jon_shared_cmd_gps.proto -> JonSharedCmdGps
+   - jon_shared_data_gps.proto -> JonSharedDataGps"
+  [proto-file-name]
+  (-> proto-file-name
+      (str/replace ".proto" "")
+      (str/split #"_")
+      (->> (map str/capitalize)
+           (str/join))))
+
 (defn get-java-class-name
   "Get the Java class name for a message based on proto file and package.
-   The main files (jon_shared_cmd.proto, jon_shared_data.proto) use special naming.
-   Other files use the proto package as the Java outer class."
+   Handles various proto file naming conventions and package structures."
   [proto-file-name proto-package message-name]
-  (cond
-    ;; Special case: jon_shared_cmd.proto with package 'cmd' -> cmd.JonSharedCmd$MessageName
-    (and (= proto-file-name "jon_shared_cmd.proto")
-         (= proto-package "cmd"))
-    (str "cmd.JonSharedCmd$" message-name)
-    
-    ;; Special case: jon_shared_data.proto with package 'ser' -> ser.JonSharedData$MessageName  
-    (and (= proto-file-name "jon_shared_data.proto")
-         (= proto-package "ser"))
-    (str "ser.JonSharedData$" message-name)
-    
-    ;; All other cases: proto package IS the Java outer class
-    ;; e.g., package cmd.Compass -> cmd.Compass$MessageName
-    :else
-    (str proto-package "$" message-name)))
+  (let [java-outer-class (proto-file-to-java-outer-class proto-file-name)]
+    (cond
+      ;; Special case: jon_shared_cmd.proto with package 'cmd' -> cmd.JonSharedCmd$MessageName
+      (and (= proto-file-name "jon_shared_cmd.proto")
+           (= proto-package "cmd"))
+      (str "cmd.JonSharedCmd$" message-name)
+      
+      ;; Special case: jon_shared_data.proto with package 'ser' -> ser.JonSharedData$MessageName  
+      (and (= proto-file-name "jon_shared_data.proto")
+           (= proto-package "ser"))
+      (str "ser.JonSharedData$" message-name)
+      
+      ;; Files with nested packages (e.g., cmd.Gps) use the Java outer class pattern
+      ;; jon_shared_cmd_gps.proto with package cmd.Gps -> cmd.Gps.JonSharedCmdGps$MessageName
+      (str/includes? proto-package ".")
+      (str proto-package "." java-outer-class "$" message-name)
+      
+      ;; Files in ser package without dots use just the Java outer class
+      ;; jon_shared_data_gps.proto with package ser -> ser.JonSharedDataGps$MessageName
+      (= proto-package "ser")
+      (str "ser." java-outer-class "$" message-name)
+      
+      ;; Default case - shouldn't normally happen but provides fallback
+      :else
+      (str proto-package "$" message-name))))
 
 (defn load-all-messages
   "Load all messages from the descriptor-set.json"

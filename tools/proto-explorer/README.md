@@ -34,6 +34,9 @@ Proto-Explorer solves these problems by providing a unified interface to search,
 - **📋 Complete Listing**: Browse all messages organized by package
 - **🔗 Actionable Results**: Search results provide ready-to-use query strings
 - **📊 Comprehensive Info**: Java mappings, Pronto EDN, Pronto schema, and field details in one view
+- **🛡️ Robust & Foolproof**: Automatic class compilation, intelligent fallbacks, and clear warnings
+- **🔄 Smart Class Resolution**: Multiple resolution strategies with fuzzy matching
+- **📦 Deep Nesting Support**: Handles complex nested messages and oneof structures
 - **⚡ Fast & Simple**: Stateless tool with clear, predictable commands
 
 ## Installation
@@ -44,9 +47,10 @@ Proto-Explorer is included in the PotatoClient project. No separate installation
 
 - Clojure CLI tools
 - Java 11+
-- Compiled protobuf classes in `target/classes`
 - Pronto library for EDN conversion
 - JSON descriptors in `output/json-descriptors/`
+
+**Note**: Proto classes are automatically compiled when needed. The tool ensures all required Java classes are available before running.
 
 ## Usage: 2-Step Workflow
 
@@ -229,10 +233,25 @@ Proto-Explorer uses a stateless architecture that:
 4. **Reflects** Java classes for method/field information
 5. **Converts** Messages to EDN using Pronto for Clojure integration
 
+### Class Resolution System
+
+The tool uses a multi-tier resolution system for maximum reliability:
+
+1. **Exact Match**: Tries the provided class name directly
+2. **Smart Variations**: Generates likely class names based on proto patterns
+3. **Fuzzy Matching**: Scans all available proto classes and finds best match
+4. **Clear Warnings**: Shows when fallback methods are used with match scores
+
+This ensures the tool always finds the correct Java class, even with complex naming patterns like:
+- `cmd.RotaryPlatform` → `cmd.RotaryPlatform.JonSharedCmdRotary$Message`
+- `cmd.Gps` → `cmd.Gps.JonSharedCmdGps$Message`
+- `ser` → `ser.JonSharedDataGps$Message`
+
 ### Key Components
 
 - **descriptor-set-search**: Searches and indexes messages from descriptors
 - **simple-api**: Core API for search, list, and info operations
+- **class-resolver**: Intelligent class resolution with fallback mechanisms
 - **cli-final**: Command-line interface and formatting
 - **java-class-info**: Java reflection utilities
 - **pronto-integration**: Pronto EDN conversion and schema extraction
@@ -287,33 +306,36 @@ This ensures the tool works correctly whether run:
 
 ## Troubleshooting
 
-### Common Issues
+The tool is designed to be robust and self-healing. Most issues are automatically resolved:
 
-1. **"Class not found" errors**: Ensure protobuf classes are compiled:
-   ```bash
-   make compile-java-proto
-   ```
+### Automatic Fixes
 
-2. **"Descriptor not found" errors**: Ensure descriptors are generated:
+1. **Missing Proto Classes**: Automatically compiled when needed
+2. **Class Name Mismatches**: Resolved via intelligent fallback system
+3. **Complex Nesting**: Handled transparently for all message depths
+
+### Manual Fixes (Rare)
+
+1. **"Descriptor not found" errors**: Regenerate descriptors:
    ```bash
    make proto  # Regenerates from proto files
    ```
 
-3. **Pronto errors**: Compile Pronto classes:
+2. **Dollar sign in class names**: Use single quotes in shell:
    ```bash
-   make ensure-pronto
+   make proto-info QUERY='cmd.JonSharedCmd$Root'  # Correct
+   make proto-info QUERY=cmd.JonSharedCmd$Root    # Wrong - $ interpreted by shell
    ```
 
-4. **Dollar sign in class names**: Use single quotes in shell:
-   ```bash
-   make proto-info CLASS='cmd.JonSharedCmd$Root'  # Correct
-   make proto-info CLASS=cmd.JonSharedCmd$Root    # Wrong - $ interpreted by shell
-   ```
+### Understanding Warnings
 
-5. **No search results**: Check if protobuf classes are in classpath:
-   ```bash
-   make proto-list  # Should show all available messages
-   ```
+When you see warnings like:
+```
+⚠️ RESOLUTION WARNING:
+Class resolved using fuzzy matching. Original: X, Found: Y (score: 0.85, type: message-name-match)
+```
+
+This means the tool successfully found your class using its fallback system. The class will work correctly, but you may want to use the suggested class name in future queries for faster resolution.
 
 ## Development
 
