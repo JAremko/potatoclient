@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.oneof-pronto :as oneof]
+   [validate.specs.oneof-edn :as oneof-edn]
    ;; Import all command specs
    [validate.specs.cmd.common]
    [validate.specs.cmd.compass]
@@ -36,8 +36,8 @@
    [:client-type :proto/client-type]
    
    ;; Oneof command payloads (exactly one must be present)
-   ;; Using oneof-pronto schema for validation
-   [:cmd [:oneof-pronto
+   ;; Using oneof-edn schema for EDN validation
+   [:cmd [:oneof-edn
           [:cv :cmd/cv]
           [:day-camera :cmd/day-camera]
           [:heat-camera :cmd/heat-camera]

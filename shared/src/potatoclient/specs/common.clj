@@ -20,9 +20,10 @@
 ;; ====================================================================
 ;; Angle specs (degrees) 
 ;; ====================================================================
+;; Azimuth: 0-360 degrees (compass heading)
 (def azimuth-spec
-  [:double {:min -180.0 :max 180.0
-            :gen/gen (gen/double* {:min -180.0 :max 180.0 :NaN? false})}])
+  [:double {:min 0.0 :max 360.0
+            :gen/gen (gen/double* {:min 0.0 :max 360.0 :NaN? false})}])
 
 (def elevation-spec
   [:double {:min -90.0 :max 90.0

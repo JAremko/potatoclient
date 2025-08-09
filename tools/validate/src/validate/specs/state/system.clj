@@ -41,7 +41,7 @@
    [:cur-video-rec-dir-month [:int {:min 1 :max 12}]]
    [:cur-video-rec-dir-second [:int {:min 0 :max 59}]]
    [:cur-video-rec-dir-year [:int {:min 2000 :max 2100}]]
-   [:disk-space :percentage]
+   [:disk-space [:int {:min 0 :max 100}]]  ; Percentage as integer
    [:gpu-load :percentage]
    [:gpu-temperature :temperature/celsius]
    [:loc :enum/system-localization]

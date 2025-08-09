@@ -6,13 +6,13 @@
 
 ;; Common command types that appear in multiple places
 
-;; Ping command (heartbeat)
+;; Ping command (heartbeat) - empty map
 (def ping-command-spec
   [:map {:closed true}])
 
 (registry/register! :cmd/ping ping-command-spec)
 
-;; Noop command (no operation)
+;; Noop command (no operation) - empty map
 (def noop-command-spec
   [:map {:closed true}])
 
