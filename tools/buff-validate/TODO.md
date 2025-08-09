@@ -19,19 +19,28 @@ The buff-validate tool is being developed to validate binary protobuf payloads u
   - JonSharedDataLrf$JonGuiDataLrf (capitalization matters)
   - JonSharedDataRecOsd$JonGuiDataRecOsd (capitalization matters)
 - [x] Fixed import statements in test_data.clj to match correct class names
+- [x] Discovered buf.validate constraints using proto-explorer:
+  - GPS coordinates: latitude ∈ [-90, 90], longitude ∈ [-180, 180], altitude ∈ [-433, 8848.86]
+  - Protocol version: must be > 0
+  - Client type: cannot be UNSPECIFIED (value 0)
+- [x] Refactored test suite to use clean, idiomatic Pronto patterns
+- [x] Created simplified test files to reduce nesting complexity
+- [x] Moved old tests to backlog/ directory for reference
 
 ## In Progress 🚧
-- [ ] Fix field names throughout test_data.clj to match proto definitions
-  - Some methods have different names (e.g., setCpuTemperature not setCpuTemp)
-  - Need to verify all field setter names
+- [ ] Fix field naming issues in test harness
+  - All proto field names use underscores, not hyphens
+  - Need to systematically update real-state-edn in test_harness.clj
+  - Fields like :cpu_load, :protocol_version, :day_cam_glass_heater
 
 ## TODO 📝
 
 ### High Priority
-1. **Fix all test imports and class references**
-   - Use proto-explorer to get exact class names for all messages
-   - Update pronto_test_data.clj with correct imports
-   - Ensure all nested classes use correct $ notation
+1. **Complete test suite refactoring**
+   - Moved old tests to backlog/ directory
+   - Created clean test harness with real EDN from state-explorer
+   - Split tests into smaller files: harness_test.clj, validation_test.clj, pronto_test.clj
+   - Need to fix remaining field name issues
 
 2. **Update all tests to use Pronto-based data**
    - Replace builder pattern tests with Pronto proto-maps
@@ -190,11 +199,12 @@ make -C ../proto-explorer info QUERY='cmd.JonSharedCmd$Root'
     :ping (p/proto-map cmd-mapper cmd.JonSharedCmd$Ping)))
 ```
 
-### How Proto-Explorer's Pronto Schema Helps Us (FULLY WORKING WITH NESTED MESSAGES!)
+### How Proto-Explorer's Pronto Schema Helps Us (WITH BUF.VALIDATE CONSTRAINTS!)
 
 The **ENHANCED Pronto Schema feature** in proto-explorer now includes:
 - **Deep nesting support** - correctly handles all nested message types
 - **Smart class resolution** - automatically finds correct Java classes with fuzzy matching
+- **buf.validate constraints** - automatically extracts and displays validation constraints
 - **Robust & foolproof** - automatic compilation and intelligent fallbacks
 
 The tool shows:
@@ -226,6 +236,18 @@ The tool shows:
    - What types to expect
    - Which enums have UNSPECIFIED that shouldn't be used
    - Required vs optional fields
+   - **buf.validate constraints** - exact ranges, patterns, and rules
+
+6. **buf.validate Constraints Discovery**:
+   Proto-explorer now shows validation constraints directly:
+   ```
+   === BUF.VALIDATE CONSTRAINTS ===
+   longitude    : {:gte -180.0, :lte 180.0}
+   latitude     : {:gte -90.0, :lte 90.0}
+   altitude     : {:gte -433.0, :lte 8848.86}
+   protocol_version : {:gt 0}
+   client_type  : {:defined_only true, :not_in [0]}
+   ```
 
 Example usage for test data creation:
 ```bash
@@ -421,6 +443,7 @@ All test files should follow this pattern:
 - Using JAremko's Pronto fork from gitlibs (see deps.edn)
 - Proto files come from protogen repo (cloned via Docker in generate script)
 - Validation uses buf.validate annotations in proto files
+- Proto-explorer now extracts and displays buf.validate constraints automatically
 - **Test data MUST use idiomatic Pronto with p/proto-map and p/p-> for performance**
 - **The tool serves as a reference implementation for Pronto usage in the broader application**
 - State-explorer output provides real-world test data in EDN format
