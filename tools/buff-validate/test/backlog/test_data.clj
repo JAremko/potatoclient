@@ -4,11 +4,11 @@
    [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]
    [ser JonSharedData$JonGUIState JonSharedDataTime$JonGuiDataTime JonSharedDataTypes$JonGuiDataClientType
         JonSharedDataSystem$JonGuiDataSystem JonSharedDataGps$JonGuiDataGps
-        JonSharedDataCompass$JonGuiDataCompass JonSharedDataRotaryPlatform$JonGuiDataRotaryPlatform
+        JonSharedDataCompass$JonGuiDataCompass JonSharedDataRotary$JonGuiDataRotary
         JonSharedDataCameraDay$JonGuiDataCameraDay JonSharedDataCameraHeat$JonGuiDataCameraHeat
-        JonSharedDataGlassHeater$JonGuiDataGlassHeater JonSharedDataMeteoInternal$JonGuiDataMeteoInternal
-        JonSharedDataLRF$JonGuiDataLRF JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
-        JonSharedDataRecOSD$JonGuiDataRecOSD JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime]
+        JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater JonSharedDataTypes$JonGuiDataMeteo
+        JonSharedDataLrf$JonGuiDataLrf JonSharedDataCompassCalibration$JonGuiDataCompassCalibration
+        JonSharedDataRecOsd$JonGuiDataRecOsd JonSharedDataActualSpaceTime$JonGuiDataActualSpaceTime]
    [com.google.protobuf ByteString]))
 
 ;; ============================================================================
@@ -27,10 +27,15 @@
                     (.setUseManualTime false)
                     (.build)))
       (.setSystem (-> (JonSharedDataSystem$JonGuiDataSystem/newBuilder)
-                      (.setCpuTemp 65.5)
+                      (.setCpuTemperature 65.5)
                       (.setCpuLoad 45.2)
-                      (.setMemoryUsed 1024000)
-                      (.setMemoryTotal 2048000)
+                      (.setGpuTemperature 60.0)
+                      (.setGpuLoad 35.0)
+                      (.setPowerConsumption 150.0)
+                      (.setDiskSpace 50)
+                      (.setRecEnabled false)
+                      (.setLowDiskSpace false)
+                      (.setLoc ser.JonSharedDataTypes$JonGuiDataSystemLocalizations/JON_GUI_DATA_SYSTEM_LOCALIZATION_EN)
                       (.build)))
       (.setGps (-> (JonSharedDataGps$JonGuiDataGps/newBuilder)
                    (.setLatitude 37.7749)
@@ -42,7 +47,7 @@
                        (.setPitch 0.0)
                        (.setRoll 0.0)
                        (.build)))
-      (.setRotary (-> (JonSharedDataRotaryPlatform$JonGuiDataRotaryPlatform/newBuilder)
+      (.setRotary (-> (JonSharedDataRotary$JonGuiDataRotary/newBuilder)
                       (.setAzimuth 0.0)
                       (.setElevation 0.0)
                       (.build)))
@@ -54,16 +59,16 @@
                           (.setZoom 1.0)
                           (.setPalette 0)
                           (.build)))
-      (.setDayCamGlassHeater (-> (JonSharedDataGlassHeater$JonGuiDataGlassHeater/newBuilder)
+      (.setDayCamGlassHeater (-> (JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater/newBuilder)
                                  (.setPowerOn false)
                                  (.setTemperature 20.0)
                                  (.build)))
-      (.setMeteoInternal (-> (JonSharedDataMeteoInternal$JonGuiDataMeteoInternal/newBuilder)
+      (.setMeteoInternal (-> (JonSharedDataTypes$JonGuiDataMeteo/newBuilder)
                             (.setTemperature 25.0)
                             (.setPressure 1013.25)
                             (.setHumidity 50.0)
                             (.build)))
-      (.setLrf (-> (JonSharedDataLRF$JonGuiDataLRF/newBuilder)
+      (.setLrf (-> (JonSharedDataLrf$JonGuiDataLrf/newBuilder)
                    (.setDistance 0.0)
                    (.setMeasuring false)
                    (.build)))
@@ -71,7 +76,7 @@
                                   (.setCalibrated false)
                                   (.setProgress 0)
                                   (.build)))
-      (.setRecOsd (-> (JonSharedDataRecOSD$JonGuiDataRecOSD/newBuilder)
+      (.setRecOsd (-> (JonSharedDataRecOsd$JonGuiDataRecOsd/newBuilder)
                       (.setRecording false)
                       (.setOsdEnabled true)
                       (.build)))

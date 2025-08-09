@@ -12,12 +12,18 @@ The buff-validate tool is being developed to validate binary protobuf payloads u
 - [x] Basic test harness setup
 - [x] Fixed client_type enum references (must use JonSharedDataTypes$JonGuiDataClientType)
 - [x] Created idiomatic Pronto test data file with performance best practices
+- [x] Fixed all import statements in pronto_test_data.clj using proto-explorer
+  - JonSharedDataRotary$JonGuiDataRotary (not JonGuiDataRotaryPlatform)
+  - JonSharedDataDayCamGlassHeater$JonGuiDataDayCamGlassHeater
+  - JonSharedDataTypes$JonGuiDataMeteo (not JonSharedDataMeteoInternal)
+  - JonSharedDataLrf$JonGuiDataLrf (capitalization matters)
+  - JonSharedDataRecOsd$JonGuiDataRecOsd (capitalization matters)
+- [x] Fixed import statements in test_data.clj to match correct class names
 
 ## In Progress 🚧
-- [ ] Fix import statements in pronto_test_data.clj to match actual generated classes
-  - Need to use proto-explorer to get exact nested class names
-  - Classes like JonSharedDataRotary$JonGuiDataRotaryPlatform need verification
-  - Some classes may be JonSharedDataDayCamGlassHeater not JonSharedDataGlassHeater
+- [ ] Fix field names throughout test_data.clj to match proto definitions
+  - Some methods have different names (e.g., setCpuTemperature not setCpuTemp)
+  - Need to verify all field setter names
 
 ## TODO 📝
 

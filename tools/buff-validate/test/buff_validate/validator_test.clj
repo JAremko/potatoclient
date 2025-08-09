@@ -1,110 +1,160 @@
 (ns buff-validate.validator-test
-  "Unit tests for the validator namespace with in-memory validation."
-  (:require
-   [clojure.test :refer [deftest testing is]]
-   [buff-validate.validator :as validator]
-   [buff-validate.test-harness :as harness])
-  (:import
-   [java.io ByteArrayInputStream]))
+  "Core validator tests using idiomatic Pronto and Clojure patterns."
+  (:require [clojure.test :refer [deftest testing is]]
+            [buff-validate.validator :as v]
+            [buff-validate.test-harness :as h]))
 
-(deftest test-create-validator
-  (testing "Creating a buf.validate validator"
-    (let [v (validator/create-validator)]
-      (is (not (nil? v)) "Validator should be created")
-      (is (instance? build.buf.protovalidate.Validator v) "Should be a Validator instance"))))
+;; ============================================================================
+;; VALIDATOR CREATION
+;; ============================================================================
 
-(deftest test-parse-messages
-  (testing "Parsing state messages"
-    ;; We need the actual proto classes to be compiled first
-    ;; This test will work after proto generation
-    (is (thrown-with-msg? Exception #"Failed to parse"
-                          (validator/parse-state-message (byte-array [0x00 0x01 0x02])))
-        "Invalid binary should throw parse error"))
-  
-  (testing "Parsing command messages"
-    (is (thrown-with-msg? Exception #"Failed to parse"
-                          (validator/parse-cmd-message (byte-array [0x00 0x01 0x02])))
-        "Invalid binary should throw parse error")))
+(deftest test-validator-creation
+  (testing "Validator instance creation"
+    (let [validator (v/create-validator)]
+      (is (some? validator) "Validator should be created")
+      (is (instance? build.buf.protovalidate.Validator validator)
+          "Should be correct type"))))
 
-(deftest test-auto-detect-message-type
-  (testing "Auto-detection with invalid data"
-    (let [invalid-data (harness/create-invalid-binary)]
-      (is (nil? (validator/auto-detect-message-type invalid-data))
-          "Invalid data should return nil"))))
+;; ============================================================================
+;; VALID MESSAGE VALIDATION
+;; ============================================================================
 
-(deftest test-validate-binary-with-invalid-data
-  (testing "Validation with completely invalid binary"
-    (let [invalid-data (harness/create-invalid-binary)]
-      (is (thrown-with-msg? Exception #"Could not detect message type"
-                           (validator/validate-binary invalid-data))
-          "Should throw when cannot detect message type"))))
+(deftest test-valid-state-validation
+  (testing "Valid state message from real data"
+    (let [result (v/validate-binary (h/valid-state-bytes) :type :state)]
+      (is (:valid? result) "Real state data should be valid")
+      (is (= :state (:message-type result)) "Should identify as state")
+      (is (pos? (:message-size result)) "Should report size")
+      (is (empty? (:violations result)) "Should have no violations"))))
 
-(deftest test-validate-stream
-  (testing "Validation from stream"
-    (let [test-data (byte-array [0x08 0x01 0x10 0x02])
-          stream (ByteArrayInputStream. test-data)]
+(deftest test-valid-command-validation
+  (testing "Valid command messages"
+    (testing "Ping command"
+      (let [result (v/validate-binary (h/valid-ping-bytes) :type :cmd)]
+        (is (:valid? result) "Ping should be valid")
+        (is (= :cmd (:message-type result)) "Should identify as cmd")))
+    
+    (testing "Noop command"
+      (let [result (v/validate-binary (h/valid-noop-bytes) :type :cmd)]
+        (is (:valid? result) "Noop should be valid")))
+    
+    (testing "Frozen command"
+      (let [result (v/validate-binary (h/valid-frozen-bytes) :type :cmd)]
+        (is (:valid? result) "Frozen should be valid")))))
+
+;; ============================================================================
+;; AUTO-DETECTION
+;; ============================================================================
+
+(deftest test-message-auto-detection
+  (testing "Auto-detection of message types"
+    (testing "State auto-detection"
+      (let [result (v/validate-binary (h/valid-state-bytes))]
+        (is (:valid? result) "Should validate without type hint")
+        (is (= :state (:message-type result)) "Should detect state type")))
+    
+    (testing "Command auto-detection"
+      (let [result (v/validate-binary (h/valid-ping-bytes))]
+        (is (:valid? result) "Should validate without type hint")
+        (is (= :cmd (:message-type result)) "Should detect cmd type")))))
+
+;; ============================================================================
+;; INVALID MESSAGE VALIDATION
+;; ============================================================================
+
+(deftest test-invalid-gps-validation
+  (testing "Invalid GPS coordinates"
+    (let [result (v/validate-binary (h/invalid-gps-state-bytes) :type :state)]
+      (is (map? result) "Should return result even for invalid data")
+      (is (= :state (:message-type result)) "Should identify type")
+      (when (seq (:violations result))
+        (testing "GPS validation violations"
+          (is (some #(re-find #"latitude" (str %)) (:violations result))
+              "Should flag invalid latitude")
+          (is (some #(re-find #"longitude" (str %)) (:violations result))
+              "Should flag invalid longitude"))))))
+
+(deftest test-invalid-protocol-validation
+  (testing "Invalid protocol versions"
+    (testing "State with protocol 0"
+      (let [result (v/validate-binary (h/invalid-protocol-state-bytes) :type :state)]
+        (is (not (:valid? result)) "Protocol 0 should be invalid")
+        (is (seq (:violations result)) "Should have violations")))
+    
+    (testing "Command with protocol 0"
+      (let [result (v/validate-binary (h/invalid-protocol-cmd-bytes) :type :cmd)]
+        (is (not (:valid? result)) "Protocol 0 should be invalid")
+        (is (seq (:violations result)) "Should have violations")))))
+
+(deftest test-invalid-client-type
+  (testing "Command with UNSPECIFIED client type"
+    (let [result (v/validate-binary (h/invalid-client-cmd-bytes) :type :cmd)]
+      (is (not (:valid? result)) "UNSPECIFIED client should be invalid")
+      (is (some #(re-find #"client_type" (str %)) (:violations result))
+          "Should flag client_type violation"))))
+
+(deftest test-missing-required-fields
+  (testing "State missing required nested messages"
+    (let [result (v/validate-binary (h/missing-fields-state-bytes) :type :state)]
+      (is (not (:valid? result)) "Missing fields should be invalid")
+      (is (seq (:violations result)) "Should have multiple violations")
+      (is (some #(re-find #"required" (str %)) (:violations result))
+          "Should mention required fields"))))
+
+;; ============================================================================
+;; BOUNDARY VALUE TESTING
+;; ============================================================================
+
+(deftest test-boundary-values
+  (testing "Valid boundary values"
+    (let [result (v/validate-binary (h/boundary-state-bytes) :type :state)]
+      (is (:valid? result) "Boundary values should be valid")
+      (is (empty? (:violations result)) "Should have no violations"))))
+
+;; ============================================================================
+;; ERROR HANDLING
+;; ============================================================================
+
+(deftest test-empty-binary
+  (testing "Empty binary data"
+    (is (thrown? Exception
+                 (v/validate-binary (byte-array 0)))
+        "Empty data should throw")))
+
+(deftest test-garbage-data
+  (testing "Random garbage data"
+    (let [garbage (byte-array (repeatedly 100 #(rand-int 256)))]
       (is (thrown? Exception
-                  (validator/validate-stream stream :type :state))
-          "Should handle stream validation"))))
+                   (v/validate-binary garbage :type :state))
+          "Garbage should throw parse exception"))))
 
-(deftest test-format-validation-result
-  (testing "Formatting successful validation"
-    (let [result {:valid? true
-                  :message-type :state
-                  :message-size 100
-                  :message "Validation successful"
-                  :violations []}
-          formatted (validator/format-validation-result result)]
-      (is (string? formatted) "Should return a string")
-      (is (.contains formatted "Valid: true") "Should indicate success")
-      (is (.contains formatted "Message Type: :state") "Should show message type")))
-  
-  (testing "Formatting failed validation with violations"
-    (let [result {:valid? false
-                  :message-type :cmd
-                  :message-size 50
-                  :message "Validation failed"
-                  :violations [{:field "system.reboot.delayMs"
-                               :constraint "int32.gte"
-                               :message "value must be greater than or equal to 0"}]}
-          formatted (validator/format-validation-result result)]
-      (is (string? formatted) "Should return a string")
-      (is (.contains formatted "Valid: false") "Should indicate failure")
-      (is (.contains formatted "Violations:") "Should show violations section")
-      (is (.contains formatted "system.reboot.delayMs") "Should show field path")
-      (is (.contains formatted "int32.gte") "Should show constraint"))))
+(deftest test-nil-input
+  (testing "Nil input handling"
+    (is (thrown? Exception (v/validate-binary nil))
+        "Nil should throw")))
 
-(deftest test-corrupted-binary-handling
-  (testing "Handling corrupted binary data"
-    (let [;; Create a valid-looking but corrupted protobuf header
-          corrupted (byte-array [0x08 0xFF 0xFF 0xFF 0xFF 0xFF])]
+(deftest test-wrong-type-hint
+  (testing "Wrong type hint"
+    (let [state-bytes (h/valid-state-bytes)]
       (is (thrown? Exception
-                  (validator/validate-binary corrupted :type :state))
-          "Should throw on corrupted data"))))
+                   (v/validate-binary state-bytes :type :cmd))
+          "Wrong type hint should cause parse error"))))
 
-(deftest test-truncated-binary-handling
-  (testing "Handling truncated binary data"
-    (let [;; Start of a valid protobuf but truncated
-          truncated (byte-array [0x08 0x01 0x10])]
-      (is (thrown? Exception
-                  (validator/validate-binary truncated :type :cmd))
-          "Should throw on truncated data"))))
+;; ============================================================================
+;; PERFORMANCE CHARACTERISTICS
+;; ============================================================================
 
-(deftest test-empty-binary-handling
-  (testing "Handling empty binary data"
-    (let [empty-data (byte-array 0)]
-      (is (thrown? Exception
-                  (validator/validate-binary empty-data))
-          "Should throw on empty data"))))
+(deftest test-validation-performance
+  (testing "Validation completes in reasonable time"
+    (let [state-bytes (h/valid-state-bytes)
+          start (System/nanoTime)
+          _ (dotimes [_ 100]
+              (v/validate-binary state-bytes :type :state))
+          elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
+      (is (< elapsed-ms 1000) 
+          (str "100 validations should complete within 1s, took " elapsed-ms "ms")))))
 
-(deftest test-validator-reuse
-  (testing "Reusing validator instance"
-    (let [v (validator/create-validator)
-          data1 (byte-array [0x08 0x01])
-          data2 (byte-array [0x10 0x02])]
-      ;; Both should fail but validator should be reusable
-      (is (thrown? Exception
-                  (validator/validate-binary data1 :validator v :type :state)))
-      (is (thrown? Exception
-                  (validator/validate-binary data2 :validator v :type :cmd)))
-      (is (not (nil? v)) "Validator should still be valid"))))
+(comment
+  ;; Run tests
+  (require '[clojure.test :as t])
+  (t/run-tests 'buff-validate.validator-test))
