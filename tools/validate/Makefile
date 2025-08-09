@@ -1,10 +1,33 @@
 # Validate Makefile
 # Tool for validating protobuf binary payloads using buf validate
+# and creating Malli specs with property-based testing
 #
 # Default behavior: Show help message
 # Common usage: make validate FILE=path/to/file.bin
+#
+# === MALLI SPEC INTEGRATION ===
+# This tool now includes comprehensive Malli specs for proto messages:
+# - State specs: Hierarchical specs for JonSharedData$JonGUIState
+# - Cmd specs: Hierarchical specs for JonSharedCmd$Root  
+# - Property-based testing against buf.validate constraints
+# - Generators that produce valid proto-compatible data
+#
+# === KEY RESOURCES ===
+# Malli Documentation: https://github.com/metosin/malli
+# - Generators: Use :gen/gen property for custom generators
+# - Validation: malli.core/validate for spec validation
+# - Property Testing: malli.generator/generate for test data
+#
+# Proto Explorer: Use proto-class-explorer agent to discover:
+# - Proto message structures and field types
+# - Buf.validate constraints per field
+# - Java class to proto message mappings
+#
+# State Explorer Outputs: /tools/state-explorer/output/*.edn
+# - Real captured state messages for reference
+# - Use for validating spec accuracy
 
-.PHONY: help build clean-build validate validate-cmd validate-state clean test repl deps proto compile ensure-proto
+.PHONY: help build clean-build validate validate-cmd validate-state clean test repl deps proto compile ensure-proto spec-test generate-samples validate-specs property-test setup-symlinks
 
 # Default target - show help when user just types 'make'
 .DEFAULT_GOAL := help
@@ -36,6 +59,9 @@ help:
 	@echo "DEVELOPMENT:"
 	@echo "  repl          - Start Clojure REPL"
 	@echo "  test          - Run test suite"
+	@echo ""
+	@echo "MALLI SPEC COMMANDS:"
+	@echo "  setup-symlinks    - Set up symlinks to shared specs"
 	@echo ""
 	@echo "EXAMPLES:"
 	@echo "  make validate FILE=output/state_20241208_143022.bin"
@@ -145,3 +171,22 @@ deps-outdated:
 deps-upgrade:
 	@echo "Interactive dependency upgrade..."
 	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core" "--upgrade"]}}}' -M:outdated
+
+# === MALLI SPEC TARGETS ===
+
+# Set up symlinks to shared specs
+setup-symlinks:
+	@echo "Setting up symlinks to shared specs..."
+	@mkdir -p src/validate/specs
+	@if [ ! -L "src/validate/specs/shared" ]; then \
+		ln -s ../../../../shared/src/potatoclient/specs src/validate/specs/shared; \
+		echo "Created symlink: src/validate/specs/shared -> shared/src/potatoclient/specs"; \
+	else \
+		echo "Symlink already exists: src/validate/specs/shared"; \
+	fi
+	@if [ ! -L "src/potatoclient" ]; then \
+		ln -s ../../../shared/src/potatoclient src/potatoclient; \
+		echo "Created symlink: src/potatoclient -> shared/src/potatoclient"; \
+	else \
+		echo "Symlink already exists: src/potatoclient"; \
+	fi

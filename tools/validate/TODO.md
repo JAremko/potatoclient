@@ -1,110 +1,234 @@
-# Validate Tool - TODO
+# Validate Tool - Malli Spec Creation and Property-Based Testing TODO
 
-## Current Status ✅
-The validate tool is fully functional for validating binary protobuf payloads using buf.validate constraints. All tests are passing and the tool uses idiomatic Pronto patterns throughout.
+## Project Goal
+Create comprehensive Malli specs for State and Cmd proto messages with property-based testing against buf.validate constraints. These specs will validate Pronto maps (EDN representations) and ensure compatibility with protobuf validation constraints.
 
-## Completed ✅
-- [x] Core validator implementation with buf.validate
-- [x] Support for both cmd (JonSharedCmd$Root) and state (JonSharedData$JonGUIState) message validation  
-- [x] Auto-detection of message types (improved to use validation for disambiguation)
-- [x] Makefile with proto generation and compilation targets
-- [x] Proto generation script with Docker and buf support
-- [x] Test harness with idiomatic Pronto patterns
-- [x] Fixed all field naming issues (underscores for fields, uppercase for enums)
-- [x] Fixed client_type enum references (JonSharedDataTypes$JonGuiDataClientType)
-- [x] Created idiomatic Pronto test data with performance best practices
-- [x] Fixed all import statements and namespace declarations
-- [x] Added required fields (rotary.current_scan_node with proper values)
-- [x] Discovered and enforced buf.validate constraints:
-  - GPS coordinates: latitude ∈ [-90, 90], longitude ∈ [-180, 180], altitude ∈ [-433, 8848.86]
-  - Protocol version: must be > 0
-  - Client type: cannot be UNSPECIFIED (value 0)
-  - Rotary scan node speed: must be > 0 and ≤ 1
-- [x] Refactored test suite to use clean, idiomatic Pronto patterns
-- [x] Created simplified test files: harness_test.clj, validation_test.clj, pronto_test.clj, validator_test.clj
-- [x] Removed old backlog tests
-- [x] All tests passing (0 failures, 0 errors)
-- [x] Error handling for empty/nil data
-- [x] Performance test timeout adjusted to realistic expectations
-- [x] **Performance optimizations implemented**
-  - Implemented validator caching using Clojure's `delay`
-  - Achieved target: < 20ms per validation with cached validator
-  - 100 validations complete in < 2 seconds
-
-## TODO 📝
-
-### Low Priority Enhancements
-
-1. **CLI enhancements**
-   - Add batch validation support
-   - Support for directory scanning
-   - Progress indicators for large files
-
-2. **Output improvements**
-   - Better error messages with field paths
-   - Colored output for terminal
-   - HTML report generation
-
-3. **Additional validation features**
-   - Custom validation rules beyond buf.validate
-   - Field-level filtering
-   - Partial message validation
-
-## Usage
-
-### Command Line
-```bash
-# Validate a file (auto-detect type)
-make validate FILE=path/to/file.bin
-
-# Validate with specific type
-make validate-cmd FILE=commands.bin
-make validate-state FILE=state.bin
-
-# With output format
-make validate FILE=data.bin OUTPUT=json
+## Architecture Overview
+```
+validate/
+├── src/
+│   └── validate/
+│       ├── specs/          # Malli specs for proto messages
+│       │   ├── state/      # State message specs (hierarchical)
+│       │   ├── cmd/        # Command message specs (hierarchical)
+│       │   └── shared.clj  # Symlink to shared/src/potatoclient/specs/
+│       ├── generators/     # Custom generators for complex types
+│       ├── buff/           # Buff validate integration utilities
+│       └── property/       # Property-based testing infrastructure
+└── test/
+    └── validate/
+        ├── specs/          # Spec validation tests
+        ├── property/       # Property-based tests against buff.validate
+        └── generators/     # Generator tests
 ```
 
-### Programmatic Usage
+## Phase 1: Foundation Setup ✅
+- [x] Research Malli documentation for generators and property-based testing
+- [x] Explore existing shared specs structure and understand patterns
+- [ ] Set up symlinks from shared specs to validate tool classpath
+- [ ] Create directory structure for specs, generators, and tests
+- [ ] Initialize global Malli registry with oneof-pronto schema
+  ```clojure
+  ;; Required initialization (see cmd-explorer example)
+  (registry/setup-global-registry!
+    {:oneof-pronto (oneof/register-oneof-pronto-schema!)})
+  ```
+
+## Phase 2: Proto Discovery and Analysis 📝
+- [ ] Use proto-class-explorer agent to document State proto structure
+  - [ ] Get complete field hierarchy for JonSharedData$JonGUIState
+  - [ ] Document all buf.validate constraints per field
+  - [ ] Map Java class names to proto message names
+  - [ ] Identify all nested message types
+- [ ] Use proto-class-explorer agent to document Cmd proto structure
+  - [ ] Get complete field hierarchy for JonSharedCmd$Root
+  - [ ] Document all buf.validate constraints per field
+  - [ ] Map Java class names to proto message names
+  - [ ] Identify all nested message types
+- [ ] Create reference document with all constraints and field types
+
+## Phase 3: Shared Base Specs Development 🔧
+- [ ] Review and enhance existing common specs with buf.validate constraints:
+  - [ ] GPS coordinates with exact buf.validate ranges:
+    - Latitude: [-90, 90]
+    - Longitude: [-180, 180]
+    - Altitude: [-433, 8848.86]
+  - [ ] Protocol version: must be > 0
+  - [ ] Client type: cannot be UNSPECIFIED
+  - [ ] Rotary speed: > 0 and ≤ 1
+- [ ] Create additional shared specs:
+  - [ ] Timestamp specs with proper ranges
+  - [ ] ID specs with validation
+  - [ ] Status/mode enums with constraints
+- [ ] Add comprehensive generators for all base specs
+- [ ] Test generators produce valid values within constraints
+
+## Phase 4: State Message Specs (Bottom-Up) 🏗️
+### Level 1: Leaf Message Specs
+- [ ] GPS message spec with all fields and constraints
+- [ ] System message spec (CPU, GPU, disk space, etc.)
+- [ ] Camera Day message spec
+- [ ] Camera Heat message spec
+- [ ] Rotary message spec with scan node constraints
+- [ ] Compass message spec
+- [ ] LRF (Laser Range Finder) message spec
+- [ ] Target message specs
+
+### Level 2: Composite Message Specs
+- [ ] Combine leaf specs into larger message structures
+- [ ] Add cross-field validation rules
+- [ ] Ensure all required fields are present
+
+### Level 3: Root State Spec
+- [ ] Create JonGUIState root spec combining all sub-messages
+- [ ] Add protocol version validation
+- [ ] Add client type validation
+- [ ] Validate complete message structure
+
+## Phase 5: Command Message Specs (Bottom-Up) 🎮
+### Level 1: Individual Command Specs
+- [ ] Rotary control commands
+- [ ] Camera control commands
+- [ ] System commands
+- [ ] LRF commands
+- [ ] Recording commands
+- [ ] Configuration commands
+
+### Level 2: Command Groups
+- [ ] Group related commands into logical units
+- [ ] Add command-specific validation rules
+- [ ] Ensure mutual exclusivity where needed
+
+### Level 3: Root Command Spec
+- [ ] Create JonSharedCmd$Root spec with oneof structure
+- [ ] Validate only one command type is present
+- [ ] Add command-specific constraints
+
+## Phase 6: Buff Validate Integration 🔌
+- [ ] Create utility functions for buff validation:
+  ```clojure
+  (defn validate-with-buff
+    "Validate generated data using buff.validate"
+    [proto-type data])
+  
+  (defn buff-constraints->malli
+    "Convert buff.validate constraints to Malli specs"
+    [constraint-map])
+  ```
+- [ ] Create conversion functions:
+  - [ ] Pronto map → protobuf binary
+  - [ ] Malli spec → buff.validate constraint checker
+- [ ] Set up validation pipeline:
+  - [ ] Generate data from Malli spec
+  - [ ] Convert to protobuf
+  - [ ] Validate with buff.validate
+  - [ ] Report any mismatches
+
+## Phase 7: Property-Based Testing 🧪
+### State Message Testing
+- [ ] Generate 1000+ random valid State messages
+- [ ] Validate each with buff.validate
+- [ ] Track any validation failures
+- [ ] Refine specs based on failures
+- [ ] Achieve 100% pass rate
+
+### Command Message Testing
+- [ ] Generate 1000+ random valid Command messages
+- [ ] Validate each with buff.validate
+- [ ] Test all command types
+- [ ] Verify oneof constraints
+- [ ] Achieve 100% pass rate
+
+### Edge Case Testing
+- [ ] Test boundary values for all numeric fields
+- [ ] Test empty/minimal messages
+- [ ] Test maximum size messages
+- [ ] Test invalid enum values
+- [ ] Test missing required fields
+
+## Phase 8: Integration and Documentation 📚
+- [ ] Update Makefile with new targets:
+  - `make spec-test` - Run all spec tests
+  - `make generate-samples` - Generate sample messages
+  - `make validate-specs` - Validate specs against buff
+  - `make property-test` - Run property-based tests
+- [ ] Create comprehensive documentation:
+  - [ ] Spec usage guide
+  - [ ] Generator documentation
+  - [ ] Property testing guide
+  - [ ] Buff validate integration guide
+- [ ] Add examples for common use cases
+- [ ] Create troubleshooting guide
+
+## Phase 9: Performance Optimization ⚡
+- [ ] Profile spec validation performance
+- [ ] Optimize generator performance
+- [ ] Cache compiled validators
+- [ ] Benchmark against raw buff.validate
+- [ ] Document performance characteristics
+
+## Success Criteria ✅
+1. **Complete Coverage**: All proto message fields have corresponding Malli specs
+2. **Constraint Compatibility**: 100% of buff.validate constraints are enforced in Malli specs
+3. **Generator Quality**: Generated data passes buff.validate 100% of the time
+4. **Performance**: Spec validation < 5ms per message
+5. **Documentation**: Complete usage and integration guides
+6. **Testing**: 1000+ successful property-based test runs per message type
+
+## Technical Notes 📋
+
+### Global Registry Setup (CRITICAL)
+The project uses a GLOBAL default Malli registry (not local registries). All specs must be registered globally:
 ```clojure
-(require '[validate.validator :as v])
+(ns validate.core
+  (:require
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-pronto :as oneof]
+   [potatoclient.specs.common])) ; Auto-registers on load
 
-; Validate binary data
-(v/validate-binary data :type :state)
-
-; Auto-detect type
-(v/validate-binary data)
-
-; Validate file
-(v/validate-file "path/to/file.bin")
+;; Initialize ONCE at application startup
+(defn initialize!
+  []
+  (registry/setup-global-registry!
+    {:oneof-pronto (oneof/register-oneof-pronto-schema!)}))
 ```
 
-## Test Commands
+### Oneof-Pronto Schema
+Custom Malli schema for protobuf oneofs in Pronto proto-maps:
+- Location: `/shared/src/potatoclient/specs/oneof_pronto.clj`
+- Purpose: Validates that exactly one field is set in a oneof group
+- Required for Command message specs (uses oneof for command type)
+- Example usage in cmd_root.clj for JonCommand root
+
+### Malli Generator Tips (2025)
+- Use `:gen/gen` property for custom generators
+- Use `:gen/fmap` for transformations
+- Use `:gen/elements` for specific value sets
+- Control size with `:gen/min` and `:gen/max`
+- Combine generators with `gen/bind` for dependent fields
+
+### Buff Validate Constraints to Implement
+- `double.gte_lte`: Range constraints for doubles
+- `uint32.gt`: Greater than for unsigned integers
+- `enum.defined_only`: Only defined enum values
+- `double.gt_lte`: Greater than with upper bound
+- Required field validation
+- Oneof field validation
+
+### State Explorer Output Reference
+- Location: `/tools/state-explorer/output/*.edn`
+- Contains real captured state messages
+- Use for validation and testing
+- Reference for field structure and values
+
+### Proto-Class Explorer Usage
 ```bash
-# Run all tests
-make test
+# Search for messages
+make search QUERY=root
 
-# Start REPL for development
-make repl
-
-# Clean and rebuild
-make clean-build
-make build
+# Get detailed info
+make info QUERY='cmd.JonSharedCmd$Root'
 ```
 
-## Architecture Notes
-- Uses Pronto for efficient protobuf handling
-- buf.validate for constraint validation
-- Memoized test data for performance
-- Type hints for optimal Pronto performance
-- Clean separation between parsing, validation, and formatting
-
-## Key Files
-- `src/validate/validator.clj` - Core validation logic
-- `src/validate/core.clj` - CLI entry point
-- `test/validate/test_harness.clj` - Idiomatic Pronto test data generation
-- `test/validate/validation_test.clj` - Validation behavior tests
-- `test/validate/validator_test.clj` - Core validator tests
-- `scripts/generate-protos.sh` - Proto generation with buf.validate support
-- `Makefile` - Build automation
-- `deps.edn` - Dependencies including Pronto fork
+## Current Status: Phase 1 - Foundation Setup
+Next Step: Complete directory structure setup and symlinks
