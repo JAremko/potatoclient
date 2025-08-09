@@ -447,9 +447,13 @@ cmd-explorer/
    cat /examples/web/frontend/ts/cmd/cmdSender/cmdDayCamera.ts | grep -A 10 "function dayCameraSetZoom"
    
    # Explore protobuf structure
+   # For Claude AI users: Use the proto-class-explorer agent instead of direct commands
+   # Example: "Use the proto-class-explorer agent to show me the DayCamera.Root message"
+   
+   # For manual exploration:
    cd /tools/proto-explorer
-   ./proto-explorer cmd DayCamera.Root
-   ./proto-explorer cmd DayCamera.Zoom
+   make proto-info QUERY='cmd.DayCamera$Root'
+   make proto-info QUERY='cmd.DayCamera$Zoom'
    
    # Note all constraints and requirements
    ```
@@ -684,7 +688,7 @@ make mock-server
 ## Related Tools
 
 - [State-Explorer](../state-explorer/) - WebSocket state endpoint testing
-- [Proto-Explorer](../proto-explorer/) - Protobuf message exploration
+- [Proto-Explorer](../proto-explorer/) - Protobuf message exploration (Claude AI users: use the `proto-class-explorer` agent instead)
 - [TypeScript Implementation](../../examples/web/frontend/ts/cmd/) - Reference implementation
 
 ## Contributing

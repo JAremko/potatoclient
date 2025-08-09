@@ -1,5 +1,7 @@
 # Proto-Explorer
 
+**Note: For Claude AI users, use the `proto-class-explorer` agent instead of direct proto-explorer commands. The agent provides better integration and automatic handling of the proto-explorer tool.**
+
 A streamlined 2-step tool for exploring Protocol Buffer messages in your codebase. Search for messages, then get comprehensive details including Java class mappings, Pronto EDN representations, and field information.
 
 ## Table of Contents
@@ -54,6 +56,8 @@ Proto-Explorer is included in the PotatoClient project. No separate installation
 **Note**: Proto classes are automatically compiled when needed. The tool ensures all required Java classes are available before running.
 
 ## Usage: 2-Step Workflow
+
+**For Claude AI users**: Instead of using these commands directly, use the `proto-class-explorer` agent which automatically handles the proto-explorer tool for you. Simply ask Claude to "use the proto-class-explorer agent to find information about [your protobuf message or Java class]".
 
 ### Step 1: Search or List Messages
 
@@ -352,7 +356,7 @@ Proto-Explorer automatically locates the descriptor files by checking multiple s
 
 This ensures the tool works correctly whether run:
 - From the project root via Makefile
-- From the tools/proto-explorer directory
+- From the tools/proto-explorer directory (Claude AI users: use proto-class-explorer agent instead)
 - As part of automated scripts
 
 ## Troubleshooting

@@ -88,8 +88,10 @@ The tool will use a multimethod-based dispatch system for sending commands, wher
 
 **Proto-Explorer is MANDATORY for understanding message structures and constraints.**
 
-Every function implementation MUST start with proto-explorer to:
+Every function implementation MUST start with protobuf exploration to:
 1. Understand exact message structure
+
+**For Claude AI users**: Use the `proto-class-explorer` agent instead of direct proto-explorer commands. Simply ask: "Use the proto-class-explorer agent to show me [message name]".
 2. Discover buf.validate constraints
 3. Identify required vs optional fields
 4. Understand nested message relationships
@@ -98,16 +100,13 @@ Every function implementation MUST start with proto-explorer to:
 ```bash
 cd tools/proto-explorer
 
-# Use bb tasks to explore messages
-bb spec DayCamera.Root      # Show specific message structure
-bb spec DayCamera.Zoom      # Show nested message
-bb spec RotaryPlatform.Azimuth  # Show another nested message
+# For Claude AI users: Use the proto-class-explorer agent instead
+# Example: "Use the proto-class-explorer agent to show me DayCamera.Root"
 
-# Find messages by fuzzy search
-bb find "DayCamera"         # List all DayCamera-related messages
-
-# Generate example data
-bb example DayCamera.Zoom   # Generate sample data for testing
+# For manual use - Use Makefile commands:
+make proto-search QUERY=DayCamera    # Search for messages
+make proto-info QUERY='cmd.DayCamera$Root'  # Get detailed info
+make proto-info QUERY='cmd.DayCamera$Zoom'  # Show nested message
 ```
 
 **Never implement a function without first exploring its protobuf structure!**
@@ -199,7 +198,9 @@ All functions return a complete CMD root message as a Pronto proto-map:
 
 1. **Pre-Implementation Research (MANDATORY for EVERY function)**
    - **Read TypeScript source**: Examine the exact implementation in `/examples/web/frontend/ts/cmd/`
-   - **Use proto-explorer**: Run `./proto-explorer cmd <MessageType>` to understand:
+   - **Explore protobuf structure**:
+     - For Claude AI: Use the `proto-class-explorer` agent to understand message structure
+     - For manual use: Run `make proto-info QUERY='cmd.MessageType'` to understand:
      - Message structure and field types
      - Nested message requirements
      - Buf.validate constraints on each field
@@ -210,9 +211,10 @@ All functions return a complete CMD root message as a Pronto proto-map:
    ```bash
    # For implementing day-camera-set-zoom
    1. Read: /examples/web/frontend/ts/cmd/cmdSender/cmdDayCamera.ts:99
-   2. Explore: bb spec DayCamera.Root
-   3. Explore: bb spec DayCamera.Zoom
-   4. Note: zoom value constraint is [0.0, 1.0] from buf.validate
+   2. For Claude AI: "Use proto-class-explorer agent to show me DayCamera.Root and DayCamera.Zoom"
+   3. For manual: make proto-info QUERY='cmd.DayCamera$Root'
+   4. For manual: make proto-info QUERY='cmd.DayCamera$Zoom'  
+   5. Note: zoom value constraint is [0.0, 1.0] from buf.validate
    ```
 
 2. **Function Implementation**
@@ -228,7 +230,7 @@ All functions return a complete CMD root message as a Pronto proto-map:
    - Exercise guardrailed function directly with generated inputs
    - Simple value tests (positive cases)
    - Negative tests (invalid inputs)
-   - Boundary tests (min/max values from buf.validate discovered via proto-explorer)
+   - Boundary tests (min/max values from buf.validate discovered via proto-explorer or proto-class-explorer agent)
    - Generative tests (minimum 300 runs using spec generators)
    - Validate returned proto-map structure matches proto definition
    - Verify oneof constraints with `p/which-one-of`
@@ -300,7 +302,7 @@ Oneof spec adaptation for Pronto (see Phase 0):
   - [x] Initialize Malli global registry
 - [x] Define common reusable specs (angles, ranges, positions, enums)
 - [ ] **Reconcile custom specs with proto-generated specs for Pronto compatibility**
-  - [ ] Compare one-off custom specs with proto-explorer generated specs
+  - [ ] Compare one-off custom specs with proto-explorer generated specs (or use proto-class-explorer agent for Claude AI)
   - [ ] Identify discrepancies between manual specs and proto definitions
   - [ ] **Adapt custom specs to work with Pronto proto-maps**
     - [ ] Specs must validate Pronto proto-map structure (not raw Clojure maps)

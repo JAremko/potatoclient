@@ -146,7 +146,7 @@ Create a tool to connect to the WebSocket state endpoint, capture binary protobu
 
 ## Notes
 
-- Use proto-explorer as reference for project structure
+- Use proto-explorer as reference for project structure (Claude AI: use proto-class-explorer agent instead of direct tool use)
 - Keep tool focused and simple
 - Prioritize reliability over features
 - Make output easily analyzable
@@ -159,4 +159,4 @@ Create a tool to connect to the WebSocket state endpoint, capture binary protobu
 - Statistical analysis
 - Diff between payloads
 - Web UI for browsing captures
-- Integration with proto-explorer
+- Integration with proto-explorer (Claude AI: use proto-class-explorer agent)

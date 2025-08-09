@@ -319,7 +319,7 @@ make clean-build
 
 ## Related Tools
 
-- [Proto-Explorer](../proto-explorer/README.md) - Explore protobuf message definitions
+- [Proto-Explorer](../proto-explorer/README.md) - Explore protobuf message definitions (Claude AI users: use the `proto-class-explorer` agent instead)
 - [WebSocket Documentation](../../docs/websocket-endpoints.md) - Detailed endpoint information
 
 ## Future Enhancements
