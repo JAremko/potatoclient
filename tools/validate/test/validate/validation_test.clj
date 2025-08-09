@@ -77,6 +77,7 @@
     (is (thrown? Exception 
                  (v/validate-binary nil))))
   
-  (testing "Wrong type hint throws"
-    (is (thrown? Exception
-                 (v/validate-binary (h/valid-state-bytes) :type :cmd)))))
+  (testing "Wrong type hint results in invalid"
+    (let [result (v/validate-binary (h/valid-state-bytes) :type :cmd)]
+      (is (not (:valid? result)))
+      (is (> (count (:violations result)) 1)))))
