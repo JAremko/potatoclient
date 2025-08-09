@@ -22,26 +22,24 @@ Example:
 validate/
 ├── src/
 │   └── validate/
-│       ├── specs/          # Malli specs for proto messages
-│       │   ├── state/      # State message specs (hierarchical)
-│       │   ├── cmd/        # Command message specs (hierarchical)
-│       │   └── shared.clj  # Symlink to shared/src/potatoclient/specs/
-│       ├── generators/     # Custom generators for complex types
-│       ├── buff/           # Buff validate integration utilities
-│       └── property/       # Property-based testing infrastructure
+│       ├── specs/          # Malli specs with inline generators
+│       │   ├── state/      # State message specs (symlink to shared)
+│       │   ├── cmd/        # Command message specs (symlink to shared)
+│       │   └── shared      # Symlink to shared/src/potatoclient/specs/
+│       └── validator.clj   # Core validation logic
 └── test/
     └── validate/
-        ├── specs/          # Spec validation tests
-        ├── property/       # Property-based tests against buff.validate
-        └── generators/     # Generator tests
+        └── specs/          # Property-based tests using Malli generators
 ```
+
+**Note**: Malli specs include generators inline using `:gen/*` properties. No separate generator/property directories needed.
 
 ## Phase 1: Foundation Setup ✅
 - [x] Research Malli documentation for generators and property-based testing
 - [x] Explore existing shared specs structure and understand patterns
-- [ ] Set up symlinks from shared specs to validate tool classpath
-- [ ] Create directory structure for specs, generators, and tests
-- [ ] Initialize global Malli registry with oneof-pronto schema
+- [X] Set up symlinks from shared specs to validate tool classpath
+- [X] Create directory structure for specs, generators, and tests
+- [X] Initialize global Malli registry with oneof-pronto schema
   ```clojure
   ;; Required initialization (see cmd-explorer example)
   (registry/setup-global-registry!
@@ -89,19 +87,19 @@ validate/
 
 ## Phase 3: Shared Base Specs Development 🔧
 - [ ] Review and enhance existing common specs with buf.validate constraints:
-  - [ ] GPS coordinates with exact buf.validate ranges:
-    - Latitude: [-90, 90]
-    - Longitude: [-180, 180]
-    - Altitude: [-433, 8848.86]
-  - [ ] Protocol version: must be > 0
-  - [ ] Client type: cannot be UNSPECIFIED
-  - [ ] Rotary speed: > 0 and ≤ 1
-- [ ] Create additional shared specs:
-  - [ ] Timestamp specs with proper ranges
-  - [ ] ID specs with validation
-  - [ ] Status/mode enums with constraints
-- [ ] Add comprehensive generators for all base specs
-- [ ] Test generators produce valid values within constraints
+  - [ ] GPS coordinates with exact buf.validate ranges and inline generators:
+    ```clojure
+    [:double {:min -90 :max 90 
+              :gen/min -90 :gen/max 90}]  ; Latitude with generator
+    ```
+  - [ ] Protocol version: must be > 0 with generator
+  - [ ] Client type: enum that cannot be UNSPECIFIED with `:gen/elements`
+  - [ ] Rotary speed: > 0 and ≤ 1 with constrained generator
+- [ ] Create additional shared specs with inline generators:
+  - [ ] Timestamp specs with proper ranges and `:gen/fmap`
+  - [ ] ID specs with validation and custom generators
+  - [ ] Status/mode enums with `:gen/elements` for valid values
+- [ ] Property-test specs using `malli.generator/sample` to verify constraints
 
 ## Phase 4: State Message Specs (Bottom-Up) 🏗️
 ### Level 1: Leaf Message Specs
@@ -145,46 +143,38 @@ validate/
 - [ ] Add command-specific constraints
 
 ## Phase 6: Buff Validate Integration 🔌
-- [ ] Create utility functions for buff validation:
+- [ ] Create validation comparison functions:
   ```clojure
-  (defn validate-with-buff
-    "Validate generated data using buff.validate"
-    [proto-type data])
-  
-  (defn buff-constraints->malli
-    "Convert buff.validate constraints to Malli specs"
-    [constraint-map])
+  (defn validate-generated-against-buff
+    "Generate data from Malli spec and validate with buff.validate"
+    [spec proto-class n-samples])
   ```
-- [ ] Create conversion functions:
-  - [ ] Pronto map → protobuf binary
-  - [ ] Malli spec → buff.validate constraint checker
-- [ ] Set up validation pipeline:
-  - [ ] Generate data from Malli spec
-  - [ ] Convert to protobuf
-  - [ ] Validate with buff.validate
-  - [ ] Report any mismatches
+- [ ] Set up property-based testing pipeline:
+  - [ ] Use `malli.generator/sample` to generate test data
+  - [ ] Convert Pronto maps to protobuf via existing validator
+  - [ ] Validate with buff.validate 
+  - [ ] Assert 100% of Malli-generated data passes buff validation
 
 ## Phase 7: Property-Based Testing 🧪
 ### State Message Testing
-- [ ] Generate 1000+ random valid State messages
-- [ ] Validate each with buff.validate
+- [ ] Use `malli.generator/sample` to generate 1000+ State messages
+- [ ] Validate each with buff.validate via existing validator
 - [ ] Track any validation failures
-- [ ] Refine specs based on failures
+- [ ] Refine spec generators (`:gen/*` properties) based on failures
 - [ ] Achieve 100% pass rate
 
-### Command Message Testing
-- [ ] Generate 1000+ random valid Command messages
+### Command Message Testing  
+- [ ] Use `malli.generator/sample` to generate 1000+ Command messages
 - [ ] Validate each with buff.validate
-- [ ] Test all command types
+- [ ] Test all command types via oneof-pronto generators
 - [ ] Verify oneof constraints
 - [ ] Achieve 100% pass rate
 
-### Edge Case Testing
-- [ ] Test boundary values for all numeric fields
-- [ ] Test empty/minimal messages
-- [ ] Test maximum size messages
-- [ ] Test invalid enum values
-- [ ] Test missing required fields
+### Edge Case Testing with Malli
+- [ ] Use `:gen/min` and `:gen/max` to test boundary values
+- [ ] Generate minimal valid messages
+- [ ] Test with `malli.generator/generate` for specific edge cases
+- [ ] Use `:gen/fmap` to create invalid data for negative testing
 
 ## Phase 8: Integration and Documentation 📚
 - [ ] Update Makefile with new targets:
@@ -240,12 +230,25 @@ Custom Malli schema for protobuf oneofs in Pronto proto-maps:
 - Required for Command message specs (uses oneof for command type)
 - Example usage in cmd_root.clj for JonCommand root
 
-### Malli Generator Tips (2025)
-- Use `:gen/gen` property for custom generators
-- Use `:gen/fmap` for transformations
-- Use `:gen/elements` for specific value sets
-- Control size with `:gen/min` and `:gen/max`
-- Combine generators with `gen/bind` for dependent fields
+### Malli Generator Integration (Correct Approach)
+Generators are part of the spec definition, not separate:
+```clojure
+;; Example: GPS latitude spec with inline generator
+[:double {:min -90 :max 90
+          :gen/min -90 :gen/max 90
+          :description "GPS latitude in degrees"}]
+
+;; Example: Enum with specific valid values
+[:enum {:gen/elements [:ACTIVE :IDLE :ERROR]}
+ :ACTIVE :IDLE :ERROR :UNSPECIFIED]
+```
+
+Key properties:
+- `:gen/min`, `:gen/max` - Control numeric ranges
+- `:gen/elements` - Specific value sets for enums
+- `:gen/fmap` - Transform generated values
+- `:gen/gen` - Custom generator function
+- `:gen/nil-allowed?` - Allow nil values
 
 ### Buff Validate Constraints to Implement
 - `double.gte_lte`: Range constraints for doubles
