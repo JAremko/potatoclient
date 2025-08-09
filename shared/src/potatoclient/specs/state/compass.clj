@@ -1,4 +1,4 @@
-(ns validate.specs.state.compass
+(ns potatoclient.specs.state.compass
   "Compass message specs matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require

@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.rotary
+(ns potatoclient.specs.cmd.rotary
   "Rotary Platform command specs matching buf.validate constraints.
    Based on jon_shared_cmd_rotary.proto.
    All maps use {:closed true} to catch typos and invalid keys."

@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.root
+(ns potatoclient.specs.cmd.root
   "Root Command message spec (JonSharedCmd.Root) using oneof structure.
    Based on jon_shared_cmd.proto.
    All maps use {:closed true} to catch typos and invalid keys."

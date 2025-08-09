@@ -1,4 +1,4 @@
-(ns validate.specs.state.camera-day
+(ns potatoclient.specs.state.camera-day
   "Camera Day message spec matching buf.validate constraints and EDN output format.
    Based on jon_shared_data_camera_day.proto.
    All maps use {:closed true} to catch typos and invalid keys."

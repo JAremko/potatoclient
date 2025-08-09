@@ -8,8 +8,8 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.oneof-edn :as oneof-edn]
    [potatoclient.specs.common]
-   [validate.specs.state.root]
-   [validate.specs.cmd.root]
+   [potatoclient.specs.state.root]
+   [potatoclient.specs.cmd.root]
    [clojure.pprint :as pp]))
 
 (defn init!

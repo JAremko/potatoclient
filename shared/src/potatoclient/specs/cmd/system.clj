@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.system
+(ns potatoclient.specs.cmd.system
   "System command specs matching buf.validate constraints.
    Based on jon_shared_cmd_system.proto.
    All maps use {:closed true} to catch typos and invalid keys."

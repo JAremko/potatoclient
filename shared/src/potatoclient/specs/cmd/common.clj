@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.common
+(ns potatoclient.specs.cmd.common
   "Common command specs used across multiple command types.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require

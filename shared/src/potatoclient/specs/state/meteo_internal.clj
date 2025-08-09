@@ -1,4 +1,4 @@
-(ns validate.specs.state.meteo-internal
+(ns potatoclient.specs.state.meteo-internal
   "Meteo Internal message spec matching buf.validate constraints and EDN output.
    Based on proto structure.
    All maps use {:closed true} to catch typos and invalid keys."

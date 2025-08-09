@@ -142,16 +142,28 @@ The tool includes comprehensive testing with idiomatic Pronto patterns:
 ```
 validate/
 ├── src/
-│   └── validate/
-│       ├── core.clj         # CLI entry point
-│       └── validator.clj    # Core validation with caching
-├── test/
+│   ├── java/                    # Generated protobuf Java classes (LOCAL)
+│   │   ├── cmd/                 # Command message classes
+│   │   └── ser/                 # State message classes
+│   ├── potatoclient             # SYMLINK → shared/src/potatoclient
+│   └── validate/                # Tool-specific code (LOCAL)
+│       ├── core.clj             # CLI entry point
+│       ├── examples.clj         # Usage examples
+│       ├── specs/               # Spec directories
+│       │   ├── cmd              # SYMLINK → shared specs/cmd
+│       │   ├── shared           # SYMLINK → shared specs
+│       │   └── state            # SYMLINK → shared specs/state
+│       └── validator.clj        # Core validation with caching
+├── test/                        # Test files (LOCAL)
 │   └── validate/
 │       ├── test_harness.clj    # Idiomatic Pronto test data
 │       ├── validator_test.clj  # Core validator tests
 │       ├── validation_test.clj # Behavior tests
 │       ├── pronto_test.clj     # Pronto-specific tests
-│       └── harness_test.clj    # Harness verification
+│       ├── harness_test.clj    # Harness verification
+│       └── specs/
+│           ├── oneof_edn_test.clj # Oneof EDN spec tests
+│           └── state_test.clj     # State spec tests
 ├── deps.edn                     # Dependencies (includes Pronto fork)
 ├── build.clj                    # Build configuration
 ├── Makefile                     # Build automation
@@ -159,6 +171,26 @@ validate/
 └── scripts/
     └── generate-protos.sh       # Protobuf generation with buf
 ```
+
+### Directory Types
+
+**LOCAL (Tool-specific)**:
+- `src/java/` - Generated protobuf Java classes
+- `src/validate/` - Tool-specific validation code
+- `test/` - All test files
+- Configuration files (deps.edn, build.clj, etc.)
+
+**SYMLINKS (Shared across project)**:
+- `src/potatoclient` → `../../../shared/src/potatoclient` - Shared project code
+- `src/validate/specs/shared` → `../../../../shared/src/potatoclient/specs` - All shared specs
+- `src/validate/specs/cmd` → `../../../../../shared/src/potatoclient/specs/cmd` - Command message specs
+- `src/validate/specs/state` → `../../../../../shared/src/potatoclient/specs/state` - State message specs
+
+This structure allows the validate tool to:
+1. Use shared Malli specs that are maintained centrally in `/shared/src/potatoclient/specs/`
+2. Share specs with other tools and the main application
+3. Maintain tool-specific code locally while leveraging shared components
+4. Keep generators and spec dependencies in the shared location for consistency
 
 ## ⚡ Performance
 

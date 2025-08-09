@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.osd
+(ns potatoclient.specs.cmd.osd
   "OSD (On-Screen Display) command specs matching buf.validate constraints.
    Based on jon_shared_cmd_osd.proto.
    All maps use {:closed true} to catch typos and invalid keys."

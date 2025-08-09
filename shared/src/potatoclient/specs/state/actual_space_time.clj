@@ -1,4 +1,4 @@
-(ns validate.specs.state.actual-space-time
+(ns potatoclient.specs.state.actual-space-time
   "Actual Space Time message spec matching buf.validate constraints and EDN output.
    Based on jon_shared_data_actual_space_time.proto.
    All maps use {:closed true} to catch typos and invalid keys."

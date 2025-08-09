@@ -1,4 +1,4 @@
-(ns validate.specs.state.root
+(ns potatoclient.specs.state.root
   "Root State message spec (JonGUIState) assembling all sub-messages.
    Based on jon_shared_data.proto.
    All maps use {:closed true} to catch typos and invalid keys."

@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.lrf-align
+(ns potatoclient.specs.cmd.lrf-align
   "LRF Alignment/Calibration command specs matching buf.validate constraints.
    Based on jon_shared_cmd_lrf_align.proto.
    All maps use {:closed true} to catch typos and invalid keys."

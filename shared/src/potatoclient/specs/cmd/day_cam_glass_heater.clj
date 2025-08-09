@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.day-cam-glass-heater
+(ns potatoclient.specs.cmd.day-cam-glass-heater
   "Day Camera Glass Heater command specs matching buf.validate constraints.
    Based on jon_shared_cmd_day_cam_glass_heater.proto.
    All maps use {:closed true} to catch typos and invalid keys."

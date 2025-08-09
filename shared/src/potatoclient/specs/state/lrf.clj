@@ -1,4 +1,4 @@
-(ns validate.specs.state.lrf
+(ns potatoclient.specs.state.lrf
   "LRF (Laser Range Finder) message spec matching buf.validate constraints and EDN output.
    Based on jon_shared_data_lrf.proto.
    All maps use {:closed true} to catch typos and invalid keys."

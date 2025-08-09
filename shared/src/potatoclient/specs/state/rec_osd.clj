@@ -1,4 +1,4 @@
-(ns validate.specs.state.rec-osd
+(ns potatoclient.specs.state.rec-osd
   "Recording OSD message spec matching buf.validate constraints and EDN output.
    Based on jon_shared_data_rec_osd.proto.
    All maps use {:closed true} to catch typos and invalid keys."

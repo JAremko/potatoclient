@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.heat-camera
+(ns potatoclient.specs.cmd.heat-camera
   "Heat Camera command specs matching buf.validate constraints.
    Based on jon_shared_cmd_heat_camera.proto.
    All maps use {:closed true} to catch typos and invalid keys."

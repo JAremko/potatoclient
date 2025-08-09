@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.compass
+(ns potatoclient.specs.cmd.compass
   "Compass command specs matching buf.validate constraints.
    Based on jon_shared_cmd_compass.proto.
    All maps use {:closed true} to catch typos and invalid keys."

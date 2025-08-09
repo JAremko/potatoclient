@@ -11,7 +11,7 @@
    [potatoclient.specs.oneof-edn :as oneof-edn]
    ;; Load all specs
    [potatoclient.specs.common]
-   [validate.specs.state.root]))
+   [potatoclient.specs.state.root]))
 
 ;; Initialize the global registry with oneof-edn schema
 (defn init-registry! []

@@ -1,4 +1,4 @@
-(ns validate.specs.state.rotary
+(ns potatoclient.specs.state.rotary
   "Rotary message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require

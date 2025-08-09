@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.lrf
+(ns potatoclient.specs.cmd.lrf
   "LRF (Laser Range Finder) command specs matching buf.validate constraints.
    Based on jon_shared_cmd_lrf.proto.
    All maps use {:closed true} to catch typos and invalid keys."

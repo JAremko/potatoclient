@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.gps
+(ns potatoclient.specs.cmd.gps
   "GPS command specs matching buf.validate constraints.
    Based on jon_shared_cmd_gps.proto.
    All maps use {:closed true} to catch typos and invalid keys."

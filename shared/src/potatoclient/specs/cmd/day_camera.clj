@@ -1,4 +1,4 @@
-(ns validate.specs.cmd.day-camera
+(ns potatoclient.specs.cmd.day-camera
   "Day Camera command specs matching buf.validate constraints.
    Based on jon_shared_cmd_day_camera.proto.
    All maps use {:closed true} to catch typos and invalid keys."

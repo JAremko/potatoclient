@@ -1,4 +1,4 @@
-(ns validate.specs.state.time
+(ns potatoclient.specs.state.time
   "Time message spec matching buf.validate constraints and EDN output format.
    Based on jon_shared_data_time.proto.
    All maps use {:closed true} to catch typos and invalid keys."

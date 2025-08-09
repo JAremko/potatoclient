@@ -1,4 +1,4 @@
-(ns validate.specs.state.camera-heat
+(ns potatoclient.specs.state.camera-heat
   "Camera Heat message spec matching buf.validate constraints and EDN output format.
    Based on jon_shared_data_camera_heat.proto.
    All maps use {:closed true} to catch typos and invalid keys."

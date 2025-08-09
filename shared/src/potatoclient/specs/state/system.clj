@@ -1,4 +1,4 @@
-(ns validate.specs.state.system
+(ns potatoclient.specs.state.system
   "System message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require

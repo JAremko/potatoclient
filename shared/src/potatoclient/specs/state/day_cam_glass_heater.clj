@@ -1,4 +1,4 @@
-(ns validate.specs.state.day-cam-glass-heater
+(ns potatoclient.specs.state.day-cam-glass-heater
   "Day Camera Glass Heater message spec matching buf.validate constraints and EDN output.
    Based on jon_shared_data_day_cam_glass_heater.proto.
    All maps use {:closed true} to catch typos and invalid keys."
