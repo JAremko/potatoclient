@@ -3,6 +3,20 @@
 ## Project Goal
 Create comprehensive Malli specs for State and Cmd proto messages with property-based testing against buf.validate constraints. These specs will validate Pronto maps (EDN representations) and ensure compatibility with protobuf validation constraints.
 
+## Critical Design Decision: Closed Map Specs
+**ALL MAP SPECS MUST BE CLOSED** - Use `:map` with `{:closed true}` to catch typos and invalid keys. This ensures:
+- Field name typos are caught immediately
+- No extra unexpected fields are silently accepted
+- Strict validation matching protobuf schema exactly
+- Better error messages when keys don't match expected schema
+
+Example:
+```clojure
+[:map {:closed true}  ; ALWAYS use closed maps
+ [:latitude double?]
+ [:longitude double?]]
+```
+
 ## Architecture Overview
 ```
 validate/

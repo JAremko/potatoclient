@@ -97,6 +97,11 @@ The agent provides:
 2. **Malli Specs** - Type specifications for all functions
 3. **Comprehensive Tests** - Every function must be tested
 
+**Malli Map Specs Must Be Closed:**
+- All map specs must use `{:closed true}` to reject extra keys
+- This ensures strict validation and prevents unintended data from passing through
+- Use `malli.util/closed-schema` when working with existing schemas
+
 ### Testing Philosophy
 **NO Test Deletion or Disabling - WE MAKE THEM PASS**
 - Never comment out failing tests
