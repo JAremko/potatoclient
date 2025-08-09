@@ -39,8 +39,8 @@ ensure-proto-classes:
 		echo "Proto classes already compiled"; \
 	fi
 
-.PHONY: search
-search: ensure-proto-classes ## [STEP 1] Search for protobuf messages
+.PHONY: search proto-search
+search proto-search: ensure-proto-classes ## [STEP 1] Search for protobuf messages
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make search QUERY=<search-term>"; \
 		echo ""; \
@@ -52,12 +52,12 @@ search: ensure-proto-classes ## [STEP 1] Search for protobuf messages
 	fi
 	@clojure -M:run:test-protos search $(QUERY)
 
-.PHONY: list
-list: ensure-proto-classes ## [STEP 1] List all protobuf messages
+.PHONY: list proto-list
+list proto-list: ensure-proto-classes ## [STEP 1] List all protobuf messages
 	@clojure -M:run:test-protos list $(FILTER)
 
-.PHONY: info
-info: ensure-proto-classes ## [STEP 2] Get detailed info using query from step 1
+.PHONY: info proto-info
+info proto-info: ensure-proto-classes ## [STEP 2] Get detailed info using query from step 1
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make info QUERY='<result-from-search>'"; \
 		echo ""; \
@@ -67,13 +67,13 @@ info: ensure-proto-classes ## [STEP 2] Get detailed info using query from step 1
 	fi
 	@clojure -M:run:test-protos info "$(QUERY)"
 
-.PHONY: repl
-repl: ## Start a REPL for interactive exploration
+.PHONY: repl proto-repl
+repl proto-repl: ## Start a REPL for interactive exploration
 	@echo "Starting REPL on port 7889..."
 	@clojure -M:nrepl
 
-.PHONY: test
-test: ## Run all tests
+.PHONY: test proto-test
+test proto-test: ## Run all tests
 	@echo "Running tests..."
 	@clojure -M:test
 
@@ -109,8 +109,14 @@ format-check: ## Check code formatting
 	@echo "Checking code format..."
 	@clojure -M:fmt check
 
-.PHONY: clean
-clean: ## Clean build artifacts
+.PHONY: clean proto-clean
+clean proto-clean: ## Clean build artifacts
 	@echo "Cleaning..."
 	@rm -rf target/ .cpcache/
+
+# Catch-all target for unknown commands
+%:
+	@echo "Error: Unknown target '$@'"
+	@echo ""
+	@$(MAKE) help
 

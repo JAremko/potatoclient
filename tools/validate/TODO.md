@@ -34,18 +34,44 @@ validate/
     {:oneof-pronto (oneof/register-oneof-pronto-schema!)})
   ```
 
-## Phase 2: Proto Discovery and Analysis 📝
-- [ ] Use proto-class-explorer agent to document State proto structure
-  - [ ] Get complete field hierarchy for JonSharedData$JonGUIState
-  - [ ] Document all buf.validate constraints per field
-  - [ ] Map Java class names to proto message names
-  - [ ] Identify all nested message types
-- [ ] Use proto-class-explorer agent to document Cmd proto structure
-  - [ ] Get complete field hierarchy for JonSharedCmd$Root
-  - [ ] Document all buf.validate constraints per field
-  - [ ] Map Java class names to proto message names
-  - [ ] Identify all nested message types
-- [ ] Create reference document with all constraints and field types
+## Phase 2: Proto Discovery and Analysis ✅
+- [x] Use proto-class-explorer agent to document State proto structure
+  - [x] Get complete field hierarchy for JonSharedData$JonGUIState
+  - [x] Document all buf.validate constraints per field
+  - [x] Map Java class names to proto message names
+  - [x] Identify all nested message types
+- [x] Use proto-class-explorer agent to document Cmd proto structure
+  - [x] Get complete field hierarchy for JonSharedCmd$Root
+  - [x] Document all buf.validate constraints per field
+  - [x] Map Java class names to proto message names
+  - [x] Identify all nested message types
+- [x] Create reference document with all constraints and field types
+
+### Discovered Proto Structures
+
+#### State Message (ser.JonSharedData$JonGUIState)
+- **protocol_version**: uint32 > 0 (required)
+- **14 nested messages** (all required):
+  - system, meteo_internal, lrf, time, gps, compass, rotary
+  - camera_day, camera_heat, compass_calibration, rec_osd
+  - day_cam_glass_heater, actual_space_time
+
+#### GPS Constraints (Critical)
+- **latitude**: double ∈ [-90, 90]
+- **longitude**: double ∈ [-180, 180]
+- **altitude**: double ∈ [-433, 8848.86]
+- **fix_type**: enum, cannot be UNSPECIFIED (0)
+
+#### Command Message (cmd.JonSharedCmd$Root)
+- **protocol_version**: uint32 > 0
+- **client_type**: enum, cannot be UNSPECIFIED (0)
+- **15 command payloads** (oneof structure):
+  - cv, day_camera, heat_camera, gps, compass, lrf, lrf_calib
+  - rotary, osd, ping, noop, frozen, system, day_cam_glass_heater, lira
+
+#### Rotary Speed Constraints
+- **All rotary speeds**: double/float > 0 and ≤ 1
+- Applies to: RotateAzimuth, RotateElevation, ScanNode operations
 
 ## Phase 3: Shared Base Specs Development 🔧
 - [ ] Review and enhance existing common specs with buf.validate constraints:
