@@ -1,7 +1,7 @@
 ---
 name: proto-class-explorer
 description: Use this agent when you need to retrieve information about specific protobuf messages or Java classes from the potatoclient codebase. This includes looking up message definitions, field details, class structures, or any related protobuf/Java class information. Examples:\n\n<example>\nContext: User needs information about a specific protobuf message in the potatoclient project.\nuser: "What fields does the UserProfile protobuf message have?"\nassistant: "I'll use the proto-class-explorer agent to look up the UserProfile message details."\n<commentary>\nSince the user is asking about a specific protobuf message, use the Task tool to launch the proto-class-explorer agent to retrieve the information.\n</commentary>\n</example>\n\n<example>\nContext: User needs to understand a Java class structure in the potatoclient project.\nuser: "Show me the methods in the ClientConnection Java class"\nassistant: "Let me use the proto-class-explorer agent to retrieve information about the ClientConnection class."\n<commentary>\nThe user wants Java class information, so use the proto-class-explorer agent which handles both protobuf and Java class exploration.\n</commentary>\n</example>\n\n<example>\nContext: User is debugging and needs to verify protobuf field types.\nuser: "I need to check the field types for the RequestMessage proto"\nassistant: "I'll launch the proto-class-explorer agent to get the RequestMessage field information."\n<commentary>\nFor protobuf field type verification, use the proto-class-explorer agent to retrieve accurate field definitions.\n</commentary>\n</example>
-model: haiku
+model: sonnet
 color: green
 ---
 

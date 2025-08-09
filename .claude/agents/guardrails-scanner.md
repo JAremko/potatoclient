@@ -1,7 +1,7 @@
 ---
 name: guardrails-scanner
 description: Use this agent when you need to scan source code for functions that lack proper guardrails or safety checks. This agent specializes in identifying unprotected functions, missing validation, error handling gaps, and security vulnerabilities in the codebase. <example>\nContext: The user wants to ensure all functions in the codebase have proper guardrails.\nuser: "Can you check if our API endpoints have proper validation?"\nassistant: "I'll use the guardrails-scanner agent to analyze the codebase for unprotected functions."\n<commentary>\nSince the user is asking about validation and protection in the code, use the Task tool to launch the guardrails-scanner agent to identify functions lacking guardrails.\n</commentary>\n</example>\n<example>\nContext: After implementing new features, checking for security gaps.\nuser: "I just added several new data processing functions to the system"\nassistant: "Let me run the guardrails-scanner agent to check if these new functions have proper guardrails in place."\n<commentary>\nWhen new code is added, proactively use the guardrails-scanner to ensure all functions have appropriate safety checks.\n</commentary>\n</example>
-model: haiku
+model: sonnet
 color: red
 ---
 
