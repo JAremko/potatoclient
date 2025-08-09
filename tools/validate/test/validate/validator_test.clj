@@ -146,6 +146,27 @@
 ;; PERFORMANCE CHARACTERISTICS
 ;; ============================================================================
 
+(deftest test-stream-validation
+  (testing "Stream validation with valid state data"
+    (let [data (h/valid-state-bytes)
+          stream (java.io.ByteArrayInputStream. data)
+          result (v/validate-stream stream)]
+      (is (:valid? result) "Should validate successfully")
+      (is (= :state (:message-type result)) "Should detect as state")))
+  
+  (testing "Stream validation with valid command data"
+    (let [data (h/valid-ping-bytes)
+          stream (java.io.ByteArrayInputStream. data)
+          result (v/validate-stream stream :type :cmd)]
+      (is (:valid? result) "Should validate successfully")
+      (is (= :cmd (:message-type result)) "Should be cmd type")))
+  
+  (testing "Stream validation with empty stream"
+    (let [stream (java.io.ByteArrayInputStream. (byte-array 0))
+          result (v/validate-stream stream)]
+      (is (not (:valid? result)) "Should not validate")
+      (is (= "Binary data cannot be empty" (:message result))))))
+
 (deftest test-validation-performance
   (testing "Cached validator provides good performance"
     (let [state-bytes (h/valid-state-bytes)]

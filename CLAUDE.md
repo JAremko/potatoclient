@@ -11,10 +11,10 @@
 - Mapping between proto messages and their Java implementations
 
 **How to use:**
-Instead of directly using proto-explorer commands or searching for proto/Java files, use:
+Provide full context when invoking:
 ```
 Task: proto-class-explorer agent
-Prompt: "Find information about [message/class name]"
+Prompt: "Find information about [message/class name] in /home/jare/git/potatoclient/tools/proto-explorer"
 ```
 
 The agent provides:
@@ -22,7 +22,13 @@ The agent provides:
 - Java class mappings (e.g., `cmd.Root` → `cmd.JonSharedCmd$Root`)
 - Pronto EDN representations for Clojure integration
 - Field information with buf.validate constraints
-- Automatic handling of the 2-step proto-explorer workflow
+- Automatic handling of the 2-step proto-explorer workflow using Makefile commands
+
+**Technical Details:**
+- Tool location: `/home/jare/git/potatoclient/tools/proto-explorer`
+- Uses Makefile commands: `make proto-search`, `make proto-list`, `make proto-info`
+- Descriptor files: `output/json-descriptors/`
+- Automatically compiles proto classes when needed
 
 ### Test Runner Analyzer Agent
 **ALWAYS use the `test-runner-analyzer` agent for:**
@@ -34,8 +40,9 @@ The agent provides:
 Instead of directly running test commands, use:
 ```
 Task: test-runner-analyzer agent
-Prompt: "Run tests for [module/feature]" or "Run all tests and report failures"
+Prompt: "Run tests in [working directory] using command: [test command]"
 ```
+Example: "Run tests in /home/jare/git/potatoclient using command: lein test"
 
 The agent provides:
 - Test execution with filtered results
@@ -54,17 +61,24 @@ The agent provides:
 - Searching for specific function patterns that lack Guardrails
 
 **How to use:**
-Instead of manually searching for functions without Guardrails, use:
+Provide full context when invoking:
 ```
 Task: guardrails-scanner agent
-Prompt: "Find all functions not using Guardrails" or "Check which namespaces have unspecced functions"
+Prompt: "Check [src-dir] for functions not using Guardrails using bb command in /home/jare/git/potatoclient/tools/guardrails-check"
 ```
+Example: "Check src/potatoclient for functions not using Guardrails using bb command in /home/jare/git/potatoclient/tools/guardrails-check"
 
 The agent provides:
 - List of functions using raw `defn` that should use `>defn`
 - Statistics on Guardrails adoption percentage
 - Namespace-grouped reports of unspecced functions
 - Recommendations to convert functions to use Guardrails
+
+**Technical Details:**
+- Tool location: `/home/jare/git/potatoclient/tools/guardrails-check`
+- Uses Babashka commands: `bb check`, `bb report`, `bb stats`, `bb find`
+- Default source directory: `src/potatoclient`
+- Output formats: EDN, Markdown
 
 **Note**: This tool specifically checks for Guardrails library usage (runtime validation), not general security vulnerabilities or error handling.
 
