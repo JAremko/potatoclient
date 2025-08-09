@@ -1,22 +1,25 @@
 (ns potatoclient.specs.common
-  "Common reusable specs for all potatoclient applications"
+  "Common reusable specs for all potatoclient applications.
+   All map specs use {:closed true} to catch typos and invalid keys.
+   Specs match exact buf.validate constraints from proto files."
   (:require
    [malli.core :as m]
    [malli.generator :as mg]
    [potatoclient.malli.registry :as registry]
-   [clojure.test.check.generators :as gen])
-  (:import
-   [ser JonSharedDataTypes$JonGuiDataClientType
-    JonSharedDataTypes$JonGuiDataGpsFixType
-    JonSharedDataTypes$JonGuiDataRotaryDirection
-    JonSharedDataTypes$JonGuiDataRotaryMode
-    JonSharedDataTypes$JonGuiDataVideoChannel
-    JonSharedDataTypes$JonGuiDataFxModeDay
-    JonSharedDataTypes$JonGuiDataFxModeHeat
-    JonSharedDataTypes$JonGuiDataLrfScanModes
-    JonSharedDataTypes$JonGuiDataCompassCalibrateStatus]))
+   [clojure.test.check.generators :as gen]))
 
-;; Angle specs (degrees)
+;; ====================================================================
+;; Protocol Version Spec (uint32 > 0 from buf.validate)
+;; ====================================================================
+(def protocol-version-spec
+  [:int {:min 1 :max 2147483647
+         :gen/gen (gen/choose 1 100)}])  ; Realistic range for protocol versions
+
+(registry/register! :proto/protocol-version protocol-version-spec)
+
+;; ====================================================================
+;; Angle specs (degrees) 
+;; ====================================================================
 (def azimuth-spec
   [:double {:min -180.0 :max 180.0
             :gen/gen (gen/double* {:min -180.0 :max 180.0 :NaN? false})}])
@@ -47,18 +50,23 @@
 (registry/register! :range/zoom zoom-level-spec)
 (registry/register! :range/focus focus-level-spec)
 
-;; Position specs (GPS coordinates)
+;; ====================================================================
+;; GPS Position specs (EXACT buf.validate constraints)
+;; ====================================================================
+;; Latitude: double ∈ [-90, 90]
 (def latitude-spec
   [:double {:min -90.0 :max 90.0
             :gen/gen (gen/double* {:NaN? false :min -90.0 :max 90.0})}])
 
+;; Longitude: double ∈ [-180, 180] (note: some proto fields use < 180)
 (def longitude-spec
   [:double {:min -180.0 :max 180.0
-            :gen/gen (gen/double* {:NaN? false :min -180.0 :max 180.0})}])
+            :gen/gen (gen/double* {:NaN? false :min -180.0 :max 179.999999})}])
 
+;; Altitude: double ∈ [-433, 8848.86] (Dead Sea to Mt. Everest)
 (def altitude-spec
-  [:double {:min -1000.0 :max 10000.0
-            :gen/gen (gen/double* {:NaN? false :min -1000.0 :max 10000.0})}])
+  [:double {:min -433.0 :max 8848.86
+            :gen/gen (gen/double* {:NaN? false :min -433.0 :max 8848.86})}])
 
 ;; Register position specs
 (registry/register! :position/latitude latitude-spec)
@@ -154,84 +162,121 @@
 ;; Register percentage spec
 (registry/register! :percentage percentage-spec)
 
-;; Enum specs (Proto enums)
+;; ====================================================================
+;; Rotary Specs (EXACT buf.validate constraints)
+;; ====================================================================
+
+;; Rotary Speed: float/double > 0 and ≤ 1
+(def rotary-speed-spec
+  [:double {:min 0.001 :max 1.0  ; > 0 means we need small positive value
+            :gen/gen (gen/double* {:min 0.001 :max 1.0 :NaN? false})}])
+
+(registry/register! :rotary/speed rotary-speed-spec)
+
+;; Rotary Azimuth: float ≥ 0 and < 360
+(def rotary-azimuth-spec
+  [:double {:min 0.0 :max 359.999999
+            :gen/gen (gen/double* {:min 0.0 :max 359.999 :NaN? false})}])
+
+;; Rotary Elevation: float ≥ -90 and ≤ 90  
+(def rotary-elevation-spec
+  [:double {:min -90.0 :max 90.0
+            :gen/gen (gen/double* {:min -90.0 :max 90.0 :NaN? false})}])
+
+;; Platform azimuth: float > -360 and < 360
+(def platform-azimuth-spec
+  [:double {:min -359.999999 :max 359.999999
+            :gen/gen (gen/double* {:min -359.999 :max 359.999 :NaN? false})}])
+
+;; Platform bank: float ≥ -180 and < 180
+(def platform-bank-spec
+  [:double {:min -180.0 :max 179.999999
+            :gen/gen (gen/double* {:min -180.0 :max 179.999 :NaN? false})}])
+
+(registry/register! :rotary/azimuth rotary-azimuth-spec)
+(registry/register! :rotary/elevation rotary-elevation-spec)
+(registry/register! :rotary/platform-azimuth platform-azimuth-spec)
+(registry/register! :rotary/platform-bank platform-bank-spec)
+
+;; ====================================================================
+;; Enum specs (Using keywords as in Pronto EDN output)
+;; ====================================================================
+
+;; Client Type (Cannot be UNSPECIFIED per buf.validate)
 (def client-type-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
-   JonSharedDataTypes$JonGuiDataClientType/JON_GUI_DATA_CLIENT_TYPE_LIRA])
+   :jon-gui-data-client-type-internal-cv
+   :jon-gui-data-client-type-local-network
+   :jon-gui-data-client-type-certificate-protected
+   :jon-gui-data-client-type-lira])
 
+;; GPS Fix Type (Cannot be UNSPECIFIED per buf.validate)
 (def gps-fix-type-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_NONE
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_1D
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_2D
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_3D
-   JonSharedDataTypes$JonGuiDataGpsFixType/JON_GUI_DATA_GPS_FIX_TYPE_MANUAL])
+   :jon-gui-data-gps-fix-type-none
+   :jon-gui-data-gps-fix-type-1d
+   :jon-gui-data-gps-fix-type-2d
+   :jon-gui-data-gps-fix-type-3d
+   :jon-gui-data-gps-fix-type-manual])
 
+;; Rotary Direction (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-direction-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
-   JonSharedDataTypes$JonGuiDataRotaryDirection/JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE])
+   :jon-gui-data-rotary-direction-clockwise
+   :jon-gui-data-rotary-direction-counter-clockwise])
 
+;; Rotary Mode (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-mode-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_SPEED
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_POSITION
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_STABILIZATION
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_TARGETING
-   JonSharedDataTypes$JonGuiDataRotaryMode/JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER])
+   :jon-gui-data-rotary-mode-initialization
+   :jon-gui-data-rotary-mode-speed
+   :jon-gui-data-rotary-mode-position
+   :jon-gui-data-rotary-mode-stabilization
+   :jon-gui-data-rotary-mode-targeting
+   :jon-gui-data-rotary-mode-video-tracker])
 
+;; Video Channel (Cannot be UNSPECIFIED per buf.validate)
 (def video-channel-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-   JonSharedDataTypes$JonGuiDataVideoChannel/JON_GUI_DATA_VIDEO_CHANNEL_DAY])
+   :jon-gui-data-video-channel-heat
+   :jon-gui-data-video-channel-day])
 
 (def fx-mode-day-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_DEFAULT
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_A
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_B
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_C
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_D
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_E
-   JonSharedDataTypes$JonGuiDataFxModeDay/JON_GUI_DATA_FX_MODE_DAY_F])
+   :jon-gui-data-fx-mode-day-default
+   :jon-gui-data-fx-mode-day-a
+   :jon-gui-data-fx-mode-day-b
+   :jon-gui-data-fx-mode-day-c
+   :jon-gui-data-fx-mode-day-d
+   :jon-gui-data-fx-mode-day-e
+   :jon-gui-data-fx-mode-day-f])
 
 (def fx-mode-heat-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_A
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_B
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_C
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_D
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_E
-   JonSharedDataTypes$JonGuiDataFxModeHeat/JON_GUI_DATA_FX_MODE_HEAT_F])
+   :jon-gui-data-fx-mode-heat-default
+   :jon-gui-data-fx-mode-heat-a
+   :jon-gui-data-fx-mode-heat-b
+   :jon-gui-data-fx-mode-heat-c
+   :jon-gui-data-fx-mode-heat-d
+   :jon-gui-data-fx-mode-heat-e
+   :jon-gui-data-fx-mode-heat-f])
 
 (def lrf-scan-modes-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
-   JonSharedDataTypes$JonGuiDataLrfScanModes/JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS])
+   :jon-gui-data-lrf-scan-mode-1-hz-continuous
+   :jon-gui-data-lrf-scan-mode-4-hz-continuous
+   :jon-gui-data-lrf-scan-mode-10-hz-continuous
+   :jon-gui-data-lrf-scan-mode-20-hz-continuous
+   :jon-gui-data-lrf-scan-mode-100-hz-continuous
+   :jon-gui-data-lrf-scan-mode-200-hz-continuous])
 
 (def compass-calibrate-status-enum-spec
   [:enum
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_UNSPECIFIED
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
-   JonSharedDataTypes$JonGuiDataCompassCalibrateStatus/JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR])
+   :jon-gui-data-compass-calibrate-status-not-calibrating
+   :jon-gui-data-compass-calibrate-status-calibrating-short
+   :jon-gui-data-compass-calibrate-status-calibrating-long
+   :jon-gui-data-compass-calibrate-status-finished
+   :jon-gui-data-compass-calibrate-status-error])
 
 ;; Register enum specs
 (registry/register! :enum/client-type client-type-enum-spec)
@@ -244,26 +289,28 @@
 (registry/register! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
 (registry/register! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
 
-;; Composite specs (combining basic specs)
+;; ====================================================================
+;; Composite specs (CLOSED MAPS - catch typos and invalid keys)
+;; ====================================================================
 (def gps-position-spec
-  [:map
+  [:map {:closed true}
    [:latitude :position/latitude]
    [:longitude :position/longitude]
    [:altitude :position/altitude]])
 
 (def compass-orientation-spec
-  [:map
+  [:map {:closed true}
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:bank :angle/bank]])
 
 (def screen-point-ndc-spec
-  [:map
+  [:map {:closed true}
    [:x :screen/ndc-x]
    [:y :screen/ndc-y]])
 
 (def screen-point-pixel-spec
-  [:map
+  [:map {:closed true}
    [:x :screen/pixel-x]
    [:y :screen/pixel-y]])
 
