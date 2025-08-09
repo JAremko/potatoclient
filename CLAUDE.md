@@ -26,23 +26,25 @@ The agent provides:
 
 ### Test Runner Analyzer Agent
 **ALWAYS use the `test-runner-analyzer` agent for:**
-- Running any tests in the codebase
-- Analyzing test failures
-- Getting comprehensive test execution reports
+- Running tests in the codebase
+- Getting test execution reports with failure details
 - Validating code changes through testing
 
 **How to use:**
 Instead of directly running test commands, use:
 ```
 Task: test-runner-analyzer agent
-Prompt: "Run tests for [module/feature]" or "Run all tests and analyze failures"
+Prompt: "Run tests for [module/feature]" or "Run all tests and report failures"
 ```
 
 The agent provides:
-- Automatic test discovery and execution
-- Detailed failure analysis
-- Test coverage information
-- Suggestions for fixing failures
+- Test execution with filtered results
+- Failure reporting (test name, error message, location)
+- Pass/fail summary statistics
+
+**Important Notes:**
+- The agent ONLY runs tests and reports results - it does not fix tests or investigate root causes
+- When reporting failures, the agent includes this directive: "Per project Testing Philosophy: Fix the failing code to make tests pass. NEVER modify, disable, or delete the tests themselves."
 
 ### Guardrails Scanner Agent
 **ALWAYS use the `guardrails-scanner` agent for:**
