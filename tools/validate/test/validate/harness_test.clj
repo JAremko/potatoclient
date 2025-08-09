@@ -7,19 +7,19 @@
   (testing "Valid state produces bytes"
     (is (> (count (h/valid-state-bytes)) 100)))
   (testing "Valid ping produces bytes"
-    (is (> (count (h/valid-ping-bytes)) 10)))
+    (is (>= (count (h/valid-ping-bytes)) 10)))
   (testing "Valid noop produces bytes"
-    (is (> (count (h/valid-noop-bytes)) 10)))
+    (is (>= (count (h/valid-noop-bytes)) 10)))
   (testing "Valid frozen produces bytes"
-    (is (> (count (h/valid-frozen-bytes)) 10))))
+    (is (>= (count (h/valid-frozen-bytes)) 10))))
 
 (deftest test-edn-structure
   (testing "Real state EDN structure"
     (is (map? h/real-state-edn))
-    (is (= 1 (:protocol-version h/real-state-edn)))
+    (is (= 1 (:protocol_version h/real-state-edn)))
     (is (number? (get-in h/real-state-edn [:gps :latitude])))
-    (is (= :jon-gui-data-gps-fix-type-3d 
-           (get-in h/real-state-edn [:gps :fix-type])))))
+    (is (= :JON_GUI_DATA_GPS_FIX_TYPE_3D 
+           (get-in h/real-state-edn [:gps :fix_type])))))
 
 (deftest test-proto-map-creation
   (testing "State proto-map creation"

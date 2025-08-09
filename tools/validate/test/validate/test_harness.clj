@@ -30,58 +30,61 @@
                        :latitude 50.023632
                        :longitude 15.81521
                        :timestamp 1754664759}
-   :camera_day {:clahe-level 0.16
-                :digital-zoom-level 1.0
-                :focus-pos 1.0
-                :fx-mode :jon-gui-data-fx-mode-day-a
-                :infrared-filter true
-                :iris-pos 0.03
-                :zoom-pos 0.59938735
-                :zoom-table-pos 3
-                :zoom-table-pos-max 4}
-   :camera_heat {:agc-mode :jon-gui-data-video-channel-heat-agc-mode-2
-                 :clahe-level 0.5
-                 :digital-zoom-level 1.0
-                 :filter :jon-gui-data-video-channel-heat-filter-hot-white
-                 :fx-mode :jon-gui-data-fx-mode-heat-a
-                 :zoom-table-pos 3
-                 :zoom-table-pos-max 4}
+   :camera_day {:clahe_level 0.16
+                :digital_zoom_level 1.0
+                :focus_pos 1.0
+                :fx_mode :JON_GUI_DATA_FX_MODE_DAY_A
+                :infrared_filter true
+                :iris_pos 0.03
+                :zoom_pos 0.59938735
+                :zoom_table_pos 3
+                :zoom_table_pos_max 4}
+   :camera_heat {:agc_mode :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
+                 :clahe_level 0.5
+                 :digital_zoom_level 1.0
+                 :filter :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
+                 :fx_mode :JON_GUI_DATA_FX_MODE_HEAT_A
+                 :zoom_table_pos 3
+                 :zoom_table_pos_max 4}
    :compass {:azimuth 333.50625
              :bank 0.84375
              :elevation 3.54375}
-   :compass_calibration {:final-stage 12
-                         :status :jon-gui-data-compass-calibrate-status-not-calibrating
-                         :target-azimuth 56.25
-                         :target-bank -5.625
-                         :target-elevation 6.75}
+   :compass_calibration {:final_stage 12
+                         :status :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+                         :target_azimuth 56.25
+                         :target_bank -5.625
+                         :target_elevation 6.75}
    :day_cam_glass_heater {}
    :gps {:altitude 0.289371
-         :fix-type :jon-gui-data-gps-fix-type-3d
+         :fix_type :JON_GUI_DATA_GPS_FIX_TYPE_3D
          :latitude 50.023632
          :longitude 15.815209999999999
-         :manual-latitude 50.023604
-         :manual-longitude 15.815316}
-   :lrf {:measure-id 52
-         :pointer-mode :jon-gui-data-lrf-laser-pointer-mode-off
-         :target {:observer-azimuth 356.40000000000003
-                  :observer-elevation -0.675
-                  :observer-fix-type :jon-gui-data-gps-fix-type-2d
-                  :observer-latitude 8.0
-                  :observer-longitude 7.0
-                  :target-id 52
-                  :target-latitude 50.023638999999996
-                  :target-longitude 15.815211999999999
+         :manual_latitude 50.023604
+         :manual_longitude 15.815316}
+   :lrf {:measure_id 52
+         :pointer_mode :JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
+         :target {:observer_azimuth 356.40000000000003
+                  :observer_elevation -0.675
+                  :observer_fix_type :JON_GUI_DATA_GPS_FIX_TYPE_2D
+                  :observer_latitude 8.0
+                  :observer_longitude 7.0
+                  :target_id 52
+                  :target_latitude 50.023638999999996
+                  :target_longitude 15.815211999999999
                   :timestamp 1754576916
-                  :uuid-part1 -494581931
-                  :uuid-part2 -224575107}}
+                  :uuid_part1 -494581931
+                  :uuid_part2 -224575107}}
    :meteo_internal {}
    :protocol_version 1
-   :rec_osd {:day-osd-enabled true
-             :heat-osd-enabled true
-             :screen :jon-gui-data-rec-osd-screen-main}
+   :rec_osd {:day_osd_enabled true
+             :heat_osd_enabled true
+             :screen :JON_GUI_DATA_REC_OSD_SCREEN_MAIN}
    :rotary {:azimuth 333.50626
             :elevation 7.04
-            :mode :jon-gui-data-rotary-mode-position}
+            :mode :JON_GUI_DATA_ROTARY_MODE_POSITION
+            :current_scan_node {:speed 0.5
+                                :azimuth 0.0
+                                :elevation 0.0}}
    :system {:cpu_load 12.94
             :cpu_temperature 53.33
             :cur_video_rec_dir_day 7
@@ -94,16 +97,16 @@
             :gpu_load 3.0
             :gpu_temperature 48.0
             :important_rec_enabled false
-            :loc :jon-gui-data-system-localization-en
+            :loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
             :low_disk_space false
             :no_disk_space false
             :power_consumption 0.0
             :rec_enabled true
             :recognition_mode false}
-   :time {:manual-timestamp 1754664759
+   :time {:manual_timestamp 1754664759
           :timestamp 1754664759
-          :use-manual-time false
-          :zone-id 3600}})
+          :use_manual_time false
+          :zone_id 3600}})
 
 ;; ============================================================================
 ;; COMPLEX COMMAND CREATION - Demonstrating nested command structures

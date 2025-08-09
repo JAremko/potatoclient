@@ -154,6 +154,10 @@
    - :validator - optional pre-created validator instance"
   [binary-data & {:keys [type validator]
                   :or {type :auto}}]
+  (when (nil? binary-data)
+    (throw (IllegalArgumentException. "Binary data cannot be nil")))
+  (when (zero? (count binary-data))
+    (throw (IllegalArgumentException. "Binary data cannot be empty")))
   (let [validator (or validator (create-validator))
         detected-type (if (= type :auto)
                        (auto-detect-message-type binary-data)
