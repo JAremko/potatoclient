@@ -11,7 +11,13 @@
   (testing "Valid noop produces bytes"
     (is (>= (count (h/valid-noop-bytes)) 10)))
   (testing "Valid frozen produces bytes"
-    (is (>= (count (h/valid-frozen-bytes)) 10))))
+    (is (>= (count (h/valid-frozen-bytes)) 10)))
+  (testing "Valid rotary azimuth produces bytes"
+    (is (>= (count (h/valid-rotary-azimuth-bytes)) 10)))
+  (testing "Valid rotary stop produces bytes"
+    (is (>= (count (h/valid-rotary-stop-bytes)) 10)))
+  (testing "Valid rotary scan produces bytes"
+    (is (>= (count (h/valid-rotary-scan-bytes)) 10))))
 
 (deftest test-edn-structure
   (testing "Real state EDN structure"

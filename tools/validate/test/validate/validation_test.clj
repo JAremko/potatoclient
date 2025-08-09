@@ -25,6 +25,20 @@
     (let [result (v/validate-binary (h/valid-frozen-bytes) :type :cmd)]
       (is (:valid? result)))))
 
+(deftest test-rotary-commands
+  (testing "Rotary azimuth command validates"
+    (let [result (v/validate-binary (h/valid-rotary-azimuth-bytes) :type :cmd)]
+      (is (:valid? result))
+      (is (= :cmd (:message-type result)))))
+  
+  (testing "Rotary stop command validates"
+    (let [result (v/validate-binary (h/valid-rotary-stop-bytes) :type :cmd)]
+      (is (:valid? result))))
+  
+  (testing "Rotary scan command validates"
+    (let [result (v/validate-binary (h/valid-rotary-scan-bytes) :type :cmd)]
+      (is (:valid? result)))))
+
 (deftest test-invalid-gps
   (testing "Out-of-range GPS detected"
     (let [result (v/validate-binary (h/invalid-gps-state-bytes) :type :state)]

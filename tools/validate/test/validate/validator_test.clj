@@ -147,14 +147,21 @@
 ;; ============================================================================
 
 (deftest test-validation-performance
-  (testing "Validation completes in reasonable time"
-    (let [state-bytes (h/valid-state-bytes)
-          start (System/nanoTime)
-          _ (dotimes [_ 100]
-              (v/validate-binary state-bytes :type :state))
-          elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)]
-      (is (< elapsed-ms 30000) 
-          (str "100 validations should complete within 30s, took " elapsed-ms "ms")))))
+  (testing "Cached validator provides good performance"
+    (let [state-bytes (h/valid-state-bytes)]
+      ;; First validation creates and caches the validator
+      (v/validate-binary state-bytes :type :state)
+      
+      ;; Measure subsequent validations with cached validator
+      (let [start (System/nanoTime)
+            _ (dotimes [_ 100]
+                (v/validate-binary state-bytes :type :state))
+            elapsed-ms (/ (- (System/nanoTime) start) 1000000.0)
+            avg-ms (/ elapsed-ms 100)]
+        (is (< elapsed-ms 2000) 
+            (str "100 cached validations should complete within 2s, took " elapsed-ms "ms"))
+        (is (< avg-ms 20)
+            (str "Average validation time should be < 20ms, was " avg-ms "ms"))))))
 
 (comment
   ;; Run tests

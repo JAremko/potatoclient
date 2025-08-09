@@ -4,7 +4,7 @@
   (:require [pronto.core :as p]
             [clojure.edn :as edn])
   (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]
-           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$RotateAzimuthTo 
+           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$SetPlatformAzimuth
                                 JonSharedCmdRotary$SetMode JonSharedCmdRotary$Stop]
            [ser JonSharedData$JonGUIState]))
 
@@ -13,8 +13,14 @@
 ;; Define once, reuse everywhere
 ;; ============================================================================
 
-(p/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
-(p/defmapper rotary-cmd-mapper [cmd.RotaryPlatform.JonSharedCmdRotary$Root])
+(p/defmapper cmd-mapper [cmd.JonSharedCmd$Root
+                        cmd.JonSharedCmd$Ping
+                        cmd.JonSharedCmd$Noop
+                        cmd.JonSharedCmd$Frozen
+                        cmd.RotaryPlatform.JonSharedCmdRotary$Root
+                        cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth
+                        cmd.RotaryPlatform.JonSharedCmdRotary$SetMode
+                        cmd.RotaryPlatform.JonSharedCmdRotary$Stop])
 (p/defmapper state-mapper [ser.JonSharedData$JonGUIState])
 
 ;; ============================================================================
@@ -112,8 +118,43 @@
 ;; COMPLEX COMMAND CREATION - Demonstrating nested command structures
 ;; ============================================================================
 
-;; For now, let's skip complex nested rotary commands until we verify the structure
-;; TODO: Add complex rotary commands after verifying proto structure
+(defn valid-rotary-azimuth-cmd
+  "Create a valid rotary azimuth command with nested structure."
+  []
+  (p/proto-map cmd-mapper cmd.JonSharedCmd$Root
+               :protocol_version 1
+               :session_id 4000
+               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+               :rotary (p/proto-map cmd-mapper cmd.RotaryPlatform.JonSharedCmdRotary$Root
+                                   :set_platform_azimuth
+                                   (p/proto-map cmd-mapper 
+                                               cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth
+                                               :value 45.0))))
+
+(defn valid-rotary-stop-cmd
+  "Create a valid rotary stop command."
+  []
+  (p/proto-map cmd-mapper cmd.JonSharedCmd$Root
+               :protocol_version 1
+               :session_id 5000
+               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+               :rotary (p/proto-map cmd-mapper cmd.RotaryPlatform.JonSharedCmdRotary$Root
+                                   :stop
+                                   (p/proto-map cmd-mapper 
+                                               cmd.RotaryPlatform.JonSharedCmdRotary$Stop))))
+
+(defn valid-rotary-scan-cmd
+  "Create a valid rotary scan command."
+  []
+  (p/proto-map cmd-mapper cmd.JonSharedCmd$Root
+               :protocol_version 1
+               :session_id 6000
+               :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+               :rotary (p/proto-map cmd-mapper cmd.RotaryPlatform.JonSharedCmdRotary$Root
+                                   :set_mode
+                                   (p/proto-map cmd-mapper 
+                                               cmd.RotaryPlatform.JonSharedCmdRotary$SetMode
+                                               :mode :JON_GUI_DATA_ROTARY_MODE_POSITION))))
 
 ;; ============================================================================
 ;; VALID DATA CREATION - Idiomatic Pronto approach
@@ -246,9 +287,9 @@
 (def valid-ping-bytes (memoize #(->bytes (valid-ping-cmd))))
 (def valid-noop-bytes (memoize #(->bytes (valid-noop-cmd))))
 (def valid-frozen-bytes (memoize #(->bytes (valid-frozen-cmd))))
-;; TODO: Add rotary command bytes after fixing structure
-;; (def valid-rotary-azimuth-bytes (memoize #(->bytes (valid-rotary-azimuth-cmd))))
-;; (def valid-rotary-stop-bytes (memoize #(->bytes (valid-rotary-stop-cmd))))
+(def valid-rotary-azimuth-bytes (memoize #(->bytes (valid-rotary-azimuth-cmd))))
+(def valid-rotary-stop-bytes (memoize #(->bytes (valid-rotary-stop-cmd))))
+(def valid-rotary-scan-bytes (memoize #(->bytes (valid-rotary-scan-cmd))))
 
 (def invalid-gps-state-bytes (memoize #(->bytes (invalid-gps-state))))
 (def invalid-protocol-state-bytes (memoize #(->bytes (invalid-protocol-state))))

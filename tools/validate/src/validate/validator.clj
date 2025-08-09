@@ -10,14 +10,21 @@
    [java.io ByteArrayInputStream FileInputStream InputStream]
    [java.nio.file Files Path Paths]))
 
+;; Cache the validator instance for performance
+;; Creating a new validator for each validation adds ~150ms overhead
+(def ^:private cached-validator
+  (delay
+    (try
+      (Validator.)
+      (catch Exception e
+        (log/error e "Failed to create validator")
+        (throw (ex-info "Failed to create buf.validate validator" {:error (.getMessage e)}))))))
+
 (defn create-validator
-  "Create a buf.validate Validator instance."
+  "Create a buf.validate Validator instance.
+   Uses a cached instance for better performance."
   []
-  (try
-    (Validator.)
-    (catch Exception e
-      (log/error e "Failed to create validator")
-      (throw (ex-info "Failed to create buf.validate validator" {:error (.getMessage e)})))))
+  @cached-validator)
 
 (defn read-binary-file
   "Read binary data from a file path."
@@ -151,13 +158,14 @@
   "Main validation function that takes binary data and validates it.
    Options:
    - :type - :state, :cmd, or :auto (default)
-   - :validator - optional pre-created validator instance"
+   - :validator - optional pre-created validator instance (uses cached by default)"
   [binary-data & {:keys [type validator]
                   :or {type :auto}}]
   (when (nil? binary-data)
     (throw (IllegalArgumentException. "Binary data cannot be nil")))
   (when (zero? (count binary-data))
     (throw (IllegalArgumentException. "Binary data cannot be empty")))
+  ;; Use provided validator or cached instance for performance
   (let [validator (or validator (create-validator))
         detected-type (if (= type :auto)
                        (auto-detect-message-type binary-data)
