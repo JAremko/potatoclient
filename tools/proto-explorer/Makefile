@@ -4,6 +4,7 @@
 # - Find protobuf messages among hundreds of definitions
 # - Understand proto to Java class mappings
 # - View message structure and field types
+# - See buf.validate constraints for field validation
 # - See Pronto EDN representations for Clojure integration
 
 .DEFAULT_GOAL := help

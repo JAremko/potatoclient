@@ -33,7 +33,8 @@ Proto-Explorer solves these problems by providing a unified interface to search,
 - **🔍 Unified Search**: Single command searches both message names and Java classes
 - **📋 Complete Listing**: Browse all messages organized by package
 - **🔗 Actionable Results**: Search results provide ready-to-use query strings
-- **📊 Comprehensive Info**: Java mappings, Pronto EDN, Pronto schema, and field details in one view
+- **📊 Comprehensive Info**: Java mappings, Pronto EDN, Pronto schema, field details, and buf.validate constraints in one view
+- **✅ Validation Constraints**: Automatically extracts and displays buf.validate constraints from compiled protobuf classes
 - **🛡️ Robust & Foolproof**: Automatic class compilation, intelligent fallbacks, and clear warnings
 - **🔄 Smart Class Resolution**: Multiple resolution strategies with fuzzy matching
 - **📦 Deep Nesting Support**: Handles complex nested messages and oneof structures
@@ -122,6 +123,7 @@ Provides comprehensive information about a message.
   - Pronto EDN structure for Clojure
   - Pronto schema showing field types and constraints
   - Field definitions with types and numbers
+  - buf.validate constraints (when defined in proto files)
   - Proto file and package information
 
 ## Common Use Cases
@@ -200,6 +202,37 @@ Java Class: cmd.RotaryPlatform$RotateAzimuthTo
 {:angle float, :speed float}
 ```
 
+### Example with buf.validate Constraints
+
+When protobuf messages have buf.validate constraints defined, they are automatically extracted and displayed:
+
+```bash
+$ make proto-info QUERY='ser.JonSharedDataGps$JonGuiDataGps'
+
+PROTOBUF MESSAGE: JonGuiDataGps
+Java Class: ser.JonSharedDataGps$JonGuiDataGps
+
+=== BUF.VALIDATE CONSTRAINTS ===
+  longitude                 : {:gte -180.0, :lte 180.0}
+  latitude                  : {:gte -90.0, :lte 90.0}
+  altitude                  : {:gte -433.0, :lte 8848.86}
+  manual_longitude          : {:gte -180.0, :lte 180.0}
+  manual_latitude           : {:gte -90.0, :lte 90.0}
+  manual_altitude           : {:gte -433.0, :lte 8848.86}
+
+=== FIELD DETAILS ===
+  [ 1] longitude                 : type-double
+                                   Constraints: {:gte -180.0, :lte 180.0}
+  [ 2] latitude                  : type-double
+                                   Constraints: {:gte -90.0, :lte 90.0}
+  [ 3] altitude                  : type-double
+                                   Constraints: {:gte -433.0, :lte 8848.86}
+  ...
+
+=== PRONTO EDN STRUCTURE ===
+{:longitude 0.0, :latitude 0.0, :altitude 0.0, ...}
+```
+
 ### Search Examples
 
 ```bash
@@ -231,7 +264,8 @@ Proto-Explorer uses a stateless architecture that:
 2. **Maps** Proto packages to Java class names using naming conventions
 3. **Searches** Using efficient string matching algorithms
 4. **Reflects** Java classes for method/field information
-5. **Converts** Messages to EDN using Pronto for Clojure integration
+5. **Extracts** buf.validate constraints from protobuf field options via Java reflection
+6. **Converts** Messages to EDN using Pronto for Clojure integration
 
 ### Class Resolution System
 
@@ -254,6 +288,8 @@ This ensures the tool always finds the correct Java class, even with complex nam
 - **class-resolver**: Intelligent class resolution with fallback mechanisms
 - **cli-final**: Command-line interface and formatting
 - **java-class-info**: Java reflection utilities
+- **validation-extractor**: Extracts buf.validate constraints from Java classes
+- **JavaReflectionHelper**: Java component for accessing protobuf descriptors and field options
 - **pronto-integration**: Pronto EDN conversion and schema extraction
 
 ### Proto to Java Mapping Rules
@@ -263,6 +299,21 @@ The tool automatically maps proto definitions to Java classes:
 - `jon_shared_cmd.proto` (package `cmd`) → `cmd.JonSharedCmd$Message`
 - `jon_shared_data.proto` (package `ser`) → `ser.JonSharedData$Message`
 - Other files use package as outer class: `cmd.Compass$Message`
+
+### buf.validate Constraints Extraction
+
+Proto-Explorer automatically extracts validation constraints from protobuf messages:
+
+1. **Detection**: Uses Java reflection to access the protobuf descriptor's field options
+2. **Extraction**: Parses buf.validate field extensions from the compiled Java classes
+3. **Display**: Shows constraints in a dedicated section and inline with field details
+4. **Supported Constraints**: 
+   - Numeric ranges (gte, gt, lte, lt)
+   - String constraints (min_len, max_len, pattern)
+   - Enum constraints (defined_only, not_in)
+   - Message constraints (required)
+
+The constraints are extracted directly from the compiled classes, ensuring they're always accurate and up-to-date with the proto definitions.
 
 ### Performance
 

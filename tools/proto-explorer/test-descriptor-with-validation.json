@@ -1,0 +1,72 @@
+{
+  "file": [{
+    "name": "test_validation.proto",
+    "package": "test",
+    "messageType": [{
+      "name": "TestMessage",
+      "field": [
+        {
+          "name": "latitude",
+          "number": 1,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_DOUBLE",
+          "jsonName": "latitude",
+          "options": {
+            "[buf.validate.field]": {
+              "double": {
+                "gte": -90.0,
+                "lte": 90.0
+              }
+            }
+          }
+        },
+        {
+          "name": "longitude",
+          "number": 2,
+          "label": "LABEL_OPTIONAL", 
+          "type": "TYPE_DOUBLE",
+          "jsonName": "longitude",
+          "options": {
+            "[buf.validate.field]": {
+              "double": {
+                "gte": -180.0,
+                "lte": 180.0
+              }
+            }
+          }
+        },
+        {
+          "name": "age",
+          "number": 3,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_INT32",
+          "jsonName": "age",
+          "options": {
+            "[buf.validate.field]": {
+              "int32": {
+                "gte": 0,
+                "lte": 150
+              }
+            }
+          }
+        },
+        {
+          "name": "email",
+          "number": 4,
+          "label": "LABEL_OPTIONAL",
+          "type": "TYPE_STRING",
+          "jsonName": "email",
+          "options": {
+            "[buf.validate.field]": {
+              "string": {
+                "email": true,
+                "min_len": 5
+              }
+            }
+          }
+        }
+      ]
+    }],
+    "syntax": "proto3"
+  }]
+}

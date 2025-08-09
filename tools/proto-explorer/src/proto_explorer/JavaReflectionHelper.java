@@ -36,6 +36,9 @@ public class JavaReflectionHelper {
                 case "builder-info":
                     printBuilderInfo(className);
                     break;
+                case "validation-info":
+                    printValidationInfo(className);
+                    break;
                 default:
                     System.out.println("{:error \"Unknown command: " + command + "\"}");
                     System.exit(1);
@@ -190,5 +193,49 @@ public class JavaReflectionHelper {
     private static String capitalize(String str) {
         if (str == null || str.isEmpty()) return str;
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+    }
+    
+    private static void printValidationInfo(String className) throws Exception {
+        Class<?> cls = Class.forName(className);
+        
+        if (!GeneratedMessage.class.isAssignableFrom(cls)) {
+            System.out.println("{:error \"Not a protobuf message class\"}");
+            return;
+        }
+        
+        Method getDescriptor = cls.getMethod("getDescriptor");
+        Descriptors.Descriptor descriptor = (Descriptors.Descriptor) getDescriptor.invoke(null);
+        
+        StringBuilder edn = new StringBuilder();
+        edn.append("{:message-name \"").append(descriptor.getName()).append("\", ");
+        edn.append(":fields-with-validation [");
+        
+        boolean first = true;
+        for (Descriptors.FieldDescriptor field : descriptor.getFields()) {
+            // Get field options which may contain buf.validate constraints
+            Object fieldOptions = field.getOptions();
+            
+            // The validation options are stored as extensions
+            // We need to check for buf.validate.field extension
+            String optionsStr = fieldOptions.toString();
+            
+            // Only include fields that have validation options
+            if (optionsStr.contains("buf.validate")) {
+                if (!first) edn.append(" ");
+                first = false;
+                
+                edn.append("{:field-name \"").append(field.getName()).append("\" ");
+                edn.append(":field-number ").append(field.getNumber()).append(" ");
+                edn.append(":type \"").append(field.getType().name()).append("\" ");
+                
+                // Include the raw options string for now - we can parse it later
+                // Escape quotes in the options string
+                String escapedOptions = optionsStr.replace("\"", "\\\"");
+                edn.append(":options \"").append(escapedOptions).append("\"}");
+            }
+        }
+        
+        edn.append("]}");
+        System.out.println(edn.toString());
     }
 }

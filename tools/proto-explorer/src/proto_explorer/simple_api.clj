@@ -5,6 +5,7 @@
             [proto-explorer.pronto-integration :as pronto]
             [proto-explorer.descriptor-integration :as desc-int]
             [proto-explorer.class-resolver :as resolver]
+            [proto-explorer.validation-extractor :as validation]
             [clojure.string :as str]
             [clojure.pprint :as pprint]))
 
@@ -135,14 +136,35 @@
                        (catch Exception e
                          {:error (.getMessage e)}))
         
-        ;; 4. Field details from descriptor
+        ;; 4. Get validation info from Java class if available
+        validation-result (try
+                           (when (and (:success class-resolution) (not (:error java-result)))
+                             (validation/get-validation-info actual-class-name))
+                           (catch Exception e
+                             {:error (.getMessage e)}))
+        
+        ;; 5. Field details from descriptor with validation constraints
+        ;; First get basic field info from descriptor
+        field-details-base (mapv (fn [field]
+                                  {:name (:name field)
+                                   :number (:number field)
+                                   :type (name (:type field))
+                                   :type-name (:type-name field)
+                                   :json-name (:json-name field)})
+                                (:fields msg-data))
+        
+        ;; Then enhance with validation info from Java class if available
+        validation-fields (when (and validation-result (:fields-with-validation validation-result))
+                           (into {} (map (fn [f] 
+                                          [(:field-name f) 
+                                           (validation/parse-validation-options (:options f))])
+                                        (:fields-with-validation validation-result))))
+        
         field-details (mapv (fn [field]
-                             {:name (:name field)
-                              :number (:number field)
-                              :type (name (:type field))
-                              :type-name (:type-name field)
-                              :json-name (:json-name field)})
-                           (:fields msg-data))]
+                             (if-let [validation (get validation-fields (:name field))]
+                               (assoc field :validation validation)
+                               field))
+                           field-details-base)]
     
     {:java-class java-class-name
      :resolved-class (when (:success class-resolution) actual-class-name)
@@ -268,6 +290,15 @@
       (println "\n=== PRONTO SCHEMA ===")
       (pprint/pprint (:pronto-schema info)))
     
+    ;; Display buf.validate constraints if any field has them
+    (let [fields-with-validation (filter :validation (:fields info))]
+      (when (seq fields-with-validation)
+        (println "\n=== BUF.VALIDATE CONSTRAINTS ===")
+        (doseq [field fields-with-validation]
+          (println (format "  %-25s : %s"
+                          (:name field)
+                          (pr-str (:validation field)))))))
+    
     (when (seq (:fields info))
       (println "\n=== FIELD DETAILS ===")
       (println "Fields:" (count (:fields info)))
@@ -276,7 +307,12 @@
                         (:number field)
                         (:name field)
                         (:type field)
-                        (or (:type-name field) "")))))
+                        (or (:type-name field) "")))
+        ;; Display validation constraints if present
+        (when-let [validation (:validation field)]
+          (println (format "       %-25s   Constraints: %s" 
+                          ""
+                          (pr-str validation))))))
     
     (when (seq (:errors info))
       (println "\n=== ERRORS ===")
