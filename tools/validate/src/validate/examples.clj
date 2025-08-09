@@ -6,7 +6,7 @@
    [malli.generator :as mg]
    [malli.util :as mu]
    [potatoclient.malli.registry :as registry]
-   [validate.specs.oneof-edn :as oneof-edn]
+   [potatoclient.specs.oneof-edn :as oneof-edn]
    [potatoclient.specs.common]
    [validate.specs.state.root]
    [validate.specs.cmd.root]

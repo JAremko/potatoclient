@@ -8,7 +8,7 @@
    [malli.error :as me]
    [malli.generator :as mg]
    [potatoclient.malli.registry :as registry]
-   [validate.specs.oneof-edn :as oneof-edn]
+   [potatoclient.specs.oneof-edn :as oneof-edn]
    ;; Load all specs
    [potatoclient.specs.common]
    [validate.specs.state.root]))

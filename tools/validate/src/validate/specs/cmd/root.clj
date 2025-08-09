@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [validate.specs.oneof-edn :as oneof-edn]
+   [potatoclient.specs.oneof-edn :as oneof-edn]
    ;; Import all command specs
    [validate.specs.cmd.common]
    [validate.specs.cmd.compass]
