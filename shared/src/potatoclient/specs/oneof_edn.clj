@@ -1,14 +1,18 @@
 (ns potatoclient.specs.oneof-edn
-  "Oneof schema for EDN data that treats nil values as absent.
-   Compatible with Pronto EDN where inactive branches have nil values."
+  "Closed oneof schema for EDN data that treats nil values as absent.
+   Compatible with Pronto EDN where inactive branches have nil values.
+   Acts as a closed map - rejects any keys not in the schema, even with nil values."
   (:require
+   [clojure.set]
    [malli.core :as m]
+   [malli.impl.util :as miu]
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]))
 
 (def -oneof-edn-schema
   "Custom :oneof-edn schema for validating EDN maps with exactly one non-nil field set.
-   Treats nil values as absent, compatible with Pronto EDN representations."
+   Treats nil values as absent, compatible with Pronto EDN representations.
+   Acts as a closed map - rejects any extra keys not defined in the schema."
   (m/-simple-schema
    {:type :oneof-edn
     :type-properties {:generator true}
@@ -30,13 +34,17 @@
                                                 (keys value)))]
                  {:pred (fn [value]
                           (and (map? value)
-                               ;; Exactly one of the specified fields must be present and non-nil
-                               (let [active-fields (get-active-fields value)]
-                                 (and (= 1 (count active-fields))
-                                      ;; Validate the active field's value
-                                      (let [active-field (first active-fields)
-                                            validator (get field-validators active-field)]
-                                        (validator (get value active-field)))))))
+                               ;; Check for extra keys (closed map behavior)
+                               (let [value-keys (set (keys value))
+                                     extra-keys (clojure.set/difference value-keys field-names)]
+                                 (and (empty? extra-keys)
+                                      ;; Exactly one of the specified fields must be present and non-nil
+                                      (let [active-fields (get-active-fields value)]
+                                        (and (= 1 (count active-fields))
+                                             ;; Validate the active field's value
+                                             (let [active-field (first active-fields)
+                                                   validator (get field-validators active-field)]
+                                               (validator (get value active-field)))))))))
                   :min (* 2 (count field-map))
                   :max (* 2 (count field-map))
                   :type-properties properties
@@ -44,41 +52,19 @@
                               (cond
                                 (not (map? value)) "must be a map"
                                 :else
-                                (let [active-fields (get-active-fields value)]
+                                (let [value-keys (set (keys value))
+                                      extra-keys (clojure.set/difference value-keys field-names)
+                                      active-fields (get-active-fields value)]
                                   (cond
+                                    (not (empty? extra-keys))
+                                    (str "unexpected keys found: " (vec extra-keys) 
+                                         ", allowed keys: " (vec field-names))
                                     (zero? (count active-fields))
                                     "must have exactly one non-nil field set"
                                     (> (count active-fields) 1)
                                     (str "must have exactly one non-nil field set, found: "
                                          (vec active-fields))
-                                    :else nil))))}))
-    :explain (fn [this {:keys [value] :as context} _]
-               (cond
-                 (not (map? value))
-                 [{:message "must be a map"
-                   :type :oneof-edn}]
-                 
-                 :else
-                 (let [properties (m/properties this)
-                       children (m/children this)
-                       field-map (if (and (empty? children) (map? properties))
-                                   (dissoc properties :error/message)
-                                   (apply hash-map children))
-                       field-names (set (keys field-map))
-                       active-fields (filter #(and (contains? field-names %)
-                                                  (some? (get value %)))
-                                            (keys value))]
-                   (cond
-                     (zero? (count active-fields))
-                     [{:message "must have exactly one non-nil field set"
-                       :type :oneof-edn}]
-                     
-                     (> (count active-fields) 1)
-                     [{:message (str "must have exactly one non-nil field set, found: "
-                                    (vec active-fields))
-                       :type :oneof-edn}]
-                     
-                     :else nil))))}))
+                                    :else nil))))}))}))
 
 ;; Generator for oneof-edn schemas
 ;; Efficient: generates exactly ONE field with a non-nil value

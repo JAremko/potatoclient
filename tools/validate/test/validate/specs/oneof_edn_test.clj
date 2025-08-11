@@ -122,6 +122,75 @@
         (is (m/validate schema {:option-a "test" :option-b nil}))
         (is (m/validate schema {:option-a nil :option-b 42}))))))
 
+(deftest oneof-edn-closed-behavior-test
+  (testing "oneof-edn acts as a closed map - rejects extra keys"
+    (let [schema [:oneof-edn
+                  :field-a :string
+                  :field-b :int
+                  :field-c :boolean]]
+      
+      (testing "Rejects extra keys even with nil values"
+        (is (not (m/validate schema {:field-a "test" :extra-key nil}))
+            "Should reject extra key with nil value")
+        (is (not (m/validate schema {:field-b 42 :unknown nil}))
+            "Should reject unknown key with nil value")
+        (is (not (m/validate schema {:field-c true :field-d nil}))
+            "Should reject field-d which is not in schema"))
+      
+      (testing "Rejects extra keys with non-nil values"
+        (is (not (m/validate schema {:field-a "test" :extra-key "value"}))
+            "Should reject extra key with value")
+        (is (not (m/validate schema {:field-b 42 :unknown 123}))
+            "Should reject unknown key with value"))
+      
+      (testing "Rejects multiple extra keys"
+        (is (not (m/validate schema {:field-a "test" :extra1 nil :extra2 nil}))
+            "Should reject multiple extra keys with nil")
+        (is (not (m/validate schema {:field-b 42 :x 1 :y 2 :z 3}))
+            "Should reject multiple extra keys with values"))
+      
+      (testing "Validation correctly rejects extra keys"
+        (let [value {:field-a "test" :extra-key nil}
+              valid? (m/validate schema value)]
+          (is (not valid?) "Should reject map with extra key even if nil"))
+        
+        (let [value {:field-b 42 :unknown "value" :another "key"}
+              valid? (m/validate schema value)]
+          (is (not valid?) "Should reject map with multiple extra keys")))
+      
+      (testing "Still accepts valid data without extra keys"
+        (is (m/validate schema {:field-a "test"}))
+        (is (m/validate schema {:field-b 42}))
+        (is (m/validate schema {:field-c false}))
+        (is (m/validate schema {:field-a "test" :field-b nil :field-c nil}))))))
+
+(deftest oneof-edn-closed-complex-test
+  (testing "Closed behavior with complex nested schemas"
+    (let [schema [:oneof-edn
+                  :command [:map {:closed true}
+                           [:type [:enum :ping :pong]]
+                           [:id :int]]
+                  :query [:map {:closed true}
+                         [:sql :string]
+                         [:params [:vector :any]]]]]
+      
+      (testing "Rejects extra keys at oneof level"
+        (is (not (m/validate schema {:command {:type :ping :id 1} :extra nil}))
+            "Should reject extra key at oneof level")
+        (is (not (m/validate schema {:query {:sql "SELECT 1" :params []} :unknown-field nil}))
+            "Should reject unknown field at oneof level"))
+      
+      (testing "Nested maps are still closed"
+        (is (not (m/validate schema {:command {:type :ping :id 1 :extra "field"}}))
+            "Nested map should still enforce closed constraint")
+        (is (not (m/validate schema {:query {:sql "SELECT 1" :params [] :limit 10}}))
+            "Query map should reject extra :limit field"))
+      
+      (testing "Accepts valid data"
+        (is (m/validate schema {:command {:type :ping :id 1}}))
+        (is (m/validate schema {:query {:sql "SELECT 1" :params []}}))
+        (is (m/validate schema {:command {:type :ping :id 1} :query nil}))))))
+
 (deftest oneof-edn-pronto-compatibility-test
   (testing "Compatible with Pronto EDN where all fields exist but inactive ones are nil"
     (let [schema [:oneof-edn
@@ -146,4 +215,10 @@
       (testing "Mixed style works (some nil fields present)"
         (is (m/validate schema {:ping {:id 123} :rotary nil}))
         (is (m/validate schema {:rotary {:angle 45.5} :cv nil}))
-        (is (m/validate schema {:cv {:command "capture"} :ping nil}))))))
+        (is (m/validate schema {:cv {:command "capture"} :ping nil})))
+      
+      (testing "Rejects extra fields even in Pronto style"
+        (is (not (m/validate schema {:ping {:id 123} :rotary nil :cv nil :extra nil}))
+            "Should reject extra field even with nil")
+        (is (not (m/validate schema {:ping {:id 123} :unknown-cmd nil}))
+            "Should reject unknown command field")))))
