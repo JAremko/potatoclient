@@ -1,14 +1,29 @@
 (ns validate.validator
-  "Core validation functionality for protobuf binary payloads using buf.validate."
+  "Core validation functionality for protobuf binary payloads using buf.validate and Malli."
   (:require
    [clojure.java.io :as io]
+   [clojure.string :as str]
+   [clojure.walk :as walk]
    [clojure.tools.logging :as log]
-   [pronto.core :as pronto])
+   [pronto.core :as pronto]
+   [malli.core :as m]
+   [malli.error :as me]
+   [malli.registry :as mr]
+   [potatoclient.malli.registry :as registry]
+   ;; Load specs
+   [potatoclient.specs.state.root]
+   [potatoclient.specs.cmd.root])
   (:import
    [build.buf.protovalidate Validator ValidationResult]
    [com.google.protobuf Message InvalidProtocolBufferException]
    [java.io ByteArrayInputStream FileInputStream InputStream]
    [java.nio.file Files Path Paths]))
+
+;; Initialize the Malli registry with oneof-edn schema
+(do
+  (require '[potatoclient.specs.oneof-edn :as oneof-edn])
+  (registry/setup-global-registry!
+   (oneof-edn/register-oneof-edn-schema!)))
 
 ;; Cache the validator instance for performance
 ;; Creating a new validator for each validation adds ~150ms overhead
@@ -154,34 +169,224 @@
        :error (.getMessage e)
        :violations []})))
 
+;; Define mappers for proto->edn conversion
+(pronto/defmapper state-mapper [ser.JonSharedData$JonGUIState])
+(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
+
+(defn proto->edn
+  "Convert a protobuf message to EDN format for Malli validation.
+   Handles errors gracefully."
+  [message message-type]
+  (try
+    ;; The Java proto objects from parsing need to be converted to proto-maps first
+    ;; We'll re-parse from bytes to get proper proto-maps
+    (let [binary-data (try
+                       (.toByteArray message)
+                       (catch Exception _ nil))]
+      (when binary-data
+        (let [proto-map (case message-type
+                          :state (pronto/bytes->proto-map state-mapper 
+                                                          ser.JonSharedData$JonGUIState
+                                                          binary-data)
+                          :cmd (pronto/bytes->proto-map cmd-mapper
+                                                        cmd.JonSharedCmd$Root
+                                                        binary-data)
+                          nil)
+              ;; Convert to snake-case map first (proto-map->clj-map returns snake_case)
+              snake-map (when proto-map (pronto/proto-map->clj-map proto-map))]
+          ;; Convert snake_case to kebab-case for Malli specs
+          (when snake-map
+            (walk/postwalk
+             (fn [x]
+               (if (keyword? x)
+                 (keyword (str/replace (name x) "_" "-"))
+                 x))
+             snake-map)))))
+    (catch Exception e
+      (log/warn e "Failed to convert proto to EDN")
+      nil)))
+
+(defn humanize-malli-errors
+  "Convert Malli errors to a flat list of violations with proper humanization."
+  [errors]
+  (letfn [(flatten-errors [errors path]
+            (cond
+              (map? errors)
+              (mapcat (fn [[k v]]
+                        (let [new-path (if (= k :malli/error)
+                                        path
+                                        (conj path (name k)))]
+                          (flatten-errors v new-path)))
+                      errors)
+              
+              (vector? errors)
+              (map (fn [msg]
+                     {:field (if (empty? path) "root" (clojure.string/join "." path))
+                      :constraint "malli"
+                      :message msg})
+                   errors)
+              
+              (string? errors)
+              [{:field (if (empty? path) "root" (clojure.string/join "." path))
+                :constraint "malli"
+                :message errors}]
+              
+              :else []))]
+    (flatten-errors errors [])))
+
+(defn validate-with-malli
+  "Validate EDN data using Malli specs.
+   Returns a map with validation results."
+  [edn-data message-type]
+  (try
+    (let [spec-key (case message-type
+                     :state :state/root
+                     :cmd :cmd/root
+                     nil)
+          spec (when spec-key (m/schema spec-key))]
+      (if spec
+        (if (m/validate spec edn-data)
+          {:valid? true
+           :message "Malli validation successful"
+           :violations []}
+          (let [explanation (m/explain spec edn-data)
+                ;; Use humanize with custom error messages
+                humanized (me/humanize explanation
+                                      {:errors (merge me/default-errors
+                                                     {::mr/missing-key 
+                                                      {:error/fn (fn [{:keys [in]} _]
+                                                                  (str "missing required field: " (last in)))}
+                                                      ::mr/extra-key
+                                                      {:error/fn (fn [{:keys [in]} _]
+                                                                  (str "unexpected field: " (last in)))}})})
+                violations (humanize-malli-errors humanized)]
+            {:valid? false
+             :message "Malli validation failed"
+             :violations violations}))
+        {:valid? false
+         :message "No Malli spec found for message type"
+         :error (str "Missing spec for " message-type)
+         :violations []}))
+    (catch Exception e
+      {:valid? false
+       :message "Malli validation error"
+       :error (.getMessage e)
+       :violations []})))
+
 (defn validate-binary
   "Main validation function that takes binary data and validates it.
+   Runs both buf.validate and Malli validation in parallel.
    Options:
    - :type - :state, :cmd, or :auto (default)
    - :validator - optional pre-created validator instance (uses cached by default)"
   [binary-data & {:keys [type validator]
                   :or {type :auto}}]
-  (when (nil? binary-data)
-    (throw (IllegalArgumentException. "Binary data cannot be nil")))
-  (when (zero? (count binary-data))
-    (throw (IllegalArgumentException. "Binary data cannot be empty")))
-  ;; Use provided validator or cached instance for performance
-  (let [validator (or validator (create-validator))
-        detected-type (if (= type :auto)
-                       (auto-detect-message-type binary-data)
-                       type)]
-    (when-not detected-type
-      (throw (ex-info "Could not detect message type and no type specified"
-                      {:attempted-types [:state :cmd]})))
+  ;; Handle nil/empty data gracefully
+  (cond
+    (nil? binary-data)
+    {:valid? false
+     :message "Binary data is nil"
+     :message-type type
+     :message-size 0
+     :buf-validate {:valid? false
+                     :message "Cannot validate nil data"
+                     :violations []}
+     :malli {:valid? false
+             :message "Cannot validate nil data"
+             :violations []}}
     
-    (let [message (case detected-type
-                   :state (parse-state-message binary-data)
-                   :cmd (parse-cmd-message binary-data)
-                   (throw (ex-info "Unknown message type" {:type detected-type})))
-          validation-result (validate-message message validator)]
-      (assoc validation-result
-             :message-type detected-type
-             :message-size (count binary-data)))))
+    (zero? (count binary-data))
+    {:valid? false
+     :message "Binary data is empty"
+     :message-type type
+     :message-size 0
+     :buf-validate {:valid? false
+                     :message "Cannot validate empty data"
+                     :violations []}
+     :malli {:valid? false
+             :message "Cannot validate empty data"
+             :violations []}}
+    
+    :else
+    (try
+      ;; Use provided validator or cached instance for performance
+      (let [validator (or validator (create-validator))
+            detected-type (if (= type :auto)
+                           (auto-detect-message-type binary-data)
+                           type)]
+        
+        (if-not detected-type
+          {:valid? false
+           :message "Could not detect or parse message type"
+           :message-type nil
+           :message-size (count binary-data)
+           :buf-validate {:valid? false
+                           :message "Failed to parse binary data"
+                           :violations []}
+           :malli {:valid? false
+                   :message "Failed to parse binary data"
+                   :violations []}}
+          
+          ;; Try to parse and validate
+          (let [message (try
+                         (case detected-type
+                           :state (parse-state-message binary-data)
+                           :cmd (parse-cmd-message binary-data))
+                         (catch Exception e
+                           (log/debug e "Failed to parse message")
+                           nil))]
+            
+            (if-not message
+              ;; Parse failed - return error result
+              {:valid? false
+               :message "Failed to parse binary as protobuf message"
+               :message-type detected-type
+               :message-size (count binary-data)
+               :buf-validate {:valid? false
+                               :message "Parse error - invalid protobuf format"
+                               :violations []}
+               :malli {:valid? false
+                       :message "Cannot validate unparseable data"
+                       :violations []}}
+              
+              ;; Parse succeeded - run both validations
+              (let [;; Run buf.validate
+                    buf-result (validate-message message validator)
+                    
+                    ;; Convert to EDN and run Malli validation
+                    edn-data (proto->edn message detected-type)
+                    malli-result (if edn-data
+                                   (validate-with-malli edn-data detected-type)
+                                   {:valid? false
+                                    :message "Failed to convert proto to EDN"
+                                    :violations []})
+                    
+                    ;; Overall validity requires both to pass
+                    overall-valid? (and (:valid? buf-result) (:valid? malli-result))]
+                
+                {:valid? overall-valid?
+                 :message (cond
+                           overall-valid? "Both validations passed"
+                           (and (not (:valid? buf-result)) (not (:valid? malli-result))) "Both validations failed"
+                           (not (:valid? buf-result)) "buf.validate failed, Malli passed"
+                           :else "Malli failed, buf.validate passed")
+                 :message-type detected-type
+                 :message-size (count binary-data)
+                 :buf-validate buf-result
+                 :malli malli-result})))))
+      
+      (catch Exception e
+        (log/error e "Unexpected error during validation")
+        {:valid? false
+         :message (str "Unexpected error: " (.getMessage e))
+         :message-type type
+         :message-size (count binary-data)
+         :buf-validate {:valid? false
+                         :message "Validation error"
+                         :violations []}
+         :malli {:valid? false
+                 :message "Validation error"
+                 :violations []}}))))
 
 (defn validate-file
   "Validate a binary file.
@@ -206,16 +411,37 @@
 (defn format-validation-result
   "Format validation result for display."
   [result]
-  (str "Validation Result:\n"
-       "  Message Type: " (:message-type result) "\n"
-       "  Message Size: " (:message-size result) " bytes\n"
-       "  Valid: " (:valid? result) "\n"
-       (when-not (:valid? result)
-         (str "  Error: " (or (:error result) (:message result)) "\n"
-              (when (seq (:violations result))
-                (str "  Violations:\n"
-                     (clojure.string/join "\n"
-                                        (map #(str "    - Field: " (:field %)
-                                                  "\n      Constraint: " (:constraint %)
-                                                  "\n      Message: " (:message %))
-                                            (:violations result)))))))))
+  (let [buf-result (:buf-validate result)
+        malli-result (:malli result)]
+    (str "Validation Result:\n"
+         "  Message Type: " (:message-type result) "\n"
+         "  Message Size: " (:message-size result) " bytes\n"
+         "  Overall Valid: " (:valid? result) "\n"
+         "  Summary: " (:message result) "\n"
+         
+         ;; Show buf.validate results
+         (when buf-result
+           (str "\n  buf.validate:\n"
+                "    Valid: " (:valid? buf-result) "\n"
+                (when-not (:valid? buf-result)
+                  (str "    Message: " (or (:error buf-result) (:message buf-result)) "\n"
+                       (when (seq (:violations buf-result))
+                         (str "    Violations:\n"
+                              (str/join "\n"
+                                       (map #(str "      - Field: " (:field %)
+                                                 "\n        Constraint: " (:constraint %)
+                                                 "\n        Message: " (:message %))
+                                           (:violations buf-result)))))))))
+         
+         ;; Show Malli results
+         (when malli-result
+           (str "\n  Malli:\n"
+                "    Valid: " (:valid? malli-result) "\n"
+                (when-not (:valid? malli-result)
+                  (str "    Message: " (or (:error malli-result) (:message malli-result)) "\n"
+                       (when (seq (:violations malli-result))
+                         (str "    Violations:\n"
+                              (str/join "\n"
+                                       (map #(str "      - Field: " (:field %)
+                                                 "\n        Message: " (:message %))
+                                           (:violations malli-result)))))))))))) ; closing: (str/join, (str "    Violations", (when (seq, (str "    Message", (when-not, (str "\n  Malli", (when malli-result, (str "Validation Result", (let, (defn
