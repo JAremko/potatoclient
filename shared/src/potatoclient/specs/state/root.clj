@@ -5,18 +5,19 @@
   (:require
    [potatoclient.malli.registry :as registry]
    ;; Import all sub-message specs
-   [validate.specs.state.actual-space-time]
-   [validate.specs.state.camera-day]
-   [validate.specs.state.camera-heat]
-   [validate.specs.state.compass]
-   [validate.specs.state.day-cam-glass-heater]
-   [validate.specs.state.gps]
-   [validate.specs.state.lrf]
-   [validate.specs.state.meteo-internal]
-   [validate.specs.state.rec-osd]
-   [validate.specs.state.rotary]
-   [validate.specs.state.system]
-   [validate.specs.state.time]))
+   [potatoclient.specs.state.actual-space-time]
+   [potatoclient.specs.state.camera-day]
+   [potatoclient.specs.state.camera-heat]
+   [potatoclient.specs.state.compass]
+   [potatoclient.specs.state.compass-calibration]
+   [potatoclient.specs.state.day-cam-glass-heater]
+   [potatoclient.specs.state.gps]
+   [potatoclient.specs.state.lrf]
+   [potatoclient.specs.state.meteo-internal]
+   [potatoclient.specs.state.rec-osd]
+   [potatoclient.specs.state.rotary]
+   [potatoclient.specs.state.system]
+   [potatoclient.specs.state.time]))
 
 ;; JonGUIState root message spec based on proto and EDN output
 ;; All 14 sub-messages are required per buf.validate

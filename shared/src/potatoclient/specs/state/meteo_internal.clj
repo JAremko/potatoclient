@@ -12,8 +12,8 @@
 
 (def meteo-internal-message-spec
   [:map {:closed true}
-   ;; Add fields here when they appear in actual data
-   ;; Likely fields: temperature, humidity, pressure, wind speed, etc.
+   ;; Empty map as shown in actual data
+   ;; May have optional weather-related fields in some configurations
    ])
 
 (registry/register! :state/meteo-internal meteo-internal-message-spec)

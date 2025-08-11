@@ -123,19 +123,120 @@ clojure -M:run -f data.bin -o json -v
 # Run complete test suite
 make test
 
+# Run only property-based tests
+clojure -M:test -n validate.specs.state-property-test
+clojure -M:test -n validate.specs.cmd-property-test
+
 # Start REPL for interactive development
 make repl
 ```
 
+### Property-Based Testing
+
+The validate tool includes extensive property-based testing to ensure Malli specs are 100% compatible with buf.validate constraints:
+
+```clojure
+;; In REPL - test state specs with 1000 samples
+(require '[validate.spec-validation-harness :as harness])
+(harness/test-state-spec :n 1000 :verbose? true)
+
+;; Test command specs
+(harness/test-cmd-spec :n 500)
+
+;; Analyze failures if any occur
+(-> (harness/test-state-spec :n 1000)
+    harness/analyze-violations)
+
+;; Test specific sub-message
+(harness/test-sub-message-spec 
+  :state/gps 
+  h/state-mapper 
+  ser.JonSharedData$JonGUIState$GPS 
+  :n 300)
+```
+
+### Hierarchical Message Validation
+
+#### Important Discovery: Sub-Message Validation
+
+The production validator (`validate.validator`) is designed to only validate root messages (JonGUIState and JonSharedCmd$Root). However, buf.validate constraints ARE present on all sub-messages and can be validated independently using a test-specific validator.
+
+**Production Validator** (for actual use):
+- Only validates complete root messages  
+- Attempts to parse all binaries as either State or Cmd root
+- Sub-messages fail validation when tested standalone
+
+**Test Validator** (`validate.test-validator`):
+- Can validate any protobuf message type independently
+- Enables bottom-up testing strategy
+- Validates sub-messages directly without requiring root context
+
+#### Bottom-Up Testing Strategy
+
+For comprehensive testing, we validate messages hierarchically:
+
+1. **Level 1 (Leaf Messages)**: Validate GPS, System, Time, etc. independently
+2. **Level 2 (Composite Messages)**: Validate messages with nested sub-messages  
+3. **Level 3 (Root Messages)**: Validate complete State or Cmd with all sub-messages
+
+Example test output demonstrating the difference:
+```
+=== GPS Sub-message Validation ===
+Direct validation (test_validator):
+  Valid?: true
+  Violations: []
+
+Binary validation (production validator):
+  Detected as: :cmd
+  Valid?: false
+  Violations: (payload required, protocol_version > 0, client_type not UNSPECIFIED)
+```
+
+This hierarchical approach ensures:
+- Sub-message specs are correct and generate valid data
+- Parent messages properly compose sub-messages
+- Complete root messages validate with all constraints
+
 ### Test Structure
 
-The tool includes comprehensive testing with idiomatic Pronto patterns:
+The tool includes comprehensive testing with idiomatic Pronto patterns and property-based testing:
 
+#### Core Test Files
 - **`test_harness.clj`**: Real-world test data generation using Pronto
 - **`validator_test.clj`**: Core validation logic tests
 - **`validation_test.clj`**: Validation behavior tests
 - **`pronto_test.clj`**: Pronto performance and immutability tests
 - **`harness_test.clj`**: Test data generation verification
+
+#### Property-Based Testing Suite
+- **`spec_validation_harness.clj`**: Comprehensive test harness for round-trip validation
+  - Spec → Proto-map → Binary → Proto-map → Spec validation pipeline
+  - Validates Malli-generated data against buf.validate constraints
+  - Ensures 100% compatibility between Malli specs and protobuf validation
+- **`specs/state_property_test.clj`**: Property-based tests for State messages
+  - Tests all 14 sub-messages with 300+ generated samples each
+  - Manual edge case testing for boundary values
+  - Round-trip validation for complete state messages
+- **`specs/cmd_property_test.clj`**: Property-based tests for Command messages
+  - Tests all 15 command types with generated samples
+  - Validates oneof exclusivity constraints
+  - Boundary value testing for protocol versions and rotary speeds
+
+#### Property Testing Features
+- **Round-trip Validation**: Each generated value goes through complete cycle:
+  1. Generate data from Malli spec
+  2. Convert to proto-map
+  3. Validate with buf.validate
+  4. Serialize to binary
+  5. Deserialize back to proto-map
+  6. Validate with buf.validate again
+  7. Convert back to EDN
+  8. Validate with Malli spec
+  9. Check equality with original
+
+- **Coverage Analysis**: Ensures specs generate all required fields and enum values
+- **Violation Analysis**: Identifies patterns in validation failures to improve specs
+- **Manual + Generated Testing**: Combines manual edge cases with 100-300 generated samples per message type
 
 ## 📁 Project Structure
 

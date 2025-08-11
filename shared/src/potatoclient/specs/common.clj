@@ -281,6 +281,7 @@
 
 ;; Register enum specs
 (registry/register! :enum/client-type client-type-enum-spec)
+(registry/register! :proto/client-type client-type-enum-spec) ; Also register as proto/client-type
 (registry/register! :enum/gps-fix-type gps-fix-type-enum-spec)
 (registry/register! :enum/rotary-direction rotary-direction-enum-spec)
 (registry/register! :enum/rotary-mode rotary-mode-enum-spec)

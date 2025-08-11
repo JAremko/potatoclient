@@ -6,19 +6,19 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.oneof-edn :as oneof-edn]
    ;; Import all command specs
-   [validate.specs.cmd.common]
-   [validate.specs.cmd.compass]
-   [validate.specs.cmd.cv]
-   [validate.specs.cmd.day-cam-glass-heater]
-   [validate.specs.cmd.day-camera]
-   [validate.specs.cmd.gps]
-   [validate.specs.cmd.heat-camera]
-   [validate.specs.cmd.lira]
-   [validate.specs.cmd.lrf]
-   [validate.specs.cmd.lrf-align]
-   [validate.specs.cmd.osd]
-   [validate.specs.cmd.rotary]
-   [validate.specs.cmd.system]))
+   [potatoclient.specs.cmd.common]
+   [potatoclient.specs.cmd.compass]
+   [potatoclient.specs.cmd.cv]
+   [potatoclient.specs.cmd.day-cam-glass-heater]
+   [potatoclient.specs.cmd.day-camera]
+   [potatoclient.specs.cmd.gps]
+   [potatoclient.specs.cmd.heat-camera]
+   [potatoclient.specs.cmd.lira]
+   [potatoclient.specs.cmd.lrf]
+   [potatoclient.specs.cmd.lrf-align]
+   [potatoclient.specs.cmd.osd]
+   [potatoclient.specs.cmd.rotary]
+   [potatoclient.specs.cmd.system]))
 
 ;; JonSharedCmd.Root message spec
 ;; From proto discovery, has:
