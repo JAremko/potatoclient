@@ -9,8 +9,10 @@
   (:gen-class))
 
 (def cli-options
-  [["-f" "--file FILE" "Path to binary file to validate"
+  [["-f" "--file FILE" "Path to file to validate (binary or EDN)"
     :validate [#(.exists (java.io.File. %)) "File must exist"]]
+   ["-e" "--edn" "Treat input file as EDN format"
+    :default false]
    ["-t" "--type TYPE" "Message type: state, cmd, or auto (default: auto)"
     :default :auto
     :parse-fn keyword
@@ -39,10 +41,11 @@
     options-summary
     ""
     "Examples:"
-    "  validate -f output/state_20241208.bin"
-    "  validate -f commands.bin -t cmd"
-    "  validate -f data.bin -o json"
-    "  validate -f state.bin -t state -v"
+    "  validate -f output/state_20241208.bin      # Validate binary file"
+    "  validate -f state.edn -e                   # Validate EDN file"
+    "  validate -f commands.bin -t cmd            # Validate as command type"
+    "  validate -f data.edn -e -o json            # EDN input with JSON output"
+    "  validate -f state.bin -t state -v          # Verbose binary validation"
     ""
     "Message Types:"
     "  state - Validate as state root message (ser.JonSharedData)"
@@ -54,9 +57,14 @@
     "  json - JSON format with nested validation results"
     "  edn  - Clojure EDN format with nested validation results"
     ""
+    "Input Formats:"
+    "  • Binary protobuf files (.bin, .pb, etc.)"
+    "  • EDN files with -e flag (.edn)"
+    ""
     "Validation Features:"
     "  • buf.validate: Checks protobuf structural constraints"
     "  • Malli: Checks semantic constraints with Clojure specs"
+    "  • EDN validation: Validates EDN directly with Malli, then converts to proto"
     "  • Graceful handling of empty, corrupted, and truncated files"
     "  • Humanized error messages for better debugging"
     "  • Independent results from both validators"]))
@@ -103,16 +111,19 @@
 
 (defn run-validation
   "Run the validation with the given options."
-  [{:keys [file type output verbose]}]
+  [{:keys [file type output verbose edn]}]
   (try
     (when verbose
       (println "Starting validation...")
       (println (str "  File: " file))
+      (println (str "  Format: " (if edn "EDN" "Binary")))
       (println (str "  Type: " type))
       (println (str "  Output: " output))
       (println))
     
-    (let [result (validator/validate-file file :type type)]
+    (let [result (if edn
+                   (validator/validate-edn-file file :type type)
+                   (validator/validate-file file :type type))]
       (println (format-output result output verbose))
       
       ;; Return appropriate exit code

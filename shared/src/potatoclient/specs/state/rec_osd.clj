@@ -8,20 +8,20 @@
 ;; Recording OSD screen enum
 (def rec-osd-screen-spec
   [:enum
-   :jon-gui-data-rec-osd-screen-main
-   :jon-gui-data-rec-osd-screen-pip])
+   :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
+   :JON_GUI_DATA_REC_OSD_SCREEN_PIP])
 
 (registry/register! :enum/rec-osd-screen rec-osd-screen-spec)
 
 ;; JonGuiDataRecOsd message spec based on EDN output:
-;; {:day-osd-enabled true
-;;  :heat-osd-enabled true
-;;  :screen :jon-gui-data-rec-osd-screen-main}
+;; {:day_osd_enabled true
+;;  :heat_osd_enabled true
+;;  :screen :JON_GUI_DATA_REC_OSD_SCREEN_MAIN}
 
 (def rec-osd-message-spec
   [:map {:closed true}
-   [:day-osd-enabled :boolean]
-   [:heat-osd-enabled :boolean]
+   [:day_osd_enabled boolean?]
+   [:heat_osd_enabled boolean?]
    [:screen :enum/rec-osd-screen]])
 
 (registry/register! :state/rec-osd rec-osd-message-spec)

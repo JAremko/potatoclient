@@ -13,10 +13,10 @@
 
 (def compass-calibration-message-spec
   [:map {:closed true}
-   [:final-stage :int]
+   [:final_stage :int]
    [:status :enum/compass-calibrate-status]
-   [:target-azimuth :angle/azimuth]
-   [:target-bank :angle/bank]
-   [:target-elevation :angle/elevation]])
+   [:target_azimuth :angle/azimuth]
+   [:target_bank :angle/bank]
+   [:target_elevation :angle/elevation]])
 
 (registry/register! :state/compass-calibration compass-calibration-message-spec)

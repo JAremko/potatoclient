@@ -26,22 +26,22 @@
 (def jon-gui-state-spec
   [:map {:closed true}
    ;; protocol_version > 0 (required)
-   [:protocol-version :proto/protocol-version]
+   [:protocol_version :proto/protocol-version]
    
    ;; All 14 required sub-messages (in EDN format with kebab-case)
-   [:actual-space-time :state/actual-space-time]
-   [:camera-day :state/camera-day]
-   [:camera-heat :state/camera-heat]
+   [:actual_space_time :state/actual-space-time]
+   [:camera_day :state/camera-day]
+   [:camera_heat :state/camera-heat]
    [:compass :state/compass]
-   [:compass-calibration :state/compass-calibration]
-   [:day-cam-glass-heater :state/day-cam-glass-heater]
+   [:compass_calibration :state/compass-calibration]
+   [:day_cam_glass_heater :state/day-cam-glass-heater]
    [:gps :state/gps]
    [:lrf :state/lrf]
-   [:meteo-internal :state/meteo-internal]
-   [:rec-osd :state/rec-osd]
+   [:meteo_internal :state/meteo-internal]
+   [:rec_osd :state/rec-osd]
    [:rotary :state/rotary]
    [:system :state/system]
    [:time :state/time]])
 
 (registry/register! :state/root jon-gui-state-spec)
-(registry/register! :jon-gui-state jon-gui-state-spec) ; Alternative name
+(registry/register! :jon_gui_state jon-gui-state-spec) ; Alternative name

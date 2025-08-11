@@ -4,6 +4,7 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.walk :as walk]
+   [clojure.edn :as edn]
    [clojure.tools.logging :as log]
    [pronto.core :as pronto]
    [malli.core :as m]
@@ -23,7 +24,7 @@
 (do
   (require '[potatoclient.specs.oneof-edn :as oneof-edn])
   (registry/setup-global-registry!
-   (oneof-edn/register-oneof-edn-schema!)))
+   (oneof-edn/register_ONeof-edn-schema!)))
 
 ;; Cache the validator instance for performance
 ;; Creating a new validator for each validation adds ~150ms overhead
@@ -192,16 +193,10 @@
                                                         cmd.JonSharedCmd$Root
                                                         binary-data)
                           nil)
-              ;; Convert to snake-case map first (proto-map->clj-map returns snake_case)
+              ;; proto-map->clj-map returns snake_case, which now matches our specs
               snake-map (when proto-map (pronto/proto-map->clj-map proto-map))]
-          ;; Convert snake_case to kebab-case for Malli specs
-          (when snake-map
-            (walk/postwalk
-             (fn [x]
-               (if (keyword? x)
-                 (keyword (str/replace (name x) "_" "-"))
-                 x))
-             snake-map)))))
+          ;; Return snake_case directly - specs now expect snake_case
+          snake-map)))
     (catch Exception e
       (log/warn e "Failed to convert proto to EDN")
       nil)))
@@ -408,12 +403,182 @@
   (let [binary-data (read-binary-stream input-stream)]
     (validate-binary binary-data :type type :validator validator)))
 
+(defn read-edn-file
+  "Read and parse an EDN file."
+  [file-path]
+  (try
+    (let [content (slurp file-path)]
+      (edn/read-string content))
+    (catch Exception e
+      (log/error e "Failed to read EDN file" file-path)
+      (throw (ex-info "Failed to read EDN file" 
+                      {:file file-path
+                       :error (.getMessage e)})))))
+
+(defn edn->proto-binary
+  "Convert EDN data to protobuf binary.
+   Now expects snake_case EDN format (no conversion needed)."
+  [edn-data message-type]
+  (try
+    ;; EDN data should already be in snake_case format
+    ;; Create proto-map from EDN data directly
+    (let [proto-map (case message-type
+                      :state (pronto/clj-map->proto-map state-mapper 
+                                                        ser.JonSharedData$JonGUIState
+                                                        edn-data)
+                      :cmd (pronto/clj-map->proto-map cmd-mapper
+                                                      cmd.JonSharedCmd$Root  
+                                                      edn-data)
+                      (throw (ex-info "Unknown message type" {:type message-type})))]
+      ;; Convert to binary
+      (pronto/proto-map->bytes proto-map))
+    (catch Exception e
+      (log/error e "Failed to convert EDN to proto binary")
+      (throw (ex-info "Failed to convert EDN to protobuf" 
+                      {:error (.getMessage e)
+                       :type message-type})))))
+
+(defn detect-edn-message-type
+  "Detect message type from EDN structure.
+   State messages have many sub-messages (gps, system, etc).
+   Command messages have client_type and one of the command fields."
+  [edn-data]
+  (cond
+    ;; Command has client_type and one of the command fields
+    (and (contains? edn-data :client_type)
+         (some #(contains? edn-data %)
+               [:ping :noop :frozen :gps :compass :lrf :lrf_calib 
+                :rotary :osd :system :cv :day_camera :heat_camera :lira
+                :day_cam_glass_heater])) :cmd
+    
+    ;; State has multiple characteristic fields
+    (and (contains? edn-data :gps)
+         (contains? edn-data :system)
+         (contains? edn-data :time)) :state
+    
+    ;; Default based on presence of certain fields
+    (contains? edn-data :client_type) :cmd
+    
+    ;; Default to nil if can't detect
+    :else nil))
+
+(defn validate-edn
+  "Validate EDN data using both Malli and buf.validate.
+   First validates with Malli directly, then converts to proto
+   and validates with buf.validate."
+  [edn-data & {:keys [type validator]
+               :or {type :auto}}]
+  (cond
+    (nil? edn-data)
+    {:valid? false
+     :message "EDN data is nil"
+     :message-type type
+     :message-size 0
+     :buf-validate {:valid? false
+                     :message "Cannot validate nil data"
+                     :violations []}
+     :malli {:valid? false
+             :message "Cannot validate nil data"
+             :violations []}}
+    
+    (not (map? edn-data))
+    {:valid? false
+     :message "EDN data must be a map"
+     :message-type type
+     :message-size 0
+     :buf-validate {:valid? false
+                     :message "EDN must be a map"
+                     :violations []}
+     :malli {:valid? false
+             :message "EDN must be a map"
+             :violations []}}
+    
+    :else
+    (try
+      (let [;; Detect or use specified type
+            detected-type (if (= type :auto)
+                           (detect-edn-message-type edn-data)
+                           type)]
+        
+        (if-not detected-type
+          {:valid? false
+           :message "Could not detect message type from EDN structure"
+           :message-type nil
+           :message-size 0
+           :buf-validate {:valid? false
+                           :message "Unknown message type"
+                           :violations []}
+           :malli {:valid? false
+                   :message "Unknown message type"
+                   :violations []}}
+          
+          (let [;; First run Malli validation on EDN directly
+                malli-result (validate-with-malli edn-data detected-type)
+                
+                ;; Try to convert to proto binary
+                binary (try
+                        (edn->proto-binary edn-data detected-type)
+                        (catch Exception e
+                          (log/debug e "Failed to convert EDN to proto")
+                          nil))
+                
+                ;; If conversion succeeded, validate with buf.validate
+                buf-result (if binary
+                             (let [val-result (validate-binary binary 
+                                                              :type detected-type
+                                                              :validator validator)]
+                               (:buf-validate val-result))
+                             {:valid? false
+                              :message "Failed to convert EDN to protobuf"
+                              :violations []})
+                
+                ;; Overall validity requires both to pass
+                overall-valid? (and (:valid? malli-result) (:valid? buf-result))]
+            
+            {:valid? overall-valid?
+             :message (cond
+                       overall-valid? "Both validations passed"
+                       (and (not (:valid? buf-result)) (not (:valid? malli-result))) "Both validations failed"
+                       (not (:valid? buf-result)) "buf.validate failed, Malli passed"
+                       :else "Malli failed, buf.validate passed")
+             :message-type detected-type
+             :message-size (if binary (count binary) 0)
+             :input-type :edn
+             :buf-validate buf-result
+             :malli malli-result})))
+      
+      (catch Exception e
+        (log/error e "Unexpected error during EDN validation")
+        {:valid? false
+         :message (str "Unexpected error: " (.getMessage e))
+         :message-type type
+         :message-size 0
+         :input-type :edn
+         :buf-validate {:valid? false
+                         :message "Validation error"
+                         :violations []}
+         :malli {:valid? false
+                 :message "Validation error"
+                 :violations []}}))))
+
+(defn validate-edn-file
+  "Validate an EDN file using both validators.
+   Options:
+   - :type - :state, :cmd, or :auto (default)
+   - :validator - optional pre-created validator instance"
+  [file-path & {:keys [type validator]
+                :or {type :auto}}]
+  (let [edn-data (read-edn-file file-path)]
+    (validate-edn edn-data :type type :validator validator)))
+
 (defn format-validation-result
   "Format validation result for display."
   [result]
   (let [buf-result (:buf-validate result)
         malli-result (:malli result)]
     (str "Validation Result:\n"
+         (when (:input-type result)
+           (str "  Input Type: " (name (:input-type result)) "\n"))
          "  Message Type: " (:message-type result) "\n"
          "  Message Size: " (:message-size result) " bytes\n"
          "  Overall Valid: " (:valid? result) "\n"

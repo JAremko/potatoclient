@@ -8,10 +8,14 @@
 (declare proto-message->map)
 
 (defn field-name->keyword
-  "Convert protobuf field name to Clojure keyword"
+  "Convert protobuf field name to Clojure keyword.
+   Handles PascalCase and converts to snake_case."
   [field-name]
   (-> field-name
-      (str/replace #"_" "-")
+      ;; Insert underscores before capital letters (except first)
+      (str/replace #"([a-z])([A-Z])" "$1_$2")
+      ;; Insert underscores between consecutive capitals and lowercase
+      (str/replace #"([A-Z]+)([A-Z][a-z])" "$1_$2")
       (str/lower-case)
       keyword))
 
@@ -24,12 +28,9 @@
       (instance? com.google.protobuf.Message value)
       (proto-message->map value)
       
-      ;; Handle enums
+      ;; Handle enums - keep UPPER_SNAKE_CASE format
       (instance? com.google.protobuf.Descriptors$EnumValueDescriptor value)
-      (-> (.getName value)
-          (str/lower-case)
-          (str/replace #"_" "-")
-          keyword)
+      (keyword (.getName value))
       
       ;; Handle repeated fields (lists)
       (instance? java.util.List value)

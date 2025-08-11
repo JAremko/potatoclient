@@ -32,27 +32,27 @@
 (def jon-shared-cmd-root-spec
   [:map {:closed true}
    ;; Required fields
-   [:protocol-version :proto/protocol-version]
-   [:client-type :proto/client-type]
+   [:protocol_version :proto/protocol-version]
+   [:client_type :proto/client-type]
    
    ;; Oneof command payloads (exactly one must be present)
    ;; Using oneof-edn schema for EDN validation
-   [:cmd [:oneof-edn
+   [:cmd [:oneof_edn
           [:cv :cmd/cv]
-          [:day-camera :cmd/day-camera]
-          [:heat-camera :cmd/heat-camera]
+          [:day_camera :cmd/day-camera]
+          [:heat_camera :cmd/heat-camera]
           [:gps :cmd/gps]
           [:compass :cmd/compass]
           [:lrf :cmd/lrf]
-          [:lrf-calib :cmd/lrf-align]
+          [:lrf_calib :cmd/lrf-align]
           [:rotary :cmd/rotary]
           [:osd :cmd/osd]
           [:ping :cmd/ping]
           [:noop :cmd/noop]
           [:frozen :cmd/frozen]
           [:system :cmd/system]
-          [:day-cam-glass-heater :cmd/day-cam-glass-heater]
+          [:day_cam_glass_heater :cmd/day-cam-glass-heater]
           [:lira :cmd/lira]]]])
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
-(registry/register! :jon-shared-cmd-root jon-shared-cmd-root-spec) ; Alternative name
+(registry/register! :jon_shared_cmd_root jon-shared-cmd-root-spec) ; Alternative name

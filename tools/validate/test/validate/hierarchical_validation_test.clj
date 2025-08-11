@@ -43,7 +43,7 @@
 
 ;; Initialize registry
 (registry/setup-global-registry!
-  (oneof-edn/register-oneof-edn-schema!))
+  (oneof-edn/register_ONeof-edn-schema!))
 
 ;; ============================================================================
 ;; LEVEL 1: LEAF MESSAGE VALIDATION (Sub-messages)

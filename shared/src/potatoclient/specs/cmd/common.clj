@@ -21,6 +21,6 @@
 ;; Frozen command (freeze state)
 (def frozen-command-spec
   [:map {:closed true}
-   [:flag :boolean]])
+   [:flag boolean?]])
 
 (registry/register! :cmd/frozen frozen-command-spec)

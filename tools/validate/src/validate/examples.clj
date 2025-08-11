@@ -16,7 +16,7 @@
   "Initialize the global Malli registry"
   []
   (registry/setup-global-registry!
-    (oneof-edn/register-oneof-edn-schema!)))
+    (oneof-edn/register_ONeof-edn-schema!)))
 
 (defn validate-state
   "Validate a State message (EDN format) against specs"

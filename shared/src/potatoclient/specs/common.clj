@@ -136,11 +136,11 @@
 
 ;; Boolean mode specs
 (def enable-disable-spec :boolean)
-(def on-off-spec :boolean)
+(def on_OFF-spec :boolean)
 
 ;; Register boolean specs
 (registry/register! :mode/enable enable-disable-spec)
-(registry/register! :mode/on-off on-off-spec)
+(registry/register! :mode/on_OFF on_OFF-spec)
 
 ;; ID specs
 (def session-id-spec
@@ -206,78 +206,78 @@
 ;; Client Type (Cannot be UNSPECIFIED per buf.validate)
 (def client-type-enum-spec
   [:enum
-   :jon-gui-data-client-type-internal-cv
-   :jon-gui-data-client-type-local-network
-   :jon-gui-data-client-type-certificate-protected
-   :jon-gui-data-client-type-lira])
+   :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   :JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   :JON_GUI_DATA_CLIENT_TYPE_LIRA])
 
 ;; GPS Fix Type (Cannot be UNSPECIFIED per buf.validate)
 (def gps-fix-type-enum-spec
   [:enum
-   :jon-gui-data-gps-fix-type-none
-   :jon-gui-data-gps-fix-type-1d
-   :jon-gui-data-gps-fix-type-2d
-   :jon-gui-data-gps-fix-type-3d
-   :jon-gui-data-gps-fix-type-manual])
+   :JON_GUI_DATA_GPS_FIX_TYPE_NONE
+   :JON_GUI_DATA_GPS_FIX_TYPE_1D
+   :JON_GUI_DATA_GPS_FIX_TYPE_2D
+   :JON_GUI_DATA_GPS_FIX_TYPE_3D
+   :JON_GUI_DATA_GPS_FIX_TYPE_MANUAL])
 
 ;; Rotary Direction (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-direction-enum-spec
   [:enum
-   :jon-gui-data-rotary-direction-clockwise
-   :jon-gui-data-rotary-direction-counter-clockwise])
+   :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
+   :JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE])
 
 ;; Rotary Mode (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-mode-enum-spec
   [:enum
-   :jon-gui-data-rotary-mode-initialization
-   :jon-gui-data-rotary-mode-speed
-   :jon-gui-data-rotary-mode-position
-   :jon-gui-data-rotary-mode-stabilization
-   :jon-gui-data-rotary-mode-targeting
-   :jon-gui-data-rotary-mode-video-tracker])
+   :JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
+   :JON_GUI_DATA_ROTARY_MODE_SPEED
+   :JON_GUI_DATA_ROTARY_MODE_POSITION
+   :JON_GUI_DATA_ROTARY_MODE_STABILIZATION
+   :JON_GUI_DATA_ROTARY_MODE_TARGETING
+   :JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER])
 
 ;; Video Channel (Cannot be UNSPECIFIED per buf.validate)
 (def video-channel-enum-spec
   [:enum
-   :jon-gui-data-video-channel-heat
-   :jon-gui-data-video-channel-day])
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+   :JON_GUI_DATA_VIDEO_CHANNEL_DAY])
 
 (def fx-mode-day-enum-spec
   [:enum
-   :jon-gui-data-fx-mode-day-default
-   :jon-gui-data-fx-mode-day-a
-   :jon-gui-data-fx-mode-day-b
-   :jon-gui-data-fx-mode-day-c
-   :jon-gui-data-fx-mode-day-d
-   :jon-gui-data-fx-mode-day-e
-   :jon-gui-data-fx-mode-day-f])
+   :JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   :JON_GUI_DATA_FX_MODE_DAY_A
+   :JON_GUI_DATA_FX_MODE_DAY_B
+   :JON_GUI_DATA_FX_MODE_DAY_C
+   :JON_GUI_DATA_FX_MODE_DAY_D
+   :JON_GUI_DATA_FX_MODE_DAY_E
+   :JON_GUI_DATA_FX_MODE_DAY_F])
 
 (def fx-mode-heat-enum-spec
   [:enum
-   :jon-gui-data-fx-mode-heat-default
-   :jon-gui-data-fx-mode-heat-a
-   :jon-gui-data-fx-mode-heat-b
-   :jon-gui-data-fx-mode-heat-c
-   :jon-gui-data-fx-mode-heat-d
-   :jon-gui-data-fx-mode-heat-e
-   :jon-gui-data-fx-mode-heat-f])
+   :JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   :JON_GUI_DATA_FX_MODE_HEAT_A
+   :JON_GUI_DATA_FX_MODE_HEAT_B
+   :JON_GUI_DATA_FX_MODE_HEAT_C
+   :JON_GUI_DATA_FX_MODE_HEAT_D
+   :JON_GUI_DATA_FX_MODE_HEAT_E
+   :JON_GUI_DATA_FX_MODE_HEAT_F])
 
 (def lrf-scan-modes-enum-spec
   [:enum
-   :jon-gui-data-lrf-scan-mode-1-hz-continuous
-   :jon-gui-data-lrf-scan-mode-4-hz-continuous
-   :jon-gui-data-lrf-scan-mode-10-hz-continuous
-   :jon-gui-data-lrf-scan-mode-20-hz-continuous
-   :jon-gui-data-lrf-scan-mode-100-hz-continuous
-   :jon-gui-data-lrf-scan-mode-200-hz-continuous])
+   :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   :JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   :JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   :JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS])
 
 (def compass-calibrate-status-enum-spec
   [:enum
-   :jon-gui-data-compass-calibrate-status-not-calibrating
-   :jon-gui-data-compass-calibrate-status-calibrating-short
-   :jon-gui-data-compass-calibrate-status-calibrating-long
-   :jon-gui-data-compass-calibrate-status-finished
-   :jon-gui-data-compass-calibrate-status-error])
+   :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+   :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
+   :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_LONG
+   :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
+   :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR])
 
 ;; Register enum specs
 (registry/register! :enum/client-type client-type-enum-spec)

@@ -16,7 +16,7 @@
 ;; Initialize the global registry with oneof-edn schema
 (defn init-registry! []
   (registry/setup-global-registry!
-    (oneof-edn/register-oneof-edn-schema!)))
+    (oneof-edn/register_ONeof-edn-schema!)))
 
 ;; Load sample EDN data
 (def sample-state-edn

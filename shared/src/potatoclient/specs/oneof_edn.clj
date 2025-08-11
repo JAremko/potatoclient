@@ -9,13 +9,13 @@
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]))
 
-(def -oneof-edn-schema
-  "Custom :oneof-edn schema for validating EDN maps with exactly one non-nil field set.
+(def _ONeof-edn-schema
+  "Custom :oneof_edn schema for validating EDN maps with exactly one non-nil field set.
    Treats nil values as absent, compatible with Pronto EDN representations.
    Acts as a closed map - rejects any extra keys not defined in the schema."
   (m/-simple-schema
-   {:type :oneof-edn
-    :type-properties {:generator true}
+   {:type :oneof_edn
+    :type_properties {:generator true}
     :compile (fn [properties children options]
                (let [;; Handle both property-style and children-style definitions
                      field-map (if (and (empty? children) (map? properties))
@@ -47,7 +47,7 @@
                                                (validator (get value active-field)))))))))
                   :min (* 2 (count field-map))
                   :max (* 2 (count field-map))
-                  :type-properties properties
+                  :type_properties properties
                   :error/fn (fn [{:keys [value]} _]
                               (cond
                                 (not (map? value)) "must be a map"
@@ -68,7 +68,7 @@
 
 ;; Generator for oneof-edn schemas
 ;; Efficient: generates exactly ONE field with a non-nil value
-(defmethod mg/-schema-generator :oneof-edn [schema options]
+(defmethod mg/-schema-generator :oneof_edn [schema options]
   (let [children (m/children schema)
         properties (m/properties schema)
         ;; Handle both property-style and children-style definitions
@@ -87,7 +87,7 @@
             {field-name field-value})
           (mg/generator (get field-map field-name) options)))))))
 
-(defn register-oneof-edn-schema!
-  "Register the :oneof-edn schema type"
+(defn register_ONeof-edn-schema!
+  "Register the :oneof_edn schema type"
   []
-  {:oneof-edn -oneof-edn-schema})
+  {:oneof_edn _ONeof-edn-schema})

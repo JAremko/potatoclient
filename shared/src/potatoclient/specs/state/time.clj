@@ -6,12 +6,12 @@
    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataTime message spec based on EDN output:
-;; {:manual-timestamp 1754665407
+;; {:manual_timestamp 1754665407
 ;;  :timestamp 1754665407}
 
 (def time-message-spec
   [:map {:closed true}
-   [:manual-timestamp :time/unix-timestamp]
+   [:manual_timestamp :time/unix-timestamp]
    [:timestamp :time/unix-timestamp]])
 
 (registry/register! :state/time time-message-spec)

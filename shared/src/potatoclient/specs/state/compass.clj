@@ -13,23 +13,28 @@
   [:map {:closed true}
    [:azimuth :angle/azimuth]
    [:bank :angle/bank]
-   [:elevation :angle/elevation]])
+   [:elevation :angle/elevation]
+   [:offsetAzimuth {:optional true} :double]
+   [:offsetElevation {:optional true} :double]
+   [:magneticDeclination {:optional true} :double]
+   [:calibrating {:optional true} boolean?]])
 
 (registry/register! :state/compass compass-message-spec)
 
 ;; Compass calibration message spec based on actual EDN output:
-;; {:final-stage 12
-;;  :status :jon-gui-data-compass-calibrate-status-not-calibrating
-;;  :target-azimuth 56.25
-;;  :target-bank -5.625
-;;  :target-elevation 6.75}
+;; {:final_stage 12
+;;  :status :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
+;;  :target_azimuth 56.25
+;;  :target_bank -5.625
+;;  :target_elevation 6.75}
 
 (def compass-calibration-message-spec
   [:map {:closed true}
-   [:final-stage [:int {:min 0 :max 100}]]
+   [:stage {:optional true} [:int {:min 0 :max 100}]]
+   [:final_stage [:int {:min 0 :max 100}]]
    [:status :enum/compass-calibrate-status]
-   [:target-azimuth :angle/azimuth]
-   [:target-bank :angle/bank]
-   [:target-elevation :angle/elevation]])
+   [:target_azimuth :angle/azimuth]
+   [:target_bank :angle/bank]
+   [:target_elevation :angle/elevation]])
 
 (registry/register! :state/compass-calibration compass-calibration-message-spec)

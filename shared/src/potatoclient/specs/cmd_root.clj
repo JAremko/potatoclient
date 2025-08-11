@@ -86,14 +86,14 @@
      (and (p/proto-map? value)
           (instance? JonSharedCmd$Root (.pmap_getProto value))
           ;; Must have exactly one payload field set
-          (some? (p/which-one-of value :payload))))])
+          (some? (p/which_ONe-of value :payload))))])
 
 ;; Payload oneof spec using instance checks for each field type
 (def cmd-payload-spec
-  [:oneof-pronto
-   {:proto-class JonSharedCmd$Root
-    :proto-mapper cmd-mapper
-    :oneof-name :payload
+  [:oneof_pronto
+   {:proto_class JonSharedCmd$Root
+    :proto_mapper cmd-mapper
+    :oneof_name :payload
     ;; Simple commands
     :ping [:fn #(instance? JonSharedCmd$Ping %)]
     :noop [:fn #(instance? JonSharedCmd$Noop %)]
@@ -130,7 +130,7 @@
 (defn get-command-type
   "Get the active command type from a JonSharedCmd$Root proto-map"
   [proto-map]
-  (p/which-one-of proto-map :payload))
+  (p/which_ONe-of proto-map :payload))
 
 (defn create-ping-command
   "Create a simple ping command"

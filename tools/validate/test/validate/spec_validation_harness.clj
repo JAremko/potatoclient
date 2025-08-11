@@ -25,7 +25,7 @@
   "Initialize the global Malli registry with all required schemas."
   []
   (registry/setup-global-registry!
-    (oneof-edn/register-oneof-edn-schema!)))
+    (oneof-edn/register_ONeof-edn-schema!)))
 
 ;; ============================================================================
 ;; SPEC TO PROTO-MAP CONVERSION
