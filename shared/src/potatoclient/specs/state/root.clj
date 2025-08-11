@@ -4,6 +4,8 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
+   ;; Import common specs for protocol-version and other shared types
+   [potatoclient.specs.common]
    ;; Import all sub-message specs
    [potatoclient.specs.state.actual-space-time]
    [potatoclient.specs.state.camera-day]

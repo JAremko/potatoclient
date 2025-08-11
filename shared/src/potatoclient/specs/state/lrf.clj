@@ -3,7 +3,8 @@
    Based on jon_shared_data_lrf.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.common]))
 
 ;; LRF laser pointer mode enum (from JonGuiDatatLrfLaserPointerModes)
 (def lrf-laser-pointer-mode-spec

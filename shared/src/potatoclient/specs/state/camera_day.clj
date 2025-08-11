@@ -3,34 +3,22 @@
    Based on jon_shared_data_camera_day.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
+   [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; JonGuiDataCameraDay message spec based on proto and EDN output:
-;; Proto has fields: focus_pos, zoom_pos, iris_pos, infrared_filter, 
-;;                   zoom_table_pos, zoom_table_pos_max, fx_mode,
-;;                   auto_focus, auto_iris, digital_zoom_level, clahe_level
-;;
-;; EDN output shows:
-;; {:clahe_level 0.16
-;;  :digital_zoom_level 1.0
-;;  :focus_pos 1.0
-;;  :fx_mode :JON_GUI_DATA_FX_MODE_DAY_A
-;;  :infrared_filter true
-;;  :iris_pos 0.03
-;;  :zoom_pos 0.59938735
-;;  :zoom_table_pos 3
-;;  :zoom_table_pos_max 4}
-
+;; JonGuiDataCameraDay message spec with all 11 fields from proto
 (def camera-day-message-spec
   [:map {:closed true}
-   [:clahe_level :range/normalized]           ; float [0.0, 1.0]
-   [:digital_zoom_level [:double {:min 1.0}]] ; float >= 1.0
-   [:focus_pos :range/normalized]             ; float [0.0, 1.0]
-   [:fx_mode :enum/fx-mode-day]               ; enum defined_only
-   [:infrared_filter boolean?]
-   [:iris_pos :range/normalized]              ; float [0.0, 1.0]
-   [:zoom_pos :range/normalized]              ; float [0.0, 1.0]
-   [:zoom_table_pos [:int {:min 0}]]          ; int32 >= 0
-   [:zoom_table_pos_max [:int {:min 0}]]])    ; int32 >= 0
+   [:auto_focus {:optional true} :boolean]
+   [:auto_iris {:optional true} :boolean]
+   [:clahe_level [:double {:min 0.0 :max 1.0}]]
+   [:digital_zoom_level [:double {:min 1.0}]]
+   [:focus_pos [:double {:min 0.0 :max 1.0}]]
+   [:fx_mode :enum/fx-mode-day]
+   [:infrared_filter {:optional true} :boolean]
+   [:iris_pos [:double {:min 0.0 :max 1.0}]]
+   [:zoom_pos [:double {:min 0.0 :max 1.0}]]
+   [:zoom_table_pos [:int {:min 0}]]
+   [:zoom_table_pos_max [:int {:min 0}]]])
 
 (registry/register! :state/camera-day camera-day-message-spec)

@@ -2,6 +2,7 @@
   "Rotary message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
+   [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
 ;; Scan node spec based on actual EDN output:

@@ -3,6 +3,7 @@
    Based on proto structure.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
+   [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataMeteo message spec based on EDN output:

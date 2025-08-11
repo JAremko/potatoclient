@@ -262,6 +262,21 @@
    :JON_GUI_DATA_FX_MODE_HEAT_E
    :JON_GUI_DATA_FX_MODE_HEAT_F])
 
+;; Heat Camera Filter enum (thermal visualization modes)
+(def heat-filter-enum-spec
+  [:enum
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA_INVERSE])
+
+;; Heat Camera AGC Mode enum
+(def heat-agc-mode-enum-spec
+  [:enum
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
+   :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3])
+
 (def lrf-scan-modes-enum-spec
   [:enum
    :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
@@ -288,6 +303,8 @@
 (registry/register! :enum/video-channel video-channel-enum-spec)
 (registry/register! :enum/fx-mode-day fx-mode-day-enum-spec)
 (registry/register! :enum/fx-mode-heat fx-mode-heat-enum-spec)
+(registry/register! :enum/heat-filter heat-filter-enum-spec)
+(registry/register! :enum/heat-agc-mode heat-agc-mode-enum-spec)
 (registry/register! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
 (registry/register! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
 

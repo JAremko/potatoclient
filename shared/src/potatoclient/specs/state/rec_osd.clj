@@ -3,6 +3,7 @@
    Based on jon_shared_data_rec_osd.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
+   [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
 ;; Recording OSD screen enum
