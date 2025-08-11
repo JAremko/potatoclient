@@ -1,21 +1,32 @@
 # Validate Tool
 
-A high-performance Clojure tool for validating Protocol Buffer binary payloads using `buf.validate` constraints. This tool validates binary protobuf messages against their schemas with comprehensive constraint checking.
+A high-performance Clojure tool for dual validation of Protocol Buffer binary payloads using both `buf.validate` constraints and Malli schemas. This tool provides comprehensive validation by running both structural (buf.validate) and semantic (Malli) validation in parallel, ensuring messages are both well-formed and semantically correct.
 
 ## 🚀 Features
 
-- **Binary Validation**: Validates protobuf binary files using buf.validate constraints
+- **Dual Validation System**: Runs both buf.validate and Malli validation in parallel
+  - **buf.validate**: Structural validation with protobuf constraints
+  - **Malli**: Semantic validation with Clojure specs and humanized error messages
+- **Binary Validation**: Validates protobuf binary files with comprehensive error handling
 - **Dual Message Support**: Handles both command (`cmd.JonSharedCmd$Root`) and state (`ser.JonSharedData$JonGUIState`) messages
 - **Auto-Detection**: Intelligently detects message type when not specified
-- **Performance Optimized**: Cached validator with < 20ms per validation
+- **Robust Error Handling**: Gracefully handles:
+  - Empty files
+  - Corrupted binary data
+  - Truncated messages
+  - Invalid protobuf formats
+  - Wrong message type specifications
+- **Performance Optimized**: Cached validators with < 20ms per validation
 - **Multiple Output Formats**: Text, JSON, and EDN output formats
 - **Comprehensive Validation**: Field-level constraint validation including:
   - GPS coordinate ranges (latitude: -90 to 90, longitude: -180 to 180)
   - Protocol version validation (must be > 0)
   - Enum constraints (client type cannot be UNSPECIFIED)
   - Nested message requirements
+  - Oneof field validation (exactly one command payload)
+- **Humanized Error Messages**: Malli validation provides clear, human-readable error descriptions
 - **Idiomatic Pronto Usage**: Utilizes the Pronto library for efficient protobuf handling
-- **Extensive Test Coverage**: Comprehensive test suite with property-based testing, round-trip validation, and deep equality checks
+- **Extensive Test Coverage**: Comprehensive test suite with property-based testing, round-trip validation, deep equality checks, and CLI-level border tests
 
 ## 📋 Prerequisites
 
@@ -343,10 +354,14 @@ The validator uses a cached instance for optimal performance:
 
 ## 🔍 Validation Process
 
-1. **Binary Parsing**: Parses binary data as protobuf message
+1. **Binary Parsing**: Safely parses binary data as protobuf message with error handling
 2. **Type Detection**: Auto-detects between state and cmd if not specified
-3. **Constraint Validation**: Validates using buf.validate rules
-4. **Result Formatting**: Outputs in requested format (text/json/edn)
+3. **Dual Validation** (runs in parallel):
+   - **buf.validate**: Validates structural constraints defined in proto files
+   - **Malli**: Validates semantic constraints using Clojure specs
+4. **Error Humanization**: Converts technical errors to human-readable messages
+5. **Result Aggregation**: Combines both validation results with overall status
+6. **Result Formatting**: Outputs in requested format (text/json/edn)
 
 ## 📊 Test Results Summary
 
@@ -366,42 +381,120 @@ The validator uses a cached instance for optimal performance:
 
 ## 📊 Example Output
 
-### Successful Validation
+### Successful Validation (Both Pass)
 
 ```
-✓ Validation successful
-  Type: state
-  Size: 1458 bytes
+Validation Result:
+  Message Type: :state
+  Message Size: 465 bytes
+  Overall Valid: true
+  Summary: Both validations passed
+
+  buf.validate:
+    Valid: true
+
+  Malli:
+    Valid: true
 ```
 
-### Failed Validation
+### Partial Validation Failure
 
 ```
-✗ Validation failed
-  Type: state
-  Size: 1458 bytes
-  
-Violations:
-  • gps.latitude: value must be between -90 and 90 (was 200.0)
-  • gps.longitude: value must be between -180 and 180 (was -400.0)
-  • protocol_version: value must be greater than 0 (was 0)
+Validation Result:
+  Message Type: :state
+  Message Size: 1458 bytes
+  Overall Valid: false
+  Summary: Malli failed, buf.validate passed
+
+  buf.validate:
+    Valid: true
+
+  Malli:
+    Valid: false
+    Message: Malli validation failed
+    Violations:
+      - Field: gps.altitude
+        Message: should be a double
+      - Field: system.cpu-load
+        Message: missing required field: cpu-load
+```
+
+### Complete Validation Failure
+
+```
+Validation Result:
+  Message Type: :state
+  Message Size: 1458 bytes
+  Overall Valid: false
+  Summary: Both validations failed
+
+  buf.validate:
+    Valid: false
+    Message: Validation failed
+    Violations:
+      - Field: gps.latitude
+        Constraint: double.gte_lte
+        Message: value must be between -90 and 90
+      - Field: protocol_version
+        Constraint: uint32.gt
+        Message: value must be greater than 0
+
+  Malli:
+    Valid: false
+    Message: Malli validation failed
+    Violations:
+      - Field: protocol-version
+        Message: should be a positive integer
+```
+
+### Corrupted Data Handling
+
+```
+Validation Result:
+  Message Type: 
+  Message Size: 100 bytes
+  Overall Valid: false
+  Summary: Could not detect or parse message type
+
+  buf.validate:
+    Valid: false
+    Message: Failed to parse binary data
+
+  Malli:
+    Valid: false
+    Message: Failed to parse binary data
 ```
 
 ### JSON Output
 
 ```json
 {
-  "valid": false,
-  "message": "Validation failed",
-  "type": "state",
-  "size": 1458,
-  "violations": [
-    {
-      "field": "gps.latitude",
-      "constraint": "double.gte_lte",
-      "message": "value must be between -90 and 90"
-    }
-  ]
+  "valid?": false,
+  "message": "Both validations failed",
+  "message-type": "state",
+  "message-size": 1458,
+  "buf-validate": {
+    "valid?": false,
+    "message": "Validation failed",
+    "violations": [
+      {
+        "field": "gps.latitude",
+        "constraint": "double.gte_lte",
+        "message": "value must be between -90 and 90"
+      }
+    ]
+  },
+  "malli": {
+    "valid?": false,
+    "message": "Malli validation failed",
+    "violations": [
+      {
+        "field": "gps.latitude",
+        "constraint": "malli",
+        "message": "should be between -90.0 and 90.0"
+      }
+    ]
+  }
 }
 ```
 
@@ -473,17 +566,20 @@ The tool enforces various buf.validate constraints:
 
 ## 🚦 Current Status
 
-✅ **Production Ready with Comprehensive Validation**
-- All core features implemented
+✅ **Production Ready with Dual Validation System**
+- Dual validation system (buf.validate + Malli) fully implemented
+- Robust error handling for all edge cases (empty, corrupted, truncated data)
 - Performance optimized with validator caching  
-- Comprehensive test coverage with deep equality validation
-- Field naming standardized (underscores)
+- Comprehensive test coverage including CLI-level border tests
+- Field naming standardized (underscores for proto, kebab-case for Malli)
 - Enum values standardized (uppercase)
-- Rotary command support added
+- Humanized error messages for better user experience
 
 ✅ **Validation Guarantees**
+- **Dual Validation**: Both structural (buf.validate) and semantic (Malli) validation
 - **100% Round-Trip Fidelity**: What goes in equals what comes out
 - **Complete Spec Coverage**: All State and Command messages have Malli specs
+- **Graceful Error Handling**: Never crashes on invalid input
 - **Generator Quality**: All specs have working generators that produce valid data
 - **buf.validate Compatibility**: Malli specs match protobuf constraints exactly
 - **Hierarchical Validation**: Sub-messages can be validated independently for testing

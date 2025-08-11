@@ -28,7 +28,10 @@
   [options-summary]
   (str/join
    \newline
-   ["validate - Protobuf Binary Validation Tool"
+   ["validate - Dual Protobuf Binary Validation Tool"
+    ""
+    "This tool runs both buf.validate and Malli validation in parallel,"
+    "providing comprehensive structural and semantic validation."
     ""
     "Usage: validate [options]"
     ""
@@ -47,9 +50,16 @@
     "  auto  - Auto-detect message type (default)"
     ""
     "Output Formats:"
-    "  text - Human-readable text output (default)"
-    "  json - JSON format for programmatic processing"
-    "  edn  - Clojure EDN format"]))
+    "  text - Human-readable text output with both validation results (default)"
+    "  json - JSON format with nested validation results"
+    "  edn  - Clojure EDN format with nested validation results"
+    ""
+    "Validation Features:"
+    "  • buf.validate: Checks protobuf structural constraints"
+    "  • Malli: Checks semantic constraints with Clojure specs"
+    "  • Graceful handling of empty, corrupted, and truncated files"
+    "  • Humanized error messages for better debugging"
+    "  • Independent results from both validators"]))
 
 (defn error-msg
   "Format error messages."

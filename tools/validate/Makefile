@@ -1,6 +1,6 @@
 # Validate Makefile
-# Tool for validating protobuf binary payloads using buf validate
-# and creating Malli specs with property-based testing
+# Dual validation tool for protobuf binary payloads using both
+# buf.validate constraints and Malli schemas in parallel
 #
 # Default behavior: Show help message
 # Common usage: make validate FILE=path/to/file.bin
@@ -35,7 +35,8 @@
 # Help target - displays all available commands
 help:
 	@echo "╔════════════════════════════════════════════════════════════════╗"
-	@echo "║            Validate - Protobuf Binary Validation Tool          ║"
+	@echo "║      Validate - Dual Protobuf Binary Validation Tool           ║"
+	@echo "║         (buf.validate + Malli validation in parallel)          ║"
 	@echo "╚════════════════════════════════════════════════════════════════╝"
 	@echo ""
 	@echo "QUICK START:"
@@ -44,9 +45,15 @@ help:
 	@echo "  make validate FILE=path/to/file.bin  # Validate a binary file"
 	@echo ""
 	@echo "VALIDATION COMMANDS:"
-	@echo "  validate      - Validate binary file (auto-detects type)"
-	@echo "  validate-cmd  - Validate as command root message"
-	@echo "  validate-state - Validate as state root message"
+	@echo "  validate      - Validate binary file with dual validation (auto-detects type)"
+	@echo "  validate-cmd  - Validate as command message with both validators"
+	@echo "  validate-state - Validate as state message with both validators"
+	@echo ""
+	@echo "VALIDATION FEATURES:"
+	@echo "  • Runs buf.validate and Malli validation in parallel"
+	@echo "  • Handles empty, corrupted, and truncated files gracefully"
+	@echo "  • Provides humanized error messages"
+	@echo "  • Shows independent results from both validators"
 	@echo ""
 	@echo "BUILD & MAINTENANCE:"
 	@echo "  build         - Build protobuf classes (automatic if needed)"
