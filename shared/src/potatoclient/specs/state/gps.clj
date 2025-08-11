@@ -4,13 +4,8 @@
   (:require
    [potatoclient.malli.registry :as registry]))
 
-;; GPS message spec based on actual EDN output:
-;; {:altitude 0.291143
-;;  :fix_type :JON_GUI_DATA_GPS_FIX_TYPE_3D
-;;  :latitude 50.023629
-;;  :longitude 15.815214999999998
-;;  :manual_latitude 50.023604
-;;  :manual_longitude 15.815316}
+;; GPS message spec based on proto definition and actual EDN output:
+;; All 8 fields from JonGuiDataGps proto message
 
 (def gps-message-spec
   [:map {:closed true}
@@ -18,7 +13,9 @@
    [:fix_type :enum/gps-fix-type]
    [:latitude :position/latitude]
    [:longitude :position/longitude]
+   [:manual_altitude {:optional true} :position/altitude]
    [:manual_latitude :position/latitude]
-   [:manual_longitude :position/longitude]])
+   [:manual_longitude :position/longitude]
+   [:use_manual {:optional true} :boolean]])
 
 (registry/register! :state/gps gps-message-spec)

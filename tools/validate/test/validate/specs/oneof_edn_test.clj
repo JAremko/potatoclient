@@ -17,7 +17,7 @@
 
 (deftest oneof-edn-nil-handling-test
   (testing "oneof-edn treats nil values as absent"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :field-a :string
                   :field-b :int
                   :field-c [:map [:x :int]]]]
@@ -50,7 +50,7 @@
 
 (deftest oneof-edn-generator-test
   (testing "Generator produces exactly one field"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :field-a :string
                   :field-b :int
                   :field-c :boolean]
@@ -68,7 +68,7 @@
 
 (deftest oneof-edn-complex-schema-test
   (testing "oneof-edn with complex nested schemas"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :command [:map {:closed true}
                            [:type [:enum :ping :pong]]
                            [:id :int]]
@@ -98,7 +98,7 @@
 
 (deftest oneof-edn-error-messages-test
   (testing "Validation correctly identifies errors"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :option-a :string
                   :option-b :int]]
       
@@ -124,7 +124,7 @@
 
 (deftest oneof-edn-closed-behavior-test
   (testing "oneof-edn acts as a closed map - rejects extra keys"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :field-a :string
                   :field-b :int
                   :field-c :boolean]]
@@ -166,7 +166,7 @@
 
 (deftest oneof-edn-closed-complex-test
   (testing "Closed behavior with complex nested schemas"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :command [:map {:closed true}
                            [:type [:enum :ping :pong]]
                            [:id :int]]
@@ -193,7 +193,7 @@
 
 (deftest oneof-edn-pronto-compatibility-test
   (testing "Compatible with Pronto EDN where all fields exist but inactive ones are nil"
-    (let [schema [:oneof-edn
+    (let [schema [:oneof_edn
                   :ping [:map {:closed true} [:id :int]]
                   :rotary [:map {:closed true} [:angle :double]]
                   :cv [:map {:closed true} [:command :string]]]
