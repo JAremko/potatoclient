@@ -76,13 +76,13 @@
   [file-desc]
   (cond-> file-desc
     ;; Process message types
-    (:message-type file-desc)
-    (update :message-type (fn [messages]
+    (:messageType file-desc)
+    (update :messageType (fn [messages]
                            (mapv enrich-message messages)))
     
     ;; Process enums
-    (:enum-type file-desc)
-    (update :enum-type (fn [enums]
+    (:enumType file-desc)
+    (update :enumType (fn [enums]
                         (mapv enrich-enum enums)))))
 
 (defn enrich-descriptor

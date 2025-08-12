@@ -1,6 +1,5 @@
-#!/usr/bin/env clojure
 
-(ns test-oneof-thorough
+(ns validate.specs.oneof-thorough-test
   "THOROUGH test suite for oneof_edn - NO TESTS SKIPPED"
   (:require
    [clojure.test :refer [deftest testing is]]
@@ -361,10 +360,8 @@
     (println "  ✓ Property-based testing (100+ random cases)")
     (println "  ✓ Error messages (explanations exist and are helpful)")
     (println "  ✓ Map integration (field usage, multiple oneofs)")
-    (println "  ✓ Edge cases (single option, many options, nil handling)")
-    (System/exit 0))
+    (println "  ✓ Edge cases (single option, many options, nil handling)"))
   (do
     (println "\n❌ SOME TESTS FAILED:")
     (doseq [{:keys [test message]} @failed-tests]
-      (println (str "  - " test ": " message)))
-    (System/exit 1)))
+      (println (str "  - " test ": " message)))))

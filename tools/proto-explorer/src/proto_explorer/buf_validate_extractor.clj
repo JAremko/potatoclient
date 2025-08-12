@@ -101,26 +101,26 @@
   [field-type]
   (case field-type
     ;; Numeric types
-    (:type-double :type-float 
-     :type-int64 :type-uint64 :type-int32 
-     :type-fixed64 :type-fixed32 :type-uint32 
-     :type-sfixed32 :type-sfixed64 
-     :type-sint32 :type-sint64) extract-numeric-constraints
+    (:TYPE_DOUBLE :TYPE_FLOAT 
+     :TYPE_INT64 :TYPE_UINT64 :TYPE_INT32 
+     :TYPE_FIXED64 :TYPE_FIXED32 :TYPE_UINT32 
+     :TYPE_SFIXED32 :TYPE_SFIXED64 
+     :TYPE_SINT32 :TYPE_SINT64) extract-numeric-constraints
     
     ;; String type
-    :type-string extract-string-constraints
+    :TYPE_STRING extract-string-constraints
     
     ;; Bytes type (similar to string)
-    :type-bytes extract-string-constraints
+    :TYPE_BYTES extract-string-constraints
     
     ;; Boolean type (limited constraints)
-    :type-bool (fn [c] (select-keys c [:const]))
+    :TYPE_BOOL (fn [c] (select-keys c [:const]))
     
     ;; Message type
-    :type-message extract-message-constraints
+    :TYPE_MESSAGE extract-message-constraints
     
     ;; Enum type
-    :type-enum extract-enum-constraints
+    :TYPE_ENUM extract-enum-constraints
     
     ;; Default
     identity))
@@ -134,43 +134,43 @@
       ;; The constraints are organized by type in the new format
       (cond
         ;; Numeric types - look for float, double, int32, etc. keys
-        (#{:type-float :type-double} field-type)
+        (#{:TYPE_FLOAT :TYPE_DOUBLE} field-type)
         (:float validate-options)
         
-        (#{:type-int32 :type-sint32} field-type)
+        (#{:TYPE_INT32 :TYPE_SINT32} field-type)
         (:int32 validate-options)
         
-        (#{:type-int64 :type-sint64} field-type)
+        (#{:TYPE_INT64 :TYPE_SINT64} field-type)
         (:int64 validate-options)
         
-        (#{:type-uint32} field-type)
+        (#{:TYPE_UINT32} field-type)
         (:uint32 validate-options)
         
-        (#{:type-uint64} field-type)
+        (#{:TYPE_UINT64} field-type)
         (:uint64 validate-options)
         
         ;; String type
-        (= :type-string field-type)
+        (= :TYPE_STRING field-type)
         (:string validate-options)
         
         ;; Bytes type
-        (= :type-bytes field-type)
+        (= :TYPE_BYTES field-type)
         (:bytes validate-options)
         
         ;; Boolean type
-        (= :type-bool field-type)
+        (= :TYPE_BOOL field-type)
         (:bool validate-options)
         
         ;; Enum type
-        (= :type-enum field-type)
+        (= :TYPE_ENUM field-type)
         (:enum validate-options)
         
         ;; Message type
-        (= :type-message field-type)
+        (= :TYPE_MESSAGE field-type)
         (:message validate-options)
         
         ;; Repeated fields might have additional constraints
-        (= :label-repeated label)
+        (= :LABEL_REPEATED label)
         (:repeated validate-options)
         
         :else nil))))
@@ -223,14 +223,14 @@
   (if (empty? constraints)
     base-schema
     (let [predicates (case field-type
-                       (:type-double :type-float 
-                        :type-int64 :type-uint64 :type-int32 
-                        :type-fixed64 :type-fixed32 :type-uint32 
-                        :type-sfixed32 :type-sfixed64 
-                        :type-sint32 :type-sint64) 
+                       (:TYPE_DOUBLE :TYPE_FLOAT 
+                        :TYPE_INT64 :TYPE_UINT64 :TYPE_INT32 
+                        :TYPE_FIXED64 :TYPE_FIXED32 :TYPE_UINT32 
+                        :TYPE_SFIXED32 :TYPE_SFIXED64 
+                        :TYPE_SINT32 :TYPE_SINT64) 
                        (numeric-constraint->malli constraints)
                        
-                       (:type-string :type-bytes)
+                       (:TYPE_STRING :TYPE_BYTES)
                        (string-constraint->malli constraints)
                        
                        [])]
@@ -260,7 +260,7 @@
   ;; Example field with constraints
   (def example-field
     {:name "age"
-     :type :type-int32
+     :type :TYPE_INT32
      :options {"1042" {:gte 0 :lte 150}}})
   
   ;; Extract constraints
@@ -268,18 +268,18 @@
   ;; => {:gte 0, :lte 150}
   
   ;; Apply to schema
-  (apply-constraints-to-schema :int {:gte 0 :lte 150} :type-int32)
+  (apply-constraints-to-schema :int {:gte 0 :lte 150} :TYPE_INT32)
   ;; => [:and :int [:>= 0] [:<= 150]]
   
   ;; String example
   (def string-field
     {:name "email"
-     :type :type-string
+     :type :TYPE_STRING
      :options {"1042" {:email true :min-len 5}}})
   
   (extract-field-constraints string-field)
   ;; => {:email true, :min-len 5}
   
-  (apply-constraints-to-schema :string {:email true :min-len 5} :type-string)
+  (apply-constraints-to-schema :string {:email true :min-len 5} :TYPE_STRING)
   ;; => [:and :string [:min-length 5] [:re #"^[^@]+@[^@]+\.[^@]+$"]]
   )

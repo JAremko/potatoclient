@@ -3,15 +3,25 @@
    Based on jon_shared_cmd_lrf.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; LRF command specs - placeholder for now
-;; Will need to check proto file for exact structure
-;; Likely includes: fire laser, set mode, pointer control
+;; LRF command specs - simplified placeholders
+;; This is a oneof structure with multiple command types
 
-(def lrf-command-spec
+(def fire-spec [:map {:closed true}])
+(def stop-spec [:map {:closed true}])
+(def set-mode-spec
   [:map {:closed true}
-   ;; TODO: Add fields based on proto definition
+   [:mode [:enum :RANGE :POINTER]]])
+
+;; Main LRF command spec using oneof
+(def lrf-command-spec
+  [:oneof_edn
+   [:fire fire-spec]
+   [:stop stop-spec]
+   [:set_mode set-mode-spec]
+   ;; Add more commands as needed
    ])
 
 (registry/register! :cmd/lrf lrf-command-spec)

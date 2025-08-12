@@ -55,97 +55,97 @@
 ;; ============================================================================
 
 (def manual-ping-cmd
-  {:protocol-version 1
-   :client-type :jon-gui-data-client-type-local-network
-   :cmd {:ping {}}})
+  {:protocol_version 1
+   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+   :ping {}})
 
 (def manual-noop-cmd
-  {:protocol-version 100
-   :client-type :jon-gui-data-client-type-internal-cv
-   :cmd {:noop {}}})
+  {:protocol_version 100
+   :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+   :noop {}})
 
 (def manual-frozen-cmd
-  {:protocol-version 42
-   :client-type :jon-gui-data-client-type-certificate-protected
-   :cmd {:frozen {}}})
+  {:protocol_version 42
+   :client_type :JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+   :frozen {}})
 
 (def manual-rotary-cmds
   "Manual test values for rotary commands"
-  [{:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:set-platform-azimuth {:value 0.0}}}}
+  [{:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:set_platform_azimuth {:value 0.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:set-platform-azimuth {:value 180.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:set_platform_azimuth {:value 180.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:set-platform-azimuth {:value 359.999}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:set_platform_azimuth {:value 359.999}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-internal-cv
-    :cmd {:rotary {:set-platform-elevation {:value -90.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+    :rotary {:set_platform_elevation {:value -90.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-internal-cv
-    :cmd {:rotary {:set-platform-elevation {:value 0.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+    :rotary {:set_platform_elevation {:value 0.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-internal-cv
-    :cmd {:rotary {:set-platform-elevation {:value 90.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+    :rotary {:set_platform_elevation {:value 90.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:set-mode {:mode :jon-gui-data-rotary-mode-position}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:set_mode {:mode :JON_GUI_DATA_ROTARY_MODE_POSITION}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:set-mode {:mode :jon-gui-data-rotary-mode-stabilization}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:set_mode {:mode :JON_GUI_DATA_ROTARY_MODE_STABILIZATION}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:stop {}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:stop {}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:scan-node {:speed 0.001  ; Just above 0
-                               :azimuth 180.0
-                               :elevation 0.0
-                               :linger 0.5
-                               :index 1
-                               :dayzoomtablevalue 2
-                               :heatzoomtablevalue 3}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:scan_node {:speed 0.001  ; Just above 0
+                         :azimuth 180.0
+                         :elevation 0.0
+                         :linger 0.5
+                         :index 1
+                         :dayzoomtablevalue 2
+                         :heatzoomtablevalue 3}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:rotary {:scan-node {:speed 1.0  ; Max speed
-                               :azimuth 0.0
-                               :elevation -90.0
-                               :linger 10.0
-                               :index 100
-                               :dayzoomtablevalue 4
-                               :heatzoomtablevalue 4}}}}])
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :rotary {:scan_node {:speed 1.0  ; Max speed
+                         :azimuth 0.0
+                         :elevation -90.0
+                         :linger 10.0
+                         :index 100
+                         :dayzoomtablevalue 4
+                         :heatzoomtablevalue 4}}}])
 
 (def manual-gps-cmds
-  [{:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:gps {:set-fix-manual {:latitude 0.0
-                                 :longitude 0.0}}}}
+  [{:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :gps {:set_fix_manual {:latitude 0.0
+                          :longitude 0.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:gps {:set-fix-manual {:latitude 90.0
-                                 :longitude 180.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :gps {:set_fix_manual {:latitude 90.0
+                          :longitude 180.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:gps {:set-fix-manual {:latitude -90.0
-                                 :longitude -180.0}}}}
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :gps {:set_fix_manual {:latitude -90.0
+                          :longitude -180.0}}}
    
-   {:protocol-version 1
-    :client-type :jon-gui-data-client-type-local-network
-    :cmd {:gps {:set-fix-auto {}}}}])
+   {:protocol_version 1
+    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+    :gps {:set_fix_auto {}}}])
 
 ;; ============================================================================
 ;; INDIVIDUAL COMMAND TYPE TESTS
@@ -270,14 +270,14 @@
 (deftest test-oneof-exclusivity
   (testing "Oneof field exclusivity"
     (testing "Only one command type should be present"
-      (let [valid-cmd {:protocol-version 1
-                       :client-type :jon-gui-data-client-type-local-network
-                       :cmd {:ping {}}}
+      (let [valid-cmd {:protocol_version 1
+                       :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                       :ping {}}
             
-            invalid-multi-cmd {:protocol-version 1
-                              :client-type :jon-gui-data-client-type-local-network
-                              :cmd {:ping {}
-                                   :noop {}}}]
+            invalid-multi-cmd {:protocol_version 1
+                              :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                              :ping {}
+                              :noop {}}]
         
         (is (m/validate :cmd/root valid-cmd)
             "Single command should validate")
@@ -286,9 +286,8 @@
             "Multiple commands should not validate (oneof constraint)")))
     
     (testing "Exactly one command must be present"
-      (let [no-cmd {:protocol-version 1
-                   :client-type :jon-gui-data-client-type-local-network
-                   :cmd {}}]
+      (let [no-cmd {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK}]
         
         (is (not (m/validate :cmd/root no-cmd))
             "No command should not validate (oneof requires exactly one)")))))
@@ -348,13 +347,13 @@
 (deftest test-cmd-boundary-values
   (testing "Command boundary value validation"
     (testing "Protocol version boundaries"
-      (let [min-protocol {:protocol-version 1
-                         :client-type :jon-gui-data-client-type-local-network
-                         :cmd {:ping {}}}
+      (let [min-protocol {:protocol_version 1
+                         :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                         :ping {}}
             
-            max-protocol {:protocol-version 2147483647
-                         :client-type :jon-gui-data-client-type-local-network
-                         :cmd {:ping {}}}]
+            max-protocol {:protocol_version 2147483647
+                         :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                         :ping {}}]
         
         (is (m/validate :cmd/root min-protocol)
             "Min protocol version should validate")
@@ -363,25 +362,25 @@
             "Max protocol version should validate")))
     
     (testing "Rotary speed boundaries"
-      (let [min-speed-cmd {:protocol-version 1
-                           :client-type :jon-gui-data-client-type-local-network
-                           :cmd {:rotary {:scan-node {:speed 0.001
-                                                      :azimuth 0.0
-                                                      :elevation 0.0
-                                                      :linger 0.001
-                                                      :index 1
-                                                      :dayzoomtablevalue 1
-                                                      :heatzoomtablevalue 1}}}}
+      (let [min-speed-cmd {:protocol_version 1
+                           :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                           :rotary {:scan_node {:speed 0.001
+                                               :azimuth 0.0
+                                               :elevation 0.0
+                                               :linger 0.001
+                                               :index 1
+                                               :dayzoomtablevalue 1
+                                               :heatzoomtablevalue 1}}}
             
-            max-speed-cmd {:protocol-version 1
-                          :client-type :jon-gui-data-client-type-local-network
-                          :cmd {:rotary {:scan-node {:speed 1.0
-                                                     :azimuth 359.999
-                                                     :elevation 90.0
-                                                     :linger 100.0
-                                                     :index 1000
-                                                     :dayzoomtablevalue 4
-                                                     :heatzoomtablevalue 4}}}}]
+            max-speed-cmd {:protocol_version 1
+                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                          :rotary {:scan_node {:speed 1.0
+                                              :azimuth 359.999
+                                              :elevation 90.0
+                                              :linger 100.0
+                                              :index 1000
+                                              :dayzoomtablevalue 4
+                                              :heatzoomtablevalue 4}}}]
         
         (is (:success? (harness/round-trip-validate 
                         :cmd/root
@@ -404,22 +403,22 @@
 (deftest test-client-type-constraints
   (testing "Client type cannot be UNSPECIFIED"
     (testing "Valid client types"
-      (let [valid-types [:jon-gui-data-client-type-internal-cv
-                        :jon-gui-data-client-type-local-network
-                        :jon-gui-data-client-type-certificate-protected
-                        :jon-gui-data-client-type-lira]]
+      (let [valid-types [:JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+                        :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
+                        :JON_GUI_DATA_CLIENT_TYPE_LIRA]]
         (doseq [client-type valid-types]
-          (let [cmd {:protocol-version 1
-                    :client-type client-type
-                    :cmd {:ping {}}}]
+          (let [cmd {:protocol_version 1
+                    :client_type client-type
+                    :ping {}}]
             (is (m/validate :cmd/root cmd)
                 (str "Client type " client-type " should validate"))))))
     
     (testing "Invalid UNSPECIFIED client type"
-      (let [invalid-cmd {:protocol-version 1
-                        :client-type :jon-gui-data-client-type-unspecified
-                        :cmd {:ping {}}}]
-        (is (not (m/validate :proto/client-type :jon-gui-data-client-type-unspecified))
+      (let [invalid-cmd {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED
+                        :ping {}}]
+        (is (not (m/validate :proto/client-type :JON_GUI_DATA_CLIENT_TYPE_UNSPECIFIED))
             "UNSPECIFIED client type should not validate")))))
 
 ;; ============================================================================
@@ -430,15 +429,20 @@
   (testing "Command spec coverage analysis"
     (testing "Command root coverage"
       (let [coverage (harness/check-spec-coverage :cmd/root 100)]
-        (is (contains? (:paths coverage) :protocol-version))
-        (is (contains? (:paths coverage) :client-type))
-        (is (contains? (:paths coverage) :cmd))))
+        (is (contains? (:paths coverage) :protocol_version))
+        (is (contains? (:paths coverage) :client_type))
+        ;; Commands are at root level, not under :cmd
+        (is (or (contains? (:paths coverage) :ping)
+                (contains? (:paths coverage) :noop)
+                (contains? (:paths coverage) :rotary))
+            "Should have at least one command field")))
     
     (testing "All command types generated"
       (let [samples (mg/sample :cmd/root {:size 500})
-            cmd-types (set (mapcat (fn [sample]
-                                    (keys (get sample :cmd)))
-                                  samples))]
+            command-fields #{:ping :noop :frozen :rotary :gps :compass :lrf :cv 
+                           :day_camera :heat_camera :osd :system :lrf_calib 
+                           :day_cam_glass_heater :lira}
+            cmd-types (set (filter command-fields (mapcat keys samples)))]
         (is (>= (count cmd-types) 10)
             (str "Should generate at least 10 different command types. "
                  "Generated: " cmd-types))))))

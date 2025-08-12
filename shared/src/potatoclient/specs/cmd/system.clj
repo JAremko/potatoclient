@@ -3,15 +3,25 @@
    Based on jon_shared_cmd_system.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; System command specs - placeholder for now
-;; Will need to check proto file for exact structure
-;; Likely includes: set localization, recording control
+;; System command specs - simplified placeholders
+;; This is a oneof structure with multiple command types
 
-(def system-command-spec
+(def reboot-spec [:map {:closed true}])
+(def shutdown-spec [:map {:closed true}])
+(def set-localization-spec
   [:map {:closed true}
-   ;; TODO: Add fields based on proto definition
+   [:locale [:string]]])
+
+;; Main System command spec using oneof
+(def system-command-spec
+  [:oneof_edn
+   [:reboot reboot-spec]
+   [:shutdown shutdown-spec]
+   [:set_localization set-localization-spec]
+   ;; Add more commands as needed
    ])
 
 (registry/register! :cmd/system system-command-spec)

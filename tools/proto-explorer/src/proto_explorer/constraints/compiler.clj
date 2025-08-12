@@ -195,16 +195,16 @@
                            :else nil)
           ;; Map proto type to Malli type
           spec-type (case type
-                     :type-float :double
-                     :type-double :double
-                     :type-int32 :int
-                     :type-int64 :int
-                     :type-uint32 :int
-                     :type-uint64 :int
-                     :type-string :string
-                     :type-bytes :bytes
-                     :type-enum :keyword
-                     :type-message :map
+                     :TYPE_FLOAT :double
+                     :TYPE_DOUBLE :double
+                     :TYPE_INT32 :int
+                     :TYPE_INT64 :int
+                     :TYPE_UINT32 :int
+                     :TYPE_UINT64 :int
+                     :TYPE_STRING :string
+                     :TYPE_BYTES :bytes
+                     :TYPE_ENUM :keyword
+                     :TYPE_MESSAGE :map
                      :else type)]
       (when constraint-type
         (compile-constraint constraint-type spec-type 

@@ -31,7 +31,7 @@
                                        :descriptor-file file-name
                                        :proto-file (:name proto-file)
                                        :fields (count (:field msg))})
-                                    (or (:message-type proto-file) []))))
+                                    (or (:messageType proto-file) []))))
                             (:file descriptor)))
                    (catch Exception e
                      (println "Error loading" (.getName file) ":" (.getMessage e))

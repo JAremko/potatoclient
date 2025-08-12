@@ -234,29 +234,29 @@
   (when-let [buf-validate (:buf.validate constraints)]
     (match [type buf-validate]
       ;; Float/Double constraints
-      [:type-float {:float rules}] (compile-numeric-constraints rules :float)
-      [:type-double {:float rules}] (compile-numeric-constraints rules :float)
+      [:TYPE_FLOAT {:float rules}] (compile-numeric-constraints rules :float)
+      [:TYPE_DOUBLE {:float rules}] (compile-numeric-constraints rules :float)
       
       ;; Integer constraints
-      [:type-int32 {:int32 rules}] (compile-numeric-constraints rules :int)
-      [:type-int64 {:int64 rules}] (compile-numeric-constraints rules :int)
-      [:type-uint32 {:uint32 rules}] (compile-numeric-constraints rules :int)
-      [:type-uint64 {:uint64 rules}] (compile-numeric-constraints rules :int)
+      [:TYPE_INT32 {:int32 rules}] (compile-numeric-constraints rules :int)
+      [:TYPE_INT64 {:int64 rules}] (compile-numeric-constraints rules :int)
+      [:TYPE_UINT32 {:uint32 rules}] (compile-numeric-constraints rules :int)
+      [:TYPE_UINT64 {:uint64 rules}] (compile-numeric-constraints rules :int)
       
       ;; String constraints
-      [:type-string {:string rules}] (compile-string-constraints rules)
+      [:TYPE_STRING {:string rules}] (compile-string-constraints rules)
       
       ;; Bytes constraints (similar to string)
-      [:type-bytes {:bytes rules}] (compile-string-constraints rules)
+      [:TYPE_BYTES {:bytes rules}] (compile-string-constraints rules)
       
       ;; Enum constraints
-      [:type-enum {:enum rules}] (compile-enum-constraints rules)
+      [:TYPE_ENUM {:enum rules}] (compile-enum-constraints rules)
       
       ;; Repeated field constraints
       [_ {:repeated rules}] (compile-repeated-constraints rules)
       
       ;; Message constraints
-      [:type-message {:message {:required true}}]
+      [:TYPE_MESSAGE {:message {:required true}}]
       {:schema [:fn {:error/message "message is required"} some?]}
       
       ;; No matching constraints

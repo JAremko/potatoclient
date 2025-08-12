@@ -22,7 +22,7 @@
    [potatoclient.specs.state.time]))
 
 ;; JonGUIState root message spec based on proto and EDN output
-;; All 14 sub-messages are required per buf.validate
+;; All 13 sub-messages are required per buf.validate
 ;; protocol_version must be > 0
 
 (def jon-gui-state-spec
@@ -30,7 +30,7 @@
    ;; protocol_version > 0 (required)
    [:protocol_version :proto/protocol-version]
    
-   ;; All 14 required sub-messages (in EDN format with kebab-case)
+   ;; All 13 required sub-messages (snake_case matching Pronto's output)
    [:actual_space_time :state/actual-space-time]
    [:camera_day :state/camera-day]
    [:camera_heat :state/camera-heat]

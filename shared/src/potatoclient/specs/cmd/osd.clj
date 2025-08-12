@@ -3,15 +3,25 @@
    Based on jon_shared_cmd_osd.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; OSD command specs - placeholder for now
-;; Will need to check proto file for exact structure
-;; Likely includes: enable/disable OSD, set display options
+;; OSD command specs - simplified placeholders
+;; This is a oneof structure with multiple command types
 
-(def osd-command-spec
+(def enable-spec [:map {:closed true}])
+(def disable-spec [:map {:closed true}])
+(def set-text-spec
   [:map {:closed true}
-   ;; TODO: Add fields based on proto definition
+   [:text [:string]]])
+
+;; Main OSD command spec using oneof
+(def osd-command-spec
+  [:oneof_edn
+   [:enable enable-spec]
+   [:disable disable-spec]
+   [:set_text set-text-spec]
+   ;; Add more commands as needed
    ])
 
 (registry/register! :cmd/osd osd-command-spec)

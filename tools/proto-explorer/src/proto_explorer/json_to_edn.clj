@@ -1,10 +1,9 @@
 (ns proto-explorer.json-to-edn
-  "Convert JSON descriptors to EDN with proper keyword conversion and kebab-case.
+  "Convert JSON descriptors to EDN with proper keyword conversion.
   
   This namespace handles the conversion of protoc-generated JSON descriptors
   to Clojure EDN format with:
-  - String keys → keywords
-  - snake_case → kebab-case
+  - String keys → keywords (preserving original case)
   - Preservation of actual string values (descriptions, etc.)
   - Constraint metadata attachment via metadata enricher"
   (:require [cheshire.core :as json]
@@ -38,24 +37,19 @@
       str/lower-case))
 
 (defn normalize-key
-  "Convert a string key to a normalized kebab-case keyword.
-  Handles snake_case, camelCase, and PascalCase."
+  "Convert a string key to a keyword, preserving the original case.
+  This matches Pronto's behavior of keeping the original field names."
   [k]
   (when (string? k)
-    (-> k
-        ;; First convert any camelCase/PascalCase
-        camel->kebab
-        ;; Then handle any remaining underscores
-        snake->kebab
-        keyword)))
+    (keyword k)))
 
 ;; =============================================================================
 ;; JSON Parsing with Custom Key Function
 ;; =============================================================================
 
 (defn keywordize-keys
-  "Custom key function for Cheshire that converts keys to kebab-case keywords.
-  Preserves the original string for actual string values."
+  "Custom key function for Cheshire that converts keys to keywords.
+  Preserves the original case as used by Pronto."
   [k]
   (normalize-key k))
 
@@ -95,8 +89,8 @@
   "Determine if a string value should be converted to a keyword.
   
   Convert:
-  - Protobuf type constants (TYPE_STRING → :type-string)
-  - Protobuf label constants (LABEL_OPTIONAL → :label-optional)
+  - Protobuf type constants (TYPE_STRING → :TYPE_STRING)
+  - Protobuf label constants (LABEL_OPTIONAL → :LABEL_OPTIONAL)
   - Known enum-like values
   
   Preserve:
@@ -115,7 +109,7 @@
   "Convert a string value to keyword if appropriate."
   [k v]
   (if (should-convert-value? k v)
-    (normalize-key v)
+    (keyword v)
     v))
 
 (defn convert-constraint-values
@@ -170,8 +164,7 @@
   "Convert JSON string to EDN with proper keyword conversion.
   
   Takes a JSON string and converts it to EDN with:
-  - String keys → keywords
-  - snake_case → kebab-case for keys
+  - String keys → keywords (preserving original case)
   - Proto constants → keywords (when convert-values? is true)
   
   Options:
@@ -209,7 +202,7 @@
   "Extract all messages from a file descriptor."
   [file-desc]
   (let [package (:package file-desc)]
-    (->> (:message-type file-desc)
+    (->> (:messageType file-desc)
          (map (fn [msg]
                 (assoc msg
                        :full-name (str package "." (:name msg))
@@ -219,7 +212,7 @@
   "Find a specific message by name in the descriptor set."
   [edn-data message-name]
   (for [file-desc (:file edn-data)
-        msg (:message-type file-desc)
+        msg (:messageType file-desc)
         :when (or (= message-name (:name msg))
                   (= message-name (str (:package file-desc) "." (:name msg))))]
     (assoc msg 
@@ -268,10 +261,11 @@
   ;; Save as EDN
   (save-edn desc "/tmp/descriptor-set.edn")
   
-  ;; Test case conversions
-  (snake->kebab "message_type")       ; => "message-type"
-  (snake->kebab "TYPE_STRING")        ; => "type-string"
-  (camel->kebab "messageType")        ; => "message-type"
-  (camel->kebab "PascalCase")         ; => "pascal-case"
-  (normalize-key "snake_case_field")  ; => :snake-case-field
+  ;; Test case conversions (Note: snake->kebab and camel->kebab still available but not used)
+  ;; normalize-key now preserves original case:
+  (normalize-key "message_type")      ; => :message_type
+  (normalize-key "TYPE_STRING")       ; => :TYPE_STRING
+  (normalize-key "messageType")       ; => :messageType
+  (normalize-key "PascalCase")        ; => :PascalCase
+  (normalize-key "snake_case_field")  ; => :snake_case_field
   )

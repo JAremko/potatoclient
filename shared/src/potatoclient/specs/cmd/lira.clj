@@ -3,14 +3,25 @@
    Based on jon_shared_cmd_lira.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; LIRA command specs - placeholder for now
-;; Will need to check proto file for exact structure
+;; LIRA command specs - simplified placeholders
+;; This is a oneof structure with multiple command types
 
-(def lira-command-spec
+(def activate-spec [:map {:closed true}])
+(def deactivate-spec [:map {:closed true}])
+(def set-mode-spec
   [:map {:closed true}
-   ;; TODO: Add fields based on proto definition
+   [:mode [:enum :NORMAL :MAINTENANCE]]])
+
+;; Main LIRA command spec using oneof
+(def lira-command-spec
+  [:oneof_edn
+   [:activate activate-spec]
+   [:deactivate deactivate-spec]
+   [:set_mode set-mode-spec]
+   ;; Add more commands as needed
    ])
 
 (registry/register! :cmd/lira lira-command-spec)

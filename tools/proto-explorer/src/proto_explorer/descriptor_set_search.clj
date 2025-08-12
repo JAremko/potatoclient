@@ -81,7 +81,7 @@
                             :java-class (get-java-class-name proto-name package (:name msg))
                             :field-count (count (:field msg))
                             :fields (:field msg)})
-                         (or (:message-type proto-file) [])))))
+                         (or (:messageType proto-file) [])))))
                (:file descriptor)))
       (println "Error: descriptor-set.json not found at" descriptor-set-path))))
 
