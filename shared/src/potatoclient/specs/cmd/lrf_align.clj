@@ -6,24 +6,36 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; LRF alignment command specs - simplified placeholders
-;; This is a oneof structure with multiple command types
+;; LRF alignment command specs - based on proto-explorer findings
+;; This has a nested oneof structure: channel -> cmd
 
-(def start-calibration-spec [:map {:closed true}])
-(def stop-calibration-spec [:map {:closed true}])
-(def set-offset-spec
+;; Offset commands
+(def set-offsets-spec
   [:map {:closed true}
-   [:x [:float]]
-   [:y [:float]]])
+   [:x [:double]]
+   [:y [:double]]])
 
-;; Main LRF Align command spec using oneof
+(def save-offsets-spec [:map {:closed true}])
+(def reset-offsets-spec [:map {:closed true}])
+
+(def shift-offsets-by-spec
+  [:map {:closed true}
+   [:x [:double]]
+   [:y [:double]]])
+
+;; Offsets message with cmd oneof
+(def offsets-spec
+  [:oneof_edn
+   [:set set-offsets-spec]
+   [:save save-offsets-spec]
+   [:reset reset-offsets-spec]
+   [:shift shift-offsets-by-spec]])
+
+;; Main LRF Align command spec using channel oneof
 (def lrf-align-command-spec
   [:oneof_edn
-   [:start_calibration start-calibration-spec]
-   [:stop_calibration stop-calibration-spec]
-   [:set_offset set-offset-spec]
-   ;; Add more commands as needed
-   ])
+   [:day offsets-spec]
+   [:heat offsets-spec]])
 
 (registry/register! :cmd/lrf-align lrf-align-command-spec)
 (registry/register! :cmd/lrf_calib lrf-align-command-spec) ; Alternative name

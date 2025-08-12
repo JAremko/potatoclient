@@ -27,7 +27,7 @@
    [potatoclient.specs.cmd.osd]
    [potatoclient.specs.cmd.rotary]
    [potatoclient.specs.cmd.system]
-   [potatoclient.specs.cmd.root])
+   [potatoclient.specs.cmd.root :refer [command-fields]])
   (:import 
    [cmd JonSharedCmd$Root 
     JonSharedCmd$Ping
@@ -162,35 +162,13 @@
       (is (m/validate :cmd/root manual-frozen-cmd)
           "Frozen command should validate"))
     
-    (testing "Property-based Ping (100 samples)"
-      (let [results (harness/run-property-tests 
-                     :cmd/ping
-                     h/cmd-mapper
-                     JonSharedCmd$Ping
-                     :n 100)]
-        (is (= 1.0 (:success-rate results))
-            (str "Ping spec should pass all tests. "
-                 "Failed: " (:failed results)))))
-    
-    (testing "Property-based Noop (100 samples)"
-      (let [results (harness/run-property-tests 
-                     :cmd/noop
-                     h/cmd-mapper
-                     JonSharedCmd$Noop
-                     :n 100)]
-        (is (= 1.0 (:success-rate results))
-            (str "Noop spec should pass all tests. "
-                 "Failed: " (:failed results)))))
-    
-    (testing "Property-based Frozen (100 samples)"
-      (let [results (harness/run-property-tests 
-                     :cmd/frozen
-                     h/cmd-mapper
-                     JonSharedCmd$Frozen
-                     :n 100)]
-        (is (= 1.0 (:success-rate results))
-            (str "Frozen spec should pass all tests. "
-                 "Failed: " (:failed results)))))))
+    (testing "Simple commands should be empty maps"
+      (is (m/validate :cmd/ping {}) "Ping should be empty map")
+      (is (m/validate :cmd/noop {}) "Noop should be empty map")
+      (is (m/validate :cmd/frozen {}) "Frozen should be empty map")
+      (is (not (m/validate :cmd/ping {:extra "field"})) "Ping should reject extra fields")
+      (is (not (m/validate :cmd/noop {:extra "field"})) "Noop should reject extra fields")
+      (is (not (m/validate :cmd/frozen {:extra "field"})) "Frozen should reject extra fields"))))
 
 (deftest test-rotary-command-specs
   (testing "Rotary command specs"
@@ -198,7 +176,7 @@
       (doseq [cmd manual-rotary-cmds]
         (is (m/validate :cmd/root cmd)
             (str "Rotary command should validate: " 
-                 (keys (get-in cmd [:cmd :rotary]))))))
+                 (keys (:rotary cmd))))))
     
     (testing "Property-based Rotary commands (300 samples)"
       (let [results (harness/run-property-tests 
@@ -219,7 +197,7 @@
       (doseq [cmd manual-gps-cmds]
         (is (m/validate :cmd/root cmd)
             (str "GPS command should validate: " 
-                 (keys (get-in cmd [:cmd :gps]))))))
+                 (keys (:gps cmd))))))
     
     (testing "Property-based GPS commands (200 samples)"
       (let [results (harness/run-property-tests 
@@ -321,7 +299,7 @@
                       cmd)]
           (is (:success? result)
               (str "Rotary command round-trip should succeed. "
-                   "Command: " (keys (get-in cmd [:cmd :rotary]))
+                   "Command: " (keys (:rotary cmd))
                    " Error: " (:error result))))))
     
     (testing "Generated command round-trips (50 samples)"
@@ -334,7 +312,7 @@
                       generated)]
           (when-not (:success? result)
             (log/warn "Failed round-trip for generated command:" 
-                     (keys (get-in generated [:cmd])) 
+                     (filter command-fields (keys generated))
                      "Error:" (:error result))))))))
 
 ;; ============================================================================

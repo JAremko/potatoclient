@@ -17,8 +17,8 @@
 ;; Tracking
 (def start-track-ndc-spec
   [:map {:closed true}
-   [:x [:float {:min -1.0 :max 1.0}]]
-   [:y [:float {:min -1.0 :max 1.0}]]])
+   [:x [:double {:min -1.0 :max 1.0}]]
+   [:y [:double {:min -1.0 :max 1.0}]]])
 
 (def stop-track-spec [:map {:closed true}])
 

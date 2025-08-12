@@ -6,22 +6,25 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; LIRA command specs - simplified placeholders
-;; This is a oneof structure with multiple command types
+;; LIRA command specs - based on proto-explorer findings
+;; This is a oneof structure with one command type
 
-(def activate-spec [:map {:closed true}])
-(def deactivate-spec [:map {:closed true}])
-(def set-mode-spec
+;; Target specification
+(def lira-target-spec
   [:map {:closed true}
-   [:mode [:enum :NORMAL :MAINTENANCE]]])
+   [:x [:double]]
+   [:y [:double]]
+   [:width [:double]]
+   [:height [:double]]])
+
+;; Refine target command
+(def refine-target-spec
+  [:map {:closed true}
+   [:target lira-target-spec]])
 
 ;; Main LIRA command spec using oneof
 (def lira-command-spec
   [:oneof_edn
-   [:activate activate-spec]
-   [:deactivate deactivate-spec]
-   [:set_mode set-mode-spec]
-   ;; Add more commands as needed
-   ])
+   [:refine_target refine-target-spec]])
 
 (registry/register! :cmd/lira lira-command-spec)

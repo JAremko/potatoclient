@@ -18,7 +18,7 @@
 ;; Zoom control
 (def zoom-spec
   [:map {:closed true}
-   [:value [:float]]])
+   [:value [:double]]])
 
 (def zoom-in-spec [:map {:closed true}])
 (def zoom-out-spec [:map {:closed true}])

@@ -33,27 +33,15 @@
 
 (defn edn->proto-map
   "Convert Malli-generated EDN map to Pronto proto-map.
-   Handles the conversion of kebab-case keys to snake_case."
+   Our specs already use snake_case, so no conversion needed."
   [edn-map mapper proto-class]
-  (let [snake-case-map (clojure.walk/postwalk
-                         (fn [x]
-                           (if (keyword? x)
-                             (keyword (clojure.string/replace (name x) "-" "_"))
-                             x))
-                         edn-map)]
-    (p/clj-map->proto-map mapper proto-class snake-case-map)))
+  (p/clj-map->proto-map mapper proto-class edn-map))
 
 (defn proto-map->edn
-  "Convert Pronto proto-map back to EDN format with kebab-case keys."
+  "Convert Pronto proto-map back to EDN format.
+   We use snake_case throughout, so no conversion needed."
   [proto-map]
-  (let [snake-map (p/proto-map->clj-map proto-map)
-        kebab-map (clojure.walk/postwalk
-                   (fn [x]
-                     (if (keyword? x)
-                       (keyword (clojure.string/replace (name x) "_" "-"))
-                       x))
-                   snake-map)]
-    kebab-map))
+  (p/proto-map->clj-map proto-map))
 
 ;; ============================================================================
 ;; VALIDATION FUNCTIONS
@@ -72,10 +60,9 @@
                            (:system proto-map))
                       :state
                       
-                      ;; Check if it's a command by the presence of :cmd field
+                      ;; Check if it's a command by the presence of client_type field
                       (and (:protocol_version proto-map)
-                           (:client_type proto-map)
-                           (:cmd proto-map))
+                           (:client_type proto-map))
                       :cmd
                       
                       :else :auto)]

@@ -17,21 +17,21 @@
 ;; Axis control
 (def axis-spec 
   [:map {:closed true}
-   [:azimuth [:float]]
-   [:elevation [:float]]])
+   [:azimuth [:double]]
+   [:elevation [:double]]])
 
 ;; Platform position controls
 (def set-platform-azimuth-spec
   [:map {:closed true}
-   [:value [:float {:min -360.0 :max 360.0}]]])
+   [:value [:double {:min -360.0 :max 360.0}]]])
    
 (def set-platform-elevation-spec  
   [:map {:closed true}
-   [:value [:float {:min -90.0 :max 90.0}]]])
+   [:value [:double {:min -90.0 :max 90.0}]]])
 
 (def set-platform-bank-spec
   [:map {:closed true}
-   [:value [:float {:min -180.0 :max 180.0}]]])
+   [:value [:double {:min -180.0 :max 180.0}]]])
 
 ;; Mode and configuration
 (def set-mode-spec
@@ -62,8 +62,8 @@
 ;; NDC rotation
 (def rotate-to-ndc-spec
   [:map {:closed true}
-   [:x [:float]]
-   [:y [:float]]])
+   [:x [:double]]
+   [:y [:double]]])
 
 ;; Scan operations
 (def scan-start-spec [:map {:closed true}])
@@ -79,9 +79,9 @@
 
 (def scan-add-node-spec
   [:map {:closed true}
-   [:azimuth [:float]]
-   [:elevation [:float]]
-   [:linger [:float {:min 0.0}]]
+   [:azimuth [:double]]
+   [:elevation [:double]]
+   [:linger [:double {:min 0.0}]]
    [:dayzoomtablevalue [:int {:min 0}]]
    [:heatzoomtablevalue [:int {:min 0}]]])
 
@@ -92,9 +92,9 @@
 (def scan-update-node-spec
   [:map {:closed true}
    [:index [:int {:min 0}]]
-   [:azimuth [:float]]
-   [:elevation [:float]]
-   [:linger [:float {:min 0.0}]]
+   [:azimuth [:double]]
+   [:elevation [:double]]
+   [:linger [:double {:min 0.0}]]
    [:dayzoomtablevalue [:int {:min 0}]]
    [:heatzoomtablevalue [:int {:min 0}]]])
 

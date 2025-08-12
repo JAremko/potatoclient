@@ -16,15 +16,15 @@
 ;; Configuration
 (def set-magnetic-declination-spec
   [:map {:closed true}
-   [:value [:float {:min -180.0 :max 180.0}]]])
+   [:value [:double {:min -180.0 :max 180.0}]]])
 
 (def set-offset-angle-azimuth-spec
   [:map {:closed true}
-   [:value [:float {:min -360.0 :max 360.0}]]])
+   [:value [:double {:min -360.0 :max 360.0}]]])
 
 (def set-offset-angle-elevation-spec
   [:map {:closed true}
-   [:value [:float {:min -90.0 :max 90.0}]]])
+   [:value [:double {:min -90.0 :max 90.0}]]])
 
 (def set-use-rotary-position-spec
   [:map {:closed true}

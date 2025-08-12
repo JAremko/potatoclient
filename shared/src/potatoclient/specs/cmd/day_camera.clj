@@ -18,11 +18,11 @@
 ;; Focus and zoom
 (def focus-spec
   [:map {:closed true}
-   [:value [:float]]])
+   [:value [:double]]])
 
 (def zoom-spec
   [:map {:closed true}
-   [:value [:float]]])
+   [:value [:double]]])
 
 (def set-digital-zoom-level-spec
   [:map {:closed true}
@@ -31,7 +31,7 @@
 ;; Iris control
 (def set-iris-spec
   [:map {:closed true}
-   [:value [:float {:min 0.0 :max 1.0}]]])
+   [:value [:double {:min 0.0 :max 1.0}]]])
 
 (def set-auto-iris-spec
   [:map {:closed true}

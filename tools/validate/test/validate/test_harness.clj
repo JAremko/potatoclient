@@ -4,8 +4,40 @@
   (:require [pronto.core :as p]
             [clojure.edn :as edn])
   (:import [cmd JonSharedCmd$Root JonSharedCmd$Ping JonSharedCmd$Noop JonSharedCmd$Frozen]
-           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$SetPlatformAzimuth
-                                JonSharedCmdRotary$SetMode JonSharedCmdRotary$Stop]
+           [cmd.RotaryPlatform JonSharedCmdRotary$Root JonSharedCmdRotary$Start 
+                                JonSharedCmdRotary$Stop JonSharedCmdRotary$SetPlatformAzimuth
+                                JonSharedCmdRotary$SetPlatformElevation JonSharedCmdRotary$SetMode]
+           [cmd.Gps JonSharedCmdGps$Root JonSharedCmdGps$Start JonSharedCmdGps$Stop
+                    JonSharedCmdGps$SetManualPosition JonSharedCmdGps$SetUseManualPosition]
+           [cmd.Compass JonSharedCmdCompass$Root JonSharedCmdCompass$Start JonSharedCmdCompass$Stop
+                        JonSharedCmdCompass$SetMagneticDeclination]
+           [cmd.CV JonSharedCmdCv$Root JonSharedCmdCv$SetAutoFocus 
+                   JonSharedCmdCv$StartTrackNDC JonSharedCmdCv$StopTrack]
+           [cmd.Lrf JonSharedCmdLrf$Root JonSharedCmdLrf$Measure 
+                    JonSharedCmdLrf$Start JonSharedCmdLrf$Stop]
+           [cmd.System JonSharedCmdSystem$Root JonSharedCmdSystem$StartALl
+                       JonSharedCmdSystem$StopALl JonSharedCmdSystem$Reboot]
+           [cmd.DayCamera JonSharedCmdDayCamera$Root JonSharedCmdDayCamera$Start
+                          JonSharedCmdDayCamera$Stop JonSharedCmdDayCamera$Focus
+                          JonSharedCmdDayCamera$Zoom]
+           [cmd.HeatCamera JonSharedCmdHeatCamera$Root JonSharedCmdHeatCamera$Start
+                           JonSharedCmdHeatCamera$Stop JonSharedCmdHeatCamera$Zoom
+                           JonSharedCmdHeatCamera$Calibrate]
+           [cmd.OSD JonSharedCmdOsd$Root JonSharedCmdOsd$ShowDefaultScreen]
+           ;; LRF Align/Calibration commands
+           [cmd.Lrf_calib JonSharedCmdLrfAlign$Root JonSharedCmdLrfAlign$Offsets
+                          JonSharedCmdLrfAlign$SetOffsets JonSharedCmdLrfAlign$SaveOffsets
+                          JonSharedCmdLrfAlign$ResetOffsets JonSharedCmdLrfAlign$ShiftOffsetsBy]
+           ;; LIRA commands
+           [cmd.Lira JonSharedCmdLira$Root JonSharedCmdLira$Refine_target
+                     JonSharedCmdLira$JonGuiDataLiraTarget]
+           ;; Day Cam Glass Heater commands
+           [cmd.DayCamGlassHeater JonSharedCmdDayCamGlassHeater$Root
+                                  JonSharedCmdDayCamGlassHeater$Start
+                                  JonSharedCmdDayCamGlassHeater$Stop
+                                  JonSharedCmdDayCamGlassHeater$TurnOn
+                                  JonSharedCmdDayCamGlassHeater$TurnOff
+                                  JonSharedCmdDayCamGlassHeater$GetMeteo]
            [ser JonSharedData$JonGUIState]))
 
 ;; ============================================================================
@@ -17,10 +49,72 @@
                         cmd.JonSharedCmd$Ping
                         cmd.JonSharedCmd$Noop
                         cmd.JonSharedCmd$Frozen
+                        ;; Rotary commands
                         cmd.RotaryPlatform.JonSharedCmdRotary$Root
+                        cmd.RotaryPlatform.JonSharedCmdRotary$Start
+                        cmd.RotaryPlatform.JonSharedCmdRotary$Stop
                         cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformAzimuth
+                        cmd.RotaryPlatform.JonSharedCmdRotary$SetPlatformElevation
                         cmd.RotaryPlatform.JonSharedCmdRotary$SetMode
-                        cmd.RotaryPlatform.JonSharedCmdRotary$Stop])
+                        ;; GPS commands
+                        cmd.Gps.JonSharedCmdGps$Root
+                        cmd.Gps.JonSharedCmdGps$Start
+                        cmd.Gps.JonSharedCmdGps$Stop
+                        cmd.Gps.JonSharedCmdGps$SetManualPosition
+                        cmd.Gps.JonSharedCmdGps$SetUseManualPosition
+                        ;; Compass commands
+                        cmd.Compass.JonSharedCmdCompass$Root
+                        cmd.Compass.JonSharedCmdCompass$Start
+                        cmd.Compass.JonSharedCmdCompass$Stop
+                        cmd.Compass.JonSharedCmdCompass$SetMagneticDeclination
+                        ;; CV commands
+                        cmd.CV.JonSharedCmdCv$Root
+                        cmd.CV.JonSharedCmdCv$SetAutoFocus
+                        cmd.CV.JonSharedCmdCv$StartTrackNDC
+                        cmd.CV.JonSharedCmdCv$StopTrack
+                        ;; LRF commands
+                        cmd.Lrf.JonSharedCmdLrf$Root
+                        cmd.Lrf.JonSharedCmdLrf$Measure
+                        cmd.Lrf.JonSharedCmdLrf$Start
+                        cmd.Lrf.JonSharedCmdLrf$Stop
+                        ;; System commands
+                        cmd.System.JonSharedCmdSystem$Root
+                        cmd.System.JonSharedCmdSystem$StartALl
+                        cmd.System.JonSharedCmdSystem$StopALl
+                        cmd.System.JonSharedCmdSystem$Reboot
+                        ;; Day Camera commands
+                        cmd.DayCamera.JonSharedCmdDayCamera$Root
+                        cmd.DayCamera.JonSharedCmdDayCamera$Start
+                        cmd.DayCamera.JonSharedCmdDayCamera$Stop
+                        cmd.DayCamera.JonSharedCmdDayCamera$Focus
+                        cmd.DayCamera.JonSharedCmdDayCamera$Zoom
+                        ;; Heat Camera commands
+                        cmd.HeatCamera.JonSharedCmdHeatCamera$Root
+                        cmd.HeatCamera.JonSharedCmdHeatCamera$Start
+                        cmd.HeatCamera.JonSharedCmdHeatCamera$Stop
+                        cmd.HeatCamera.JonSharedCmdHeatCamera$Zoom
+                        cmd.HeatCamera.JonSharedCmdHeatCamera$Calibrate
+                        ;; OSD commands  
+                        cmd.OSD.JonSharedCmdOsd$Root
+                        cmd.OSD.JonSharedCmdOsd$ShowDefaultScreen
+                        ;; LRF Align/Calibration commands
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$Root
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$Offsets
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$SetOffsets
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$SaveOffsets
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$ResetOffsets
+                        cmd.Lrf_calib.JonSharedCmdLrfAlign$ShiftOffsetsBy
+                        ;; LIRA commands
+                        cmd.Lira.JonSharedCmdLira$Root
+                        cmd.Lira.JonSharedCmdLira$Refine_target
+                        cmd.Lira.JonSharedCmdLira$JonGuiDataLiraTarget
+                        ;; Day Cam Glass Heater commands
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Root
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Start
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$Stop
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOn
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$TurnOff
+                        cmd.DayCamGlassHeater.JonSharedCmdDayCamGlassHeater$GetMeteo])
 (p/defmapper state-mapper [ser.JonSharedData$JonGUIState])
 
 ;; ============================================================================
