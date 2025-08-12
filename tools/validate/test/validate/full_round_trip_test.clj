@@ -94,18 +94,18 @@
       (let [gps-proto (p/proto-map h/cmd-mapper JonSharedCmd$Root
                                   :protocol_version 1
                                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                                  :gps {:set-manual-gps {:latitude 45.5
+                                  :gps {:set_manual_position {:latitude 45.5
                                                         :longitude -122.6
                                                         :altitude 100.0}})
             binary (p/proto-map->bytes gps-proto)
             parsed (p/bytes->proto-map h/cmd-mapper JonSharedCmd$Root binary)
             result (into {} parsed)]
         
-        (is (= 45.5 (get-in result [:gps :set-manual-gps :latitude]))
+        (is (= 45.5 (get-in result [:gps :set_manual_position :latitude]))
             "GPS latitude should be preserved")
-        (is (= -122.6 (get-in result [:gps :set-manual-gps :longitude]))
+        (is (= -122.6 (get-in result [:gps :set_manual_position :longitude]))
             "GPS longitude should be preserved")
-        (is (= 100.0 (get-in result [:gps :set-manual-gps :altitude]))
+        (is (= 100.0 (get-in result [:gps :set_manual_position :altitude]))
             "GPS altitude should be preserved")))))
 
 ;; ============================================================================

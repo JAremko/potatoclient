@@ -75,25 +75,10 @@
     
     (testing "System sub-message validation"
       (let [sys-data (mg/generate :state/system)
-            sys-proto (p/proto-map h/state-mapper JonSharedDataSystem$JonGuiDataSystem
-                                  :cpu_load (:cpu-load sys-data)
-                                  :cpu_temperature (:cpu-temperature sys-data)
-                                  :gpu_load (:gpu-load sys-data)
-                                  :gpu_temperature (:gpu-temperature sys-data)
-                                  :disk_space (:disk-space sys-data)
-                                  :power_consumption (:power-consumption sys-data)
-                                  :rec_enabled (:rec-enabled sys-data)
-                                  :low_disk_space (:low-disk-space sys-data)
-                                  :cur_video_rec_dir_year (:cur-video-rec-dir-year sys-data)
-                                  :cur_video_rec_dir_month (:cur-video-rec-dir-month sys-data)
-                                  :cur_video_rec_dir_day (:cur-video-rec-dir-day sys-data)
-                                  :cur_video_rec_dir_hour (:cur-video-rec-dir-hour sys-data)
-                                  :cur_video_rec_dir_minute (:cur-video-rec-dir-minute sys-data)
-                                  :cur_video_rec_dir_second (:cur-video-rec-dir-second sys-data)
-                                  :loc (-> sys-data :loc name
-                                          (clojure.string/replace "-" "_")
-                                          (clojure.string/upper-case)
-                                          keyword))
+            ;; Use clj-map->proto-map which takes the map directly
+            sys-proto (p/clj-map->proto-map h/state-mapper 
+                                           JonSharedDataSystem$JonGuiDataSystem
+                                           sys-data)
             result (tv/validate-proto-map sys-proto)]
         
         (is (:valid? result)
