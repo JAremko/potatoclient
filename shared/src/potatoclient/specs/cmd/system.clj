@@ -6,22 +6,51 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.oneof-edn :as oneof-edn]))
 
-;; System command specs - simplified placeholders
-;; This is a oneof structure with multiple command types
+;; System command specs - based on proto-explorer findings
+;; This is a oneof structure with 13 command types
 
+;; Basic control
+(def start-all-spec [:map {:closed true}])
+(def stop-all-spec [:map {:closed true}])
 (def reboot-spec [:map {:closed true}])
-(def shutdown-spec [:map {:closed true}])
-(def set-localization-spec
-  [:map {:closed true}
-   [:locale [:string]]])
+(def power-off-spec [:map {:closed true}])
+(def reset-configs-spec [:map {:closed true}])
+(def enter-transport-spec [:map {:closed true}])
 
-;; Main System command spec using oneof
+;; Localization
+(def localization-spec
+  [:map {:closed true}
+   [:locale [:enum
+             :JON_GUI_DATA_LOCALE_UNSPECIFIED
+             :JON_GUI_DATA_LOCALE_EN
+             :JON_GUI_DATA_LOCALE_HE
+             :JON_GUI_DATA_LOCALE_RU]]])
+
+;; Recording control
+(def start-rec-spec [:map {:closed true}])
+(def stop-rec-spec [:map {:closed true}])
+(def mark-rec-important-spec [:map {:closed true}])
+(def unmark-rec-important-spec [:map {:closed true}])
+
+;; Geodesic mode
+(def geodesic-mode-enable-spec [:map {:closed true}])
+(def geodesic-mode-disable-spec [:map {:closed true}])
+
+;; Main System command spec using oneof - all 13 commands
 (def system-command-spec
   [:oneof_edn
+   [:start_all start-all-spec]
+   [:stop_all stop-all-spec]
    [:reboot reboot-spec]
-   [:shutdown shutdown-spec]
-   [:set_localization set-localization-spec]
-   ;; Add more commands as needed
-   ])
+   [:power_off power-off-spec]
+   [:localization localization-spec]
+   [:reset_configs reset-configs-spec]
+   [:start_rec start-rec-spec]
+   [:stop_rec stop-rec-spec]
+   [:mark_rec_important mark-rec-important-spec]
+   [:unmark_rec_important unmark-rec-important-spec]
+   [:enter_transport enter-transport-spec]
+   [:geodesic_mode_enable geodesic-mode-enable-spec]
+   [:geodesic_mode_disable geodesic-mode-disable-spec]])
 
 (registry/register! :cmd/system system-command-spec)

@@ -109,43 +109,40 @@
    
    {:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :rotary {:scan_node {:speed 0.001  ; Just above 0
-                         :azimuth 180.0
-                         :elevation 0.0
-                         :linger 0.5
-                         :index 1
-                         :dayzoomtablevalue 2
-                         :heatzoomtablevalue 3}}}
+    :rotary {:scan_add_node {:azimuth 180.0
+                             :elevation 0.0
+                             :linger 0.5
+                             :dayzoomtablevalue 2
+                             :heatzoomtablevalue 3}}}
    
    {:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :rotary {:scan_node {:speed 1.0  ; Max speed
-                         :azimuth 0.0
-                         :elevation -90.0
-                         :linger 10.0
-                         :index 100
-                         :dayzoomtablevalue 4
-                         :heatzoomtablevalue 4}}}])
+    :rotary {:scan_update_node {:index 1
+                                :azimuth 0.0
+                                :elevation -90.0
+                                :linger 10.0
+                                :dayzoomtablevalue 4
+                                :heatzoomtablevalue 4}}}])
 
 (def manual-gps-cmds
   [{:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :gps {:set_fix_manual {:latitude 0.0
-                          :longitude 0.0}}}
+    :gps {:set_manual_position {:latitude 0.0
+                                :longitude 0.0}}}
    
    {:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :gps {:set_fix_manual {:latitude 90.0
-                          :longitude 180.0}}}
+    :gps {:set_manual_position {:latitude 90.0
+                                :longitude 180.0}}}
    
    {:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :gps {:set_fix_manual {:latitude -90.0
-                          :longitude -180.0}}}
+    :gps {:set_manual_position {:latitude -90.0
+                                :longitude -180.0}}}
    
    {:protocol_version 1
     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-    :gps {:set_fix_auto {}}}])
+    :gps {:set_use_manual_position {:value true}}}])
 
 ;; ============================================================================
 ;; INDIVIDUAL COMMAND TYPE TESTS
@@ -361,40 +358,37 @@
         (is (m/validate :cmd/root max-protocol)
             "Max protocol version should validate")))
     
-    (testing "Rotary speed boundaries"
-      (let [min-speed-cmd {:protocol_version 1
+    (testing "Rotary position boundaries"
+      (let [min-values-cmd {:protocol_version 1
                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                           :rotary {:scan_node {:speed 0.001
-                                               :azimuth 0.0
-                                               :elevation 0.0
-                                               :linger 0.001
-                                               :index 1
-                                               :dayzoomtablevalue 1
-                                               :heatzoomtablevalue 1}}}
+                           :rotary {:scan_add_node {:azimuth 0.0
+                                                    :elevation -90.0
+                                                    :linger 0.001
+                                                    :dayzoomtablevalue 0
+                                                    :heatzoomtablevalue 0}}}
             
-            max-speed-cmd {:protocol_version 1
+            max-values-cmd {:protocol_version 1
                           :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :rotary {:scan_node {:speed 1.0
-                                              :azimuth 359.999
-                                              :elevation 90.0
-                                              :linger 100.0
-                                              :index 1000
-                                              :dayzoomtablevalue 4
-                                              :heatzoomtablevalue 4}}}]
+                          :rotary {:scan_update_node {:index 1000
+                                                      :azimuth 359.999
+                                                      :elevation 90.0
+                                                      :linger 100.0
+                                                      :dayzoomtablevalue 10
+                                                      :heatzoomtablevalue 10}}}]
         
         (is (:success? (harness/round-trip-validate 
                         :cmd/root
                         h/cmd-mapper
                         JonSharedCmd$Root
-                        min-speed-cmd))
-            "Min speed rotary command should validate")
+                        min-values-cmd))
+            "Min values rotary command should validate")
         
         (is (:success? (harness/round-trip-validate 
                         :cmd/root
                         h/cmd-mapper
                         JonSharedCmd$Root
-                        max-speed-cmd))
-            "Max speed rotary command should validate")))))
+                        max-values-cmd))
+            "Max values rotary command should validate")))))
 
 ;; ============================================================================
 ;; CLIENT TYPE VALIDATION
