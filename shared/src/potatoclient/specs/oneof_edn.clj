@@ -63,7 +63,7 @@
                 (not (map? value))
                 (conj acc {:path path
                           :in in
-                          :schema [:oneof_edn]
+                          :schema form
                           :value value
                           :message "should be a map"})
                 
@@ -75,21 +75,21 @@
                     (seq extra-keys)
                     (conj acc {:path path
                               :in in
-                              :schema [:oneof_edn]
+                              :schema form
                               :value value
                               :message (str "unexpected keys: " (vec extra-keys))})
                     
                     (zero? (count non-nil-fields))
                     (conj acc {:path path
                               :in in
-                              :schema [:oneof_edn]
+                              :schema form
                               :value value
                               :message "must have exactly one non-nil field"})
                     
                     (> (count non-nil-fields) 1)
                     (conj acc {:path path
                               :in in
-                              :schema [:oneof_edn]
+                              :schema form
                               :value value
                               :message (str "multiple non-nil fields: " (vec non-nil-fields))})
                     
