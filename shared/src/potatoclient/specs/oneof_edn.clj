@@ -1,7 +1,14 @@
 (ns potatoclient.specs.oneof-edn
-  "Closed oneof schema for EDN data that treats nil values as absent.
+  "Oneof schema for EDN maps - like :altn but for maps with exactly one non-nil value.
    Compatible with Pronto EDN where inactive branches have nil values.
-   Acts as a closed map - rejects any keys not in the schema, even with nil values."
+   
+   Usage: [:oneof_edn [:ping :cmd/ping] [:cv :cmd/cv] [:rotary :cmd/rotary]]
+   
+   This validates maps where:
+   - Exactly one of the specified keys has a non-nil value
+   - Other specified keys can be nil or absent
+   - No extra keys are allowed (closed map behavior)
+   - The non-nil value must validate against its schema"
   (:require
    [clojure.set]
    [malli.core :as m]
@@ -9,83 +16,159 @@
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]))
 
-(def _ONeof-edn-schema
-  "Custom :oneof_edn schema for validating EDN maps with exactly one non-nil field set.
-   Treats nil values as absent, compatible with Pronto EDN representations.
-   Acts as a closed map - rejects any extra keys not defined in the schema."
-  (m/-simple-schema
-   {:type :oneof_edn
-    :type_properties {:generator true}
-    :compile (fn [properties children options]
-               (let [;; Handle both property-style and children-style definitions
-                     field-map (if (and (empty? children) (map? properties))
-                                 ;; Properties style: fields are in properties map
-                                 (dissoc properties :error/message)
-                                 ;; Children style: fields are in children vector
-                                 (apply hash-map children))
-                     field-names (set (keys field-map))
-                     field-validators (into {} (map (fn [[k v]]
-                                                     [k (m/validator v options)])
-                                                   field-map))
-                     ;; Helper to get non-nil fields from the specified field set
-                     get-active-fields (fn [value]
-                                         (filter #(and (contains? field-names %)
-                                                      (some? (get value %)))
-                                                (keys value)))]
-                 {:pred (fn [value]
-                          (and (map? value)
-                               ;; Check for extra keys (closed map behavior)
-                               (let [value-keys (set (keys value))
-                                     extra-keys (clojure.set/difference value-keys field-names)]
-                                 (and (empty? extra-keys)
-                                      ;; Exactly one of the specified fields must be present and non-nil
-                                      (let [active-fields (get-active-fields value)]
-                                        (and (= 1 (count active-fields))
-                                             ;; Validate the active field's value
-                                             (let [active-field (first active-fields)
-                                                   validator (get field-validators active-field)]
-                                               (validator (get value active-field)))))))))
-                  :min (* 2 (count field-map))
-                  :max (* 2 (count field-map))
-                  :type_properties properties
-                  :error/fn (fn [{:keys [value]} _]
-                              (cond
-                                (not (map? value)) "must be a map"
-                                :else
-                                (let [value-keys (set (keys value))
-                                      extra-keys (clojure.set/difference value-keys field-names)
-                                      active-fields (get-active-fields value)]
-                                  (cond
-                                    (not (empty? extra-keys))
-                                    (str "unexpected keys found: " (vec extra-keys) 
-                                         ", allowed keys: " (vec field-names))
-                                    (zero? (count active-fields))
-                                    "must have exactly one non-nil field set"
-                                    (> (count active-fields) 1)
-                                    (str "must have exactly one non-nil field set, found: "
-                                         (vec active-fields))
-                                    :else nil))))}))}))
+(defn -oneof-edn-schema
+  "Creates the :oneof_edn schema implementation"
+  []
+  (reify
+    m/IntoSchema
+    (-type [_] :oneof_edn)
+    (-type-properties [_] nil)
+    (-properties-schema [_ _] nil)
+    (-children-schema [_ _] nil)
+    (-into-schema [_ properties children options]
+      (when (empty? children)
+        (m/-fail! ::no-children {:type :oneof_edn}))
+      ;; Parse children as [key schema] pairs
+      (let [entries (mapv (fn [child]
+                           (if (and (vector? child) 
+                                   (= 2 (count child)) 
+                                   (keyword? (first child)))
+                             [(first child) (m/schema (second child) options)]
+                             (m/-fail! ::invalid-child {:child child})))
+                         children)
+            field-keys (set (map first entries))
+            validators (into {} (map (fn [[k schema]]
+                                      [k (m/validator schema)])
+                                    entries))
+            form (m/-create-form :oneof_edn properties children options)]
+        (reify
+          m/Schema
+          (-validator [_]
+            (fn [value]
+              (and (map? value)
+                   ;; Check no extra keys (closed map)
+                   (let [value-keys (set (keys value))]
+                     (and (clojure.set/subset? value-keys field-keys)
+                          ;; Exactly one non-nil field
+                          (let [non-nil-fields (filter #(some? (get value %)) field-keys)]
+                            (and (= 1 (count non-nil-fields))
+                                 ;; Validate the non-nil field
+                                 (let [active-key (first non-nil-fields)
+                                       validator (get validators active-key)]
+                                   (validator (get value active-key))))))))))
+          
+          (-explainer [_ path]
+            (fn [value in acc]
+              (cond
+                (not (map? value))
+                (conj acc {:path path
+                          :in in
+                          :schema [:oneof_edn]
+                          :value value
+                          :message "should be a map"})
+                
+                :else
+                (let [value-keys (set (keys value))
+                      extra-keys (clojure.set/difference value-keys field-keys)
+                      non-nil-fields (filter #(some? (get value %)) field-keys)]
+                  (cond
+                    (seq extra-keys)
+                    (conj acc {:path path
+                              :in in
+                              :schema [:oneof_edn]
+                              :value value
+                              :message (str "unexpected keys: " (vec extra-keys))})
+                    
+                    (zero? (count non-nil-fields))
+                    (conj acc {:path path
+                              :in in
+                              :schema [:oneof_edn]
+                              :value value
+                              :message "must have exactly one non-nil field"})
+                    
+                    (> (count non-nil-fields) 1)
+                    (conj acc {:path path
+                              :in in
+                              :schema [:oneof_edn]
+                              :value value
+                              :message (str "multiple non-nil fields: " (vec non-nil-fields))})
+                    
+                    :else acc)))))
+          
+          (-parser [_] 
+            (let [parsers (into {} (map (fn [[k schema]]
+                                          [k (m/parser schema)])
+                                        entries))]
+              (fn [value]
+                (when (map? value)
+                  (let [non-nil-fields (filter #(some? (get value %)) field-keys)]
+                    (when (= 1 (count non-nil-fields))
+                      (let [active-key (first non-nil-fields)
+                            parser (get parsers active-key)]
+                        (when-let [parsed (parser (get value active-key))]
+                          {active-key parsed}))))))))
+          
+          (-unparser [_]
+            (let [unparsers (into {} (map (fn [[k schema]]
+                                            [k (m/unparser schema)])
+                                          entries))]
+              (fn [value]
+                (when (map? value)
+                  (let [non-nil-fields (filter #(some? (get value %)) field-keys)]
+                    (when (= 1 (count non-nil-fields))
+                      (let [active-key (first non-nil-fields)
+                            unparser (get unparsers active-key)]
+                        (when-let [unparsed (unparser (get value active-key))]
+                          {active-key unparsed}))))))))
+          
+          (-transformer [this transformer method options]
+            (let [this-transformer (m/-value-transformer transformer this method options)]
+              (if (seq entries)
+                (let [transformers (mapv (fn [[k schema]]
+                                           [k (m/-transformer schema transformer method options)])
+                                         entries)
+                      transform-map (into {} transformers)]
+                  (m/-intercepting this-transformer
+                    (fn [value]
+                      (if (map? value)
+                        (reduce-kv (fn [acc k v]
+                                    (if-let [transformer (get transform-map k)]
+                                      (assoc acc k (transformer v))
+                                      (assoc acc k v)))
+                                  {}
+                                  value)
+                        value))))
+                this-transformer)))
+          
+          (-walk [this walker path options]
+            (when (m/-accept walker this path options)
+              (m/-outer walker this path (mapv (fn [[k schema]]
+                                                 [k (m/-walk schema walker (conj path k) options)])
+                                               entries) options)))
+          
+          (-properties [_] properties)
+          (-options [_] options)
+          (-children [_] entries)
+          (-parent [_] :oneof_edn)
+          (-form [_] form))))))
 
-;; Generator for oneof-edn schemas
-;; Efficient: generates exactly ONE field with a non-nil value
+;; Register the schema
+(def _ONeof-edn-schema (-oneof-edn-schema))
+
+;; Generator for oneof_edn schemas
 (defmethod mg/-schema-generator :oneof_edn [schema options]
-  (let [children (m/children schema)
-        properties (m/properties schema)
-        ;; Handle both property-style and children-style definitions
-        field-map (if (and (empty? children) (map? properties))
-                    (dissoc properties :error/message)
-                    (apply hash-map children))]
-    (if (empty? field-map)
+  (let [children (m/children schema)]
+    (if (empty? children)
       (gen/return {})
-      ;; Efficiently generate exactly one field - no wasted generation
+      ;; Pick one entry and generate only that field
+      ;; Children are already [key schema] pairs where schema is a parsed Schema object
       (gen/bind
-       (gen/elements (keys field-map))
-       (fn [field-name]
+       (gen/elements children)
+       (fn [[field-key field-schema]]
          (gen/fmap
           (fn [field-value]
-            ;; Returns a map with only the selected field set
-            {field-name field-value})
-          (mg/generator (get field-map field-name) options)))))))
+            {field-key field-value})
+          (mg/generator field-schema options)))))))
 
 (defn register_ONeof-edn-schema!
   "Register the :oneof_edn schema type"

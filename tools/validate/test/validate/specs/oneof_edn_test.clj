@@ -18,9 +18,9 @@
 (deftest oneof-edn-nil-handling-test
   (testing "oneof-edn treats nil values as absent"
     (let [schema [:oneof_edn
-                  :field-a :string
-                  :field-b :int
-                  :field-c [:map [:x :int]]]]
+                  [:field-a :string]
+                  [:field-b :int]
+                  [:field-c [:map [:x :int]]]]]
       
       (testing "Valid cases - exactly one non-nil field"
         (is (m/validate schema {:field-a "test"}))
@@ -51,14 +51,13 @@
 (deftest oneof-edn-generator-test
   (testing "Generator produces exactly one field"
     (let [schema [:oneof_edn
-                  :field-a :string
-                  :field-b :int
-                  :field-c :boolean]
-          gen (mg/generator schema)]
+                  [:field-a :string]
+                  [:field-b :int]
+                  [:field-c :boolean]]]
       
       (testing "Generated values have exactly one key"
         (dotimes [_ 20]
-          (let [generated (mg/generate gen)]
+          (let [generated (mg/generate schema)]
             (is (= 1 (count generated))
                 (str "Generated map should have exactly 1 key, got: " generated))
             (is (contains? #{:field-a :field-b :field-c} (first (keys generated)))
@@ -69,15 +68,15 @@
 (deftest oneof-edn-complex-schema-test
   (testing "oneof-edn with complex nested schemas"
     (let [schema [:oneof_edn
-                  :command [:map {:closed true}
-                           [:type [:enum :ping :pong]]
-                           [:id :int]]
-                  :query [:map {:closed true}
-                         [:sql :string]
-                         [:params [:vector :any]]]
-                  :event [:map {:closed true}
-                         [:name :keyword]
-                         [:data :any]]]]
+                  [:command [:map {:closed true}
+                            [:type [:enum :ping :pong]]
+                            [:id :int]]]
+                  [:query [:map {:closed true}
+                          [:sql :string]
+                          [:params [:vector :any]]]]
+                  [:event [:map {:closed true}
+                          [:name :keyword]
+                          [:data :any]]]]]
       
       (testing "Valid complex values"
         (is (m/validate schema {:command {:type :ping :id 1}}))
@@ -99,8 +98,8 @@
 (deftest oneof-edn-error-messages-test
   (testing "Validation correctly identifies errors"
     (let [schema [:oneof_edn
-                  :option-a :string
-                  :option-b :int]]
+                  [:option-a :string]
+                  [:option-b :int]]]
       
       (testing "Correctly rejects invalid values"
         (is (not (m/validate schema {}))
@@ -125,9 +124,9 @@
 (deftest oneof-edn-closed-behavior-test
   (testing "oneof-edn acts as a closed map - rejects extra keys"
     (let [schema [:oneof_edn
-                  :field-a :string
-                  :field-b :int
-                  :field-c :boolean]]
+                  [:field-a :string]
+                  [:field-b :int]
+                  [:field-c :boolean]]]
       
       (testing "Rejects extra keys even with nil values"
         (is (not (m/validate schema {:field-a "test" :extra-key nil}))
@@ -167,12 +166,12 @@
 (deftest oneof-edn-closed-complex-test
   (testing "Closed behavior with complex nested schemas"
     (let [schema [:oneof_edn
-                  :command [:map {:closed true}
-                           [:type [:enum :ping :pong]]
-                           [:id :int]]
-                  :query [:map {:closed true}
-                         [:sql :string]
-                         [:params [:vector :any]]]]]
+                  [:command [:map {:closed true}
+                            [:type [:enum :ping :pong]]
+                            [:id :int]]]
+                  [:query [:map {:closed true}
+                          [:sql :string]
+                          [:params [:vector :any]]]]]
       
       (testing "Rejects extra keys at oneof level"
         (is (not (m/validate schema {:command {:type :ping :id 1} :extra nil}))
@@ -189,14 +188,14 @@
       (testing "Accepts valid data"
         (is (m/validate schema {:command {:type :ping :id 1}}))
         (is (m/validate schema {:query {:sql "SELECT 1" :params []}}))
-        (is (m/validate schema {:command {:type :ping :id 1} :query nil}))))))
+        (is (m/validate schema {:command {:type :ping :id 1} :query nil})))))
 
 (deftest oneof-edn-pronto-compatibility-test
   (testing "Compatible with Pronto EDN where all fields exist but inactive ones are nil"
     (let [schema [:oneof_edn
-                  :ping [:map {:closed true} [:id :int]]
-                  :rotary [:map {:closed true} [:angle :double]]
-                  :cv [:map {:closed true} [:command :string]]]
+                  [:ping [:map {:closed true} [:id :int]]]
+                  [:rotary [:map {:closed true} [:angle :double]]]
+                  [:cv [:map {:closed true} [:command :string]]]]
           ;; Simulating Pronto EDN with all fields present
           pronto-style-ping {:ping {:id 123} :rotary nil :cv nil}
           pronto-style-rotary {:ping nil :rotary {:angle 45.5} :cv nil}
@@ -222,3 +221,57 @@
             "Should reject extra field even with nil")
         (is (not (m/validate schema {:ping {:id 123} :unknown-cmd nil}))
             "Should reject unknown command field")))))
+
+(deftest oneof-edn-integration-with-maps-test
+  (testing "Integration with regular map schemas using :merge"
+    (let [base-spec [:map {:closed true}
+                     [:protocol_version :int]
+                     [:client_type :keyword]]
+          oneof-spec [:oneof_edn
+                      [:ping [:map [:id :int]]]
+                      [:cmd [:map [:action :string]]]]
+          ;; Test that oneof can be used alongside regular map validation
+          combined-validator (fn [value]
+                              (and (m/validate base-spec value)
+                                   (m/validate oneof-spec value)))]
+      
+      (testing "Combined validation works"
+        (is (combined-validator {:protocol_version 1
+                                 :client_type :local
+                                 :ping {:id 123}}))
+        (is (combined-validator {:protocol_version 2
+                                 :client_type :remote
+                                 :cmd {:action "execute"}})))
+      
+      (testing "Fails when base validation fails"
+        (is (not (combined-validator {:ping {:id 123}}))) ; missing required fields
+        (is (not (combined-validator {:protocol_version "not-int"
+                                      :client_type :local
+                                      :ping {:id 123}}))))
+      
+      (testing "Fails when oneof validation fails"
+        (is (not (combined-validator {:protocol_version 1
+                                      :client_type :local}))) ; no command
+        (is (not (combined-validator {:protocol_version 1
+                                      :client_type :local
+                                      :ping {:id 123}
+                                      :cmd {:action "test"}}))))))) ; multiple commands
+
+(deftest oneof-edn-generator-coverage-test
+  (testing "Generator covers all alternatives"
+    (let [schema [:oneof_edn
+                  [:a :string]
+                  [:b :int]
+                  [:c :boolean]]
+          samples (repeatedly 100 #(mg/generate schema))
+          keys-generated (set (mapcat keys samples))]
+      
+      (testing "All alternatives are generated"
+        (is (contains? keys-generated :a) "Should generate :a alternative")
+        (is (contains? keys-generated :b) "Should generate :b alternative")
+        (is (contains? keys-generated :c) "Should generate :c alternative"))
+      
+      (testing "Each generated value is valid"
+        (doseq [sample samples]
+          (is (m/validate schema sample)
+              (str "Generated value should be valid: " sample)))))))
