@@ -1,4 +1,4 @@
-(ns validate.specs.oneof-edn-test
+(ns validate.specs.oneof_edn_test
   "Tests for oneof-edn schema with nil value handling"
   (:require
    [clojure.test :refer [deftest testing is]]

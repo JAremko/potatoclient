@@ -3,11 +3,46 @@
 ## Overview
 This document provides a comprehensive schema reference for the command and state protobuf messages used in the system. All fields include their types and buf.validate constraints.
 
+For detailed exploration of any message type, use the proto-explorer tool:
+```bash
+# Search for a message
+make proto-search QUERY=<message_name>
+
+# Get complete details including Pronto EDN and Java mappings
+make proto-info QUERY='<java_class_name>'
+```
+
 ## Table of Contents
-1. [State Messages (ser.JonGUIState)](#state-messages)
-2. [Command Messages (cmd.Root)](#command-messages)
-3. [Common Enumerations](#common-enumerations)
-4. [Validation Constraints Reference](#validation-constraints-reference)
+1. [Quick Reference](#quick-reference)
+2. [State Messages (ser.JonGUIState)](#state-messages)
+3. [Command Messages (cmd.Root)](#command-messages)
+4. [Common Enumerations](#common-enumerations)
+5. [Validation Constraints Reference](#validation-constraints-reference)
+6. [Proto-Explorer Integration](#proto-explorer-integration)
+7. [Troubleshooting](#troubleshooting)
+
+---
+
+## Quick Reference
+
+### Most Common Messages
+
+| Message Type | Java Class | Proto-Explorer Query |
+|-------------|------------|---------------------|
+| State Root | `ser.JonSharedData$JonGUIState` | `make proto-info QUERY='ser.JonSharedData$JonGUIState'` |
+| Command Root | `cmd.JonSharedCmd$Root` | `make proto-info QUERY='cmd.JonSharedCmd$Root'` |
+| GPS State | `ser.JonSharedDataGps$JonGuiDataGps` | `make proto-info QUERY='ser.JonSharedDataGps$JonGuiDataGps'` |
+| Rotary Commands | `cmd.RotaryPlatform.JonSharedCmdRotary$Root` | `make proto-info QUERY='cmd.RotaryPlatform.JonSharedCmdRotary$Root'` |
+
+### Critical Validation Rules
+
+| Field Type | Common Constraints | Example |
+|------------|-------------------|---------|
+| GPS Coordinates | lon: [-180, 180], lat: [-90, 90] | `longitude: -122.4194` |
+| Angles | azimuth: [0, 360), elevation: [-90, 90] | `azimuth: 45.0` |
+| Normalized Values | [0.0, 1.0] | `zoom_pos: 0.5` |
+| Speeds | [-1.0, 1.0] | `azimuth_speed: 0.8` |
+| Protocol Version | > 0 | `protocol_version: 1` |
 
 ---
 
@@ -16,7 +51,8 @@ This document provides a comprehensive schema reference for the command and stat
 ### ser.JonGUIState (Root State Container)
 **Proto File:** `jon_shared_data.proto`  
 **Java Class:** `ser.JonSharedData$JonGUIState`  
-**Purpose:** Main container for all system state information
+**Purpose:** Main container for all system state information  
+**Proto-Explorer:** `make proto-info QUERY='ser.JonSharedData$JonGUIState'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -37,7 +73,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### ser.JonGuiDataSystem
 **Java Class:** `ser.JonSharedDataSystem$JonGuiDataSystem`  
-**Purpose:** System health and operational status
+**Purpose:** System health and operational status  
+**Proto-Explorer:** `make proto-info QUERY='ser.JonSharedDataSystem$JonGuiDataSystem'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -61,7 +98,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### ser.JonGuiDataGps
 **Java Class:** `ser.JonSharedDataGps$JonGuiDataGps`  
-**Purpose:** GPS position and fix information
+**Purpose:** GPS position and fix information  
+**Proto-Explorer:** `make proto-info QUERY='ser.JonSharedDataGps$JonGuiDataGps'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -76,7 +114,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### ser.JonGuiDataCompass
 **Java Class:** `ser.JonSharedDataCompass$JonGuiDataCompass`  
-**Purpose:** Compass orientation data
+**Purpose:** Compass orientation data  
+**Proto-Explorer:** `make proto-info QUERY='ser.JonSharedDataCompass$JonGuiDataCompass'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -90,7 +129,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### ser.JonGuiDataRotary
 **Java Class:** `ser.JonSharedDataRotary$JonGuiDataRotary`  
-**Purpose:** Rotary platform position and status
+**Purpose:** Rotary platform position and status  
+**Proto-Explorer:** `make proto-info QUERY='ser.JonSharedDataRotary$JonGuiDataRotary'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -218,7 +258,8 @@ This document provides a comprehensive schema reference for the command and stat
 ### cmd.Root
 **Proto File:** `jon_shared_cmd.proto`  
 **Java Class:** `cmd.JonSharedCmd$Root`  
-**Purpose:** Root command container with payload selection
+**Purpose:** Root command container with payload selection  
+**Proto-Explorer:** `make proto-info QUERY='cmd.JonSharedCmd$Root'`
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
@@ -241,15 +282,13 @@ This document provides a comprehensive schema reference for the command and stat
 | 27 | osd | cmd.OSD.Root | OSD commands |
 | 28 | ping | cmd.Ping | Ping command |
 | 29 | noop | cmd.Noop | No operation |
-| 30 | frozen | cmd.Frozen | Frozen command |
-| 31 | system | cmd.System.Root | System commands |
-| 32 | cv | cmd.CV.Root | Computer vision commands |
-| 33 | day_cam_glass_heater | cmd.DayCamGlassHeater.Root | Glass heater commands |
-| 34 | lira | cmd.Lira.Root | LIRA commands |
+
+**Note:** Additional payload fields may exist beyond field 29. Use `make proto-info QUERY='cmd.JonSharedCmd$Root'` to see the complete list.
 
 ### cmd.DayCamera.Root
 **Java Class:** `cmd.DayCamera.JonSharedCmdDayCamera$Root`  
-**Purpose:** Day camera command selection (17 commands)
+**Purpose:** Day camera command selection (17 commands)  
+**Proto-Explorer:** `make proto-info QUERY='cmd.DayCamera.JonSharedCmdDayCamera$Root'`
 
 **Available Commands (one-of):**
 - `focus`: Focus control commands
@@ -272,7 +311,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### cmd.HeatCamera.Root
 **Java Class:** `cmd.HeatCamera.JonSharedCmdHeatCamera$Root`  
-**Purpose:** Heat camera command selection (31 commands)
+**Purpose:** Heat camera command selection (31 commands)  
+**Proto-Explorer:** `make proto-info QUERY='cmd.HeatCamera.JonSharedCmdHeatCamera$Root'`
 
 **Available Commands (one-of):**
 - Focus controls: `focus_in`, `focus_out`, `focus_step`, `focus_stop`
@@ -288,7 +328,8 @@ This document provides a comprehensive schema reference for the command and stat
 
 ### cmd.RotaryPlatform.Root
 **Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$Root`  
-**Purpose:** Rotary platform command selection (24 commands)
+**Purpose:** Rotary platform command selection (24 commands)  
+**Proto-Explorer:** `make proto-info QUERY='cmd.RotaryPlatform.JonSharedCmdRotary$Root'`
 
 **Available Commands (one-of):**
 - Movement: `move`, `stop`, `targeting`, `targeting_gps`
@@ -298,37 +339,41 @@ This document provides a comprehensive schema reference for the command and stat
 - GPS targeting: `move_to_gps`
 - Platform adjustments: `set_platform_bank`, `set_platform_elevation`
 
-### cmd.RotaryPlatform.Move
-**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$Move`  
-**Purpose:** Rotary movement command
+### cmd.RotaryPlatform.RotateAzimuthTo
+**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuthTo`  
+**Purpose:** Rotate to absolute azimuth position
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
-| 1 | azimuth_speed | float | `gte: -1.0, lte: 1.0` | Azimuth speed (-1 to 1) |
-| 2 | elevation_speed | float | `gte: -1.0, lte: 1.0` | Elevation speed (-1 to 1) |
+| 1 | target_value | float | `gte: 0.0, lt: 360.0` | Target azimuth angle |
+| 2 | speed | float | `gte: 0.0, lte: 1.0` | Movement speed (0-1) |
+| 3 | direction | enum | `defined_only: true, not_in: 0` | Rotation direction |
 
-### cmd.RotaryPlatform.SetPosition
-**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$SetPosition`  
-**Purpose:** Set absolute position
-
-| Field | Name | Type | Constraints | Description |
-|-------|------|------|-------------|-------------|
-| 1 | azimuth | float | `gte: 0.0, lt: 360.0` | Target azimuth |
-| 2 | elevation | float | `gte: -90.0, lte: 90.0` | Target elevation |
-
-### cmd.RotaryPlatform.ScanAddNode
-**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$ScanAddNode`  
-**Purpose:** Add scan node
+### cmd.RotaryPlatform.RotateElevationTo
+**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$RotateElevationTo`  
+**Purpose:** Rotate to absolute elevation position
 
 | Field | Name | Type | Constraints | Description |
 |-------|------|------|-------------|-------------|
-| 1 | index | int32 | `gte: 0` | Node index |
-| 2 | DayZoomTableValue | int32 | `gte: 0` | Day zoom setting |
-| 3 | HeatZoomTableValue | int32 | `gte: 0` | Heat zoom setting |
-| 4 | azimuth | double | `gte: 0.0, lt: 360.0` | Node azimuth |
-| 5 | elevation | double | `gte: -90.0, lte: 90.0` | Node elevation |
-| 6 | linger | double | `gte: 0` | Dwell time |
-| 7 | speed | double | `gt: 0.0, lte: 1.0` | Movement speed |
+| 1 | target_value | float | `gte: -90.0, lte: 90.0` | Target elevation angle |
+| 2 | speed | float | `gte: 0.0, lte: 1.0` | Movement speed (0-1) |
+
+### cmd.RotaryPlatform.RotateAzimuth
+**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$RotateAzimuth`  
+**Purpose:** Continuous azimuth rotation
+
+| Field | Name | Type | Constraints | Description |
+|-------|------|------|-------------|-------------|
+| 1 | speed | float | `gte: 0.0, lte: 1.0` | Rotation speed |
+| 2 | direction | enum | `defined_only: true, not_in: 0` | Rotation direction |
+
+### cmd.RotaryPlatform.ScanSelectNode
+**Java Class:** `cmd.RotaryPlatform.JonSharedCmdRotary$ScanSelectNode`  
+**Purpose:** Select a specific scan node
+
+| Field | Name | Type | Constraints | Description |
+|-------|------|------|-------------|-------------|
+| 1 | node_index | int32 | `gte: 0` | Index of node to select |
 
 ---
 
@@ -445,6 +490,7 @@ This document provides a comprehensive schema reference for the command and stat
 ## Usage Examples
 
 ### Creating a State Message
+
 ```protobuf
 ser.JonGUIState state = {
   protocol_version: 1,  // Must be > 0
@@ -456,7 +502,36 @@ ser.JonGUIState state = {
 };
 ```
 
+**Pronto EDN Representation:**
+```clojure
+{:protocol-version 1
+ :system {:cpu-temperature 45.0
+          :gpu-temperature 50.0
+          :cpu-load 25.0
+          :gpu-load 30.0
+          :power-consumption 150.0
+          :loc :jon-gui-data-system-localization-en
+          :rec-enabled false
+          :disk-space 75}
+ :gps {:longitude -122.4194
+       :latitude 37.7749
+       :altitude 52.0
+       :fix-type :jon-gui-data-gps-fix-type-3d
+       :use-manual false}
+ :compass {:azimuth 45.0
+           :elevation 10.0
+           :bank 0.0
+           :calibrating false}
+ :rotary {:azimuth 45.0
+          :elevation 10.0
+          :is-moving false
+          :mode :jon-gui-data-rotary-mode-position}
+ ;; ... other required fields
+}
+```
+
 ### Creating a Command Message
+
 ```protobuf
 cmd.Root command = {
   protocol_version: 1,  // Must be > 0
@@ -471,6 +546,91 @@ cmd.Root command = {
     }
   }
 };
+```
+
+**Pronto EDN Representation:**
+```clojure
+{:protocol-version 1
+ :session-id 12345
+ :client-type :jon-gui-data-client-type-local-network
+ :day-camera {:zoom {:target-value 0.5
+                     :speed 0.8}}}
+```
+
+### Real-World Example: Rotary Platform Movement
+
+```clojure
+;; Rotate to specific azimuth position
+{:protocol-version 1
+ :session-id (System/currentTimeMillis)
+ :client-type :jon-gui-data-client-type-local-network
+ :rotary {:axis {:azimuth {:rotate-to {:target-value 120.5
+                                       :speed 0.8
+                                       :direction :jon-gui-data-rotary-direction-clockwise}}}}}
+
+;; Start continuous rotation
+{:protocol-version 1
+ :session-id (System/currentTimeMillis)
+ :client-type :jon-gui-data-client-type-local-network
+ :rotary {:axis {:azimuth {:rotate {:speed 0.5 ;; 50% speed
+                                    :direction :jon-gui-data-rotary-direction-clockwise}}}}}
+```
+
+### Java Class Method Examples
+
+Common Java methods for working with protobuf messages (get full list with `make proto-info`):
+
+#### Reading State Messages
+```java
+// ser.JonSharedData$JonGUIState
+JonGUIState state = ...;
+int version = state.getProtocolVersion();
+JonGuiDataSystem system = state.getSystem();
+JonGuiDataGps gps = state.getGps();
+boolean hasGps = state.hasGps();
+
+// ser.JonSharedDataGps$JonGuiDataGps
+JonGuiDataGps gps = ...;
+double lon = gps.getLongitude();
+double lat = gps.getLatitude();
+double alt = gps.getAltitude();
+FixType fixType = gps.getFixType();
+boolean useManual = gps.getUseManual();
+```
+
+#### Building Command Messages
+```java
+// cmd.JonSharedCmd$Root
+Root.Builder cmdBuilder = Root.newBuilder()
+    .setProtocolVersion(1)
+    .setSessionId(12345)
+    .setClientType(ClientType.LOCAL_NETWORK);
+
+// Add rotary command
+RotaryPlatform.Root.Builder rotaryCmd = RotaryPlatform.Root.newBuilder()
+    .setSetPosition(RotaryPlatform.SetPosition.newBuilder()
+        .setAzimuth(120.5f)
+        .setElevation(45.0f));
+
+cmdBuilder.setRotary(rotaryCmd);
+Root command = cmdBuilder.build();
+```
+
+#### Validation Helpers
+```java
+// Check if value is within GPS coordinate range
+boolean isValidLongitude(double lon) {
+    return lon >= -180.0 && lon <= 180.0;
+}
+
+boolean isValidLatitude(double lat) {
+    return lat >= -90.0 && lat <= 90.0;
+}
+
+// Check angle ranges
+boolean isValidAzimuth(double az) {
+    return az >= 0.0 && az < 360.0;
+}
 ```
 
 ### Validation Examples
@@ -505,6 +665,139 @@ ser.JonGUIState state = {
 
 ---
 
+## Proto-Explorer Integration
+
+### Discovering Messages
+
+Use proto-explorer to find and explore any message in the codebase:
+
+```bash
+# Find all GPS-related messages
+make proto-search QUERY=gps
+
+# Find all command messages
+make proto-search QUERY=cmd
+
+# List all messages in a package
+make proto-list FILTER=ser
+make proto-list FILTER=cmd.RotaryPlatform
+```
+
+### Getting Detailed Information
+
+For any message in this document, get complete details including:
+- Java class methods
+- Pronto EDN structure
+- Pronto schema
+- buf.validate constraints
+
+```bash
+# Get full details for GPS state
+make proto-info QUERY='ser.JonSharedDataGps$JonGuiDataGps'
+
+# Output includes:
+# - Field details with constraints
+# - Pronto EDN structure: {:longitude 0.0, :latitude 0.0, ...}
+# - Pronto schema: {:longitude double, :latitude double, ...}
+# - Java methods: getLongitude(), getLatitude(), etc.
+```
+
+### Common Patterns
+
+```bash
+# Pattern 1: Find message → Get details
+make proto-search QUERY=rotary
+# Find: RotateAzimuthTo → cmd.RotaryPlatform$RotateAzimuthTo
+make proto-info QUERY='cmd.RotaryPlatform$RotateAzimuthTo'
+
+# Pattern 2: Explore subsystem
+make proto-list FILTER=cmd.DayCamera
+# See all day camera commands
+make proto-info QUERY='cmd.DayCamera.JonSharedCmdDayCamera$SetZoom'
+
+# Pattern 3: Check validation constraints
+make proto-info QUERY='ser.JonSharedDataGps$JonGuiDataGps'
+# See all GPS field constraints
+```
+
+---
+
+## Troubleshooting
+
+### Common Validation Errors
+
+#### Error: Protocol version must be > 0
+```clojure
+;; WRONG
+{:protocol-version 0 ...}  ;; Error: gt: 0
+
+;; CORRECT
+{:protocol-version 1 ...}
+```
+
+#### Error: Enum value 0 (UNSPECIFIED) not allowed
+```clojure
+;; WRONG
+{:fix-type 0 ...}  ;; Error: not_in: 0
+
+;; CORRECT
+{:fix-type :jon-gui-data-gps-fix-type-3d ...}
+```
+
+#### Error: Angle out of range
+```clojure
+;; WRONG - Azimuth must be < 360
+{:azimuth 360.0 ...}  ;; Error: lt: 360.0
+
+;; CORRECT
+{:azimuth 359.9 ...}  ;; or use 0.0 for north
+```
+
+#### Error: Missing required field
+```clojure
+;; WRONG - Missing required 'system' field
+{:protocol-version 1
+ :gps {...}
+ :compass {...}}
+
+;; CORRECT - All required fields present
+{:protocol-version 1
+ :system {...}
+ :gps {...}
+ :compass {...}
+ :rotary {...}
+ ;; ... all other required fields
+}
+```
+
+### Proto-Explorer Troubleshooting
+
+#### Class not found
+```bash
+# If exact class name doesn't work, search first
+make proto-search QUERY=YourMessage
+# Use the Java class name from results
+```
+
+#### Dollar sign in shell
+```bash
+# WRONG - $ interpreted by shell
+make proto-info QUERY=cmd.JonSharedCmd$Root
+
+# CORRECT - Use single quotes
+make proto-info QUERY='cmd.JonSharedCmd$Root'
+```
+
+#### Finding nested messages
+```bash
+# Search for the parent message first
+make proto-search QUERY=RotaryPlatform
+# Then explore specific commands
+make proto-info QUERY='cmd.RotaryPlatform.JonSharedCmdRotary$Move'
+```
+
+---
+
 ## Notes and Best Practices
 
 1. **Protocol Version**: Always set `protocol_version > 0` in both command and state messages
@@ -522,3 +815,5 @@ ser.JonGUIState state = {
     - Temperature: Celsius
     - Speed: normalized (-1 to 1)
     - Time: Unix timestamp (int64)
+11. **Proto-Explorer**: Use `make proto-info` to get Java methods and Pronto schemas for any message
+12. **Validation Testing**: Always test edge cases at constraint boundaries

@@ -25,7 +25,7 @@
     (-type-properties [_] nil)
     (-properties-schema [_ _] nil)
     (-children-schema [_ _] nil)
-    (-into-schema [_ properties children options]
+    (-into-schema [parent properties children options]
       (when (empty? children)
         (m/-fail! ::no-children {:type :oneof_edn}))
       ;; Parse children as [key schema] pairs
@@ -149,7 +149,7 @@
           (-properties [_] properties)
           (-options [_] options)
           (-children [_] entries)
-          (-parent [_] :oneof_edn)
+          (-parent [_] parent)
           (-form [_] form))))))
 
 ;; Register the schema
