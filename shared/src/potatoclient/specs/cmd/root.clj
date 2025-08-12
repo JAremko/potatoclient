@@ -23,9 +23,12 @@
    [potatoclient.specs.cmd.rotary]
    [potatoclient.specs.cmd.system]))
 
-;; Root spec that directly represents the protobuf structure
-;; The commands are at the top level (not nested under a :command field)
-;; This matches the Pronto EDN output where one command field is non-nil
+;; Define the command fields as a set for validation
+(def command-fields
+  #{:cv :day_camera :heat_camera :gps :compass :lrf :lrf_calib 
+    :rotary :osd :ping :noop :frozen :system :day_cam_glass_heater :lira})
+
+;; The flat spec that matches protobuf structure
 (def jon-shared-cmd-root-spec
   [:map {:closed true}
    ;; Required fields
@@ -35,7 +38,7 @@
    [:session_id {:optional true} :int]
    [:important {:optional true} :boolean]
    [:from_cv_subsystem {:optional true} :boolean]
-   ;; All command fields as optional (oneof behavior enforced by custom validator)
+   ;; All command fields as optional (oneof behavior enforced by validator)
    [:cv {:optional true} [:maybe :cmd/cv]]
    [:day_camera {:optional true} [:maybe :cmd/day-camera]]
    [:heat_camera {:optional true} [:maybe :cmd/heat-camera]]
@@ -52,63 +55,52 @@
    [:day_cam_glass_heater {:optional true} [:maybe :cmd/day-cam-glass-heater]]
    [:lira {:optional true} [:maybe :cmd/lira]]])
 
-;; Alternative: If we want to enforce the oneof at schema level,
-;; we need to extract just the command fields as a separate oneof
+;; Add validation for exactly one command
 (def jon-shared-cmd-root-spec-with-validation
   [:and
    jon-shared-cmd-root-spec
    [:fn {:error/message "must have exactly one command field"}
     (fn [value]
-      (let [command-fields #{:cv :day_camera :heat_camera :gps :compass :lrf 
-                            :lrf_calib :rotary :osd :ping :noop :frozen 
-                            :system :day_cam_glass_heater :lira}
-            present-cmds (filter #(contains? value %) command-fields)
+      (let [present-cmds (filter #(contains? value %) command-fields)
             non-nil-cmds (filter #(some? (get value %)) present-cmds)]
         (= 1 (count non-nil-cmds))))]])
 
-;; Custom generator that ensures exactly one command
+;; Generator using oneof_edn internally (much cleaner!)
+;; We create a temporary nested structure for generation, then flatten it
 (defmethod mg/-schema-generator :cmd/root [_ options]
-  (gen/bind
-   (gen/tuple
-    ;; Required fields
-    (mg/generator :proto/protocol-version options)
-    (mg/generator :proto/client-type options)
-    ;; Optional fields
-    (gen/elements [nil (gen/generate (mg/generator :int options))])
-    (gen/elements [nil true false])
-    (gen/elements [nil true false])
-    ;; Pick one command
-    (gen/elements [:cv :day_camera :heat_camera :gps :compass :lrf 
-                  :lrf_calib :rotary :osd :ping :noop :frozen 
-                  :system :day_cam_glass_heater :lira]))
-   (fn [[pv ct session important from-cv cmd-key]]
-     (gen/fmap
-      (fn [cmd-value]
-        (cond-> {:protocol_version pv
-                 :client_type ct
-                 cmd-key cmd-value}
-          session (assoc :session_id session)
-          (some? important) (assoc :important important)
-          (some? from-cv) (assoc :from_cv_subsystem from-cv)))
-      ;; Generate value for the selected command
-      (mg/generator 
-       (case cmd-key
-         :cv :cmd/cv
-         :day_camera :cmd/day-camera
-         :heat_camera :cmd/heat-camera
-         :gps :cmd/gps
-         :compass :cmd/compass
-         :lrf :cmd/lrf
-         :lrf_calib :cmd/lrf-align
-         :rotary :cmd/rotary
-         :osd :cmd/osd
-         :ping :cmd/ping
-         :noop :cmd/noop
-         :frozen :cmd/frozen
-         :system :cmd/system
-         :day_cam_glass_heater :cmd/day-cam-glass-heater
-         :lira :cmd/lira)
-       options)))))
+  (let [;; Internal schema with oneof_edn for generation
+        internal-schema [:map {:closed true}
+                        [:protocol_version :proto/protocol-version]
+                        [:client_type :proto/client-type]
+                        [:session_id {:optional true} :int]
+                        [:important {:optional true} :boolean]
+                        [:from_cv_subsystem {:optional true} :boolean]
+                        ;; Use oneof_edn for command generation!
+                        [:_command [:oneof_edn
+                                   [:cv :cmd/cv]
+                                   [:day_camera :cmd/day-camera]
+                                   [:heat_camera :cmd/heat-camera]
+                                   [:gps :cmd/gps]
+                                   [:compass :cmd/compass]
+                                   [:lrf :cmd/lrf]
+                                   [:lrf_calib :cmd/lrf-align]
+                                   [:rotary :cmd/rotary]
+                                   [:osd :cmd/osd]
+                                   [:ping :cmd/ping]
+                                   [:noop :cmd/noop]
+                                   [:frozen :cmd/frozen]
+                                   [:system :cmd/system]
+                                   [:day_cam_glass_heater :cmd/day-cam-glass-heater]
+                                   [:lira :cmd/lira]]]]
+        ;; Generate from internal schema
+        internal-gen (mg/generator internal-schema options)]
+    ;; Transform: merge command field into root level
+    (gen/fmap
+     (fn [generated]
+       (let [command (:_command generated)
+             base (dissoc generated :_command)]
+         (merge base command)))
+     internal-gen)))
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec-with-validation)
 (registry/register! :jon_shared_cmd_root jon-shared-cmd-root-spec-with-validation)

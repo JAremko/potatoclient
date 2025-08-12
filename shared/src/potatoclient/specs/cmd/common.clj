@@ -18,9 +18,8 @@
 
 (registry/register! :cmd/noop noop-command-spec)
 
-;; Frozen command (freeze state)
+;; Frozen command (freeze state) - empty map
 (def frozen-command-spec
-  [:map {:closed true}
-   [:flag boolean?]])
+  [:map {:closed true}])
 
 (registry/register! :cmd/frozen frozen-command-spec)
