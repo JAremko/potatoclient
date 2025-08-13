@@ -52,5 +52,4 @@
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
 
 ;(registry/setup-global-registry!)
-;
-;(mg/generate :cmd/day-camera)
+;(mg/generate :cmd/heat-camera)
