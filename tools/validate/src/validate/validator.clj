@@ -18,7 +18,9 @@
    [build.buf.protovalidate Validator ValidationResult]
    [com.google.protobuf Message InvalidProtocolBufferException]
    [java.io ByteArrayInputStream FileInputStream InputStream]
-   [java.nio.file Files Path Paths]))
+   [java.nio.file Files Path Paths]
+   [ser JonSharedData$JonGUIState]
+   [cmd JonSharedCmd$Root]))
 
 ;; Initialize the Malli registry with oneof-edn schema
 (do
@@ -71,9 +73,8 @@
   "Parse binary data as a state root message (ser.JonSharedData$JonGUIState)."
   [binary-data]
   (try
-    (let [message-class (Class/forName "ser.JonSharedData$JonGUIState")
-          parse-method (.getMethod message-class "parseFrom" (into-array Class [(Class/forName "[B")]))]
-      (.invoke parse-method nil (object-array [binary-data])))
+    ;; Direct static method call instead of reflection
+    (ser.JonSharedData$JonGUIState/parseFrom binary-data)
     (catch InvalidProtocolBufferException e
       (log/error e "Invalid protobuf format for state message")
       (throw (ex-info "Invalid state message format" 
@@ -89,9 +90,8 @@
   "Parse binary data as a command root message (cmd.JonSharedCmd$Root)."
   [binary-data]
   (try
-    (let [message-class (Class/forName "cmd.JonSharedCmd$Root")
-          parse-method (.getMethod message-class "parseFrom" (into-array Class [(Class/forName "[B")]))]
-      (.invoke parse-method nil (object-array [binary-data])))
+    ;; Direct static method call instead of reflection
+    (cmd.JonSharedCmd$Root/parseFrom binary-data)
     (catch InvalidProtocolBufferException e
       (log/error e "Invalid protobuf format for command message")
       (throw (ex-info "Invalid command message format" 
