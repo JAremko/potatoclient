@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof-edn :as oneof-edn]))
 
 ;; CV command specs - based on proto-explorer findings
 ;; This is a oneof structure with 11 command types

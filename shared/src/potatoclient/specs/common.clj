@@ -9,29 +9,17 @@
    [clojure.test.check.generators :as gen]))
 
 ;; ====================================================================
-;; Protocol Version Spec (uint32 > 0 from buf.validate)
-;; ====================================================================
-(def protocol-version-spec
-  [:int {:min 1 :max 2147483647
-         :gen/gen (gen/choose 1 100)}])  ; Realistic range for protocol versions
-
-(registry/register! :proto/protocol-version protocol-version-spec)
-
-;; ====================================================================
-;; Angle specs (degrees) 
+;; Angle specs (degrees)
 ;; ====================================================================
 ;; Azimuth: 0-360 degrees (compass heading)
 (def azimuth-spec
-  [:double {:min 0.0 :max 360.0
-            :gen/gen (gen/double* {:min 0.0 :max 360.0 :NaN? false})}])
+  [:double {:min 0.0 :max 360.0}])
 
 (def elevation-spec
-  [:double {:min -90.0 :max 90.0
-            :gen/gen (gen/double* {:min -90.0 :max 90.0 :NaN? false})}])
+  [:double {:min -90.0 :max 90.0}])
 
 (def bank-spec
-  [:double {:min -180.0 :max 180.0
-            :gen/gen (gen/double* {:min -180.0 :max 180.0 :NaN? false})}])
+  [:double {:min -180.0 :max 180.0}])
 
 ;; Register angle specs
 (registry/register! :angle/azimuth azimuth-spec)
@@ -40,8 +28,7 @@
 
 ;; Range specs (normalized 0-1)
 (def normalized-range-spec
-  [:double {:min 0.0 :max 1.0
-            :gen/gen (gen/double* {:NaN? false :min 0.0 :max 1.0})}])
+  [:double {:min 0.0 :max 1.0}])
 
 (def zoom-level-spec normalized-range-spec)
 (def focus-level-spec normalized-range-spec)
@@ -56,8 +43,7 @@
 ;; ====================================================================
 ;; Latitude: double ∈ [-90, 90]
 (def latitude-spec
-  [:double {:min -90.0 :max 90.0
-            :gen/gen (gen/double* {:NaN? false :min -90.0 :max 90.0})}])
+  [:double {:min -90.0 :max 90.0}])
 
 ;; Longitude: double ∈ [-180, 180] (note: some proto fields use < 180)
 (def longitude-spec
@@ -179,7 +165,7 @@
   [:double {:min 0.0 :max 359.999999
             :gen/gen (gen/double* {:min 0.0 :max 359.999 :NaN? false})}])
 
-;; Rotary Elevation: float ≥ -90 and ≤ 90  
+;; Rotary Elevation: float ≥ -90 and ≤ 90
 (def rotary-elevation-spec
   [:double {:min -90.0 :max 90.0
             :gen/gen (gen/double* {:min -90.0 :max 90.0 :NaN? false})}])

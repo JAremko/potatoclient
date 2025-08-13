@@ -201,101 +201,40 @@ main() {
     
     print_success "Protogen repository cloned"
     
-    # Check if base image archive exists and is valid
-    BASE_IMAGE_PATH="$PROTOGEN_DIR/$BASE_IMAGE_ARCHIVE"
-    if [ -f "$BASE_IMAGE_PATH" ]; then
-        # Check if it's a valid gzip file (not an LFS pointer)
-        if file "$BASE_IMAGE_PATH" | grep -q "gzip compressed"; then
-            print_info "Found valid pre-built base image archive: $BASE_IMAGE_ARCHIVE"
-            print_info "Importing base image from archive..."
-            
-            if docker load < "$BASE_IMAGE_PATH"; then
-                print_success "Base image imported successfully"
-            else
-                print_warning "Failed to import base image, will build from scratch"
-            fi
-        else
-            print_info "Base image archive is an LFS pointer file, not the actual archive"
-            print_info "Will build base image from scratch"
-        fi
-    else
-        print_info "No pre-built base image found, will build from scratch"
-    fi
-    
-    # Check if base image already exists
-    if docker image inspect "$DOCKER_BASE_IMAGE" &>/dev/null; then
-        print_success "Base image already exists, skipping base build"
-    fi
-    
-    # Build Docker image
-    print_info "Building Docker image..."
+    # Build and generate using protogen's Makefile
+    print_info "Running make generate in protogen..."
     cd "$PROTOGEN_DIR"
     
-    # If the base image archive is invalid, remove it to avoid Makefile issues
-    if [ -f "$BASE_IMAGE_ARCHIVE" ] && ! file "$BASE_IMAGE_ARCHIVE" | grep -q "gzip compressed"; then
-        print_info "Removing invalid LFS pointer file"
-        rm -f "$BASE_IMAGE_ARCHIVE"
-    fi
-    
-    # Build the images
-    if ! make build; then
-        print_error "Failed to build Docker image"
+    # Check if proto directory exists in the cloned repository
+    if [ ! -d "proto" ]; then
+        print_warning "Proto directory not found in cloned repository"
+        print_error "Please ensure the protogen repository at $PROTOGEN_REPO includes the proto files"
         exit 1
     fi
     
-    cd - >/dev/null
-    print_success "Docker image built successfully"
-    
-    # Create output directory
-    TEMP_OUTPUT_DIR=$(mktemp -d -t protogen-output.XXXXXX)
-    # Setup trap for temp output directory with inline function
-    trap 'if [ -n "${TEMP_OUTPUT_DIR:-}" ] && [ -d "${TEMP_OUTPUT_DIR}" ]; then rm -rf "$TEMP_OUTPUT_DIR" 2>/dev/null || true; fi' EXIT
-    
-    print_info "Using temporary output directory: $TEMP_OUTPUT_DIR"
-    
-    # Create subdirectories
-    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "
-        mkdir -p /workspace/output/java
-    "
-    
-    # Define the Java script inline to match protogen's approach
-    JAVA_SCRIPT='
-set -e
-# Create a temporary directory for proto files
-mkdir -p /tmp/java_proto_buf
-
-# Copy proto files to temporary directory
-cp -r /workspace/proto/* /tmp/java_proto_buf/
-
-# Copy buf validate proto definitions to the expected location
-mkdir -p /tmp/java_proto_buf/buf/validate
-cp /opt/protovalidate/proto/protovalidate/buf/validate/validate.proto /tmp/java_proto_buf/buf/validate/
-
-# First, ensure all proto files have proper imports
-cd /tmp/java_proto_buf
-for proto in *.proto; do
-    if [ -f "$proto" ]; then
-        /usr/local/bin/add-validate-import.sh "$proto"
+    # Verify proto files exist
+    if [ -z "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
+        print_error "No .proto files found in the proto directory"
+        exit 1
     fi
-done
-
-# Generate using standard protoc with the validate.proto available
-protoc -I/tmp/java_proto_buf \
-    --java_out=/workspace/output/java \
-    /tmp/java_proto_buf/*.proto
-'
     
-    # Generate Java bindings WITH buf.validate annotations
-    print_info "Generating Java bindings with buf.validate annotations..."
-    # Use the Java generation script that handles buf.validate imports
-    docker run --rm -u "$(id -u):$(id -g)" -v "$TEMP_OUTPUT_DIR:/workspace/output" "$DOCKER_IMAGE" -c "$JAVA_SCRIPT"
+    print_info "Found $(find proto -name '*.proto' -type f | wc -l) proto files"
     
-    if [ $? -ne 0 ]; then
+    # Clean any existing output
+    rm -rf output/
+    
+    # Run make generate which builds the Docker image and generates all bindings
+    if ! make generate; then
         print_error "Proto generation failed"
         exit 1
     fi
     
+    cd - >/dev/null
+    
     print_success "Proto generation completed"
+    
+    # Use the output from protogen directly
+    TEMP_OUTPUT_DIR="$PROTOGEN_DIR/output"
     
     # Copy generated files to PotatoClient structure
     print_info "Cleaning old proto bindings and copying new generated files..."
@@ -304,12 +243,12 @@ protoc -I/tmp/java_proto_buf \
     print_info "Cleaning Java proto directories..."
     rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
     
-    # Copy Java files with buf.validate annotations
+    # Copy Java files from protogen output
     if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
         mkdir -p "$OUTPUT_DIR"
         cp -r "$TEMP_OUTPUT_DIR/java"/* "$OUTPUT_DIR/" 2>/dev/null || true
         print_success "Copied Java files to $OUTPUT_DIR/"
-        print_info "Note: Using protobuf bindings with buf.validate annotations preserved"
+        print_info "Note: Java bindings generated with buf.validate support"
     else
         print_error "No Java files found in output directory"
         exit 1

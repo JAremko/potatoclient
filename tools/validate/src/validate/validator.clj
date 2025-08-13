@@ -12,7 +12,7 @@
    [malli.registry :as mr]
    [potatoclient.malli.registry :as registry]
    ;; Load specs
-   [potatoclient.specs.state.root]
+   [potatoclient.specs.state-root]
    [potatoclient.specs.cmd.root])
   (:import
    [build.buf.protovalidate Validator ValidationResult]
