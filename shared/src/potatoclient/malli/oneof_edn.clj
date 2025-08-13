@@ -159,15 +159,19 @@
   (let [children (m/children schema)]
     (if (empty? children)
       (gen/return {})
-      ;; Pick one entry and generate only that field
-      ;; Children are already [key schema] pairs where schema is a parsed Schema object
+      ;; Pick one entry to be active and generate all fields
+      ;; with only the active one having a non-nil value
       (gen/bind
        (gen/elements children)
-       (fn [[field-key field-schema]]
+       (fn [[active-key active-schema]]
          (gen/fmap
-          (fn [field-value]
-            {field-key field-value})
-          (mg/generator field-schema options)))))))
+          (fn [active-value]
+            ;; Create a map with all keys, where only the active key has a non-nil value
+            (into {active-key active-value}
+                  (for [[k _] children
+                        :when (not= k active-key)]
+                    [k nil])))
+          (mg/generator active-schema options)))))))
 
 (defn register-oneof-edn-schema!
   "Register the :oneof_edn schema type in a registry.

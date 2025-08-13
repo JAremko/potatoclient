@@ -3,8 +3,10 @@
    Based on jon_shared_cmd_gps.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+    [malli.generator :as mg]
+    [malli.core :as m]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.malli.oneof-edn :as oneof-edn]))
 
 ;; GPS command specs - based on proto-explorer findings
 ;; This is a oneof structure with 5 command types

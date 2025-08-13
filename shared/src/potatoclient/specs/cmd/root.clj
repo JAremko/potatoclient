@@ -50,3 +50,5 @@
     [:lira :cmd/lira]]])
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
+
+(registry/setup-global-registry!)
