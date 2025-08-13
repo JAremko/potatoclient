@@ -5,23 +5,23 @@
    [malli.core :as m]
    [malli.registry :as mr]
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 (deftest setup-global-registry
   (testing "Global registry setup"
-    (testing "Automatically includes oneof_edn schema"
+    (testing "Automatically includes oneof schema"
       (registry/setup-global-registry!)
       
-      ;; Verify oneof_edn is available without explicit registration
-      (is (m/validate [:oneof_edn [:a :int] [:b :string]] {:a 1}))
-      (is (not (m/validate [:oneof_edn [:a :int] [:b :string]] {:a 1 :b "two"}))))
+      ;; Verify oneof is available without explicit registration
+      (is (m/validate [:oneof [:a :int] [:b :string]] {:a 1}))
+      (is (not (m/validate [:oneof [:a :int] [:b :string]] {:a 1 :b "two"}))))
     
     (testing "Can add custom schemas to registry"
       (registry/setup-global-registry! {:my/custom [:map [:id :int]]})
       
-      ;; Both oneof_edn and custom schemas should work
+      ;; Both oneof and custom schemas should work
       (is (m/validate :my/custom {:id 123}))
-      (is (m/validate [:oneof_edn [:x :int]] {:x 42})))))
+      (is (m/validate [:oneof [:x :int]] {:x 42})))))
 
 (deftest register-spec
   (testing "Registering individual specs"
@@ -69,19 +69,19 @@
     (let [current-registry (registry/get-registry)]
       (is (map? current-registry))
       ;; The get-registry function only returns the mutable portion
-      ;; oneof_edn is in the composite registry but not the mutable part
+      ;; oneof is in the composite registry but not the mutable part
       (is (contains? current-registry :test/example))
       
       ;; Verify the spec works via the global registry
       (is (m/validate :test/example {:value "test"})))))
 
-(deftest registry-with-oneof-edn
-  (testing "Registry works with oneof_edn schemas"
+(deftest registry-with-oneof
+  (testing "Registry works with oneof schemas"
     (registry/setup-global-registry!)
     
-    (testing "Can register specs using oneof_edn"
+    (testing "Can register specs using oneof"
       (registry/register-spec! :test/command
-                              [:oneof_edn
+                              [:oneof
                                [:create [:map [:name :string]]]
                                [:update [:map [:id :int] [:name :string]]]
                                [:delete [:map [:id :int]]]])
@@ -92,7 +92,7 @@
       (is (not (m/validate :test/command {})))
       (is (not (m/validate :test/command {:create {:name "a"} :delete {:id 1}}))))
     
-    (testing "Can use oneof_edn in nested specs"
+    (testing "Can use oneof in nested specs"
       (registry/register-spec! :test/request
                               [:map
                                [:id :uuid]
@@ -111,10 +111,10 @@
       (registry/setup-global-registry! 
        (merge base-registry extended-registry))
       
-      ;; oneof_edn is always included automatically
+      ;; oneof is always included automatically
       (is (m/validate :base/spec {:x 1}))
       (is (m/validate :extended/spec {:y "test"}))
-      (is (m/validate [:oneof_edn [:a :base/spec] [:b :extended/spec]]
+      (is (m/validate [:oneof [:a :base/spec] [:b :extended/spec]]
                      {:a {:x 1}})))))
 
 (deftest registry-thread-safety

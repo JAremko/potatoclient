@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; Day cam glass heater command specs - based on proto-explorer findings
 ;; This is a oneof structure with 5 command types
@@ -17,7 +17,7 @@
 
 ;; Main Day Cam Glass Heater command spec using oneof
 (def day-cam-glass-heater-command-spec
-  [:oneof_edn
+  [:oneof
    [:start start-spec]
    [:stop stop-spec]
    [:turn_on turn-on-spec]

@@ -1,11 +1,11 @@
-(ns potatoclient.malli.oneof-edn-test
-  "Tests for the oneof_edn Malli schema"
+(ns potatoclient.malli.oneof-test
+  "Tests for the oneof Malli schema"
   (:require
    [clojure.test :refer [deftest testing is are use-fixtures]]
    [malli.core :as m]
    [malli.generator :as mg]
    [malli.transform :as mt]
-   [potatoclient.malli.oneof-edn :as oneof-edn]
+   [potatoclient.malli.oneof :as oneof]
    [potatoclient.malli.registry :as registry]))
 
 ;; Set up global registry before all tests
@@ -14,21 +14,21 @@
     (registry/setup-global-registry!)
     (f)))
 
-(deftest oneof-edn-schema-registration
+(deftest oneof-schema-registration
   (testing "Schema can be registered and used"
     (let [test-registry (merge (m/default-schemas)
-                               (oneof-edn/register-oneof-edn-schema! {}))]
-      (is (contains? test-registry :oneof_edn))
-      (is (m/schema [:oneof_edn [:a :int] [:b :string]] {:registry test-registry})))
+                               (oneof/register-oneof-schema! {}))]
+      (is (contains? test-registry :oneof))
+      (is (m/schema [:oneof [:a :int] [:b :string]] {:registry test-registry})))
     
     (testing "Schema is automatically available via global registry"
       ;; Global registry was already set up by fixture
       ;; No explicit registry needed
-      (is (m/validate [:oneof_edn [:a :int] [:b :string]] {:a 1})))))
+      (is (m/validate [:oneof [:a :int] [:b :string]] {:a 1})))))
 
-(deftest oneof-edn-validation
+(deftest oneof-validation
   (testing "Basic validation"
-    (let [schema [:oneof_edn 
+    (let [schema [:oneof 
                   [:ping [:map [:data :string]]]
                   [:pong [:map [:timestamp :int]]]
                   [:status :boolean]]]
@@ -76,9 +76,9 @@
           "string"
           123)))))
 
-(deftest oneof-edn-with-complex-schemas
+(deftest oneof-with-complex-schemas
   (testing "Works with complex nested schemas"
-    (let [schema [:oneof_edn
+    (let [schema [:oneof
                   [:create [:map 
                            [:id :uuid]
                            [:name :string]
@@ -106,9 +106,9 @@
                     :name "test"
                     :tags ["not" "keywords"]}})))))
 
-(deftest oneof-edn-explainer
+(deftest oneof-explainer
   (testing "Provides helpful error messages"
-    (let [schema [:oneof_edn [:a :int] [:b :string]]
+    (let [schema [:oneof [:a :int] [:b :string]]
           explain (fn [value] (m/explain schema value))]
       
       (testing "Error for non-map"
@@ -131,9 +131,9 @@
           (is (= 1 (count errors)))
           (is (re-find #"multiple non-nil fields" (:message (first errors)))))))))
 
-(deftest oneof-edn-generator
+(deftest oneof-generator
   (testing "Can generate valid values"
-    (let [schema [:oneof_edn 
+    (let [schema [:oneof 
                   [:x :int]
                   [:y :string]
                   [:z :boolean]]
@@ -152,9 +152,9 @@
               (is (= 1 non-nil-count)
                   (str "Should have exactly 1 non-nil field: " value)))))))))
 
-(deftest oneof-edn-parsing
+(deftest oneof-parsing
   (testing "Parser correctly transforms values"
-    (let [schema [:oneof_edn 
+    (let [schema [:oneof 
                   [:int :int]
                   [:bool :boolean]]
           parser (m/parser schema)]
@@ -168,9 +168,9 @@
         (is (nil? (parser {})))  ; no non-nil
         (is (nil? (parser {:unknown "key"})))))))  ; extra key
 
-(deftest oneof-edn-encoding
+(deftest oneof-encoding
   (testing "Encoder correctly transforms values"
-    (let [schema [:oneof_edn 
+    (let [schema [:oneof 
                   [:timestamp :int]
                   [:name :string]]
           encoder (m/encoder schema mt/transformer)]
@@ -182,15 +182,15 @@
       (testing "Returns value unchanged when invalid"
         (is (= {:timestamp 123 :name "both"} (encoder {:timestamp 123 :name "both"})))))))
 
-(deftest oneof-edn-form
+(deftest oneof-form
   (testing "Preserves form correctly"
-    (let [schema [:oneof_edn [:a :int] [:b :string]]
+    (let [schema [:oneof [:a :int] [:b :string]]
           compiled (m/schema schema)]
-      (is (= [:oneof_edn [:a :int] [:b :string]] (m/form compiled))))))
+      (is (= [:oneof [:a :int] [:b :string]] (m/form compiled))))))
 
-(deftest oneof-edn-compatibility
+(deftest oneof-compatibility
   (testing "Compatible with nil values in pronto-style maps"
-    (let [schema [:oneof_edn 
+    (let [schema [:oneof 
                   [:command [:map [:type :keyword]]]
                   [:query [:map [:sql :string]]]
                   [:event [:map [:name :string]]]]]

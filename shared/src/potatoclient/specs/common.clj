@@ -38,17 +38,21 @@
 (registry/register! :speed/normalized normalized-speed-spec)
 
 ;; ====================================================================
-;; Range specs (normalized 0-1)
+;; Range specs
 ;; ====================================================================
 
 (def normalized-range-spec
   [:double {:min 0.0 :max 1.0}])
+
+(def normalized-offset-spec
+  [:double {:min -1.0 :max 1.0}])
 
 (def zoom-level-spec normalized-range-spec)
 (def focus-level-spec normalized-range-spec)
 
 ;; Register range specs
 (registry/register! :range/normalized normalized-range-spec)
+(registry/register! :range/normalized-offset normalized-offset-spec)
 (registry/register! :range/zoom zoom-level-spec)
 (registry/register! :range/focus focus-level-spec)
 

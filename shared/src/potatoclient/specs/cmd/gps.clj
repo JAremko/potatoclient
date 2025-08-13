@@ -6,7 +6,7 @@
     [malli.generator :as mg]
     [malli.core :as m]
     [potatoclient.malli.registry :as registry]
-    [potatoclient.malli.oneof-edn :as oneof-edn]))
+    [potatoclient.malli.oneof :as oneof]))
 
 ;; GPS command specs - based on proto-explorer findings
 ;; This is a oneof structure with 5 command types
@@ -30,7 +30,7 @@
 
 ;; Main GPS command spec using oneof - all 5 commands
 (def gps-command-spec
-  [:oneof_edn
+  [:oneof
    [:start start-spec]
    [:stop stop-spec]
    [:set_manual_position set-manual-position-spec]

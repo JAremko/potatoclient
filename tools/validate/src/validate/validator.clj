@@ -22,11 +22,11 @@
    [ser JonSharedData$JonGUIState]
    [cmd JonSharedCmd$Root]))
 
-;; Initialize the Malli registry with oneof-edn schema
+;; Initialize the Malli registry with oneof schema
 (do
-  (require '[potatoclient.specs.oneof-edn :as oneof-edn])
+  (require '[potatoclient.malli.oneof :as oneof])
   (registry/setup-global-registry!
-   (oneof-edn/register_ONeof-edn-schema!)))
+   (oneof/register-oneof-schema!)))
 
 ;; Cache the validator instance for performance
 ;; Creating a new validator for each validation adds ~150ms overhead

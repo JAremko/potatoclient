@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; Heat camera command specs - based on proto-explorer findings
 ;; This is a oneof structure with 31 command types
@@ -106,7 +106,7 @@
 
 ;; Main Heat Camera command spec using oneof - all 31 commands
 (def heat-camera-command-spec
-  [:oneof_edn
+  [:oneof
    [:zoom zoom-spec]
    [:set_agc set-agc-spec]
    [:set_filter set-filter-spec]

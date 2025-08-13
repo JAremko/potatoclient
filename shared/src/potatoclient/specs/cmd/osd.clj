@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; OSD command specs - realistic implementation
 ;; This is a oneof structure with multiple command types
@@ -23,7 +23,7 @@
 
 ;; Main OSD command spec using oneof
 (def osd-command-spec
-  [:oneof_edn
+  [:oneof
    [:start start-spec]
    [:stop stop-spec]
    [:show show-spec]

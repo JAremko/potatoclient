@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; LRF command specs - based on proto-explorer findings
 ;; This is a oneof structure with 15 command types
@@ -44,7 +44,7 @@
 
 ;; Main LRF command spec using oneof - all 15 commands
 (def lrf-command-spec
-  [:oneof_edn
+  [:oneof
    [:measure measure-spec]
    [:scan_on scan-on-spec]
    [:scan_off scan-off-spec]

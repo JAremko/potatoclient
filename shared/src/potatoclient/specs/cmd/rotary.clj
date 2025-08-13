@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; Rotary command specs - based on proto-explorer findings
 ;; This is a oneof structure with 24 command types
@@ -105,7 +105,7 @@
 
 ;; Main rotary command spec using oneof - all 24 commands
 (def rotary-command-spec
-  [:oneof_edn
+  [:oneof
    [:start start-spec]
    [:stop stop-spec]
    [:axis axis-spec]

@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; LIRA command specs - based on proto-explorer findings
 ;; This is a oneof structure with one command type
@@ -24,7 +24,7 @@
 
 ;; Main LIRA command spec using oneof
 (def lira-command-spec
-  [:oneof_edn
+  [:oneof
    [:refine_target refine-target-spec]])
 
 (registry/register! :cmd/lira lira-command-spec)

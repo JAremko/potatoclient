@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; System command specs - based on proto-explorer findings
 ;; This is a oneof structure with 13 command types
@@ -38,7 +38,7 @@
 
 ;; Main System command spec using oneof - all 13 commands
 (def system-command-spec
-  [:oneof_edn
+  [:oneof
    [:start_all start-all-spec]
    [:stop_all stop-all-spec]
    [:reboot reboot-spec]

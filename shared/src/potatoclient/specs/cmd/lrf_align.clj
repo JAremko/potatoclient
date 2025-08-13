@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; LRF alignment command specs - based on proto-explorer findings
 ;; This has a nested oneof structure: channel -> cmd
@@ -25,7 +25,7 @@
 
 ;; Offsets message with cmd oneof
 (def offsets-spec
-  [:oneof_edn
+  [:oneof
    [:set set-offsets-spec]
    [:save save-offsets-spec]
    [:reset reset-offsets-spec]
@@ -33,7 +33,7 @@
 
 ;; Main LRF Align command spec using channel oneof
 (def lrf-align-command-spec
-  [:oneof_edn
+  [:oneof
    [:day offsets-spec]
    [:heat offsets-spec]])
 

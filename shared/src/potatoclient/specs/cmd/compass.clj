@@ -4,7 +4,7 @@
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]))
+   [potatoclient.malli.oneof :as oneof]))
 
 ;; Compass command specs - based on proto-explorer findings
 ;; This is a oneof structure with 11 command types
@@ -41,7 +41,7 @@
 
 ;; Main compass command spec using oneof - all 11 commands
 (def compass-command-spec
-  [:oneof_edn
+  [:oneof
    [:start start-spec]
    [:stop stop-spec]
    [:set_magnetic_declination set-magnetic-declination-spec]

@@ -7,7 +7,7 @@
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof-edn :as oneof-edn]
+   [potatoclient.malli.oneof :as oneof]
    ;; Import all command specs
    [potatoclient.specs.cmd.common]
    [potatoclient.specs.cmd.compass]
@@ -27,12 +27,12 @@
 (def jon-shared-cmd-root-spec
   [:map {:closed true}
    [:protocol_version [:int {:min 1}]]
-   [:session_id :int {:min 1}]
+   [:session_id [:int {:min 1}]]
    [:important :boolean]
    [:from_cv_subsystem :boolean]
-   [:client_type :proto/client-type]
+   [:client_type :enum/client-type]
    ;; All command fields as optional (oneof behavior enforced by validator)
-   [:oneof_edn
+   [:oneof
     [:day_camera :cmd/day-camera]
     [:heat_camera :cmd/heat-camera]
     [:gps :cmd/gps]
@@ -51,4 +51,6 @@
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
 
-(registry/setup-global-registry!)
+;(registry/setup-global-registry!)
+;
+;(mg/generate :cmd/day-camera)

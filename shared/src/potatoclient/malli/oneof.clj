@@ -1,8 +1,8 @@
-(ns potatoclient.malli.oneof-edn
+(ns potatoclient.malli.oneof
   "Oneof schema for EDN maps - like :altn but for maps with exactly one non-nil value.
    Compatible with Pronto EDN where inactive branches have nil values.
 
-   Usage: [:oneof_edn [:ping :cmd/ping] [:cv :cmd/cv] [:rotary :cmd/rotary]]
+   Usage: [:oneof [:ping :cmd/ping] [:cv :cmd/cv] [:rotary :cmd/rotary]]
 
    This validates maps where:
    - Exactly one of the specified keys has a non-nil value
@@ -15,18 +15,18 @@
     [malli.core :as m]
     [malli.generator :as mg]))
 
-(defn -oneof-edn-schema
-  "Creates the :oneof_edn schema implementation"
+(defn -oneof-schema
+  "Creates the :oneof schema implementation"
   []
   (reify
     m/IntoSchema
-    (-type [_] :oneof_edn)
+    (-type [_] :oneof)
     (-type-properties [_] nil)
     (-properties-schema [_ _] nil)
     (-children-schema [_ _] nil)
     (-into-schema [parent properties children options]
       (when (empty? children)
-        (m/-fail! ::no-children {:type :oneof_edn}))
+        (m/-fail! ::no-children {:type :oneof}))
       ;; Parse children as [key schema] pairs
       (let [entries (mapv (fn [child]
                            (if (and (vector? child)
@@ -39,7 +39,7 @@
             validators (into {} (map (fn [[k schema]]
                                       [k (m/validator schema)])
                                     entries))
-            form (m/-create-form :oneof_edn properties children options)]
+            form (m/-create-form :oneof properties children options)]
         (reify
           m/Schema
           (-validator [_]
@@ -152,10 +152,10 @@
           (-form [_] form))))))
 
 ;; Create the schema instance
-(def oneof-edn-schema (-oneof-edn-schema))
+(def oneof-schema (-oneof-schema))
 
-;; Generator for oneof_edn schemas
-(defmethod mg/-schema-generator :oneof_edn [schema options]
+;; Generator for oneof schemas
+(defmethod mg/-schema-generator :oneof [schema options]
   (let [children (m/children schema)]
     (if (empty? children)
       (gen/return {})
@@ -173,8 +173,8 @@
                     [k nil])))
           (mg/generator active-schema options)))))))
 
-(defn register-oneof-edn-schema!
-  "Register the :oneof_edn schema type in a registry.
+(defn register-oneof-schema!
+  "Register the :oneof schema type in a registry.
    Pass an existing registry map to extend it, or {} for a new registry."
   [registry]
-  (assoc registry :oneof_edn oneof-edn-schema))
+  (assoc registry :oneof oneof-schema))
