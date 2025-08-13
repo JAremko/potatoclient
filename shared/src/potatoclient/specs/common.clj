@@ -13,20 +13,34 @@
 ;; ====================================================================
 ;; Azimuth: 0-360 degrees (compass heading)
 (def azimuth-spec
-  [:double {:min 0.0 :max 360.0}])
+  [:and [:double {:min 0.0 :max 360.0}]
+   [:< 360.0]])
 
 (def elevation-spec
   [:double {:min -90.0 :max 90.0}])
 
 (def bank-spec
-  [:double {:min -180.0 :max 180.0}])
+  [:and [:double {:min -180.0 :max 180.0}]
+   [:< 180.0]])
 
 ;; Register angle specs
 (registry/register! :angle/azimuth azimuth-spec)
 (registry/register! :angle/elevation elevation-spec)
 (registry/register! :angle/bank bank-spec)
 
+;; ====================================================================
+;; Speed specs (normalized 0-1)
+;; ====================================================================
+(def normalized-speed-spec
+  [:and [:double {:min 0.0 :max 1.0}]
+   [:> 0.0]])
+
+(registry/register! :speed/normalized normalized-speed-spec)
+
+;; ====================================================================
 ;; Range specs (normalized 0-1)
+;; ====================================================================
+
 (def normalized-range-spec
   [:double {:min 0.0 :max 1.0}])
 
@@ -47,61 +61,43 @@
 
 ;; Longitude: double ∈ [-180, 180] (note: some proto fields use < 180)
 (def longitude-spec
-  [:double {:min -180.0 :max 180.0
-            :gen/gen (gen/double* {:NaN? false :min -180.0 :max 179.999999})}])
+  [:and [:double {:min -180.0 :max 180.0}]
+   [:< 180.0]])
 
-;; Altitude: double ∈ [-433, 8848.86] (Dead Sea to Mt. Everest)
+;; Altitude: double ∈ [-433, 100000] Kármán line
 (def altitude-spec
-  [:double {:min -433.0 :max 8848.86
-            :gen/gen (gen/double* {:NaN? false :min -433.0 :max 8848.86})}])
+  [:double {:min -433.0 :max 100000.0}])
 
 ;; Register position specs
 (registry/register! :position/latitude latitude-spec)
 (registry/register! :position/longitude longitude-spec)
 (registry/register! :position/altitude altitude-spec)
 
-;; Speed specs
-(def speed-kmh-spec
-  [:double {:min 0.0 :max 500.0
-            :gen/gen (gen/double* {:NaN? false :min 0.0 :max 500.0})}])
-
-(def speed-ms-spec
-  [:double {:min 0.0 :max 150.0
-            :gen/gen (gen/double* {:NaN? false :min 0.0 :max 150.0})}])
-
-;; Register speed specs
-(registry/register! :speed/kmh speed-kmh-spec)
-(registry/register! :speed/ms speed-ms-spec)
-
 ;; Temperature specs
-(def temperature-celsius-spec
-  [:double {:min -50.0 :max 100.0
-            :gen/gen (gen/double* {:NaN? false :min -50.0 :max 100.0})}])
+(def component-temperature-spec
+  [:double {:min -273.15 :max 150.0}])
 
 ;; Register temperature specs
-(registry/register! :temperature/celsius temperature-celsius-spec)
+(registry/register! :temperature/component component-temperature-spec)
 
 ;; Distance specs
-(def distance-meters-spec
-  [:double {:min 0.0 :max 50000.0
-            :gen/gen (gen/double* {:NaN? false :min 0.0 :max 50000.0})}])
+(def distance-decimeters-spec
+  [:double {:min 0.0 :max 50000.0}])
 
 ;; Register distance specs
-(registry/register! :distance/meters distance-meters-spec)
+(registry/register! :distance/meters distance-decimeters-spec)
 
 ;; Screen coordinate specs (NDC - Normalized Device Coordinates)
-(def ndc-coord-spec
-  [:double {:min -1.0 :max 1.0
-            :gen/gen (gen/double* {:NaN? false :min -1.0 :max 1.0})}])
+(def ndc-coord-clamped-spec
+  [:double {:min -1.0 :max 1.0}])
 
 ;; Register NDC specs
-(registry/register! :screen/ndc-x ndc-coord-spec)
-(registry/register! :screen/ndc-y ndc-coord-spec)
+(registry/register! :screen/ndc-x ndc-coord-clamped-spec)
+(registry/register! :screen/ndc-y ndc-coord-clamped-spec)
 
 ;; Pixel coordinate specs
 (def pixel-coord-spec
-  [:int {:min 0 :max 4096
-         :gen/gen (gen/choose 0 4096)}])
+  [:int {:min 0}])
 
 ;; Register pixel specs
 (registry/register! :screen/pixel-x pixel-coord-spec)
@@ -109,81 +105,18 @@
 
 ;; Time specs
 (def unix-timestamp-spec
-  [:int {:min 0 :max 2147483647
-         :gen/gen (gen/choose 1000000000 2147483647)}])
-
-(def duration-seconds-spec
-  [:int {:min 0 :max 86400
-         :gen/gen (gen/choose 0 86400)}])
+  [:int {:min 0 :max 2147483647}])
 
 ;; Register time specs
 (registry/register! :time/unix-timestamp unix-timestamp-spec)
-(registry/register! :time/duration-seconds duration-seconds-spec)
-
-;; Boolean mode specs
-(def enable-disable-spec :boolean)
-(def on_OFF-spec :boolean)
-
-;; Register boolean specs
-(registry/register! :mode/enable enable-disable-spec)
-(registry/register! :mode/on_OFF on_OFF-spec)
-
-;; ID specs
-(def session-id-spec
-  [:int {:min 0 :max 2147483647
-         :gen/gen (gen/choose 0 2147483647)}])
-
-(def track-id-spec
-  [:int {:min 0 :max 65535
-         :gen/gen (gen/choose 0 65535)}])
-
-;; Register ID specs
-(registry/register! :id/session session-id-spec)
-(registry/register! :id/track track-id-spec)
+(registry/register! :time/duration-seconds unix-timestamp-spec)
 
 ;; Percentage specs
 (def percentage-spec
-  [:double {:min 0.0 :max 100.0
-            :gen/gen (gen/double* {:NaN? false :min 0.0 :max 100.0})}])
+  [:double {:min 0.0 :max 100.0}])
 
 ;; Register percentage spec
 (registry/register! :percentage percentage-spec)
-
-;; ====================================================================
-;; Rotary Specs (EXACT buf.validate constraints)
-;; ====================================================================
-
-;; Rotary Speed: float/double > 0 and ≤ 1
-(def rotary-speed-spec
-  [:double {:min 0.001 :max 1.0  ; > 0 means we need small positive value
-            :gen/gen (gen/double* {:min 0.001 :max 1.0 :NaN? false})}])
-
-(registry/register! :rotary/speed rotary-speed-spec)
-
-;; Rotary Azimuth: float ≥ 0 and < 360
-(def rotary-azimuth-spec
-  [:double {:min 0.0 :max 359.999999
-            :gen/gen (gen/double* {:min 0.0 :max 359.999 :NaN? false})}])
-
-;; Rotary Elevation: float ≥ -90 and ≤ 90
-(def rotary-elevation-spec
-  [:double {:min -90.0 :max 90.0
-            :gen/gen (gen/double* {:min -90.0 :max 90.0 :NaN? false})}])
-
-;; Platform azimuth: float > -360 and < 360
-(def platform-azimuth-spec
-  [:double {:min -359.999999 :max 359.999999
-            :gen/gen (gen/double* {:min -359.999 :max 359.999 :NaN? false})}])
-
-;; Platform bank: float ≥ -180 and < 180
-(def platform-bank-spec
-  [:double {:min -180.0 :max 179.999999
-            :gen/gen (gen/double* {:min -180.0 :max 179.999 :NaN? false})}])
-
-(registry/register! :rotary/azimuth rotary-azimuth-spec)
-(registry/register! :rotary/elevation rotary-elevation-spec)
-(registry/register! :rotary/platform-azimuth platform-azimuth-spec)
-(registry/register! :rotary/platform-bank platform-bank-spec)
 
 ;; ====================================================================
 ;; Enum specs (Using keywords as in Pronto EDN output)
@@ -324,19 +257,3 @@
 (registry/register! :composite/compass-orientation compass-orientation-spec)
 (registry/register! :composite/screen-point-ndc screen-point-ndc-spec)
 (registry/register! :composite/screen-point-pixel screen-point-pixel-spec)
-
-;; Helper functions for validation
-(defn validate-spec
-  "Validate a value against a registered spec"
-  [spec-key value]
-  (m/validate spec-key value))
-
-(defn explain-spec
-  "Explain validation errors for a value against a spec"
-  [spec-key value]
-  (m/explain spec-key value))
-
-(defn generate-spec
-  "Generate a sample value for a registered spec"
-  [spec-key]
-  (mg/generate spec-key))

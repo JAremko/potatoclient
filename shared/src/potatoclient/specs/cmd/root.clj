@@ -28,25 +28,25 @@
   [:map {:closed true}
    [:protocol_version [:int {:min 1}]]
    [:session_id :int {:min 1}]
-   [:client_type :proto/client-type]
    [:important :boolean]
    [:from_cv_subsystem :boolean]
+   [:client_type :proto/client-type]
    ;; All command fields as optional (oneof behavior enforced by validator)
-   [:cv [:maybe :cmd/cv]]
-   [:day_camera [:maybe :cmd/day-camera]]
-   [:heat_camera [:maybe :cmd/heat-camera]]
-   [:gps [:maybe :cmd/gps]]
-   [:compass [:maybe :cmd/compass]]
-   [:lrf [:maybe :cmd/lrf]]
-   [:lrf_calib [:maybe :cmd/lrf-align]]
-   [:rotary [:maybe :cmd/rotary]]
-   [:osd [:maybe :cmd/osd]]
-   [:ping [:maybe :cmd/ping]]
-   [:noop [:maybe :cmd/noop]]
-   [:frozen [:maybe :cmd/frozen]]
-   [:system [:maybe :cmd/system]]
-   [:day_cam_glass_heater [:maybe :cmd/day-cam-glass-heater]]
-   [:lira [:maybe :cmd/lira]]])
-
+   [:oneof_edn
+    [:day_camera :cmd/day-camera]
+    [:heat_camera :cmd/heat-camera]
+    [:gps :cmd/gps]
+    [:compass :cmd/compass]
+    [:lrf :cmd/lrf]
+    [:lrf_calib :cmd/lrf-align]
+    [:rotary :cmd/rotary]
+    [:osd :cmd/osd]
+    [:ping [:map {:closed true}]]
+    [:noop [:map {:closed true}]]
+    [:frozen [:map {:closed true}]]
+    [:system :cmd/system]
+    [:cv :cmd/cv]
+    [:day_cam_glass_heater :cmd/day-cam-glass-heater]
+    [:lira :cmd/lira]]])
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
