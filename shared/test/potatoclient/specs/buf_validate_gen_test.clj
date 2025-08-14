@@ -299,13 +299,13 @@
               "Message with invalid system values should fail")))))))
 
 (deftest generate-valid-state-samples
-  (testing "Can generate 1000 valid state samples from Malli specs"
+  (testing "Can generate 5000 valid state samples from Malli specs"
     (let [state-spec (m/schema :state/root)
-          ;; Generate 1000 samples - force evaluation with doall
-          samples (doall (mg/sample state-spec {:size 1000}))]
+          ;; Generate 5000 samples - force evaluation with doall
+          samples (doall (mg/sample state-spec {:size 5000}))]
       
       ;; Basic checks
-      (is (= 1000 (count samples)) "Should generate 1000 samples")
+      (is (= 5000 (count samples)) "Should generate 5000 samples")
       
       ;; Validate all samples
       (let [validation-results (mapv #(m/validate state-spec %) samples)
@@ -315,8 +315,8 @@
                              (when-not valid? idx))
                            validation-results)]
         
-        (is (= 1000 valid-count)
-            (format "All 1000 samples should be valid. Invalid samples at indices: %s"
+        (is (= 5000 valid-count)
+            (format "All 5000 samples should be valid. Invalid samples at indices: %s"
                    (take 10 invalid-samples)))
         
         ;; If there are invalid samples, show why the first one failed
@@ -416,17 +416,17 @@
   (testing "Sample generation performance"
     (let [state-spec (m/schema :state/root)
           start-time (System/currentTimeMillis)
-          samples (doall (mg/sample state-spec {:size 1000}))
+          samples (doall (mg/sample state-spec {:size 5000}))
           end-time (System/currentTimeMillis)
           duration (- end-time start-time)]
       
-      (is (= 1000 (count samples))
-          "Should generate 1000 samples")
+      (is (= 5000 (count samples))
+          "Should generate 5000 samples")
       
-      (println (format "\nGenerated 1000 samples in %d ms (%.1f samples/sec)"
+      (println (format "\nGenerated 5000 samples in %d ms (%.1f samples/sec)"
                       duration
-                      (/ 1000.0 (/ duration 1000.0))))
+                      (/ 5000.0 (/ duration 1000.0))))
       
       ;; Check that generation is reasonably fast
-      (is (< duration 30000)
-          "Should generate 1000 samples in less than 30 seconds"))))
+      (is (< duration 60000)
+          "Should generate 5000 samples in less than 60 seconds"))))

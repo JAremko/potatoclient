@@ -135,9 +135,9 @@
 
 (deftest buf-validate-state-samples
   (testing "Generated state samples should pass buf.validate constraints"
-    (let [;; Generate 1000 samples from the state spec
+    (let [;; Generate 5000 samples from the state spec
           samples (try
-                   (mg/sample (m/schema :state/root) {:size 1000})
+                   (mg/sample (m/schema :state/root) {:size 5000})
                    (catch Exception e
                      (throw (ex-info "Failed to generate samples"
                                      {:error (.getMessage e)}))))
@@ -157,7 +157,7 @@
       ;; Print failure reports (max 5)
       (when (seq failures)
         (println "\n=== buf.validate Validation Failures ===")
-        (println (format "Found %d failures out of 1000 samples (showing first %d):"
+        (println (format "Found %d failures out of 5000 samples (showing first %d):"
                         failure-count
                         (min 5 failure-count)))
         (doseq [[idx failure] (map-indexed vector failures)]

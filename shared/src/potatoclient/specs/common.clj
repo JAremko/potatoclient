@@ -133,12 +133,15 @@
 
 ;; Integer type specs for protobuf compatibility
 ;; int32: -2147483648 to 2147483647
-;; uint32: 0 to 4294967295
+;; uint32: 0 to 4294967295 in protobuf, but in Java it's stored as signed int
+;;         so we need to limit to int32 max to avoid overflow
 (def int32-spec
   [:int {:min -2147483648 :max 2147483647}])
 
 (def uint32-spec
-  [:int {:min 0 :max 4294967295}])
+  ;; Even though protobuf uint32 can be 0 to 4294967295,
+  ;; in Java it's represented as signed int, so max is 2147483647
+  [:int {:min 0 :max 2147483647}])
 
 (def int32-positive-spec
   [:int {:min 0 :max 2147483647}])
@@ -379,9 +382,9 @@
 (def meteo-spec
   "JonGuiDataMeteo message spec - meteorological data"
   [:map {:closed true}
-   [:temperature [:float {:min -273.15 :max 100.0}]]  ; Absolute zero to boiling water
+   [:temperature [:float {:min -273.15 :max 150.0}]]   ; Absolute zero to max sensor reading
    [:humidity [:float {:min 0.0 :max 100.0}]]          ; Percentage
-   [:pressure [:float {:min 0.0 :max 2000.0}]]])      ; hPa/mbar typical range
+   [:pressure [:float {:min 0.0 :max 1200.0}]]])       ; Max atmospheric pressure with margin
 
 ;; ====================================================================
 ;; Common command specs (empty messages used across multiple commands)

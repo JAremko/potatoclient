@@ -27,8 +27,8 @@
 ;; All fields with protocol_version being uint32 > 0 and all message fields required
 (def jon-gui-state-spec
   [:map {:closed true}
-   ;; protocol_version: uint32 with constraint gt: 0 (max value for uint32: 4294967295)
-   [:protocol_version [:and :int [:> 0] [:<= 4294967295]]]
+   ;; protocol_version: uint32 with constraint gt: 0
+   [:protocol_version [:and :proto/uint32 [:> 0]]]
    ;; All subsystem state messages - all are required per buf.validate
    [:system :state/system]
    [:meteo_internal :common/meteo]
