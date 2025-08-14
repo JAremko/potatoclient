@@ -4,7 +4,6 @@
    Uses Clojure 1.12's new process features for better control."
   (:require
    [clojure.java.io :as io]
-   [clojure.java.process :as process]
    [clojure.string :as str]
    [clojure.repl.deps :as deps])
   (:import
@@ -39,59 +38,36 @@
            (filter #(.endsWith (.getName %) ".proto"))
            (map #(.getAbsolutePath %))))))
 
+;; We're not actually using these compile functions since we copy from tools
+;; But if we ever need them, they should use proper Java/Clojure APIs
 (defn compile-proto-classes!
-  "Compile proto files to Java classes using protoc.
-   Uses Clojure 1.12's new process features."
+  "Compile proto files to Java classes.
+   This would require protoc to be available, which we avoid by copying from tools."
   []
-  (let [proto-files (find-proto-files)
-        java-out-dir "target/classes"
-        proto-dir "../examples/protogen/proto"]
-    
-    (when (empty? proto-files)
-      (throw (ex-info "No proto files found" {:dir proto-dir})))
-    
-    ;; Create output directory
-    (.mkdirs (io/file java-out-dir))
-    
-    (println "Compiling proto files...")
-    (println (format "Found %d proto files in %s" (count proto-files) proto-dir))
-    
-    ;; Use protoc to generate Java classes
-    (let [protoc-cmd (into ["protoc"
-                            (str "--java_out=" java-out-dir)
-                            (str "--proto_path=" proto-dir)]
-                           (map #(.getName (io/file %)) proto-files))
-          result (process/exec protoc-cmd)]
-      
-      (if (zero? (:exit result))
-        (println "Proto compilation successful")
-        (throw (ex-info "Proto compilation failed" 
-                        {:exit (:exit result)
-                         :err (:err result)}))))))
+  (throw (ex-info "Direct proto compilation not implemented. Copy from tools instead."
+                  {:reason "Avoiding external protoc dependency"})))
 
 (defn compile-java-sources!
-  "Compile generated Java source files to classes."
+  "Compile Java source files.
+   This would require javac, which we avoid by copying from tools."
   [java-dir]
-  (println "Compiling Java sources...")
-  
-  ;; Find all .java files
-  (let [java-files (atom [])]
-    (doseq [^File file (file-seq (io/file java-dir))]
-      (when (.endsWith (.getName file) ".java")
-        (swap! java-files conj (.getAbsolutePath file))))
-    
-    (if (empty? @java-files)
-      (println "No Java files to compile")
-      (let [javac-cmd (into ["javac" "-d" java-dir "-cp" 
-                             (System/getProperty "java.class.path")]
-                            @java-files)
-            result (process/exec javac-cmd)]
-        
-        (if (zero? (:exit result))
-          (println "Java compilation successful")
-          (throw (ex-info "Java compilation failed"
-                          {:exit (:exit result)
-                           :err (:err result)})))))))
+  (throw (ex-info "Direct Java compilation not implemented. Copy from tools instead."
+                  {:reason "Avoiding external javac dependency"})))
+
+(defn copy-directory!
+  "Copy a directory recursively using Java NIO."
+  [src-dir dst-dir]
+  (let [src-path (.toPath (io/file src-dir))
+        dst-path (.toPath (io/file dst-dir))]
+    (doseq [src-file (file-seq (io/file src-dir))]
+      (let [src-file-path (.toPath src-file)
+            relative-path (.relativize src-path src-file-path)
+            dst-file-path (.resolve dst-path relative-path)]
+        (when (.isFile src-file)
+          ;; Create parent directories if needed
+          (io/make-parents (.toFile dst-file-path))
+          ;; Copy the file
+          (io/copy src-file (.toFile dst-file-path)))))))
 
 (defn copy-proto-classes-from-tools!
   "Copy pre-compiled proto classes from state-explorer or validate tools if available."
@@ -109,18 +85,16 @@
       (println (format "Copying proto classes from %s" source-dir))
       (.mkdirs target-dir)
       
-      ;; Copy ser and cmd directories
+      ;; Copy ser and cmd directories using Clojure's io functions
       (doseq [subdir ["ser" "cmd"]]
         (let [src (io/file source-dir subdir)
               dst (io/file target-dir subdir)]
           (when (.exists src)
-            (.mkdirs dst)
-            ;; Use process to copy files
-            (let [result (process/exec ["cp" "-r" 
-                                        (.getAbsolutePath src)
-                                        (.getAbsolutePath (.getParentFile dst))])]
-              (when-not (zero? (:exit result))
-                (println (format "Warning: Failed to copy %s" subdir)))))))
+            (try
+              (copy-directory! src dst)
+              (println (format "Copied %s successfully" subdir))
+              (catch Exception e
+                (println (format "Warning: Failed to copy %s: %s" subdir (.getMessage e))))))))
       true)))
 
 (defn ensure-proto-classes!
@@ -193,7 +167,7 @@
 
 ;; Auto-initialize when namespace is loaded
 ;; This ensures all test namespaces that require this will have the system ready
-(defonce ^:private initialized? 
+(defonce initialized? 
   (try
     (initialize!)
     (catch Exception e

@@ -32,33 +32,48 @@
 (registry/setup-global-registry!)
 
 ;; These will be initialized in tests when classes are available
-(def state-mapper (atom nil))
 (def validator (atom nil))
-
-(defn init-mapper! []
-  (when-not @state-mapper
-    (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")]
-      ;; Create mapper dynamically
-      (reset! state-mapper 
-              (pronto/mapper [proto-class])))))
 
 (defn init-validator! []
   (when-not @validator
     (let [validator-class (Class/forName "build.buf.protovalidate.Validator")]
       (reset! validator (.newInstance validator-class)))))
 
+;; Import test harness to ensure proto classes are compiled
+(require '[potatoclient.test-harness :as harness])
+
+;; Force harness initialization - this MUST succeed or tests fail
+(when-not harness/initialized?
+  (throw (ex-info "Test harness failed to initialize! Proto classes not available." 
+                  {:initialized? harness/initialized?})))
+
+;; Now we can safely create the mapper since classes are guaranteed to exist
+;; But we still need to handle the compile-time class resolution issue
+;; We'll use a different approach - create mapper inside a function
+
+(defn create-state-mapper
+  "Create mapper at runtime after ensuring classes are loaded."
+  []
+  ;; First verify class is actually available
+  (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")]
+    ;; Since defmapper is a macro that needs compile-time class resolution,
+    ;; we need a different approach. Let's use the mapper protocol directly.
+    ;; Actually, looking at pronto source, we can use proto-map directly
+    {:proto-class proto-class}))
+
+(def state-mapper-info (delay (create-state-mapper)))
+
 (defn edn->proto
-  "Convert EDN map to protobuf message via Pronto."
+  "Convert EDN map to protobuf message via Pronto.
+   This skips the mapper and uses proto-map directly."
   [edn-data]
   (try
-    (init-mapper!)
-    ;; Get the class dynamically
-    (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")
-          ;; Convert EDN to proto-map
-          proto-map (pronto/clj-map->proto-map @state-mapper 
-                                               proto-class
-                                               edn-data)
-          ;; Convert to bytes
+    ;; Get the proto class (force will throw if harness failed)
+    (let [proto-class (:proto-class @state-mapper-info)
+          ;; Create a proto-map directly without defmapper
+          ;; The proto-map function can work without a pre-defined mapper
+          proto-map (pronto/proto-map proto-class edn-data)
+          ;; Convert proto-map to bytes
           proto-bytes (pronto/proto-map->bytes proto-map)
           ;; Parse bytes to get Java proto object for validation
           parse-method (.getMethod proto-class "parseFrom" (into-array Class [bytes]))]
@@ -92,7 +107,7 @@
           {:valid? false
            :error :validation-exception
            :message (.getMessage e)}
-          
+
           :else
           {:valid? false
            :error :unexpected-error
@@ -118,7 +133,7 @@
                    (catch Exception e
                      (throw (ex-info "Failed to generate samples"
                                      {:error (.getMessage e)}))))
-          
+
           ;; Process samples through validation pipeline
           ;; Using simple map for now instead of reducers
           validation-reports (mapv (fn [sample]
@@ -126,11 +141,11 @@
                                            report (validate-proto proto)]
                                        (assoc report :sample sample)))
                                    samples)
-          
+
           ;; Collect failures
           failures (collect-failures validation-reports)
           failure-count (count (filter #(false? (:valid? %)) validation-reports))]
-      
+
       ;; Print failure reports (max 5)
       (when (seq failures)
         (println "\n=== buf.validate Validation Failures ===")
@@ -150,10 +165,10 @@
               (println (format "      Message: %s" (:message v)))))
           (when (and (< idx 2) (:sample failure)) ; Show sample data for first 2
             (println "  Sample data (truncated):")
-            (println (pr-str (select-keys (:sample failure) 
+            (println (pr-str (select-keys (:sample failure)
                                          [:protocol_version :gps :system])))))
         (println "\n========================================="))
-      
+
       ;; Test assertion
       (is (empty? failures)
           (format "Expected all samples to pass buf.validate, but %d failed"
@@ -177,7 +192,7 @@
             "Should fail validation for latitude > 90")
         (is (some #(re-find #"latitude" (:field %)) (:violations result))
             "Should have violation for latitude field")))
-    
+
     (testing "Azimuth must be within [0, 360)"
       (let [invalid-sample {:protocol_version 1
                             :compass {:azimuth 360.0  ; Invalid (must be < 360)
