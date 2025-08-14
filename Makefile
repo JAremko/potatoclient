@@ -59,15 +59,12 @@ help: ## Show all available commands with detailed descriptions
 
 # Build proto files
 .PHONY: proto
-proto: ## Regenerate protobuf classes from protogen repository - always fresh
-	@echo "Generating Java classes from proto files using Protogen Docker..."
-	@echo "  • Clones latest protogen repository with bundled proto definitions"
-	@echo "  • Imports pre-built base image from Git LFS (or builds from scratch)"
-	@echo "  • Builds Docker image with all proto files included"
-	@echo "  • Generates Java bindings with buf.validate annotations preserved"
-	@echo "  • Custom kebab-case conversion for Clojure idioms"
-	@echo "  • Cleans up Docker images after generation to save space"
-	./scripts/generate-protos.sh
+proto: ## Regenerate and compile protobuf classes in shared project
+	@echo "Delegating proto generation to shared project..."
+	@echo "  • Generates Java bindings from protogen repository"
+	@echo "  • Compiles to bytecode in shared/target/classes"
+	@echo "  • Available to all projects via local dependency"
+	cd shared && $(MAKE) proto
 
 
 # Compile pronto Java classes if needed

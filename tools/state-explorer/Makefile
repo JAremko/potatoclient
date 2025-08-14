@@ -57,17 +57,9 @@ help:
 # === BUILD TARGETS ===
 
 # Generate proto Java sources using protogen Docker
-proto:
-	@echo "Generating proto Java sources..."
-	@clojure -T:build generate-proto
-
-# Compile all Java sources (Pronto + proto)
-compile:
-	@echo "Compiling all Java sources..."
-	@clojure -T:build compile-all
-
-# Build everything (generate + compile)
-build: proto compile
+# Build is now just compiling Pronto (proto classes come from shared)
+build:
+	@echo "Setting up classpath with shared proto classes..."
 	@echo "Build complete!"
 
 # Remove all build artifacts and captured files

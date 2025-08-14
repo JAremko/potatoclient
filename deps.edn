@@ -1,6 +1,8 @@
-{:paths ["src" "resources" "src/potatoclient/java" "shared/src"]
+{:paths ["src" "resources"]
 
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
+        ;; Shared project with proto classes
+        potatoclient/shared {:local/root "shared"}
         seesaw/seesaw {:mvn/version "1.5.0"}
         org.clojure/data.json {:mvn/version "2.5.1"}
         ;; Localization

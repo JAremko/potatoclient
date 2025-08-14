@@ -1,8 +1,8 @@
-{:paths ["src" "scripts" "resources" "target/classes"
-         ;; Add Pronto's Java source for compilation
-         "~/.gitlibs/libs/com.appsflyer/pronto/0fb034bc9c943d6a04177b23eb97436f9ca817f7/src/java"]
+{:paths ["src" "scripts" "resources"]
  
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        ;; Shared project with proto classes
+        potatoclient/shared {:local/root "../../shared"}
         ;; Parser for TypeScript function extraction
         instaparse/instaparse {:mvn/version "1.5.0"}
         ;; Markdown manipulation

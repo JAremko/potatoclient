@@ -1,9 +1,12 @@
 {:paths ["src" "resources"]
  
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        ;; Shared project with proto classes
+        potatoclient/shared {:local/root "../../shared"}
         
         ;; Protobuf support
-        pronto/pronto {:local/root "../../examples/pronto"}
+        com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
+                              :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"}
         potemkin/potemkin {:mvn/version "0.4.5"}
         com.google.protobuf/protobuf-java {:mvn/version "4.29.2"}
         com.google.protobuf/protobuf-java-util {:mvn/version "4.29.2"}
@@ -59,7 +62,7 @@
    :main-opts ["-m" "cognitect.test-runner" "-d" "test/unit"]}
   
   :test:integration
-  {:inherit [:test :test-protos]
+  {:inherit [:test]
    :main-opts ["-m" "cognitect.test-runner" "-d" "test/integration"]}
   
   :test:watch
@@ -114,10 +117,7 @@
   :examples
   {:main-opts ["-m" "proto-explorer.examples"]}
   
-  :test-protos
-  {:extra-paths ["../../target/classes"
-                 "../../src/potatoclient/java"
-                 "../../examples/pronto/target/classes"]}
+  ;; Proto classes now come from potatoclient/shared dependency
   
   :quick
   {:inherit [:test]

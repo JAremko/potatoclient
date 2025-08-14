@@ -29,18 +29,10 @@ help: ## Show 2-step workflow
 	@echo "  make test                       # Run tests"
 	@echo "  make repl                       # Start REPL"
 
-# Ensure proto classes are compiled
-.PHONY: ensure-proto-classes
-ensure-proto-classes:
-	@if [ ! -d "../../target/classes/ser" ] || [ ! -d "../../target/classes/cmd" ]; then \
-		echo "Proto classes missing, compiling..."; \
-		cd ../.. && make compile-java-proto; \
-	else \
-		echo "Proto classes already compiled"; \
-	fi
+# Proto classes are now provided by the shared project dependency
 
 .PHONY: search proto-search
-search proto-search: ensure-proto-classes ## [STEP 1] Search for protobuf messages
+search proto-search: ## [STEP 1] Search for protobuf messages
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make search QUERY=<search-term>"; \
 		echo ""; \

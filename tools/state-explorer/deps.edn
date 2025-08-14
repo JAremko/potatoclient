@@ -1,6 +1,8 @@
-{:paths ["src" "resources" "target/classes"]
+{:paths ["src" "resources"]
  
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        ;; Shared project with proto classes
+        potatoclient/shared {:local/root "../../shared"}
         ;; WebSocket client library
         hato/hato {:mvn/version "0.9.0"}
         ;; Command-line argument parsing

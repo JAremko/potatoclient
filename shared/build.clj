@@ -12,34 +12,23 @@
 (def basis (b/create-basis {:project "deps.edn"}))
 
 (defn clean [_]
-  (b/delete {:path "target"}))
+  (b/delete {:path "target"})
+  (b/delete {:path "src/java"}))
 
-(defn copy-proto-classes
-  "Copy pre-compiled proto classes from tools if available."
+(defn compile-proto-sources
+  "Compile proto Java source files to bytecode.
+   Assumes proto sources are already generated in src/java."
   [_]
-  (let [sources ["../tools/state-explorer/target/classes"
-                 "../tools/validate/target/classes"]
-        target (io/file class-dir)]
-    
-    ;; Create target directory
-    (.mkdirs target)
-    
-    (if-let [source (->> sources
-                        (map io/file)
-                        (filter #(.exists %))
-                        first)]
+  (let [proto-src-dir (io/file "src/java")]
+    (if (.exists proto-src-dir)
       (do
-        (println (format "Copying proto classes from %s" source))
-        ;; Copy ser and cmd directories
-        (doseq [subdir ["ser" "cmd"]]
-          (let [src (io/file source subdir)
-                dst (io/file target subdir)]
-            (when (.exists src)
-              (.mkdirs (.getParentFile dst))
-              (b/copy-dir {:src-dirs [(.getPath src)]
-                          :target-dir class-dir}))))
-        (println "Proto classes copied successfully"))
-      (println "Warning: No pre-compiled proto classes found"))))
+        (println "Compiling proto Java sources to bytecode...")
+        (b/javac {:src-dirs ["src/java"]
+                  :class-dir class-dir
+                  :basis basis
+                  :javac-opts ["-source" "11" "-target" "11"]})
+        (println "Proto classes compiled successfully"))
+      (println "Warning: No proto sources found in src/java"))))
 
 (defn compile-pronto
   "Compile Pronto Java sources."
@@ -63,8 +52,7 @@
 (defn compile-all
   "Compile everything needed for tests."
   [_]
-  (clean nil)
-  (copy-proto-classes nil)
+  (compile-proto-sources nil)
   (compile-pronto nil)
   (compile-clj nil))
 
