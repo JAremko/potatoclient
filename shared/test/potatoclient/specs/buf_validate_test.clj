@@ -47,38 +47,35 @@
   (throw (ex-info "Test harness failed to initialize! Proto classes not available." 
                   {:initialized? harness/initialized?})))
 
-;; Now we can safely create the mapper since classes are guaranteed to exist
-;; But we still need to handle the compile-time class resolution issue
-;; We'll use a different approach - create mapper inside a function
+;; Create mapper dynamically using eval after classes are loaded
+;; This allows us to work with runtime-loaded proto classes
+(def ^:dynamic *state-mapper* nil)
 
-(defn create-state-mapper
-  "Create mapper at runtime after ensuring classes are loaded."
+;; Initialize the mapper at runtime
+(defn init-mapper!
+  "Initialize the pronto mapper at runtime."
   []
-  ;; First verify class is actually available
-  (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")]
-    ;; Since defmapper is a macro that needs compile-time class resolution,
-    ;; we need a different approach. Let's use the mapper protocol directly.
-    ;; Actually, looking at pronto source, we can use proto-map directly
-    {:proto-class proto-class}))
-
-(def state-mapper-info (delay (create-state-mapper)))
+  (when (nil? *state-mapper*)
+    (alter-var-root #'*state-mapper*
+                    (constantly 
+                     (eval '(do 
+                             (pronto.core/defmapper state-mapper-internal 
+                                                   [ser.JonSharedData$JonGUIState])
+                             state-mapper-internal))))))
 
 (defn edn->proto
-  "Convert EDN map to protobuf message via Pronto.
-   This skips the mapper and uses proto-map directly."
+  "Convert EDN map to protobuf message via Pronto."
   [edn-data]
   (try
-    ;; Get the proto class (force will throw if harness failed)
-    (let [proto-class (:proto-class @state-mapper-info)
-          ;; Create a proto-map directly without defmapper
-          ;; The proto-map function can work without a pre-defined mapper
-          proto-map (pronto/proto-map proto-class edn-data)
-          ;; Convert proto-map to bytes
-          proto-bytes (pronto/proto-map->bytes proto-map)
-          ;; Parse bytes to get Java proto object for validation
-          parse-method (.getMethod proto-class "parseFrom" (into-array Class [bytes]))]
-      ;; Invoke the static parseFrom method
-      (.invoke parse-method nil (object-array [proto-bytes])))
+    ;; Ensure mapper is initialized
+    (init-mapper!)
+    
+    ;; Use eval to work with the runtime-loaded classes and mapper
+    (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")
+          proto-map (eval `(pronto.core/clj-map->proto-map ~*state-mapper* 
+                                                           ser.JonSharedData$JonGUIState 
+                                                           ~edn-data))]
+      (pronto/proto-map->proto proto-map))
     (catch Exception e
       {:error :conversion-failed
        :message (.getMessage e)
@@ -88,8 +85,19 @@
   "Validate a protobuf message with buf.validate.
    Returns a validation report as EDN."
   [proto-msg]
-  (if (map? proto-msg) ; Error from conversion
+  (cond
+    ;; If we got an error from conversion, return it
+    (and (map? proto-msg) (:error proto-msg))
     proto-msg
+    
+    ;; If proto-msg is nil, return an error
+    (nil? proto-msg)
+    {:valid? false
+     :error :null-proto
+     :message "Proto message is null"}
+    
+    ;; Otherwise validate the proto
+    :else
     (try
       (init-validator!)
       (let [result (.validate @validator proto-msg)]

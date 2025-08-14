@@ -98,27 +98,24 @@
       true)))
 
 (defn ensure-proto-classes!
-  "Ensure proto classes are available, compiling if necessary."
+  "Ensure proto classes are available, always rebuilding for freshness."
   []
-  (cond
-    ;; Already available
-    (proto-classes-available?)
-    (do 
-      (println "Proto classes already available")
-      true)
-    
-    ;; Try to copy from existing tools
-    (copy-proto-classes-from-tools!)
+  ;; Always copy fresh proto classes from tools to ensure they're up-to-date
+  (println "Rebuilding proto classes from tools for freshness...")
+  (if (copy-proto-classes-from-tools!)
     (do
-      (println "Proto classes copied from tools")
+      (println "Proto classes freshly copied from tools")
       true)
-    
-    ;; Compile from scratch
-    :else
-    (do
-      (println "Compiling proto classes from source...")
-      (compile-proto-classes!)
-      true)))
+    ;; If copying fails, check if they're already available
+    (if (proto-classes-available?)
+      (do 
+        (println "Warning: Could not rebuild, using existing proto classes")
+        true)
+      ;; Last resort - try to compile from scratch
+      (do
+        (println "Compiling proto classes from source...")
+        (compile-proto-classes!)
+        true))))
 
 (defn ensure-pronto!
   "Ensure Pronto is available on classpath.

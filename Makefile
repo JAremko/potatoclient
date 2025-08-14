@@ -192,13 +192,13 @@ test: ensure-compiled compile-kotlin-tests ## Run tests (saves output to logs/te
 	echo "Test output will be saved to: $$TEST_RUN_DIR" && \
 	echo "Compiling test Java files..." && \
 	mkdir -p target/test-classes && \
-	javac -cp "$$(clojure -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true && \
+	javac -cp "$$(clojure -M:test -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true && \
 	echo "Running Clojure tests..." && \
 	clojure -M:test 2>&1 | tee "$$TEST_RUN_DIR/test-full.log"; \
 	CLOJURE_EXIT_CODE=$$?; \
 	echo "" && \
 	echo "Running Kotlin tests..." && \
-	java -cp "$$(clojure -Spath):target/classes:target/test-classes" org.junit.runner.JUnitCore $$(find target/test-classes -name "*Test.class" | sed 's|target/test-classes/||g' | sed 's|\.class||g' | sed 's|/|.|g' | grep -v '\$$' | sort -u) 2>&1 | tee -a "$$TEST_RUN_DIR/test-full.log"; \
+	java -cp "$$(clojure -M:test -Spath):target/classes:target/test-classes" org.junit.runner.JUnitCore $$(find target/test-classes -name "*Test.class" | sed 's|target/test-classes/||g' | sed 's|\.class||g' | sed 's|/|.|g' | grep -v '\$$' | sort -u) 2>&1 | tee -a "$$TEST_RUN_DIR/test-full.log"; \
 	KOTLIN_EXIT_CODE=$$?; \
 	EXIT_CODE=$$((CLOJURE_EXIT_CODE + KOTLIN_EXIT_CODE)); \
 	echo "" && \

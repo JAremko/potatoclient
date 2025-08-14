@@ -83,9 +83,9 @@
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
-;; Altitude: double ∈ [-432, 100000] Kármán line (Dead Sea shore to edge of space)
+;; Altitude: double ∈ [-430, 100000] Kármán line (Dead Sea shore to edge of space)
 (def altitude-spec
-  [:double {:min -432.0 :max 100000.0}])
+  [:double {:min -430.0 :max 100000.0}])
 
 ;; Register position specs
 (registry/register! :position/latitude latitude-spec)
@@ -296,10 +296,9 @@
    :JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
    :JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2])
 
-;; REC OSD Screen enum
+;; REC OSD Screen enum (Cannot be UNSPECIFIED per buf.validate)
 (def rec-osd-screen-enum-spec
   [:enum
-   :JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
    :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
    :JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
    :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
@@ -358,11 +357,24 @@
 (registry/register! :composite/screen-point-pixel screen-point-pixel-spec)
 
 ;; ====================================================================
+;; Common message specs
+;; ====================================================================
+(def meteo-spec
+  "JonGuiDataMeteo message spec - meteorological data"
+  [:map {:closed true}
+   [:temperature :float]
+   [:humidity :float]
+   [:pressure :float]])
+
+;; ====================================================================
 ;; Common command specs (empty messages used across multiple commands)
 ;; ====================================================================
 (def empty-command-spec
   "Empty command message - used for Start, Stop, GetMeteo, etc."
   [:map {:closed true}])
+
+;; Register common message specs
+(registry/register! :common/meteo meteo-spec)
 
 ;; Register common command specs
 (registry/register! :cmd/empty empty-command-spec)
