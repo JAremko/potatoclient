@@ -2,7 +2,6 @@
   "Compass message specs matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
 ;; Compass message spec based on actual EDN output:
@@ -13,12 +12,12 @@
 (def compass-message-spec
   [:map {:closed true}
    [:azimuth :angle/azimuth]
-   [:bank :angle/bank]
    [:elevation :angle/elevation]
-   [:offsetAzimuth {:optional true} :double]
-   [:offsetElevation {:optional true} :double]
-   [:magneticDeclination {:optional true} :double]
-   [:calibrating {:optional true} boolean?]])
+   [:bank :angle/bank]
+   [:offsetAzimuth :angle/offset-azimuth]
+   [:offsetElevation :angle/offset-elevation]
+   [:magneticDeclination :angle/magnetic-declination]
+   [:calibrating [:boolean]]])
 
 (registry/register! :state/compass compass-message-spec)
 

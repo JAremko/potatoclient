@@ -23,10 +23,25 @@
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
+;; Offset angle specs (for compass offsets)
+(def offset-azimuth-spec
+  [:and [:double {:min -180.0 :max 180.0}]
+   [:< 180.0]])
+
+(def offset-elevation-spec
+  [:double {:min -90.0 :max 90.0}])
+
+(def magnetic-declination-spec
+  [:and [:double {:min -180.0 :max 180.0}]
+   [:< 180.0]])
+
 ;; Register angle specs
 (registry/register! :angle/azimuth azimuth-spec)
 (registry/register! :angle/elevation elevation-spec)
 (registry/register! :angle/bank bank-spec)
+(registry/register! :angle/offset-azimuth offset-azimuth-spec)
+(registry/register! :angle/offset-elevation offset-elevation-spec)
+(registry/register! :angle/magnetic-declination magnetic-declination-spec)
 
 ;; ====================================================================
 ;; Speed specs (normalized 0-1)
@@ -68,9 +83,9 @@
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
-;; Altitude: double ∈ [-433, 100000] Kármán line
+;; Altitude: double ∈ [-432, 100000] Kármán line (Dead Sea shore to edge of space)
 (def altitude-spec
-  [:double {:min -433.0 :max 100000.0}])
+  [:double {:min -432.0 :max 100000.0}])
 
 ;; Register position specs
 (registry/register! :position/latitude latitude-spec)
@@ -103,9 +118,18 @@
 (def pixel-coord-spec
   [:int {:min 0}])
 
+;; Pixel offset specs (for LRF alignment)
+(def pixel-offset-x-spec
+  [:int {:min -1920 :max 1920}])
+
+(def pixel-offset-y-spec
+  [:int {:min -1080 :max 1080}])
+
 ;; Register pixel specs
 (registry/register! :screen/pixel-x pixel-coord-spec)
 (registry/register! :screen/pixel-y pixel-coord-spec)
+(registry/register! :screen/pixel-offset-x pixel-offset-x-spec)
+(registry/register! :screen/pixel-offset-y pixel-offset-y-spec)
 
 ;; Time specs
 (def unix-timestamp-spec
@@ -217,6 +241,70 @@
    :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_FINISHED
    :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_ERROR])
 
+;; System Localizations enum (Cannot be UNSPECIFIED per buf.validate)
+(def system-localizations-enum-spec
+  [:enum
+   :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
+   :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+   :JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+   :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS])
+
+;; GPS Units enum
+(def gps-units-enum-spec
+  [:enum
+   :JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
+   :JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
+   :JON_GUI_DATA_GPS_UNITS_DEGREES_MINUTES_SECONDS
+   :JON_GUI_DATA_GPS_UNITS_DEGREES_DECIMAL_MINUTES])
+
+;; Compass Units enum
+(def compass-units-enum-spec
+  [:enum
+   :JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
+   :JON_GUI_DATA_COMPASS_UNITS_DEGREES
+   :JON_GUI_DATA_COMPASS_UNITS_MILS
+   :JON_GUI_DATA_COMPASS_UNITS_GRAD
+   :JON_GUI_DATA_COMPASS_UNITS_MRAD])
+
+;; Accumulator State enum
+(def accumulator-state-enum-spec
+  [:enum
+   :JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
+   :JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
+   :JON_GUI_DATA_ACCUMULATOR_STATE_EMPTY
+   :JON_GUI_DATA_ACCUMULATOR_STATE_1
+   :JON_GUI_DATA_ACCUMULATOR_STATE_2
+   :JON_GUI_DATA_ACCUMULATOR_STATE_3
+   :JON_GUI_DATA_ACCUMULATOR_STATE_4
+   :JON_GUI_DATA_ACCUMULATOR_STATE_5
+   :JON_GUI_DATA_ACCUMULATOR_STATE_6
+   :JON_GUI_DATA_ACCUMULATOR_STATE_FULL
+   :JON_GUI_DATA_ACCUMULATOR_STATE_CHARGING])
+
+;; Time Formats enum
+(def time-formats-enum-spec
+  [:enum
+   :JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
+   :JON_GUI_DATA_TIME_FORMAT_H_M_S
+   :JON_GUI_DATA_TIME_FORMAT_Y_m_D_H_M_S])
+
+;; LRF Laser Pointer Modes enum
+(def lrf-laser-pointer-modes-enum-spec
+  [:enum
+   :JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
+   :JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
+   :JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_1
+   :JON_GUI_DATA_LRF_LASER_POINTER_MODE_ON_2])
+
+;; REC OSD Screen enum
+(def rec-osd-screen-enum-spec
+  [:enum
+   :JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
+   :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
+   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
+   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
+   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED])
+
 ;; Register enum specs
 (registry/register! :enum/client-type client-type-enum-spec)
 (registry/register! :proto/client-type client-type-enum-spec) ; Also register as proto/client-type
@@ -230,6 +318,13 @@
 (registry/register! :enum/heat-agc-mode heat-agc-mode-enum-spec)
 (registry/register! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
 (registry/register! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
+(registry/register! :enum/system-localizations system-localizations-enum-spec)
+(registry/register! :enum/gps-units gps-units-enum-spec)
+(registry/register! :enum/compass-units compass-units-enum-spec)
+(registry/register! :enum/accumulator-state accumulator-state-enum-spec)
+(registry/register! :enum/time-formats time-formats-enum-spec)
+(registry/register! :enum/lrf-laser-pointer-modes lrf-laser-pointer-modes-enum-spec)
+(registry/register! :enum/rec-osd-screen rec-osd-screen-enum-spec)
 
 ;; ====================================================================
 ;; Composite specs (CLOSED MAPS - catch typos and invalid keys)
@@ -261,3 +356,13 @@
 (registry/register! :composite/compass-orientation compass-orientation-spec)
 (registry/register! :composite/screen-point-ndc screen-point-ndc-spec)
 (registry/register! :composite/screen-point-pixel screen-point-pixel-spec)
+
+;; ====================================================================
+;; Common command specs (empty messages used across multiple commands)
+;; ====================================================================
+(def empty-command-spec
+  "Empty command message - used for Start, Stop, GetMeteo, etc."
+  [:map {:closed true}])
+
+;; Register common command specs
+(registry/register! :cmd/empty empty-command-spec)

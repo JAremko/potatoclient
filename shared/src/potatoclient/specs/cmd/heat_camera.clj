@@ -3,9 +3,7 @@
    Based on jon_shared_cmd_heat_camera.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.common :as common]
-   [potatoclient.malli.oneof :as oneof]))
+   [potatoclient.malli.registry :as registry]))
 
 ;; Zoom nested command (has its own oneof structure)
 
@@ -14,15 +12,13 @@
   [:map {:closed true}
    [:value [:int {:min 0}]]])
 
-(def next-zoom-table-pos-spec [:map {:closed true}])
-(def prev-zoom-table-pos-spec [:map {:closed true}])
 
 (def zoom-spec
   "Zoom command with nested oneof"
   [:oneof
    [:set_zoom_table_value set-zoom-table-value-spec]
-   [:next_zoom_table_pos next-zoom-table-pos-spec]
-   [:prev_zoom_table_pos prev-zoom-table-pos-spec]])
+   [:next_zoom_table_pos :cmd/empty]
+   [:prev_zoom_table_pos :cmd/empty]])
 
 ;; AGC and Filter control messages
 
@@ -48,8 +44,6 @@
   [:map {:closed true}
    [:value [:int {:min -100 :max 100}]]])
 
-(def enable-dde-spec [:map {:closed true}])
-(def disable-dde-spec [:map {:closed true}])
 
 ;; FX (Effects) mode messages
 
@@ -58,9 +52,6 @@
   [:map {:closed true}
    [:mode :enum/fx-mode-heat]])
 
-(def next-fx-mode-spec [:map {:closed true}])
-(def prev-fx-mode-spec [:map {:closed true}])
-(def refresh-fx-mode-spec [:map {:closed true}])
 
 ;; CLAHE messages
 
@@ -83,11 +74,6 @@
 
 ;; Focus control messages
 
-(def focus-in-spec [:map {:closed true}])
-(def focus-out-spec [:map {:closed true}])
-(def focus-stop-spec [:map {:closed true}])
-(def focus-step-plus-spec [:map {:closed true}])
-(def focus-step-minus-spec [:map {:closed true}])
 
 (def set-auto-focus-spec
   "SetAutoFocus with boolean value"
@@ -96,20 +82,9 @@
 
 ;; Zoom control messages (simple zoom commands, not the nested Zoom message)
 
-(def zoom-in-spec [:map {:closed true}])
-(def zoom-out-spec [:map {:closed true}])
-(def zoom-stop-spec [:map {:closed true}])
-(def reset-zoom-spec [:map {:closed true}])
 
 ;; Basic control messages
 
-(def start-spec [:map {:closed true}])
-(def stop-spec [:map {:closed true}])
-(def photo-spec [:map {:closed true}])
-(def calibrate-spec [:map {:closed true}])
-(def get-meteo-spec [:map {:closed true}])
-(def save-to-table-spec [:map {:closed true}])
-(def set-calib-mode-spec [:map {:closed true}])
 
 ;; Main Heat Camera Root command spec using oneof - all 31 commands
 (def heat-camera-command-spec
@@ -117,31 +92,31 @@
    [:zoom zoom-spec]
    [:set_agc set-agc-spec]
    [:set_filters set-filters-spec]
-   [:start start-spec]
-   [:stop stop-spec]
-   [:photo photo-spec]
-   [:zoom_in zoom-in-spec]
-   [:zoom_out zoom-out-spec]
-   [:zoom_stop zoom-stop-spec]
-   [:focus_in focus-in-spec]
-   [:focus_out focus-out-spec]
-   [:focus_stop focus-stop-spec]
-   [:calibrate calibrate-spec]
+   [:start :cmd/empty]
+   [:stop :cmd/empty]
+   [:photo :cmd/empty]
+   [:zoom_in :cmd/empty]
+   [:zoom_out :cmd/empty]
+   [:zoom_stop :cmd/empty]
+   [:focus_in :cmd/empty]
+   [:focus_out :cmd/empty]
+   [:focus_stop :cmd/empty]
+   [:calibrate :cmd/empty]
    [:set_dde_level set-dde-level-spec]
-   [:enable_dde enable-dde-spec]
-   [:disable_dde disable-dde-spec]
+   [:enable_dde :cmd/empty]
+   [:disable_dde :cmd/empty]
    [:set_auto_focus set-auto-focus-spec]
-   [:focus_step_plus focus-step-plus-spec]
-   [:focus_step_minus focus-step-minus-spec]
+   [:focus_step_plus :cmd/empty]
+   [:focus_step_minus :cmd/empty]
    [:set_fx_mode set-fx-mode-spec]
-   [:next_fx_mode next-fx-mode-spec]
-   [:prev_fx_mode prev-fx-mode-spec]
-   [:get_meteo get-meteo-spec]
+   [:next_fx_mode :cmd/empty]
+   [:prev_fx_mode :cmd/empty]
+   [:get_meteo :cmd/empty]
    [:shift_dde shift-dde-spec]
-   [:refresh_fx_mode refresh-fx-mode-spec]
-   [:reset_zoom reset-zoom-spec]
-   [:save_to_table save-to-table-spec]
-   [:set_calib_mode set-calib-mode-spec]
+   [:refresh_fx_mode :cmd/empty]
+   [:reset_zoom :cmd/empty]
+   [:save_to_table :cmd/empty]
+   [:set_calib_mode :cmd/empty]
    [:set_digital_zoom_level set-digital-zoom-level-spec]
    [:set_clahe_level set-clahe-level-spec]
    [:shift_clahe_level shift-clahe-level-spec]])

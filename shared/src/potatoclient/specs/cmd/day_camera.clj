@@ -3,9 +3,7 @@
    Based on jon_shared_cmd_day_camera.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.common :as common]
-   [potatoclient.malli.oneof :as oneof]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; Common message types used across multiple commands
 
@@ -25,9 +23,7 @@
   [:map {:closed true}
    [:offset_value :range/normalized-offset]])
 
-(def halt-spec
-  "Halt message - empty"
-  [:map {:closed true}])
+(def halt-spec :cmd/empty)
 
 ;; CLAHE-specific messages
 
@@ -43,8 +39,6 @@
 
 ;; Focus-specific messages
 
-(def reset-focus-spec [:map {:closed true}])
-(def save-to-table-focus-spec [:map {:closed true}])
 
 (def focus-spec
   "Focus command with nested oneof"
@@ -53,8 +47,8 @@
    [:move move-spec]
    [:halt halt-spec]
    [:offset offset-spec]
-   [:reset_focus reset-focus-spec]
-   [:save_to_table_focus save-to-table-focus-spec]])
+   [:reset_focus :cmd/empty]
+   [:save_to_table_focus :cmd/empty]])
 
 ;; Zoom-specific messages
 
@@ -62,10 +56,6 @@
   [:map {:closed true}
    [:value [:int {:min 0}]]])
 
-(def next-zoom-table-pos-spec [:map {:closed true}])
-(def prev-zoom-table-pos-spec [:map {:closed true}])
-(def reset-zoom-spec [:map {:closed true}])
-(def save-to-table-spec [:map {:closed true}])
 
 (def zoom-spec
   "Zoom command with nested oneof"
@@ -74,11 +64,11 @@
    [:move move-spec]
    [:halt halt-spec]
    [:set_zoom_table_value set-zoom-table-value-spec]
-   [:next_zoom_table_pos next-zoom-table-pos-spec]
-   [:prev_zoom_table_pos prev-zoom-table-pos-spec]
+   [:next_zoom_table_pos :cmd/empty]
+   [:prev_zoom_table_pos :cmd/empty]
    [:offset offset-spec]
-   [:reset_zoom reset-zoom-spec]
-   [:save_to_table save-to-table-spec]])
+   [:reset_zoom :cmd/empty]
+   [:save_to_table :cmd/empty]])
 
 ;; Simple command messages
 
@@ -90,24 +80,16 @@
   [:map {:closed true}
    [:value [:boolean]]])
 
-(def start-spec [:map {:closed true}])
-(def stop-spec [:map {:closed true}])
-(def photo-spec [:map {:closed true}])
 
 (def set-auto-iris-spec
   [:map {:closed true}
    [:value [:boolean]]])
 
-(def halt-all-spec [:map {:closed true}])
 
 (def set-fx-mode-spec
   [:map {:closed true}
    [:mode :enum/fx-mode-day]])
 
-(def next-fx-mode-spec [:map {:closed true}])
-(def prev-fx-mode-spec [:map {:closed true}])
-(def get-meteo-spec [:map {:closed true}])
-(def refresh-fx-mode-spec [:map {:closed true}])
 
 (def set-digital-zoom-level-spec
   [:map {:closed true}
@@ -120,16 +102,16 @@
    [:zoom zoom-spec]
    [:set_iris set-iris-spec]
    [:set_infra_red_filter set-infra-red-filter-spec]
-   [:start start-spec]
-   [:stop stop-spec]
-   [:photo photo-spec]
+   [:start :cmd/empty]
+   [:stop :cmd/empty]
+   [:photo :cmd/empty]
    [:set_auto_iris set-auto-iris-spec]
-   [:halt_all halt-all-spec]
+   [:halt_all :cmd/empty]
    [:set_fx_mode set-fx-mode-spec]
-   [:next_fx_mode next-fx-mode-spec]
-   [:prev_fx_mode prev-fx-mode-spec]
-   [:get_meteo get-meteo-spec]
-   [:refresh_fx_mode refresh-fx-mode-spec]
+   [:next_fx_mode :cmd/empty]
+   [:prev_fx_mode :cmd/empty]
+   [:get_meteo :cmd/empty]
+   [:refresh_fx_mode :cmd/empty]
    [:set_digital_zoom_level set-digital-zoom-level-spec]
    [:set_clahe_level set-clahe-level-spec]
    [:shift_clahe_level shift-clahe-level-spec]])
