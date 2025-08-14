@@ -6,21 +6,17 @@
    [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; JonGuiDataActualSpaceTime message spec based on EDN output:
-;; {:altitude 0.291143
-;;  :azimuth 256.62
-;;  :elevation 7.04
-;;  :latitude 50.02363
-;;  :longitude 15.815215
-;;  :timestamp 1754665407}
+;; JonGuiDataActualSpaceTime message spec
+;; All 7 fields from proto definition
 
 (def actual-space-time-message-spec
   [:map {:closed true}
-   [:altitude :position/altitude]
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
+   [:bank :angle/bank]
    [:latitude :position/latitude]
    [:longitude :position/longitude]
-   [:timestamp :time/unix-timestamp]])
+   [:altitude :position/altitude]
+   [:timestamp [:int {:min 0}]]])
 
 (registry/register! :state/actual-space-time actual-space-time-message-spec)

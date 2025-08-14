@@ -6,27 +6,17 @@
    [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; Recording OSD screen enum
-;; Based on actual Java enum values from JonSharedDataTypes$JonGuiDataRecOsdScreen
-(def rec-osd-screen-spec
-  [:enum
-   :JON_GUI_DATA_REC_OSD_SCREEN_UNSPECIFIED
-   :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
-   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
-   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT
-   :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED])
-
-(registry/register! :enum/rec-osd-screen rec-osd-screen-spec)
-
-;; JonGuiDataRecOsd message spec based on EDN output:
-;; {:day_osd_enabled true
-;;  :heat_osd_enabled true
-;;  :screen :JON_GUI_DATA_REC_OSD_SCREEN_MAIN}
+;; JonGuiDataRecOsd message spec
+;; All 7 fields from proto definition
 
 (def rec-osd-message-spec
   [:map {:closed true}
-   [:day_osd_enabled boolean?]
-   [:heat_osd_enabled boolean?]
-   [:screen :enum/rec-osd-screen]])
+   [:screen :enum/rec-osd-screen]
+   [:heat_osd_enabled :boolean]
+   [:day_osd_enabled :boolean]
+   [:heat_crosshair_offset_horizontal :int]
+   [:heat_crosshair_offset_vertical :int]
+   [:day_crosshair_offset_horizontal :int]
+   [:day_crosshair_offset_vertical :int]])
 
 (registry/register! :state/rec-osd rec-osd-message-spec)

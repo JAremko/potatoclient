@@ -2,21 +2,21 @@
   "GPS message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.common]))
+   [potatoclient.specs.common]
+   [potatoclient.malli.registry :as registry]))
 
-;; GPS message spec based on proto definition and actual EDN output:
-;; All 8 fields from JonGuiDataGps proto message
+;; JonGuiDataGps message spec
+;; All 8 fields from proto definition
 
 (def gps-message-spec
   [:map {:closed true}
-   [:altitude :position/altitude]
-   [:fix_type :enum/gps-fix-type]
-   [:latitude :position/latitude]
    [:longitude :position/longitude]
-   [:manual_altitude {:optional true} :position/altitude]
-   [:manual_latitude :position/latitude]
+   [:latitude :position/latitude]
+   [:altitude :position/altitude]
    [:manual_longitude :position/longitude]
-   [:use_manual {:optional true} :boolean]])
+   [:manual_latitude :position/latitude]
+   [:manual_altitude :position/altitude]
+   [:fix_type :enum/gps-fix-type]
+   [:use_manual :boolean]])
 
 (registry/register! :state/gps gps-message-spec)

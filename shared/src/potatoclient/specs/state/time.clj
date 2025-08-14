@@ -6,13 +6,14 @@
    [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; JonGuiDataTime message spec based on EDN output:
-;; {:manual_timestamp 1754665407
-;;  :timestamp 1754665407}
+;; JonGuiDataTime message spec
+;; All 4 fields from proto definition
 
 (def time-message-spec
   [:map {:closed true}
-   [:manual_timestamp :time/unix-timestamp]
-   [:timestamp :time/unix-timestamp]])
+   [:timestamp [:int {:min 0}]]
+   [:manual_timestamp [:int {:min 0}]]
+   [:zone_id :int]
+   [:use_manual_time :boolean]])
 
 (registry/register! :state/time time-message-spec)

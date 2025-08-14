@@ -9,7 +9,7 @@
    [potatoclient.malli.registry :as registry]
    [potatoclient.malli.oneof :as oneof]
    ;; Import all command specs
-   [potatoclient.specs.cmd.common]
+   [potatoclient.specs.common]
    [potatoclient.specs.cmd.compass]
    [potatoclient.specs.cmd.cv]
    [potatoclient.specs.cmd.day-cam-glass-heater]
@@ -52,4 +52,4 @@
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
 
 ;(registry/setup-global-registry!)
-;(mg/generate :cmd/heat-camera)
+;(mg/generate :state/root)

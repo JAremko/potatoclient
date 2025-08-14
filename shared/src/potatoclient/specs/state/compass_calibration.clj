@@ -5,19 +5,16 @@
    [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; Compass calibration message spec based on actual EDN output:
-;; {:final_stage 12
-;;  :status :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
-;;  :target_azimuth 56.25
-;;  :target_bank -5.625
-;;  :target_elevation 6.75}
+;; JonGuiDataCompassCalibration message spec
+;; All 6 fields from proto definition
 
 (def compass-calibration-message-spec
   [:map {:closed true}
-   [:final_stage :int]
-   [:status :enum/compass-calibrate-status]
+   [:stage [:int {:min 0}]]
+   [:final_stage [:int {:min 1}]]
    [:target_azimuth :angle/azimuth]
+   [:target_elevation :angle/elevation]
    [:target_bank :angle/bank]
-   [:target_elevation :angle/elevation]])
+   [:status :enum/compass-calibrate-status]])
 
 (registry/register! :state/compass-calibration compass-calibration-message-spec)

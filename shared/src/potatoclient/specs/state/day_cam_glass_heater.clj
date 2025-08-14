@@ -6,14 +6,12 @@
    [potatoclient.specs.common]
    [potatoclient.malli.registry :as registry]))
 
-;; JonGuiDataDayCamGlassHeater message spec based on EDN output:
-;; {} (empty map in the example)
-;;
-;; This message appears to be empty in the sample but may have optional fields
+;; JonGuiDataDayCamGlassHeater message spec
+;; All 2 fields from proto definition
 
 (def day-cam-glass-heater-message-spec
   [:map {:closed true}
-   ;; Add fields here when they appear in actual data
-   ])
+   [:temperature [:double {:min -273.15 :max 660.32}]]
+   [:status :boolean]])
 
 (registry/register! :state/day-cam-glass-heater day-cam-glass-heater-message-spec)

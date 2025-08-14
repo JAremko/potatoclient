@@ -9,7 +9,6 @@
    [potatoclient.malli.registry :as registry]
    ;; Import all state specs
    [potatoclient.specs.state.system]
-   [potatoclient.specs.state.meteo-internal]
    [potatoclient.specs.state.lrf]
    [potatoclient.specs.state.time]
    [potatoclient.specs.state.gps]
@@ -30,7 +29,6 @@
    [:protocol_version [:and :int [:> 0]]]
    ;; All subsystem state messages - all are required per buf.validate
    [:system :state/system]
-   [:meteo_internal :state/meteo-internal]
    [:lrf :state/lrf]
    [:time :state/time]
    [:gps :state/gps]
@@ -59,3 +57,6 @@
    Uses the spec's generator."
   []
   (mg/generate :state/root))
+
+;(registry/setup-global-registry!)
+;(mg/generate :state/root)
