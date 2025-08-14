@@ -131,9 +131,26 @@
 (registry/register! :screen/pixel-offset-x pixel-offset-x-spec)
 (registry/register! :screen/pixel-offset-y pixel-offset-y-spec)
 
+;; Integer type specs for protobuf compatibility
+;; int32: -2147483648 to 2147483647
+;; uint32: 0 to 4294967295
+(def int32-spec
+  [:int {:min -2147483648 :max 2147483647}])
+
+(def uint32-spec
+  [:int {:min 0 :max 4294967295}])
+
+(def int32-positive-spec
+  [:int {:min 0 :max 2147483647}])
+
 ;; Time specs
 (def unix-timestamp-spec
   [:int {:min 0 :max 2147483647}])
+
+;; Register integer specs
+(registry/register! :proto/int32 int32-spec)
+(registry/register! :proto/uint32 uint32-spec)
+(registry/register! :proto/int32-positive int32-positive-spec)
 
 ;; Register time specs
 (registry/register! :time/unix-timestamp unix-timestamp-spec)
@@ -362,9 +379,9 @@
 (def meteo-spec
   "JonGuiDataMeteo message spec - meteorological data"
   [:map {:closed true}
-   [:temperature :float]
-   [:humidity :float]
-   [:pressure :float]])
+   [:temperature [:float {:min -273.15 :max 100.0}]]  ; Absolute zero to boiling water
+   [:humidity [:float {:min 0.0 :max 100.0}]]          ; Percentage
+   [:pressure [:float {:min 0.0 :max 2000.0}]]])      ; hPa/mbar typical range
 
 ;; ====================================================================
 ;; Common command specs (empty messages used across multiple commands)

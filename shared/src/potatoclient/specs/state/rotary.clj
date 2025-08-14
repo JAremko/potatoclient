@@ -10,9 +10,9 @@
 
 (def scan-node-spec
   [:map {:closed true}
-   [:index [:int {:min 0}]]
-   [:DayZoomTableValue [:int {:min 0}]]
-   [:HeatZoomTableValue [:int {:min 0}]]
+   [:index :proto/int32-positive]
+   [:DayZoomTableValue :proto/int32-positive]
+   [:HeatZoomTableValue :proto/int32-positive]
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:linger [:double {:min 0.0}]]
@@ -37,8 +37,8 @@
    [:is_scanning :boolean]
    [:is_scanning_paused :boolean]
    [:use_rotary_as_compass :boolean]
-   [:scan_target [:int {:min 0}]]
-   [:scan_target_max [:int {:min 0}]]
+   [:scan_target :proto/int32-positive]
+   [:scan_target_max :proto/int32-positive]
    [:sun_azimuth :angle/azimuth]
    [:sun_elevation :angle/azimuth]
    [:current_scan_node :rotary/scan-node]])

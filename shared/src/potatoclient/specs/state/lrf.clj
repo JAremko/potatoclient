@@ -20,7 +20,7 @@
 
 (def lrf-target-spec
   [:map {:closed true}
-   [:timestamp [:int {:min 0}]]
+   [:timestamp :time/unix-timestamp]
    [:target_longitude :position/longitude]
    [:target_latitude :position/latitude]
    [:target_altitude :double]
@@ -33,14 +33,14 @@
    [:distance_2d :distance/meters]
    [:distance_3b :distance/meters]
    [:observer_fix_type :enum/gps-fix-type]
-   [:session_id [:int {:min 0}]]
-   [:target_id [:int {:min 0}]]
+   [:session_id :proto/int32-positive]
+   [:target_id :proto/int32-positive]
    [:target_color :lrf/rgb-color]
-   [:type :int]
-   [:uuid_part1 :int]
-   [:uuid_part2 :int]
-   [:uuid_part3 :int]
-   [:uuid_part4 :int]])
+   [:type :proto/int32]
+   [:uuid_part1 :proto/int32]
+   [:uuid_part2 :proto/int32]
+   [:uuid_part3 :proto/int32]
+   [:uuid_part4 :proto/int32]])
 
 (registry/register! :lrf/target lrf-target-spec)
 
@@ -51,7 +51,7 @@
   [:map {:closed true}
    [:is_scanning :boolean]
    [:is_measuring :boolean]
-   [:measure_id [:int {:min 0}]]
+   [:measure_id :proto/int32-positive]
    [:target :lrf/target]
    [:pointer_mode :enum/lrf-laser-pointer-modes]
    [:fogModeEnabled :boolean]

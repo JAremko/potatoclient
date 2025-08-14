@@ -17,6 +17,6 @@
    [:latitude :position/latitude]
    [:longitude :position/longitude]
    [:altitude :position/altitude]
-   [:timestamp [:int {:min 0}]]])
+   [:timestamp :time/unix-timestamp]])
 
 (registry/register! :state/actual-space-time actual-space-time-message-spec)

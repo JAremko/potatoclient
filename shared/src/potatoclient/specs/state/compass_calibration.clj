@@ -10,8 +10,8 @@
 
 (def compass-calibration-message-spec
   [:map {:closed true}
-   [:stage [:int {:min 0}]]
-   [:final_stage [:int {:min 1}]]
+   [:stage :proto/int32-positive]
+   [:final_stage [:int {:min 1 :max 2147483647}]]
    [:target_azimuth :angle/azimuth]
    [:target_elevation :angle/elevation]
    [:target_bank :angle/bank]

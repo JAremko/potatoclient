@@ -14,9 +14,9 @@
    [:screen :enum/rec-osd-screen]
    [:heat_osd_enabled :boolean]
    [:day_osd_enabled :boolean]
-   [:heat_crosshair_offset_horizontal :int]
-   [:heat_crosshair_offset_vertical :int]
-   [:day_crosshair_offset_horizontal :int]
-   [:day_crosshair_offset_vertical :int]])
+   [:heat_crosshair_offset_horizontal :proto/int32]
+   [:heat_crosshair_offset_vertical :proto/int32]
+   [:day_crosshair_offset_horizontal :proto/int32]
+   [:day_crosshair_offset_vertical :proto/int32]])
 
 (registry/register! :state/rec-osd rec-osd-message-spec)

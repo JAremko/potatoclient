@@ -11,9 +11,9 @@
 
 (def time-message-spec
   [:map {:closed true}
-   [:timestamp [:int {:min 0}]]
-   [:manual_timestamp [:int {:min 0}]]
-   [:zone_id :int]
+   [:timestamp :time/unix-timestamp]
+   [:manual_timestamp :time/unix-timestamp]
+   [:zone_id :proto/int32]
    [:use_manual_time :boolean]])
 
 (registry/register! :state/time time-message-spec)
