@@ -31,25 +31,27 @@
    [:important :boolean]
    [:from_cv_subsystem :boolean]
    [:client_type :enum/client-type]
-   ;; All command fields as optional (oneof behavior enforced by validator)
-   [:oneof
-    [:day_camera :cmd/day-camera]
-    [:heat_camera :cmd/heat-camera]
-    [:gps :cmd/gps]
-    [:compass :cmd/compass]
-    [:lrf :cmd/lrf]
-    [:lrf_calib :cmd/lrf-align]
-    [:rotary :cmd/rotary]
-    [:osd :cmd/osd]
-    [:ping [:map {:closed true}]]
-    [:noop [:map {:closed true}]]
-    [:frozen [:map {:closed true}]]
-    [:system :cmd/system]
-    [:cv :cmd/cv]
-    [:day_cam_glass_heater :cmd/day-cam-glass-heater]
-    [:lira :cmd/lira]]])
+   ;; Payload field using oneof schema type
+   [:payload
+    [:oneof
+     [:day_camera :cmd/day-camera]
+     [:heat_camera :cmd/heat-camera]
+     [:gps :cmd/gps]
+     [:compass :cmd/compass]
+     [:lrf :cmd/lrf]
+     [:lrf_calib :cmd/lrf-align]
+     [:rotary :cmd/rotary]
+     [:osd :cmd/osd]
+     [:ping :cmd/empty]
+     [:noop :cmd/empty]
+     [:frozen :cmd/empty]
+     [:system :cmd/system]
+     [:cv :cmd/cv]
+     [:day_cam_glass_heater :cmd/day-cam-glass-heater]
+     [:lira :cmd/lira]]]])
 
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
 
 ;(registry/setup-global-registry!)
-;(mg/generate :state/root)
+;
+;(mg/generate :cmd/root)
