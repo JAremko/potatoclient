@@ -23,12 +23,16 @@ clean:
 	clojure -T:build clean
 	@rm -rf src/java target
 
-# Build all (proto + pronto + clojure)
-build: proto
-	@echo "Building shared project..."
+# Compile existing proto sources (no Docker, just javac)
+compile: 
+	@echo "Compiling existing proto sources..."
 	clojure -T:build compile-all
 
-# Run tests
-test: build
+# Run tests (requires proto classes to be compiled)
+test: compile
 	@echo "Running shared project tests..."
 	clojure -M:test
+
+# Full build with proto generation (only when protos change)
+build-with-proto: proto compile
+	@echo "Full build complete!"

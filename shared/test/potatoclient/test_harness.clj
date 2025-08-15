@@ -98,24 +98,15 @@
       true)))
 
 (defn ensure-proto-classes!
-  "Ensure proto classes are available, always rebuilding for freshness."
+  "Ensure proto classes are compiled and available."
   []
-  ;; Always copy fresh proto classes from tools to ensure they're up-to-date
-  (println "Rebuilding proto classes from tools for freshness...")
-  (if (copy-proto-classes-from-tools!)
+  (if (proto-classes-available?)
     (do
-      (println "Proto classes freshly copied from tools")
+      (println "Proto classes available ✓")
       true)
-    ;; If copying fails, check if they're already available
-    (if (proto-classes-available?)
-      (do 
-        (println "Warning: Could not rebuild, using existing proto classes")
-        true)
-      ;; Last resort - try to compile from scratch
-      (do
-        (println "Compiling proto classes from source...")
-        (compile-proto-classes!)
-        true))))
+    (throw (ex-info "Proto classes not compiled! Please compile before running tests."
+                    {:missing-classes ["ser.JonSharedData" "cmd.JonSharedCmd"]
+                     :hint "Run 'clojure -T:build compile-all' or 'make test' to compile and test"}))))
 
 (defn ensure-pronto!
   "Ensure Pronto is available on classpath.
