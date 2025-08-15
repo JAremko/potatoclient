@@ -11,7 +11,7 @@
         org.clojure/data.json {:mvn/version "2.4.0"}
         ;; Pronto for protobuf handling (using JAremko's fork via git)
         com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
-                              :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"}
+                              :git/sha "5444ae5ec3b567a5565e6c1e90ba0850960331b6"}
         ;; Logging
         org.clojure/tools.logging {:mvn/version "1.2.4"}
         ch.qos.logback/logback-classic {:mvn/version "1.4.11"}

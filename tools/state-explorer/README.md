@@ -217,13 +217,15 @@ make repl
 Example REPL usage:
 ```clojure
 (require '[state-explorer.core :as core])
-(require '[state-explorer.proto-to-edn :as p2e])
+(require '[state-explorer.pronto-handler :as proto])
 
 ;; Capture directly
 (core/run-capture {:domain "sych.local" :count 2})
 
 ;; Parse existing binary file
-(def data (p2e/parse-and-convert (java.nio.file.Files/readAllBytes (java.nio.file.Paths/get "output/1234567890.bin" (into-array String [])))))
+(def binary-data (java.nio.file.Files/readAllBytes (java.nio.file.Paths/get "output/1234567890.bin" (into-array String []))))
+(def proto-map (proto/parse-state-message binary-data))
+(def edn-data (proto/proto->edn proto-map))
 ```
 
 ### Testing

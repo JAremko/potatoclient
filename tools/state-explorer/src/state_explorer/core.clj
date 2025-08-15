@@ -2,7 +2,7 @@
   "Main entry point for state-explorer tool"
   (:require [state-explorer.websocket-simple :as ws]
             [state-explorer.capture :as capture]
-            [state-explorer.proto-handler-simple :as proto]
+            [state-explorer.pronto-handler :as proto]
             [state-explorer.cli :as cli]
             [clojure.tools.logging :as log]
             [clojure.string :as str])
