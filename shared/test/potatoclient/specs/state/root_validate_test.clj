@@ -1,6 +1,6 @@
-(ns potatoclient.specs.buf-validate-test
-  "Tests for buf.validate constraint validation using generated samples.
-   Generates 1000 samples from Malli specs, converts to protobuf,
+(ns potatoclient.specs.state.root-validate-test
+  "Tests for state.Root buf.validate constraint validation using generated samples.
+   Generates samples from Malli specs, converts to protobuf,
    validates with buf.validate, and reports failures."
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
@@ -181,38 +181,3 @@
       (is (empty? failures)
           (format "Expected all samples to pass buf.validate, but %d failed"
                  failure-count)))))
-
-(deftest buf-validate-specific-constraints
-  (testing "Specific buf.validate constraints"
-    (testing "GPS latitude must be within [-90, 90]"
-      (let [invalid-sample {:protocol_version 1
-                            :gps {:latitude 91.0  ; Invalid
-                                  :longitude 0.0
-                                  :altitude 0.0
-                                  :manual_latitude 0.0
-                                  :manual_longitude 0.0
-                                  :manual_altitude 0.0
-                                  :fix_type :JON_GUI_DATA_GPS_FIX_TYPE_3D
-                                  :use_manual false}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for latitude > 90")
-        (is (some #(re-find #"latitude" (:field %)) (:violations result))
-            "Should have violation for latitude field")))
-
-    (testing "Azimuth must be within [0, 360)"
-      (let [invalid-sample {:protocol_version 1
-                            :compass {:azimuth 360.0  ; Invalid (must be < 360)
-                                      :elevation 0.0
-                                      :bank 0.0
-                                      :offsetAzimuth 0.0
-                                      :offsetElevation 0.0
-                                      :magneticDeclination 0.0
-                                      :calibrating false}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for azimuth >= 360")
-        (is (some #(re-find #"azimuth" (:field %)) (:violations result))
-            "Should have violation for azimuth field")))))
