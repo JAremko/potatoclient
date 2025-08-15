@@ -7,6 +7,7 @@
    [clojure.core.reducers :as r]
    [clojure.java.data :as java-data]
    [malli.core :as m]
+   [malli.error :as me]
    [malli.generator :as mg]
    [pronto.core :as pronto]
    [potatoclient.malli.registry :as registry]
@@ -189,88 +190,125 @@
           (format "Expected all samples to pass buf.validate, but %d failed"
                  failure-count)))))
 
-(deftest buf-validate-cmd-specific-constraints
-  (testing "Specific buf.validate constraints for cmd messages"
-    (testing "Protocol version must be >= 1"
-      (let [invalid-sample {:protocol_version 0  ; Invalid
-                            :session_id 1
+(deftest buf-validate-negative-tests
+  (testing "Hand-crafted invalid cmd messages"
+    (let [cmd-spec (m/schema :cmd/root)
+          ;; Generate a valid base sample
+          base-sample (mg/generate cmd-spec)]
+      
+      (testing "Invalid protocol_version (0 - must be > 0)"
+        (let [invalid-sample (assoc base-sample :protocol_version 0)]
+          (is (not (m/validate cmd-spec invalid-sample))
+              "Message with protocol_version=0 should fail Malli validation")
+          
+          ;; Try proto conversion and buf.validate
+          (let [proto (edn->proto invalid-sample)
+                result (validate-proto proto)]
+            (is (false? (:valid? result))
+                "Should fail buf.validate for protocol_version=0")
+            (is (some #(re-find #"protocol_version" (:field %)) (:violations result))
+                "Should have violation for protocol_version field"))))
+      
+      (testing "Invalid GPS coordinates in GPS command"
+        (when (:gps base-sample)
+          (let [invalid-sample (assoc base-sample
+                                      :gps {:set_manual_position
+                                            {:latitude 91.0     ; Invalid: > 90
+                                             :longitude 181.0   ; Invalid: > 180  
+                                             :altitude -500.0}})] ; Invalid: < -430
+            (is (not (m/validate cmd-spec invalid-sample))
+                "Message with invalid GPS coordinates should fail")
+            
+            (when-let [explanation (m/explain cmd-spec invalid-sample)]
+              (let [errors (:errors explanation)]
+                (is (some #(re-find #"latitude" (str %)) errors)
+                    "Should have error for invalid latitude"))))))
+      
+      (testing "Invalid compass angles"
+        (when (:compass base-sample)
+          (let [invalid-sample (assoc base-sample
+                                      :compass {:set_offset_angle_azimuth
+                                               {:value 180.0}})]  ; Invalid: must be < 180
+            (is (not (m/validate cmd-spec invalid-sample))
+                "Message with invalid compass offset should fail"))))
+      
+      (testing "Invalid rotary relative angles"
+        (when (:rotary base-sample)
+          (let [invalid-sample (assoc base-sample
+                                      :rotary {:axis {:azimuth {:relative
+                                                                {:value 181.0  ; Invalid: > 180
+                                                                 :speed 0.5
+                                                                 :direction :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE}}
+                                                     :elevation {:relative
+                                                                {:value 91.0  ; Invalid: > 90
+                                                                 :speed 0.5
+                                                                 :direction :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE}}}})]
+            (is (not (m/validate cmd-spec invalid-sample))
+                "Message with invalid rotary relative angles should fail"))))
+      
+      (testing "Multiple oneof fields present (invalid)"
+        (let [invalid-sample (-> base-sample
+                                 (assoc :ping {})
+                                 (assoc :noop {}))]
+          (is (not (m/validate cmd-spec invalid-sample))
+              "Message with multiple oneof fields should fail")))
+      
+      (testing "No oneof fields present (invalid)"  
+        (let [invalid-sample (-> base-sample
+                                 (dissoc :ping :noop :system :gps :compass :lrf 
+                                        :lrf_calib :rotary :osd :cv :lira :frozen
+                                        :day_camera :heat_camera :day_cam_glass_heater))]
+          (is (not (m/validate cmd-spec invalid-sample))
+              "Message with no oneof fields should fail")))))
+  
+  (testing "Sanity checks for valid messages"
+    (let [cmd-spec (m/schema :cmd/root)]
+      
+      (testing "Valid ping command"
+        (let [valid-sample {:protocol_version 1
+                            :session_id 123
                             :important false
                             :from_cv_subsystem false
                             :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                            :ping {}}  ; No :payload wrapper
-            _ (println "\nTesting protocol_version constraint:")
-            _ (println "Invalid sample:" invalid-sample)
-            proto (edn->proto invalid-sample)
-            _ (println "Proto result:" proto)
-            result (validate-proto proto)
-            _ (println "Validation result:" result)]
-        (is (false? (:valid? result))
-            "Should fail validation for protocol_version < 1")
-        (is (some #(re-find #"protocol_version" (:field %)) (:violations result))
-            "Should have violation for protocol_version field")))
-
-    (testing "Session ID must be >= 1"
-      (let [invalid-sample {:protocol_version 1
-                            :session_id 0  ; Invalid
+                            :ping {}}]
+          (is (m/validate cmd-spec valid-sample)
+              "Valid ping command should pass")
+          
+          (let [proto (edn->proto valid-sample)
+                result (validate-proto proto)]
+            (is (:valid? result)
+                "Should pass buf.validate"))))
+      
+      (testing "Valid system command"
+        (let [valid-sample {:protocol_version 1
+                            :session_id 456
+                            :important true
+                            :from_cv_subsystem false
+                            :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+                            :system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}]
+          (is (m/validate cmd-spec valid-sample)
+              "Valid system command should pass")))))
+  
+  (testing "Edge cases"
+    (let [cmd-spec (m/schema :cmd/root)]
+      
+      (testing "Maximum valid protocol_version"
+        (let [valid-sample {:protocol_version 2147483647
+                            :session_id 0
                             :important false
                             :from_cv_subsystem false
-                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                            :noop {}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for session_id < 1")
-        (is (some #(re-find #"session_id" (:field %)) (:violations result))
-            "Should have violation for session_id field")))
-
-    (testing "GPS coordinates validation in cmd"
-      (let [invalid-sample {:protocol_version 1
-                            :session_id 1
+                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LIRA
+                            :noop {}}]
+          (is (m/validate cmd-spec valid-sample)
+              "Max protocol_version should be valid")))
+      
+      (testing "Minimum valid session_id (0 is valid)"
+        (let [valid-sample {:protocol_version 1
+                            :session_id 0
                             :important false
                             :from_cv_subsystem false
-                            :client_type :CLIENT_TYPE_COELACANTH
-                            :payload {:gps {:start {:latitude 91.0  ; Invalid (> 90)
-                                                   :longitude 0.0
-                                                   :altitude 0.0
-                                                   :fix_type :JON_CMD_GPS_FIX_TYPE_3D
-                                                   :gps_source :JON_CMD_GPS_SOURCE_INTERNAL}}}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for GPS latitude > 90")
-        (is (some #(re-find #"latitude" (:field %)) (:violations result))
-            "Should have violation for latitude field")))
+                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LIRA
+                            :frozen {}}]
+          (is (m/validate cmd-spec valid-sample)
+              "session_id=0 should be valid"))))))
 
-    (testing "Compass azimuth validation in cmd"
-      (let [invalid-sample {:protocol_version 1
-                            :session_id 1
-                            :important false
-                            :from_cv_subsystem false
-                            :client_type :CLIENT_TYPE_COELACANTH
-                            :payload {:compass {:start {:azimuth 360.0  ; Invalid (must be < 360)
-                                                       :elevation 0.0
-                                                       :bank 0.0
-                                                       :magnetic_declination 0.0
-                                                       :compass_source :JON_CMD_COMPASS_SOURCE_INTERNAL}}}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for compass azimuth >= 360")
-        (is (some #(re-find #"azimuth" (:field %)) (:violations result))
-            "Should have violation for azimuth field")))
-
-    (testing "Day camera zoom constraints"
-      (let [invalid-sample {:protocol_version 1
-                            :session_id 1
-                            :important false
-                            :from_cv_subsystem false
-                            :client_type :CLIENT_TYPE_COELACANTH
-                            :payload {:day_camera {:zoom {:zoom_type :DAYC_ZOOM_TYPE_CONTINUOUS
-                                                          :optical_zoom -1.0  ; Invalid (< 0)
-                                                          :digital_zoom 1.0}}}}
-            proto (edn->proto invalid-sample)
-            result (validate-proto proto)]
-        (is (false? (:valid? result))
-            "Should fail validation for negative optical zoom")
-        (is (some #(re-find #"optical_zoom" (:field %)) (:violations result))
-            "Should have violation for optical_zoom field")))))
