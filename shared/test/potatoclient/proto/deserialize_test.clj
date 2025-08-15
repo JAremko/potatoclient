@@ -26,37 +26,18 @@
 ;; Test Helpers
 ;; ============================================================================
 
-;; Dynamic mappers - initialized at runtime after proto classes are loaded
-(def ^:dynamic *cmd-mapper* nil)
-(def ^:dynamic *state-mapper* nil)
-
-(defn init-mappers!
-  "Initialize the pronto mappers at runtime."
-  []
-  (when (nil? *cmd-mapper*)
-    (alter-var-root #'*cmd-mapper*
-                    (constantly 
-                     (eval '(do 
-                             (pronto.core/defmapper cmd-mapper-internal 
-                                                   [cmd.JonSharedCmd$Root])
-                             cmd-mapper-internal)))))
-  (when (nil? *state-mapper*)
-    (alter-var-root #'*state-mapper*
-                    (constantly
-                     (eval '(do
-                             (pronto.core/defmapper state-mapper-internal
-                                                   [ser.JonSharedData$JonGUIState])
-                             state-mapper-internal))))))
+;; Define Pronto mappers at compile time (proto classes must be available)
+;; Run 'make compile' or 'clojure -T:build compile-all' first
+(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
+(pronto/defmapper state-mapper [ser.JonSharedData$JonGUIState])
 
 (defn edn->cmd-bytes
   "Convert EDN map to CMD protobuf bytes for testing."
   [edn-data]
-  (init-mappers!)
   (try
-    (let [proto-class (Class/forName "cmd.JonSharedCmd$Root")
-          proto-map (eval `(pronto.core/clj-map->proto-map ~*cmd-mapper*
-                                                           cmd.JonSharedCmd$Root
-                                                           ~edn-data))
+    (let [proto-map (pronto/clj-map->proto-map cmd-mapper
+                                               cmd.JonSharedCmd$Root
+                                               edn-data)
           proto (pronto/proto-map->proto proto-map)]
       (.toByteArray proto))
     (catch Exception e
@@ -67,12 +48,10 @@
 (defn edn->state-bytes
   "Convert EDN map to State protobuf bytes for testing."
   [edn-data]
-  (init-mappers!)
   (try
-    (let [proto-class (Class/forName "ser.JonSharedData$JonGUIState")
-          proto-map (eval `(pronto.core/clj-map->proto-map ~*state-mapper*
-                                                           ser.JonSharedData$JonGUIState
-                                                           ~edn-data))
+    (let [proto-map (pronto/clj-map->proto-map state-mapper
+                                               ser.JonSharedData$JonGUIState
+                                               edn-data)
           proto (pronto/proto-map->proto proto-map)]
       (.toByteArray proto))
     (catch Exception e

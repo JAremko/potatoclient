@@ -32,13 +32,8 @@
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
 
-;; These will be initialized in tests when classes are available
-(def validator (atom nil))
-
-(defn init-validator! []
-  (when-not @validator
-    (let [validator-class (Class/forName "build.buf.protovalidate.Validator")]
-      (reset! validator (.newInstance validator-class)))))
+;; Proto classes must be compiled before running tests
+;; Run 'make compile' or 'clojure -T:build compile-all' first
 
 ;; Import test harness to ensure proto classes are compiled
 (require '[potatoclient.test-harness :as harness])
@@ -48,34 +43,19 @@
   (throw (ex-info "Test harness failed to initialize! Proto classes not available." 
                   {:initialized? harness/initialized?})))
 
-;; Create mapper dynamically using eval after classes are loaded
-;; This allows us to work with runtime-loaded proto classes
-(def ^:dynamic *cmd-mapper* nil)
+;; Define Pronto mapper at compile time (proto classes must be available)
+(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
 
-;; Initialize the mapper at runtime
-(defn init-mapper!
-  "Initialize the pronto mapper at runtime."
-  []
-  (when (nil? *cmd-mapper*)
-    (alter-var-root #'*cmd-mapper*
-                    (constantly 
-                     (eval '(do 
-                             (pronto.core/defmapper cmd-mapper-internal 
-                                                   [cmd.JonSharedCmd$Root])
-                             cmd-mapper-internal))))))
+;; Initialize validator
+(def validator (delay (build.buf.protovalidate.Validator.)))
 
 (defn edn->proto
   "Convert EDN map to protobuf message via Pronto."
   [edn-data]
   (try
-    ;; Ensure mapper is initialized
-    (init-mapper!)
-    
-    ;; Use eval to work with the runtime-loaded classes and mapper
-    (let [proto-class (Class/forName "cmd.JonSharedCmd$Root")
-          proto-map (eval `(pronto.core/clj-map->proto-map ~*cmd-mapper* 
-                                                           cmd.JonSharedCmd$Root 
-                                                           ~edn-data))]
+    (let [proto-map (pronto/clj-map->proto-map cmd-mapper 
+                                               cmd.JonSharedCmd$Root 
+                                               edn-data)]
       (pronto/proto-map->proto proto-map))
     (catch Exception e
       {:error :conversion-failed
@@ -100,7 +80,6 @@
     ;; Otherwise validate the proto
     :else
     (try
-      (init-validator!)
       (let [result (.validate @validator proto-msg)]
         (if (.isSuccess result)
           {:valid? true}
