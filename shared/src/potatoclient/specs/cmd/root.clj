@@ -1,13 +1,14 @@
 (ns potatoclient.specs.cmd.root
-  "Root Command message spec (JonSharedCmd.Root) using oneof structure.
+  "Root Command message spec (JonSharedCmd.Root) with flattened oneof structure.
    Based on jon_shared_cmd.proto.
-   All maps use {:closed true} to catch typos and invalid keys."
+   
+   Pronto expects oneof fields to be flattened at the root level, not wrapped in :payload.
+   The spec ensures exactly one oneof field is present."
   (:require
    [malli.core :as m]
    [malli.generator :as mg]
    [clojure.test.check.generators :as gen]
    [potatoclient.malli.registry :as registry]
-   [potatoclient.malli.oneof :as oneof]
    ;; Import all command specs
    [potatoclient.specs.common]
    [potatoclient.specs.cmd.compass]
@@ -24,34 +25,31 @@
    [potatoclient.specs.cmd.system]))
 
 ;; The flat spec that matches protobuf structure
+;; Uses oneof with base fields for the non-oneof fields
 (def jon-shared-cmd-root-spec
-  [:map {:closed true}
-   [:protocol_version [:int {:min 1}]]
-   [:session_id [:int {:min 1}]]
-   [:important :boolean]
-   [:from_cv_subsystem :boolean]
-   [:client_type :enum/client-type]
-   ;; Payload field using oneof schema type
-   [:payload
-    [:oneof
-     [:day_camera :cmd/day-camera]
-     [:heat_camera :cmd/heat-camera]
-     [:gps :cmd/gps]
-     [:compass :cmd/compass]
-     [:lrf :cmd/lrf]
-     [:lrf_calib :cmd/lrf-align]
-     [:rotary :cmd/rotary]
-     [:osd :cmd/osd]
-     [:ping :cmd/empty]
-     [:noop :cmd/empty]
-     [:frozen :cmd/empty]
-     [:system :cmd/system]
-     [:cv :cmd/cv]
-     [:day_cam_glass_heater :cmd/day-cam-glass-heater]
-     [:lira :cmd/lira]]]])
+  [:oneof
+   ;; Base fields (always present, not part of oneof constraint)
+   [:protocol_version {:base true} [:int {:min 1}]]
+   [:session_id {:base true} [:int {:min 1}]]
+   [:important {:base true} :boolean]
+   [:from_cv_subsystem {:base true} :boolean]
+   [:client_type {:base true} :enum/client-type]
+   ;; Oneof fields (exactly one must be present)
+   [:day_camera :cmd/day-camera]
+   [:heat_camera :cmd/heat-camera]
+   [:gps :cmd/gps]
+   [:compass :cmd/compass]
+   [:lrf :cmd/lrf]
+   [:lrf_calib :cmd/lrf-align]
+   [:rotary :cmd/rotary]
+   [:osd :cmd/osd]
+   [:ping :cmd/empty]
+   [:noop :cmd/empty]
+   [:frozen :cmd/empty]
+   [:system :cmd/system]
+   [:cv :cmd/cv]
+   [:day_cam_glass_heater :cmd/day-cam-glass-heater]
+   [:lira :cmd/lira]])
 
+;; Register the spec
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
-
-;(registry/setup-global-registry!)
-;
-;(mg/generate :cmd/root)
