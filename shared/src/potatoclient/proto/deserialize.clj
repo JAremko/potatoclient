@@ -13,7 +13,7 @@
    [malli.core :as m]
    [malli.error :as me]
    [pronto.core :as pronto]
-   [potatoclient.proto.to-edn :as p2e]
+   [pronto.utils]
    [potatoclient.malli.registry :as registry]
    [potatoclient.specs.cmd.root]
    [potatoclient.specs.state.root])
@@ -36,29 +36,13 @@
 (s/def ::malli-errors any?)
 
 ;; ============================================================================
-;; Pronto mappers - initialized at runtime using eval
+;; Pronto mappers for proto conversion
 ;; ============================================================================
 
-(def ^:dynamic *cmd-mapper* nil)
-(def ^:dynamic *state-mapper* nil)
-
-(defn- ensure-mappers!
-  "Initialize the pronto mappers at runtime if not already done."
-  []
-  (when (nil? *cmd-mapper*)
-    (alter-var-root #'*cmd-mapper*
-                    (constantly 
-                     (eval '(do 
-                             (pronto.core/defmapper cmd-mapper-internal 
-                                                   [cmd.JonSharedCmd$Root])
-                             cmd-mapper-internal)))))
-  (when (nil? *state-mapper*)
-    (alter-var-root #'*state-mapper*
-                    (constantly
-                     (eval '(do
-                             (pronto.core/defmapper state-mapper-internal
-                                                   [ser.JonSharedData$JonGUIState])
-                             state-mapper-internal))))))
+;; Proto classes must be compiled before using this namespace
+;; Run 'make compile' or 'clojure -T:build compile-all' first
+(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
+(pronto/defmapper state-mapper [ser.JonSharedData$JonGUIState])
 
 ;; ============================================================================
 ;; Validator - initialized lazily
@@ -112,8 +96,9 @@
   [binary-data]
   [::bytes => ::edn-map]
   (try
-    (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)]
-      (p2e/proto-message->map proto-msg))
+    (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
+          proto-map (pronto/proto->proto-map cmd-mapper proto-msg)]
+      (pronto/proto-map->clj-map proto-map))
     (catch Exception e
       (throw (ex-info "Failed to deserialize CMD payload"
                       {:type :deserialization-error
@@ -131,7 +116,8 @@
     ;; Parse proto
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
           _ (validate-with-buf proto-msg :cmd)
-          edn-data (p2e/proto-message->map proto-msg)]
+          proto-map (pronto/proto->proto-map cmd-mapper proto-msg)
+          edn-data (pronto/proto-map->clj-map proto-map)]
       ;; Validate with Malli
       (validate-with-malli edn-data :cmd/root)
       edn-data)
@@ -156,8 +142,9 @@
   [binary-data]
   [::bytes => ::edn-map]
   (try
-    (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)]
-      (p2e/proto-message->map proto-msg))
+    (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
+          proto-map (pronto/proto->proto-map state-mapper proto-msg)]
+      (pronto/proto-map->clj-map proto-map))
     (catch Exception e
       (throw (ex-info "Failed to deserialize State payload"
                       {:type :deserialization-error
@@ -175,7 +162,8 @@
     ;; Parse proto
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
           _ (validate-with-buf proto-msg :state)
-          edn-data (p2e/proto-message->map proto-msg)]
+          proto-map (pronto/proto->proto-map state-mapper proto-msg)
+          edn-data (pronto/proto-map->clj-map proto-map)]
       ;; Validate with Malli
       (validate-with-malli edn-data :state/root)
       edn-data)

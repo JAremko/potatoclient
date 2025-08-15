@@ -6,6 +6,7 @@
    [malli.core :as m]
    [malli.generator :as mg]
    [pronto.core :as pronto]
+   [pronto.utils]
    [potatoclient.malli.registry :as registry]
    [potatoclient.proto.deserialize :as deserialize]
    [potatoclient.specs.cmd.root]
@@ -38,7 +39,7 @@
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
                                                edn-data)
-          proto (pronto/proto-map->proto proto-map)]
+          proto (pronto.utils/proto-map->proto proto-map)]
       (.toByteArray proto))
     (catch Exception e
       (throw (ex-info "Failed to convert EDN to CMD proto bytes"
@@ -52,7 +53,7 @@
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
                                                edn-data)
-          proto (pronto/proto-map->proto proto-map)]
+          proto (pronto.utils/proto-map->proto proto-map)]
       (.toByteArray proto))
     (catch Exception e
       (throw (ex-info "Failed to convert EDN to State proto bytes"
