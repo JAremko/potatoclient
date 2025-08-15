@@ -10,7 +10,7 @@
 (def set-zoom-table-value-spec
   "SetZoomTableValue with value >= 0"
   [:map {:closed true}
-   [:value [:int {:min 0}]]])
+   [:value :proto/int32-positive]])
 
 
 (def zoom-spec
@@ -70,7 +70,7 @@
 (def set-digital-zoom-level-spec
   "SetDigitalZoomLevel with value >= 1.0"
   [:map {:closed true}
-   [:value [:double {:min 1.0}]]])
+   [:value :range/digital-zoom]])
 
 ;; Focus control messages
 
@@ -91,7 +91,7 @@
   [:oneof
    [:zoom zoom-spec]
    [:set_agc set-agc-spec]
-   [:set_filters set-filters-spec]
+   [:set_filter set-filters-spec]
    [:start :cmd/empty]
    [:stop :cmd/empty]
    [:photo :cmd/empty]

@@ -20,7 +20,7 @@
    [:channel :enum/video-channel]
    [:x :screen/ndc-x]
    [:y :screen/ndc-y]
-   [:frame_time [:int {:min 0}]]])
+   [:frame_time :time/frame-time]])
 
 
 ;; Main CV command spec using oneof - all 11 commands

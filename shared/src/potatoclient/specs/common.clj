@@ -23,13 +23,21 @@
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
-;; Offset angle specs (for compass offsets)
+;; Offset/Relative angle specs (for compass offsets and relative rotations)
 (def offset-azimuth-spec
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def offset-elevation-spec
   [:double {:min -90.0 :max 90.0}])
+
+;; Float versions for relative rotations (same constraints)
+(def relative-azimuth-spec
+  [:and [:float {:min -180.0 :max 180.0}]
+   [:< 180.0]])
+
+(def relative-elevation-spec
+  [:float {:min -90.0 :max 90.0}])
 
 (def magnetic-declination-spec
   [:and [:double {:min -180.0 :max 180.0}]
@@ -41,6 +49,8 @@
 (registry/register! :angle/bank bank-spec)
 (registry/register! :angle/offset-azimuth offset-azimuth-spec)
 (registry/register! :angle/offset-elevation offset-elevation-spec)
+(registry/register! :angle/relative-azimuth relative-azimuth-spec)
+(registry/register! :angle/relative-elevation relative-elevation-spec)
 (registry/register! :angle/magnetic-declination magnetic-declination-spec)
 
 ;; ====================================================================
@@ -65,11 +75,16 @@
 (def zoom-level-spec normalized-range-spec)
 (def focus-level-spec normalized-range-spec)
 
+;; Digital zoom spec (must be >= 1.0, but keep reasonable bounds for float)
+(def digital-zoom-spec
+  [:float {:min 1.0 :max 100.0}])
+
 ;; Register range specs
 (registry/register! :range/normalized normalized-range-spec)
 (registry/register! :range/normalized-offset normalized-offset-spec)
 (registry/register! :range/zoom zoom-level-spec)
 (registry/register! :range/focus focus-level-spec)
+(registry/register! :range/digital-zoom digital-zoom-spec)
 
 ;; ====================================================================
 ;; GPS Position specs (EXACT buf.validate constraints)
@@ -146,18 +161,39 @@
 (def int32-positive-spec
   [:int {:min 0 :max 2147483647}])
 
+;; Protocol and session specs
+(def protocol-version-spec
+  ;; uint32 with gt: 0 constraint (must be > 0)
+  [:and :proto/uint32 [:> 0]])
+
+(def session-id-spec
+  ;; uint32 with no additional constraints (can be 0)
+  :proto/uint32)
+
 ;; Time specs
 (def unix-timestamp-spec
   [:int {:min 0 :max 2147483647}])
+
+(def unix-timestamp-int64-spec
+  ;; int64 timestamp (milliseconds since epoch)
+  [:int {:min 0 :max 9223372036854775807}])
+
+(def frame-time-spec
+  ;; uint64 frame time in nanoseconds/microseconds
+  [:int {:min 0 :max 9223372036854775807}])
 
 ;; Register integer specs
 (registry/register! :proto/int32 int32-spec)
 (registry/register! :proto/uint32 uint32-spec)
 (registry/register! :proto/int32-positive int32-positive-spec)
+(registry/register! :proto/protocol-version protocol-version-spec)
+(registry/register! :proto/session-id session-id-spec)
 
 ;; Register time specs
 (registry/register! :time/unix-timestamp unix-timestamp-spec)
+(registry/register! :time/unix-timestamp-int64 unix-timestamp-int64-spec)
 (registry/register! :time/duration-seconds unix-timestamp-spec)
+(registry/register! :time/frame-time frame-time-spec)
 
 ;; Percentage specs
 (def percentage-spec
@@ -211,7 +247,7 @@
 
 (def fx-mode-day-enum-spec
   [:enum
-   :JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+   ;; Note: DEFAULT is not allowed by buf.validate (not_in: [0])
    :JON_GUI_DATA_FX_MODE_DAY_A
    :JON_GUI_DATA_FX_MODE_DAY_B
    :JON_GUI_DATA_FX_MODE_DAY_C
@@ -221,7 +257,7 @@
 
 (def fx-mode-heat-enum-spec
   [:enum
-   :JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+   ;; Note: DEFAULT is not allowed by buf.validate (not_in: [0])
    :JON_GUI_DATA_FX_MODE_HEAT_A
    :JON_GUI_DATA_FX_MODE_HEAT_B
    :JON_GUI_DATA_FX_MODE_HEAT_C

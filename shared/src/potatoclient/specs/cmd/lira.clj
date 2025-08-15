@@ -11,17 +11,17 @@
 ;; JonGuiDataLiraTarget specification
 (def lira-target-spec
   [:map {:closed true}
-   [:timestamp [:int {:min 0}]]
+   [:timestamp :time/unix-timestamp-int64]
    [:target_longitude [:double {:min -180.0 :max 180.0}]]
    [:target_latitude :position/latitude]
    [:target_altitude :position/altitude]
    [:target_azimuth :angle/azimuth]
    [:target_elevation :angle/elevation]
    [:distance [:double {:min 0.0}]]
-   [:uuid_part1 [:int]]
-   [:uuid_part2 [:int]]
-   [:uuid_part3 [:int]]
-   [:uuid_part4 [:int]]])
+   [:uuid_part1 :proto/int32]
+   [:uuid_part2 :proto/int32]
+   [:uuid_part3 :proto/int32]
+   [:uuid_part4 :proto/int32]])
 
 ;; Refine target command
 (def refine-target-spec

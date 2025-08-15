@@ -27,13 +27,13 @@
 
 (def rotate-azimuth-relative-spec
   [:map {:closed true}
-   [:value [:double]]
+   [:value :angle/relative-azimuth]
    [:speed :range/normalized]
    [:direction :enum/rotary-direction]])
 
 (def rotate-azimuth-relative-set-spec
   [:map {:closed true}
-   [:value [:double]]
+   [:value :angle/relative-azimuth]
    [:direction :enum/rotary-direction]])
 
 ;; Azimuth oneof structure
@@ -66,13 +66,13 @@
 
 (def rotate-elevation-relative-spec
   [:map {:closed true}
-   [:value [:double]]
+   [:value :angle/relative-elevation]
    [:speed :range/normalized]
    [:direction :enum/rotary-direction]])
 
 (def rotate-elevation-relative-set-spec
   [:map {:closed true}
-   [:value [:double]]
+   [:value :angle/relative-elevation]
    [:direction :enum/rotary-direction]])
 
 ;; Elevation oneof structure
@@ -100,7 +100,7 @@
 
 (def set-platform-azimuth-spec
   [:map {:closed true}
-   [:value [:and [:double {:min -360.0 :max 360.0}]
+   [:value [:and [:float {:min -360.0 :max 360.0}]
             [:> -360.0]
             [:< 360.0]]]])
 
@@ -156,31 +156,33 @@
 
 (def scan-select-node-spec
   [:map {:closed true}
-   [:index [:int {:min 0}]]])
+   [:index :proto/int32-positive]])
 
 (def scan-delete-node-spec
   [:map {:closed true}
-   [:index [:int {:min 0}]]])
+   [:index :proto/int32-positive]])
 
 (def scan-update-node-spec
   [:map {:closed true}
-   [:index [:int {:min 0}]]
-   [:DayZoomTableValue [:int {:min 0}]]
-   [:HeatZoomTableValue [:int {:min 0}]]
+   [:index :proto/int32-positive]
+   [:DayZoomTableValue :proto/int32-positive]
+   [:HeatZoomTableValue :proto/int32-positive]
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:linger [:double {:min 0.0}]]
-   [:speed :speed/normalized]])
+   [:speed [:and [:double {:min 0.0 :max 1.0}]
+            [:> 0.0]]]])
 
 (def scan-add-node-spec
   [:map {:closed true}
-   [:index [:int {:min 0}]]
-   [:DayZoomTableValue [:int {:min 0}]]
-   [:HeatZoomTableValue [:int {:min 0}]]
+   [:index :proto/int32-positive]
+   [:DayZoomTableValue :proto/int32-positive]
+   [:HeatZoomTableValue :proto/int32-positive]
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:linger [:double {:min 0.0}]]
-   [:speed :speed/normalized]])
+   [:speed [:and [:double {:min 0.0 :max 1.0}]
+            [:> 0.0]]]])
 
 ;; ====================================================================
 ;; Main rotary command spec using oneof - all 24 commands

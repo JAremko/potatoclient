@@ -29,8 +29,8 @@
 (def jon-shared-cmd-root-spec
   [:oneof
    ;; Base fields (always present, not part of oneof constraint)
-   [:protocol_version {:base true} [:int {:min 1}]]
-   [:session_id {:base true} [:int {:min 1}]]
+   [:protocol_version {:base true} :proto/protocol-version]
+   [:session_id {:base true} :proto/uint32]  ; Just uint32, no additional constraints in proto
    [:important {:base true} :boolean]
    [:from_cv_subsystem {:base true} :boolean]
    [:client_type {:base true} :enum/client-type]

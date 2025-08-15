@@ -196,8 +196,8 @@
                             :session_id 1
                             :important false
                             :from_cv_subsystem false
-                            :client_type :CLIENT_TYPE_COELACANTH
-                            :payload {:ping {}}}
+                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                            :ping {}}  ; No :payload wrapper
             _ (println "\nTesting protocol_version constraint:")
             _ (println "Invalid sample:" invalid-sample)
             proto (edn->proto invalid-sample)
@@ -214,8 +214,8 @@
                             :session_id 0  ; Invalid
                             :important false
                             :from_cv_subsystem false
-                            :client_type :CLIENT_TYPE_COELACANTH
-                            :payload {:noop {}}}
+                            :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                            :noop {}}
             proto (edn->proto invalid-sample)
             result (validate-proto proto)]
         (is (false? (:valid? result))

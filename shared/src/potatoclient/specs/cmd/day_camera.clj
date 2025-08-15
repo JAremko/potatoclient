@@ -10,7 +10,7 @@
 (def set-value-spec
   "SetValue message with float value [0.0, 1.0]"
   [:map {:closed true}
-   [:value [:double {:min 0.0 :max 1.0}]]])
+   [:value [:float {:min 0.0 :max 1.0}]]])
 
 (def move-spec
   "Move message with target_value and speed, both [0.0, 1.0]"
@@ -35,7 +35,7 @@
 (def shift-clahe-level-spec
   "ShiftClaheLevel with value [-1.0, 1.0]"
   [:map {:closed true}
-   [:value :range/normalized]])
+   [:value :range/normalized-offset]])
 
 ;; Focus-specific messages
 
@@ -54,7 +54,7 @@
 
 (def set-zoom-table-value-spec
   [:map {:closed true}
-   [:value [:int {:min 0}]]])
+   [:value :proto/int32-positive]])
 
 
 (def zoom-spec
@@ -93,7 +93,7 @@
 
 (def set-digital-zoom-level-spec
   [:map {:closed true}
-   [:value [:double {:min 1.0}]]])
+   [:value :range/digital-zoom]])
 
 ;; Main Day Camera Root command spec using oneof - all 17 commands
 (def day-camera-command-spec
