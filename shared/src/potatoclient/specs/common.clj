@@ -12,66 +12,49 @@
 ;; Angle specs (degrees)
 ;; ====================================================================
 ;; Azimuth: 0-360 degrees (compass heading)
-;; Note: Compass uses double, but rotary/actual_space_time use float
+;; All proto fields now use double
 (def azimuth-spec
   [:and [:double {:min 0.0 :max 360.0}]
-   [:< 360.0]])
-
-(def azimuth-float-spec
-  [:and [:float {:min 0.0 :max 360.0}]
    [:< 360.0]])
 
 (def elevation-spec
   [:double {:min -90.0 :max 90.0}])
 
-(def elevation-float-spec
-  [:float {:min -90.0 :max 90.0}])
-
 (def bank-spec
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
-(def bank-float-spec
-  [:and [:float {:min -180.0 :max 180.0}]
-   [:< 180.0]])
-
 ;; Offset/Relative angle specs (for compass offsets and relative rotations)
 (def offset-azimuth-spec
-  [:and [:float {:min -180.0 :max 180.0}]
+  [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def offset-elevation-spec
-  [:float {:min -90.0 :max 90.0}])
+  [:double {:min -90.0 :max 90.0}])
 
-;; Float versions for relative rotations (same constraints)
 (def relative-azimuth-spec
-  [:and [:float {:min -180.0 :max 180.0}]
+  [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def relative-elevation-spec
-  [:float {:min -90.0 :max 90.0}])
+  [:double {:min -90.0 :max 90.0}])
 
 (def magnetic-declination-spec
-  [:and [:float {:min -180.0 :max 180.0}]
+  [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 ;; Sun elevation spec - sun can be below horizon but proto incorrectly constrains to 0-360
 ;; We'll match proto's constraint even though it's semantically wrong
-(def sun-elevation-float-spec
-  [:and [:float {:min 0.0 :max 360.0}]
+(def sun-elevation-spec
+  [:and [:double {:min 0.0 :max 360.0}]
    [:< 360.0]])
 
 ;; Register angle specs
-;; Double versions (for compass, lrf, commands)
 (registry/register! :angle/azimuth azimuth-spec)
 (registry/register! :angle/elevation elevation-spec)
 (registry/register! :angle/bank bank-spec)
-;; Float versions (for rotary state, actual_space_time)
-(registry/register! :angle/azimuth-float azimuth-float-spec)
-(registry/register! :angle/elevation-float elevation-float-spec)
-(registry/register! :angle/bank-float bank-float-spec)
 ;; Special case for sun elevation (proto bug)
-(registry/register! :angle/sun-elevation-float sun-elevation-float-spec)
+(registry/register! :angle/sun-elevation sun-elevation-spec)
 ;; Offset angles
 (registry/register! :angle/offset-azimuth offset-azimuth-spec)
 (registry/register! :angle/offset-elevation offset-elevation-spec)
@@ -86,30 +69,25 @@
   [:and [:double {:min 0.0 :max 1.0}]
    [:> 0.0]])
 
-(def normalized-speed-float-spec
-  [:and [:float {:min 0.0 :max 1.0}]
-   [:> 0.0]])
-
 (registry/register! :speed/normalized normalized-speed-spec)
-(registry/register! :speed/normalized-float normalized-speed-float-spec)
 
 ;; ====================================================================
 ;; Range specs
 ;; ====================================================================
-;; Note: Most range values in proto are float (zoom_pos, focus_pos, iris_pos, clahe_level)
+;; Range values in proto (zoom_pos, focus_pos, iris_pos, clahe_level)
 
 (def normalized-range-spec
-  [:float {:min 0.0 :max 1.0}])
+  [:double {:min 0.0 :max 1.0}])
 
 (def normalized-offset-spec
-  [:float {:min -1.0 :max 1.0}])
+  [:double {:min -1.0 :max 1.0}])
 
 (def zoom-level-spec normalized-range-spec)
 (def focus-level-spec normalized-range-spec)
 
-;; Digital zoom spec (must be >= 1.0, but keep reasonable bounds for float)
+;; Digital zoom spec (must be >= 1.0, with reasonable bounds)
 (def digital-zoom-spec
-  [:float {:min 1.0 :max 100.0}])
+  [:double {:min 1.0 :max 100.0}])
 
 ;; Register range specs
 (registry/register! :range/normalized normalized-range-spec)
@@ -140,9 +118,9 @@
 (registry/register! :position/altitude altitude-spec)
 
 ;; Temperature specs
-;; Most temperatures in proto are float, not double
+;; Temperature specs
 (def component-temperature-spec
-  [:float {:min -273.15 :max 150.0}])
+  [:double {:min -273.15 :max 150.0}])
 
 ;; Register temperature specs
 (registry/register! :temperature/component component-temperature-spec)
@@ -229,9 +207,9 @@
 (registry/register! :time/frame-time frame-time-spec)
 
 ;; Percentage specs
-;; Percentages in proto are float (cpu_load, gpu_load, etc.)
+;; Percentage specs (cpu_load, gpu_load, etc.)
 (def percentage-spec
-  [:float {:min 0.0 :max 100.0}])
+  [:double {:min 0.0 :max 100.0}])
 
 ;; Register percentage spec
 (registry/register! :percentage percentage-spec)
@@ -452,9 +430,9 @@
 (def meteo-spec
   "JonGuiDataMeteo message spec - meteorological data"
   [:map {:closed true}
-   [:temperature [:float {:min -273.15 :max 150.0}]]   ; Absolute zero to max sensor reading
-   [:humidity [:float {:min 0.0 :max 100.0}]]          ; Percentage
-   [:pressure [:float {:min 0.0 :max 1200.0}]]])       ; Max atmospheric pressure with margin
+   [:temperature [:double {:min -273.15 :max 150.0}]]   ; Absolute zero to max sensor reading
+   [:humidity [:double {:min 0.0 :max 100.0}]]          ; Percentage
+   [:pressure [:double {:min 0.0 :max 1200.0}]]])       ; Max atmospheric pressure with margin
 
 ;; ====================================================================
 ;; Common command specs (empty messages used across multiple commands)

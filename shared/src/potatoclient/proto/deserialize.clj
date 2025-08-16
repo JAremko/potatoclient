@@ -56,26 +56,6 @@
 ;; Helper functions
 ;; ============================================================================
 
-(defn- convert-floats-to-doubles
-  "Recursively convert all Float values to Double values in a nested structure.
-   This is needed because protobuf float fields become java.lang.Float but
-   Malli specs expect java.lang.Double."
-  [data]
-  (cond
-    (instance? java.lang.Float data)
-    (double data)
-    
-    (map? data)
-    (reduce-kv (fn [m k v]
-                 (assoc m k (convert-floats-to-doubles v)))
-               {}
-               data)
-    
-    (sequential? data)
-    (mapv convert-floats-to-doubles data)
-    
-    :else
-    data))
 
 (>defn- validate-with-buf
   "Validate a protobuf message with buf.validate.

@@ -8,9 +8,9 @@
 ;; Common message types used across multiple commands
 
 (def set-value-spec
-  "SetValue message with float value [0.0, 1.0]"
+  "SetValue message with double value [0.0, 1.0]"
   [:map {:closed true}
-   [:value [:float {:min 0.0 :max 1.0}]]])
+   [:value [:double {:min 0.0 :max 1.0}]]])
 
 (def move-spec
   "Move message with target_value and speed, both [0.0, 1.0]"

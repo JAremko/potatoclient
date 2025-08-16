@@ -11,11 +11,11 @@
 
 (def actual-space-time-message-spec
   [:map {:closed true}
-   [:azimuth :angle/azimuth-float]  ; float in proto
-   [:elevation :angle/elevation-float]  ; float in proto
-   [:bank :angle/bank-float]  ; float in proto
-   [:latitude [:float {:min -90.0 :max 90.0}]]  ; float in proto
-   [:longitude [:float {:min -180.0 :max 180.0}]]  ; float in proto
+   [:azimuth :angle/azimuth]  ; double in proto
+   [:elevation :angle/elevation]  ; double in proto
+   [:bank :angle/bank]  ; double in proto
+   [:latitude [:double {:min -90.0 :max 90.0}]]  ; double in proto
+   [:longitude [:double {:min -180.0 :max 180.0}]]  ; double in proto
    [:altitude :position/altitude]  ; double in proto
    [:timestamp :time/unix-timestamp]])
 

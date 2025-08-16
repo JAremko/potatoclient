@@ -10,11 +10,11 @@
 
 (def system-message-spec
   [:map {:closed true}
-   [:cpu_temperature :temperature/component]  ; float in proto
-   [:gpu_temperature :temperature/component]  ; float in proto
-   [:gpu_load :percentage]  ; float in proto
-   [:cpu_load :percentage]  ; float in proto
-   [:power_consumption [:float {:min 0.0 :max 1000.0}]]  ; float in proto
+   [:cpu_temperature :temperature/component]  ; double in proto
+   [:gpu_temperature :temperature/component]  ; double in proto
+   [:gpu_load :percentage]  ; double in proto
+   [:cpu_load :percentage]  ; double in proto
+   [:power_consumption [:double {:min 0.0 :max 1000.0}]]  ; double in proto
    [:loc :enum/system-localizations]
    [:cur_video_rec_dir_year [:int {:min 0 :max 9999}]]
    [:cur_video_rec_dir_month [:int {:min 0 :max 12}]]

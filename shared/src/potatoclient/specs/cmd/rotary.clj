@@ -100,7 +100,7 @@
 
 (def set-platform-azimuth-spec
   [:map {:closed true}
-   [:value [:and [:float {:min -360.0 :max 360.0}]
+   [:value [:and [:double {:min -360.0 :max 360.0}]
             [:> -360.0]
             [:< 360.0]]]])
 
