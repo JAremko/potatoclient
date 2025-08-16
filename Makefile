@@ -29,7 +29,7 @@ help: ## Show all available commands with detailed descriptions
 	@grep -E '^(dev|nrepl|run):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "BUILD & RELEASE:"
-	@grep -E '^(build|release|proto|compile-kotlin|compile-java-proto|clean|rebuild):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(build|release|compile-kotlin|clean|rebuild):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "CODE QUALITY:"
 	@grep -E '^(fmt|lint|lint-raw):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -57,14 +57,8 @@ help: ## Show all available commands with detailed descriptions
 # BUILD TARGETS
 ###############################################################################
 
-# Build proto files
-.PHONY: proto
-proto: ## Regenerate and compile protobuf classes in shared project
-	@echo "Delegating proto generation to shared project..."
-	@echo "  • Generates Java bindings from protogen repository"
-	@echo "  • Compiles to bytecode in shared/target/classes"
-	@echo "  • Available to all projects via local dependency"
-	cd shared && $(MAKE) proto
+# Proto generation has been moved to shared module
+# Run 'make proto' in the shared/ directory to regenerate proto classes
 
 
 # Compile pronto Java classes if needed
@@ -87,11 +81,6 @@ compile-kotlin: ## Compile Kotlin source files
 	@echo "Compiling Kotlin sources..."
 	clojure -T:build compile-kotlin
 
-# Compile Java protobuf sources
-.PHONY: compile-java-proto
-compile-java-proto: ## Compile Java protobuf source files
-	@echo "Compiling Java protobuf sources..."
-	clojure -T:build compile-java-proto
 
 # Compile Java enum sources
 .PHONY: compile-java-enums
@@ -111,10 +100,10 @@ build: ensure-compiled ## Build the project (creates JAR file)
 	@echo "Building project..."
 	clojure -T:build uber
 
-# Build with forced proto regeneration
+# Build with forced clean
 .PHONY: build-clean
-build-clean: proto compile-java-proto compile-java-enums compile-java-utils compile-kotlin ## Build with forced proto regeneration
-	@echo "Building project with clean proto..."
+build-clean: compile-java-enums compile-java-utils compile-kotlin ## Build with forced clean rebuild
+	@echo "Building project with clean rebuild..."
 	clojure -T:build uber
 
 # Release build target
@@ -131,19 +120,9 @@ release: ## Build optimized JAR for distribution (stripped metadata, WARN/ERROR 
 	POTATOCLIENT_RELEASE=true clojure -T:build release
 
 
-# Clean proto files
-.PHONY: clean-proto
-clean-proto: ## Clean generated proto Java files
-	@echo "Cleaning generated proto files..."
-	rm -rf src/potatoclient/java/ser/
-	rm -rf src/potatoclient/java/cmd/
-	rm -rf src/potatoclient/java/jon/
-	rm -rf src/potatoclient/java/com/
-	rm -rf src/potatoclient/java/build/
-
 # Clean target
 .PHONY: clean
-clean: clean-proto clean-cache ## Clean all build artifacts
+clean: clean-cache ## Clean all build artifacts
 	@echo "Cleaning build artifacts..."
 	clojure -T:build clean
 	rm -rf target/
@@ -151,7 +130,7 @@ clean: clean-proto clean-cache ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: proto compile-java-proto compile-java-enums compile-java-utils compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
+nrepl: compile-java-enums compile-java-utils compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ EDN state validation enabled"

@@ -29,73 +29,6 @@
     (catch ClassNotFoundException _
       false)))
 
-(defn find-proto-files
-  "Find proto files in the examples directory."
-  []
-  (let [proto-dir (io/file "../examples/protogen/proto")]
-    (when (.exists proto-dir)
-      (->> (.listFiles proto-dir)
-           (filter #(.endsWith (.getName %) ".proto"))
-           (map #(.getAbsolutePath %))))))
-
-;; We're not actually using these compile functions since we copy from tools
-;; But if we ever need them, they should use proper Java/Clojure APIs
-(defn compile-proto-classes!
-  "Compile proto files to Java classes.
-   This would require protoc to be available, which we avoid by copying from tools."
-  []
-  (throw (ex-info "Direct proto compilation not implemented. Copy from tools instead."
-                  {:reason "Avoiding external protoc dependency"})))
-
-(defn compile-java-sources!
-  "Compile Java source files.
-   This would require javac, which we avoid by copying from tools."
-  [java-dir]
-  (throw (ex-info "Direct Java compilation not implemented. Copy from tools instead."
-                  {:reason "Avoiding external javac dependency"})))
-
-(defn copy-directory!
-  "Copy a directory recursively using Java NIO."
-  [src-dir dst-dir]
-  (let [src-path (.toPath (io/file src-dir))
-        dst-path (.toPath (io/file dst-dir))]
-    (doseq [src-file (file-seq (io/file src-dir))]
-      (let [src-file-path (.toPath src-file)
-            relative-path (.relativize src-path src-file-path)
-            dst-file-path (.resolve dst-path relative-path)]
-        (when (.isFile src-file)
-          ;; Create parent directories if needed
-          (io/make-parents (.toFile dst-file-path))
-          ;; Copy the file
-          (io/copy src-file (.toFile dst-file-path)))))))
-
-(defn copy-proto-classes-from-tools!
-  "Copy pre-compiled proto classes from state-explorer or validate tools if available."
-  []
-  (let [sources ["../tools/state-explorer/target/classes"
-                 "../tools/validate/target/classes"
-                 "../tools/proto-explorer/target/classes"]
-        target-dir (io/file "target/classes")]
-    
-    ;; Find first available source
-    (when-let [source-dir (->> sources
-                               (map io/file)
-                               (filter #(.exists %))
-                               first)]
-      (println (format "Copying proto classes from %s" source-dir))
-      (.mkdirs target-dir)
-      
-      ;; Copy ser and cmd directories using Clojure's io functions
-      (doseq [subdir ["ser" "cmd"]]
-        (let [src (io/file source-dir subdir)
-              dst (io/file target-dir subdir)]
-          (when (.exists src)
-            (try
-              (copy-directory! src dst)
-              (println (format "Copied %s successfully" subdir))
-              (catch Exception e
-                (println (format "Warning: Failed to copy %s: %s" subdir (.getMessage e))))))))
-      true)))
 
 (defn ensure-proto-classes!
   "Ensure proto classes are compiled and available."
@@ -104,9 +37,27 @@
     (do
       (println "Proto classes available ✓")
       true)
-    (throw (ex-info "Proto classes not compiled! Please compile before running tests."
-                    {:missing-classes ["ser.JonSharedData" "cmd.JonSharedCmd"]
-                     :hint "Run 'clojure -T:build compile-all' or 'make test' to compile and test"}))))
+    (do
+      (println "")
+      (println "================================================")
+      (println "ERROR: Proto classes not found!")
+      (println "")
+      (println "The proto Java classes are required but not compiled.")
+      (println "")
+      (println "To fix this, run:")
+      (println "  cd shared && make proto")
+      (println "")
+      (println "This will:")
+      (println "  1. Generate Java sources from .proto files")
+      (println "  2. Compile them to bytecode")
+      (println "  3. Make them available for all modules")
+      (println "")
+      (println "Note: Proto generation only needs to be done once,")
+      (println "      or when .proto files change.")
+      (println "================================================")
+      (throw (ex-info "Proto classes not compiled!"
+                      {:missing-classes ["ser.JonSharedData" "cmd.JonSharedCmd"]
+                       :solution "Run 'make proto' in the shared directory"})))))
 
 (defn ensure-pronto!
   "Ensure Pronto is available on classpath.
