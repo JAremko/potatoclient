@@ -104,8 +104,13 @@
                                    (if-let [v (get value k)]
                                      (if-let [schema-entry (first (filter #(= (first %) k) entries))]
                                        (let [[_ _ schema] schema-entry]
-                                         (if-let [explainer (m/explainer schema)]
-                                           (explainer v (conj in k) acc)
+                                         (if-not (m/validate schema v)
+                                           ;; Use m/explain to get errors in the right format
+                                           (if-let [explanation (m/explain schema v)]
+                                             (into acc (map (fn [error]
+                                                             (update error :in #(vec (concat in [k] %))))
+                                                           (:errors explanation)))
+                                             acc)
                                            acc))
                                        acc)
                                      acc))
@@ -116,8 +121,13 @@
           (if active-key
             (if-let [schema-entry (first (filter #(= (first %) active-key) entries))]
               (let [[_ _ schema] schema-entry]
-                (if-let [explainer (m/explainer schema)]
-                  (explainer (get value active-key) (conj in active-key) base-errors)
+                (if-not (m/validate schema (get value active-key))
+                  ;; Use m/explain to get errors in the right format
+                  (if-let [explanation (m/explain schema (get value active-key))]
+                    (into base-errors (map (fn [error]
+                                            (update error :in #(vec (concat in [active-key] %))))
+                                          (:errors explanation)))
+                    base-errors)
                   base-errors))
               base-errors)
             base-errors))))))

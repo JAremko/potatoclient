@@ -21,8 +21,19 @@
    [com.google.protobuf ByteString]
    [build.buf.protovalidate Validator]))
 
-;; Initialize registry with all specs
-(registry/setup-global-registry!)
+;; Initialize registry with all specs - done lazily in functions to ensure specs are loaded
+
+(defn ensure-registry!
+  "Ensure the Malli registry is properly initialized with all specs."
+  []
+  ;; Check if :cmd/root is available - if it is, registry is set up
+  (try
+    (m/schema :cmd/root)
+    ;; Registry is already set up, nothing to do
+    nil
+    (catch Exception _
+      ;; Registry not set up, initialize it
+      (registry/setup-global-registry!))))
 
 ;; ============================================================================
 ;; Specs for Guardrails
@@ -30,6 +41,8 @@
 
 (s/def ::bytes bytes?)
 (s/def ::edn-map map?)
+(s/def ::cmd-edn (s/and map? #(contains? % :protocol_version) #(contains? % :client_type)))
+(s/def ::state-edn (s/and map? #(contains? % :protocol_version) #(contains? % :system)))
 (s/def ::error-type keyword?)
 (s/def ::error-message string?)
 (s/def ::violations (s/coll-of map?))
@@ -60,7 +73,8 @@
   "Validate EDN data with Malli spec.
    Returns nil if valid, throws ex-info with errors if invalid."
   [edn-data spec-key]
-  [::edn-map keyword? => (s/nilable nil?)]
+  [map? keyword? => (s/nilable nil?)]
+  (ensure-registry!)
   (let [spec (try 
                 (m/schema spec-key)
                 (catch Exception e
@@ -77,7 +91,8 @@
         (throw (ex-info "Malli validation failed"
                         {:type :malli-validation-error
                          :spec spec-key
-                         :errors errors}))))))
+                         :errors errors
+                         :raw-explanation explanation}))))))
 
 (>defn- validate-with-buf
   "Validate a protobuf message with buf.validate.
@@ -104,7 +119,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [::edn-map => ::bytes]
+  [::cmd-edn => ::bytes]
   (try
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
@@ -120,13 +135,13 @@
 (>defn serialize-cmd-payload
   "Serialize CMD payload with full validation.
    Takes EDN data and returns binary protobuf data.
-   Performs buf.validate validation after serialization.
+   Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [::edn-map => ::bytes]
+  [::cmd-edn => ::bytes]
   (try
-    ;; Skip Malli validation for now - buf.validate is sufficient
-    ;; (validate-with-malli edn-data :cmd/root)
+    ;; Validate EDN with Malli first
+    (validate-with-malli edn-data :cmd/root)
     
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
@@ -158,7 +173,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [::edn-map => ::bytes]
+  [::state-edn => ::bytes]
   (try
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
@@ -175,13 +190,13 @@
 (>defn serialize-state-payload
   "Serialize State payload with full validation.
    Takes EDN data and returns binary protobuf data.
-   Performs buf.validate validation after serialization.
+   Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [::edn-map => ::bytes]
+  [::state-edn => ::bytes]
   (try
-    ;; Skip Malli validation for now - buf.validate is sufficient
-    ;; (validate-with-malli edn-data :state/root)
+    ;; Validate EDN with Malli first
+    (validate-with-malli edn-data :state/root)
     
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map state-mapper

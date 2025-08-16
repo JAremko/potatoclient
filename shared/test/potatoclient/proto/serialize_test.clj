@@ -105,7 +105,7 @@
             :platform_elevation 0.0
             :platform_bank 0.0
             :is_moving false
-            :mode :JON_GUI_DATA_ROTARY_MODE_STOPPED
+            :mode :JON_GUI_DATA_ROTARY_MODE_SPEED
             :is_scanning false
             :is_scanning_paused false
             :use_rotary_as_compass false
@@ -153,7 +153,7 @@
                 :infrared_filter false
                 :zoom_table_pos 5
                 :zoom_table_pos_max 10
-                :fx_mode :JON_GUI_DATA_FX_MODE_DAY_DEFAULT
+                :fx_mode :JON_GUI_DATA_FX_MODE_DAY_A
                 :auto_focus true
                 :auto_iris true
                 :digital_zoom_level 2.0
@@ -166,7 +166,7 @@
                  :zoom_table_pos_max 10
                  :dde_level 256
                  :dde_enabled true
-                 :fx_mode :JON_GUI_DATA_FX_MODE_HEAT_DEFAULT
+                 :fx_mode :JON_GUI_DATA_FX_MODE_HEAT_A
                  :digital_zoom_level 1.5
                  :clahe_level 0.5}
    :compass_calibration {:stage 1
@@ -184,7 +184,7 @@
                        :timestamp 1234567890}
    :day_cam_glass_heater {:temperature 25.0
                           :status false}
-   :rec_osd {:screen :JON_GUI_DATA_REC_OSD_SCREEN_OFF
+   :rec_osd {:screen :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
              :heat_osd_enabled false
              :day_osd_enabled false
              :heat_crosshair_offset_horizontal 0
@@ -239,7 +239,7 @@
           (is (m/validate :cmd/root deserialized)
               "Deserialized data should be valid"))))
     
-    (testing "CMD with invalid protocol_version fails buf.validate"
+    (testing "CMD with invalid protocol_version fails Malli validation"
       (let [invalid-edn {:protocol_version 0  ; Invalid: must be > 0
                          :session_id 123
                          :important false
@@ -247,9 +247,9 @@
                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                          :ping {}}]
         (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"buf.validate validation failed"
+                              #"Malli validation failed"
                               (serialize/serialize-cmd-payload invalid-edn))
-            "Should throw buf.validate error for invalid protocol_version")))
+            "Should throw Malli validation error for invalid protocol_version")))
     
     (testing "CMD with missing client_type gets default enum value that fails buf.validate"
       (let [invalid-edn {:protocol_version 1
@@ -263,7 +263,7 @@
                               (serialize/serialize-cmd-payload invalid-edn))
             "Should throw buf.validate error for unspecified enum value")))
     
-    (testing "CMD with no oneof field fails buf.validate"
+    (testing "CMD with no oneof field fails Malli validation"
       (let [invalid-edn {:protocol_version 1
                          :session_id 123
                          :important false
@@ -272,17 +272,30 @@
                          ;; No oneof field
                          }]
         (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"buf.validate validation failed"
+                              #"Malli validation failed"
                               (serialize/serialize-cmd-payload invalid-edn))
-            "Should throw buf.validate error for missing oneof field")))
+            "Should throw Malli validation error for missing oneof field")))
     
-    (testing "Valid EDN that generates invalid proto fails buf.validate"
-      ;; This is a hypothetical case - if Malli passes but buf.validate fails
-      ;; Most validation should be caught by Malli, but buf.validate provides additional safety
+    (testing "Valid CMD passes both Malli and buf.validate"
       (let [edn-data (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload edn-data)]
         ;; Verify the happy path works
-        (is (bytes? binary-data) "Should successfully serialize valid data")))))
+        (is (bytes? binary-data) "Should successfully serialize valid data")
+        (is (pos? (count binary-data)) "Should have non-empty binary data")))
+    
+    (testing "Multiple validation layers work correctly"
+      ;; Test that a message with multiple oneof fields fails Malli
+      (let [invalid-edn {:protocol_version 1
+                         :session_id 123
+                         :important false
+                         :from_cv_subsystem false
+                         :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                         :ping {}
+                         :noop {}}]  ; Two oneof fields - invalid
+        (is (thrown-with-msg? clojure.lang.ExceptionInfo
+                              #"Malli validation failed"
+                              (serialize/serialize-cmd-payload invalid-edn))
+            "Should throw Malli validation error for multiple oneof fields"))))
 
 ;; ============================================================================
 ;; State Serialization Tests
@@ -327,23 +340,23 @@
           (is (m/validate :state/root deserialized)
               "Deserialized data should be valid"))))
     
-    (testing "State with invalid GPS coordinates fails buf.validate"
+    (testing "State with invalid GPS coordinates fails Malli validation"
       (let [base-state (valid-state-sample)
             invalid-edn (assoc base-state
                               :gps (assoc (:gps base-state)
                                          :latitude 91.0  ; Invalid: > 90
                                          :longitude -181.0))]  ; Invalid: < -180
         (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"buf.validate validation failed"
+                              #"Malli validation failed"
                               (serialize/serialize-state-payload invalid-edn))
-            "Should throw buf.validate error for invalid GPS coordinates")))
+            "Should throw Malli validation error for invalid GPS coordinates")))
     
-    (testing "State with missing required field fails serialization"
+    (testing "State with missing required field fails Malli validation"
       (let [invalid-edn (dissoc (valid-state-sample) :system)]
         (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"Failed to serialize"
+                              #"Malli validation failed"
                               (serialize/serialize-state-payload invalid-edn))
-            "Should throw serialization error for missing required field")))))
+            "Should throw Malli validation error for missing required field")))))
 
 ;; ============================================================================
 ;; Round-trip Tests with Both Serialize and Deserialize
@@ -433,7 +446,7 @@
 (deftest test-serialization-error-information
   (testing "Serialization errors contain useful debugging information"
     
-    (testing "buf.validate errors contain field information"
+    (testing "Malli validation errors contain field information"
       (let [invalid-edn {:protocol_version 0  ; Invalid
                          :session_id 123
                          :important false
@@ -445,11 +458,9 @@
           (is false "Should have thrown exception")
           (catch clojure.lang.ExceptionInfo e
             (let [data (ex-data e)]
-              (is (= :buf-validate-error (:type data)))
-              (is (vector? (:violations data)))
-              (is (some #(re-find #"protocol_version" (:field %))
-                       (:violations data))
-                  "Should include field name in violation"))))))
+              (is (= :malli-validation-error (:type data)))
+              (is (= :cmd/root (:spec data)))
+              (is (contains? data :errors) "Should contain error details"))))))
     
     (testing "Serialization errors for invalid structure"
       (try
@@ -504,4 +515,4 @@
             fast-deserialized (deserialize/deserialize-cmd-payload* fast-bytes)
             validating-deserialized (deserialize/deserialize-cmd-payload validating-bytes)]
         (is (= fast-deserialized validating-deserialized)
-            "Fast and validating versions should produce equivalent results")))))
+            "Fast and validating versions should produce equivalent results"))))))

@@ -3,6 +3,7 @@
   (:require
    [clojure.test :refer [deftest testing is are use-fixtures]]
    [malli.core :as m]
+   [malli.error :as me]
    [malli.generator :as mg]
    [malli.transform :as mt]
    [potatoclient.malli.oneof :as oneof]
@@ -212,3 +213,59 @@
         
         (is (m/validate schema
                        {:query {:sql "SELECT * FROM users"}}))))))
+
+(deftest oneof-error-humanization
+  (testing "Error humanization should work correctly with oneof schemas"
+    (let [schema [:oneof
+                  [:protocol_version {:base true} [:int {:min 1}]]
+                  [:session_id {:base true} [:int {:min 1}]]
+                  [:client_type {:base true} [:enum :LOCAL :REMOTE :CLOUD]]
+                  [:ping [:map {:closed true}]]
+                  [:noop [:map {:closed true}]]
+                  [:system [:map [:restart :boolean]]]]]
+      
+      (testing "Humanize errors for invalid base field values"
+        (let [invalid-data {:protocol_version 0  ; Invalid: must be > 0
+                            :session_id 123
+                            :client_type :LOCAL
+                            :ping {}}
+              explanation (m/explain schema invalid-data)]
+          (is explanation "Should produce an explanation")
+          ;; This was failing with :malli.core/invalid-schema
+          (is (map? (me/humanize explanation))
+              "Should be able to humanize the explanation")
+          (is (contains? (me/humanize explanation) :protocol_version)
+              "Should have error for protocol_version")))
+      
+      (testing "Humanize errors for missing oneof field"
+        (let [invalid-data {:protocol_version 1
+                            :session_id 123
+                            :client_type :LOCAL}
+              explanation (m/explain schema invalid-data)]
+          (is explanation "Should produce an explanation")
+          (is (me/humanize explanation)
+              "Should be able to humanize the explanation")))
+      
+      (testing "Humanize errors for multiple oneof fields"
+        (let [invalid-data {:protocol_version 1
+                            :session_id 123
+                            :client_type :LOCAL
+                            :ping {}
+                            :noop {}}  ; Two oneof fields - invalid
+              explanation (m/explain schema invalid-data)]
+          (is explanation "Should produce an explanation")
+          (is (me/humanize explanation)
+              "Should be able to humanize the explanation")))
+      
+      (testing "Humanize errors for nested validation failures"
+        (let [schema [:oneof
+                      [:cmd [:map [:type [:enum :create :update :delete]]]]
+                      [:query [:map [:sql :string] [:limit [:int {:min 1}]]]]]
+              invalid-data {:query {:sql "SELECT *" :limit 0}}  ; limit too small
+              explanation (m/explain schema invalid-data)]
+          (is explanation "Should produce an explanation")
+          (let [humanized (me/humanize explanation)]
+            (is humanized "Should be able to humanize the explanation")
+            (is (or (get-in humanized [:query :limit])
+                    (get humanized :query))
+                "Should have error for nested field")))))))
