@@ -37,11 +37,11 @@
 
 ;; Offset/Relative angle specs (for compass offsets and relative rotations)
 (def offset-azimuth-spec
-  [:and [:double {:min -180.0 :max 180.0}]
+  [:and [:float {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def offset-elevation-spec
-  [:double {:min -90.0 :max 90.0}])
+  [:float {:min -90.0 :max 90.0}])
 
 ;; Float versions for relative rotations (same constraints)
 (def relative-azimuth-spec
@@ -52,7 +52,7 @@
   [:float {:min -90.0 :max 90.0}])
 
 (def magnetic-declination-spec
-  [:and [:double {:min -180.0 :max 180.0}]
+  [:and [:float {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 ;; Sun elevation spec - sun can be below horizon but proto incorrectly constrains to 0-360
