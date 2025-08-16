@@ -4,8 +4,8 @@
             [state-explorer.pronto-handler :as proto]))
 
 (deftest proto-classes-available
-  (testing "Proto classes are compiled and available"
-    (is (harness/proto-classes-compiled?) "Proto classes should be compiled")
+  (testing "Proto classes are available from shared module"
+    (is (harness/proto-classes-available?) "Proto classes should be available from shared module")
     (is (harness/pronto-classes-available?) "Pronto classes should be available")))
 
 (deftest pronto-conversion

@@ -7,7 +7,7 @@
    [malli.generator :as mg]
    [cmd-explorer.test-harness] ;; Auto-initializes on load
    [potatoclient.specs.oneof-pronto :as oneof]
-   [potatoclient.specs.cmd-root :as cmd-root]
+   [potatoclient.specs.cmd.root :as cmd-root]
    [potatoclient.specs.common :as shared]
    [pronto.core :as p]
    [com.fulcrologic.guardrails.malli.core :refer [>defn >def | ? =>]])

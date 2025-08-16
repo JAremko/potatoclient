@@ -5,7 +5,7 @@
    [cmd-explorer.test-harness] ;; Auto-initializes on load
    [potatoclient.malli.pronto :as pm]
    [potatoclient.specs.common :as shared]
-   [potatoclient.specs.cmd-root :as cmd-root]
+   [potatoclient.specs.cmd.root :as cmd-root]
    [malli.core :as m]
    [malli.generator :as mg]
    [pronto.core :as p])
