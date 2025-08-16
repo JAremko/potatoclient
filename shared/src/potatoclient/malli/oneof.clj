@@ -62,7 +62,7 @@
 
 (defn- explain-oneof-value
   "Explain validation failures for oneof value"
-  [value path in acc form field-keys oneof-fields]
+  [value path in acc form field-keys base-fields oneof-fields entries validators]
   (cond
     (not (map? value))
     (conj acc {:path path
@@ -88,7 +88,7 @@
                    :in in
                    :schema form
                    :value value
-                   :message "must have exactly one non-nil field"})
+                   :message "must have exactly one non-nil oneof field"})
         
         (> (count non-nil-oneof-fields) 1)
         (conj acc {:path path
@@ -97,7 +97,30 @@
                    :value value
                    :message (str "multiple non-nil fields: " (vec non-nil-oneof-fields))})
         
-        :else acc))))
+        :else 
+        ;; Check validation of all fields
+        (let [;; First check base field validations
+              base-errors (reduce (fn [acc k]
+                                   (if-let [v (get value k)]
+                                     (if-let [schema-entry (first (filter #(= (first %) k) entries))]
+                                       (let [[_ _ schema] schema-entry]
+                                         (if-let [explainer (m/explainer schema)]
+                                           (explainer v (conj in k) acc)
+                                           acc))
+                                       acc)
+                                     acc))
+                                 acc
+                                 base-fields)
+              ;; Then check the active oneof field
+              active-key (first non-nil-oneof-fields)]
+          (if active-key
+            (if-let [schema-entry (first (filter #(= (first %) active-key) entries))]
+              (let [[_ _ schema] schema-entry]
+                (if-let [explainer (m/explainer schema)]
+                  (explainer (get value active-key) (conj in active-key) base-errors)
+                  base-errors))
+              base-errors)
+            base-errors))))))
 
 (defn- parse-oneof-value
   "Parse value with oneof constraints"
@@ -126,7 +149,7 @@
     
     (-explainer [_ path]
       (fn [value in acc]
-        (explain-oneof-value value path in acc form field-keys oneof-fields)))
+        (explain-oneof-value value path in acc form field-keys base-fields oneof-fields entries validators)))
     
     (-parser [_]
       (let [parsers (into {} (map (fn [[k _ schema]]
