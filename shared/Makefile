@@ -18,16 +18,23 @@ help: ## Show available commands
 	@echo "Proto classes are preserved between builds unless explicitly regenerated"
 
 # Generate and compile proto classes (only run when protos change)
-proto: proto-clean ## Regenerate proto Java sources and compile them
+proto: ## Regenerate proto Java sources and compile them (clean rebuild)
 	@echo "================================================"
-	@echo "Regenerating Proto Classes"
+	@echo "Regenerating Proto Classes (Clean Rebuild)"
 	@echo "================================================"
-	@echo "Cleaning old proto artifacts..."
-	@rm -rf src/java target/classes/cmd target/classes/ser
+	@echo "Cleaning ALL artifacts for fresh rebuild..."
+	@rm -rf src/java target
 	@echo "Generating proto Java sources..."
-	./scripts/generate-protos.sh
+	@# Note: If this hangs or fails, you can manually copy from:
+	@# /home/jare/git/potatoclient/examples/protogen/output/java/
+	./scripts/generate-protos.sh || (echo "Proto generation failed, trying fallback..." && \
+		mkdir -p src/java && \
+		cp -r ../examples/protogen/output/java/* src/java/ 2>/dev/null && \
+		echo "Used fallback proto sources from examples/protogen/output/java/")
 	@echo "Compiling proto Java sources to bytecode..."
 	clojure -T:build compile-proto-sources
+	@echo "Compiling Pronto and Clojure sources..."
+	clojure -T:build compile-all
 	@echo "================================================"
 	@echo "✓ Proto generation and compilation complete!"
 	@echo "  Java sources: src/java/"
