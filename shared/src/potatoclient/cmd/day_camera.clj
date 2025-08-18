@@ -1,219 +1,283 @@
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as Types from "ts/proto/jon/jon_shared_data_types";
+(ns potatoclient.cmd.day-camera
+  "Day Camera command functions.
+   Based on the DayCamera message structure in jon_shared_cmd_day_camera.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function dayCameraSetInfraRedFilter(value: boolean): void {
-    //console.log(`Day Camera Setting infra red filter to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setInfraRedFilter: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Infra-Red Filter Control
+;; ============================================================================
 
-export function dayCameraSetIris(value: number): void {
-    //console.log(`Day Camera Setting iris to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setIris: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-infra-red-filter
+  "Set the infra-red filter on/off.
+   Returns a fully formed cmd root ready to send."
+  [enabled?]
+  [:boolean => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_infra_red_filter {:value enabled?}}}))
 
-export function dayCameraSetAutoIris(value: boolean): void {
-    //console.log(`Day Camera Setting auto iris to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setAutoIris: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Iris Control
+;; ============================================================================
 
-export function dayCameraTakePhoto(): void {
-    //console.log("Day Camera Taking photo");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({
-        photo: function (): Cmd.DayCamera.Photo {
-            return Cmd.DayCamera.Photo.create();
-        }
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-iris
+  "Set the iris value (0.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/normalized => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_iris {:value value}}}))
 
-export function dayCameraStart(): void {
-    //console.log("Day Camera Sending dayCamera start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({start: Cmd.DayCamera.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-auto-iris
+  "Enable or disable auto iris.
+   Returns a fully formed cmd root ready to send."
+  [enabled?]
+  [:boolean => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_auto_iris {:value enabled?}}}))
 
-export function dayCameraStop(): void {
-    //console.log("Day Camera Sending dayCamera stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({stop: Cmd.DayCamera.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Photo Control
+;; ============================================================================
 
-export function dayCameraSetFocus(value: number): void {
-    //console.log(`Day Camera Setting day camera focus value to ${value}`);
-    let focus = Cmd.DayCamera.Focus.create({setValue: {value}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn take-photo
+  "Take a photo with the day camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:photo {}}}))
 
-export function dayCameraMoveFocus(targetValue: number, speed: number): void {
-    //console.log(`Moving day camera focus to ${targetValue} at speed ${speed}`);
-    let focus = Cmd.DayCamera.Focus.create({move: {targetValue, speed}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Camera Control
+;; ============================================================================
 
-export function dayCameraHaltFocus(): void {
-    //console.log("Halting day camera focus");
-    let focus = Cmd.DayCamera.Focus.create({halt: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start
+  "Start the day camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:start {}}}))
 
-export function dayCameraOffsetFocus(offsetValue: number): void {
-    //console.log(`Offsetting day camera focus by ${offsetValue}`);
-    let focus = Cmd.DayCamera.Focus.create({offset: {offsetValue}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn stop
+  "Stop the day camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:stop {}}}))
 
-export function dayCameraResetFocus(): void {
-    //console.log("Resetting day camera focus");
-    let focus = Cmd.DayCamera.Focus.create({resetFocus: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn halt-all
+  "Halt all day camera operations.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:halt_all {}}}))
 
-export function dayCameraSaveFocusToTable(): void {
-    //console.log("Saving day camera focus to table");
-    let focus = Cmd.DayCamera.Focus.create({saveToTableFocus: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({focus});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Focus Control
+;; ============================================================================
 
-export function dayCameraSetZoom(value: number): void {
-    //console.log(`Day Camera Setting day camera zoom value to ${value}`);
-    let zoom = Cmd.DayCamera.Zoom.create({setValue: {value}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-focus
+  "Set the focus value (0.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/focus => :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:set_value {:value value}}}}))
 
-export function dayCameraMoveZoom(targetValue: number, speed: number): void {
-    //console.log(`Moving day camera zoom to ${targetValue} at speed ${speed}`);
-    let zoom = Cmd.DayCamera.Zoom.create({move: {targetValue, speed}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn move-focus
+  "Move focus to target value at specified speed.
+   Both target-value and speed are 0.0 to 1.0.
+   Returns a fully formed cmd root ready to send."
+  [target-value speed]
+  [:range/normalized :speed/normalized => :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:move {:target_value target-value
+                                 :speed speed}}}}))
 
-export function dayCameraHaltZoom(): void {
-    //console.log("Halting day camera zoom");
-    let zoom = Cmd.DayCamera.Zoom.create({halt: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn halt-focus
+  "Halt focus movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:halt {}}}}))
 
-export function dayCameraOffsetZoom(offsetValue: number): void {
-    //console.log(`Offsetting day camera zoom by ${offsetValue}`);
-    let zoom = Cmd.DayCamera.Zoom.create({offset: {offsetValue}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn offset-focus
+  "Offset focus by a value (-1.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [offset-value]
+  [:range/normalized-offset => :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:offset {:offset_value offset-value}}}}))
 
-export function dayCameraResetZoom(): void {
-    //console.log("Resetting day camera zoom");
-    let zoom = Cmd.DayCamera.Zoom.create({resetZoom: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn reset-focus
+  "Reset focus to default position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:reset_focus {}}}}))
 
-export function dayCameraSaveZoomToTable(): void {
-    //console.log("Saving day camera zoom to table");
-    let zoom = Cmd.DayCamera.Zoom.create({saveToTable: {}});
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn save-focus-to-table
+  "Save current focus position to table.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:focus {:save_to_table_focus {}}}}))
 
-export function dayCameraSetZoomTableValue(value: number): void {
-    //console.log(`Day Camera Setting optical zoom table value to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.DayCamera.Zoom.create({setZoomTableValue: {value}});
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Zoom Control
+;; ============================================================================
 
-export function dayCameraSetDigitalZoomLevel(value: number): void {
-    //console.log(`Day Camera Setting digital zoom level to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.DayCamera.Root.create({setDigitalZoomLevel: {value}});
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setDigitalZoomLevel: Cmd.DayCamera.SetDigitalZoomLevel.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-zoom
+  "Set the zoom value (0.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/zoom => :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:set_value {:value value}}}}))
 
-export function dayCameraNextZoomTablePos(): void {
-    //console.log(`Day Camera Setting next optical zoom table position`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.DayCamera.Zoom.create({nextZoomTablePos: {}});
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn move-zoom
+  "Move zoom to target value at specified speed.
+   Both target-value and speed are 0.0 to 1.0.
+   Returns a fully formed cmd root ready to send."
+  [target-value speed]
+  [:range/normalized :speed/normalized => :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:move {:target_value target-value
+                                :speed speed}}}}))
 
-export function dayCameraPrevZoomTablePos(): void {
-    //console.log(`Day Camera Setting previous optical zoom table position`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.DayCamera.Zoom.create({prevZoomTablePos: {}});
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn halt-zoom
+  "Halt zoom movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:halt {}}}}))
 
-export function getMeteo(): void {
-    //console.log("Requesting camera day meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({getMeteo: Cmd.DayCamera.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn offset-zoom
+  "Offset zoom by a value (-1.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [offset-value]
+  [:range/normalized-offset => :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:offset {:offset_value offset-value}}}}))
 
-export function setFxMode(mode: Types.JonGuiDataFxModeDay): void {
-    //console.log(`Setting FX mode to ${mode}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setFxMode: Cmd.DayCamera.SetFxMode.create({mode})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn reset-zoom
+  "Reset zoom to default position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:reset_zoom {}}}}))
 
-export function nextFxMode(): void {
-    //console.log(`Setting next FX mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({nextFxMode: Cmd.DayCamera.NextFxMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn save-zoom-to-table
+  "Save current zoom position to table.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:save_to_table {}}}}))
 
-export function prevFxMode(): void {
-    //console.log(`Setting previous FX mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({prevFxMode: Cmd.DayCamera.PrevFxMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-zoom-table-value
+  "Set the zoom table value (positive integer).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:proto/int32-positive => :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:set_zoom_table_value {:value value}}}}))
 
-export function setClaheLevel(value: number): void {
-    //console.log(`Setting day CLAHE level to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({setClaheLevel: Cmd.DayCamera.SetClaheLevel.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn next-zoom-table-pos
+  "Move to next zoom table position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:next_zoom_table_pos {}}}}))
 
-export function  shiftClaheLevel(shift: number): void {
-    //console.log(`Shifting day CLAHE level by ${shift}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.dayCamera = Cmd.DayCamera.Root.create({shiftClaheLevel: Cmd.DayCamera.ShiftClaheLevel.create({value: shift})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn prev-zoom-table-pos
+  "Move to previous zoom table position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:day_camera {:zoom {:prev_zoom_table_pos {}}}}))
+
+;; ============================================================================
+;; Digital Zoom
+;; ============================================================================
+
+(>defn set-digital-zoom-level
+  "Set the digital zoom level (must be >= 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/digital-zoom => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_digital_zoom_level {:value value}}}))
+
+;; ============================================================================
+;; Meteo Data
+;; ============================================================================
+
+(>defn get-meteo
+  "Request meteorological data from day camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:get_meteo {}}}))
+
+;; ============================================================================
+;; FX Mode Control
+;; ============================================================================
+
+(>defn set-fx-mode
+  "Set the FX mode for the day camera.
+   Mode must be one of the JonGuiDataFxModeDay enum values.
+   Returns a fully formed cmd root ready to send."
+  [mode]
+  [:enum/fx-mode-day => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_fx_mode {:mode mode}}}))
+
+(>defn next-fx-mode
+  "Switch to next FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:next_fx_mode {}}}))
+
+(>defn prev-fx-mode
+  "Switch to previous FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:prev_fx_mode {}}}))
+
+(>defn refresh-fx-mode
+  "Refresh current FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:day_camera {:refresh_fx_mode {}}}))
+
+;; ============================================================================
+;; CLAHE (Contrast Limited Adaptive Histogram Equalization)
+;; ============================================================================
+
+(>defn set-clahe-level
+  "Set the CLAHE level (0.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/normalized => :cmd/root]
+  (core/create-command 
+    {:day_camera {:set_clahe_level {:value value}}}))
+
+(>defn shift-clahe-level
+  "Shift the CLAHE level by offset (-1.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [shift-value]
+  [:range/normalized-offset => :cmd/root]
+  (core/create-command 
+    {:day_camera {:shift_clahe_level {:value shift-value}}}))
