@@ -83,28 +83,6 @@
     ;; Return the full command with all fields
     full-cmd))
 
-(>defn send-command-with-session!
-  "Send a command with a specific session ID.
-   Used when session tracking is important.
-   Returns the full command with all fields."
-  [cmd-payload session-id]
-  [:cmd/payload :pos-int => :cmd/root]
-  (let [full-cmd (builder/populate-cmd-fields-with-overrides 
-                   cmd-payload
-                   {:session_id session-id})]
-    ;; Validate with Malli and buf.validate via serialize
-    (serialize/serialize-cmd-payload full-cmd)
-    
-    ;; In test mode, also validate roundtrip
-    (when test-mode?
-      (validate-roundtrip! full-cmd))
-    
-    ;; If validation passed, add to queue (unless in test mode)
-    (when-not test-mode?
-      (.offer command-queue full-cmd))
-    
-    ;; Return the full command
-    full-cmd))
 
 (>defn send-important-command!
   "Send a command marked as important.
@@ -149,7 +127,7 @@
    If timeout expires, returns a ping command.
    Timeout is in milliseconds."
   [timeout-ms]
-  [:pos-int => :cmd/root]
+  [nat-int? => :cmd/root]
   (or (.poll command-queue timeout-ms TimeUnit/MILLISECONDS)
       ;; Timeout - send ping to keep connection alive
       (create-ping-command)))

@@ -65,7 +65,7 @@
       (and (= {} (:ping cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -76,7 +76,7 @@
       (and (= {} (:noop cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -87,7 +87,7 @@
       (and (= {} (:frozen cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -102,7 +102,7 @@
       (and (= {:reboot {}} (:system cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -113,7 +113,7 @@
       (and (= {:power_off {}} (:system cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -124,7 +124,7 @@
       (and (= {:start_all {}} (:system cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -135,7 +135,7 @@
       (and (= {:stop_all {}} (:system cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -146,7 +146,7 @@
       (and (= {:localization {:loc loc}} (:system cmd))
            (= 1 (:protocol_version cmd))
            (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type cmd))
-           (= 0 (:session_id cmd))
+           (= 42 (:session_id cmd))
            (= false (:important cmd))
            (= false (:from_cv_subsystem cmd))
            (:valid? (v/validate-roundtrip-with-report cmd))))))
@@ -155,13 +155,6 @@
 ;; Core Infrastructure Properties
 ;; ============================================================================
 
-(defspec send-command-with-session-preserves-session num-tests
-  (prop/for-all [session-id (gen/choose 1 Integer/MAX_VALUE)]
-    (let [cmd {:ping {}}
-          result (core/send-command-with-session! cmd session-id)]
-      (and (= session-id (:session_id result))
-           (= {} (:ping result))
-           (:valid? (v/validate-roundtrip-with-report result))))))
 
 (defspec send-important-command-sets-flag num-tests
   (prop/for-all [_ gen/any]
@@ -199,10 +192,3 @@
 ;; Session ID Boundary Values
 ;; ============================================================================
 
-(defspec session-id-boundary-values num-tests
-  (prop/for-all [session-id (gen/one-of [gen/nat
-                                         (gen/return 0)
-                                         (gen/return Integer/MAX_VALUE)])]
-    (let [result (core/send-command-with-session! {:ping {}} session-id)]
-      (and (= session-id (:session_id result))
-           (:valid? (v/validate-roundtrip-with-report result))))))

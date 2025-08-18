@@ -21,7 +21,7 @@
   "Default values for required protocol fields"
   {:protocol_version 1
    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   :session_id 0
+   :session_id 42  ; Placeholder - server overrides this anyway
    :important false
    :from_cv_subsystem false})
 

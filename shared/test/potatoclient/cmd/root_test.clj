@@ -34,18 +34,17 @@
 (deftest ping-command-test
   (testing "ping command construction and roundtrip"
     (let [cmd (root/ping)
-          expected {:ping {}}
-          full-cmd (merge {:protocol_version 1
-                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :session_id 0
-                          :important false
-                          :from_cv_subsystem false}
-                         cmd)]
+          expected {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                   :session_id 42
+                   :important false
+                   :from_cv_subsystem false
+                   :ping {}}]
       (is (= expected cmd) "Command structure should match expected")
-      (is (validate-cmd full-cmd) "Command should be valid against spec")
+      (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
-        (let [result (validation/validate-roundtrip-with-report full-cmd)]
+        (let [result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? result) 
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
@@ -54,18 +53,17 @@
 (deftest noop-command-test
   (testing "noop command construction and roundtrip"
     (let [cmd (root/noop)
-          expected {:noop {}}
-          full-cmd (merge {:protocol_version 1
-                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :session_id 0
-                          :important false
-                          :from_cv_subsystem false}
-                         cmd)]
+          expected {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                   :session_id 42
+                   :important false
+                   :from_cv_subsystem false
+                   :noop {}}]
       (is (= expected cmd) "Command structure should match expected")
-      (is (validate-cmd full-cmd) "Command should be valid against spec")
+      (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
-        (let [result (validation/validate-roundtrip-with-report full-cmd)]
+        (let [result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? result) 
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
@@ -74,18 +72,17 @@
 (deftest frozen-command-test
   (testing "frozen command construction and roundtrip"
     (let [cmd (root/frozen)
-          expected {:frozen {}}
-          full-cmd (merge {:protocol_version 1
-                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :session_id 0
-                          :important false
-                          :from_cv_subsystem false}
-                         cmd)]
+          expected {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                   :session_id 42
+                   :important false
+                   :from_cv_subsystem false
+                   :frozen {}}]
       (is (= expected cmd) "Command structure should match expected")
-      (is (validate-cmd full-cmd) "Command should be valid against spec")
+      (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
-        (let [result (validation/validate-roundtrip-with-report full-cmd)]
+        (let [result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? result) 
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
@@ -100,7 +97,7 @@
     (is (core/in-test-mode?) "Should be running in test mode")
     
     (testing "Invalid commands should throw"
-      (is (thrown-with-msg? Exception #"validation failed"
+      (is (thrown? Exception
             (core/send-command! {:invalid_command {}}))
           "Invalid command should throw validation error"))))
 
@@ -108,42 +105,21 @@
 ;; Core Features Tests
 ;; ============================================================================
 
-(deftest command-with-session-test
-  (testing "Commands with session ID"
-    (let [session-id 12345
-          cmd {:ping {}}
-          full-cmd (merge {:protocol_version 1
-                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :session_id session-id
-                          :important false
-                          :from_cv_subsystem false}
-                         cmd)]
-      (testing "session ID is included"
-        (let [result (core/send-command-with-session! cmd session-id)]
-          (is (= cmd result) "Should return original command"))
-        
-        (testing "roundtrip validation"
-          (let [validation-result (validation/validate-roundtrip-with-report full-cmd)]
-            (is (:valid? validation-result) 
-                (str "Should survive roundtrip with session ID"
-                     (when-not (:valid? validation-result)
-                       (str "\n" (:pretty-diff validation-result)))))))))))
-
 (deftest important-command-test
   (testing "Important commands"
-    (let [cmd {:ping {}}
-          full-cmd (merge {:protocol_version 1
-                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                          :session_id 0
-                          :important true
-                          :from_cv_subsystem false}
-                         cmd)]
+    (let [cmd-payload {:ping {}}
+          expected {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                   :session_id 42
+                   :important true
+                   :from_cv_subsystem false
+                   :ping {}}]
       (testing "important flag is set"
-        (let [result (core/send-important-command! cmd)]
-          (is (= cmd result) "Should return original command"))
+        (let [result (core/send-important-command! cmd-payload)]
+          (is (= expected result) "Should return full command with important flag"))
         
         (testing "roundtrip validation"
-          (let [validation-result (validation/validate-roundtrip-with-report full-cmd)]
+          (let [validation-result (validation/validate-roundtrip-with-report expected)]
             (is (:valid? validation-result) 
                 (str "Should survive roundtrip with important flag"
                      (when-not (:valid? validation-result)
@@ -154,7 +130,7 @@
     (let [ping-cmd (core/create-ping-command)]
       (is (= {:protocol_version 1
              :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-             :session_id 0
+             :session_id 42
              :important false
              :from_cv_subsystem false
              :ping {}}

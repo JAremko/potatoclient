@@ -67,12 +67,6 @@
 (deftest session-and-importance-test
   (testing "Session ID and importance flags work correctly"
     
-    (testing "Commands with custom session ID"
-      (let [cmd (core/send-command-with-session! {:ping {}} 12345)]
-        (is (= 12345 (:session_id cmd)) "Should have custom session ID")
-        (is (= {} (:ping cmd)) "Should have ping payload")
-        (is (:valid? (v/validate-roundtrip-with-report cmd))
-            "Custom session command should roundtrip")))
     
     (testing "Important commands"
       (let [cmd (core/send-important-command! {:frozen {}})]
