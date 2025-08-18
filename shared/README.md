@@ -188,6 +188,28 @@ The module includes comprehensive testing:
 - **Negative tests** to ensure error handling
 - **Integration tests** for end-to-end flow
 
+### Automatic Generative Testing with mi/check
+
+When Guardrails is enabled, you can use `malli.instrument/check` for automatic generative testing:
+
+```clojure
+(require '[malli.instrument :as mi])
+
+;; Collect schemas from Guardrails functions
+(mi/collect! {:ns ['potatoclient.cmd.compass]})
+
+;; Run generative testing on all collected functions
+(mi/check)  ; Returns nil if all pass, or a map of failures
+```
+
+This automatically:
+- Generates test inputs based on function schemas
+- Validates outputs against return schemas
+- Finds edge cases and constraint violations
+- Reports smallest failing inputs through shrinking
+
+### Running Tests
+
 Run all tests:
 ```bash
 clojure -M:test
@@ -196,6 +218,11 @@ clojure -M:test
 Run specific test namespace:
 ```bash
 clojure -M:test -n potatoclient.cmd.integration-test
+```
+
+Run with Guardrails enabled (for development):
+```bash
+clojure -J-Dguardrails.enabled=true -M:test
 ```
 
 ## Protocol Consistency
@@ -252,7 +279,8 @@ The command system is optimized for performance:
 - **Numeric values in tests**: Always use doubles (e.g., `15.5`, not `15`) when testing functions that expect `:double`
 - **Oneof fields with nils**: Valid in our schemas, handled by `remove-nil-values` in validation
 - **Custom schemas**: Define in `specs/common.clj` and register them (e.g., `:nat-int`)
-- **Guardrails metadata**: Malli version adds `:malli/schema` to function metadata (currently unused but available)
+- **Guardrails metadata**: Malli version adds `:malli/schema` to function metadata when `-Dguardrails.enabled=true`
+- **Generative testing with mi/check**: Works automatically with Malli Guardrails functions!
 
 ## License
 

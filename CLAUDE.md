@@ -110,6 +110,14 @@ This module ensures type safety and protocol consistency across all PotatoClient
 2. **Malli Specs** - Type specifications for all functions
 3. **Comprehensive Tests** - Every function must be tested
 
+### Generative Testing with mi/check
+When Guardrails is enabled (`-Dguardrails.enabled=true`) and using Malli Guardrails:
+- Functions automatically get `:malli/schema` metadata
+- Use `(mi/collect! {:ns ['namespace.name]})` to gather schemas
+- Use `(mi/check)` for automatic generative testing of all collected functions
+- This finds edge cases and constraint violations automatically
+- No need to write manual `defspec` tests - schemas drive the testing
+
 **Malli Map Specs Must Be Closed:**
 - All map specs must use `{:closed true}` to reject extra keys
 - This ensures strict validation and prevents unintended data from passing through
