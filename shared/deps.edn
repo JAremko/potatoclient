@@ -34,6 +34,26 @@
                   :main-opts ["-m" "cognitect.test-runner"
                               "-d" "test"]}
            
+           :test-oneof {:extra-paths ["test"]
+                        :extra-deps {io.github.cognitect-labs/test-runner 
+                                     {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                        :main-opts ["-m" "test-suites.oneof-suite"]}
+           
+           :test-malli {:extra-paths ["test"]
+                        :extra-deps {io.github.cognitect-labs/test-runner 
+                                     {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                        :main-opts ["-m" "test-suites.malli-suite"]}
+           
+           :test-serialization {:extra-paths ["test"]
+                                :extra-deps {io.github.cognitect-labs/test-runner 
+                                             {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                                :main-opts ["-m" "test-suites.serialization-suite"]}
+           
+           :test-cmd {:extra-paths ["test"]
+                      :extra-deps {io.github.cognitect-labs/test-runner 
+                                   {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                      :main-opts ["-m" "test-suites.cmd-suite"]}
+           
            :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.5"}}
                    :ns-default build}
            

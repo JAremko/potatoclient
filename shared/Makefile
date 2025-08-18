@@ -1,7 +1,7 @@
 # Shared Project Makefile
 # Central proto generation and compilation for the entire PotatoClient project
 
-.PHONY: proto proto-clean test compile help
+.PHONY: proto proto-clean test test-oneof test-malli test-serialization test-cmd compile help
 
 # Default target
 .DEFAULT_GOAL := help
@@ -76,6 +76,63 @@ test: ## Run all shared module tests
 	fi
 	@echo "Running shared project tests..."
 	@clojure -J-Dguardrails.enabled=true -M:test
+
+# Test categories - run specific test suites
+test-oneof: ## Run only oneof custom spec tests
+	@if [ ! -d "target/classes/cmd" ]; then \
+		echo "================================================"; \
+		echo "ERROR: Proto classes not compiled!"; \
+		echo ""; \
+		echo "Please run: make proto"; \
+		echo ""; \
+		echo "This will generate and compile proto classes."; \
+		echo "================================================"; \
+		exit 1; \
+	fi
+	@echo "Running oneof tests..."
+	@clojure -J-Dguardrails.enabled=true -M:test-oneof
+
+test-malli: ## Run only malli spec tests
+	@if [ ! -d "target/classes/cmd" ]; then \
+		echo "================================================"; \
+		echo "ERROR: Proto classes not compiled!"; \
+		echo ""; \
+		echo "Please run: make proto"; \
+		echo ""; \
+		echo "This will generate and compile proto classes."; \
+		echo "================================================"; \
+		exit 1; \
+	fi
+	@echo "Running malli spec tests..."
+	@clojure -J-Dguardrails.enabled=true -M:test-malli
+
+test-serialization: ## Run only serialization/deserialization tests
+	@if [ ! -d "target/classes/cmd" ]; then \
+		echo "================================================"; \
+		echo "ERROR: Proto classes not compiled!"; \
+		echo ""; \
+		echo "Please run: make proto"; \
+		echo ""; \
+		echo "This will generate and compile proto classes."; \
+		echo "================================================"; \
+		exit 1; \
+	fi
+	@echo "Running serialization tests..."
+	@clojure -J-Dguardrails.enabled=true -M:test-serialization
+
+test-cmd: ## Run only command tests
+	@if [ ! -d "target/classes/cmd" ]; then \
+		echo "================================================"; \
+		echo "ERROR: Proto classes not compiled!"; \
+		echo ""; \
+		echo "Please run: make proto"; \
+		echo ""; \
+		echo "This will generate and compile proto classes."; \
+		echo "================================================"; \
+		exit 1; \
+	fi
+	@echo "Running command tests..."
+	@clojure -J-Dguardrails.enabled=true -M:test-cmd
 
 # Clean everything EXCEPT proto artifacts
 clean: ## Clean build artifacts (preserves proto classes)
