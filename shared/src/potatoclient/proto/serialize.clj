@@ -106,7 +106,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [:cmd/root => :bytes]
+  [map? => bytes?]
   (try
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
@@ -125,7 +125,7 @@
    Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [:cmd/root => :bytes]
+  [map? => bytes?]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :cmd/root)
@@ -160,7 +160,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [:state/root => :bytes]
+  [map? => bytes?]
   (try
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
@@ -180,7 +180,7 @@
    Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [:state/root => :bytes]
+  [map? => bytes?]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :state/root)

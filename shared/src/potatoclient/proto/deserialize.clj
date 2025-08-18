@@ -94,7 +94,7 @@
    Takes binary protobuf data and returns EDN.
    Throws ex-info if deserialization fails."
   [binary-data]
-  [:bytes => :cmd/root]
+  [bytes? => map?]
   (try
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)]
@@ -111,15 +111,15 @@
    Performs buf.validate and Malli validation.
    Throws ex-info if deserialization or validation fails."
   [binary-data]
-  [:bytes => :cmd/root]
+  [bytes? => map?]
   (try
     ;; Parse proto
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
           _ (validate-with-buf proto-msg :cmd)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)
           edn-data (pronto/proto-map->clj-map proto-map)]
-      ;; Skip Malli validation for now - buf.validate is sufficient
-      ;; (validate-with-malli edn-data :cmd/root)
+      ;; Validate EDN with Malli
+      (validate-with-malli edn-data :cmd/root)
       edn-data)
     (catch clojure.lang.ExceptionInfo e
       ;; Re-throw our validation errors
@@ -140,7 +140,7 @@
    Takes binary protobuf data and returns EDN.
    Throws ex-info if deserialization fails."
   [binary-data]
-  [:bytes => :state/root]
+  [bytes? => map?]
   (try
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)]
@@ -157,15 +157,15 @@
    Performs buf.validate and Malli validation.
    Throws ex-info if deserialization or validation fails."
   [binary-data]
-  [:bytes => :state/root]
+  [bytes? => map?]
   (try
     ;; Parse proto
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
           _ (validate-with-buf proto-msg :state)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)
           edn-data (pronto/proto-map->clj-map proto-map)]
-      ;; Skip Malli validation for now - buf.validate is sufficient
-      ;; (validate-with-malli edn-data :state/root)
+      ;; Validate EDN with Malli
+      (validate-with-malli edn-data :state/root)
       edn-data)
     (catch clojure.lang.ExceptionInfo e
       ;; Re-throw our validation errors
