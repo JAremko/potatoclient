@@ -1,7 +1,0 @@
-{:enabled? true
- :spec-engine :malli
- :instrumentation true
- :check-on-compile false
- :throw? true
- :expound? true
- :report-output :throw}

@@ -1,0 +1,328 @@
+(ns potatoclient.cmd.system-test
+  "Roundtrip tests for system commands.
+   Validates that commands are constructed correctly and survive serialization/deserialization."
+  (:require
+   [clojure.test :refer [deftest is testing]]
+   [potatoclient.cmd.system :as sys]
+   [potatoclient.cmd.core :as core]
+   [potatoclient.proto.serialize :as serialize]
+   [potatoclient.proto.deserialize :as deserialize]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.test-harness :as harness]
+   [malli.core :as m]))
+
+;; Ensure test harness is initialized
+(when-not harness/initialized?
+  (throw (ex-info "Test harness failed to initialize!" 
+                  {:initialized? harness/initialized?})))
+
+;; Initialize registry
+(registry/setup-global-registry!)
+
+;; ============================================================================
+;; Test Helpers
+;; ============================================================================
+
+(defn roundtrip-test
+  "Helper to test command roundtrip serialization.
+   Returns the deserialized command for comparison."
+  [cmd-root]
+  (let [full-cmd (merge {:protocol_version 1
+                         :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                         :session_id 0
+                         :important false
+                         :from_cv_subsystem false}
+                        cmd-root)
+        ;; Serialize to binary
+        binary (serialize/serialize-cmd-payload full-cmd)
+        ;; Deserialize back
+        roundtrip (deserialize/deserialize-cmd-payload binary)]
+    roundtrip))
+
+(defn validate-cmd
+  "Validate a command against the cmd/root spec."
+  [cmd]
+  (m/validate (m/schema :cmd/root) cmd))
+
+;; ============================================================================
+;; System Command Tests
+;; ============================================================================
+
+(deftest reboot-test
+  (testing "reboot command construction and roundtrip"
+    (let [cmd (sys/reboot)
+          expected {:system {:reboot {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest power-off-test
+  (testing "power-off command construction and roundtrip"
+    (let [cmd (sys/power-off)
+          expected {:system {:power_off {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest reset-configs-test
+  (testing "reset-configs command construction and roundtrip"
+    (let [cmd (sys/reset-configs)
+          expected {:system {:reset_configs {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest start-all-test
+  (testing "start-all command construction and roundtrip"
+    (let [cmd (sys/start-all)
+          expected {:system {:start_all {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest stop-all-test
+  (testing "stop-all command construction and roundtrip"
+    (let [cmd (sys/stop-all)
+          expected {:system {:stop_all {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest mark-rec-important-test
+  (testing "mark-rec-important command construction and roundtrip"
+    (let [cmd (sys/mark-rec-important)
+          expected {:system {:mark_rec_important {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest unmark-rec-important-test
+  (testing "unmark-rec-important command construction and roundtrip"
+    (let [cmd (sys/unmark-rec-important)
+          expected {:system {:unmark_rec_important {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest set-localization-test
+  (testing "set-localization command construction and roundtrip"
+    (let [cmd (sys/set-localization :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN)
+          expected {:system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization")))
+    
+    (testing "with different localizations"
+      (doseq [loc [:JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+                   :JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+                   :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS]]
+        (let [cmd (sys/set-localization loc)
+              roundtrip (roundtrip-test cmd)]
+          (is (= {:system {:localization {:loc loc}}} cmd)
+              (str "Should create correct command for " loc))
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              (str "Should survive roundtrip for " loc)))))))
+
+(deftest enter-transport-test
+  (testing "enter-transport command construction and roundtrip"
+    (let [cmd (sys/enter-transport)
+          expected {:system {:enter_transport {}}}]
+      (is (= expected cmd) "Command structure should match expected")
+      (is (validate-cmd (merge {:protocol_version 1
+                               :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                               :session_id 0
+                               :important false
+                               :from_cv_subsystem false}
+                              cmd))
+          "Command should be valid against spec")
+      
+      (testing "roundtrip serialization"
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Command should survive serialization/deserialization"))))))
+
+(deftest geodesic-mode-test
+  (testing "geodesic mode enable/disable commands"
+    (testing "enable geodesic mode"
+      (let [cmd (sys/enable-geodesic-mode)
+            expected {:system {:geodesic_mode_enable {}}}]
+        (is (= expected cmd) "Enable command structure should match expected")
+        (is (validate-cmd (merge {:protocol_version 1
+                                 :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                                 :session_id 0
+                                 :important false
+                                 :from_cv_subsystem false}
+                                cmd))
+            "Enable command should be valid against spec")
+        
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Enable command should survive serialization/deserialization"))))
+    
+    (testing "disable geodesic mode"
+      (let [cmd (sys/disable-geodesic-mode)
+            expected {:system {:geodesic_mode_disable {}}}]
+        (is (= expected cmd) "Disable command structure should match expected")
+        (is (validate-cmd (merge {:protocol_version 1
+                                 :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                                 :session_id 0
+                                 :important false
+                                 :from_cv_subsystem false}
+                                cmd))
+            "Disable command should be valid against spec")
+        
+        (let [roundtrip (roundtrip-test cmd)]
+          (is (= (merge {:protocol_version 1
+                        :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                        :session_id 0
+                        :important false
+                        :from_cv_subsystem false}
+                       cmd)
+                 roundtrip)
+              "Disable command should survive serialization/deserialization"))))))

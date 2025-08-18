@@ -82,6 +82,16 @@ The agent provides:
 
 **Note**: This tool specifically checks for Guardrails library usage (runtime validation), not general security vulnerabilities or error handling.
 
+## Shared Module
+
+The `shared` module (`./shared/README.md`) is the foundational library providing:
+- **Protocol Buffer definitions** for all system communication (commands and state messages)
+- **Malli specifications** that mirror protobuf constraints with runtime validation
+- **Serialization utilities** for EDN ↔ Protobuf binary conversion
+- **Single source of truth** for data structures, enums, and protocol compliance
+
+This module ensures type safety and protocol consistency across all PotatoClient subsystems. All other modules depend on it for message definitions and validation.
+
 ## Project Principles
 
 ### Core Development Philosophy
