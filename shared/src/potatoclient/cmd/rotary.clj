@@ -1,481 +1,480 @@
-import * as Types from "ts/proto/jon/jon_shared_data_types";
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
+(ns potatoclient.cmd.rotary
+  "Rotary Platform command functions for controlling azimuth and elevation axes.
+   Based on the RotaryPlatform message structure in jon_shared_cmd_rotary.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function rotaryStart(): void {
-    //console.log("Sending rotary start command");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({start: Cmd.RotaryPlatform.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Platform Control
+;; ============================================================================
 
-export function rotaryStop(): void {
-    //console.log("Sending rotary stop command");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({stop: Cmd.RotaryPlatform.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start
+  "Start the rotary platform.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:start {}}}))
 
-export function rotaryHalt(): void {
-    //console.log("Sending rotary halt command");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({halt: Cmd.RotaryPlatform.Halt.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn stop
+  "Stop the rotary platform.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:stop {}}}))
 
-export function rotarySetPlatformAzimuth(value: number): void {
-    //console.log(`Setting platform azimuth to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setPlatformAzimuth: Cmd.RotaryPlatform.SetPlatformAzimuth.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn halt
+  "Halt all rotary platform movement immediately.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:halt {}}}))
 
-export function rotarySetPlatformElevation(value: number): void {
-    //console.log(`Setting platform elevation to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setPlatformElevation: Cmd.RotaryPlatform.SetPlatformElevation.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Platform Position Setting
+;; ============================================================================
 
-export function rotarySetPlatformBank(value: number): void {
-    //console.log(`Setting platform bank to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setPlatformBank: Cmd.RotaryPlatform.SetPlatformBank.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-platform-azimuth
+  "Set the platform azimuth reference angle.
+   Value must be between -360 and 360 degrees (exclusive).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [[:and [:double {:min -360.0 :max 360.0}]
+    [:> -360.0]
+    [:< 360.0]] => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_platform_azimuth {:value value}}}))
 
-export function rotaryHaltAzimuth(): void {
-    //console.log("Sending halt azimuth command");
-    let azimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        halt: Cmd.RotaryPlatform.HaltAzimuth.create()
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: azimuthMsg});
-}
+(>defn set-platform-elevation
+  "Set the platform elevation reference angle.
+   Value must be between -90 and 90 degrees.
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:angle/elevation => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_platform_elevation {:value value}}}))
 
-export function rotaryHaltElevation(): void {
-    //console.log("Sending halt elevation command");
-    let elevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        halt: Cmd.RotaryPlatform.HaltElevation.create()
-    });
-    CSShared.sendRotaryAxisCommand({elevation: elevationMsg});
-}
+(>defn set-platform-bank
+  "Set the platform bank reference angle.
+   Value must be between -180 and 180 degrees (exclusive).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:angle/bank => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_platform_bank {:value value}}}))
 
-export function rotaryHaltElevationAndAzimuth(): void {
-    //console.log("Sending halt elevation and azimuth command");
-    let azimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        halt: Cmd.RotaryPlatform.HaltAzimuth.create()
-    });
-    let elevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        halt: Cmd.RotaryPlatform.HaltElevation.create()
-    });
-    CSShared.sendRotaryAxisCommand({
-        azimuth: azimuthMsg,
-        elevation: elevationMsg
-    });
-}
+;; ============================================================================
+;; Mode and Configuration
+;; ============================================================================
 
-export function rotaryAzimuthSetValue(value: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Setting azimuth value to ${value} with direction ${direction}`);
-    let setAzimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        setValue: Cmd.RotaryPlatform.SetAzimuthValue.create({value, direction})
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: setAzimuthMsg});
-}
+(>defn set-mode
+  "Set the rotary platform operation mode.
+   Mode must be one of the JonGuiDataRotaryMode enum values.
+   Returns a fully formed cmd root ready to send."
+  [mode]
+  [:enum/rotary-mode => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_mode {:mode mode}}}))
 
-export function rotaryAzimuthRotateTo(targetValue: number, speed: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating azimuth to ${targetValue} with speed ${speed} and direction ${direction}`);
-    let rotateAzimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        rotateTo: Cmd.RotaryPlatform.RotateAzimuthTo.create({
-            targetValue: targetValue,
-            speed,
-            direction
-        })
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: rotateAzimuthMsg});
-}
+(>defn set-use-rotary-as-compass
+  "Enable or disable using rotary platform as compass reference.
+   Returns a fully formed cmd root ready to send."
+  [use-as-compass?]
+  [:boolean => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_use_rotary_as_compass {:flag use-as-compass?}}}))
 
-export function rotaryAzimuthRotateRelative(value: number, speed: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating azimuth RELATIVE to the current position by ${value} at speed ${speed} with direction ${direction}`);
-    let rotateAzimuthRelativeMsg = Cmd.RotaryPlatform.Azimuth.create({
-        relative: Cmd.RotaryPlatform.RotateAzimuthRelative.create({
-            value,
-            speed,
-            direction
-        })
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: rotateAzimuthRelativeMsg});
-}
+;; ============================================================================
+;; Azimuth Control (Single Axis)
+;; ============================================================================
 
-export function rotaryElevationRotateRelative(value: number, speed: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating elevation RELATIVE to the current position by ${value} at speed ${speed} with direction ${direction}`);
-    let rotateElevationRelativeMsg = Cmd.RotaryPlatform.Elevation.create({
-        relative: Cmd.RotaryPlatform.RotateElevationRelative.create({
-            value,
-            speed,
-            direction
-        })
-    });
-    CSShared.sendRotaryAxisCommand({elevation: rotateElevationRelativeMsg});
-}
+(>defn halt-azimuth
+  "Halt azimuth movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:halt {}}}}}))
 
-export function rotaryElevationRotateRelativeSet(value: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Setting elevation value RELATIVE to the current position to ${value} with direction ${direction}`);
-    let rotateElevationRelativeSetMsg = Cmd.RotaryPlatform.Elevation.create({
-        relativeSet: Cmd.RotaryPlatform.RotateElevationRelativeSet.create({
-            value,
-            direction
-        })
-    });
-    CSShared.sendRotaryAxisCommand({elevation: rotateElevationRelativeSetMsg});
-}
+(>defn set-azimuth-value
+  "Set azimuth to specific value with direction.
+   Value: 0-360 degrees
+   Direction: :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE or _COUNTER_CLOCKWISE
+   Returns a fully formed cmd root ready to send."
+  [value direction]
+  [:angle/azimuth :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:set_value {:value value
+                                           :direction direction}}}}}))
 
-export function rotaryAzimuthRotateRelativeSet(value: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Setting azimuth value RELATIVE to the current position to ${value} with direction ${direction}`);
-    let rotateAzimuthRelativeSetMsg = Cmd.RotaryPlatform.Azimuth.create({
-        relativeSet: Cmd.RotaryPlatform.RotateAzimuthRelativeSet.create({
-            value,
-            direction
-        })
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: rotateAzimuthRelativeSetMsg});
-}
+(>defn rotate-azimuth-to
+  "Rotate azimuth to target value at specified speed with direction.
+   Target: 0-360 degrees
+   Speed: 0.0 to 1.0 (normalized)
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [target-value speed direction]
+  [:angle/azimuth :speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:rotate_to {:target_value target-value
+                                           :speed speed
+                                           :direction direction}}}}}))
 
-export function rotaryAzimuthRotate(speed: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating azimuth continuously at speed ${speed} with direction ${direction}`);
-    let rotateAzimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        rotate: Cmd.RotaryPlatform.RotateAzimuth.create({speed, direction})
-    });
-    CSShared.sendRotaryAxisCommand({azimuth: rotateAzimuthMsg});
-}
+(>defn rotate-azimuth
+  "Rotate azimuth continuously at specified speed and direction.
+   Speed: 0.0 to 1.0 (normalized)
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [speed direction]
+  [:speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:rotate {:speed speed
+                                        :direction direction}}}}}))
 
-export function rotaryElevationRotate(speed: number, direction: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating elevation continuously at speed ${speed} with direction ${direction}`);
-    let rotateElevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        rotate: Cmd.RotaryPlatform.RotateElevation.create({speed, direction})
-    });
-    CSShared.sendRotaryAxisCommand({elevation: rotateElevationMsg});
-}
+(>defn rotate-azimuth-relative
+  "Rotate azimuth relative to current position.
+   Value: -180 to 180 degrees relative change
+   Speed: 0.0 to 1.0 (normalized)
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [value speed direction]
+  [:angle/relative-azimuth :speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:relative {:value value
+                                          :speed speed
+                                          :direction direction}}}}}))
 
-export function rotaryElevationSetValue(value: number): void {
-    //console.log(`Setting elevation value to ${value}`);
-    let rotateElevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        setValue: Cmd.RotaryPlatform.SetElevationValue.create({value})
-    });
-    CSShared.sendRotaryAxisCommand({elevation: rotateElevationMsg});
-}
+(>defn rotate-azimuth-relative-set
+  "Set azimuth relative to current position (immediate).
+   Value: -180 to 180 degrees relative change
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [value direction]
+  [:angle/relative-azimuth :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:relative_set {:value value
+                                              :direction direction}}}}}))
 
-export function rotaryElevationRotateTo(targetValue: number, speed: number,): void {
-    //console.log(`Rotating elevation to ${targetValue} at speed ${speed}`);
-    let rotateElevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        rotateTo: Cmd.RotaryPlatform.RotateElevationTo.create({
-            targetValue: targetValue,
-            speed
-        })
-    });
-    CSShared.sendRotaryAxisCommand({elevation: rotateElevationMsg});
-}
+;; ============================================================================
+;; Elevation Control (Single Axis)
+;; ============================================================================
 
-export function rotateBothTo(azimuth: number, azimuthSpeed: number, azimuthDirection: Types.JonGuiDataRotaryDirection, elevation: number, elevationSpeed: number): void {
+(>defn halt-elevation
+  "Halt elevation movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:halt {}}}}}))
 
-    //console.log(`Rotating azimuth to ${azimuth} at speed ${azimuthSpeed} and elevation to ${elevation} at speed ${elevationSpeed} and azimuth direction ${azimuthDirection}`);
-    let rotateElevationToMsg = Cmd.RotaryPlatform.Elevation.create({
-        rotateTo: Cmd.RotaryPlatform.RotateElevationTo.create({
-            targetValue: elevation,
-            speed: elevationSpeed
-        })
-    });
-    let rotateAzimuthToMsg = Cmd.RotaryPlatform.Azimuth.create({
-        rotateTo: Cmd.RotaryPlatform.RotateAzimuthTo.create({
-            targetValue: azimuth,
-            speed: azimuthSpeed,
-            direction: azimuthDirection
-        })
-    });
-    CSShared.sendRotaryAxisCommand({
-        elevation: rotateElevationToMsg,
-        azimuth: rotateAzimuthToMsg
-    });
-}
+(>defn set-elevation-value
+  "Set elevation to specific value.
+   Value: -90 to 90 degrees
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:angle/elevation => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:set_value {:value value}}}}}))
 
-export function rotateBoth(azimuthSpeed: number, azimuthDirection: Types.JonGuiDataRotaryDirection, elevationSpeed: number, elevationDirection: Types.JonGuiDataRotaryDirection): void {
-    //console.log(`Rotating azimuth at speed ${azimuthSpeed} and elevation at speed ${elevationSpeed} and azimuth direction ${azimuthDirection} and elevation direction ${elevationDirection}`);
-    let rotateElevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        rotate: Cmd.RotaryPlatform.RotateElevation.create({
-            speed: elevationSpeed,
-            direction: elevationDirection
-        })
-    });
-    let rotateAzimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        rotate: Cmd.RotaryPlatform.RotateAzimuth.create({
-            speed: azimuthSpeed,
-            direction: azimuthDirection
-        })
-    });
-    CSShared.sendRotaryAxisCommand({
-        elevation: rotateElevationMsg,
-        azimuth: rotateAzimuthMsg
-    });
-}
+(>defn rotate-elevation-to
+  "Rotate elevation to target value at specified speed.
+   Target: -90 to 90 degrees
+   Speed: 0.0 to 1.0 (normalized)
+   Returns a fully formed cmd root ready to send."
+  [target-value speed]
+  [:angle/elevation :speed/normalized => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:rotate_to {:target_value target-value
+                                             :speed speed}}}}}))
 
-export function rotateBothRelative(azimuth: number, azimuthSpeed: number, azimuthDirection: Types.JonGuiDataRotaryDirection, elevation: number, elevationSpeed: number, elevationDirection: Types.JonGuiDataRotaryDirection): void {
+(>defn rotate-elevation
+  "Rotate elevation continuously at specified speed and direction.
+   Speed: 0.0 to 1.0 (normalized)
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [speed direction]
+  [:speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:rotate {:speed speed
+                                          :direction direction}}}}}))
 
-    //console.log(`Rotating azimuth relative to ${azimuth} at speed ${azimuthSpeed} and elevation relative to ${elevation} at speed ${elevationSpeed} and azimuth direction ${azimuthDirection} and elevation direction ${elevationDirection}`);
-    let rotateElevationRelativeMsg = Cmd.RotaryPlatform.Elevation.create({
-        relative: Cmd.RotaryPlatform.RotateElevationRelative.create({
-            value: elevation,
-            speed: elevationSpeed,
-            direction: elevationDirection
-        })
-    });
-    let rotateAzimuthRelativeMsg = Cmd.RotaryPlatform.Azimuth.create({
-        relative: Cmd.RotaryPlatform.RotateAzimuthRelative.create({
-            value: azimuth,
-            speed: azimuthSpeed,
-            direction: azimuthDirection
-        })
-    });
-    CSShared.sendRotaryAxisCommand({
-        elevation: rotateElevationRelativeMsg,
-        azimuth: rotateAzimuthRelativeMsg
-    });
-}
+(>defn rotate-elevation-relative
+  "Rotate elevation relative to current position.
+   Value: -90 to 90 degrees relative change
+   Speed: 0.0 to 1.0 (normalized)
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [value speed direction]
+  [:angle/relative-elevation :speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:relative {:value value
+                                            :speed speed
+                                            :direction direction}}}}}))
 
-export function rotateBothRelativeSet(azimuth: number, azimuthDirection: Types.JonGuiDataRotaryDirection, elevation: number, elevationDirection: Types.JonGuiDataRotaryDirection): void {
+(>defn rotate-elevation-relative-set
+  "Set elevation relative to current position (immediate).
+   Value: -90 to 90 degrees relative change
+   Direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [value direction]
+  [:angle/relative-elevation :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:elevation {:relative_set {:value value
+                                                :direction direction}}}}}))
 
-    //console.log(`Setting azimuth relative to ${azimuth} and elevation relative to ${elevation} and azimuth direction ${azimuthDirection} and elevation direction ${elevationDirection}`);
-    let rotateElevationRelativeSetMsg = Cmd.RotaryPlatform.Elevation.create({
-        relativeSet: Cmd.RotaryPlatform.RotateElevationRelativeSet.create({
-            value: elevation,
-            direction: elevationDirection
-        })
-    });
-    let rotateAzimuthRelativeSetMsg = Cmd.RotaryPlatform.Azimuth.create({
-        relativeSet: Cmd.RotaryPlatform.RotateAzimuthRelativeSet.create({
-            value: azimuth,
-            direction: azimuthDirection
-        })
-    });
-    CSShared.sendRotaryAxisCommand({
-        elevation: rotateElevationRelativeSetMsg,
-        azimuth: rotateAzimuthRelativeSetMsg
-    });
-}
+;; ============================================================================
+;; Combined Axis Control
+;; ============================================================================
 
-export function setBothTo(azimuth: number, elevation: number, azimuthDirection: Types.JonGuiDataRotaryDirection,): void {
-    //console.log(`Setting azimuth to ${azimuth} and elevation to ${elevation} and azimuth direction ${azimuthDirection}`);
-    let setAzimuthMsg = Cmd.RotaryPlatform.Azimuth.create({
-        setValue: Cmd.RotaryPlatform.SetAzimuthValue.create({
-            value: azimuth,
-            direction: azimuthDirection
-        })
-    });
-    let setElevationMsg = Cmd.RotaryPlatform.Elevation.create({
-        setValue: Cmd.RotaryPlatform.SetElevationValue.create({value: elevation})
-    });
-    CSShared.sendRotaryAxisCommand({
-        azimuth: setAzimuthMsg,
-        elevation: setElevationMsg
-    });
-}
+(>defn halt-both
+  "Halt both azimuth and elevation movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:halt {}}
+                    :elevation {:halt {}}}}}))
 
-export function setCalculateBasePositionFromCompass(value: boolean): void {
-    //console.log(`Setting calculate base position from compass to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setUseRotaryAsCompass: {flag: value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn rotate-both-to
+  "Rotate both axes to target positions.
+   Azimuth: 0-360 degrees
+   Azimuth speed: 0.0 to 1.0
+   Azimuth direction: rotation direction enum
+   Elevation: -90 to 90 degrees  
+   Elevation speed: 0.0 to 1.0
+   Returns a fully formed cmd root ready to send."
+  [azimuth azimuth-speed azimuth-direction elevation elevation-speed]
+  [:angle/azimuth :speed/normalized :enum/rotary-direction 
+   :angle/elevation :speed/normalized => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:rotate_to {:target_value azimuth
+                                           :speed azimuth-speed
+                                           :direction azimuth-direction}}
+                    :elevation {:rotate_to {:target_value elevation
+                                           :speed elevation-speed}}}}}))
 
-export function getMeteo(): void {
-    //console.log("Requesting rotary meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({getMeteo: Cmd.RotaryPlatform.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn rotate-both
+  "Rotate both axes continuously.
+   Azimuth speed: 0.0 to 1.0
+   Azimuth direction: rotation direction enum
+   Elevation speed: 0.0 to 1.0
+   Elevation direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [azimuth-speed azimuth-direction elevation-speed elevation-direction]
+  [:speed/normalized :enum/rotary-direction 
+   :speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:rotate {:speed azimuth-speed
+                                        :direction azimuth-direction}}
+                    :elevation {:rotate {:speed elevation-speed
+                                        :direction elevation-direction}}}}}))
 
-export function setRotateToGps(lon : number, lat :number, alt:number): void {
-    //console.log(`Setting rotate to GPS to ${lon}, ${lat}, ${alt}`);
-    let rotateToGpsMsg = Cmd.RotaryPlatform.RotateToGPS.create({
-        longitude: lon,
-        latitude: lat,
-        altitude: alt
-    });
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({rotateToGps: rotateToGpsMsg});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn rotate-both-relative
+  "Rotate both axes relative to current positions.
+   Azimuth: -180 to 180 degrees relative
+   Azimuth speed: 0.0 to 1.0
+   Azimuth direction: rotation direction enum
+   Elevation: -90 to 90 degrees relative
+   Elevation speed: 0.0 to 1.0
+   Elevation direction: rotation direction enum
+   Returns a fully formed cmd root ready to send."
+  [azimuth azimuth-speed azimuth-direction elevation elevation-speed elevation-direction]
+  [:angle/relative-azimuth :speed/normalized :enum/rotary-direction
+   :angle/relative-elevation :speed/normalized :enum/rotary-direction => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:relative {:value azimuth
+                                          :speed azimuth-speed
+                                          :direction azimuth-direction}}
+                    :elevation {:relative {:value elevation
+                                          :speed elevation-speed
+                                          :direction elevation-direction}}}}}))
 
-export function setOriginGps(lon : number, lat :number, alt:number): void {
-    //console.log(`Setting origin GPS to ${lon}, ${lat}, ${alt}`);
-    let setOriginGpsMsg = Cmd.RotaryPlatform.SetOriginGPS.create({
-        longitude: lon,
-        latitude: lat,
-        altitude: alt
-    });
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setOriginGps: setOriginGpsMsg});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-both-values
+  "Set both axes to specific values.
+   Azimuth: 0-360 degrees
+   Azimuth direction: rotation direction enum
+   Elevation: -90 to 90 degrees
+   Returns a fully formed cmd root ready to send."
+  [azimuth azimuth-direction elevation]
+  [:angle/azimuth :enum/rotary-direction :angle/elevation => :cmd/root]
+  (core/create-command 
+    {:rotary {:axis {:azimuth {:set_value {:value azimuth
+                                           :direction azimuth-direction}}
+                    :elevation {:set_value {:value elevation}}}}}))
 
-export function stringToRotaryMode (value: string): Types.JonGuiDataRotaryMode {
-    switch (value) {
-        case "init":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_INITIALIZATION;
-        case "speed":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_SPEED;
-        case "position":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_POSITION;
-        case "stabilization":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_STABILIZATION;
-        case "targeting":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_TARGETING;
-        case "video_tracker":
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_VIDEO_TRACKER;
-        default:
-            return Types.JonGuiDataRotaryMode.JON_GUI_DATA_ROTARY_MODE_UNSPECIFIED;
-    }
-}
+;; ============================================================================
+;; GPS Integration
+;; ============================================================================
 
-export function setRotaryMode (mode: Types.JonGuiDataRotaryMode): void {
-    //console.log(`Setting rotary mode to ${mode}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({setMode: {mode}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn rotate-to-gps
+  "Rotate platform to point at GPS coordinates.
+   Latitude: -90 to 90 degrees
+   Longitude: -180 to 180 degrees
+   Altitude: -430 to 100000 meters
+   Returns a fully formed cmd root ready to send."
+  [latitude longitude altitude]
+  [:position/latitude :position/longitude :position/altitude => :cmd/root]
+  (core/create-command 
+    {:rotary {:rotate_to_gps {:latitude latitude
+                              :longitude longitude
+                              :altitude altitude}}}))
 
-export function stringToRotaryDirection(value: string): Types.JonGuiDataRotaryDirection {
-    switch (value.toLowerCase()) {
-        case 'clockwise':
-            return Types.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE;
-        case 'counterclockwise':
-        case 'counter clockwise':
-            return Types.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE;
-        default:
-            return Types.JonGuiDataRotaryDirection.JON_GUI_DATA_ROTARY_DIRECTION_UNSPECIFIED;
-    }
-}
+(>defn set-origin-gps
+  "Set GPS origin reference point for platform.
+   Latitude: -90 to 90 degrees
+   Longitude: -180 to 180 degrees
+   Altitude: -430 to 100000 meters
+   Returns a fully formed cmd root ready to send."
+  [latitude longitude altitude]
+  [:position/latitude :position/longitude :position/altitude => :cmd/root]
+  (core/create-command 
+    {:rotary {:set_origin_gps {:latitude latitude
+                               :longitude longitude
+                               :altitude altitude}}}))
 
-export function RotateToNDC(channel: Types.JonGuiDataVideoChannel, x: number, y: number): void {
-    //console.log(`Rotating to NDC ${x}, ${y} on channel ${channel}`);
-    let rotateToNDCMsg = Cmd.RotaryPlatform.RotateToNDC.create({
-        channel,
-        x,
-        y
-    });
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({rotateToNdc: rotateToNDCMsg});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; NDC (Normalized Device Coordinates) Control
+;; ============================================================================
 
-export function scanStart(): void {
-    // console.log("Starting rotary scan");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanStart: Cmd.RotaryPlatform.ScanStart.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn rotate-to-ndc
+  "Rotate platform to point at screen coordinates.
+   Channel: :JON_GUI_DATA_VIDEO_CHANNEL_DAY or _HEAT
+   X: -1.0 to 1.0 (normalized)
+   Y: -1.0 to 1.0 (normalized)
+   Returns a fully formed cmd root ready to send."
+  [channel x y]
+  [:enum/video-channel :screen/ndc-x :screen/ndc-y => :cmd/root]
+  (core/create-command 
+    {:rotary {:rotate_to_ndc {:channel channel
+                              :x x
+                              :y y}}}))
 
-export function scanPrev(): void {
-    // console.log("rotary scan prev");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanPrev: Cmd.RotaryPlatform.ScanPrev.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Scan Operations
+;; ============================================================================
 
-export function scanNext(): void {
-    // console.log("rotary scan next");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanNext: Cmd.RotaryPlatform.ScanNext.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-start
+  "Start scanning operation.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_start {}}}))
 
-export function scanStop(): void {
-    // console.log("Stopping rotary scan");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanStop: Cmd.RotaryPlatform.ScanStop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-stop
+  "Stop scanning operation.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_stop {}}}))
 
-export function scanPause(): void {
-    // console.log("Pausing rotary scan");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanPause: Cmd.RotaryPlatform.ScanPause.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-pause
+  "Pause scanning operation.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_pause {}}}))
 
-export function scanUnpause(): void {
-    // console.log("Unpausing rotary scan");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanUnpause: Cmd.RotaryPlatform.ScanUnpause.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-unpause
+  "Resume paused scanning operation.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_unpause {}}}))
 
+(>defn scan-prev
+  "Move to previous scan position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_prev {}}}))
 
-export function scanRefreshNodeList(): void {
-    // console.log("Refreshing rotary scan node list");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanRefreshNodeList: Cmd.RotaryPlatform.ScanRefreshNodeList.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-next
+  "Move to next scan position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_next {}}}))
 
-export function scanSelectNode(index: number): void {
-    // console.log(`Selecting rotary scan node ${node}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanSelectNode: Cmd.RotaryPlatform.ScanSelectNode.create({index})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-refresh-node-list
+  "Refresh the scan node list.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:scan_refresh_node_list {}}}))
 
-export function scanDeleteNode(index: number): void {
-    // console.log(`Deleting rotary scan node at index ${index}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({scanDeleteNode: Cmd.RotaryPlatform.ScanDeleteNode.create({index})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-select-node
+  "Select a scan node by index.
+   Index must be >= 0.
+   Returns a fully formed cmd root ready to send."
+  [index]
+  [:proto/int32-positive => :cmd/root]
+  (core/create-command 
+    {:rotary {:scan_select_node {:index index}}}))
 
-export function scanUpdateNode(
-    index: number,
-    dayZoomTableValue: number,
-    heatZoomTableValue: number,
-    azimuth: number,
-    elevation: number,
-    linger: number,
-    speed: number
-): void {
-    // console.log(`Updating rotary scan node at index ${index}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({
-        scanUpdateNode: Cmd.RotaryPlatform.ScanUpdateNode.create({
-            index,
-            DayZoomTableValue: dayZoomTableValue,
-            HeatZoomTableValue: heatZoomTableValue,
-            azimuth,
-            elevation,
-            linger,
-            speed
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-delete-node
+  "Delete a scan node by index.
+   Index must be >= 0.
+   Returns a fully formed cmd root ready to send."
+  [index]
+  [:proto/int32-positive => :cmd/root]
+  (core/create-command 
+    {:rotary {:scan_delete_node {:index index}}}))
 
-export function scanAddNode(
-    index: number,
-    dayZoomTableValue: number,
-    heatZoomTableValue: number,
-    azimuth: number,
-    elevation: number,
-    linger: number,
-    speed: number
-): void {
-    console.log(`Add rotary scan node at index ${index}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.rotary = Cmd.RotaryPlatform.Root.create({
-        scanAddNode: Cmd.RotaryPlatform.ScanAddNode.create({
-            index,
-            DayZoomTableValue: dayZoomTableValue,
-            HeatZoomTableValue: heatZoomTableValue,
-            azimuth,
-            elevation,
-            linger,
-            speed
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-update-node
+  "Update a scan node's parameters.
+   Index: >= 0
+   Day/Heat zoom table values: >= 0
+   Azimuth: 0-360 degrees
+   Elevation: -90 to 90 degrees
+   Linger: >= 0.0 seconds
+   Speed: > 0.0 to 1.0 (normalized)
+   Returns a fully formed cmd root ready to send."
+  [index day-zoom heat-zoom azimuth elevation linger speed]
+  [:proto/int32-positive :proto/int32-positive :proto/int32-positive
+   :angle/azimuth :angle/elevation 
+   [:double {:min 0.0}]
+   [:and [:double {:min 0.0 :max 1.0}] [:> 0.0]]
+   => :cmd/root]
+  (core/create-command 
+    {:rotary {:scan_update_node {:index index
+                                 :DayZoomTableValue day-zoom
+                                 :HeatZoomTableValue heat-zoom
+                                 :azimuth azimuth
+                                 :elevation elevation
+                                 :linger linger
+                                 :speed speed}}}))
+
+(>defn scan-add-node
+  "Add a new scan node.
+   Index: >= 0
+   Day/Heat zoom table values: >= 0
+   Azimuth: 0-360 degrees
+   Elevation: -90 to 90 degrees
+   Linger: >= 0.0 seconds
+   Speed: > 0.0 to 1.0 (normalized)
+   Returns a fully formed cmd root ready to send."
+  [index day-zoom heat-zoom azimuth elevation linger speed]
+  [:proto/int32-positive :proto/int32-positive :proto/int32-positive
+   :angle/azimuth :angle/elevation 
+   [:double {:min 0.0}]
+   [:and [:double {:min 0.0 :max 1.0}] [:> 0.0]]
+   => :cmd/root]
+  (core/create-command 
+    {:rotary {:scan_add_node {:index index
+                              :DayZoomTableValue day-zoom
+                              :HeatZoomTableValue heat-zoom
+                              :azimuth azimuth
+                              :elevation elevation
+                              :linger linger
+                              :speed speed}}}))
+
+;; ============================================================================
+;; Meteo Data
+;; ============================================================================
+
+(>defn get-meteo
+  "Request meteorological data from rotary platform.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:rotary {:get_meteo {}}}))

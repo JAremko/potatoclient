@@ -1,0 +1,161 @@
+(ns potatoclient.cmd.gps-test
+  "Tests for GPS command functions."
+  (:require
+   [clojure.test :refer [deftest is testing]]
+   [potatoclient.cmd.gps :as gps]
+   [potatoclient.cmd.validation :as validation]
+   [malli.core :as m]
+   [malli.instrument :as mi]
+   [com.fulcrologic.guardrails.malli.core :as gm]
+   [potatoclient.test-harness :as harness]))
+
+;; Ensure test harness is initialized
+(when-not harness/initialized?
+  (throw (ex-info "Test harness failed to initialize!" 
+                  {:initialized? harness/initialized?})))
+
+;; ============================================================================
+;; Enable instrumentation for generative testing
+;; ============================================================================
+
+(defn test-ns-hook
+  "Enable Guardrails checking for this namespace"
+  []
+  (gm/=> true))
+
+;; ============================================================================
+;; GPS Control Tests
+;; ============================================================================
+
+(deftest test-gps-control
+  (testing "start creates valid command"
+    (let [result (gps/start)]
+      (is (m/validate :cmd/root result))
+      (is (= {} (get-in result [:gps :start])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
+  
+  (testing "stop creates valid command"
+    (let [result (gps/stop)]
+      (is (m/validate :cmd/root result))
+      (is (= {} (get-in result [:gps :stop])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
+
+;; ============================================================================
+;; Manual Position Control Tests
+;; ============================================================================
+
+(deftest test-manual-position-control
+  (testing "set-manual-position creates valid command with typical coordinates"
+    (let [result (gps/set-manual-position 40.7128 -74.0060 10.5)]
+      (is (m/validate :cmd/root result))
+      (is (= 40.7128 (get-in result [:gps :set_manual_position :latitude])))
+      (is (= -74.0060 (get-in result [:gps :set_manual_position :longitude])))
+      (is (= 10.5 (get-in result [:gps :set_manual_position :altitude])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
+  
+  (testing "set-manual-position works with extreme values"
+    ;; North Pole
+    (let [result (gps/set-manual-position 90.0 0.0 0.0)]
+      (is (m/validate :cmd/root result))
+      (is (= 90.0 (get-in result [:gps :set_manual_position :latitude])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
+    
+    ;; South Pole
+    (let [result (gps/set-manual-position -90.0 180.0 1000.0)]
+      (is (m/validate :cmd/root result))
+      (is (= -90.0 (get-in result [:gps :set_manual_position :latitude])))
+      (is (= 180.0 (get-in result [:gps :set_manual_position :longitude])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
+    
+    ;; Dead Sea (lowest point on Earth)
+    (let [result (gps/set-manual-position 31.5590 35.4732 -430.0)]
+      (is (m/validate :cmd/root result))
+      (is (= -430.0 (get-in result [:gps :set_manual_position :altitude])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
+    
+    ;; Edge of space (Kármán line approximation)
+    (let [result (gps/set-manual-position 0.0 0.0 100000.0)]
+      (is (m/validate :cmd/root result))
+      (is (= 100000.0 (get-in result [:gps :set_manual_position :altitude])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
+  
+  (testing "set-use-manual-position creates valid command"
+    (let [result (gps/set-use-manual-position true)]
+      (is (m/validate :cmd/root result))
+      (is (= true (get-in result [:gps :set_use_manual_position :flag])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
+    
+    (let [result (gps/set-use-manual-position false)]
+      (is (m/validate :cmd/root result))
+      (is (= false (get-in result [:gps :set_use_manual_position :flag])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
+
+;; ============================================================================
+;; Meteo Data Tests
+;; ============================================================================
+
+(deftest test-meteo
+  (testing "get-meteo creates valid command"
+    (let [result (gps/get-meteo)]
+      (is (m/validate :cmd/root result))
+      (is (= {} (get-in result [:gps :get_meteo])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result) 
+            (str "Should pass roundtrip validation" 
+                 (when-not (:valid? roundtrip-result) 
+                   (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
+
+;; ============================================================================
+;; Generative Testing
+;; ============================================================================
+
+(deftest test-gps-functions-generative
+  (testing "All GPS functions pass generative testing with mi/check"
+    ;; Functions with parameters
+    (is (nil? (mi/check {:filters [(gm/=>)]
+                        :num-tests 20}
+                       [#'gps/set-manual-position
+                        #'gps/set-use-manual-position])))
+    
+    ;; Functions without parameters
+    (is (nil? (mi/check {:filters [(gm/=>)]
+                        :num-tests 5}
+                       [#'gps/start
+                        #'gps/stop
+                        #'gps/get-meteo])))))

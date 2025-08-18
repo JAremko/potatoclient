@@ -1,43 +1,61 @@
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import * as Cmd from "ts/proto/jon/index.cmd";
+(ns potatoclient.cmd.gps
+  "GPS command functions.
+   Based on the GPS message structure in jon_shared_cmd_gps.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function gpsStart(): void {
-    //console.log("Sending gps start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.gps = Cmd.Gps.Root.create({start: Cmd.Gps.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; GPS Control
+;; ============================================================================
 
-export function gpsStop(): void {
-    //console.log("Sending gps stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.gps = Cmd.Gps.Root.create({stop: Cmd.Gps.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start
+  "Start GPS operations.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:gps {:start {}}}))
 
-export function setManualPosition(latitude: number, longitude: number, altitude: number): void {
-    //console.log("Sending manual position");
-    let rootMsg = CSShared.createRootMessage();
-    let position = Cmd.Gps.SetManualPosition.create({
-        latitude: latitude,
-        longitude: longitude,
-        altitude: altitude
-    });
-    rootMsg.gps = Cmd.Gps.Root.create({setManualPosition: position});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn stop
+  "Stop GPS operations.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:gps {:stop {}}}))
 
-export function setUseManualPosition(useManual: boolean): void {
-    //console.log("Sending use manual position");
-    let rootMsg = CSShared.createRootMessage();
-    let position = Cmd.Gps.SetUseManualPosition.create({flag: useManual});
-    rootMsg.gps = Cmd.Gps.Root.create({setUseManualPosition: position});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Manual Position Control
+;; ============================================================================
 
-export function getMeteo(): void {
-    //console.log("Requesting GPS meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.gps = Cmd.Gps.Root.create({getMeteo: Cmd.Gps.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-manual-position
+  "Set manual GPS position.
+   Latitude: -90 to 90 degrees
+   Longitude: -180 to 180 degrees  
+   Altitude: -430 to 100000 meters (Dead Sea to edge of space)
+   Returns a fully formed cmd root ready to send."
+  [latitude longitude altitude]
+  [:position/latitude :position/longitude :position/altitude => :cmd/root]
+  (core/create-command 
+    {:gps {:set_manual_position {:latitude latitude
+                                  :longitude longitude
+                                  :altitude altitude}}}))
+
+(>defn set-use-manual-position
+  "Enable or disable use of manual GPS position.
+   When enabled, the system uses the manually set position instead of GPS receiver.
+   Returns a fully formed cmd root ready to send."
+  [use-manual?]
+  [:boolean => :cmd/root]
+  (core/create-command 
+    {:gps {:set_use_manual_position {:flag use-manual?}}}))
+
+;; ============================================================================
+;; Meteo Data
+;; ============================================================================
+
+(>defn get-meteo
+  "Request meteorological data from GPS module.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:gps {:get_meteo {}}}))
