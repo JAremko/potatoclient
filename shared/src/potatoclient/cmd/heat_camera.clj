@@ -1,263 +1,296 @@
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as Types from "ts/proto/jon/jon_shared_data_types";
+(ns potatoclient.cmd.heat-camera
+  "Heat Camera (thermal imaging) command functions.
+   Based on the HeatCamera message structure in jon_shared_cmd_heat_camera.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function heatCameraTakePhoto(): void {
-    //console.log("Taking photo");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({
-        photo: function (): Cmd.HeatCamera.Photo {
-            return Cmd.HeatCamera.Photo.create();
-        }
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Photo Control
+;; ============================================================================
 
-export function heatCameraSetAgc(value: Types.JonGuiDataVideoChannelHeatAGCModes): void {
-    //console.log(`Heat Camera Setting agc to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setAgc: Cmd.HeatCamera.SetAGC.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn take-photo
+  "Take a photo with the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:photo {}}}))
 
-export function heatCameraSetFilter(value: Types.JonGuiDataVideoChannelHeatFilters): void {
-    //console.log(`Heat Camera Setting filter to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setFilter: Cmd.HeatCamera.SetFilters.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; AGC (Automatic Gain Control) and Filter Settings
+;; ============================================================================
 
-export function heatCameraSetZoomTableValue(value: number): void {
-    //console.log(`Heat Camera Setting optical zoom table value to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.HeatCamera.Zoom.create({setZoomTableValue: {value}});
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-agc
+  "Set the AGC (Automatic Gain Control) mode.
+   Mode must be one of the JonGuiDataVideoChannelHeatAGCModes enum values.
+   Returns a fully formed cmd root ready to send."
+  [mode]
+  [:enum/heat-agc-mode => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_agc {:value mode}}}))
 
-export function heatCameraSetDigitalZoomLevel(value: number): void {
-    //console.log(`Heat Camera Setting digital zoom level to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setDigitalZoomLevel: Cmd.HeatCamera.SetDigitalZoomLevel.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-filter
+  "Set the heat camera filter (thermal visualization mode).
+   Filter must be one of the JonGuiDataVideoChannelHeatFilters enum values.
+   Returns a fully formed cmd root ready to send."
+  [filter]
+  [:enum/heat-filter => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_filter {:value filter}}}))
 
-export function stringToHeatCameraAgcMode(value: string): Types.JonGuiDataVideoChannelHeatAGCModes {
-    switch (value.toLowerCase()) {
-        case 'mode_1':
-            return Types.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1;
-        case 'mode_2':
-            return Types.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2;
-        case 'mode_3':
-            return Types.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3;
-        default:
-            return Types.JonGuiDataVideoChannelHeatAGCModes.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_UNSPECIFIED;
-    }
-}
+;; ============================================================================
+;; Camera Control
+;; ============================================================================
 
-export function stringToHeatCameraFilter(value: string): Types.JonGuiDataVideoChannelHeatFilters {
-    switch (value.toLowerCase()) {
-        case 'hot_black':
-            return Types.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK;
-        case 'hot_white':
-            return Types.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE;
-        case 'sepia':
-            return Types.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_SEPIA;
-        default:
-            return Types.JonGuiDataVideoChannelHeatFilters.JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_UNSPECIFIED;
-    }
-}
+(>defn calibrate
+  "Calibrate the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:calibrate {}}}))
 
-export function heatCameraCalibrate(): void {
-    //console.log("Sending heatCamera calibrate");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({calibrate: Cmd.HeatCamera.Calibrate.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start
+  "Start the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:start {}}}))
 
-export function heatCameraStart(): void {
-    //console.log("Sending heatCamera start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({start: Cmd.HeatCamera.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn stop
+  "Stop the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:stop {}}}))
 
-export function heatCameraStop(): void {
-    //console.log("Sending heatCamera stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({stop: Cmd.HeatCamera.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-calib-mode
+  "Set calibration mode for the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:set_calib_mode {}}}))
 
-export function heatCameraZoomIn(): void {
-    //console.log("Sending heatCamera zoom in");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoomIn: Cmd.HeatCamera.ZoomIn.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Zoom Control - Simple Commands
+;; ============================================================================
 
-export function heatCameraZoomOut(): void {
-    //console.log("Sending heatCamera zoom out");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoomOut: Cmd.HeatCamera.ZoomOut.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn zoom-in
+  "Start zooming in.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:zoom_in {}}}))
 
-export function heatCameraZoomStop(): void {
-    //console.log("Sending heatCamera zoom stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoomStop: Cmd.HeatCamera.ZoomStop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn zoom-out
+  "Start zooming out.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:zoom_out {}}}))
 
-function heatCameraSetAutoFocus(value: boolean): void {
-    //console.log(`Heat Camera Setting auto focus to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setAutoFocus: Cmd.HeatCamera.SetAutoFocus.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn zoom-stop
+  "Stop zoom movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:zoom_stop {}}}))
 
-export function heatCameraSetAutoFocusOn(): void {
-    //console.log("Setting auto focus on");
-    heatCameraSetAutoFocus(true);
-}
+(>defn reset-zoom
+  "Reset zoom to default position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:reset_zoom {}}}))
 
-export function heatCameraSetAutoFocusOff(): void {
-    //console.log("Setting auto focus off");
-    heatCameraSetAutoFocus(false);
-}
+(>defn save-zoom-to-table
+  "Save current zoom position to table.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:save_to_table {}}}))
 
-export function heatCameraFocusStop(): void {
-    //console.log("Sending heatCamera focus stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({focusStop: Cmd.HeatCamera.FocusStop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Zoom Control - Table Operations (nested Zoom message)
+;; ============================================================================
 
-export function heatCameraFocusIn(): void {
-    //console.log("Sending heatCamera focus in");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({focusIn: Cmd.HeatCamera.FocusIn.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-zoom-table-value
+  "Set the zoom table value (positive integer).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:proto/int32-positive => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:zoom {:set_zoom_table_value {:value value}}}}))
 
-export function heatCameraFocusOut(): void {
-    //console.log("Sending heatCamera focus out");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({focusOut: Cmd.HeatCamera.FocusOut.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn next-zoom-table-pos
+  "Move to next zoom table position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:heat_camera {:zoom {:next_zoom_table_pos {}}}}))
 
-export function heatCameraFocusStepPLus(): void {
-    //console.log("Sending heatCamera focus step plus");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({focusStepPlus: Cmd.HeatCamera.FocusStepPlus.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn prev-zoom-table-pos
+  "Move to previous zoom table position.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:heat_camera {:zoom {:prev_zoom_table_pos {}}}}))
 
-export function heatCameraFocusStepMinus(): void {
-    //console.log("Sending heatCamera focus step minus");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({focusStepMinus: Cmd.HeatCamera.FocusStepMinus.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Digital Zoom
+;; ============================================================================
 
-export function heatCameraNextZoomTablePos(): void {
-    //console.log(`Heat Camera Setting next optical zoom table position`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.HeatCamera.Zoom.create({nextZoomTablePos: {}});
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-digital-zoom-level
+  "Set the digital zoom level (must be >= 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/digital-zoom => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_digital_zoom_level {:value value}}}))
 
-export function heatCameraPrevZoomTablePos(): void {
-    //console.log(`Heat Camera Setting previous optical zoom table position`);
-    let rootMsg = CSShared.createRootMessage();
-    let zoom = Cmd.HeatCamera.Zoom.create({prevZoomTablePos: {}});
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({zoom});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Focus Control
+;; ============================================================================
 
-export function heatCameraResetZoom(): void {
-    //console.log("Resetting heat camera zoom");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({resetZoom: Cmd.HeatCamera.ResetZoom.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-auto-focus
+  "Enable or disable auto focus.
+   Returns a fully formed cmd root ready to send."
+  [enabled?]
+  [:boolean => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_auto_focus {:value enabled?}}}))
 
-export function heatCameraSaveZoomToTable(): void {
-    //console.log("Saving heat camera zoom to table");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({saveToTable: Cmd.HeatCamera.SaveToTable.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn focus-stop
+  "Stop focus movement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:focus_stop {}}}))
 
-export function getMeteo(): void {
-    //console.log("Requesting camera heat meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({getMeteo: Cmd.HeatCamera.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn focus-in
+  "Start focusing in (closer).
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:focus_in {}}}))
 
-export function enableDDE(): void {
-    //console.log("Enabling DDE");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({enableDde: Cmd.HeatCamera.EnableDDE.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn focus-out
+  "Start focusing out (farther).
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:focus_out {}}}))
 
-export function disableDDE(): void {
-    //console.log("Disabling DDE");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({disableDde: Cmd.HeatCamera.DisableDDE.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn focus-step-plus
+  "Step focus forward by one increment.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:focus_step_plus {}}}))
 
-export function setDDELevel(level: number): void {
-    //console.log(`Setting DDE level to ${level}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setDdeLevel: Cmd.HeatCamera.SetDDELevel.create({value: level})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn focus-step-minus
+  "Step focus backward by one increment.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:focus_step_minus {}}}))
 
-export function shiftDDELevel(shift: number): void {
-    //console.log(`Shifting DDE level by ${shift}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({shiftDde: Cmd.HeatCamera.ShiftDDE.create({value: shift})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Meteo Data
+;; ============================================================================
 
-export function setFxMode(mode: Types.JonGuiDataFxModeHeat): void {
-    //console.log(`Setting FX mode to ${mode}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setFxMode: Cmd.HeatCamera.SetFxMode.create({mode})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn get-meteo
+  "Request meteorological data from heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:get_meteo {}}}))
 
-export function nextFxMode(): void {
-    //console.log(`Setting next FX mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({nextFxMode: Cmd.HeatCamera.NextFxMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; DDE (Digital Detail Enhancement)
+;; ============================================================================
 
-export function prevFxMode(): void {
-    //console.log(`Setting previous FX mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({prevFxMode: Cmd.HeatCamera.PrevFxMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn enable-dde
+  "Enable Digital Detail Enhancement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:enable_dde {}}}))
 
-export function setClaheLevel(value: number): void {
-    //console.log(`Setting heat CLAHE level to ${value}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({setClaheLevel: Cmd.HeatCamera.SetClaheLevel.create({value})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn disable-dde
+  "Disable Digital Detail Enhancement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:disable_dde {}}}))
 
-export function shiftClaheLevel(shift: number): void {
-    //console.log(`Shifting heat CLAHE level by ${shift}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.heatCamera = Cmd.HeatCamera.Root.create({shiftClaheLevel: Cmd.HeatCamera.ShiftClaheLevel.create({value: shift})});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-dde-level
+  "Set the DDE level (0 to 100).
+   Returns a fully formed cmd root ready to send."
+  [level]
+  [[:int {:min 0 :max 100}] => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_dde_level {:value level}}}))
+
+(>defn shift-dde
+  "Shift the DDE level by offset (-100 to 100).
+   Returns a fully formed cmd root ready to send."
+  [shift-value]
+  [[:int {:min -100 :max 100}] => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:shift_dde {:value shift-value}}}))
+
+;; ============================================================================
+;; FX Mode Control
+;; ============================================================================
+
+(>defn set-fx-mode
+  "Set the FX mode for the heat camera.
+   Mode must be one of the JonGuiDataFxModeHeat enum values.
+   Returns a fully formed cmd root ready to send."
+  [mode]
+  [:enum/fx-mode-heat => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_fx_mode {:mode mode}}}))
+
+(>defn next-fx-mode
+  "Switch to next FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:next_fx_mode {}}}))
+
+(>defn prev-fx-mode
+  "Switch to previous FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:prev_fx_mode {}}}))
+
+(>defn refresh-fx-mode
+  "Refresh current FX mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:heat_camera {:refresh_fx_mode {}}}))
+
+;; ============================================================================
+;; CLAHE (Contrast Limited Adaptive Histogram Equalization)
+;; ============================================================================
+
+(>defn set-clahe-level
+  "Set the CLAHE level (0.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:range/normalized => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:set_clahe_level {:value value}}}))
+
+(>defn shift-clahe-level
+  "Shift the CLAHE level by offset (-1.0 to 1.0).
+   Returns a fully formed cmd root ready to send."
+  [shift-value]
+  [:range/normalized-offset => :cmd/root]
+  (core/create-command 
+    {:heat_camera {:shift_clahe_level {:value shift-value}}}))
