@@ -1,4 +1,4 @@
-(ns potatoclient.cmd.lrf_test
+(ns potatoclient.cmd.lrf-test
   "Tests for LRF (Laser Range Finder) command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
