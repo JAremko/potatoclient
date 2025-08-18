@@ -114,7 +114,7 @@
    Direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [target-value speed direction]
-  [:angle/azimuth :speed/normalized :enum/rotary-direction => :cmd/root]
+  [:angle/azimuth :range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:rotate_to {:target_value target-value
                                            :speed speed
@@ -126,7 +126,7 @@
    Direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [speed direction]
-  [:speed/normalized :enum/rotary-direction => :cmd/root]
+  [:range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:rotate {:speed speed
                                         :direction direction}}}}}))
@@ -138,7 +138,7 @@
    Direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [value speed direction]
-  [:angle/relative-azimuth :speed/normalized :enum/rotary-direction => :cmd/root]
+  [:angle/relative-azimuth :range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:relative {:value value
                                           :speed speed
@@ -182,7 +182,7 @@
    Speed: 0.0 to 1.0 (normalized)
    Returns a fully formed cmd root ready to send."
   [target-value speed]
-  [:angle/elevation :speed/normalized => :cmd/root]
+  [:angle/elevation :range/normalized => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:elevation {:rotate_to {:target_value target-value
                                              :speed speed}}}}}))
@@ -193,7 +193,7 @@
    Direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [speed direction]
-  [:speed/normalized :enum/rotary-direction => :cmd/root]
+  [:range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:elevation {:rotate {:speed speed
                                           :direction direction}}}}}))
@@ -205,7 +205,7 @@
    Direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [value speed direction]
-  [:angle/relative-elevation :speed/normalized :enum/rotary-direction => :cmd/root]
+  [:angle/relative-elevation :range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:elevation {:relative {:value value
                                             :speed speed
@@ -244,8 +244,8 @@
    Elevation speed: 0.0 to 1.0
    Returns a fully formed cmd root ready to send."
   [azimuth azimuth-speed azimuth-direction elevation elevation-speed]
-  [:angle/azimuth :speed/normalized :enum/rotary-direction 
-   :angle/elevation :speed/normalized => :cmd/root]
+  [:angle/azimuth :range/normalized :enum/rotary-direction 
+   :angle/elevation :range/normalized => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:rotate_to {:target_value azimuth
                                            :speed azimuth-speed
@@ -261,8 +261,8 @@
    Elevation direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [azimuth-speed azimuth-direction elevation-speed elevation-direction]
-  [:speed/normalized :enum/rotary-direction 
-   :speed/normalized :enum/rotary-direction => :cmd/root]
+  [:range/normalized :enum/rotary-direction 
+   :range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:rotate {:speed azimuth-speed
                                         :direction azimuth-direction}}
@@ -279,8 +279,8 @@
    Elevation direction: rotation direction enum
    Returns a fully formed cmd root ready to send."
   [azimuth azimuth-speed azimuth-direction elevation elevation-speed elevation-direction]
-  [:angle/relative-azimuth :speed/normalized :enum/rotary-direction
-   :angle/relative-elevation :speed/normalized :enum/rotary-direction => :cmd/root]
+  [:angle/relative-azimuth :range/normalized :enum/rotary-direction
+   :angle/relative-elevation :range/normalized :enum/rotary-direction => :cmd/root]
   (core/create-command 
     {:rotary {:axis {:azimuth {:relative {:value azimuth
                                           :speed azimuth-speed
@@ -433,7 +433,7 @@
   [:proto/int32-positive :proto/int32-positive :proto/int32-positive
    :angle/azimuth :angle/elevation 
    [:double {:min 0.0}]
-   [:and [:double {:min 0.0 :max 1.0}] [:> 0.0]]
+   :speed/normalized
    => :cmd/root]
   (core/create-command 
     {:rotary {:scan_update_node {:index index
@@ -457,7 +457,7 @@
   [:proto/int32-positive :proto/int32-positive :proto/int32-positive
    :angle/azimuth :angle/elevation 
    [:double {:min 0.0}]
-   [:and [:double {:min 0.0 :max 1.0}] [:> 0.0]]
+   :speed/normalized
    => :cmd/root]
   (core/create-command 
     {:rotary {:scan_add_node {:index index

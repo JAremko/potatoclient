@@ -170,8 +170,7 @@
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:linger [:double {:min 0.0}]]
-   [:speed [:and [:double {:min 0.0 :max 1.0}]
-            [:> 0.0]]]])
+   [:speed :speed/normalized]])
 
 (def scan-add-node-spec
   [:map {:closed true}
@@ -181,8 +180,7 @@
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:linger [:double {:min 0.0}]]
-   [:speed [:and [:double {:min 0.0 :max 1.0}]
-            [:> 0.0]]]])
+   [:speed :speed/normalized]])
 
 ;; ====================================================================
 ;; Main rotary command spec using oneof - all 24 commands
