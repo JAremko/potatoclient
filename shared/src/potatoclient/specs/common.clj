@@ -9,6 +9,12 @@
    [clojure.test.check.generators :as gen]))
 
 ;; ====================================================================
+;; Basic type specs
+;; ====================================================================
+(def nat-int-spec
+  [:and :int [:>= 0]])
+
+;; ====================================================================
 ;; Angle specs (degrees)
 ;; ====================================================================
 ;; Azimuth: 0-360 degrees (compass heading)
@@ -194,6 +200,7 @@
   [:int {:min 0 :max 9223372036854775807}])
 
 ;; Register integer specs
+(registry/register! :nat-int nat-int-spec)
 (registry/register! :proto/int32 int32-spec)
 (registry/register! :proto/uint32 uint32-spec)
 (registry/register! :proto/int32-positive int32-positive-spec)

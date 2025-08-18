@@ -1,81 +1,100 @@
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import * as Cmd from "ts/proto/jon/index.cmd";
+(ns potatoclient.cmd.compass
+  "Compass command functions.
+   Based on the Compass message structure in jon_shared_cmd_compass.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function compassStart(): void {
-    //console.log("Sending compass start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({start: Cmd.Compass.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Control Commands (under :compass key in cmd root)
+;; ============================================================================
 
-export function getMeteo(): void {
-    //console.log("Requesting compass meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({getMeteo: Cmd.Compass.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
+(>defn start
+  "Start the compass subsystem.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:start {}}}))
 
-}
+(>defn stop
+  "Stop the compass subsystem.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:stop {}}}))
 
-export function compassStop(): void {
-    //console.log("Sending compass stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({stop: Cmd.Compass.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Data Request Commands
+;; ============================================================================
 
-export function setMagneticDeclination(value: number): void {
-    //console.log(`Setting magnetic declination to ${value} mils`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({setMagneticDeclination: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn get-meteo
+  "Request compass meteorological data.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:get_meteo {}}}))
 
-export function setOffsetAngleAzimuth(value: number): void {
-    //console.log(`Setting offset angle azimuth to ${value} mils`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({setOffsetAngleAzimuth: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Configuration Commands
+;; ============================================================================
 
-export function setOffsetAngleElevation(value: number): void {
-    //console.log(`Setting offset angle elevation to ${value} mils`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({setOffsetAngleElevation: {value}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-magnetic-declination
+  "Set the magnetic declination angle in mils.
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:double => :cmd/root]
+  (core/create-command {:compass {:set_magnetic_declination {:value value}}}))
 
-export function calibrateLongStart(): void {
-    //console.log("Sending calibrate long start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({startCalibrateLong: Cmd.Compass.CalibrateStartLong.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-offset-angle-azimuth
+  "Set the offset angle for azimuth in mils.
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:double => :cmd/root]
+  (core/create-command {:compass {:set_offset_angle_azimuth {:value value}}}))
 
-export function calibrateShortStart(): void {
-    //console.log("Sending calibrate short start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({startCalibrateShort: Cmd.Compass.CalibrateStartShort.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-offset-angle-elevation
+  "Set the offset angle for elevation in mils.
+   Returns a fully formed cmd root ready to send."
+  [value]
+  [:double => :cmd/root]
+  (core/create-command {:compass {:set_offset_angle_elevation {:value value}}}))
 
-export function calibrateNext(): void {
-    //console.log("Sending calibrate next");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({calibrateNext: Cmd.Compass.CalibrateNext.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-use-rotary-position
+  "Configure whether to use rotary position data.
+   Returns a fully formed cmd root ready to send."
+  [use-rotary?]
+  [:boolean => :cmd/root]
+  (core/create-command {:compass {:set_use_rotary_position {:flag use-rotary?}}}))
 
-export function calibrateCancel(): void {
-    //console.log("Sending calibrate cancel");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.compass = Cmd.Compass.Root.create({calibrateCencel: Cmd.Compass.CalibrateCencel.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Calibration Commands
+;; ============================================================================
 
-export function setUseRotaryPosition(useRotary: boolean): void {
-    //console.log("Sending use rotary position");
-    let rootMsg = CSShared.createRootMessage();
-    let position = Cmd.Compass.SetUseRotaryPosition.create({flag: useRotary});
-    rootMsg.compass = Cmd.Compass.Root.create({setUseRotaryPosition: position});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn calibrate-long-start
+  "Start long calibration process for the compass.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:start_calibrate_long {}}}))
+
+(>defn calibrate-short-start
+  "Start short calibration process for the compass.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:start_calibrate_short {}}}))
+
+(>defn calibrate-next
+  "Move to the next step in the calibration process.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:calibrate_next {}}}))
+
+(>defn calibrate-cancel
+  "Cancel the ongoing calibration process.
+   Note: Proto has typo 'cencel' which we preserve for compatibility.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:compass {:calibrate_cencel {}}}))

@@ -38,26 +38,25 @@
 ;; Validation Helpers
 ;; ============================================================================
 
+(>defn- remove-nil-values
+  "Recursively remove all keys with nil values from a map.
+   Used for test comparison only - nil values are valid in oneofs."
+  [m]
+  [map? => map?]
+  (into {}
+        (for [[k v] m
+              :when (not (nil? v))]
+          [k (if (map? v)
+               (remove-nil-values v)
+               v)])))
+
 (>defn normalize-cmd
-  "Normalize a command by merging it with the template.
-   This ensures both original and roundtrip have the same keys.
-   Also normalizes nested oneofs like system commands."
+  "Normalize a command for comparison by removing nil values.
+   Proto deserialization adds nil for all oneof fields, which is valid
+   but makes comparison difficult. We remove nils for testing purposes."
   [cmd]
-  [:cmd/root => :cmd/root]
-  (let [normalized (merge @cmd-template cmd)]
-    ;; If system command is present, normalize its nested oneof too
-    (if-let [system-cmd (:system normalized)]
-      (let [;; System command oneofs
-            system-oneofs #{:start_all :stop_all :reboot :power_off :localization
-                           :reset_configs :start_rec :stop_rec :mark_rec_important
-                           :unmark_rec_important :enter_transport 
-                           :geodesic_mode_enable :geodesic_mode_disable}
-            ;; Add nil values for all system oneofs
-            system-template (zipmap system-oneofs (repeat nil))
-            ;; Merge with actual system command
-            normalized-system (merge system-template system-cmd)]
-        (assoc normalized :system normalized-system))
-      normalized)))
+  [:cmd/root => map?]
+  (remove-nil-values cmd))
 
 (>defn validate-roundtrip
   "Validate that a command survives serialization/deserialization.

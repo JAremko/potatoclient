@@ -220,10 +220,39 @@ The command system is optimized for performance:
 
 ## Development Guidelines
 
-1. **All functions must have Guardrails** for runtime type checking
-2. **All proto maps must use closed specs** to catch typos
-3. **All commands must pass roundtrip validation**
-4. **Never modify tests that fail** - fix the code instead
+### Mandatory Requirements
+
+1. **Use Malli Guardrails ONLY** - Clojure Spec is forbidden
+   - Always import: `com.fulcrologic.guardrails.malli.core`
+   - NEVER import: `com.fulcrologic.guardrails.core` (spec version)
+   - Use Malli schemas: `:int`, `:double`, `:boolean`, `:map`, etc.
+   - NOT predicates: `int?`, `double?`, `boolean?` (these are spec-style)
+
+2. **All functions must have Guardrails** for runtime type checking
+   ```clojure
+   (>defn my-function
+     [arg]
+     [:double => :cmd/root]  ; Malli schemas, not predicates!
+     ...)
+   ```
+
+3. **All proto maps must use closed specs** to catch typos
+   ```clojure
+   [:map {:closed true} ...]
+   ```
+
+4. **All commands must pass roundtrip validation**
+   - Protobuf deserialization adds `nil` for all oneof fields - this is valid
+   - Our validation removes nils for comparison in tests only
+
+5. **Never modify tests that fail** - fix the code instead
+
+### Important Discoveries
+
+- **Numeric values in tests**: Always use doubles (e.g., `15.5`, not `15`) when testing functions that expect `:double`
+- **Oneof fields with nils**: Valid in our schemas, handled by `remove-nil-values` in validation
+- **Custom schemas**: Define in `specs/common.clj` and register them (e.g., `:nat-int`)
+- **Guardrails metadata**: Malli version adds `:malli/schema` to function metadata (currently unused but available)
 
 ## License
 

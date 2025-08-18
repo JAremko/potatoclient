@@ -111,7 +111,7 @@
    If timeout expires, returns a ping command.
    Timeout is in milliseconds."
   [timeout-ms]
-  [nat-int? => :cmd/root]
+  [:nat-int => :cmd/root]
   (or (.poll command-queue timeout-ms TimeUnit/MILLISECONDS)
       ;; Timeout - send ping to keep connection alive
       (create-ping-command)))
@@ -137,7 +137,7 @@
 (>defn queue-size
   "Get the current number of commands in the queue."
   []
-  [=> nat-int?]
+  [=> :nat-int]
   (.size command-queue))
 
 ;; ============================================================================

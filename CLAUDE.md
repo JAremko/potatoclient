@@ -103,7 +103,10 @@ This module ensures type safety and protocol consistency across all PotatoClient
 
 ### Code Quality Standards
 **All Functions Must Have:**
-1. **Guardrails** - Input validation and error handling
+1. **Guardrails (Malli version ONLY)** - Input validation and error handling
+   - Use `com.fulcrologic.guardrails.malli.core` 
+   - NEVER use `com.fulcrologic.guardrails.core` (Clojure Spec version is FORBIDDEN)
+   - Use Malli schemas (`:int`, `:double`, `:map`) not predicates (`int?`, `double?`)
 2. **Malli Specs** - Type specifications for all functions
 3. **Comprehensive Tests** - Every function must be tested
 
