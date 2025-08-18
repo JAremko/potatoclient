@@ -1,134 +1,116 @@
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import {JonGuiDataVideoChannel} from "../../proto/jon/jon_shared_data_types";
-import {DeviceStateDispatch} from "../../statePub/deviceStateDispatch";
-import Long from "long";
+(ns potatoclient.cmd.cv
+  "Computer Vision (CV) command functions.
+   Based on the CV message structure in jon_shared_cmd_cv.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function CVStartTrackNDC(channel: JonGuiDataVideoChannel, x: number, y:number): void {
-    // Get timestamps from device state
-    const dispatch = DeviceStateDispatch.getInstance();
+;; ============================================================================
+;; Tracking Commands
+;; ============================================================================
 
-    // Start async frame data retrieval without waiting
-    (async () => {
-        try {
-            // Get the appropriate frame data based on channel
-            const frameData = channel === JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY
-                ? await dispatch.getDayFrameData()
-                : await dispatch.getHeatFrameData();
+(>defn start-track-ndc
+  "Start tracking at normalized device coordinates.
+   NDC coordinates range from -1.0 to 1.0.
+   Frame time should be the timestamp of the frame being tracked.
+   Returns a fully formed cmd root ready to send."
+  [channel x y frame-time]
+  [:enum/video-channel :screen/ndc-x :screen/ndc-y :time/frame-time => :cmd/root]
+  (core/create-command 
+    {:cv {:start_track_ndc {:channel channel
+                            :x x
+                            :y y
+                            :frame_time frame-time}}}))
 
-            if (!frameData) {
-                console.warn("No frame data available. Using 0 as fallback timestamp.");
-                sendStartTrackCommand(channel, x, y, Long.UZERO);
-                return;
-            }
+(>defn stop-track
+  "Stop current tracking.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:stop_track {}}}))
 
-            // Get the BigInt timestamp directly
-            const bigintTimestamp = frameData.timestamp;
-            const bigintDuration = frameData.duration;
+;; ============================================================================
+;; Focus Control
+;; ============================================================================
 
-            // Convert BigInt to a string first to create a Long object
-            // This ensures proper handling as a 64-bit integer in protobuf
-            let frameTimeLong: Long;
-            try {
-                frameTimeLong = Long.fromString(bigintTimestamp.toString(), true); // true for unsigned
-            } catch (error) {
-                console.error(`Failed to convert timestamp to Long: ${error}`);
-                console.warn("Using 0 as fallback timestamp");
-                frameTimeLong = Long.UZERO; // Unsigned zero
-            }
+(>defn set-auto-focus
+  "Set auto focus mode for specified channel.
+   Channel must be either :JON_GUI_DATA_VIDEO_CHANNEL_DAY or :JON_GUI_DATA_VIDEO_CHANNEL_HEAT.
+   Returns a fully formed cmd root ready to send."
+  [channel enabled?]
+  [:enum/video-channel :boolean => :cmd/root]
+  (core/create-command 
+    {:cv {:set_auto_focus {:channel channel
+                          :value enabled?}}}))
 
-            // Log timestamp and duration information
-            const channelName = channel === JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY ? 'DAY' : 'HEAT';
-            console.log(`Channel: ${channelName}
-            Timestamp: ${bigintTimestamp.toString()} (${DeviceStateDispatch.formatTimestamp(bigintTimestamp, true)})
-            Duration: ${bigintDuration.toString()} (${DeviceStateDispatch.formatDuration(bigintDuration)})`);
+;; ============================================================================
+;; Vampire Mode (Enhanced Night Vision)
+;; ============================================================================
 
-            // Send the command with the appropriate timestamp
-            sendStartTrackCommand(channel, x, y, frameTimeLong);
-        } catch (error) {
-            // On any error, fallback to zero timestamp
-            console.error("Error fetching frame data:", error);
-            sendStartTrackCommand(channel, x, y, Long.UZERO);
-        }
-    })();
-}
+(>defn enable-vampire-mode
+  "Enable vampire mode (enhanced night vision).
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:vampire_mode_enable {}}}))
 
-/**
- * Helper function to send the StartTrackNDC command
- */
-function sendStartTrackCommand(channel: JonGuiDataVideoChannel, x: number, y: number, frameTime: Long): void {
-    // Create the command with the Long value directly
-    // The protobuf library will handle this correctly for uint64 fields
-    let rootMsg = CSShared.createRootMessage();
+(>defn disable-vampire-mode
+  "Disable vampire mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:vampire_mode_disable {}}}))
 
-    // We need to create the object manually with the Long value
-    const startTrackNdcObj = {
-        channel: channel,
-        x: x,
-        y: y,
-        frameTime: frameTime // Use Long directly
-    };
+;; ============================================================================
+;; Stabilization Mode
+;; ============================================================================
 
-    // Create the command with this object
-    rootMsg.cv = Cmd.CV.Root.create({
-        startTrackNdc: startTrackNdcObj
-    });
+(>defn enable-stabilization-mode
+  "Enable image stabilization mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:stabilization_mode_enable {}}}))
 
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn disable-stabilization-mode
+  "Disable image stabilization mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:stabilization_mode_disable {}}}))
 
-export function CVStopTrack(): void {
-    console.log(`Sending stop track command`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({stopTrack: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Data Dump Commands
+;; ============================================================================
 
-export function CVSetAutoFocus(value: boolean, channel: JonGuiDataVideoChannel): void {
-    console.log(`Setting auto focus to ${value} for channel ${channel === JonGuiDataVideoChannel.JON_GUI_DATA_VIDEO_CHANNEL_DAY ? 'DAY' : 'HEAT'}`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({setAutoFocus: {value, channel}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start-dump
+  "Start data dump/recording.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:dump_start {}}}))
 
-export function CVEnableVampireMode(): void {
-    console.log(`Enabling vampire mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({vampireModeEnable: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn stop-dump
+  "Stop data dump/recording.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:dump_stop {}}}))
 
-export function CVDisableVampireMode(): void {
-    console.log(`Disabling vampire mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({vampireModeDisable: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Recognition Mode
+;; ============================================================================
 
-export function CVEnableStabilizationMode(): void {
-    console.log(`Enabling stabilization mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({stabilizationModeEnable: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn enable-recognition-mode
+  "Enable object recognition mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:recognition_mode_enable {}}}))
 
-export function CVDisableStabilizationMode(): void {
-    console.log(`Disabling stabilization mode`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({stabilizationModeDisable: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
-
-export function CVDumpStart (): void {
-    console.log(`Starting dump`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({dumpStart: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
-
-export function CVDumpStop (): void {
-    console.log(`Stopping dump`);
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.cv = Cmd.CV.Root.create({dumpStop: {}});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn disable-recognition-mode
+  "Disable object recognition mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:cv {:recognition_mode_disable {}}}))

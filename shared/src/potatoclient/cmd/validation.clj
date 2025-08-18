@@ -50,10 +50,10 @@
                (remove-nil-values v)
                v)])))
 
-(>defn normalize-cmd
-  "Normalize a command for comparison by removing nil values.
+(>defn remove-nil-oneof-fields
+  "Remove nil oneof fields from a command for comparison purposes.
    Proto deserialization adds nil for all oneof fields, which is valid
-   but makes comparison difficult. We remove nils for testing purposes."
+   but makes comparison difficult. We remove nils for testing purposes only."
   [cmd]
   [:cmd/root => map?]
   (remove-nil-values cmd))
@@ -68,8 +68,8 @@
         ;; Deserialize back
         roundtrip (deserialize/deserialize-cmd-payload binary)
         ;; Normalize both by merging with template
-        normalized-original (normalize-cmd original-cmd)
-        normalized-roundtrip (normalize-cmd roundtrip)]
+        normalized-original (remove-nil-oneof-fields original-cmd)
+        normalized-roundtrip (remove-nil-oneof-fields roundtrip)]
     (if (= normalized-original normalized-roundtrip)
       true
       (let [diff (ddiff/diff normalized-original normalized-roundtrip)]
@@ -88,8 +88,8 @@
         ;; Deserialize back
         roundtrip (deserialize/deserialize-cmd-payload binary)
         ;; Normalize both by merging with template
-        normalized-original (normalize-cmd original-cmd)
-        normalized-roundtrip (normalize-cmd roundtrip)]
+        normalized-original (remove-nil-oneof-fields original-cmd)
+        normalized-roundtrip (remove-nil-oneof-fields roundtrip)]
     (if (= normalized-original normalized-roundtrip)
       {:valid? true}
       {:valid? false
@@ -116,8 +116,8 @@
         binary (serialize/serialize-cmd-payload full-cmd)
         ;; Deserialize back
         roundtrip (deserialize/deserialize-cmd-payload binary)]
-    ;; Return normalized roundtrip for comparison
-    (normalize-cmd roundtrip)))
+    ;; Return roundtrip with nil oneof fields removed for comparison
+    (remove-nil-oneof-fields roundtrip)))
 
 (>defn assert-roundtrip
   "Assert that a command survives roundtrip.

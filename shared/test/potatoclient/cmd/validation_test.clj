@@ -162,15 +162,15 @@
         (is (:valid? (v/validate-roundtrip-with-report broken))
             "Modified but valid command should pass")))
     
-    (testing "Ensure normalize-cmd works"
+    (testing "Ensure remove-nil-oneof-fields works correctly"
       (let [minimal (builder/populate-cmd-fields {:ping {}})
-            normalized (v/normalize-cmd minimal)]
-        (is (contains? normalized :protocol_version) 
-            "Normalized command should have protocol_version")
-        (is (contains? normalized :noop)
-            "Normalized command should have all oneof fields")
-        (is (nil? (:noop normalized))
-            "Unused oneof fields should be nil")))))
+            cleaned (v/remove-nil-oneof-fields minimal)]
+        (is (contains? cleaned :protocol_version) 
+            "Cleaned command should have protocol_version")
+        (is (not (contains? cleaned :noop))
+            "Cleaned command should NOT have nil oneof fields")
+        (is (contains? cleaned :ping)
+            "Cleaned command should have the actual oneof field")))))
 
 ;; ============================================================================
 ;; Template Creation Tests
