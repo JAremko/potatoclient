@@ -1,109 +1,150 @@
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
-import * as Types from "ts/proto/jon/jon_shared_data_types";
+(ns potatoclient.cmd.lrf
+  "LRF (Laser Range Finder) command functions for controlling laser measurement operations.
+   Based on the Lrf message structure in jon_shared_cmd_lrf.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function lrfStart(): void {
-    //console.log("Sending LRF start");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({start: Cmd.Lrf.Start.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Measurement Operations
+;; ============================================================================
 
-export function lrfStop(): void {
-    //console.log("Sending LRF stop");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({stop: Cmd.Lrf.Stop.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn measure
+  "Trigger a single distance measurement.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:measure {}}}))
 
-export function lrfNewSession(): void {
-    //console.log("Sending LRF new session");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({newSession: Cmd.Lrf.NewSession.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Scan Operations
+;; ============================================================================
 
-export function lrfScanOn(): void {
-    //console.log("Sending LRF scan on");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({scanOn: Cmd.Lrf.ScanOn.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-on
+  "Enable continuous scanning mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:scan_on {}}}))
 
-export function refineOn (): void {
-    //console.log("Sending LRF refine on");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({refineOn: Cmd.Lrf.RefineOn.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn scan-off
+  "Disable continuous scanning mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:scan_off {}}}))
 
-export function refineOff (): void {
-    //console.log("Sending LRF refine off");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({refineOff: Cmd.Lrf.RefineOff.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-scan-mode
+  "Set the LRF scan mode.
+   Mode must be one of the JonGuiDataLrfScanMode enum values:
+   - :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
+   - :JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
+   - :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS
+   - :JON_GUI_DATA_LRF_SCAN_MODE_20_HZ_CONTINUOUS
+   - :JON_GUI_DATA_LRF_SCAN_MODE_100_HZ_CONTINUOUS
+   - :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS
+   Returns a fully formed cmd root ready to send."
+  [mode]
+  [:enum/lrf-scan-modes => :cmd/root]
+  (core/create-command {:lrf {:set_scan_mode {:mode mode}}}))
 
-export function lrfScanOff(): void {
-    //console.log("Sending LRF scan off");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({scanOff: Cmd.Lrf.ScanOff.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Device Control
+;; ============================================================================
 
-export function lrfMeasure(): void {
-    //console.log("Sending LRF measure");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({measure: Cmd.Lrf.Measure.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn start
+  "Start the LRF device.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:start {}}}))
 
+(>defn stop
+  "Stop the LRF device.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:stop {}}}))
 
-// export function lrfSetScanMode(mode: Types.JonGuiDataLrfScanModes): void {
-//     //console.log("Sending LRF set scan mode");
-//     let rootMsg = CSShared.createRootMessage();
-//     rootMsg.lrf = Cmd.Lrf.Root.create({setScanMode: Cmd.Lrf.setScanMode.create({mode: mode})});
-//     CSShared.sendCmdMessage(rootMsg);
-// }
+;; ============================================================================
+;; Target Designator Control
+;; ============================================================================
 
-export function lrfEnableFogMode(): void {
-    //console.log("Sending LRF enable fog mode");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({enableFogMode: Cmd.Lrf.EnableFogMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn target-designator-off
+  "Turn off the target designator laser.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:target_designator_off {}}}))
 
-export function lrfDisableFogMode(): void {
-    //console.log("Sending LRF disable fog mode");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({disableFogMode: Cmd.Lrf.DisableFogMode.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn target-designator-on-mode-a
+  "Turn on the target designator laser in mode A.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:target_designator_on_mode_a {}}}))
 
-export function lrfTargetDesignatorOff(): void {
-    //console.log("Sending LRF target designator off");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({targetDesignatorOff: Cmd.Lrf.TargetDesignatorOff.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn target-designator-on-mode-b
+  "Turn on the target designator laser in mode B.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:target_designator_on_mode_b {}}}))
 
-export function lrfTargetDesignatorOnModeA(): void {
-    //console.log("Sending LRF target designator on mode A");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({targetDesignatorOnModeA: Cmd.Lrf.TargetDesignatorOnModeA.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Fog Mode Control
+;; ============================================================================
 
-export function lrfTargetDesignatorOnModeB(): void {
-    //console.log("Sending LRF target designator on mode B");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({targetDesignatorOnModeB: Cmd.Lrf.TargetDesignatorOnModeB.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn enable-fog-mode
+  "Enable fog mode for improved performance in foggy conditions.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:enable_fog_mode {}}}))
 
-export function getMeteo(): void {
-    //console.log("Requesting LRF meteo data");
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrf = Cmd.Lrf.Root.create({getMeteo: Cmd.Lrf.GetMeteo.create()});
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn disable-fog-mode
+  "Disable fog mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:disable_fog_mode {}}}))
+
+;; ============================================================================
+;; Session Management
+;; ============================================================================
+
+(>defn new-session
+  "Start a new measurement session.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:new_session {}}}))
+
+;; ============================================================================
+;; Meteo Data
+;; ============================================================================
+
+(>defn get-meteo
+  "Request meteorological data from the LRF.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:get_meteo {}}}))
+
+;; ============================================================================
+;; Refine Mode Control
+;; ============================================================================
+
+(>defn refine-on
+  "Enable refine mode for improved measurement accuracy.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:refine_on {}}}))
+
+(>defn refine-off
+  "Disable refine mode.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command {:lrf {:refine_off {}}}))
