@@ -42,21 +42,21 @@
   "Set the magnetic declination angle in mils.
    Returns a fully formed cmd root ready to send."
   [value]
-  [:double => :cmd/root]
+  [:angle/magnetic-declination => :cmd/root]
   (core/create-command {:compass {:set_magnetic_declination {:value value}}}))
 
 (>defn set-offset-angle-azimuth
   "Set the offset angle for azimuth in mils.
    Returns a fully formed cmd root ready to send."
   [value]
-  [:double => :cmd/root]
+  [:angle/offset-azimuth => :cmd/root]
   (core/create-command {:compass {:set_offset_angle_azimuth {:value value}}}))
 
 (>defn set-offset-angle-elevation
   "Set the offset angle for elevation in mils.
    Returns a fully formed cmd root ready to send."
   [value]
-  [:double => :cmd/root]
+  [:angle/offset-elevation => :cmd/root]
   (core/create-command {:compass {:set_offset_angle_elevation {:value value}}}))
 
 (>defn set-use-rotary-position
