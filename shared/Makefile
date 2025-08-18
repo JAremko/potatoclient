@@ -75,7 +75,7 @@ test: ## Run all shared module tests
 		exit 1; \
 	fi
 	@echo "Running shared project tests..."
-	@clojure -M:test
+	@clojure -J-Dguardrails.enabled=true -M:test
 
 # Clean everything EXCEPT proto artifacts
 clean: ## Clean build artifacts (preserves proto classes)

@@ -2,32 +2,16 @@
   "Efficient command building utilities using Pronto performance patterns.
    Provides functions to populate missing fields in proto-maps."
   (:require
-   [com.fulcrologic.guardrails.core :refer [>defn >defn- => | ?]]
-   [clojure.spec.alpha :as s]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [pronto.core :as p]
-   [potatoclient.proto.serialize :as serialize])
+   [potatoclient.proto.serialize :as serialize]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
    [cmd JonSharedCmd$Root]))
 
-;; ============================================================================
-;; Specs
-;; ============================================================================
-
-(s/def ::cmd-payload (s/and map?
-                            ;; Must have exactly one oneof field
-                            #(= 1 (count (select-keys % 
-                                                      [:day_camera :heat_camera :gps :compass :lrf 
-                                                       :lrf_calib :rotary :osd :ping :noop :frozen 
-                                                       :system :cv :day_cam_glass_heater :lira])))))
-
-(s/def ::cmd-full (s/and map?
-                         #(contains? % :protocol_version)
-                         #(contains? % :client_type)
-                         #(contains? % :session_id)
-                         #(contains? % :important)
-                         #(contains? % :from_cv_subsystem)))
-
-(s/def ::proto-map #(instance? pronto.ProtoMap %))
+;; Initialize registry to access specs
+(registry/setup-global-registry!)
 
 ;; ============================================================================
 ;; Default Values
@@ -54,7 +38,7 @@
    
    This function is designed to be used both in tests and production."
   [cmd]
-  [map? => ::cmd-full]
+  [:cmd/payload => :cmd/root]
   ;; First, create a proto-map with all the data at once (fastest approach per Pronto docs)
   ;; We merge defaults with the provided command, so any provided values override defaults
   (let [complete-cmd (merge default-protocol-fields cmd)]
@@ -78,7 +62,7 @@
    
    Takes a command and a map of override values for the protocol fields."
   [cmd overrides]
-  [map? map? => ::cmd-full]
+  [:cmd/payload [:map] => :cmd/root]
   (let [fields-to-use (merge default-protocol-fields overrides)
         complete-cmd (merge fields-to-use cmd)]
     complete-cmd))
@@ -91,7 +75,7 @@
    (create-full-cmd {:ping {}} 
                     {:session_id 12345 :important true})"
   [payload-cmd field-overrides]
-  [::cmd-payload map? => ::cmd-full]
+  [:cmd/payload [:map] => :cmd/root]
   (populate-cmd-fields-with-overrides payload-cmd field-overrides))
 
 (>defn create-proto-map-cmd
@@ -100,7 +84,7 @@
    
    This is the most efficient way to create a proto-map command."
   [cmd]
-  [::cmd-full => ::proto-map]
+  [:cmd/root => :any]
   ;; Find the oneof field that's present
   (let [oneof-fields #{:day_camera :heat_camera :gps :compass :lrf 
                        :lrf_calib :rotary :osd :ping :noop :frozen 
@@ -127,7 +111,7 @@
    Example:
    (update-proto-map-cmd my-proto-cmd {:session_id 999 :important true})"
   [proto-cmd updates]
-  [::proto-map map? => ::proto-map]
+  [:any [:map] => :any]
   ;; Use p-> with hints for efficient updates
   (p/with-hints [(p/hint proto-cmd JonSharedCmd$Root serialize/cmd-mapper)]
     (reduce-kv (fn [cmd k v]
@@ -147,7 +131,7 @@
    (create-batch-commands [{:ping {}} {:noop {}} {:frozen {}}]
                           {:session_id 12345})"
   [payload-cmds field-overrides]
-  [(s/coll-of ::cmd-payload) map? => (s/coll-of ::cmd-full)]
+  [[:vector :cmd/payload] [:map] => [:vector :cmd/root]]
   (let [fields-to-use (merge default-protocol-fields field-overrides)]
     (mapv #(merge fields-to-use %) payload-cmds)))
 
@@ -159,7 +143,7 @@
   "Ensure a command has all required fields populated.
    Returns the command if valid, throws if missing required fields."
   [cmd]
-  [map? => ::cmd-full]
+  [[:map] => :cmd/root]
   (let [required-fields [:protocol_version :client_type :session_id 
                          :important :from_cv_subsystem]
         missing-fields (remove #(contains? cmd %) required-fields)]

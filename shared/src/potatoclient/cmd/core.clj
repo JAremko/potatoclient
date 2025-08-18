@@ -8,15 +8,19 @@
    - Uses p-> for multiple mutations
    - Avoids repeated assoc operations"
   (:require
-   [com.fulcrologic.guardrails.core :refer [>defn >defn- => | ?]]
-   [clojure.spec.alpha :as s]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [pronto.core :as p]
    [potatoclient.proto.serialize :as serialize]
    [potatoclient.proto.deserialize :as deserialize]
    [potatoclient.cmd.validation :as validation]
-   [potatoclient.cmd.builder :as builder])
+   [potatoclient.cmd.builder :as builder]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
    [java.util.concurrent LinkedBlockingQueue TimeUnit]))
+
+;; Initialize registry to access specs
+(registry/setup-global-registry!)
 
 ;; ============================================================================
 ;; Test Mode Detection
@@ -37,19 +41,6 @@
 (defonce ^LinkedBlockingQueue command-queue
   (LinkedBlockingQueue.))
 
-;; ============================================================================
-;; Specs
-;; ============================================================================
-
-(s/def ::cmd-edn (s/and map? 
-                        #(contains? % :protocol_version) 
-                        #(contains? % :client_type)))
-
-(s/def ::cmd-root (s/and map?
-                         #(some? (dissoc % :protocol_version :client_type 
-                                        :session_id :important :from_cv_subsystem))))
-
-(s/def ::bytes bytes?)
 
 
 ;; ============================================================================
@@ -61,7 +52,7 @@
    Used in test mode to ensure correctness.
    Uses normalized comparison with proto template."
   [full-cmd]
-  [::cmd-edn => nil?]
+  [:cmd/root => nil?]
   (validation/assert-roundtrip full-cmd))
 
 ;; ============================================================================
@@ -75,7 +66,7 @@
    In test mode, also validates roundtrip serialization.
    Throws if validation fails."
   [cmd-payload]
-  [::cmd-root => map?]
+  [:cmd/payload => :cmd/root]
   (let [full-cmd (builder/populate-cmd-fields cmd-payload)]
     ;; Validate with Malli and buf.validate via serialize
     ;; This will throw if validation fails
@@ -97,7 +88,7 @@
    Used when session tracking is important.
    Returns the full command with all fields."
   [cmd-payload session-id]
-  [::cmd-root pos-int? => map?]
+  [:cmd/payload :pos-int => :cmd/root]
   (let [full-cmd (builder/populate-cmd-fields-with-overrides 
                    cmd-payload
                    {:session_id session-id})]
@@ -120,7 +111,7 @@
    Important commands may have different handling on the server.
    Returns the full command with all fields."
   [cmd-payload]
-  [::cmd-root => map?]
+  [:cmd/payload => :cmd/root]
   (let [full-cmd (builder/populate-cmd-fields-with-overrides 
                    cmd-payload
                    {:important true})]
@@ -146,7 +137,7 @@
   "Create a ping command to keep connection alive.
    Returns the full command with all protocol fields."
   []
-  [=> ::cmd-edn]
+  [=> :cmd/root]
   (builder/populate-cmd-fields {:ping {}}))
 
 ;; ============================================================================
@@ -158,7 +149,7 @@
    If timeout expires, returns a ping command.
    Timeout is in milliseconds."
   [timeout-ms]
-  [pos-int? => ::cmd-edn]
+  [:pos-int => :cmd/root]
   (or (.poll command-queue timeout-ms TimeUnit/MILLISECONDS)
       ;; Timeout - send ping to keep connection alive
       (create-ping-command)))
@@ -167,7 +158,7 @@
   "Take the next command, blocking up to 1 second.
    Returns ping command if timeout."
   []
-  [=> ::cmd-edn]
+  [=> :cmd/root]
   (poll-command-with-timeout 1000))
 
 ;; ============================================================================
@@ -184,7 +175,7 @@
 (>defn queue-size
   "Get the current number of commands in the queue."
   []
-  [=> nat-int?]
+  [=> :nat-int]
   (.size command-queue))
 
 ;; ============================================================================
@@ -197,7 +188,7 @@
    The send-fn is a function that takes binary data and sends it.
    Returns a function to stop the consumer loop."
   [send-fn]
-  [(s/fspec :args (s/cat :data ::bytes)) => fn?]
+  [:fn => :fn]
   (let [running (atom true)]
     (future
       (while @running
@@ -224,5 +215,5 @@
 (>defn in-test-mode?
   "Check if running in test mode."
   []
-  [=> boolean?]
+  [=> :boolean]
   test-mode?)

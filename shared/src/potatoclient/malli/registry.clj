@@ -24,17 +24,20 @@
    This ensures specs can be reused across namespaces.
    Automatically includes the :oneof custom schema."
   [& custom-schemas]
-  (let [oneof-registry (oneof/register-oneof-schema! {})]
+  (let [oneof-registry (oneof/register-oneof-schema! {})
+        ;; Add common predicates to the registry
+        base-registry (merge oneof-registry
+                            {:bytes bytes?})]
     (mr/set-default-registry!
      (apply mr/composite-registry
             (concat
              [(m/default-schemas)                    ;; Include Malli's built-in schemas
               (mu/schemas)                           ;; Include utility schemas
-              oneof-registry                         ;; Include oneof schema
+              base-registry                          ;; Include oneof schema and :bytes
               (mr/mutable-registry registry-atom)]   ;; Add mutable registry for dynamic specs
              custom-schemas)))
     ;; Return the complete registry for inspection if needed
-    oneof-registry))
+    base-registry))
 
 (defn get-registry
   "Get the current contents of the mutable registry"

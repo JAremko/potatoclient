@@ -1,324 +1,226 @@
-# PotatoClient Shared Module
+# Shared Module
+
+The foundational library for the PotatoClient system, providing protocol definitions, validation, and serialization utilities that ensure type safety and protocol consistency across all subsystems.
 
 ## Overview
 
-The `shared` module is the foundational library for the PotatoClient project, providing Protocol Buffer definitions, Malli specifications, and serialization utilities that ensure type safety and protocol compliance across all subsystems.
-
-This module serves as the single source of truth for:
-- Protocol Buffer message definitions (commands and state)
-- Malli runtime validation specifications
-- Serialization/deserialization between EDN and protobuf binary formats
-- Shared data structures and enums
+The shared module serves as the **single source of truth** for:
+- **Protocol Buffer definitions** for all system communication
+- **Malli specifications** that mirror protobuf constraints with runtime validation
+- **Command construction** with automatic field population and validation
+- **Serialization/deserialization** utilities for EDN ↔ Protobuf binary conversion
 
 ## Architecture
 
-### Core Components
-
-1. **Protocol Buffers**: Define the wire protocol for all system communication
-2. **Malli Specifications**: Runtime validation mirroring protobuf constraints
-3. **Serialization Layer**: Bidirectional EDN ↔ Protobuf conversion
-4. **Validation Pipeline**: Two-tier validation (Malli + buf.validate)
-
-### Design Principles
-
-- **No Backward Compatibility**: Pre-alpha stage, breaking changes allowed
-- **Strict Validation**: All map specs use `{:closed true}` to reject extra keys
-- **Comprehensive Testing**: Every spec and serialization path is tested
-- **Type Safety**: Protobuf + Malli ensures compile-time and runtime safety
-
-## Directory Structure
-
 ```
 shared/
-├── Makefile                    # Build commands for proto generation
-├── deps.edn                    # Clojure dependencies
-├── build.clj                   # Build configuration
-├── scripts/
-│   ├── generate-protos.sh     # Proto generation script
-│   └── fix-proto-compatibility.sh  # Java compatibility fixes
-├── src/
-│   ├── java/                   # Generated Java classes from protobuf
-│   │   ├── cmd/               # Command message classes
-│   │   │   ├── JonSharedCmd.java
-│   │   │   ├── JonSharedCmdCompass.java
-│   │   │   ├── JonSharedCmdGps.java
-│   │   │   ├── JonSharedCmdLrf.java
-│   │   │   ├── JonSharedCmdRotary.java
-│   │   │   └── JonSharedCmdTracker.java
-│   │   └── ser/               # State/data message classes
-│   │       ├── JonSharedData.java
-│   │       ├── JonSharedDataCamera.java
-│   │       ├── JonSharedDataGps.java
-│   │       ├── JonSharedDataLrf.java
-│   │       ├── JonSharedDataRotary.java
-│   │       ├── JonSharedDataSystem.java
-│   │       └── JonSharedDataTracker.java
-│   └── potatoclient/
-│       ├── proto/
-│       │   ├── serialize.clj   # EDN → Protobuf conversion
-│       │   └── deserialize.clj # Protobuf → EDN conversion
-│       ├── specs/
-│       │   ├── cmd/            # Command message specs
-│       │   │   ├── root.clj
-│       │   │   ├── compass.clj
-│       │   │   ├── gps.clj
-│       │   │   ├── lrf.clj
-│       │   │   ├── rotary.clj
-│       │   │   └── tracker.clj
-│       │   ├── state/          # State message specs
-│       │   │   ├── root.clj
-│       │   │   ├── camera.clj
-│       │   │   ├── gps.clj
-│       │   │   ├── lrf.clj
-│       │   │   ├── rotary.clj
-│       │   │   ├── system.clj
-│       │   │   └── tracker.clj
-│       │   └── common.clj      # Shared specs (enums, types)
-│       └── malli/
-│           ├── oneof.clj       # Custom oneof schema for protobuf
-│           └── registry.clj    # Centralized spec registry
-├── test/
-│   └── potatoclient/
-│       ├── test_harness.clj   # Test initialization
-│       ├── proto/              # Serialization tests
-│       └── specs/              # Spec validation tests
-└── target/                     # Build output (generated)
-    └── classes/                # Compiled Java classes
+├── src/potatoclient/
+│   ├── cmd/                    # Command construction and sending
+│   │   ├── core.clj            # Queue management and command dispatch
+│   │   ├── builder.clj         # Efficient proto-map building
+│   │   ├── validation.clj      # Roundtrip validation with deep-diff
+│   │   ├── root.clj            # Root-level commands (ping, noop, frozen)
+│   │   └── *.clj               # Command implementations by subsystem
+│   ├── proto/                  # Protobuf serialization
+│   │   ├── serialize.clj       # EDN → Binary with validation
+│   │   └── deserialize.clj     # Binary → EDN with validation
+│   ├── specs/                  # Malli specifications
+│   │   ├── common.clj          # Reusable specs (angles, coordinates, etc.)
+│   │   ├── cmd/                # Command message specs
+│   │   └── state/              # State message specs
+│   └── malli/                  # Malli infrastructure
+│       ├── registry.clj        # Global spec registry
+│       └── oneof.clj           # Custom oneof schema for proto oneofs
+├── target/classes/             # Compiled Java protobuf classes
+└── test/                       # Comprehensive test suite
+
 ```
 
-## API Reference
+## Key Features
 
-### Proto Serialization API
+### 🚀 Command System
+
+The command system provides type-safe, validated command construction with automatic protocol field population:
 
 ```clojure
-;; Serialize EDN to protobuf binary
-(require '[potatoclient.proto.serialize :as serialize])
+(require '[potatoclient.cmd.root :as root]
+         '[potatoclient.cmd.system :as sys])
 
-;; Create a GPS command
-(serialize/edn->proto 
-  {:cmd/root 
-    {:gps {:set-position {:latitude 40.7128 
-                          :longitude -74.0060}}}}
-  :cmd/root)
-;; => byte array
+;; Simple commands - all fields automatically populated
+(root/ping)
+;; => {:protocol_version 1, 
+;;     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK,
+;;     :session_id 0, 
+;;     :important false, 
+;;     :from_cv_subsystem false,
+;;     :ping {}}
 
-;; Deserialize protobuf binary to EDN
-(require '[potatoclient.proto.deserialize :as deserialize])
+;; Commands with parameters
+(sys/set-localization :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA)
+;; => {:protocol_version 1, ...
+;;     :system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA}}}
 
-(deserialize/proto->edn proto-bytes :cmd/root)
-;; => {:cmd/root {:gps {:set-position {...}}}}
+;; Custom session ID or importance
+(require '[potatoclient.cmd.core :as cmd-core])
+(cmd-core/send-command-with-session! {:ping {}} 12345)
+(cmd-core/send-important-command! {:frozen {}})
 ```
 
-### Malli Spec API
+### 📨 Command Queue
+
+Commands are queued using a non-blocking `LinkedBlockingQueue`:
+- **Producer side**: Never blocks, queue grows as needed
+- **Consumer side**: Blocks for 1 second, then sends ping to maintain connection
+- **Test mode**: Automatic roundtrip validation without queuing
 
 ```clojure
-;; Access specs from registry
-(require '[potatoclient.specs.cmd.root :as cmd-spec])
-(require '[malli.core :as m])
+;; In production, commands are queued
+(root/ping)  ; Adds to queue
 
-;; Validate command
-(m/validate cmd-spec/root-spec command-data)
-
-;; Generate test data
-(require '[malli.generator :as mg])
-(mg/generate cmd-spec/root-spec)
+;; Consumer thread (WebSocket sender)
+(cmd-core/consume-commands 
+  (fn [binary-data] 
+    (websocket/send! binary-data)))
 ```
 
-### Available Message Types
+### ✅ Validation
 
-#### Commands (cmd namespace)
-- **Root**: `cmd/root` - Command wrapper with oneof selection
-- **Compass**: `cmd/compass` - Compass control commands
-- **GPS**: `cmd/gps` - GPS positioning commands
-- **LRF**: `cmd/lrf` - Laser rangefinder commands
-- **Rotary**: `cmd/rotary` - Rotary platform control
-- **Tracker**: `cmd/tracker` - Target tracking commands
+Multi-layer validation ensures protocol compliance:
 
-#### State (state namespace)
-- **Root**: `state/root` - System state wrapper (JonGUIState)
-- **Camera**: `state/camera` - Camera subsystem state
-- **GPS**: `state/gps` - GPS position and status
-- **LRF**: `state/lrf` - Laser rangefinder readings
-- **Rotary**: `state/rotary` - Platform position state
-- **System**: `state/system` - Overall system status
-- **Tracker**: `state/tracker` - Tracking subsystem state
+1. **Malli specs** - Structure and constraint validation
+2. **buf.validate** - Protocol buffer constraint validation  
+3. **Roundtrip testing** - Automatic in test mode
 
-### Common Enums and Types
+```clojure
+(require '[potatoclient.cmd.validation :as v])
 
-Located in `potatoclient.specs.common`:
-- **Angles**: `angle-deg`, `angle-rad`, `angle-mrad`
-- **Positions**: `latitude`, `longitude`, `altitude`
-- **Enums**: Camera types, tracking modes, system states
-- **Validation**: Range constraints, precision limits
+;; Validate any command
+(let [cmd (sys/reboot)
+      result (v/validate-roundtrip-with-report cmd)]
+  (if (:valid? result)
+    (println "Command valid!")
+    (println (:pretty-diff result))))  ; Deep-diff output
+```
 
-## Build Commands
+### 🏗️ Efficient Proto Building
 
-### Development Workflow
+Following Pronto performance guidelines for optimal proto-map creation:
 
+```clojure
+(require '[potatoclient.cmd.builder :as builder])
+
+;; Populate missing fields efficiently
+(builder/populate-cmd-fields {:ping {}})
+
+;; Batch operations
+(builder/create-batch-commands 
+  [{:ping {}} {:noop {}} {:frozen {}}]
+  {:session_id 999})  ; Same session for all
+
+;; Custom overrides
+(builder/create-full-cmd 
+  {:system {:reboot {}}}
+  {:important true, :session_id 12345})
+```
+
+## Usage
+
+### Prerequisites
+
+1. **Compile proto classes** (required once or when .proto files change):
 ```bash
-# Daily development - compile existing proto sources
-make compile
-
-# Run all tests (auto-compiles if needed)
-make test
-
-# Full proto regeneration (when proto files change)
+cd shared
 make proto
-
-# Clean all generated artifacts
-make proto-clean
 ```
 
-### Proto Generation Process
+2. **Run tests** to verify everything works:
+```bash
+clojure -M:test
+```
 
-1. **Fetch Proto Files**: Retrieved from external `protogen` repository
-2. **Generate Java**: Docker-based `jettison-proto-generator` creates Java classes
-3. **Fix Compatibility**: Script patches Java 8 compatibility issues
-4. **Compile Classes**: Java compilation to target/classes
-5. **Generate Pronto**: Clojure-Java bridge code generation
+### Adding New Commands
+
+1. Create the command function in the appropriate namespace:
+```clojure
+(ns potatoclient.cmd.my-subsystem
+  (:require [potatoclient.cmd.core :as core]
+            [com.fulcrologic.guardrails.core :refer [>defn =>]]))
+
+(>defn my-command
+  "Description of what this command does."
+  [param]
+  [string? => map?]
+  (core/send-command! 
+    {:my_subsystem {:my_command {:field param}}}))
+```
+
+2. Add specs in `specs/cmd/my_subsystem.clj` if needed
+
+3. Write tests with roundtrip validation
+
+### Integration with Other Modules
+
+```clojure
+;; In your module's deps.edn
+{:deps {potatoclient/shared {:local/root "../shared"}}}
+
+;; In your code
+(require '[potatoclient.cmd.root :as cmd-root]
+         '[potatoclient.proto.serialize :as serialize])
+
+;; Use commands
+(let [cmd (cmd-root/ping)
+      binary (serialize/serialize-cmd-payload cmd)]
+  (websocket/send! binary))
+```
 
 ## Testing
 
-### Test Categories
+The module includes comprehensive testing:
 
-- **Unit Tests**: Individual spec validation
-- **Integration Tests**: Full serialization round-trips
-- **Property Tests**: Generative testing with test.check
-- **Validation Tests**: buf.validate constraint verification
+- **Unit tests** for each command function
+- **Roundtrip validation** for all commands
+- **Generative testing** with 500+ samples per function
+- **Negative tests** to ensure error handling
+- **Integration tests** for end-to-end flow
 
-### Running Tests
-
+Run all tests:
 ```bash
-# Run all tests
-lein test
-
-# Or using Makefile
-make test
-
-# Run specific namespace
-lein test potatoclient.proto.serialize-test
+clojure -M:test
 ```
 
-## Integration Guide
-
-### For Other Modules
-
-1. **Add Dependency** in your `deps.edn`:
-```clojure
-{:deps {potatoclient/shared {:local/root "../shared"}}}
+Run specific test namespace:
+```bash
+clojure -M:test -n potatoclient.cmd.integration-test
 ```
 
-2. **Import Specs**:
-```clojure
-(require '[potatoclient.specs.cmd.root :as cmd])
-(require '[potatoclient.specs.state.root :as state])
-```
+## Protocol Consistency
 
-3. **Use Serialization**:
-```clojure
-(require '[potatoclient.proto.serialize :as ser])
-(require '[potatoclient.proto.deserialize :as deser])
-```
+All data structures are defined in `.proto` files and compiled to:
+1. **Java classes** for JVM interop
+2. **Malli specs** for Clojure validation
+3. **EDN schemas** for runtime checking
 
-### Proto Class Access
+This ensures:
+- **Type safety** across language boundaries
+- **Protocol compliance** with buf.validate constraints
+- **Runtime validation** with helpful error messages
 
-Java classes are available after compilation:
-- Commands: `cmd.JonSharedCmd$*`
-- State: `ser.JonSharedData$*`
+## Performance
 
-Example:
-```java
-import cmd.JonSharedCmd.Root;
-import ser.JonSharedData.JonGUIState;
-```
-
-## Validation Pipeline
-
-### Two-Tier Validation
-
-1. **Malli Validation** (Clojure):
-   - Structure validation
-   - Type checking
-   - Range constraints
-   - Custom business rules
-
-2. **buf.validate** (Protobuf):
-   - Wire format compliance
-   - Field constraints
-   - Enum validation
-   - Required field checks
-
-### Validation Flow
-
-```
-EDN Data → Malli Validation → Proto Construction → buf.validate → Binary
-                     ↓ fail                              ↓ fail
-                  Exception                          Exception
-```
+The command system is optimized for performance:
+- **Pronto hints** for direct Java method dispatch
+- **Single proto-map creation** with all fields at once
+- **Efficient queue operations** with Java concurrent collections
+- **Minimal allocations** through careful data flow
 
 ## Development Guidelines
 
-### Adding New Message Types
-
-1. **Define Proto** in protogen repository
-2. **Run Generation**: `make proto`
-3. **Create Malli Spec** in `src/potatoclient/specs/`
-4. **Add Tests** in `test/potatoclient/specs/`
-5. **Update Registry** if needed
-
-### Spec Requirements
-
-- All maps must use `{:closed true}`
-- Mirror buf.validate constraints exactly
-- Include comprehensive docstrings
-- Provide generators for testing
-
-### Testing Philosophy
-
-- Never disable failing tests
-- Fix the code, not the test
-- Ensure 100% spec coverage
-- Test all serialization paths
-
-## Dependencies
-
-### Core Dependencies
-- **Clojure**: 1.12.1
-- **Malli**: 0.19.1 (runtime validation)
-- **Guardrails**: 1.2.9 (function specs)
-- **Protobuf Java**: 4.31.1
-- **buf.validate**: 0.3.2
-
-### Development Dependencies
-- **test.check**: 1.1.1 (property testing)
-- **cognitect test-runner**: 0.5.1
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Proto Compilation Fails**
-   - Ensure Docker is running
-   - Check network access to protogen repo
-   - Run `make proto-clean` then `make proto`
-
-2. **Class Not Found**
-   - Run `make compile` to ensure Java classes are built
-   - Check target/classes directory exists
-
-3. **Validation Mismatch**
-   - Ensure specs match latest proto definitions
-   - Check buf.validate constraints in proto files
-   - Verify Malli spec has `{:closed true}`
+1. **All functions must have Guardrails** for runtime type checking
+2. **All proto maps must use closed specs** to catch typos
+3. **All commands must pass roundtrip validation**
+4. **Never modify tests that fail** - fix the code instead
 
 ## License
 
-[Project License Information]
-
-## Contributing
-
-See main project CONTRIBUTING.md for guidelines.
-
-### Contact
-
-[Project Contact Information]
+[Your License Here]

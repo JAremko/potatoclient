@@ -2,21 +2,18 @@
   "Validation utilities for command roundtrip testing.
    Uses proto templates to ensure consistent comparison."
   (:require
-   [com.fulcrologic.guardrails.core :refer [>defn >defn- => | ?]]
-   [clojure.spec.alpha :as s]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [lambdaisland.deep-diff2 :as ddiff]
    [pronto.core :as p]
    [potatoclient.proto.serialize :as serialize]
-   [potatoclient.proto.deserialize :as deserialize])
+   [potatoclient.proto.deserialize :as deserialize]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
    [cmd JonSharedCmd$Root]))
 
-;; ============================================================================
-;; Specs
-;; ============================================================================
-
-(s/def ::cmd-edn map?)
-(s/def ::bytes bytes?)
+;; Initialize registry to access specs
+(registry/setup-global-registry!)
 
 ;; ============================================================================
 ;; Proto Template Creation
@@ -26,7 +23,7 @@
   "Create a base proto-map template with all fields present.
    This gives us a map with all oneof fields set to nil/default values."
   []
-  [=> ::cmd-edn]
+  [=> [:map]]
   ;; Create an empty proto instance and convert to EDN
   ;; This will have all fields with their default values
   (let [empty-proto (cmd.JonSharedCmd$Root/getDefaultInstance)
@@ -46,7 +43,7 @@
    This ensures both original and roundtrip have the same keys.
    Also normalizes nested oneofs like system commands."
   [cmd]
-  [::cmd-edn => ::cmd-edn]
+  [:cmd/root => :cmd/root]
   (let [normalized (merge @cmd-template cmd)]
     ;; If system command is present, normalize its nested oneof too
     (if-let [system-cmd (:system normalized)]
@@ -66,7 +63,7 @@
   "Validate that a command survives serialization/deserialization.
    Returns true if valid, throws with detailed diff if not."
   [original-cmd]
-  [::cmd-edn => boolean?]
+  [:cmd/root => :boolean]
   (let [;; Serialize to binary
         binary (serialize/serialize-cmd-payload original-cmd)
         ;; Deserialize back
@@ -86,7 +83,7 @@
   "Validate roundtrip and return a detailed report.
    Returns {:valid? true} or {:valid? false :diff <diff>}."
   [original-cmd]
-  [::cmd-edn => map?]
+  [:cmd/root => [:map]]
   (let [;; Serialize to binary
         binary (serialize/serialize-cmd-payload original-cmd)
         ;; Deserialize back
@@ -109,7 +106,7 @@
 (>defn roundtrip-test
   "Helper for tests - performs roundtrip and returns normalized result."
   [cmd-root]
-  [::cmd-edn => ::cmd-edn]
+  [:cmd/root => :cmd/root]
   (let [full-cmd (merge {:protocol_version 1
                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                          :session_id 0
@@ -127,7 +124,7 @@
   "Assert that a command survives roundtrip.
    Throws with pretty diff if validation fails."
   [cmd]
-  [::cmd-edn => nil?]
+  [:cmd/root => :nil]
   (let [result (validate-roundtrip-with-report cmd)]
     (when-not (:valid? result)
       (throw (ex-info (str "Roundtrip validation failed:\n" (:pretty-diff result))

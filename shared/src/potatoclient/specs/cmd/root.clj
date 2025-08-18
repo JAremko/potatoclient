@@ -53,3 +53,26 @@
 
 ;; Register the spec
 (registry/register! :cmd/root jon-shared-cmd-root-spec)
+
+;; Spec for just the payload (one of the oneof fields, without protocol fields)
+;; This is what command functions accept as input
+(def cmd-payload-spec
+  [:or
+   [:map {:closed true} [:day_camera :cmd/day-camera]]
+   [:map {:closed true} [:heat_camera :cmd/heat-camera]]
+   [:map {:closed true} [:gps :cmd/gps]]
+   [:map {:closed true} [:compass :cmd/compass]]
+   [:map {:closed true} [:lrf :cmd/lrf]]
+   [:map {:closed true} [:lrf_calib :cmd/lrf-align]]
+   [:map {:closed true} [:rotary :cmd/rotary]]
+   [:map {:closed true} [:osd :cmd/osd]]
+   [:map {:closed true} [:ping :cmd/empty]]
+   [:map {:closed true} [:noop :cmd/empty]]
+   [:map {:closed true} [:frozen :cmd/empty]]
+   [:map {:closed true} [:system :cmd/system]]
+   [:map {:closed true} [:cv :cmd/cv]]
+   [:map {:closed true} [:day_cam_glass_heater :cmd/day-cam-glass-heater]]
+   [:map {:closed true} [:lira :cmd/lira]]])
+
+;; Register the payload spec
+(registry/register! :cmd/payload cmd-payload-spec)

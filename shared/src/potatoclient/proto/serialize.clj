@@ -8,8 +8,7 @@
    - serialize-state-payload*: Fast serialization without validation  
    - serialize-state-payload: Full serialization with Malli and buf.validate validation"
   (:require
-   [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
-   [clojure.spec.alpha :as s]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
    [malli.core :as m]
    [malli.error :as me]
    [pronto.core :as pronto]
@@ -35,18 +34,6 @@
       ;; Registry not set up, initialize it
       (registry/setup-global-registry!))))
 
-;; ============================================================================
-;; Specs for Guardrails
-;; ============================================================================
-
-(s/def ::bytes bytes?)
-(s/def ::edn-map map?)
-(s/def ::cmd-edn (s/and map? #(contains? % :protocol_version) #(contains? % :client_type)))
-(s/def ::state-edn (s/and map? #(contains? % :protocol_version) #(contains? % :system)))
-(s/def ::error-type keyword?)
-(s/def ::error-message string?)
-(s/def ::violations (s/coll-of map?))
-(s/def ::malli-errors any?)
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -73,7 +60,7 @@
   "Validate EDN data with Malli spec.
    Returns nil if valid, throws ex-info with errors if invalid."
   [edn-data spec-key]
-  [map? keyword? => (s/nilable nil?)]
+  [[:map] :keyword => :any]
   (ensure-registry!)
   (let [spec (try 
                 (m/schema spec-key)
@@ -98,7 +85,7 @@
   "Validate a protobuf message with buf.validate.
    Returns nil if valid, throws ex-info with violations if invalid."
   [proto-msg proto-type]
-  [any? keyword? => (s/nilable nil?)]
+  [:any :keyword => :any]
   (let [result (.validate @validator proto-msg)]
     (when-not (.isSuccess result)
       (throw (ex-info "buf.validate validation failed"
@@ -119,7 +106,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [::cmd-edn => ::bytes]
+  [:cmd/root => :bytes]
   (try
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
@@ -138,7 +125,7 @@
    Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [::cmd-edn => ::bytes]
+  [:cmd/root => :bytes]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :cmd/root)
@@ -173,7 +160,7 @@
    Takes EDN data and returns binary protobuf data.
    Throws ex-info if serialization fails."
   [edn-data]
-  [::state-edn => ::bytes]
+  [:state/root => :bytes]
   (try
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
@@ -193,7 +180,7 @@
    Performs Malli validation before serialization and buf.validate after.
    Throws ex-info if validation or serialization fails."
   [edn-data]
-  [::state-edn => ::bytes]
+  [:state/root => :bytes]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :state/root)

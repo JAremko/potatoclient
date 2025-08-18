@@ -1,0 +1,1 @@
+["^ ","~$test-oneof-payload-structure",["^ ","~:row",16,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$potatoclient.cmd-oneof-test","~:top-ns","^7"],"~:filename","/home/jare/git/potatoclient/shared/test/potatoclient/cmd_oneof_test.clj"]

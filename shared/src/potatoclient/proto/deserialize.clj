@@ -8,8 +8,7 @@
    - deserialize-state-payload*: Fast deserialization without validation  
    - deserialize-state-payload: Full deserialization with buf.validate and Malli validation"
   (:require
-   [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
-   [clojure.spec.alpha :as s]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
    [malli.core :as m]
    [malli.error :as me]
    [pronto.core :as pronto]
@@ -24,16 +23,6 @@
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
 
-;; ============================================================================
-;; Specs for Guardrails
-;; ============================================================================
-
-(s/def ::bytes bytes?)
-(s/def ::edn-map map?)
-(s/def ::error-type keyword?)
-(s/def ::error-message string?)
-(s/def ::violations (s/coll-of map?))
-(s/def ::malli-errors any?)
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -61,7 +50,7 @@
   "Validate a protobuf message with buf.validate.
    Returns nil if valid, throws ex-info with violations if invalid."
   [proto-msg proto-type]
-  [any? keyword? => (s/nilable nil?)]
+  [:any :keyword => :any]
   (let [result (.validate @validator proto-msg)]
     (when-not (.isSuccess result)
       (throw (ex-info "buf.validate validation failed"
@@ -77,7 +66,7 @@
   "Validate EDN data with Malli spec.
    Returns nil if valid, throws ex-info with errors if invalid."
   [edn-data spec-key]
-  [::edn-map keyword? => (s/nilable nil?)]
+  [[:map] :keyword => :any]
   (let [spec (try 
                 (m/schema spec-key)
                 (catch Exception e
@@ -105,7 +94,7 @@
    Takes binary protobuf data and returns EDN.
    Throws ex-info if deserialization fails."
   [binary-data]
-  [::bytes => ::edn-map]
+  [:bytes => :cmd/root]
   (try
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)]
@@ -122,7 +111,7 @@
    Performs buf.validate and Malli validation.
    Throws ex-info if deserialization or validation fails."
   [binary-data]
-  [::bytes => ::edn-map]
+  [:bytes => :cmd/root]
   (try
     ;; Parse proto
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
@@ -151,7 +140,7 @@
    Takes binary protobuf data and returns EDN.
    Throws ex-info if deserialization fails."
   [binary-data]
-  [::bytes => ::edn-map]
+  [:bytes => :state/root]
   (try
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)]
@@ -168,7 +157,7 @@
    Performs buf.validate and Malli validation.
    Throws ex-info if deserialization or validation fails."
   [binary-data]
-  [::bytes => ::edn-map]
+  [:bytes => :state/root]
   (try
     ;; Parse proto
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
