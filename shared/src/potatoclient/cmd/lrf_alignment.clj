@@ -1,82 +1,110 @@
-import * as Cmd from "ts/proto/jon/index.cmd";
-import * as CSShared from "ts/cmd/cmdSender/cmdSenderShared";
+(ns potatoclient.cmd.lrf-alignment
+  "LRF Alignment/Calibration command functions for adjusting laser-to-camera alignment.
+   Based on the Lrf_calib message structure in jon_shared_cmd_lrf_align.proto."
+  (:require
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
+   [potatoclient.cmd.core :as core]))
 
-export function lrfCalibSetDayOffsets(x: number, y: number): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        day: Cmd.Lrf_calib.Offsets.create({
-            set: Cmd.Lrf_calib.SetOffsets.create({ x, y })
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Day Camera Offset Operations
+;; ============================================================================
 
-export function lrfCalibSetHeatOffsets(x: number, y: number): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        heat: Cmd.Lrf_calib.Offsets.create({
-            set: Cmd.Lrf_calib.SetOffsets.create({ x, y })
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-day-offsets
+  "Set the LRF alignment offsets for the day camera.
+   X: Horizontal offset in pixels (-1920 to 1920)
+   Y: Vertical offset in pixels (-1080 to 1080)
+   Returns a fully formed cmd root ready to send."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:day {:set {:x x :y y}}}}))
 
-export function lrfCalibShiftDayOffsets(x: number, y: number): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        day: Cmd.Lrf_calib.Offsets.create({
-            shift: Cmd.Lrf_calib.ShiftOffsetsBy.create({ x, y })
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn shift-day-offsets
+  "Shift the LRF alignment offsets for the day camera by relative amounts.
+   X: Horizontal shift in pixels (-1920 to 1920)
+   Y: Vertical shift in pixels (-1080 to 1080)
+   Returns a fully formed cmd root ready to send."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:day {:shift {:x x :y y}}}}))
 
-export function lrfCalibShiftHeatOffsets(x: number, y: number): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        heat: Cmd.Lrf_calib.Offsets.create({
-            shift: Cmd.Lrf_calib.ShiftOffsetsBy.create({ x, y })
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn save-day-offsets
+  "Save the current LRF alignment offsets for the day camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:day {:save {}}}}))
 
-export function lrfCalibSaveDayOffsets(): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        day: Cmd.Lrf_calib.Offsets.create({
-            save: Cmd.Lrf_calib.SaveOffsets.create()
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn reset-day-offsets
+  "Reset the LRF alignment offsets for the day camera to defaults.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:day {:reset {}}}}))
 
-export function lrfCalibSaveHeatOffsets(): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        heat: Cmd.Lrf_calib.Offsets.create({
-            save: Cmd.Lrf_calib.SaveOffsets.create()
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+;; ============================================================================
+;; Heat Camera Offset Operations
+;; ============================================================================
 
-export function lrfCalibResetDayOffsets(): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        day: Cmd.Lrf_calib.Offsets.create({
-            reset: Cmd.Lrf_calib.ResetOffsets.create()
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn set-heat-offsets
+  "Set the LRF alignment offsets for the heat camera.
+   X: Horizontal offset in pixels (-1920 to 1920)
+   Y: Vertical offset in pixels (-1080 to 1080)
+   Returns a fully formed cmd root ready to send."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:heat {:set {:x x :y y}}}}))
 
-export function lrfCalibResetHeatOffsets(): void {
-    let rootMsg = CSShared.createRootMessage();
-    rootMsg.lrfCalib = Cmd.Lrf_calib.Root.create({
-        heat: Cmd.Lrf_calib.Offsets.create({
-            reset: Cmd.Lrf_calib.ResetOffsets.create()
-        })
-    });
-    CSShared.sendCmdMessage(rootMsg);
-}
+(>defn shift-heat-offsets
+  "Shift the LRF alignment offsets for the heat camera by relative amounts.
+   X: Horizontal shift in pixels (-1920 to 1920)
+   Y: Vertical shift in pixels (-1080 to 1080)
+   Returns a fully formed cmd root ready to send."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:heat {:shift {:x x :y y}}}}))
+
+(>defn save-heat-offsets
+  "Save the current LRF alignment offsets for the heat camera.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:heat {:save {}}}}))
+
+(>defn reset-heat-offsets
+  "Reset the LRF alignment offsets for the heat camera to defaults.
+   Returns a fully formed cmd root ready to send."
+  []
+  [=> :cmd/root]
+  (core/create-command 
+    {:lrf_calib {:heat {:reset {}}}}))
+
+;; ============================================================================
+;; Convenience Functions
+;; ============================================================================
+
+(>defn calibrate-day-camera
+  "Convenience function to set and save day camera offsets in one operation.
+   X: Horizontal offset in pixels (-1920 to 1920)
+   Y: Vertical offset in pixels (-1080 to 1080)
+   Returns a vector of two cmd roots: [set-command save-command]."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => [:vector :cmd/root]]
+  [(set-day-offsets x y)
+   (save-day-offsets)])
+
+(>defn calibrate-heat-camera
+  "Convenience function to set and save heat camera offsets in one operation.
+   X: Horizontal offset in pixels (-1920 to 1920)
+   Y: Vertical offset in pixels (-1080 to 1080)
+   Returns a vector of two cmd roots: [set-command save-command]."
+  [x y]
+  [:screen/pixel-offset-x :screen/pixel-offset-y => [:vector :cmd/root]]
+  [(set-heat-offsets x y)
+   (save-heat-offsets)])
