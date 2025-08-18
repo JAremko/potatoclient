@@ -10,22 +10,22 @@
 ;; ============================================================================
 
 (>defn ping
-  "Send a ping command to keep connection alive.
-   This is a root-level command in the payload oneof."
+  "Create a ping command to keep connection alive.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:ping {}}))
+  (core/create-command {:ping {}}))
 
 (>defn noop
-  "Send a no-operation command.
-   This is a root-level command in the payload oneof."
+  "Create a no-operation command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:noop {}}))
+  (core/create-command {:noop {}}))
 
 (>defn frozen
-  "Send a frozen command to indicate system freeze state.
-   This is a root-level command in the payload oneof."
+  "Create a frozen command to indicate system freeze state.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:frozen {}}))
+  (core/create-command {:frozen {}}))

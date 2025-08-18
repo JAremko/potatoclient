@@ -21,7 +21,7 @@
   "Default values for required protocol fields"
   {:protocol_version 1
    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-   :session_id 42  ; Placeholder - server overrides this anyway
+   :session_id 0  ; Placeholder - server overrides this anyway
    :important false
    :from_cv_subsystem false})
 
@@ -30,31 +30,14 @@
 ;; ============================================================================
 
 (>defn populate-cmd-fields
-  "Efficiently populate missing required fields in a command proto-map.
-   Uses Pronto's p-> macro with hints for optimal performance.
+  "Takes a command payload (just the oneof part like {:ping {}}) and 
+   returns a complete cmd root with all required protocol fields populated.
    
-   Takes a partial command (with at least the oneof payload) and returns
-   a complete command with all required fields populated.
-   
-   This function is designed to be used both in tests and production."
-  [cmd]
-  [:cmd/payload => :cmd/root]
-  ;; First, create a proto-map with all the data at once (fastest approach per Pronto docs)
-  ;; We merge defaults with the provided command, so any provided values override defaults
-  (let [complete-cmd (merge default-protocol-fields cmd)]
-    ;; Create proto-map with all fields in one go (most efficient)
-    (if (p/proto-map? cmd)
-      ;; If already a proto-map, use p-> with hints for efficient updates
-      (p/p-> (p/hint cmd JonSharedCmd$Root serialize/cmd-mapper)
-             ;; Only update fields that need updating
-             (cond-> 
-               (nil? (get cmd :protocol_version)) (assoc :protocol_version 1)
-               (nil? (get cmd :client_type)) (assoc :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK)
-               (nil? (get cmd :session_id)) (assoc :session_id 0)
-               (nil? (get cmd :important)) (assoc :important false)
-               (nil? (get cmd :from_cv_subsystem)) (assoc :from_cv_subsystem false)))
-      ;; If it's a regular map, just return the merged map
-      complete-cmd)))
+   This is the primary function for creating valid cmd roots from payloads."
+  [payload]
+  [map? => :cmd/root]  ;; Simple map check - validation happens via serialization
+  ;; Merge the payload with default protocol fields to create a complete cmd
+  (merge default-protocol-fields payload))
 
 (>defn populate-cmd-fields-with-overrides
   "Populate missing fields with specific override values.
@@ -62,7 +45,7 @@
    
    Takes a command and a map of override values for the protocol fields."
   [cmd overrides]
-  [:cmd/payload [:map] => :cmd/root]
+  [map? map? => :cmd/root]  ;; Simple checks - validation via serialization
   (let [fields-to-use (merge default-protocol-fields overrides)
         complete-cmd (merge fields-to-use cmd)]
     complete-cmd))
@@ -75,7 +58,7 @@
    (create-full-cmd {:ping {}} 
                     {:session_id 12345 :important true})"
   [payload-cmd field-overrides]
-  [:cmd/payload [:map] => :cmd/root]
+  [map? map? => :cmd/root]  ;; Simple checks - validation via serialization
   (populate-cmd-fields-with-overrides payload-cmd field-overrides))
 
 (>defn create-proto-map-cmd
@@ -118,22 +101,6 @@
                  (p/p-> cmd (assoc k v)))
                proto-cmd
                updates)))
-
-;; ============================================================================
-;; Batch Operations
-;; ============================================================================
-
-(>defn create-batch-commands
-  "Efficiently create multiple commands with shared protocol fields.
-   Useful for tests or batch operations.
-   
-   Example:
-   (create-batch-commands [{:ping {}} {:noop {}} {:frozen {}}]
-                          {:session_id 12345})"
-  [payload-cmds field-overrides]
-  [[:vector :cmd/payload] [:map] => [:vector :cmd/root]]
-  (let [fields-to-use (merge default-protocol-fields field-overrides)]
-    (mapv #(merge fields-to-use %) payload-cmds)))
 
 ;; ============================================================================
 ;; Validation Helpers

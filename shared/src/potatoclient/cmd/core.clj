@@ -60,52 +60,36 @@
 ;; ============================================================================
 
 (>defn send-command!
-  "Validate and enqueue a command for sending.
-   This is the main function that all cmd functions call.
-   Takes a cmd payload map (just the oneof part) and returns the full command.
-   In test mode, also validates roundtrip serialization.
+  "Enqueue a fully formed command for sending.
+   Takes a complete cmd root and adds it to the queue.
+   In production, returns nil after enqueueing.
+   In test mode, skips enqueueing but still validates.
    Throws if validation fails."
-  [cmd-payload]
-  [:cmd/payload => :cmd/root]
-  (let [full-cmd (builder/populate-cmd-fields cmd-payload)]
-    ;; Validate with Malli and buf.validate via serialize
-    ;; This will throw if validation fails
-    (serialize/serialize-cmd-payload full-cmd)
-    
-    ;; In test mode, also validate roundtrip
-    (when test-mode?
-      (validate-roundtrip! full-cmd))
-    
-    ;; If validation passed, add to queue (unless in test mode)
-    (when-not test-mode?
-      (.offer command-queue full-cmd))
-    
-    ;; Return the full command with all fields
-    full-cmd))
+  [full-cmd]
+  [:cmd/root => nil?]
+  ;; Validate with Malli and buf.validate via serialize
+  ;; This will throw if validation fails
+  (serialize/serialize-cmd-payload full-cmd)
+  
+  ;; In test mode, also validate roundtrip
+  (when test-mode?
+    (validate-roundtrip! full-cmd))
+  
+  ;; If validation passed, add to queue (unless in test mode)
+  (when-not test-mode?
+    (.offer command-queue full-cmd))
+  
+  ;; Always return nil
+  nil)
 
 
-(>defn send-important-command!
-  "Send a command marked as important.
-   Important commands may have different handling on the server.
-   Returns the full command with all fields."
+(>defn create-command
+  "Create a fully populated command from a payload.
+   Takes a cmd payload map (just the oneof part) and returns the full command.
+   This is what command functions should use to build their return values."
   [cmd-payload]
-  [:cmd/payload => :cmd/root]
-  (let [full-cmd (builder/populate-cmd-fields-with-overrides 
-                   cmd-payload
-                   {:important true})]
-    ;; Validate with Malli and buf.validate via serialize
-    (serialize/serialize-cmd-payload full-cmd)
-    
-    ;; In test mode, also validate roundtrip
-    (when test-mode?
-      (validate-roundtrip! full-cmd))
-    
-    ;; If validation passed, add to queue (unless in test mode)
-    (when-not test-mode?
-      (.offer command-queue full-cmd))
-    
-    ;; Return the full command
-    full-cmd))
+  [map? => :cmd/root]  ;; Simple map check instead of complex :or spec
+  (builder/populate-cmd-fields cmd-payload))
 
 ;; ============================================================================
 ;; Ping Command for Keep-Alive
@@ -153,7 +137,7 @@
 (>defn queue-size
   "Get the current number of commands in the queue."
   []
-  [=> :nat-int]
+  [=> nat-int?]
   (.size command-queue))
 
 ;; ============================================================================

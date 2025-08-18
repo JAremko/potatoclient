@@ -44,7 +44,8 @@ The command system provides type-safe, validated command construction with autom
 
 ```clojure
 (require '[potatoclient.cmd.root :as root]
-         '[potatoclient.cmd.system :as sys])
+         '[potatoclient.cmd.system :as sys]
+         '[potatoclient.cmd.core :as cmd-core])
 
 ;; Simple commands - all fields automatically populated
 (root/ping)
@@ -60,10 +61,10 @@ The command system provides type-safe, validated command construction with autom
 ;; => {:protocol_version 1, ...
 ;;     :system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA}}}
 
-;; Custom session ID or importance
-(require '[potatoclient.cmd.core :as cmd-core])
-(cmd-core/send-command-with-session! {:ping {}} 12345)
-(cmd-core/send-important-command! {:frozen {}})
+;; All command functions return full cmd roots
+;; To actually send them, use send-command!
+(let [cmd (root/ping)]
+  (cmd-core/send-command! cmd))  ; Returns nil after enqueueing
 ```
 
 ### 📨 Command Queue
@@ -74,8 +75,9 @@ Commands are queued using a non-blocking `LinkedBlockingQueue`:
 - **Test mode**: Automatic roundtrip validation without queuing
 
 ```clojure
-;; In production, commands are queued
-(root/ping)  ; Adds to queue
+;; Commands must be explicitly sent to queue
+(let [cmd (root/ping)]
+  (cmd-core/send-command! cmd))  ; Adds to queue
 
 ;; Consumer thread (WebSocket sender)
 (cmd-core/consume-commands 
@@ -111,16 +113,12 @@ Following Pronto performance guidelines for optimal proto-map creation:
 
 ;; Populate missing fields efficiently
 (builder/populate-cmd-fields {:ping {}})
-
-;; Batch operations
-(builder/create-batch-commands 
-  [{:ping {}} {:noop {}} {:frozen {}}]
-  {:session_id 999})  ; Same session for all
+;; => {:protocol_version 1, :client_type ..., :session_id 0, :ping {}}
 
 ;; Custom overrides
 (builder/create-full-cmd 
   {:system {:reboot {}}}
-  {:important true, :session_id 12345})
+  {:session_id 12345})  ; Custom session ID
 ```
 
 ## Usage
@@ -147,10 +145,11 @@ clojure -M:test
             [com.fulcrologic.guardrails.core :refer [>defn =>]]))
 
 (>defn my-command
-  "Description of what this command does."
+  "Description of what this command does.
+   Returns a fully formed cmd root ready to send."
   [param]
-  [string? => map?]
-  (core/send-command! 
+  [string? => :cmd/root]
+  (core/create-command 
     {:my_subsystem {:my_command {:field param}}}))
 ```
 
@@ -166,12 +165,17 @@ clojure -M:test
 
 ;; In your code
 (require '[potatoclient.cmd.root :as cmd-root]
+         '[potatoclient.cmd.core :as cmd-core]
          '[potatoclient.proto.serialize :as serialize])
 
-;; Use commands
+;; Use commands - they return full cmd roots
 (let [cmd (cmd-root/ping)
       binary (serialize/serialize-cmd-payload cmd)]
   (websocket/send! binary))
+
+;; Or use the queue system
+(let [cmd (cmd-root/ping)]
+  (cmd-core/send-command! cmd))
 ```
 
 ## Testing

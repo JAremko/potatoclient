@@ -10,72 +10,83 @@
 ;; ============================================================================
 
 (>defn reboot
-  "Reboot the system."
+  "Create a reboot system command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:reboot {}}}))
+  (core/create-command {:system {:reboot {}}}))
 
 (>defn power-off
-  "Power off the system."
+  "Create a power off system command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:power_off {}}}))
+  (core/create-command {:system {:power_off {}}}))
 
 (>defn reset-configs
-  "Reset system configurations to defaults."
+  "Create a reset configs command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:reset_configs {}}}))
+  (core/create-command {:system {:reset_configs {}}}))
 
 (>defn start-all
-  "Start all system subsystems."
+  "Create a start all subsystems command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:start_all {}}}))
+  (core/create-command {:system {:start_all {}}}))
 
 (>defn stop-all
-  "Stop all system subsystems."
+  "Create a stop all subsystems command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:stop_all {}}}))
+  (core/create-command {:system {:stop_all {}}}))
 
 (>defn mark-rec-important
-  "Mark current recording as important."
+  "Create a mark recording as important command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:mark_rec_important {}}}))
+  (core/create-command {:system {:mark_rec_important {}}}))
 
 (>defn unmark-rec-important
-  "Unmark current recording as important."
+  "Create an unmark recording as important command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:unmark_rec_important {}}}))
+  (core/create-command {:system {:unmark_rec_important {}}}))
 
 (>defn set-localization
-  "Set system localization/language.
+  "Create a set localization command.
    Localization must be one of the supported enum values:
    - :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
    - :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
    - :JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
-   - :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS"
+   - :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS
+   Returns a fully formed cmd root ready to send."
   [localization]
   [:keyword => :cmd/root]
-  (core/send-command! {:system {:localization {:loc localization}}}))
+  (core/create-command {:system {:localization {:loc localization}}}))
 
 (>defn enter-transport
-  "Enter transport mode - prepares system for transportation."
+  "Create an enter transport mode command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:enter_transport {}}}))
+  (core/create-command {:system {:enter_transport {}}}))
 
 (>defn enable-geodesic-mode
-  "Enable geodesic mode for accurate long-range calculations."
+  "Create an enable geodesic mode command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:geodesic_mode_enable {}}}))
+  (core/create-command {:system {:geodesic_mode_enable {}}}))
 
 (>defn disable-geodesic-mode
-  "Disable geodesic mode."
+  "Create a disable geodesic mode command.
+   Returns a fully formed cmd root ready to send."
   []
   [=> :cmd/root]
-  (core/send-command! {:system {:geodesic_mode_disable {}}}))
+  (core/create-command {:system {:geodesic_mode_disable {}}}))

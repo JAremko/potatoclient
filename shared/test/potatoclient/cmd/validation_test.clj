@@ -4,6 +4,7 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [potatoclient.cmd.validation :as v]
+   [potatoclient.cmd.builder :as builder]
    [potatoclient.proto.serialize :as serialize]
    [potatoclient.malli.registry :as registry]
    [potatoclient.test-harness :as harness]))
@@ -162,7 +163,7 @@
             "Modified but valid command should pass")))
     
     (testing "Ensure normalize-cmd works"
-      (let [minimal {:ping {}}
+      (let [minimal (builder/populate-cmd-fields {:ping {}})
             normalized (v/normalize-cmd minimal)]
         (is (contains? normalized :protocol_version) 
             "Normalized command should have protocol_version")

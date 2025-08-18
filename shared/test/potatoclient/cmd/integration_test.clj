@@ -65,15 +65,15 @@
             "Parameterized command should roundtrip")))))
 
 (deftest session-and-importance-test
-  (testing "Session ID and importance flags work correctly"
-    
-    
-    (testing "Important commands"
-      (let [cmd (core/send-important-command! {:frozen {}})]
-        (is (true? (:important cmd)) "Should be marked important")
+  (testing "Protocol fields work correctly"
+    ;; Important flag removed - it's just a default protocol field
+    (testing "Default protocol fields are present"
+      (let [cmd (root/frozen)]
+        (is (false? (:important cmd)) "Should have default important flag")
+        (is (= 0 (:session_id cmd)) "Should have default session ID")
         (is (= {} (:frozen cmd)) "Should have frozen payload")
         (is (:valid? (v/validate-roundtrip-with-report cmd))
-            "Important command should roundtrip")))))
+            "Command should roundtrip")))))
 
 (deftest builder-integration-test
   (testing "Builder functions work in the command flow"
@@ -91,10 +91,10 @@
         (is (= 999 (:session_id full)) "Should use override session ID")
         (is (true? (:important full)) "Should use override important flag")))
     
-    (testing "Batch command creation"
+    (testing "Multiple command creation with overrides"
       (let [payloads [{:ping {}} {:noop {}} {:frozen {}}]
             overrides {:session_id 777}
-            cmds (builder/create-batch-commands payloads overrides)]
+            cmds (mapv #(merge (merge builder/default-protocol-fields overrides) %) payloads)]
         (is (= 3 (count cmds)) "Should create 3 commands")
         (is (every? #(= 777 (:session_id %)) cmds) 
             "All should have same session ID")

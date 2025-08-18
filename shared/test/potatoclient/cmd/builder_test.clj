@@ -39,26 +39,26 @@
         (is (false? (:from_cv_subsystem result)))
         (is (= {} (:ping result)))))
     
-    (testing "Partial command preserves provided values"
-      (let [partial {:ping {}
-                    :session_id 12345
-                    :important true}
-            result (builder/populate-cmd-fields partial)]
-        (is (= 1 (:protocol_version result)) "Should add missing protocol_version")
-        (is (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type result)) "Should add missing client_type")
-        (is (= 12345 (:session_id result)) "Should preserve provided session_id")
-        (is (true? (:important result)) "Should preserve provided important flag")
-        (is (false? (:from_cv_subsystem result)) "Should add missing from_cv_subsystem")))
+    (testing "Commands with overrides"
+      (let [payload {:ping {}}
+            base-result (builder/populate-cmd-fields payload)
+            custom-result (builder/create-full-cmd payload {:session_id 12345 :important true})]
+        (is (= 1 (:protocol_version base-result)) "Should have default protocol_version")
+        (is (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type base-result)) "Should have default client_type")
+        (is (= 0 (:session_id base-result)) "Should have default session_id")
+        (is (false? (:important base-result)) "Should have default important flag")
+        (is (false? (:from_cv_subsystem base-result)) "Should have default from_cv_subsystem")
+        
+        (is (= 12345 (:session_id custom-result)) "Custom should have override session_id")
+        (is (true? (:important custom-result)) "Custom should have override important flag")))
     
-    (testing "Full command is unchanged"
-      (let [full {:protocol_version 2
-                  :client_type :JON_GUI_DATA_CLIENT_TYPE_LIRA
-                  :session_id 999
-                  :important true
-                  :from_cv_subsystem true
-                  :noop {}}
-            result (builder/populate-cmd-fields full)]
-        (is (= full result) "Full command should be unchanged")))))
+    (testing "Different payload types"
+      (let [noop-result (builder/populate-cmd-fields {:noop {}})
+            frozen-result (builder/populate-cmd-fields {:frozen {}})
+            system-result (builder/populate-cmd-fields {:system {:reboot {}}})]
+        (is (= {} (:noop noop-result)) "Noop payload preserved")
+        (is (= {} (:frozen frozen-result)) "Frozen payload preserved")
+        (is (= {:reboot {}} (:system system-result)) "System payload preserved")))))
 
 (deftest populate-cmd-fields-with-overrides-test
   (testing "populate-cmd-fields-with-overrides applies custom defaults"
@@ -118,17 +118,7 @@
                :ping {}}))
           "Should throw even with some fields present"))))
 
-(deftest create-batch-commands-test
-  (testing "create-batch-commands efficiently creates multiple commands"
-    (let [payloads [{:ping {}} {:noop {}} {:frozen {}}]
-          overrides {:session_id 999}
-          results (builder/create-batch-commands payloads overrides)]
-      (is (= 3 (count results)))
-      (is (every? #(= 999 (:session_id %)) results) "All should have override session_id")
-      (is (every? #(= 1 (:protocol_version %)) results) "All should have default protocol_version")
-      (is (= {:ping {}} (select-keys (first results) [:ping])))
-      (is (= {:noop {}} (select-keys (second results) [:noop])))
-      (is (= {:frozen {}} (select-keys (nth results 2) [:frozen]))))))
+;; create-batch-commands removed - not needed
 
 ;; ============================================================================
 ;; Proto-Map Tests
@@ -203,9 +193,9 @@
     
     (testing "Batch operations are faster than individual"
       ;; This is more of a sanity check than a real performance test
-      (let [payloads (repeat 100 {:ping {}})
+      (let [payloads (vec (repeat 100 {:ping {}}))
             start-batch (System/nanoTime)
-            batch-results (builder/create-batch-commands payloads {})
+            batch-results (mapv builder/populate-cmd-fields payloads)
             batch-time (- (System/nanoTime) start-batch)
             
             start-individual (System/nanoTime)
@@ -257,7 +247,7 @@
   (prop/for-all [payloads (gen/vector payload-gen 1 10)
                  session-id (gen/choose 0 1000000)]
     (let [overrides {:session_id session-id}
-          results (builder/create-batch-commands payloads overrides)]
+          results (mapv #(merge (merge builder/default-protocol-fields overrides) %) payloads)]
       (and (= (count payloads) (count results))
            (every? #(= session-id (:session_id %)) results)
            (every? #(:valid? (v/validate-roundtrip-with-report %)) results)))))

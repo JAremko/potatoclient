@@ -36,7 +36,7 @@
     (let [cmd (root/ping)
           expected {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                   :session_id 42
+                   :session_id 0
                    :important false
                    :from_cv_subsystem false
                    :ping {}}]
@@ -55,7 +55,7 @@
     (let [cmd (root/noop)
           expected {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                   :session_id 42
+                   :session_id 0
                    :important false
                    :from_cv_subsystem false
                    :noop {}}]
@@ -74,7 +74,7 @@
     (let [cmd (root/frozen)
           expected {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                   :session_id 42
+                   :session_id 0
                    :important false
                    :from_cv_subsystem false
                    :frozen {}}]
@@ -105,32 +105,14 @@
 ;; Core Features Tests
 ;; ============================================================================
 
-(deftest important-command-test
-  (testing "Important commands"
-    (let [cmd-payload {:ping {}}
-          expected {:protocol_version 1
-                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                   :session_id 42
-                   :important true
-                   :from_cv_subsystem false
-                   :ping {}}]
-      (testing "important flag is set"
-        (let [result (core/send-important-command! cmd-payload)]
-          (is (= expected result) "Should return full command with important flag"))
-        
-        (testing "roundtrip validation"
-          (let [validation-result (validation/validate-roundtrip-with-report expected)]
-            (is (:valid? validation-result) 
-                (str "Should survive roundtrip with important flag"
-                     (when-not (:valid? validation-result)
-                       (str "\n" (:pretty-diff validation-result)))))))))))
+;; Important flag test removed - it's just a default protocol field
 
 (deftest ping-keep-alive-test
   (testing "Ping command for keep-alive"
     (let [ping-cmd (core/create-ping-command)]
       (is (= {:protocol_version 1
              :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-             :session_id 42
+             :session_id 0
              :important false
              :from_cv_subsystem false
              :ping {}}

@@ -94,6 +94,39 @@
 
 
 ;; ============================================================================
+;; Guardrails Validation Tests - Ensure Guardrails is actually checking specs
+;; ============================================================================
+
+(deftest guardrails-validation-sanity-check
+  (testing "Guardrails actually validates function specs"
+    (testing "Return value validation"
+      ;; create-command should return :cmd/root
+      (let [valid-result (core/create-command {:ping {}})]
+        (is (map? valid-result) "Should return a map")
+        (is (contains? valid-result :protocol_version) "Should have protocol fields")
+        (is (contains? valid-result :ping) "Should have payload")))
+    
+    (testing "Argument validation should throw on invalid input"
+      ;; create-command expects a map
+      (is (thrown? Exception 
+                   (core/create-command "not a map"))
+          "Should throw when passing non-map")
+      ;; But it will accept any map since we're using simple map? spec
+      (let [result (core/create-command {:ping {}})]
+        (is (map? result) "Should accept payload map")))
+    
+    (testing "send-command! expects full cmd and returns nil"
+      (let [full-cmd (core/create-command {:noop {}})]
+        ;; send-command! should return nil
+        (is (nil? (core/send-command! full-cmd)) 
+            "send-command! should return nil"))
+      
+      ;; send-command! should throw if given just payload
+      (is (thrown? Exception
+                   (core/send-command! {:noop {}}))
+          "Should throw when passing payload instead of full cmd"))))
+
+;; ============================================================================
 ;; Sanity Check - Ensure Tests Can Detect Real Errors
 ;; ============================================================================
 
@@ -102,15 +135,18 @@
     
     (testing "Valid commands should pass"
       ;; This should NOT throw
-      (is (= {:ping {}} (root/ping))
-          "Valid ping should work")
+      (let [ping-result (root/ping)]
+        (is (= {:ping {}} (select-keys ping-result [:ping]))
+            "Valid ping should work"))
       
-      (is (= {:system {:reboot {}}} (sys/reboot))
-          "Valid reboot should work")
+      (let [reboot-result (sys/reboot)]
+        (is (= {:system {:reboot {}}} (select-keys reboot-result [:system]))
+            "Valid reboot should work"))
       
-      (is (= {:system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}
-             (sys/set-localization :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN))
-          "Valid set-localization should work"))
+      (let [loc-result (sys/set-localization :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN)]
+        (is (= {:system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}
+               (select-keys loc-result [:system]))
+            "Valid set-localization should work")))
     
     (testing "Basic assertions work"
       (is (= 1 1) "Basic equality should pass")
