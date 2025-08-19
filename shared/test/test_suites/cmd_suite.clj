@@ -14,13 +14,17 @@
             [potatoclient.cmd.compass-micheck-test]
             [potatoclient.cmd.compass-test]
             [potatoclient.cmd.cv-test]
+            [potatoclient.cmd.cv-generative-test]
             [potatoclient.cmd.day-camera-test]
             [potatoclient.cmd.gps-test]
+            [potatoclient.cmd.gps-generative-test]
             [potatoclient.cmd.heat-camera-test]
             [potatoclient.cmd.lrf-alignment-test]
             [potatoclient.cmd.lrf-test]
+            [potatoclient.cmd.lrf-generative-test]
             [potatoclient.cmd.osd-test]
             [potatoclient.cmd.rotary-test]
+            [potatoclient.cmd.rotary-generative-test]
             ;; Spec tests
             [potatoclient.specs.cmd.root-test]
             [potatoclient.specs.cmd.root-validate-test]))
@@ -43,13 +47,17 @@
                           'potatoclient.cmd.compass-micheck-test
                           'potatoclient.cmd.compass-test
                           'potatoclient.cmd.cv-test
+                          'potatoclient.cmd.cv-generative-test
                           'potatoclient.cmd.day-camera-test
                           'potatoclient.cmd.gps-test
+                          'potatoclient.cmd.gps-generative-test
                           'potatoclient.cmd.heat-camera-test
                           'potatoclient.cmd.lrf-alignment-test
                           'potatoclient.cmd.lrf-test
+                          'potatoclient.cmd.lrf-generative-test
                           'potatoclient.cmd.osd-test
                           'potatoclient.cmd.rotary-test
+                          'potatoclient.cmd.rotary-generative-test
                           ;; Spec tests
                           'potatoclient.specs.cmd.root-test
                           'potatoclient.specs.cmd.root-validate-test)]
