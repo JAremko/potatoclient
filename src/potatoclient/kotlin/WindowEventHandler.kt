@@ -1,5 +1,7 @@
 package potatoclient.kotlin
 
+import potatoclient.kotlin.ipc.IpcKeys
+import potatoclient.kotlin.ipc.IpcManager
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.Point
@@ -7,198 +9,187 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 import javax.swing.JFrame
 
+/**
+ * Unified window event handler that sends events via IPC.
+ * Handles all window events with proper throttling for rapid-fire events.
+ */
 class WindowEventHandler(
     private val frame: JFrame,
-    private val callback: EventCallback,
-    private val eventFilter: EventFilter,
-    private val eventThrottleExecutor: ScheduledExecutorService,
+    private val ipcManager: IpcManager,
+    private val throttleMs: Long = 100L,  // Default 100ms throttle for resize/move events
+    private val onShutdown: (() -> Unit)? = null  // Optional shutdown callback
 ) {
-    interface EventCallback {
-        fun onWindowEvent(
-            type: EventFilter.EventType,
-            eventName: String,
-            details: Map<String, Any>?,
-        )
+    // Throttling state
+    private val resizeThrottler = EventThrottler(throttleMs)
+    private val moveThrottler = EventThrottler(throttleMs)
+    
+    // Track window state for relative data
+    @Volatile private var lastSize = Dimension(frame.width, frame.height)
+    @Volatile private var lastLocation = Point(frame.x, frame.y)
+    @Volatile private var lastState = frame.extendedState
+    
+    private val throttleExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor { r ->
+        Thread(r, "WindowEventThrottle").apply { isDaemon = true }
     }
 
-    // Window state tracking
-    @Volatile private var lastWindowLocation: Point? = frame.location
-
-    @Volatile private var lastWindowSize: Dimension? = frame.size
-    private val lastWindowEventTime = AtomicLong(0)
-
-    // Throttled event tasks
-    @Volatile private var pendingWindowResizeTask: ScheduledFuture<*>? = null
-
-    @Volatile private var pendingWindowMoveTask: ScheduledFuture<*>? = null
-
-    @Volatile private var lastResizeEvent: ComponentEvent? = null
-
-    @Volatile private var lastMoveEvent: ComponentEvent? = null
-
     fun attachListeners() {
-        // Add comprehensive window listeners
-        frame.addWindowListener(
-            object : WindowAdapter() {
-                // Removed windowClosing - handled by FrameManager
+        // Window event listener
+        frame.addWindowListener(object : WindowAdapter() {
+            override fun windowOpened(e: WindowEvent) {
+                ipcManager.sendWindowEvent("focus")
+            }
 
-                override fun windowOpened(e: WindowEvent) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_OPENED, "opened", null)
-                }
+            override fun windowClosing(e: WindowEvent) {
+                // Clean shutdown when window is closed
+                cleanup()
+                onShutdown?.invoke()  // Call custom shutdown handler if provided
+                ipcManager.shutdown()
+                System.exit(0)
+            }
 
-                override fun windowIconified(e: WindowEvent) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_MINIMIZED, "minimized", null)
-                }
+            override fun windowClosed(e: WindowEvent) {
+                // Additional cleanup if needed
+                cleanup()
+            }
 
-                override fun windowDeiconified(e: WindowEvent) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_RESTORED, "restored", null)
-                }
+            override fun windowIconified(e: WindowEvent) {
+                ipcManager.sendWindowEvent("minimize")
+            }
 
-                override fun windowActivated(e: WindowEvent) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_FOCUSED, "focused", null)
-                }
+            override fun windowDeiconified(e: WindowEvent) {
+                ipcManager.sendWindowEvent("restore")
+            }
 
-                override fun windowDeactivated(e: WindowEvent) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_UNFOCUSED, "unfocused", null)
-                }
-            },
-        )
+            override fun windowActivated(e: WindowEvent) {
+                ipcManager.sendWindowEvent("focus")
+            }
 
-        // Window state listener for maximize/normal
+            override fun windowDeactivated(e: WindowEvent) {
+                ipcManager.sendWindowEvent("blur")
+            }
+        })
+
+        // Window state listener for maximize events
         frame.addWindowStateListener { e ->
             val oldState = e.oldState
             val newState = e.newState
-
+            
             if (oldState != newState) {
-                val details =
-                    mutableMapOf<String, Any>(
-                        "oldState" to getStateString(oldState),
-                        "newState" to getStateString(newState),
-                    )
-
-                if ((newState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_MAXIMIZED, "maximized", details)
-                } else if ((oldState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH &&
-                    (newState and Frame.MAXIMIZED_BOTH) == 0
-                ) {
-                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_UNMAXIMIZED, "unmaximized", details)
+                when {
+                    // Maximized
+                    (newState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH &&
+                    (oldState and Frame.MAXIMIZED_BOTH) != Frame.MAXIMIZED_BOTH -> {
+                        ipcManager.sendWindowEvent("maximize")
+                    }
+                    // Restored from maximized
+                    (oldState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH &&
+                    (newState and Frame.MAXIMIZED_BOTH) == 0 -> {
+                        ipcManager.sendWindowEvent("restore")
+                    }
                 }
+                lastState = newState
             }
         }
 
         // Component listener for resize and move
-        frame.addComponentListener(
-            object : ComponentAdapter() {
-                override fun componentResized(e: ComponentEvent) {
-                    lastResizeEvent = e
-                    scheduleWindowEvent(
-                        task = {
-                            lastResizeEvent?.let {
-                                val newSize = frame.size
-                                if (newSize != lastWindowSize) {
-                                    val details =
-                                        mutableMapOf<String, Any>(
-                                            "width" to newSize.width,
-                                            "height" to newSize.height,
-                                        )
-                                    lastWindowSize?.let {
-                                        details["oldWidth"] = it.width
-                                        details["oldHeight"] = it.height
-                                    }
-                                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_RESIZED, "resized", details)
-                                    lastWindowSize = newSize
-                                }
-                            }
-                        },
-                        currentTask = pendingWindowResizeTask,
-                        taskSetter = { pendingWindowResizeTask = it },
-                    )
+        frame.addComponentListener(object : ComponentAdapter() {
+            override fun componentResized(e: ComponentEvent) {
+                val newSize = frame.size
+                val oldSize = lastSize
+                
+                // Only send if actually changed
+                if (newSize.width != oldSize.width || newSize.height != oldSize.height) {
+                    // Throttle resize events
+                    resizeThrottler.throttle {
+                        ipcManager.sendWindowEvent(
+                            "resize",
+                            width = newSize.width,
+                            height = newSize.height,
+                            deltaX = newSize.width - oldSize.width,
+                            deltaY = newSize.height - oldSize.height
+                        )
+                        lastSize = Dimension(newSize)
+                    }
                 }
-
-                override fun componentMoved(e: ComponentEvent) {
-                    lastMoveEvent = e
-                    scheduleWindowEvent(
-                        task = {
-                            lastMoveEvent?.let {
-                                val newLocation = frame.location
-                                if (newLocation != lastWindowLocation) {
-                                    val details =
-                                        mutableMapOf<String, Any>(
-                                            "x" to newLocation.x,
-                                            "y" to newLocation.y,
-                                        )
-                                    lastWindowLocation?.let {
-                                        details["oldX"] = it.x
-                                        details["oldY"] = it.y
-                                    }
-                                    sendFilteredWindowEvent(EventFilter.EventType.WINDOW_MOVED, "moved", details)
-                                    lastWindowLocation = newLocation
-                                }
-                            }
-                        },
-                        currentTask = pendingWindowMoveTask,
-                        taskSetter = { pendingWindowMoveTask = it },
-                    )
-                }
-            },
-        )
-    }
-
-    private fun scheduleWindowEvent(
-        task: () -> Unit,
-        currentTask: ScheduledFuture<*>?,
-        taskSetter: (ScheduledFuture<*>?) -> Unit,
-    ) {
-        val now = System.currentTimeMillis()
-        val lastTime = lastWindowEventTime.get()
-
-        if (now - lastTime >= Constants.WINDOW_EVENT_THROTTLE_MS) {
-            if (lastWindowEventTime.compareAndSet(lastTime, now)) {
-                task()
-                // Cancel any pending task
-                currentTask?.cancel(false)
             }
-        } else {
-            // Cancel existing task and schedule new one
-            currentTask?.cancel(false)
 
-            val delay = Constants.WINDOW_EVENT_THROTTLE_MS - (now - lastTime)
-            val newTask =
-                eventThrottleExecutor.schedule({
-                    task()
-                    lastWindowEventTime.set(System.currentTimeMillis())
-                }, delay, TimeUnit.MILLISECONDS)
-            taskSetter(newTask)
-        }
-    }
-
-    private fun getStateString(state: Int): String =
-        buildString {
-            append("normal,")
-            if ((state and Frame.ICONIFIED) == Frame.ICONIFIED) append("minimized,")
-            if ((state and Frame.MAXIMIZED_HORIZ) == Frame.MAXIMIZED_HORIZ) append("maximized_horizontal,")
-            if ((state and Frame.MAXIMIZED_VERT) == Frame.MAXIMIZED_VERT) append("maximized_vertical,")
-            if ((state and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) append("maximized,")
-        }.removeSuffix(",")
-
-    private fun sendFilteredWindowEvent(
-        type: EventFilter.EventType,
-        eventName: String,
-        details: Map<String, Any>?,
-    ) {
-        if (eventFilter.isUnfiltered(type)) {
-            callback.onWindowEvent(type, eventName, details)
-        }
+            override fun componentMoved(e: ComponentEvent) {
+                val newLocation = frame.location
+                val oldLocation = lastLocation
+                
+                // Only send if actually moved
+                if (newLocation.x != oldLocation.x || newLocation.y != oldLocation.y) {
+                    // Throttle move events
+                    moveThrottler.throttle {
+                        ipcManager.sendWindowEvent(
+                            "window-move",
+                            x = newLocation.x,
+                            y = newLocation.y,
+                            deltaX = newLocation.x - oldLocation.x,
+                            deltaY = newLocation.y - oldLocation.y
+                        )
+                        lastLocation = Point(newLocation)
+                    }
+                }
+            }
+        })
     }
 
     fun cleanup() {
-        pendingWindowResizeTask?.cancel(false)
-        pendingWindowMoveTask?.cancel(false)
+        resizeThrottler.cleanup()
+        moveThrottler.cleanup()
+        throttleExecutor.shutdown()
+        try {
+            if (!throttleExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                throttleExecutor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            throttleExecutor.shutdownNow()
+        }
+    }
+
+    /**
+     * Inner class to handle event throttling
+     */
+    private inner class EventThrottler(private val throttleMs: Long) {
+        private val lastEventTime = AtomicLong(0)
+        private val pendingTask = AtomicReference<ScheduledFuture<*>?>(null)
+        
+        fun throttle(action: () -> Unit) {
+            val now = System.currentTimeMillis()
+            val last = lastEventTime.get()
+            
+            if (now - last >= throttleMs) {
+                // Execute immediately if enough time has passed
+                if (lastEventTime.compareAndSet(last, now)) {
+                    action()
+                    // Cancel any pending task
+                    pendingTask.getAndSet(null)?.cancel(false)
+                }
+            } else {
+                // Schedule for later
+                val delay = throttleMs - (now - last)
+                val oldTask = pendingTask.getAndSet(
+                    throttleExecutor.schedule({
+                        lastEventTime.set(System.currentTimeMillis())
+                        action()
+                    }, delay, TimeUnit.MILLISECONDS)
+                )
+                // Cancel old task if any
+                oldTask?.cancel(false)
+            }
+        }
+        
+        fun cleanup() {
+            pendingTask.getAndSet(null)?.cancel(false)
+        }
     }
 }

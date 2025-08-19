@@ -32,8 +32,18 @@ object IpcKeys {
     @JvmField val DETAILS = TransitFactory.keyword("details")
     
     // Event types
+    @JvmField val GESTURE = TransitFactory.keyword("gesture")
     @JvmField val WINDOW = TransitFactory.keyword("window")
     @JvmField val CONNECTION = TransitFactory.keyword("connection")
+    
+    // Gesture types
+    @JvmField val TAP = TransitFactory.keyword("tap")
+    @JvmField val DOUBLE_TAP = TransitFactory.keyword("double-tap")
+    @JvmField val PAN_START = TransitFactory.keyword("pan-start")
+    @JvmField val PAN_MOVE = TransitFactory.keyword("pan-move")
+    @JvmField val PAN_STOP = TransitFactory.keyword("pan-stop")
+    @JvmField val WHEEL_UP = TransitFactory.keyword("wheel-up")
+    @JvmField val WHEEL_DOWN = TransitFactory.keyword("wheel-down")
     
     // Window actions
     @JvmField val MINIMIZE = TransitFactory.keyword("minimize")
@@ -42,6 +52,8 @@ object IpcKeys {
     @JvmField val RESIZE = TransitFactory.keyword("resize")
     @JvmField val FOCUS = TransitFactory.keyword("focus")
     @JvmField val BLUR = TransitFactory.keyword("blur")
+    @JvmField val WINDOW_MOVE = TransitFactory.keyword("window-move")
+    @JvmField val CLOSE_REQUEST = TransitFactory.keyword("close-request")
     
     // Connection actions
     @JvmField val CONNECTED = TransitFactory.keyword("connected")
@@ -50,11 +62,6 @@ object IpcKeys {
     @JvmField val RECONNECTING = TransitFactory.keyword("reconnecting")
     @JvmField val CONNECTION_ERROR = TransitFactory.keyword("connection-error")
     
-    // Command actions
-    @JvmField val ROTARY_GOTO_NDC = TransitFactory.keyword("rotary-goto-ndc")
-    @JvmField val CV_START_TRACK_NDC = TransitFactory.keyword("cv-start-track-ndc")
-    @JvmField val ROTARY_SET_VELOCITY = TransitFactory.keyword("rotary-set-velocity")
-    @JvmField val ROTARY_HALT = TransitFactory.keyword("rotary-halt")
     
     // Stream types
     @JvmField val HEAT = TransitFactory.keyword("heat")
@@ -70,19 +77,10 @@ object IpcKeys {
     @JvmField val DELTA_X = TransitFactory.keyword("delta-x")
     @JvmField val DELTA_Y = TransitFactory.keyword("delta-y")
     
-    // Video/CV keys
-    @JvmField val CHANNEL = TransitFactory.keyword("channel")
-    @JvmField val FRAME_TIME = TransitFactory.keyword("frame-time")
+    // Gesture-specific keys
+    @JvmField val GESTURE_TYPE = TransitFactory.keyword("gesture-type")
+    @JvmField val FRAME_TIMESTAMP = TransitFactory.keyword("frame-timestamp")
     
-    // Velocity control keys
-    @JvmField val AZIMUTH_SPEED = TransitFactory.keyword("azimuth-speed")
-    @JvmField val ELEVATION_SPEED = TransitFactory.keyword("elevation-speed")
-    @JvmField val AZIMUTH_DIRECTION = TransitFactory.keyword("azimuth-direction")
-    @JvmField val ELEVATION_DIRECTION = TransitFactory.keyword("elevation-direction")
-    
-    // Direction values
-    @JvmField val CLOCKWISE = TransitFactory.keyword("clockwise")
-    @JvmField val COUNTER_CLOCKWISE = TransitFactory.keyword("counter-clockwise")
     
     // Log levels
     @JvmField val DEBUG = TransitFactory.keyword("debug")

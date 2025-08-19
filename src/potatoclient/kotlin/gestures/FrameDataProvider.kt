@@ -5,6 +5,10 @@ package potatoclient.kotlin.gestures
  */
 interface FrameDataProvider {
     fun getFrameData(): FrameData?
+    
+    fun getCurrentFrameTimestamp(): Long {
+        return getFrameData()?.timestamp ?: System.currentTimeMillis()
+    }
 
     fun getCurrentZoomLevel(): Int
 }

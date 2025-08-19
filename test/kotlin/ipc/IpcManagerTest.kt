@@ -7,6 +7,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import potatoclient.java.ipc.UnixSocketCommunicator
+import potatoclient.kotlin.gestures.GestureEvent
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.file.Files
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference
 import com.cognitect.transit.TransitFactory
 
 /**
- * Tests for IpcManager.
+ * Tests for IpcManager focusing on gesture events.
  */
 class IpcManagerTest {
     private lateinit var socketPath: Path
@@ -75,35 +76,163 @@ class IpcManagerTest {
     }
     
     @Test
-    fun testSendRotaryGotoNdc() {
+    fun testSendTapGesture() {
         setupManagerWithServer()
         
-        // Send rotary goto NDC command with Keyword channel
-        manager!!.sendRotaryGotoNdc(IpcKeys.HEAT, 0.5, -0.5)
+        // Send tap gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val tap = GestureEvent.Tap(100, 200, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(tap)
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.HEAT, message[IpcKeys.CHANNEL])
-        assertEquals(0.5, message[IpcKeys.NDC_X])
-        assertEquals(-0.5, message[IpcKeys.NDC_Y])
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.TAP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(100, message[IpcKeys.X])
+        assertEquals(200, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
     }
     
     @Test
-    fun testSendRotaryGotoNdcWithString() {
+    fun testSendDoubleTapGesture() {
         setupManagerWithServer()
         
-        // Send rotary goto NDC command with string channel
-        manager!!.sendRotaryGotoNdc("day", 0.25, 0.75)
+        // Send double tap gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val doubleTap = GestureEvent.DoubleTap(150, 250, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(doubleTap)
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.DAY, message[IpcKeys.CHANNEL])
-        assertEquals(0.25, message[IpcKeys.NDC_X])
-        assertEquals(0.75, message[IpcKeys.NDC_Y])
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.DOUBLE_TAP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(150, message[IpcKeys.X])
+        assertEquals(250, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendPanStartGesture() {
+        setupManagerWithServer()
+        
+        // Send pan start gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val panStart = GestureEvent.PanStart(300, 400, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(panStart)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.PAN_START, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(300, message[IpcKeys.X])
+        assertEquals(400, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendPanMoveGesture() {
+        setupManagerWithServer()
+        
+        // Send pan move gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val panMove = GestureEvent.PanMove(320, 420, 20, 20, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(panMove)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.PAN_MOVE, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(320, message[IpcKeys.X])
+        assertEquals(420, message[IpcKeys.Y])
+        assertEquals(20, message[IpcKeys.DELTA_X])
+        assertEquals(20, message[IpcKeys.DELTA_Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendPanStopGesture() {
+        setupManagerWithServer()
+        
+        // Send pan stop gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val panStop = GestureEvent.PanStop(350, 450, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(panStop)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.PAN_STOP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(350, message[IpcKeys.X])
+        assertEquals(450, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendWheelUpGesture() {
+        setupManagerWithServer()
+        
+        // Send wheel up gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val wheelUp = GestureEvent.WheelUp(200, 300, 3, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(wheelUp)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WHEEL_UP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(200, message[IpcKeys.X])
+        assertEquals(300, message[IpcKeys.Y])
+        assertEquals(3, message["scroll-amount"])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendWheelDownGesture() {
+        setupManagerWithServer()
+        
+        // Send wheel down gesture
+        val frameTimestamp = System.currentTimeMillis()
+        val wheelDown = GestureEvent.WheelDown(200, 300, 3, System.currentTimeMillis(), frameTimestamp)
+        manager!!.sendGestureEvent(wheelDown)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WHEEL_DOWN, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(200, message[IpcKeys.X])
+        assertEquals(300, message[IpcKeys.Y])
+        assertEquals(3, message["scroll-amount"])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testSendGestureEventWithKeyword() {
+        setupManagerWithServer()
+        
+        // Send gesture event using keyword directly
+        val frameTimestamp = System.currentTimeMillis()
+        manager!!.sendGestureEvent(
+            IpcKeys.TAP,
+            x = 100,
+            y = 200,
+            frameTimestamp = frameTimestamp
+        )
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.TAP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(100, message[IpcKeys.X])
+        assertEquals(200, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
     }
     
     @Test
@@ -111,7 +240,7 @@ class IpcManagerTest {
         setupManagerWithServer()
         
         // Send window resize event
-        manager!!.sendWindowEvent("resize", width = 1920, height = 1080)
+        manager!!.sendWindowEvent("resize", width = 1920, height = 1080, deltaX = 100, deltaY = 50)
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
@@ -120,8 +249,27 @@ class IpcManagerTest {
         assertEquals(IpcKeys.keyword("resize"), message[IpcKeys.ACTION])
         assertEquals(1920, message[IpcKeys.WIDTH])
         assertEquals(1080, message[IpcKeys.HEIGHT])
+        assertEquals(100, message[IpcKeys.DELTA_X])
+        assertEquals(50, message[IpcKeys.DELTA_Y])
     }
     
+    @Test
+    fun testSendWindowMoveEvent() {
+        setupManagerWithServer()
+        
+        // Send window move event
+        manager!!.sendWindowEvent("window-move", x = 100, y = 200, deltaX = 10, deltaY = 20)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.WINDOW, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WINDOW_MOVE, message[IpcKeys.ACTION])
+        assertEquals(100, message[IpcKeys.X])
+        assertEquals(200, message[IpcKeys.Y])
+        assertEquals(10, message[IpcKeys.DELTA_X])
+        assertEquals(20, message[IpcKeys.DELTA_Y])
+    }
     
     @Test
     fun testSendLogMessage() {
@@ -142,88 +290,20 @@ class IpcManagerTest {
     }
     
     @Test
-    fun testSendCvStartTrackNdc() {
+    fun testSendConnectionEvent() {
         setupManagerWithServer()
         
-        // Send CV start track NDC command
-        val frameTime = System.currentTimeMillis()
-        manager!!.sendCvStartTrackNdc(IpcKeys.DAY, -0.3, 0.4, frameTime)
+        // Send custom connection event
+        manager!!.sendConnectionEvent(IpcKeys.RECONNECTING, mapOf("attempt" to 3))
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.CV_START_TRACK_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.DAY, message[IpcKeys.CHANNEL])
-        assertEquals(-0.3, message[IpcKeys.NDC_X])
-        assertEquals(0.4, message[IpcKeys.NDC_Y])
-        assertEquals(frameTime, message[IpcKeys.FRAME_TIME])
-    }
-    
-    @Test
-    fun testSendRotarySetVelocity() {
-        setupManagerWithServer()
+        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.CONNECTION, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.RECONNECTING, message[IpcKeys.ACTION])
         
-        // Send rotary set velocity command
-        manager!!.sendRotarySetVelocity(
-            0.5, IpcKeys.CLOCKWISE,
-            0.3, IpcKeys.COUNTER_CLOCKWISE
-        )
-        
-        val message = receiveMessageFromManager()
-        assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_SET_VELOCITY, message[IpcKeys.ACTION])
-        assertEquals(0.5, message[IpcKeys.AZIMUTH_SPEED])
-        assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
-        assertEquals(0.3, message[IpcKeys.ELEVATION_SPEED])
-        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
-    }
-    
-    @Test
-    fun testSendRotarySetVelocityWithStrings() {
-        setupManagerWithServer()
-        
-        // Send rotary set velocity command with string directions
-        manager!!.sendRotarySetVelocity(
-            0.8, "clockwise",
-            0.2, "counter-clockwise"
-        )
-        
-        val message = receiveMessageFromManager()
-        assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_SET_VELOCITY, message[IpcKeys.ACTION])
-        assertEquals(0.8, message[IpcKeys.AZIMUTH_SPEED])
-        assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
-        assertEquals(0.2, message[IpcKeys.ELEVATION_SPEED])
-        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
-    }
-    
-    @Test
-    fun testSendRotaryHalt() {
-        setupManagerWithServer()
-        
-        // Send rotary halt command
-        manager!!.sendRotaryHalt()
-        
-        val message = receiveMessageFromManager()
-        assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_HALT, message[IpcKeys.ACTION])
-    }
-    
-    @Test
-    fun testSendCommand() {
-        setupManagerWithServer()
-        
-        // Send generic command
-        manager!!.sendCommand("some-action", mapOf(IpcKeys.STREAM_TYPE to IpcKeys.HEAT))
-        
-        val message = receiveMessageFromManager()
-        assertNotNull(message)
-        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.keyword("some-action"), message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
+        val details = message[IpcKeys.DETAILS] as Map<*, *>
+        assertEquals(3, details["attempt"])
     }
     
     @Test
@@ -241,10 +321,11 @@ class IpcManagerTest {
         
         // Send message from server to manager
         val testMessage = mapOf(
-            IpcKeys.MSG_TYPE to IpcKeys.COMMAND,
-            IpcKeys.ACTION to IpcKeys.ROTARY_GOTO_NDC,
-            IpcKeys.NDC_X to 0.5,
-            IpcKeys.NDC_Y to -0.5
+            IpcKeys.MSG_TYPE to IpcKeys.EVENT,
+            IpcKeys.TYPE to IpcKeys.GESTURE,
+            IpcKeys.GESTURE_TYPE to IpcKeys.TAP,
+            IpcKeys.X to 100,
+            IpcKeys.Y to 200
         )
         
         sendMessageToManager(testMessage)
@@ -254,10 +335,11 @@ class IpcManagerTest {
         
         val received = receivedMessage.get()
         assertNotNull(received)
-        assertEquals(IpcKeys.COMMAND, received[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_GOTO_NDC, received[IpcKeys.ACTION])
-        assertEquals(0.5, received[IpcKeys.NDC_X])
-        assertEquals(-0.5, received[IpcKeys.NDC_Y])
+        assertEquals(IpcKeys.EVENT, received[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, received[IpcKeys.TYPE])
+        assertEquals(IpcKeys.TAP, received[IpcKeys.GESTURE_TYPE])
+        assertEquals(100, received[IpcKeys.X])
+        assertEquals(200, received[IpcKeys.Y])
     }
     
     @Test

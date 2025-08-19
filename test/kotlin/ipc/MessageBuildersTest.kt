@@ -5,11 +5,140 @@ import org.junit.Test
 import java.util.UUID
 
 /**
- * Tests for MessageBuilders.
+ * Tests for MessageBuilders focusing on gesture and window events.
  */
 class MessageBuildersTest {
     
-    // Gesture tests removed - gestures no longer supported
+    @Test
+    fun testGestureEventTap() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.TAP,
+            IpcKeys.HEAT,
+            x = 100,
+            y = 200,
+            frameTimestamp = frameTimestamp
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.TAP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
+        assertEquals(100, message[IpcKeys.X])
+        assertEquals(200, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+        assertNotNull(message[IpcKeys.MSG_ID])
+        assertNotNull(message[IpcKeys.TIMESTAMP])
+    }
+    
+    @Test
+    fun testGestureEventDoubleTap() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.DOUBLE_TAP,
+            IpcKeys.DAY,
+            x = 150,
+            y = 250,
+            frameTimestamp = frameTimestamp
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.DOUBLE_TAP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(IpcKeys.DAY, message[IpcKeys.STREAM_TYPE])
+        assertEquals(150, message[IpcKeys.X])
+        assertEquals(250, message[IpcKeys.Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testGestureEventPanMove() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.PAN_MOVE,
+            IpcKeys.HEAT,
+            x = 300,
+            y = 400,
+            frameTimestamp = frameTimestamp,
+            deltaX = 20,
+            deltaY = -30
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.PAN_MOVE, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(300, message[IpcKeys.X])
+        assertEquals(400, message[IpcKeys.Y])
+        assertEquals(20, message[IpcKeys.DELTA_X])
+        assertEquals(-30, message[IpcKeys.DELTA_Y])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testGestureEventWheelUp() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.WHEEL_UP,
+            IpcKeys.DAY,
+            x = 200,
+            y = 300,
+            frameTimestamp = frameTimestamp,
+            scrollAmount = 3
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WHEEL_UP, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(200, message[IpcKeys.X])
+        assertEquals(300, message[IpcKeys.Y])
+        assertEquals(3, message["scroll-amount"])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testGestureEventWheelDown() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.WHEEL_DOWN,
+            IpcKeys.HEAT,
+            x = 250,
+            y = 350,
+            frameTimestamp = frameTimestamp,
+            scrollAmount = 2
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WHEEL_DOWN, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(250, message[IpcKeys.X])
+        assertEquals(350, message[IpcKeys.Y])
+        assertEquals(2, message["scroll-amount"])
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+    }
+    
+    @Test
+    fun testGestureEventWithoutOptionalParams() {
+        val frameTimestamp = System.currentTimeMillis()
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.PAN_START,
+            IpcKeys.HEAT,
+            x = 100,
+            y = 100,
+            frameTimestamp = frameTimestamp
+        )
+        
+        // Required fields present
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.PAN_START, message[IpcKeys.GESTURE_TYPE])
+        assertEquals(100, message[IpcKeys.X])
+        assertEquals(100, message[IpcKeys.Y])
+        
+        // Optional fields not present
+        assertFalse(message.containsKey(IpcKeys.DELTA_X))
+        assertFalse(message.containsKey(IpcKeys.DELTA_Y))
+        assertFalse(message.containsKey("scroll-amount"))
+    }
     
     @Test
     fun testWindowEventWithAllParams() {
@@ -54,6 +183,25 @@ class MessageBuildersTest {
     }
     
     @Test
+    fun testWindowMoveEvent() {
+        val message = MessageBuilders.windowEvent(
+            IpcKeys.WINDOW_MOVE,
+            x = 500,
+            y = 300,
+            deltaX = 50,
+            deltaY = -20
+        )
+        
+        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.WINDOW, message[IpcKeys.TYPE])
+        assertEquals(IpcKeys.WINDOW_MOVE, message[IpcKeys.ACTION])
+        assertEquals(500, message[IpcKeys.X])
+        assertEquals(300, message[IpcKeys.Y])
+        assertEquals(50, message[IpcKeys.DELTA_X])
+        assertEquals(-20, message[IpcKeys.DELTA_Y])
+    }
+    
+    @Test
     fun testConnectionEvent() {
         val details = mapOf<Any, Any>("reason" to "timeout", "retry_count" to 3)
         val message = MessageBuilders.connectionEvent(
@@ -75,84 +223,6 @@ class MessageBuildersTest {
         assertEquals(IpcKeys.CONNECTION, message[IpcKeys.TYPE])
         assertEquals(IpcKeys.CONNECTED, message[IpcKeys.ACTION])
         assertFalse(message.containsKey(IpcKeys.DETAILS))
-    }
-    
-    @Test
-    fun testCommand() {
-        val params = mapOf<Any, Any>(
-            IpcKeys.NDC_X to 0.5,
-            IpcKeys.NDC_Y to -0.5
-        )
-        
-        val message = MessageBuilders.command(
-            IpcKeys.ROTARY_GOTO_NDC,
-            IpcKeys.DAY,
-            params
-        )
-        
-        assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.DAY, message[IpcKeys.STREAM_TYPE])
-        assertEquals(0.5, message[IpcKeys.NDC_X])
-        assertEquals(-0.5, message[IpcKeys.NDC_Y])
-    }
-    
-    @Test
-    fun testRotaryGotoNdc() {
-        val message = MessageBuilders.rotaryGotoNdc(
-            IpcKeys.HEAT,
-            0.75,
-            -0.25
-        )
-        
-        assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
-        assertEquals(0.75, message[IpcKeys.NDC_X])
-        assertEquals(-0.25, message[IpcKeys.NDC_Y])
-    }
-    
-    @Test
-    fun testCvStartTrackNdc() {
-        val message = MessageBuilders.cvStartTrackNdc(
-            IpcKeys.DAY,
-            0.1,
-            0.2
-        )
-        
-        assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.CV_START_TRACK_NDC, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.DAY, message[IpcKeys.STREAM_TYPE])
-        assertEquals(0.1, message[IpcKeys.NDC_X])
-        assertEquals(0.2, message[IpcKeys.NDC_Y])
-    }
-    
-    @Test
-    fun testRotarySetVelocity() {
-        val message = MessageBuilders.rotarySetVelocity(
-            IpcKeys.HEAT,
-            1.5,
-            0.5,
-            IpcKeys.CLOCKWISE,
-            IpcKeys.COUNTER_CLOCKWISE
-        )
-        
-        assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_SET_VELOCITY, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
-        assertEquals(1.5, message[IpcKeys.AZIMUTH_SPEED])
-        assertEquals(0.5, message[IpcKeys.ELEVATION_SPEED])
-        assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
-        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
-    }
-    
-    @Test
-    fun testRotaryHalt() {
-        val message = MessageBuilders.rotaryHalt(IpcKeys.DAY)
-        
-        assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.ROTARY_HALT, message[IpcKeys.ACTION])
-        assertEquals(IpcKeys.DAY, message[IpcKeys.STREAM_TYPE])
     }
     
     @Test
@@ -231,9 +301,12 @@ class MessageBuildersTest {
     
     @Test
     fun testTimestampPresence() {
-        // Use windowEvent instead of removed gestureEvent
-        val message = MessageBuilders.windowEvent(
-            IpcKeys.RESIZE
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.TAP,
+            IpcKeys.HEAT,
+            x = 100,
+            y = 200,
+            frameTimestamp = System.currentTimeMillis()
         )
         
         val timestamp = message[IpcKeys.TIMESTAMP] as Long
@@ -243,5 +316,22 @@ class MessageBuildersTest {
         val now = System.currentTimeMillis()
         assertTrue(timestamp <= now)
         assertTrue(timestamp > now - 60000)
+    }
+    
+    @Test
+    fun testGestureEventIncludesFrameTimestamp() {
+        val frameTimestamp = 1234567890L
+        val message = MessageBuilders.gestureEvent(
+            IpcKeys.TAP,
+            IpcKeys.HEAT,
+            x = 100,
+            y = 200,
+            frameTimestamp = frameTimestamp
+        )
+        
+        assertEquals(frameTimestamp, message[IpcKeys.FRAME_TIMESTAMP])
+        // Should also have a separate system timestamp
+        assertNotNull(message[IpcKeys.TIMESTAMP])
+        assertNotEquals(frameTimestamp, message[IpcKeys.TIMESTAMP])
     }
 }

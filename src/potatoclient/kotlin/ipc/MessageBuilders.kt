@@ -54,84 +54,34 @@ object MessageBuilders {
     }
     
     /**
-     * Build a command message (to be forwarded to server).
+     * Build a gesture event message.
      */
     @JvmStatic
-    fun command(
-        action: Keyword,
+    fun gestureEvent(
+        gestureType: Keyword,
         streamType: Keyword,
-        params: Map<Any, Any> = emptyMap()
-    ): Map<Any, Any> = mapOf(
-        IpcKeys.MSG_TYPE to IpcKeys.COMMAND,
-        IpcKeys.MSG_ID to UUID.randomUUID().toString(),
-        IpcKeys.TIMESTAMP to System.currentTimeMillis(),
-        IpcKeys.ACTION to action,
-        IpcKeys.STREAM_TYPE to streamType
-    ) + params
-    
-    /**
-     * Build a rotary goto command.
-     */
-    @JvmStatic
-    fun rotaryGotoNdc(
-        streamType: Keyword,
-        ndcX: Double,
-        ndcY: Double
-    ): Map<Any, Any> = command(
-        IpcKeys.ROTARY_GOTO_NDC,
-        streamType,
-        mapOf(
-            IpcKeys.NDC_X to ndcX,
-            IpcKeys.NDC_Y to ndcY
-        )
-    )
-    
-    /**
-     * Build a CV track command.
-     */
-    @JvmStatic
-    fun cvStartTrackNdc(
-        streamType: Keyword,
-        ndcX: Double,
-        ndcY: Double
-    ): Map<Any, Any> = command(
-        IpcKeys.CV_START_TRACK_NDC,
-        streamType,
-        mapOf(
-            IpcKeys.NDC_X to ndcX,
-            IpcKeys.NDC_Y to ndcY
-        )
-    )
-    
-    /**
-     * Build a rotary velocity command.
-     */
-    @JvmStatic
-    fun rotarySetVelocity(
-        streamType: Keyword,
-        azimuthSpeed: Double,
-        elevationSpeed: Double,
-        azimuthDirection: Keyword,
-        elevationDirection: Keyword
-    ): Map<Any, Any> = command(
-        IpcKeys.ROTARY_SET_VELOCITY,
-        streamType,
-        mapOf(
-            IpcKeys.AZIMUTH_SPEED to azimuthSpeed,
-            IpcKeys.ELEVATION_SPEED to elevationSpeed,
-            IpcKeys.AZIMUTH_DIRECTION to azimuthDirection,
-            IpcKeys.ELEVATION_DIRECTION to elevationDirection
-        )
-    )
-    
-    /**
-     * Build a rotary halt command.
-     */
-    @JvmStatic
-    fun rotaryHalt(streamType: Keyword): Map<Any, Any> = command(
-        IpcKeys.ROTARY_HALT,
-        streamType
-    )
+        x: Int,
+        y: Int,
+        frameTimestamp: Long,
+        deltaX: Int? = null,
+        deltaY: Int? = null,
+        scrollAmount: Int? = null
+    ): Map<Any, Any> = buildMap {
+        put(IpcKeys.MSG_TYPE, IpcKeys.EVENT)
+        put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+        put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
+        put(IpcKeys.TYPE, IpcKeys.GESTURE)
+        put(IpcKeys.GESTURE_TYPE, gestureType)
+        put(IpcKeys.STREAM_TYPE, streamType)
+        put(IpcKeys.X, x)
+        put(IpcKeys.Y, y)
+        put(IpcKeys.FRAME_TIMESTAMP, frameTimestamp)
+        
+        // Optional parameters for specific gesture types
+        deltaX?.let { put(IpcKeys.DELTA_X, it) }
+        deltaY?.let { put(IpcKeys.DELTA_Y, it) }
+        scrollAmount?.let { put("scroll-amount", it) }
+    }
     
     /**
      * Build a log message.

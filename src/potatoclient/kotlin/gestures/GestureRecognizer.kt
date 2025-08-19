@@ -23,6 +23,7 @@ data class GestureConfig(
 class GestureRecognizer(
     private val config: GestureConfig = GestureConfig(),
     private val onGesture: (GestureEvent) -> Unit,
+    private val frameDataProvider: FrameDataProvider
 ) {
     private val state = AtomicReference(GestureState.IDLE)
     private var startX: Int = 0
@@ -65,7 +66,7 @@ class GestureRecognizer(
             state.set(GestureState.PANNING)
             panStartNotified = true
             lastPanUpdate.set(time)
-            onGesture(GestureEvent.PanStart(startX, startY, time))
+            onGesture(GestureEvent.PanStart(startX, startY, time, frameDataProvider.getCurrentFrameTimestamp()))
         } else if (currentState == GestureState.PANNING) {
             // Throttle pan updates to config.panUpdateInterval
             val lastUpdate = lastPanUpdate.get()
@@ -73,7 +74,7 @@ class GestureRecognizer(
                 // Calculate deltas from start position (not incremental)
                 val deltaX = x - startX
                 val deltaY = y - startY
-                onGesture(GestureEvent.PanMove(x, y, deltaX, deltaY, time))
+                onGesture(GestureEvent.PanMove(x, y, deltaX, deltaY, time, frameDataProvider.getCurrentFrameTimestamp()))
                 lastPanUpdate.set(time)
             }
         }
@@ -100,11 +101,11 @@ class GestureRecognizer(
                         abs(x - lastTapX) < config.doubleTapTolerance &&
                         abs(y - lastTapY) < config.doubleTapTolerance
                     ) {
-                        onGesture(GestureEvent.DoubleTap(x, y, time))
+                        onGesture(GestureEvent.DoubleTap(x, y, time, frameDataProvider.getCurrentFrameTimestamp()))
                         lastTapTime = 0 // Reset to prevent triple tap
                     } else {
                         // Single tap
-                        onGesture(GestureEvent.Tap(x, y, time))
+                        onGesture(GestureEvent.Tap(x, y, time, frameDataProvider.getCurrentFrameTimestamp()))
                         lastTapTime = time
                         lastTapX = x
                         lastTapY = y
@@ -113,7 +114,7 @@ class GestureRecognizer(
                 // No swipe detection - any other release is just ignored
             }
             GestureState.PANNING -> {
-                onGesture(GestureEvent.PanStop(x, y, time))
+                onGesture(GestureEvent.PanStop(x, y, time, frameDataProvider.getCurrentFrameTimestamp()))
             }
             else -> {}
         }
@@ -122,6 +123,20 @@ class GestureRecognizer(
         panStartNotified = false
     }
 
+    fun processMouseWheel(
+        x: Int,
+        y: Int,
+        rotation: Int,
+        time: Long
+    ) {
+        val frameTimestamp = frameDataProvider.getCurrentFrameTimestamp()
+        if (rotation < 0) {
+            onGesture(GestureEvent.WheelUp(x, y, abs(rotation), time, frameTimestamp))
+        } else if (rotation > 0) {
+            onGesture(GestureEvent.WheelDown(x, y, rotation, time, frameTimestamp))
+        }
+    }
+    
     fun reset() {
         state.set(GestureState.IDLE)
         panStartNotified = false

@@ -123,191 +123,62 @@ class IpcManager private constructor(
     }
 
     /**
-     * Send a command message.
+     * Send a gesture event.
+     * @param gestureType The type of gesture (tap, double-tap, pan-start, etc.)
+     * @param x X coordinate in pixels
+     * @param y Y coordinate in pixels
+     * @param frameTimestamp Timestamp of the video frame when gesture occurred
+     * @param deltaX Optional delta X for pan-move events
+     * @param deltaY Optional delta Y for pan-move events
+     * @param scrollAmount Optional scroll amount for wheel events
      */
-    fun sendCommand(action: String, params: Map<Any, Any> = emptyMap()) {
-        if (!isInitialized) {
-            System.err.println("IpcManager not initialized")
-            return
-        }
-
-        val message = MessageBuilders.command(
-            IpcKeys.keyword(action),
-            IpcKeys.streamType(streamId),
-            params
-        )
-
-        sendMessage(message)
-    }
-
-    // ============================================================================
-    // Command Helper Functions - RPC-style interface for Clojure commands
-    // ============================================================================
-
-    /**
-     * Send rotary platform goto NDC command.
-     * Rotates platform to point at normalized device coordinates.
-     * @param channel Video channel (DAY or HEAT)
-     * @param x NDC x coordinate (-1.0 to 1.0)
-     * @param y NDC y coordinate (-1.0 to 1.0)
-     */
-    fun sendRotaryGotoNdc(channel: com.cognitect.transit.Keyword, x: Double, y: Double) {
-        if (!isInitialized) {
-            System.err.println("IpcManager not initialized")
-            return
-        }
-
-        val params: Map<Any, Any> = mapOf(
-            IpcKeys.CHANNEL to channel,
-            IpcKeys.NDC_X to x,
-            IpcKeys.NDC_Y to y
-        )
-
-        val message = MessageBuilders.command(
-            IpcKeys.ROTARY_GOTO_NDC,
-            IpcKeys.streamType(streamId),
-            params
-        )
-
-        sendMessage(message)
-    }
-
-    /**
-     * Send CV start track NDC command.
-     * Starts tracking at normalized device coordinates.
-     * @param channel Video channel (DAY or HEAT)
-     * @param x NDC x coordinate (-1.0 to 1.0)
-     * @param y NDC y coordinate (-1.0 to 1.0)
-     * @param frameTime Timestamp of the frame being tracked
-     */
-    fun sendCvStartTrackNdc(channel: com.cognitect.transit.Keyword, x: Double, y: Double, frameTime: Long) {
-        if (!isInitialized) {
-            System.err.println("IpcManager not initialized")
-            return
-        }
-
-        val params: Map<Any, Any> = mapOf(
-            IpcKeys.CHANNEL to channel,
-            IpcKeys.NDC_X to x,
-            IpcKeys.NDC_Y to y,
-            IpcKeys.FRAME_TIME to frameTime
-        )
-
-        val message = MessageBuilders.command(
-            IpcKeys.CV_START_TRACK_NDC,
-            IpcKeys.streamType(streamId),
-            params
-        )
-
-        sendMessage(message)
-    }
-
-    /**
-     * Send rotary set velocity command.
-     * Sets continuous rotation velocities for both axes.
-     * @param azimuthSpeed Speed for azimuth axis (0.0 to 1.0)
-     * @param azimuthDirection Direction for azimuth (CLOCKWISE or COUNTER_CLOCKWISE)
-     * @param elevationSpeed Speed for elevation axis (0.0 to 1.0)
-     * @param elevationDirection Direction for elevation (CLOCKWISE or COUNTER_CLOCKWISE)
-     */
-    fun sendRotarySetVelocity(
-        azimuthSpeed: Double,
-        azimuthDirection: com.cognitect.transit.Keyword,
-        elevationSpeed: Double,
-        elevationDirection: com.cognitect.transit.Keyword
+    fun sendGestureEvent(
+        gestureType: com.cognitect.transit.Keyword,
+        x: Int,
+        y: Int,
+        frameTimestamp: Long,
+        deltaX: Int? = null,
+        deltaY: Int? = null,
+        scrollAmount: Int? = null
     ) {
         if (!isInitialized) {
             System.err.println("IpcManager not initialized")
             return
         }
 
-        val params: Map<Any, Any> = mapOf(
-            IpcKeys.AZIMUTH_SPEED to azimuthSpeed,
-            IpcKeys.AZIMUTH_DIRECTION to azimuthDirection,
-            IpcKeys.ELEVATION_SPEED to elevationSpeed,
-            IpcKeys.ELEVATION_DIRECTION to elevationDirection
-        )
-
-        val message = MessageBuilders.command(
-            IpcKeys.ROTARY_SET_VELOCITY,
+        val message = MessageBuilders.gestureEvent(
+            gestureType,
             IpcKeys.streamType(streamId),
-            params
+            x, y, frameTimestamp,
+            deltaX, deltaY, scrollAmount
         )
 
         sendMessage(message)
     }
-
+    
     /**
-     * Send rotary halt command.
-     * Immediately stops all rotary platform movement.
+     * Send a gesture event using GestureEvent object.
      */
-    fun sendRotaryHalt() {
-        if (!isInitialized) {
-            System.err.println("IpcManager not initialized")
-            return
+    fun sendGestureEvent(event: potatoclient.kotlin.gestures.GestureEvent) {
+        when (event) {
+            is potatoclient.kotlin.gestures.GestureEvent.Tap -> 
+                sendGestureEvent(IpcKeys.TAP, event.x, event.y, event.frameTimestamp)
+            is potatoclient.kotlin.gestures.GestureEvent.DoubleTap -> 
+                sendGestureEvent(IpcKeys.DOUBLE_TAP, event.x, event.y, event.frameTimestamp)
+            is potatoclient.kotlin.gestures.GestureEvent.PanStart -> 
+                sendGestureEvent(IpcKeys.PAN_START, event.x, event.y, event.frameTimestamp)
+            is potatoclient.kotlin.gestures.GestureEvent.PanMove -> 
+                sendGestureEvent(IpcKeys.PAN_MOVE, event.x, event.y, event.frameTimestamp, 
+                    event.deltaX, event.deltaY)
+            is potatoclient.kotlin.gestures.GestureEvent.PanStop -> 
+                sendGestureEvent(IpcKeys.PAN_STOP, event.x, event.y, event.frameTimestamp)
+            is potatoclient.kotlin.gestures.GestureEvent.WheelUp -> 
+                sendGestureEvent(IpcKeys.WHEEL_UP, event.x, event.y, event.frameTimestamp,
+                    scrollAmount = event.scrollAmount)
+            is potatoclient.kotlin.gestures.GestureEvent.WheelDown -> 
+                sendGestureEvent(IpcKeys.WHEEL_DOWN, event.x, event.y, event.frameTimestamp,
+                    scrollAmount = event.scrollAmount)
         }
-
-        val message = MessageBuilders.command(
-            IpcKeys.ROTARY_HALT,
-            IpcKeys.streamType(streamId),
-            emptyMap()
-        )
-
-        sendMessage(message)
-    }
-
-    // ============================================================================
-    // Convenience overloads with string parameters
-    // ============================================================================
-
-    /**
-     * Convenience overload for sendRotaryGotoNdc with string channel.
-     * @param channel "day" or "heat"
-     */
-    fun sendRotaryGotoNdc(channel: String, x: Double, y: Double) {
-        val channelKeyword = when (channel.lowercase()) {
-            "day" -> IpcKeys.DAY
-            "heat" -> IpcKeys.HEAT
-            else -> IpcKeys.keyword(channel)
-        }
-        sendRotaryGotoNdc(channelKeyword, x, y)
-    }
-
-    /**
-     * Convenience overload for sendCvStartTrackNdc with string channel.
-     * @param channel "day" or "heat"
-     */
-    fun sendCvStartTrackNdc(channel: String, x: Double, y: Double, frameTime: Long) {
-        val channelKeyword = when (channel.lowercase()) {
-            "day" -> IpcKeys.DAY
-            "heat" -> IpcKeys.HEAT
-            else -> IpcKeys.keyword(channel)
-        }
-        sendCvStartTrackNdc(channelKeyword, x, y, frameTime)
-    }
-
-    /**
-     * Convenience overload for sendRotarySetVelocity with string directions.
-     * @param azimuthDirection "clockwise" or "counter-clockwise"
-     * @param elevationDirection "clockwise" or "counter-clockwise"
-     */
-    fun sendRotarySetVelocity(
-        azimuthSpeed: Double,
-        azimuthDirection: String,
-        elevationSpeed: Double,
-        elevationDirection: String
-    ) {
-        val azimuthDirKeyword = when (azimuthDirection.lowercase()) {
-            "clockwise" -> IpcKeys.CLOCKWISE
-            "counter-clockwise", "counterclockwise" -> IpcKeys.COUNTER_CLOCKWISE
-            else -> IpcKeys.keyword(azimuthDirection)
-        }
-        val elevationDirKeyword = when (elevationDirection.lowercase()) {
-            "clockwise" -> IpcKeys.CLOCKWISE
-            "counter-clockwise", "counterclockwise" -> IpcKeys.COUNTER_CLOCKWISE
-            else -> IpcKeys.keyword(elevationDirection)
-        }
-        sendRotarySetVelocity(azimuthSpeed, azimuthDirKeyword, elevationSpeed, elevationDirKeyword)
     }
 
     /**
