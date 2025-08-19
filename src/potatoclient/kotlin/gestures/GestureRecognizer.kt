@@ -10,7 +10,6 @@ enum class GestureState {
     IDLE,
     PENDING,
     PANNING,
-    DRAGGING,
 }
 
 data class GestureConfig(

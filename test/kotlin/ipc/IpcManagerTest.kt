@@ -75,21 +75,35 @@ class IpcManagerTest {
     }
     
     @Test
-    fun testSendGestureEvent() {
+    fun testSendRotaryGotoNdc() {
         setupManagerWithServer()
         
-        // Send gesture event
-        manager!!.sendGestureEvent("tap", 100, 200, 0.5, -0.5)
+        // Send rotary goto NDC command with Keyword channel
+        manager!!.sendRotaryGotoNdc(IpcKeys.HEAT, 0.5, -0.5)
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
-        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
-        assertEquals(IpcKeys.keyword("tap"), message[IpcKeys.GESTURE_TYPE])
-        assertEquals(100, message[IpcKeys.X])
-        assertEquals(200, message[IpcKeys.Y])
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
+        assertEquals(IpcKeys.HEAT, message[IpcKeys.CHANNEL])
         assertEquals(0.5, message[IpcKeys.NDC_X])
         assertEquals(-0.5, message[IpcKeys.NDC_Y])
+    }
+    
+    @Test
+    fun testSendRotaryGotoNdcWithString() {
+        setupManagerWithServer()
+        
+        // Send rotary goto NDC command with string channel
+        manager!!.sendRotaryGotoNdc("day", 0.25, 0.75)
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.ROTARY_GOTO_NDC, message[IpcKeys.ACTION])
+        assertEquals(IpcKeys.DAY, message[IpcKeys.CHANNEL])
+        assertEquals(0.25, message[IpcKeys.NDC_X])
+        assertEquals(0.75, message[IpcKeys.NDC_Y])
     }
     
     @Test
@@ -108,23 +122,6 @@ class IpcManagerTest {
         assertEquals(1080, message[IpcKeys.HEIGHT])
     }
     
-    @Test
-    fun testSendWindowMoveEvent() {
-        setupManagerWithServer()
-        
-        // Send window move event
-        manager!!.sendWindowEvent("window-move", x = 50, y = 100, deltaX = 10, deltaY = 20)
-        
-        val message = receiveMessageFromManager()
-        assertNotNull(message)
-        assertEquals(IpcKeys.EVENT, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.WINDOW, message[IpcKeys.TYPE])
-        assertEquals(IpcKeys.keyword("window-move"), message[IpcKeys.ACTION])
-        assertEquals(50, message[IpcKeys.X])
-        assertEquals(100, message[IpcKeys.Y])
-        assertEquals(10, message[IpcKeys.DELTA_X])
-        assertEquals(20, message[IpcKeys.DELTA_Y])
-    }
     
     @Test
     fun testSendLogMessage() {
@@ -145,16 +142,87 @@ class IpcManagerTest {
     }
     
     @Test
-    fun testSendCommand() {
+    fun testSendCvStartTrackNdc() {
         setupManagerWithServer()
         
-        // Send command
-        manager!!.sendCommand("rotary-halt", mapOf(IpcKeys.STREAM_TYPE to IpcKeys.HEAT))
+        // Send CV start track NDC command
+        val frameTime = System.currentTimeMillis()
+        manager!!.sendCvStartTrackNdc(IpcKeys.DAY, -0.3, 0.4, frameTime)
         
         val message = receiveMessageFromManager()
         assertNotNull(message)
         assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.keyword("rotary-halt"), message[IpcKeys.ACTION])
+        assertEquals(IpcKeys.CV_START_TRACK_NDC, message[IpcKeys.ACTION])
+        assertEquals(IpcKeys.DAY, message[IpcKeys.CHANNEL])
+        assertEquals(-0.3, message[IpcKeys.NDC_X])
+        assertEquals(0.4, message[IpcKeys.NDC_Y])
+        assertEquals(frameTime, message[IpcKeys.FRAME_TIME])
+    }
+    
+    @Test
+    fun testSendRotarySetVelocity() {
+        setupManagerWithServer()
+        
+        // Send rotary set velocity command
+        manager!!.sendRotarySetVelocity(
+            0.5, IpcKeys.CLOCKWISE,
+            0.3, IpcKeys.COUNTER_CLOCKWISE
+        )
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.ROTARY_SET_VELOCITY, message[IpcKeys.ACTION])
+        assertEquals(0.5, message[IpcKeys.AZIMUTH_SPEED])
+        assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
+        assertEquals(0.3, message[IpcKeys.ELEVATION_SPEED])
+        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
+    }
+    
+    @Test
+    fun testSendRotarySetVelocityWithStrings() {
+        setupManagerWithServer()
+        
+        // Send rotary set velocity command with string directions
+        manager!!.sendRotarySetVelocity(
+            0.8, "clockwise",
+            0.2, "counter-clockwise"
+        )
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.ROTARY_SET_VELOCITY, message[IpcKeys.ACTION])
+        assertEquals(0.8, message[IpcKeys.AZIMUTH_SPEED])
+        assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
+        assertEquals(0.2, message[IpcKeys.ELEVATION_SPEED])
+        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
+    }
+    
+    @Test
+    fun testSendRotaryHalt() {
+        setupManagerWithServer()
+        
+        // Send rotary halt command
+        manager!!.sendRotaryHalt()
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.ROTARY_HALT, message[IpcKeys.ACTION])
+    }
+    
+    @Test
+    fun testSendCommand() {
+        setupManagerWithServer()
+        
+        // Send generic command
+        manager!!.sendCommand("some-action", mapOf(IpcKeys.STREAM_TYPE to IpcKeys.HEAT))
+        
+        val message = receiveMessageFromManager()
+        assertNotNull(message)
+        assertEquals(IpcKeys.COMMAND, message!![IpcKeys.MSG_TYPE])
+        assertEquals(IpcKeys.keyword("some-action"), message[IpcKeys.ACTION])
         assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
     }
     
@@ -226,7 +294,7 @@ class IpcManagerTest {
         setupManagerWithServer()
         
         // Send message synchronously
-        val message = mapOf(
+        val message = mapOf<Any, Any>(
             IpcKeys.MSG_TYPE to IpcKeys.LOG,
             IpcKeys.MESSAGE to "Sync message"
         )
@@ -339,7 +407,7 @@ class IpcManagerTest {
      */
     private fun serializeTransitMessage(message: Map<*, *>): ByteArray {
         val baos = ByteArrayOutputStream()
-        val writer = TransitFactory.writer(
+        val writer = TransitFactory.writer<Any>(
             TransitFactory.Format.MSGPACK,
             baos,
             null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?

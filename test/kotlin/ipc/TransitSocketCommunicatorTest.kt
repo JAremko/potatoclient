@@ -70,11 +70,12 @@ class TransitSocketCommunicatorTest {
         serverFuture.get(2, TimeUnit.SECONDS)
         
         // Send message from client to server
-        val message = mapOf(
+        val message = mapOf<Any, Any>(
             IpcKeys.MSG_TYPE to IpcKeys.EVENT,
-            IpcKeys.TYPE to IpcKeys.GESTURE,
-            IpcKeys.X to 100,
-            IpcKeys.Y to 200
+            IpcKeys.TYPE to IpcKeys.WINDOW,
+            IpcKeys.ACTION to IpcKeys.RESIZE,
+            IpcKeys.WIDTH to 1920,
+            IpcKeys.HEIGHT to 1080
         )
         
         clientComm!!.sendMessage(message)
@@ -83,9 +84,10 @@ class TransitSocketCommunicatorTest {
         val received = serverComm!!.readMessage()
         assertNotNull(received)
         assertEquals(IpcKeys.EVENT, received!![IpcKeys.MSG_TYPE])
-        assertEquals(IpcKeys.GESTURE, received[IpcKeys.TYPE])
-        assertEquals(100, received[IpcKeys.X])
-        assertEquals(200, received[IpcKeys.Y])
+        assertEquals(IpcKeys.WINDOW, received[IpcKeys.TYPE])
+        assertEquals(IpcKeys.RESIZE, received[IpcKeys.ACTION])
+        assertEquals(1920, received[IpcKeys.WIDTH])
+        assertEquals(1080, received[IpcKeys.HEIGHT])
     }
     
     @Test
@@ -95,7 +97,7 @@ class TransitSocketCommunicatorTest {
         // Create message with envelope
         val message = clientComm!!.createMessage(
             IpcKeys.LOG,
-            mapOf(
+            mapOf<Any, Any>(
                 IpcKeys.LEVEL to IpcKeys.INFO,
                 IpcKeys.MESSAGE to "Test log message"
             )
@@ -152,7 +154,7 @@ class TransitSocketCommunicatorTest {
         val logMessage = clientComm!!.createLogMessage(
             IpcKeys.ERROR,
             "Test error message",
-            mapOf("error_code" to 500)
+            mapOf<Any, Any>("error_code" to 500)
         )
         
         clientComm!!.sendMessage(logMessage)
@@ -176,7 +178,7 @@ class TransitSocketCommunicatorTest {
         
         // Send multiple messages
         for (i in 1..10) {
-            val message = mapOf(
+            val message = mapOf<Any, Any>(
                 IpcKeys.MSG_TYPE to IpcKeys.METRIC,
                 "value" to i,
                 "name" to "metric_$i"
@@ -199,7 +201,7 @@ class TransitSocketCommunicatorTest {
         establishConnection()
         
         // Create message with various keyword types
-        val message = mapOf(
+        val message = mapOf<Any, Any>(
             IpcKeys.MSG_TYPE to IpcKeys.COMMAND,
             IpcKeys.ACTION to IpcKeys.ROTARY_GOTO_NDC,
             IpcKeys.STREAM_TYPE to IpcKeys.HEAT,
@@ -227,7 +229,7 @@ class TransitSocketCommunicatorTest {
         establishConnection()
         
         // Use direct send (non-coroutine)
-        val message = mapOf(
+        val message = mapOf<Any, Any>(
             IpcKeys.MSG_TYPE to IpcKeys.LOG,
             IpcKeys.MESSAGE to "Direct send test"
         )
@@ -251,7 +253,7 @@ class TransitSocketCommunicatorTest {
         assertFalse(serverComm!!.hasMessage())
         
         // Send a message
-        clientComm!!.sendMessage(mapOf(IpcKeys.MSG_TYPE to IpcKeys.EVENT))
+        clientComm!!.sendMessage(mapOf<Any, Any>(IpcKeys.MSG_TYPE to IpcKeys.EVENT))
         
         // Give time for message to arrive
         delay(100)

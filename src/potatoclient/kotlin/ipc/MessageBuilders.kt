@@ -111,14 +111,16 @@ object MessageBuilders {
         streamType: Keyword,
         azimuthSpeed: Double,
         elevationSpeed: Double,
-        azimuthDirection: Keyword
+        azimuthDirection: Keyword,
+        elevationDirection: Keyword
     ): Map<Any, Any> = command(
         IpcKeys.ROTARY_SET_VELOCITY,
         streamType,
         mapOf(
             IpcKeys.AZIMUTH_SPEED to azimuthSpeed,
             IpcKeys.ELEVATION_SPEED to elevationSpeed,
-            IpcKeys.AZIMUTH_DIRECTION to azimuthDirection
+            IpcKeys.AZIMUTH_DIRECTION to azimuthDirection,
+            IpcKeys.ELEVATION_DIRECTION to elevationDirection
         )
     )
     

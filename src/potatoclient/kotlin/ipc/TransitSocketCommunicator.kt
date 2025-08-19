@@ -5,6 +5,7 @@ import com.cognitect.transit.TransitFactory
 import com.cognitect.transit.Writer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -30,10 +31,10 @@ class TransitSocketCommunicator private constructor(
     private val messageQueue = Channel<Map<*, *>>(Channel.UNLIMITED)
     private val isRunning = AtomicBoolean(false)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    
+
     // Transit handlers for custom types
     private val writeHandlers: Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>> = mapOf()
-    
+
     private val readHandlers = mapOf(
         "kw" to com.cognitect.transit.ReadHandler<Any, Any> { rep ->
             TransitFactory.keyword(rep.toString())
@@ -42,7 +43,7 @@ class TransitSocketCommunicator private constructor(
             TransitFactory.keyword(rep.toString())
         }
     )
-    
+
     /**
      * Start the communicator and begin processing messages.
      */
@@ -50,17 +51,17 @@ class TransitSocketCommunicator private constructor(
         if (isRunning.getAndSet(true)) {
             throw IllegalStateException("Communicator already running")
         }
-        
+
         withContext(Dispatchers.IO) {
             socketComm.start()
         }
-        
+
         // Start reader coroutine
         scope.launch {
             startReading()
         }
     }
-    
+
     /**
      * Send a Transit message through the socket.
      */
@@ -69,12 +70,12 @@ class TransitSocketCommunicator private constructor(
             val baos = ByteArrayOutputStream()
             val writer = createWriter(baos)
             writer.write(message)
-            
+
             val messageBytes = baos.toByteArray()
             socketComm.send(messageBytes)
         }
     }
-    
+
     /**
      * Send a message directly without coroutine overhead (for critical paths).
      */
@@ -82,11 +83,11 @@ class TransitSocketCommunicator private constructor(
         val baos = ByteArrayOutputStream()
         val writer = createWriter(baos)
         writer.write(message)
-        
+
         val messageBytes = baos.toByteArray()
         socketComm.send(messageBytes)
     }
-    
+
     /**
      * Read a message from the queue.
      */
@@ -96,12 +97,12 @@ class TransitSocketCommunicator private constructor(
         } else {
             null
         }
-    
+
     /**
      * Check if a message is available.
      */
     fun hasMessage(): Boolean = !messageQueue.tryReceive().isFailure
-    
+
     /**
      * Start reading messages from the socket.
      */
@@ -114,7 +115,7 @@ class TransitSocketCommunicator private constructor(
                         val bais = ByteArrayInputStream(messageBytes)
                         val reader = createReader(bais)
                         val message = reader.read<Any>()
-                        
+
                         if (message is Map<*, *>) {
                             // Non-blocking send to avoid blocking the reader
                             val sent = messageQueue.trySend(message).isSuccess
@@ -135,7 +136,7 @@ class TransitSocketCommunicator private constructor(
             }
         }
     }
-    
+
     /**
      * Create a standard message envelope.
      */
@@ -148,7 +149,7 @@ class TransitSocketCommunicator private constructor(
         IpcKeys.TIMESTAMP to System.currentTimeMillis(),
         IpcKeys.PAYLOAD to payload
     )
-    
+
     /**
      * Create a standard event message.
      */
@@ -159,7 +160,7 @@ class TransitSocketCommunicator private constructor(
         IpcKeys.EVENT,
         eventData + mapOf(IpcKeys.TYPE to eventType)
     )
-    
+
     /**
      * Create a standard log message.
      */
@@ -178,28 +179,28 @@ class TransitSocketCommunicator private constructor(
             }
         }
     )
-    
+
     /**
      * Stop the communicator and clean up resources.
      */
     fun stop() {
         isRunning.set(false)
-        scope.cancel()
-        
+        scope.cancel(null as kotlinx.coroutines.CancellationException?)
+
         try {
             messageQueue.close()
         } catch (e: Exception) {
             // Ignore channel close errors
         }
-        
+
         socketComm.stop()
     }
-    
+
     /**
      * Check if the communicator is running.
      */
     fun isRunning(): Boolean = isRunning.get() && socketComm.isRunning()
-    
+
     private fun createWriter(out: ByteArrayOutputStream): Writer<Any> =
         if (writeHandlers.isNotEmpty()) {
             TransitFactory.writer(
@@ -214,18 +215,18 @@ class TransitSocketCommunicator private constructor(
                 null as Map<Class<*>, com.cognitect.transit.WriteHandler<*, *>>?
             )
         }
-    
+
     private fun createReader(input: ByteArrayInputStream): Reader =
         TransitFactory.reader(
             TransitFactory.Format.MSGPACK,
             input,
             TransitFactory.readHandlerMap(readHandlers)
         )
-    
+
     companion object {
         @Volatile
         private var instance: TransitSocketCommunicator? = null
-        
+
         /**
          * Create or get the singleton instance for Kotlin video stream process.
          * Uses a dynamically generated socket path.
@@ -236,17 +237,17 @@ class TransitSocketCommunicator private constructor(
                 instance ?: run {
                     // Generate socket path for this stream
                     val socketPath = SocketFactory.generateStreamSocketPath(streamId)
-                    
+
                     // Create client socket (Clojure side will be server)
                     val socketComm = SocketFactory.createClient(socketPath)
-                    
+
                     TransitSocketCommunicator(socketComm, streamId).also {
                         instance = it
                     }
                 }
             }
         }
-        
+
         /**
          * Create a communicator with a specific socket path.
          * Useful for testing or custom configurations.
@@ -260,7 +261,7 @@ class TransitSocketCommunicator private constructor(
             }
             return TransitSocketCommunicator(socketComm, streamId)
         }
-        
+
         /**
          * Reset the singleton instance (mainly for testing).
          */

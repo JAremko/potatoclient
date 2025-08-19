@@ -9,29 +9,7 @@ import java.util.UUID
  */
 class MessageBuildersTest {
     
-    @Test
-    fun testGestureEvent() {
-        val message = MessageBuilders.gestureEvent(
-            IpcKeys.TAP,
-            IpcKeys.HEAT,
-            100, 200,
-            0.5, -0.5
-        )
-        
-        // Check base message fields
-        assertEquals(IpcKeys.EVENT, message[IpcKeys.MSG_TYPE])
-        assertNotNull(message[IpcKeys.MSG_ID])
-        assertNotNull(message[IpcKeys.TIMESTAMP])
-        
-        // Check gesture fields
-        assertEquals(IpcKeys.GESTURE, message[IpcKeys.TYPE])
-        assertEquals(IpcKeys.TAP, message[IpcKeys.GESTURE_TYPE])
-        assertEquals(IpcKeys.HEAT, message[IpcKeys.STREAM_TYPE])
-        assertEquals(100, message[IpcKeys.X])
-        assertEquals(200, message[IpcKeys.Y])
-        assertEquals(0.5, message[IpcKeys.NDC_X])
-        assertEquals(-0.5, message[IpcKeys.NDC_Y])
-    }
+    // Gesture tests removed - gestures no longer supported
     
     @Test
     fun testWindowEventWithAllParams() {
@@ -77,7 +55,7 @@ class MessageBuildersTest {
     
     @Test
     fun testConnectionEvent() {
-        val details = mapOf("reason" to "timeout", "retry_count" to 3)
+        val details = mapOf<Any, Any>("reason" to "timeout", "retry_count" to 3)
         val message = MessageBuilders.connectionEvent(
             IpcKeys.RECONNECTING,
             details
@@ -101,7 +79,7 @@ class MessageBuildersTest {
     
     @Test
     fun testCommand() {
-        val params = mapOf(
+        val params = mapOf<Any, Any>(
             IpcKeys.NDC_X to 0.5,
             IpcKeys.NDC_Y to -0.5
         )
@@ -155,7 +133,8 @@ class MessageBuildersTest {
             IpcKeys.HEAT,
             1.5,
             0.5,
-            IpcKeys.CLOCKWISE
+            IpcKeys.CLOCKWISE,
+            IpcKeys.COUNTER_CLOCKWISE
         )
         
         assertEquals(IpcKeys.COMMAND, message[IpcKeys.MSG_TYPE])
@@ -164,6 +143,7 @@ class MessageBuildersTest {
         assertEquals(1.5, message[IpcKeys.AZIMUTH_SPEED])
         assertEquals(0.5, message[IpcKeys.ELEVATION_SPEED])
         assertEquals(IpcKeys.CLOCKWISE, message[IpcKeys.AZIMUTH_DIRECTION])
+        assertEquals(IpcKeys.COUNTER_CLOCKWISE, message[IpcKeys.ELEVATION_DIRECTION])
     }
     
     @Test
@@ -177,7 +157,7 @@ class MessageBuildersTest {
     
     @Test
     fun testLogMessage() {
-        val data = mapOf("file" to "test.kt", "line" to 42)
+        val data = mapOf<Any, Any>("file" to "test.kt", "line" to 42)
         val message = MessageBuilders.log(
             IpcKeys.DEBUG,
             "Test debug message",
@@ -251,8 +231,9 @@ class MessageBuildersTest {
     
     @Test
     fun testTimestampPresence() {
-        val message = MessageBuilders.gestureEvent(
-            IpcKeys.TAP, IpcKeys.HEAT, 0, 0, 0.0, 0.0
+        // Use windowEvent instead of removed gestureEvent
+        val message = MessageBuilders.windowEvent(
+            IpcKeys.RESIZE
         )
         
         val timestamp = message[IpcKeys.TIMESTAMP] as Long

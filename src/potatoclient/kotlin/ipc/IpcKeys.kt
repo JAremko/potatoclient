@@ -40,10 +40,8 @@ object IpcKeys {
     @JvmField val MAXIMIZE = TransitFactory.keyword("maximize")
     @JvmField val RESTORE = TransitFactory.keyword("restore")
     @JvmField val RESIZE = TransitFactory.keyword("resize")
-    @JvmField val CLOSE_REQUEST = TransitFactory.keyword("close-request")
     @JvmField val FOCUS = TransitFactory.keyword("focus")
     @JvmField val BLUR = TransitFactory.keyword("blur")
-    @JvmField val WINDOW_MOVE = TransitFactory.keyword("window-move")
     
     // Connection actions
     @JvmField val CONNECTED = TransitFactory.keyword("connected")
@@ -72,10 +70,15 @@ object IpcKeys {
     @JvmField val DELTA_X = TransitFactory.keyword("delta-x")
     @JvmField val DELTA_Y = TransitFactory.keyword("delta-y")
     
+    // Video/CV keys
+    @JvmField val CHANNEL = TransitFactory.keyword("channel")
+    @JvmField val FRAME_TIME = TransitFactory.keyword("frame-time")
+    
     // Velocity control keys
     @JvmField val AZIMUTH_SPEED = TransitFactory.keyword("azimuth-speed")
     @JvmField val ELEVATION_SPEED = TransitFactory.keyword("elevation-speed")
     @JvmField val AZIMUTH_DIRECTION = TransitFactory.keyword("azimuth-direction")
+    @JvmField val ELEVATION_DIRECTION = TransitFactory.keyword("elevation-direction")
     
     // Direction values
     @JvmField val CLOCKWISE = TransitFactory.keyword("clockwise")

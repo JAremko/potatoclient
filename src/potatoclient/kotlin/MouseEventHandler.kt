@@ -1,5 +1,6 @@
 package potatoclient.kotlin
 
+import com.cognitect.transit.TransitFactory
 import potatoclient.java.transit.EventType
 import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.GestureConfig
@@ -8,7 +9,6 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
-import potatoclient.kotlin.gestures.toKeyword
 import potatoclient.kotlin.transit.TransitKeys
 import java.awt.Component
 import java.awt.event.MouseAdapter
@@ -108,7 +108,13 @@ class MouseEventHandler(
             mutableMapOf<Any, Any>(
                 TransitKeys.MSG_TYPE to TransitKeys.EVENT,
                 TransitKeys.TYPE to TransitKeys.GESTURE,
-                TransitKeys.GESTURE_TYPE to gesture.getEventType().toKeyword(),
+                TransitKeys.GESTURE_TYPE to when(gesture) {
+                    is GestureEvent.Tap -> TransitFactory.keyword("tap")
+                    is GestureEvent.DoubleTap -> TransitFactory.keyword("double-tap")
+                    is GestureEvent.PanStart -> TransitFactory.keyword("pan-start")
+                    is GestureEvent.PanMove -> TransitFactory.keyword("pan-move")
+                    is GestureEvent.PanStop -> TransitFactory.keyword("pan-stop")
+                },
                 TransitKeys.TIMESTAMP to gesture.timestamp,
                 TransitKeys.CANVAS_WIDTH to canvasWidth,
                 TransitKeys.CANVAS_HEIGHT to canvasHeight,
