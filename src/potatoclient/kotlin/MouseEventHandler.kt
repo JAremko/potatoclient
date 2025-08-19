@@ -8,6 +8,7 @@ import potatoclient.kotlin.gestures.GestureRecognizer
 import potatoclient.kotlin.gestures.PanController
 import potatoclient.kotlin.gestures.RotaryDirection
 import potatoclient.kotlin.gestures.StreamType
+import potatoclient.kotlin.gestures.toKeyword
 import potatoclient.kotlin.transit.TransitKeys
 import java.awt.Component
 import java.awt.event.MouseAdapter
@@ -81,16 +82,16 @@ class MouseEventHandler(
                 e.wheelRotation < 0 -> {
                     // Wheel up = zoom in
                     val command: Map<Any, Any> = mapOf(
-                        TransitKeys.TYPE to "command",
-                        TransitKeys.COMMAND_TYPE to if (streamType == StreamType.HEAT) "heat-camera-next-zoom" else "day-camera-next-zoom"
+                        TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+                        TransitKeys.ACTION to if (streamType == StreamType.HEAT) TransitKeys.HEAT_CAMERA_NEXT_ZOOM else TransitKeys.DAY_CAMERA_NEXT_ZOOM
                     )
                     callback.sendCommand(command)
                 }
                 e.wheelRotation > 0 -> {
                     // Wheel down = zoom out
                     val command: Map<Any, Any> = mapOf(
-                        TransitKeys.TYPE to "command",
-                        TransitKeys.COMMAND_TYPE to if (streamType == StreamType.HEAT) "heat-camera-prev-zoom" else "day-camera-prev-zoom"
+                        TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+                        TransitKeys.ACTION to if (streamType == StreamType.HEAT) TransitKeys.HEAT_CAMERA_PREV_ZOOM else TransitKeys.DAY_CAMERA_PREV_ZOOM
                     )
                     callback.sendCommand(command)
                 }
@@ -105,13 +106,14 @@ class MouseEventHandler(
 
         val baseEvent =
             mutableMapOf<Any, Any>(
-                TransitKeys.TYPE to EventType.GESTURE,
-                TransitKeys.GESTURE_TYPE to gesture.getEventType(),
+                TransitKeys.MSG_TYPE to TransitKeys.EVENT,
+                TransitKeys.TYPE to TransitKeys.GESTURE,
+                TransitKeys.GESTURE_TYPE to gesture.getEventType().toKeyword(),
                 TransitKeys.TIMESTAMP to gesture.timestamp,
                 TransitKeys.CANVAS_WIDTH to canvasWidth,
                 TransitKeys.CANVAS_HEIGHT to canvasHeight,
                 TransitKeys.ASPECT_RATIO to aspectRatio,
-                TransitKeys.STREAM_TYPE to streamType.toKeyword(),
+                TransitKeys.STREAM_TYPE to if (streamType == StreamType.HEAT) TransitKeys.HEAT else TransitKeys.DAY
             )
 
         when (gesture) {
@@ -204,9 +206,9 @@ class MouseEventHandler(
         ndcY: Double,
     ) {
         val command: Map<Any, Any> = mapOf(
-            TransitKeys.TYPE to "command",
-            TransitKeys.COMMAND_TYPE to "rotary-goto-ndc",
-            TransitKeys.STREAM_TYPE to streamType.toKeyword(),
+            TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+            TransitKeys.ACTION to TransitKeys.ROTARY_GOTO_NDC,
+            TransitKeys.STREAM_TYPE to if (streamType == StreamType.HEAT) TransitKeys.HEAT else TransitKeys.DAY,
             TransitKeys.NDC_X to ndcX,
             TransitKeys.NDC_Y to ndcY
         )
@@ -219,9 +221,9 @@ class MouseEventHandler(
         frameTimestamp: Long?,
     ) {
         val command: MutableMap<Any, Any> = mutableMapOf(
-            TransitKeys.TYPE to "command",
-            TransitKeys.COMMAND_TYPE to "cv-start-track-ndc",
-            TransitKeys.STREAM_TYPE to streamType.toKeyword(),
+            TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+            TransitKeys.ACTION to TransitKeys.CV_START_TRACK_NDC,
+            TransitKeys.STREAM_TYPE to if (streamType == StreamType.HEAT) TransitKeys.HEAT else TransitKeys.DAY,
             TransitKeys.NDC_X to ndcX,
             TransitKeys.NDC_Y to ndcY
         )
@@ -236,20 +238,20 @@ class MouseEventHandler(
         elDir: RotaryDirection,
     ) {
         val command: Map<Any, Any> = mapOf(
-            TransitKeys.TYPE to "command",
-            TransitKeys.COMMAND_TYPE to "rotary-set-velocity",
+            TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+            TransitKeys.ACTION to TransitKeys.ROTARY_SET_VELOCITY,
             TransitKeys.AZIMUTH_SPEED to azSpeed,
             TransitKeys.ELEVATION_SPEED to elSpeed,
-            TransitKeys.AZIMUTH_DIRECTION to azDir.toKeyword(),
-            TransitKeys.ELEVATION_DIRECTION to elDir.toKeyword()
+            TransitKeys.AZIMUTH_DIRECTION to if (azDir == RotaryDirection.CLOCKWISE) TransitKeys.CLOCKWISE else TransitKeys.COUNTER_CLOCKWISE,
+            TransitKeys.ELEVATION_DIRECTION to if (elDir == RotaryDirection.CLOCKWISE) TransitKeys.CLOCKWISE else TransitKeys.COUNTER_CLOCKWISE
         )
         callback.sendCommand(command)
     }
 
     private fun sendRotaryHaltCommand() {
         val command: Map<Any, Any> = mapOf(
-            TransitKeys.TYPE to "command",
-            TransitKeys.COMMAND_TYPE to "rotary-halt"
+            TransitKeys.MSG_TYPE to TransitKeys.COMMAND,
+            TransitKeys.ACTION to TransitKeys.ROTARY_HALT
         )
         callback.sendCommand(command)
     }

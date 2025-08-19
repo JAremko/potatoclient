@@ -149,3 +149,103 @@ When Guardrails is enabled (`-Dguardrails.enabled=true`) and using Malli Guardra
 - Prefer pure functions where possible
 - Use meaningful names that reflect intent
 - Document complex logic inline when necessary
+
+## IPC Protocol Architecture
+
+### Transit Keywords - The Foundation
+**CRITICAL: Always use Transit Keywords for IPC communication**
+- **Kotlin/Java side**: Use `com.cognitect.transit.Keyword` via `TransitFactory.keyword("name")`
+- **Clojure side**: Automatically converts Transit Keywords to Clojure keywords
+- **Never use strings** for message types, actions, or enum values - always use Transit Keywords
+- This eliminates type conversion issues and ensures protocol consistency
+
+### Message Types
+All IPC messages follow this structure with Transit Keywords:
+```clojure
+{:msg-type :event|:command|:log|:metric  ; Message type (Transit Keyword)
+ :timestamp 1234567890                    ; Unix timestamp
+ ...payload}                              ; Type-specific data
+```
+
+### Event Messages
+Events from Kotlin video streams to Clojure:
+
+**Gesture Events:**
+```clojure
+{:msg-type :event
+ :type :gesture
+ :gesture-type :tap|:double-tap|:pan-start|:pan-move|:pan-stop
+ :stream-type :heat|:day
+ :x 100 :y 200                           ; Pixel coordinates
+ :ndc-x 0.5 :ndc-y -0.5                  ; Normalized device coordinates
+ :timestamp 1234567890}
+```
+
+**Window Events:**
+```clojure
+{:msg-type :event
+ :type :window
+ :action :minimize|:maximize|:restore|:resize|:close-request|:focus|:blur|:window-move
+ :width 1920 :height 1080                ; For resize events
+ :delta-x 10 :delta-y 20                 ; Relative changes
+ :x 100 :y 100                           ; For move events
+ :timestamp 1234567890}
+```
+- Resize and move events are automatically throttled (default 100ms)
+- All events include relative data (deltas) when applicable
+
+**Connection Events (future):**
+```clojure
+{:msg-type :event
+ :type :connection
+ :action :connected|:disconnected|:timeout|:reconnecting|:connection-error
+ :details {...}                          ; Connection-specific data
+ :timestamp 1234567890}
+```
+
+### Command Messages
+Commands sent from Kotlin to be forwarded to server:
+```clojure
+{:msg-type :command
+ :action :rotary-goto-ndc|:cv-start-track-ndc|:rotary-set-velocity|:rotary-halt
+ :stream-type :heat|:day                 ; Which camera stream
+ :ndc-x 0.5 :ndc-y -0.5                 ; For goto commands
+ :azimuth-speed 1.0 :elevation-speed 0.5 ; For velocity commands
+ :azimuth-direction :clockwise|:counter-clockwise
+ :timestamp 1234567890}
+```
+
+### Log Messages
+Structured logging from Kotlin components:
+```clojure
+{:msg-type :log
+ :level :debug|:info|:warn|:error
+ :message "Log message"
+ :process "video-stream"                 ; Source process
+ :data {...}                            ; Additional context
+ :timestamp 1234567890}
+```
+
+### Removed Message Types
+The following have been removed in the refactoring:
+- **Request/Response messages** - No longer needed with in-process state/commands
+- **State update messages** - Now handled in-process by Clojure
+
+### Implementation Notes
+
+**Kotlin Side (`TransitKeys.kt`):**
+- All message keys are pre-created Transit Keywords
+- Use `TransitKeys.MSG_TYPE`, `TransitKeys.EVENT`, etc.
+- Never use string literals for keys or enum values
+
+**Clojure Side:**
+- Transit Keywords automatically convert to Clojure keywords
+- No manual conversion needed - `:msg-type`, `:event`, etc. work directly
+- Use `case` or `cond` with keywords for message dispatch
+
+**Key Benefits:**
+1. Type safety - Transit Keywords are strongly typed
+2. No string conversion bugs
+3. Cleaner code on both sides
+4. Better performance (no string parsing)
+5. IDE autocomplete support

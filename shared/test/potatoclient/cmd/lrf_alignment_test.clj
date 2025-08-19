@@ -2,6 +2,8 @@
   "Tests for LRF Alignment/Calibration command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.lrf-alignment :as lrf-align]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,8 +33,9 @@
   (testing "set-day-offsets creates valid command"
     (let [result (lrf-align/set-day-offsets 100 -50)]
       (is (m/validate :cmd/root result))
-      (is (= 100 (get-in result [:lrf_calib :day :set :x])))
-      (is (= -50 (get-in result [:lrf_calib :day :set :y])))
+      (is (match? {:lrf_calib {:day {:set {:x 100
+                                            :y -50}}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -42,22 +45,25 @@
   (testing "shift-day-offsets creates valid command"
     (let [result (lrf-align/shift-day-offsets -200 150)]
       (is (m/validate :cmd/root result))
-      (is (= -200 (get-in result [:lrf_calib :day :shift :x])))
-      (is (= 150 (get-in result [:lrf_calib :day :shift :y])))
+      (is (match? {:lrf_calib {:day {:shift {:x -200
+                                              :y 150}}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "save-day-offsets creates valid command"
     (let [result (lrf-align/save-day-offsets)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:lrf_calib :day :save])))
+      (is (match? {:lrf_calib {:day {:save {}}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "reset-day-offsets creates valid command"
     (let [result (lrf-align/reset-day-offsets)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:lrf_calib :day :reset])))
+      (is (match? {:lrf_calib {:day {:reset {}}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
@@ -69,8 +75,9 @@
   (testing "set-heat-offsets creates valid command"
     (let [result (lrf-align/set-heat-offsets -300 250)]
       (is (m/validate :cmd/root result))
-      (is (= -300 (get-in result [:lrf_calib :heat :set :x])))
-      (is (= 250 (get-in result [:lrf_calib :heat :set :y])))
+      (is (match? {:lrf_calib {:heat {:set {:x -300
+                                             :y 250}}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   

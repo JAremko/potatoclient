@@ -59,6 +59,7 @@ object TransitKeys {
 
     // Event type key
     val TYPE: Keyword = TransitFactory.keyword("type")
+    val GESTURE: Keyword = TransitFactory.keyword("gesture")
     
     // Additional keys from MessageKeys.java
     val DATA: Keyword = TransitFactory.keyword("data")
@@ -77,12 +78,25 @@ object TransitKeys {
     val STATE: Keyword = TransitFactory.keyword("state")
     
     // Command-specific keys
-    val COMMAND_TYPE: Keyword = TransitFactory.keyword("command-type")
+    val COMMAND: Keyword = TransitFactory.keyword("command")
+    val EVENT: Keyword = TransitFactory.keyword("event")
+    val LOG: Keyword = TransitFactory.keyword("log")
+    val METRIC: Keyword = TransitFactory.keyword("metric")
     val ROTARY: Keyword = TransitFactory.keyword("rotary")
     val CV: Keyword = TransitFactory.keyword("cv")
+    val HEAT: Keyword = TransitFactory.keyword("heat")
+    val DAY: Keyword = TransitFactory.keyword("day")
     val HEAT_CAMERA: Keyword = TransitFactory.keyword("heat-camera")
     val DAY_CAMERA: Keyword = TransitFactory.keyword("day-camera")
+    val HEAT_CAMERA_NEXT_ZOOM: Keyword = TransitFactory.keyword("heat-camera-next-zoom")
+    val HEAT_CAMERA_PREV_ZOOM: Keyword = TransitFactory.keyword("heat-camera-prev-zoom")
+    val DAY_CAMERA_NEXT_ZOOM: Keyword = TransitFactory.keyword("day-camera-next-zoom")
+    val DAY_CAMERA_PREV_ZOOM: Keyword = TransitFactory.keyword("day-camera-prev-zoom")
     val GUI: Keyword = TransitFactory.keyword("gui")
+    val ROTARY_GOTO_NDC: Keyword = TransitFactory.keyword("rotary-goto-ndc")
+    val ROTARY_SET_VELOCITY: Keyword = TransitFactory.keyword("rotary-set-velocity")
+    val ROTARY_HALT: Keyword = TransitFactory.keyword("rotary-halt")
+    val CV_START_TRACK_NDC: Keyword = TransitFactory.keyword("cv-start-track-ndc")
     val GOTO_NDC: Keyword = TransitFactory.keyword("goto-ndc")
     val START_TRACK_NDC: Keyword = TransitFactory.keyword("start-track-ndc")
     val STOP_TRACK: Keyword = TransitFactory.keyword("stop-track")
@@ -100,6 +114,8 @@ object TransitKeys {
     val DELTA_Y: Keyword = TransitFactory.keyword("delta-y")
     val NDC_DELTA_X: Keyword = TransitFactory.keyword("ndc-delta-x")
     val NDC_DELTA_Y: Keyword = TransitFactory.keyword("ndc-delta-y")
+    val CLOCKWISE: Keyword = TransitFactory.keyword("clockwise")
+    val COUNTER_CLOCKWISE: Keyword = TransitFactory.keyword("counter-clockwise")
     
     // Response type keywords
     val PONG: Keyword = TransitFactory.keyword("pong")
@@ -120,6 +136,25 @@ object TransitKeys {
     val PROTO_TYPE: Keyword = TransitFactory.keyword("proto-type")
     val SIZE: Keyword = TransitFactory.keyword("size")
     val RATE_LIMIT_HZ: Keyword = TransitFactory.keyword("rate-limit-hz")
+    
+    // Window event keys
+    val WINDOW: Keyword = TransitFactory.keyword("window")
+    val WINDOW_MOVE: Keyword = TransitFactory.keyword("window-move")
+    val MINIMIZE: Keyword = TransitFactory.keyword("minimize")
+    val MAXIMIZE: Keyword = TransitFactory.keyword("maximize")
+    val RESTORE: Keyword = TransitFactory.keyword("restore")
+    val RESIZE: Keyword = TransitFactory.keyword("resize")
+    val CLOSE_REQUEST: Keyword = TransitFactory.keyword("close-request")
+    val FOCUS: Keyword = TransitFactory.keyword("focus")
+    val BLUR: Keyword = TransitFactory.keyword("blur")
+    
+    // Connection event keys
+    val CONNECTION: Keyword = TransitFactory.keyword("connection")
+    val CONNECTED: Keyword = TransitFactory.keyword("connected")
+    val DISCONNECTED: Keyword = TransitFactory.keyword("disconnected")
+    val RECONNECTING: Keyword = TransitFactory.keyword("reconnecting")
+    val TIMEOUT: Keyword = TransitFactory.keyword("timeout")
+    val CONNECTION_ERROR: Keyword = TransitFactory.keyword("connection-error")
     
     // Additional keys from MessageKeys.java (camelCase versions)
     val STREAM_ID: Keyword = TransitFactory.keyword("streamId")

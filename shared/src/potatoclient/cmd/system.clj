@@ -3,7 +3,12 @@
    These commands are under the :system key in the cmd root proto."
   (:require
    [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
-   [potatoclient.cmd.core :as core]))
+   [potatoclient.cmd.core :as core]
+   [potatoclient.malli.registry :as registry]
+   [potatoclient.specs.common])) ; Load enum specs
+
+;; Initialize registry to access specs
+(registry/setup-global-registry!)
 
 ;; ============================================================================
 ;; System Commands (under :system key in payload oneof)
@@ -67,7 +72,7 @@
    - :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS
    Returns a fully formed cmd root ready to send."
   [localization]
-  [:keyword => :cmd/root]
+  [:enum/system-localizations => :cmd/root]
   (core/create-command {:system {:localization {:loc localization}}}))
 
 (>defn enter-transport

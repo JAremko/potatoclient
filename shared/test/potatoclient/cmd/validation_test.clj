@@ -3,6 +3,8 @@
    Ensures our validation logic correctly detects both valid and invalid cases."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.validation :as v]
    [potatoclient.cmd.builder :as builder]
    [potatoclient.proto.serialize :as serialize]

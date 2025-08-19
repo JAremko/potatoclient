@@ -2,6 +2,8 @@
   "Tests for Heat Camera (thermal imaging) command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.heat-camera :as heat-camera]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]

@@ -2,6 +2,8 @@
   "Tests for OSD (On-Screen Display) command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.osd :as osd]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,7 +33,8 @@
   (testing "show-default-screen creates valid command"
     (let [result (osd/show-default-screen)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :show_default_screen])))
+      (is (match? {:osd {:show_default_screen {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -41,21 +44,24 @@
   (testing "show-lrf-measure-screen creates valid command"
     (let [result (osd/show-lrf-measure-screen)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :show_lrf_measure_screen])))
+      (is (match? {:osd {:show_lrf_measure_screen {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "show-lrf-result-screen creates valid command"
     (let [result (osd/show-lrf-result-screen)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :show_lrf_result_screen])))
+      (is (match? {:osd {:show_lrf_result_screen {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "show-lrf-result-simplified-screen creates valid command"
     (let [result (osd/show-lrf-result-simplified-screen)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :show_lrf_result_simplified_screen])))
+      (is (match? {:osd {:show_lrf_result_simplified_screen {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
@@ -67,14 +73,16 @@
   (testing "enable-heat-osd creates valid command"
     (let [result (osd/enable-heat-osd)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :enable_heat_osd])))
+      (is (match? {:osd {:enable_heat_osd {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "disable-heat-osd creates valid command"
     (let [result (osd/disable-heat-osd)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:osd :disable_heat_osd])))
+      (is (match? {:osd {:disable_heat_osd {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 

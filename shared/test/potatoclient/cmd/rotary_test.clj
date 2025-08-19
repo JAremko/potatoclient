@@ -2,6 +2,8 @@
   "Tests for Rotary Platform command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.rotary :as rotary]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,7 +33,8 @@
   (testing "start creates valid command"
     (let [result (rotary/start)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:rotary :start])))
+      (is (match? {:rotary {:start {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -41,14 +44,16 @@
   (testing "stop creates valid command"
     (let [result (rotary/stop)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:rotary :stop])))
+      (is (match? {:rotary {:stop {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "halt creates valid command"
     (let [result (rotary/halt)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:rotary :halt])))
+      (is (match? {:rotary {:halt {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
@@ -60,21 +65,24 @@
   (testing "set-platform-azimuth creates valid command"
     (let [result (rotary/set-platform-azimuth 45.5)]
       (is (m/validate :cmd/root result))
-      (is (= 45.5 (get-in result [:rotary :set_platform_azimuth :value])))
+      (is (match? {:rotary {:set_platform_azimuth {:value 45.5}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "set-platform-elevation creates valid command"
     (let [result (rotary/set-platform-elevation -30.0)]
       (is (m/validate :cmd/root result))
-      (is (= -30.0 (get-in result [:rotary :set_platform_elevation :value])))
+      (is (match? {:rotary {:set_platform_elevation {:value -30.0}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "set-platform-bank creates valid command"
     (let [result (rotary/set-platform-bank 15.0)]
       (is (m/validate :cmd/root result))
-      (is (= 15.0 (get-in result [:rotary :set_platform_bank :value])))
+      (is (match? {:rotary {:set_platform_bank {:value 15.0}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 

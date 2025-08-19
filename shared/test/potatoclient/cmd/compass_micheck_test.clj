@@ -2,6 +2,8 @@
   "Test compass functions using malli.instrument/check for generative testing."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.instrument :as mi]
    [potatoclient.cmd.compass :as compass]
    [potatoclient.test-harness :as harness]))

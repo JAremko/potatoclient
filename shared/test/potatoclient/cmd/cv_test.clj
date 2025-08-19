@@ -2,6 +2,8 @@
   "Tests for CV (Computer Vision) command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.cv :as cv]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -32,11 +34,11 @@
     (let [result (cv/start-track-ndc :JON_GUI_DATA_VIDEO_CHANNEL_DAY 
                                      0.5 -0.5 123456789)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_VIDEO_CHANNEL_DAY 
-             (get-in result [:cv :start_track_ndc :channel])))
-      (is (= 0.5 (get-in result [:cv :start_track_ndc :x])))
-      (is (= -0.5 (get-in result [:cv :start_track_ndc :y])))
-      (is (= 123456789 (get-in result [:cv :start_track_ndc :frame_time])))
+      (is (match? {:cv {:start_track_ndc {:channel :JON_GUI_DATA_VIDEO_CHANNEL_DAY
+                                           :x 0.5
+                                           :y -0.5
+                                           :frame_time 123456789}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -47,10 +49,10 @@
     (let [result (cv/start-track-ndc :JON_GUI_DATA_VIDEO_CHANNEL_HEAT 
                                      -1.0 1.0 987654321)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_VIDEO_CHANNEL_HEAT
-             (get-in result [:cv :start_track_ndc :channel])))
-      (is (= -1.0 (get-in result [:cv :start_track_ndc :x])))
-      (is (= 1.0 (get-in result [:cv :start_track_ndc :y])))
+      (is (match? {:cv {:start_track_ndc {:channel :JON_GUI_DATA_VIDEO_CHANNEL_HEAT
+                                           :x -1.0
+                                           :y 1.0}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -61,8 +63,9 @@
     (let [result (cv/start-track-ndc :JON_GUI_DATA_VIDEO_CHANNEL_DAY 
                                      0.0 0.0 0)]
       (is (m/validate :cmd/root result))
-      (is (= 0.0 (get-in result [:cv :start_track_ndc :x])))
-      (is (= 0.0 (get-in result [:cv :start_track_ndc :y])))
+      (is (match? {:cv {:start_track_ndc {:x 0.0
+                                           :y 0.0}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -73,7 +76,8 @@
   (testing "stop-track creates valid command"
     (let [result (cv/stop-track)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:cv :stop_track])))
+      (is (match? {:cv {:stop_track {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -88,9 +92,9 @@
   (testing "set-auto-focus creates valid command with DAY channel"
     (let [result (cv/set-auto-focus :JON_GUI_DATA_VIDEO_CHANNEL_DAY true)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_VIDEO_CHANNEL_DAY 
-             (get-in result [:cv :set_auto_focus :channel])))
-      (is (= true (get-in result [:cv :set_auto_focus :value])))
+      (is (match? {:cv {:set_auto_focus {:channel :JON_GUI_DATA_VIDEO_CHANNEL_DAY
+                                          :value true}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 

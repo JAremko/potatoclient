@@ -11,20 +11,12 @@ import kotlin.math.sqrt
 
 enum class StreamType {
     HEAT,
-    DAY,
-    ;
-
-    fun toKeyword(): String = name.lowercase().replace("_", "-")
+    DAY
 }
 
 enum class RotaryDirection {
     CLOCKWISE,
-    COUNTER_CLOCKWISE;
-    
-    fun toKeyword(): String = when (this) {
-        CLOCKWISE -> "clockwise"
-        COUNTER_CLOCKWISE -> "counter-clockwise"
-    }
+    COUNTER_CLOCKWISE
 }
 
 data class PanState(

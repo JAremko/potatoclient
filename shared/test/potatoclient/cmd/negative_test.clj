@@ -3,6 +3,8 @@
    These tests deliberately pass invalid arguments to ensure proper error handling."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.root :as root]
    [potatoclient.cmd.system :as sys]
    [potatoclient.cmd.core :as core]
@@ -103,8 +105,10 @@
       ;; create-command should return :cmd/root
       (let [valid-result (core/create-command {:ping {}})]
         (is (map? valid-result) "Should return a map")
-        (is (contains? valid-result :protocol_version) "Should have protocol fields")
-        (is (contains? valid-result :ping) "Should have payload")))
+        (is (match? {:protocol_version any?
+                     :ping map?}
+                    valid-result)
+            "Should have protocol fields and payload")))
     
     (testing "Argument validation should throw on invalid input"
       ;; create-command expects a map
@@ -136,16 +140,18 @@
     (testing "Valid commands should pass"
       ;; This should NOT throw
       (let [ping-result (root/ping)]
-        (is (= {:ping {}} (select-keys ping-result [:ping]))
+        (is (match? {:ping {}}
+                    ping-result)
             "Valid ping should work"))
       
       (let [reboot-result (sys/reboot)]
-        (is (= {:system {:reboot {}}} (select-keys reboot-result [:system]))
+        (is (match? {:system {:reboot {}}}
+                    reboot-result)
             "Valid reboot should work"))
       
       (let [loc-result (sys/set-localization :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN)]
-        (is (= {:system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}
-               (select-keys loc-result [:system]))
+        (is (match? {:system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}
+                    loc-result)
             "Valid set-localization should work")))
     
     (testing "Basic assertions work"
@@ -186,13 +192,10 @@
     
     (testing "Protocol fields are added correctly"
       (let [ping-cmd (core/create-ping-command)]
-        (is (= 1 (:protocol_version ping-cmd))
-            "Should have protocol version 1")
-        (is (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type ping-cmd))
-            "Should have correct client type")
-        (is (= 0 (:session_id ping-cmd))
-            "Should have default session ID")
-        (is (false? (:important ping-cmd))
-            "Should have important flag false by default")
-        (is (false? (:from_cv_subsystem ping-cmd))
-            "Should have from_cv_subsystem false by default")))))
+        (is (match? {:protocol_version 1
+                     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                     :session_id 0
+                     :important false
+                     :from_cv_subsystem false}
+                    ping-cmd)
+            "Should have all correct protocol fields")))))

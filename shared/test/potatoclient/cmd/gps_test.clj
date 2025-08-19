@@ -2,6 +2,8 @@
   "Tests for GPS command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.gps :as gps]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,7 +33,8 @@
   (testing "start creates valid command"
     (let [result (gps/start)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:gps :start])))
+      (is (match? {:gps {:start {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -41,7 +44,8 @@
   (testing "stop creates valid command"
     (let [result (gps/stop)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:gps :stop])))
+      (is (match? {:gps {:stop {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -56,9 +60,10 @@
   (testing "set-manual-position creates valid command with typical coordinates"
     (let [result (gps/set-manual-position 40.7128 -74.0060 10.5)]
       (is (m/validate :cmd/root result))
-      (is (= 40.7128 (get-in result [:gps :set_manual_position :latitude])))
-      (is (= -74.0060 (get-in result [:gps :set_manual_position :longitude])))
-      (is (= 10.5 (get-in result [:gps :set_manual_position :altitude])))
+      (is (match? {:gps {:set_manual_position {:latitude 40.7128
+                                                :longitude -74.0060
+                                                :altitude 10.5}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -69,7 +74,8 @@
     ;; North Pole
     (let [result (gps/set-manual-position 90.0 0.0 0.0)]
       (is (m/validate :cmd/root result))
-      (is (= 90.0 (get-in result [:gps :set_manual_position :latitude])))
+      (is (match? {:gps {:set_manual_position {:latitude 90.0}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 

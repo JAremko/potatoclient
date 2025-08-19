@@ -2,6 +2,8 @@
   "Tests for LRF (Laser Range Finder) command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.lrf :as lrf]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,7 +33,8 @@
   (testing "measure creates valid command"
     (let [result (lrf/measure)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:lrf :measure])))
+      (is (match? {:lrf {:measure {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -46,30 +49,32 @@
   (testing "scan-on creates valid command"
     (let [result (lrf/scan-on)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:lrf :scan_on])))
+      (is (match? {:lrf {:scan_on {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "scan-off creates valid command"
     (let [result (lrf/scan-off)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:lrf :scan_off])))
+      (is (match? {:lrf {:scan_off {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "set-scan-mode creates valid command with 1 Hz continuous mode"
     (let [result (lrf/set-scan-mode :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS 
-             (get-in result [:lrf :set_scan_mode :mode])))
+      (is (match? {:lrf {:set_scan_mode {:mode :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "set-scan-mode creates valid command with 10 Hz continuous mode"
     (let [result (lrf/set-scan-mode :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS 
-             (get-in result [:lrf :set_scan_mode :mode])))
+      (is (match? {:lrf {:set_scan_mode {:mode :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   

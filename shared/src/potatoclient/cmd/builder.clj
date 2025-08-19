@@ -35,7 +35,7 @@
    
    This is the primary function for creating valid cmd roots from payloads."
   [payload]
-  [map? => :cmd/root]  ;; Simple map check - validation happens via serialization
+  [[:map {:closed false}] => :cmd/root]  ;; Stricter validation - must be a non-nil map
   ;; Merge the payload with default protocol fields to create a complete cmd
   (merge default-protocol-fields payload))
 
@@ -45,7 +45,7 @@
    
    Takes a command and a map of override values for the protocol fields."
   [cmd overrides]
-  [map? map? => :cmd/root]  ;; Simple checks - validation via serialization
+  [[:map {:closed false}] [:map {:closed false}] => :cmd/root]  ;; Stricter validation - both must be non-nil maps
   (let [fields-to-use (merge default-protocol-fields overrides)
         complete-cmd (merge fields-to-use cmd)]
     complete-cmd))
@@ -58,7 +58,7 @@
    (create-full-cmd {:ping {}} 
                     {:session_id 12345 :important true})"
   [payload-cmd field-overrides]
-  [map? map? => :cmd/root]  ;; Simple checks - validation via serialization
+  [:cmd/payload [:map {:closed false}] => :cmd/root]  ;; Validate payload structure and require non-nil map for overrides
   (populate-cmd-fields-with-overrides payload-cmd field-overrides))
 
 (>defn create-proto-map-cmd

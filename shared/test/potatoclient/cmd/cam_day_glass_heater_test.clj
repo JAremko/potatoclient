@@ -2,6 +2,8 @@
   "Tests for Day Camera Glass Heater command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.cam-day-glass-heater :as heater]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
@@ -31,7 +33,8 @@
   (testing "start creates valid command"
     (let [result (heater/start)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:day_cam_glass_heater :start])))
+      (is (match? {:day_cam_glass_heater {:start {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -41,7 +44,8 @@
   (testing "stop creates valid command"
     (let [result (heater/stop)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:day_cam_glass_heater :stop])))
+      (is (match? {:day_cam_glass_heater {:stop {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
@@ -53,14 +57,16 @@
   (testing "turn-on creates valid command"
     (let [result (heater/turn-on)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:day_cam_glass_heater :turn_on])))
+      (is (match? {:day_cam_glass_heater {:turn_on {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
   
   (testing "turn-off creates valid command"
     (let [result (heater/turn-off)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:day_cam_glass_heater :turn_off])))
+      (is (match? {:day_cam_glass_heater {:turn_off {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
@@ -72,7 +78,8 @@
   (testing "get-meteo creates valid command"
     (let [result (heater/get-meteo)]
       (is (m/validate :cmd/root result))
-      (is (= {} (get-in result [:day_cam_glass_heater :get_meteo])))
+      (is (match? {:day_cam_glass_heater {:get_meteo {}}}
+                  result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 

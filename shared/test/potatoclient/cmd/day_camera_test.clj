@@ -2,6 +2,8 @@
   "Tests for Day Camera command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.day-camera :as day-camera]
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]

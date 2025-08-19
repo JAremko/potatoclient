@@ -2,6 +2,8 @@
   "Tests for compass command functions."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.compass :as compass]
    [potatoclient.cmd.validation :as validation]
    [potatoclient.test-harness :as harness]))
@@ -20,9 +22,11 @@
     
     (testing "start command"
       (let [cmd (compass/start)]
-        (is (= {} (get-in cmd [:compass :start])) "Should have empty start payload")
-        (is (= 1 (:protocol_version cmd)) "Should have protocol version")
-        (is (= 0 (:session_id cmd)) "Should have default session ID")
+        (is (match? {:compass {:start {}}
+                     :protocol_version 1
+                     :session_id 0}
+                    cmd)
+            "Should have correct structure")
         
         (testing "roundtrip validation"
           (let [result (validation/validate-roundtrip-with-report cmd)]
@@ -33,7 +37,9 @@
     
     (testing "stop command"
       (let [cmd (compass/stop)]
-        (is (= {} (get-in cmd [:compass :stop])) "Should have empty stop payload")
+        (is (match? {:compass {:stop {}}}
+                    cmd)
+            "Should have empty stop payload")
         
         (testing "roundtrip validation"
           (let [result (validation/validate-roundtrip-with-report cmd)]
@@ -51,7 +57,8 @@
     
     (testing "get-meteo command"
       (let [cmd (compass/get-meteo)]
-        (is (= {} (get-in cmd [:compass :get_meteo])) 
+        (is (match? {:compass {:get_meteo {}}}
+                    cmd)
             "Should have empty get_meteo payload")
         
         (testing "roundtrip validation"
@@ -141,7 +148,8 @@
     
     (testing "calibrate-long-start command"
       (let [cmd (compass/calibrate-long-start)]
-        (is (= {} (get-in cmd [:compass :start_calibrate_long]))
+        (is (match? {:compass {:start_calibrate_long {}}}
+                    cmd)
             "Should have empty start_calibrate_long payload")
         
         (testing "roundtrip validation"
@@ -153,7 +161,8 @@
     
     (testing "calibrate-short-start command"
       (let [cmd (compass/calibrate-short-start)]
-        (is (= {} (get-in cmd [:compass :start_calibrate_short]))
+        (is (match? {:compass {:start_calibrate_short {}}}
+                    cmd)
             "Should have empty start_calibrate_short payload")
         
         (testing "roundtrip validation"
@@ -165,7 +174,8 @@
     
     (testing "calibrate-next command"
       (let [cmd (compass/calibrate-next)]
-        (is (= {} (get-in cmd [:compass :calibrate_next]))
+        (is (match? {:compass {:calibrate_next {}}}
+                    cmd)
             "Should have empty calibrate_next payload")
         
         (testing "roundtrip validation"
@@ -177,7 +187,8 @@
     
     (testing "calibrate-cancel command (with proto typo)"
       (let [cmd (compass/calibrate-cancel)]
-        (is (= {} (get-in cmd [:compass :calibrate_cencel]))
+        (is (match? {:compass {:calibrate_cencel {}}}
+                    cmd)
             "Should have empty calibrate_cencel payload (with typo)")
         
         (testing "roundtrip validation"
