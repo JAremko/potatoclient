@@ -26,7 +26,10 @@
         org.clojure/test.check {:mvn/version "1.1.1"}
         
         ;; For better diff output in tests
-        lambdaisland/deep-diff2 {:mvn/version "2.12.219"}}
+        lambdaisland/deep-diff2 {:mvn/version "2.12.219"}
+        
+        ;; For expressive test assertions with nested data structures
+        nubank/matcher-combinators {:mvn/version "3.9.1"}}
  
  :aliases {:test {:extra-paths ["test"]
                   :extra-deps {io.github.cognitect-labs/test-runner 

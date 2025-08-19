@@ -3,9 +3,13 @@
    Tests specific edge cases and negative scenarios."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   ;; Load the spec definitions
+   [potatoclient.specs.cmd.root]))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
@@ -80,7 +84,15 @@
                             :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                             :ping {}}]
           (is (m/validate cmd-spec valid-sample)
-              "Valid ping command should pass")))
+              "Valid ping command should pass")
+          ;; Also verify structure with matcher-combinators
+          (is (match? {:protocol_version pos-int?
+                       :session_id nat-int?
+                       :important boolean?
+                       :from_cv_subsystem boolean?
+                       :client_type keyword?
+                       :ping map?}
+                      valid-sample))))
       
       (testing "Valid system command"
         (let [valid-sample {:protocol_version 1
@@ -90,7 +102,15 @@
                             :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
                             :system {:localization {:loc :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN}}}]
           (is (m/validate cmd-spec valid-sample)
-              "Valid system command should pass")))))
+              "Valid system command should pass")
+          ;; Verify nested structure
+          (is (match? {:protocol_version pos-int?
+                       :session_id pos-int?
+                       :important true?
+                       :from_cv_subsystem false?
+                       :client_type keyword?
+                       :system {:localization {:loc keyword?}}}
+                      valid-sample))))))
   
   (testing "Edge cases"
     (let [cmd-spec (m/schema :cmd/root)]

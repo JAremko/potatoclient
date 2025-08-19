@@ -2,6 +2,7 @@
   "Test to understand how Pronto handles oneof fields in cmd.Root"
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
    [pronto.core :as pronto]
    [potatoclient.test-harness :as harness]))
 

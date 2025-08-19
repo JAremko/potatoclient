@@ -2,6 +2,8 @@
   "Test the enhanced oneof schema with base fields support"
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [potatoclient.malli.registry :as registry]))
@@ -57,10 +59,10 @@
         (doseq [sample (take 3 samples)]
           (println "Sample:" sample)
           (is (m/validate schema sample))
-          (is (contains? sample :protocol_version) "Should have protocol_version")
-          (is (contains? sample :session_id) "Should have session_id")
-          (is (>= (:protocol_version sample) 1) "protocol_version >= 1")
-          (is (>= (:session_id sample) 1) "session_id >= 1")
+          ;; Use matcher-combinators for cleaner assertions
+          (is (match? {:protocol_version pos-int?
+                       :session_id pos-int?}
+                      sample))
           
           ;; Check exactly one oneof field is present
           (let [oneof-fields [:ping :noop :system]
@@ -96,7 +98,12 @@
                     :config {:debug false}
                     :create {:name "test"}}]
         
-        (is (m/validate schema sample) "Complex nested structure validates")))
+        (is (m/validate schema sample) "Complex nested structure validates")
+        ;; Also verify structure with matcher-combinators
+        (is (match? {:metadata {:version int? :timestamp int?}
+                     :config {:debug boolean?}
+                     :create {:name string?}}
+                    sample))))
     
     (testing "Nil values in oneof fields"
       (let [schema [:oneof

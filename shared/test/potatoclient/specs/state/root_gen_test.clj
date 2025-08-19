@@ -3,10 +3,14 @@
    Tests that generated samples are valid according to Malli specs."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [malli.error :as me]
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   ;; Load the spec definitions
+   [potatoclient.specs.state.root]))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
@@ -44,50 +48,50 @@
       (doseq [sample samples]
         (testing "Sample has required top-level structure"
           (is (map? sample) "Sample should be a map")
-          (is (contains? sample :protocol_version) "Should have protocol_version")
-          (is (> (:protocol_version sample) 0) "protocol_version should be > 0"))
+          (is (match? {:protocol_version pos-int?} sample)))
         
         (testing "All required subsystems are present"
-          (is (contains? sample :system) "Should have system")
-          (is (contains? sample :meteo_internal) "Should have meteo_internal")
-          (is (contains? sample :lrf) "Should have lrf")
-          (is (contains? sample :time) "Should have time")
-          (is (contains? sample :gps) "Should have gps")
-          (is (contains? sample :compass) "Should have compass")
-          (is (contains? sample :rotary) "Should have rotary")
-          (is (contains? sample :camera_day) "Should have camera_day")
-          (is (contains? sample :camera_heat) "Should have camera_heat")
-          (is (contains? sample :compass_calibration) "Should have compass_calibration")
-          (is (contains? sample :rec_osd) "Should have rec_osd")
-          (is (contains? sample :day_cam_glass_heater) "Should have day_cam_glass_heater")
-          (is (contains? sample :actual_space_time) "Should have actual_space_time"))
+          (is (match? {:system any?
+                       :meteo_internal any?
+                       :lrf any?
+                       :time any?
+                       :gps any?
+                       :compass any?
+                       :rotary any?
+                       :camera_day any?
+                       :camera_heat any?
+                       :compass_calibration any?
+                       :rec_osd any?
+                       :day_cam_glass_heater any?
+                       :actual_space_time any?}
+                      sample)))
         
         (testing "Nested structures are valid"
           (when (:gps sample)
-            (is (every? #(contains? (:gps sample) %)
-                       [:latitude :longitude :altitude :manual_latitude 
-                        :manual_longitude :manual_altitude :fix_type :use_manual])
-                "GPS should have all required fields")
-            (is (<= -90 (get-in sample [:gps :latitude]) 90)
-                "GPS latitude should be in valid range"))
+            (is (match? {:gps {:latitude #(<= -90 % 90)
+                               :longitude any?
+                               :altitude any?
+                               :manual_latitude any?
+                               :manual_longitude any?
+                               :manual_altitude any?
+                               :fix_type any?
+                               :use_manual any?}}
+                       sample)))
           
           (when (:compass sample)
-            (let [azimuth (get-in sample [:compass :azimuth])]
-              (is (and (>= azimuth 0) (< azimuth 360))
-                  "Compass azimuth should be in [0, 360)")))
+            (is (match? {:compass {:azimuth #(and (>= % 0) (< % 360))}}
+                       sample)))
           
           (when (:lrf sample)
-            (is (map? (get-in sample [:lrf :target]))
-                "LRF should have nested target map")
+            (is (match? {:lrf {:target map?}} sample))
             (when-let [target-color (get-in sample [:lrf :target :target_color])]
-              (is (and (<= 0 (:red target-color) 255)
-                      (<= 0 (:green target-color) 255)
-                      (<= 0 (:blue target-color) 255))
-                  "LRF target color RGB values should be in [0, 255]")))
+              (is (match? {:red #(<= 0 % 255)
+                          :green #(<= 0 % 255)
+                          :blue #(<= 0 % 255)}
+                         target-color))))
           
           (when (:rotary sample)
-            (is (map? (get-in sample [:rotary :current_scan_node]))
-                "Rotary should have nested current_scan_node map")))))))
+            (is (match? {:rotary {:current_scan_node map?}} sample))))))))
 
 (deftest generate-samples-performance
   (testing "Sample generation performance"

@@ -2,6 +2,8 @@
   "Test merging regular map schemas with oneof schemas"
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.util :as mu]
    [malli.generator :as mg]
@@ -117,6 +119,14 @@
         (println "\nValid sample:" valid-sample)
         (println "Validates?" (m/validate constrained valid-sample))
         (is (m/validate constrained valid-sample))
+        ;; Also test with matcher-combinators
+        (is (match? {:protocol_version pos-int?
+                     :session_id pos-int?
+                     :important boolean?
+                     :from_cv_subsystem boolean?
+                     :client_type keyword?
+                     :ping map?}
+                    valid-sample))
         
         (println "\nInvalid sample (no oneof):" invalid-sample-none)
         (println "Validates?" (m/validate constrained invalid-sample-none))
@@ -166,5 +176,14 @@
           (doseq [sample samples]
             (println "Generated:" sample)
             (println "Valid?" (m/validate base-schema sample))
-            (is (m/validate base-schema sample))))))
+            (is (m/validate base-schema sample))
+            ;; Test with matcher-combinators - exactly one of the oneof fields should be present
+            (is (match? (matchers/all-of
+                         {:protocol_version pos-int?
+                          :session_id pos-int?
+                          :important boolean?
+                          :from_cv_subsystem boolean?
+                          :client_type keyword?}
+                         #(= 1 (count (filter (partial contains? %) [:ping :noop :system]))))
+                        sample))))))
     ))

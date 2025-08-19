@@ -2,6 +2,8 @@
   "Tests for the Malli registry management"
   (:require
    [clojure.test :refer [deftest testing is]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.registry :as mr]
    [potatoclient.malli.registry :as registry]
@@ -70,7 +72,7 @@
       (is (map? current-registry))
       ;; The get-registry function only returns the mutable portion
       ;; oneof is in the composite registry but not the mutable part
-      (is (contains? current-registry :test/example))
+      (is (match? {:test/example any?} current-registry))
       
       ;; Verify the spec works via the global registry
       (is (m/validate :test/example {:value "test"})))))
@@ -102,7 +104,15 @@
       (is (m/validate :test/request
                      {:id #uuid "550e8400-e29b-41d4-a716-446655440000"
                       :command {:create {:name "test"}}
-                      :timestamp 1234567890})))))
+                      :timestamp 1234567890}))
+      
+      ;; Using matcher-combinators for partial matching
+      (is (match? {:id uuid?
+                   :command {:create {:name string?}}
+                   :timestamp int?}
+                  {:id #uuid "550e8400-e29b-41d4-a716-446655440000"
+                   :command {:create {:name "test"}}
+                   :timestamp 1234567890})))))
 
 (deftest registry-composition
   (testing "Registry can be composed from multiple sources"
