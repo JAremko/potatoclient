@@ -91,8 +91,8 @@
 
 (def axis-spec
   [:map {:closed true}
-   [:azimuth azimuth-spec]
-   [:elevation elevation-spec]])
+   [:azimuth {:optional true} [:maybe azimuth-spec]]
+   [:elevation {:optional true} [:maybe elevation-spec]]])
 
 ;; ====================================================================
 ;; Platform control commands

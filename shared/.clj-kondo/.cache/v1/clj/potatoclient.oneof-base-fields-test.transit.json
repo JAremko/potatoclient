@@ -1,1 +1,1 @@
-["^ ","~$test-oneof-with-base-fields",["^ ","~:row",12,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$potatoclient.oneof-base-fields-test","~:top-ns","^7"],"~:filename","/home/jare/git/potatoclient/shared/test/potatoclient/oneof_base_fields_test.clj"]
+["^ ","~$test-oneof-with-base-fields",["^ ","~:row",14,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$potatoclient.oneof-base-fields-test","~:top-ns","^7"],"~:filename","/home/jare/git/potatoclient/shared/test/potatoclient/oneof_base_fields_test.clj"]
