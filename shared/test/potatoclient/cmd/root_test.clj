@@ -3,6 +3,8 @@
    Validates that commands are constructed correctly and survive serialization/deserialization."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [potatoclient.cmd.root :as root]
    [potatoclient.cmd.core :as core]
    [potatoclient.cmd.validation :as validation]
@@ -33,14 +35,15 @@
 
 (deftest ping-command-test
   (testing "ping command construction and roundtrip"
-    (let [cmd (root/ping)
-          expected {:protocol_version 1
+    (let [cmd (root/ping)]
+      (is (match? {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                    :session_id 0
                    :important false
                    :from_cv_subsystem false
-                   :ping {}}]
-      (is (= expected cmd) "Command structure should match expected")
+                   :ping {}}
+                  cmd)
+          "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
@@ -52,14 +55,15 @@
 
 (deftest noop-command-test
   (testing "noop command construction and roundtrip"
-    (let [cmd (root/noop)
-          expected {:protocol_version 1
+    (let [cmd (root/noop)]
+      (is (match? {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                    :session_id 0
                    :important false
                    :from_cv_subsystem false
-                   :noop {}}]
-      (is (= expected cmd) "Command structure should match expected")
+                   :noop {}}
+                  cmd)
+          "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
@@ -71,14 +75,15 @@
 
 (deftest frozen-command-test
   (testing "frozen command construction and roundtrip"
-    (let [cmd (root/frozen)
-          expected {:protocol_version 1
+    (let [cmd (root/frozen)]
+      (is (match? {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                    :session_id 0
                    :important false
                    :from_cv_subsystem false
-                   :frozen {}}]
-      (is (= expected cmd) "Command structure should match expected")
+                   :frozen {}}
+                  cmd)
+          "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
       
       (testing "roundtrip serialization"
@@ -110,13 +115,13 @@
 (deftest ping-keep-alive-test
   (testing "Ping command for keep-alive"
     (let [ping-cmd (core/create-ping-command)]
-      (is (= {:protocol_version 1
-             :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-             :session_id 0
-             :important false
-             :from_cv_subsystem false
-             :ping {}}
-            ping-cmd)
+      (is (match? {:protocol_version 1
+                   :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                   :session_id 0
+                   :important false
+                   :from_cv_subsystem false
+                   :ping {}}
+                  ping-cmd)
           "Should create complete ping command with all protocol fields")
       
       (testing "roundtrip validation"

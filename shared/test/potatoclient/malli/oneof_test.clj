@@ -2,6 +2,8 @@
   "Tests for the oneof Malli schema"
   (:require
    [clojure.test :refer [deftest testing is are use-fixtures]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.error :as me]
    [malli.generator :as mg]
@@ -115,22 +117,22 @@
       (testing "Error for non-map"
         (let [errors (:errors (explain "not-a-map"))]
           (is (= 1 (count errors)))
-          (is (= "should be a map" (:message (first errors))))))
+          (is (match? {:message "should be a map"} (first errors)))))
       
       (testing "Error for extra keys"
         (let [errors (:errors (explain {:a 1 :extra "key"}))]
           (is (= 1 (count errors)))
-          (is (re-find #"unexpected keys" (:message (first errors))))))
+          (is (match? {:message #"unexpected keys"} (first errors)))))
       
       (testing "Error for no non-nil fields"
         (let [errors (:errors (explain {:a nil :b nil}))]
           (is (= 1 (count errors)))
-          (is (re-find #"exactly one non-nil field" (:message (first errors))))))
+          (is (match? {:message #"exactly one non-nil field"} (first errors)))))
       
       (testing "Error for multiple non-nil fields"
         (let [errors (:errors (explain {:a 1 :b "two"}))]
           (is (= 1 (count errors)))
-          (is (re-find #"multiple non-nil fields" (:message (first errors)))))))))
+          (is (match? {:message #"multiple non-nil fields"} (first errors))))))))
 
 (deftest oneof-generator
   (testing "Can generate valid values"
@@ -234,8 +236,7 @@
           ;; This was failing with :malli.core/invalid-schema
           (is (map? (me/humanize explanation))
               "Should be able to humanize the explanation")
-          (is (contains? (me/humanize explanation) :protocol_version)
-              "Should have error for protocol_version")))
+          (is (match? {:protocol_version any?} (me/humanize explanation)))))
       
       (testing "Humanize errors for missing oneof field"
         (let [invalid-data {:protocol_version 1

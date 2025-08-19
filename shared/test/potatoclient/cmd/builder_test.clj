@@ -3,6 +3,8 @@
    Ensures efficient proto-map building and field population."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [clojure.test.check :as tc]
    [clojure.test.check.generators :as gen]
    [clojure.test.check.properties :as prop]
@@ -32,33 +34,36 @@
     (testing "Minimal command gets all defaults"
       (let [minimal {:ping {}}
             result (builder/populate-cmd-fields minimal)]
-        (is (= 1 (:protocol_version result)))
-        (is (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type result)))
-        (is (= 0 (:session_id result)))
-        (is (false? (:important result)))
-        (is (false? (:from_cv_subsystem result)))
-        (is (= {} (:ping result)))))
+        (is (match? {:protocol_version 1
+                     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                     :session_id 0
+                     :important false
+                     :from_cv_subsystem false
+                     :ping {}}
+                    result))))
     
     (testing "Commands with overrides"
       (let [payload {:ping {}}
             base-result (builder/populate-cmd-fields payload)
             custom-result (builder/create-full-cmd payload {:session_id 12345 :important true})]
-        (is (= 1 (:protocol_version base-result)) "Should have default protocol_version")
-        (is (= :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK (:client_type base-result)) "Should have default client_type")
-        (is (= 0 (:session_id base-result)) "Should have default session_id")
-        (is (false? (:important base-result)) "Should have default important flag")
-        (is (false? (:from_cv_subsystem base-result)) "Should have default from_cv_subsystem")
+        (is (match? {:protocol_version 1
+                     :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                     :session_id 0
+                     :important false
+                     :from_cv_subsystem false}
+                    base-result))
         
-        (is (= 12345 (:session_id custom-result)) "Custom should have override session_id")
-        (is (true? (:important custom-result)) "Custom should have override important flag")))
+        (is (match? {:session_id 12345
+                     :important true}
+                    custom-result))))
     
     (testing "Different payload types"
       (let [noop-result (builder/populate-cmd-fields {:noop {}})
             frozen-result (builder/populate-cmd-fields {:frozen {}})
             system-result (builder/populate-cmd-fields {:system {:reboot {}}})]
-        (is (= {} (:noop noop-result)) "Noop payload preserved")
-        (is (= {} (:frozen frozen-result)) "Frozen payload preserved")
-        (is (= {:reboot {}} (:system system-result)) "System payload preserved")))))
+        (is (match? {:noop {}} noop-result))
+        (is (match? {:frozen {}} frozen-result))
+        (is (match? {:system {:reboot {}}} system-result))))))
 
 (deftest populate-cmd-fields-with-overrides-test
   (testing "populate-cmd-fields-with-overrides applies custom defaults"
@@ -71,29 +76,32 @@
                       :important true
                       :from_cv_subsystem true}
             result (builder/populate-cmd-fields-with-overrides cmd overrides)]
-        (is (= 2 (:protocol_version result)))
-        (is (= :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV (:client_type result)))
-        (is (= 555 (:session_id result)))
-        (is (true? (:important result)))
-        (is (true? (:from_cv_subsystem result)))))
+        (is (match? {:protocol_version 2
+                     :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+                     :session_id 555
+                     :important true
+                     :from_cv_subsystem true}
+                    result))))
     
     (testing "Partial overrides"
       (let [cmd {:system {:reboot {}}}
             overrides {:session_id 777}
             result (builder/populate-cmd-fields-with-overrides cmd overrides)]
-        (is (= 777 (:session_id result)) "Should use override")
-        (is (= 1 (:protocol_version result)) "Should use default for non-overridden")
-        (is (false? (:important result)) "Should use default for non-overridden")))))
+        (is (match? {:session_id 777
+                     :protocol_version 1
+                     :important false}
+                    result))))))
 
 (deftest create-full-cmd-test
   (testing "create-full-cmd builds complete commands"
     (let [payload {:ping {}}
           overrides {:session_id 123 :important true}
           result (builder/create-full-cmd payload overrides)]
-      (is (= {:ping {}}) (select-keys result [:ping]))
-      (is (= 123 (:session_id result)))
-      (is (true? (:important result)))
-      (is (= 1 (:protocol_version result)) "Should use default for non-overridden"))))
+      (is (match? {:ping {}
+                   :session_id 123
+                   :important true
+                   :protocol_version 1}
+                  result)))))
 
 (deftest ensure-required-fields-test
   (testing "ensure-required-fields validates presence of required fields"
@@ -134,8 +142,9 @@
                :ping {}}
           proto-map (builder/create-proto-map-cmd cmd)]
       (is (p/proto-map? proto-map) "Should create a proto-map")
-      (is (= 1 (:protocol_version proto-map)))
-      (is (= {} (:ping proto-map))))))
+      (is (match? {:protocol_version 1
+                   :ping {}}
+                  proto-map)))))
 
 ;; ============================================================================
 ;; Guardrails Tests - Invalid Arguments
