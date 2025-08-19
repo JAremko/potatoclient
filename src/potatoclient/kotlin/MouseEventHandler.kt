@@ -260,4 +260,113 @@ class MouseEventHandler(
         panController.shutdown()
         gestureRecognizer.reset()
     }
+
+    /**
+     * Companion object containing NDC conversion utilities.
+     * Merged from the Java NDCConverter class.
+     * 
+     * NDC coordinates range from -1 to 1 in both axes, with (0,0) at the center.
+     * Y-axis is inverted so that positive Y is up (matching OpenGL conventions).
+     */
+    companion object {
+        data class NDCPoint(val x: Double, val y: Double)
+        data class PixelPoint(val x: Int, val y: Int)
+
+        /**
+         * Convert pixel coordinates to NDC coordinates.
+         * 
+         * @param x Pixel X coordinate (0 to width-1)
+         * @param y Pixel Y coordinate (0 to height-1)
+         * @param width Canvas width in pixels
+         * @param height Canvas height in pixels
+         * @return NDC coordinates where x,y are in range [-1, 1]
+         */
+        @JvmStatic
+        fun pixelToNDC(x: Int, y: Int, width: Int, height: Int): NDCPoint {
+            require(width > 0 && height > 0) { "Width and height must be positive" }
+            
+            var ndcX = (x.toDouble() / width) * 2.0 - 1.0
+            var ndcY = -((y.toDouble() / height) * 2.0 - 1.0) // Invert Y
+            
+            // Clamp to valid NDC range to handle edge cases
+            ndcX = ndcX.coerceIn(-1.0, 1.0)
+            ndcY = ndcY.coerceIn(-1.0, 1.0)
+            
+            return NDCPoint(ndcX, ndcY)
+        }
+
+        /**
+         * Convert NDC coordinates to pixel coordinates.
+         * 
+         * @param ndcX NDC X coordinate (-1 to 1)
+         * @param ndcY NDC Y coordinate (-1 to 1)
+         * @param width Canvas width in pixels
+         * @param height Canvas height in pixels
+         * @return Pixel coordinates
+         */
+        @JvmStatic
+        fun ndcToPixel(ndcX: Double, ndcY: Double, width: Int, height: Int): PixelPoint {
+            require(width > 0 && height > 0) { "Width and height must be positive" }
+            
+            // Clamp NDC coordinates to valid range
+            val clampedX = ndcX.coerceIn(-1.0, 1.0)
+            val clampedY = ndcY.coerceIn(-1.0, 1.0)
+            
+            var x = Math.round((clampedX + 1.0) / 2.0 * width).toInt()
+            var y = Math.round((-clampedY + 1.0) / 2.0 * height).toInt() // Invert Y back
+            
+            // Clamp to valid pixel range
+            x = x.coerceIn(0, width - 1)
+            y = y.coerceIn(0, height - 1)
+            
+            return PixelPoint(x, y)
+        }
+
+        /**
+         * Convert pixel delta to NDC delta (for pan gestures).
+         * Does not invert Y axis as this is a relative movement.
+         * 
+         * @param deltaX Pixel delta X
+         * @param deltaY Pixel delta Y
+         * @param width Canvas width in pixels
+         * @param height Canvas height in pixels
+         * @return NDC delta values
+         */
+        @JvmStatic
+        fun pixelDeltaToNDC(deltaX: Int, deltaY: Int, width: Int, height: Int): NDCPoint {
+            require(width > 0 && height > 0) { "Width and height must be positive" }
+            
+            val ndcDeltaX = (deltaX.toDouble() / width) * 2.0
+            val ndcDeltaY = -(deltaY.toDouble() / height) * 2.0 // Still invert for consistency
+            
+            return NDCPoint(ndcDeltaX, ndcDeltaY)
+        }
+
+        /**
+         * Apply aspect ratio correction to NDC X coordinate.
+         * This is useful for maintaining circular motion in non-square viewports.
+         * 
+         * @param ndcX NDC X coordinate
+         * @param aspectRatio Width/Height ratio
+         * @return Aspect-corrected NDC X
+         */
+        @JvmStatic
+        fun applyAspectRatio(ndcX: Double, aspectRatio: Double): Double {
+            return ndcX * aspectRatio
+        }
+
+        /**
+         * Check if pixel coordinates are within canvas bounds.
+         * 
+         * @param x Pixel X coordinate
+         * @param y Pixel Y coordinate
+         * @param width Canvas width
+         * @param height Canvas height
+         * @return true if coordinates are within bounds
+         */
+        @JvmStatic
+        fun isInBounds(x: Int, y: Int, width: Int, height: Int): Boolean {
+            return x >= 0 && x < width && y >= 0 && y < height
+        }
+    }
 }

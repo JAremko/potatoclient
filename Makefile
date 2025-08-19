@@ -88,12 +88,6 @@ compile-java-enums: ## Compile Java enum source files
 	@echo "Compiling Java enum sources..."
 	clojure -T:build compile-java-enums
 
-# Compile Java utility sources
-.PHONY: compile-java-utils
-compile-java-utils: ## Compile Java utility source files (NDCConverter, etc.)
-	@echo "Compiling Java utility sources..."
-	clojure -T:build compile-java-utils
-
 # Build target
 .PHONY: build
 build: ensure-compiled ## Build the project (creates JAR file)
@@ -102,7 +96,7 @@ build: ensure-compiled ## Build the project (creates JAR file)
 
 # Build with forced clean
 .PHONY: build-clean
-build-clean: compile-java-enums compile-java-utils compile-kotlin ## Build with forced clean rebuild
+build-clean: compile-java-enums compile-kotlin ## Build with forced clean rebuild
 	@echo "Building project with clean rebuild..."
 	clojure -T:build uber
 
