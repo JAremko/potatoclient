@@ -2,6 +2,8 @@
   "Test our custom oneof validation to catch edge cases"
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [malli.error :as me]
@@ -105,7 +107,15 @@
                          :day_cam_glass_heater nil :heat_camera nil 
                          :compass nil :day_camera nil :frozen nil}]
           (is (m/validate spec valid-data) "Valid data should validate")
-          (is (nil? (m/explain spec valid-data)) "Valid data should have no explanation")))
+          (is (nil? (m/explain spec valid-data)) "Valid data should have no explanation")
+          ;; Also check with matcher-combinators
+          (is (match? {:protocol_version pos-int?
+                       :session_id nat-int?
+                       :important false?
+                       :from_cv_subsystem false?
+                       :client_type keyword?
+                       :ping map?}
+                      valid-data))))
       
       ;; Test with extra keys
       (testing "Data with extra keys should fail"
@@ -181,7 +191,11 @@
               (let [open-spec (m/schema [:map 
                                         [:protocol_version :int]
                                         [:session_id :int]])]
-                (println "  Open map validates?" (m/validate open-spec result)))
+                (println "  Open map validates?" (m/validate open-spec result))
+                ;; Check structure with matcher-combinators
+                (is (match? {:protocol_version int?
+                            :session_id int?}
+                           result)))
               
               ;; This should fail the test, demonstrating the bug
               (is false 

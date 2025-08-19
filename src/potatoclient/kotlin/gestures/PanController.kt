@@ -19,7 +19,12 @@ enum class StreamType {
 
 enum class RotaryDirection {
     CLOCKWISE,
-    COUNTER_CLOCKWISE,
+    COUNTER_CLOCKWISE;
+    
+    fun toKeyword(): String = when (this) {
+        CLOCKWISE -> "clockwise"
+        COUNTER_CLOCKWISE -> "counter-clockwise"
+    }
 }
 
 data class PanState(

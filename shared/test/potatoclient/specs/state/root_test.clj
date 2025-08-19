@@ -3,10 +3,14 @@
    Tests specific edge cases and negative scenarios."
   (:require
    [clojure.test :refer [deftest is testing]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [malli.error :as me]
-   [potatoclient.malli.registry :as registry]))
+   [potatoclient.malli.registry :as registry]
+   ;; Load the spec definitions
+   [potatoclient.specs.state.root]))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
@@ -81,7 +85,21 @@
     
     (testing "Valid message with specific GPS, compass, system, and rotary values"
       (is (m/validate state-spec valid-message-1)
-          "Message should be valid"))))
+          "Message should be valid")
+      ;; Also verify structure with matcher-combinators
+      (is (match? {:protocol_version 1
+                   :gps {:latitude #(<= -90 % 90)
+                         :longitude #(<= -180 % 180)
+                         :fix_type keyword?}
+                   :compass {:azimuth #(< % 360)
+                            :elevation #(<= -90 % 90)}
+                   :system {:cpu_temperature number?
+                           :loc keyword?
+                           :rec_enabled boolean?}
+                   :rotary {:azimuth number?
+                           :mode keyword?
+                           :current_scan_node map?}}
+                  valid-message-1)))))
 
 (deftest state-invalid-gps
   (let [state-spec (m/schema :state/root)
@@ -103,12 +121,11 @@
       
       (when-let [explanation (m/explain state-spec invalid-gps-message)]
         (let [humanized (me/humanize explanation)]
-          (is (get-in humanized [:gps :latitude])
-              "Should have error for invalid latitude")
-          (is (get-in humanized [:gps :longitude])
-              "Should have error for invalid longitude")
-          (is (get-in humanized [:gps :altitude])
-              "Should have error for invalid altitude"))))))
+          ;; Use matcher-combinators to check for error structure
+          (is (match? {:gps {:latitude any?
+                             :longitude any?
+                             :altitude any?}}
+                     humanized)))))))
 
 (deftest state-invalid-compass
   (let [state-spec (m/schema :state/root)
@@ -213,6 +230,12 @@
                                   :longitude -122.0
                                   :altitude 100.0})
             "Valid GPS data should pass")
+        (is (match? {:latitude #(<= -90 % 90)
+                     :longitude #(< -180 % 180)
+                     :altitude number?}
+                    {:latitude 45.0
+                     :longitude -122.0
+                     :altitude 100.0}))
         
         ;; Invalid latitude (> 90)
         (is (not (m/validate gps-spec {:latitude 91.0
@@ -230,15 +253,23 @@
       (let [scan-node-spec (m/schema :rotary/scan-node)]
         
         ;; Valid scan node
-        (is (m/validate scan-node-spec
-                       {:index 5
-                        :DayZoomTableValue 10
-                        :HeatZoomTableValue 8
-                        :azimuth 180.0
-                        :elevation 45.0
-                        :linger 2.0
-                        :speed 0.75})
-            "Valid scan node should pass")
+        (let [valid-node {:index 5
+                          :DayZoomTableValue 10
+                          :HeatZoomTableValue 8
+                          :azimuth 180.0
+                          :elevation 45.0
+                          :linger 2.0
+                          :speed 0.75}]
+          (is (m/validate scan-node-spec valid-node)
+              "Valid scan node should pass")
+          (is (match? {:index nat-int?
+                       :DayZoomTableValue nat-int?
+                       :HeatZoomTableValue nat-int?
+                       :azimuth #(< % 360)
+                       :elevation #(<= -90 % 90)
+                       :linger pos?
+                       :speed pos?}
+                      valid-node)))
         
         ;; Invalid scan node
         (is (not (m/validate scan-node-spec

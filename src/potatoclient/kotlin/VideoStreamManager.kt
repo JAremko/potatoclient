@@ -320,8 +320,7 @@ class VideoStreamManager(
     }
 
     override fun sendCommand(command: Map<Any, Any>) {
-        // Send command directly to main process to be forwarded to command subprocess
-        // The command is already in the new nested format from CommandBuilder
+        // Send command directly to main process
         messageProtocol.sendCommand(command)
     }
 

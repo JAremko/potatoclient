@@ -4,6 +4,7 @@
    validates with buf.validate, and reports failures."
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
    [clojure.core.reducers :as r]
    [clojure.java.data :as java-data]
    [malli.core :as m]

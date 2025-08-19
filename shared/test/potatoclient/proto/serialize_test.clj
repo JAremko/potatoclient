@@ -3,6 +3,8 @@
    Tests both fast (*) and validating versions of serialize functions."
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [pronto.core :as pronto]
@@ -209,12 +211,10 @@
       (let [original-edn (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload* original-edn)
             deserialized (deserialize/deserialize-cmd-payload* binary-data)]
-        (is (= (:protocol_version original-edn) 
-               (:protocol_version deserialized))
-            "Protocol version should match after round-trip")
-        (is (= (:session_id original-edn)
-               (:session_id deserialized))
-            "Session ID should match after round-trip")))
+        ;; Use matcher-combinators for partial matching
+        (is (match? {:protocol_version (:protocol_version original-edn)
+                     :session_id (:session_id original-edn)}
+                    deserialized))))
     
     (testing "Invalid EDN structure throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
@@ -237,7 +237,13 @@
         ;; Verify it can be deserialized
         (let [deserialized (deserialize/deserialize-cmd-payload binary-data)]
           (is (m/validate :cmd/root deserialized)
-              "Deserialized data should be valid"))))
+              "Deserialized data should be valid")
+          ;; Also check structure with matcher-combinators
+          (is (match? {:protocol_version pos-int?
+                       :session_id nat-int?
+                       :client_type keyword?
+                       :ping map?}
+                      deserialized)))))
     
     (testing "CMD with invalid protocol_version fails Malli validation"
       (let [invalid-edn {:protocol_version 0  ; Invalid: must be > 0
@@ -314,12 +320,10 @@
       (let [original-edn (valid-state-sample)
             binary-data (serialize/serialize-state-payload* original-edn)
             deserialized (deserialize/deserialize-state-payload* binary-data)]
-        (is (= (:protocol_version original-edn) 
-               (:protocol_version deserialized))
-            "Protocol version should match after round-trip")
-        (is (= (get-in original-edn [:gps :latitude])
-               (get-in deserialized [:gps :latitude]))
-            "GPS latitude should match after round-trip")))
+        ;; Use matcher-combinators for cleaner assertions
+        (is (match? {:protocol_version (:protocol_version original-edn)
+                     :gps {:latitude (get-in original-edn [:gps :latitude])}}
+                    deserialized))))
     
     (testing "Invalid EDN structure throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
@@ -368,22 +372,13 @@
       (let [original-edn (generate-valid-cmd)
             binary-data (serialize/serialize-cmd-payload original-edn)
             deserialized (deserialize/deserialize-cmd-payload binary-data)]
-        ;; Check all top-level fields are preserved
-        (is (= (:protocol_version original-edn)
-               (:protocol_version deserialized))
-            "Protocol version should be preserved")
-        (is (= (:session_id original-edn)
-               (:session_id deserialized))
-            "Session ID should be preserved")
-        (is (= (:client_type original-edn)
-               (:client_type deserialized))
-            "Client type should be preserved")
-        (is (= (:important original-edn)
-               (:important deserialized))
-            "Important flag should be preserved")
-        (is (= (:from_cv_subsystem original-edn)
-               (:from_cv_subsystem deserialized))
-            "from_cv_subsystem flag should be preserved")))))
+        ;; Check all top-level fields are preserved using matcher-combinators
+        (is (match? {:protocol_version (:protocol_version original-edn)
+                     :session_id (:session_id original-edn)
+                     :client_type (:client_type original-edn)
+                     :important (:important original-edn)
+                     :from_cv_subsystem (:from_cv_subsystem original-edn)}
+                    deserialized))))))
 
 (deftest test-state-full-round-trip
   (testing "State full round-trip: EDN -> serialize -> deserialize -> EDN"

@@ -108,39 +108,24 @@
     (cond
       ;; Special case for forward-command - extract the nested command
       (= action "forward-command")
-      (let [nested-command (:command payload)
-            subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
-            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
-        (when (and subprocess-launcher transit-core nested-command)
-          (let [command-msg (@transit-core :command nested-command)]
-            (@subprocess-launcher :cmd command-msg)
-            (logging/log-debug
-              {:id ::forwarded-command
-               :data {:stream stream-key
-                      :action (:action nested-command)
-                      :original-action action
-                      :command command-msg}
-               :msg (str "Forwarded nested command " (:action nested-command) " from " stream-key)}))))
+      ;; TODO: Handle forward-command through in-process handler
+      (logging/log-debug
+        {:id ::forward-command-todo
+         :data {:stream stream-key
+                :action action}
+         :msg "TODO: Implement forward-command through in-process handler"})
 
       ;; Direct gesture-based commands
       (contains? #{"rotary-set-velocity" "rotary-halt" "rotary-goto-ndc"
                    "cv-start-track-ndc"
                    "heat-camera-next-zoom-table-pos" "heat-camera-prev-zoom-table-pos"
                    "day-camera-next-zoom-table-pos" "day-camera-prev-zoom-table-pos"} action)
-      (let [subprocess-launcher (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
-            transit-core (requiring-resolve 'potatoclient.transit.core/create-message)]
-        (when (and subprocess-launcher transit-core)
-          ;; Create a command message with the action and data from the request
-          (let [command-msg (@transit-core :command
-                                           (merge {:action action}
-                                                  (dissoc payload :action :process)))]
-            (@subprocess-launcher :cmd command-msg)
-            (logging/log-debug
-              {:id ::forwarded-command
-               :data {:stream stream-key
-                      :action action
-                      :command command-msg}
-               :msg (str "Forwarded " action " command from " stream-key)}))))
+      ;; TODO: Handle direct gesture commands through in-process handler
+      (logging/log-debug
+        {:id ::gesture-command-todo
+         :data {:stream stream-key
+                :action action}
+         :msg "TODO: Implement gesture commands through in-process handler"})
 
       ;; Unknown request types
       :else

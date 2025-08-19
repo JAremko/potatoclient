@@ -13,7 +13,6 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.transit.subprocess-launcher :as launcher]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.startup-dialog :as startup-dialog]
             [seesaw.core :as seesaw])
@@ -45,8 +44,6 @@
       (fn []
         (try
           (logging/log-info {:msg "Shutting down PotatoClient..."})
-          ;; Stop Transit subprocesses first
-          (launcher/stop-all-subprocesses)
           ;; Stop video stream processes
           (process/cleanup-all-processes)
           ;; Give processes time to terminate
@@ -109,25 +106,7 @@
   "Set up periodic ping command sender (every 300ms like web frontend)."
   []
   [=> nil?]
-  (let [send-message (requiring-resolve 'potatoclient.transit.subprocess-launcher/send-message)
-        create-message (requiring-resolve 'potatoclient.transit.core/create-message)
-        ping-cmd (requiring-resolve 'potatoclient.transit.commands/ping)]
-    (when (and send-message create-message ping-cmd)
-      ;; Create a timer that sends ping every 300ms
-      (let [timer (java.util.Timer. "PingTimer" true)]
-        (.scheduleAtFixedRate timer
-                              (proxy [java.util.TimerTask] []
-                                (run []
-                                  (try
-                ;; Create ping command message
-                                    (let [ping-msg (@create-message :command (@ping-cmd))]
-                                      (@send-message :cmd ping-msg))
-                                    (catch Exception e
-                                      (logging/log-debug {:msg "Failed to send ping" :error (.getMessage e)})))))
-                              300  ; initial delay
-                              300) ; period
-        ;; Store timer reference so we can stop it later if needed
-        (reset! ping-timer timer))))
+  ;; TODO: Implement in-process ping sending when needed
   nil)
 
 (>defn -main

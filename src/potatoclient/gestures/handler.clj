@@ -5,7 +5,6 @@
             [potatoclient.transit.app-db :as app-db]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.subprocess-launcher :as subprocess]
             [potatoclient.ui-specs :as specs]))
 
 (>defn handle-tap-gesture
@@ -14,9 +13,8 @@
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command
-                                                          (commands/rotary-goto-ndc channel ndc-x ndc-y))))
+    ;; TODO: Send command directly through in-process handler
+    (comment "Send rotary-goto-ndc command"))
   nil)
 
 (>defn handle-double-tap-gesture
@@ -25,9 +23,8 @@
   [::specs/gesture-event => nil?]
   (logging/log-info {:msg "Double-tap gesture" :ndc-x ndc-x :ndc-y ndc-y :stream stream-type})
   (let [channel (if (= stream-type :heat) :heat :day)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command
-                                                          (commands/cv-start-track-ndc channel ndc-x ndc-y frame-timestamp))))
+    ;; TODO: Send command directly through in-process handler
+    (comment "Send cv-start-track-ndc command"))
   nil)
 
 (>defn handle-pan-start-gesture
@@ -59,9 +56,8 @@
             ;; Determine rotation directions based on delta signs
             az-direction (if (pos? ndc-delta-x) :clockwise :counter-clockwise)
             el-direction (if (pos? ndc-delta-y) :clockwise :counter-clockwise)]
-        (subprocess/send-message :cmd
-                                 (transit-core/create-message :command
-                                                              (commands/rotary-set-velocity az-speed el-speed az-direction el-direction)))
+        ;; TODO: Send command directly through in-process handler
+        (comment "Send rotary-set-velocity command")
         (app-db/update-in-app-db! [:gestures :pan :last-update] now))))
   nil)
 
@@ -70,9 +66,8 @@
   [_gesture]
   [::specs/gesture-event => nil?]
   (logging/log-debug {:msg "Pan stop"})
-  (subprocess/send-message :cmd
-                           (transit-core/create-message :command
-                                                        (commands/rotary-halt)))
+  ;; TODO: Send command directly through in-process handler
+  (comment "Send rotary-halt command")
   (app-db/update-in-app-db! [:gestures :pan] {:active false})
   nil)
 

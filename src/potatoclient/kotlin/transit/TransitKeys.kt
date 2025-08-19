@@ -77,6 +77,7 @@ object TransitKeys {
     val STATE: Keyword = TransitFactory.keyword("state")
     
     // Command-specific keys
+    val COMMAND_TYPE: Keyword = TransitFactory.keyword("command-type")
     val ROTARY: Keyword = TransitFactory.keyword("rotary")
     val CV: Keyword = TransitFactory.keyword("cv")
     val HEAT_CAMERA: Keyword = TransitFactory.keyword("heat-camera")

@@ -1,7 +1,6 @@
 package potatoclient.kotlin
 
 import potatoclient.java.transit.EventType
-import potatoclient.kotlin.events.CommandBuilder
 import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.GestureConfig
 import potatoclient.kotlin.gestures.GestureEvent
@@ -81,22 +80,18 @@ class MouseEventHandler(
             when {
                 e.wheelRotation < 0 -> {
                     // Wheel up = zoom in
-                    val command =
-                        if (streamType == StreamType.HEAT) {
-                            CommandBuilder.heatCameraNextZoom()
-                        } else {
-                            CommandBuilder.dayCameraNextZoom()
-                        }
+                    val command: Map<Any, Any> = mapOf(
+                        TransitKeys.TYPE to "command",
+                        TransitKeys.COMMAND_TYPE to if (streamType == StreamType.HEAT) "heat-camera-next-zoom" else "day-camera-next-zoom"
+                    )
                     callback.sendCommand(command)
                 }
                 e.wheelRotation > 0 -> {
                     // Wheel down = zoom out
-                    val command =
-                        if (streamType == StreamType.HEAT) {
-                            CommandBuilder.heatCameraPrevZoom()
-                        } else {
-                            CommandBuilder.dayCameraPrevZoom()
-                        }
+                    val command: Map<Any, Any> = mapOf(
+                        TransitKeys.TYPE to "command",
+                        TransitKeys.COMMAND_TYPE to if (streamType == StreamType.HEAT) "heat-camera-prev-zoom" else "day-camera-prev-zoom"
+                    )
                     callback.sendCommand(command)
                 }
             }
@@ -208,7 +203,13 @@ class MouseEventHandler(
         ndcX: Double,
         ndcY: Double,
     ) {
-        val command = CommandBuilder.rotaryGotoNDC(streamType, ndcX, ndcY)
+        val command: Map<Any, Any> = mapOf(
+            TransitKeys.TYPE to "command",
+            TransitKeys.COMMAND_TYPE to "rotary-goto-ndc",
+            TransitKeys.STREAM_TYPE to streamType.toKeyword(),
+            TransitKeys.NDC_X to ndcX,
+            TransitKeys.NDC_Y to ndcY
+        )
         callback.sendCommand(command)
     }
 
@@ -217,8 +218,15 @@ class MouseEventHandler(
         ndcY: Double,
         frameTimestamp: Long?,
     ) {
-        val command = CommandBuilder.cvStartTrackNDC(streamType, ndcX, ndcY, frameTimestamp)
-        callback.sendCommand(command)
+        val command: MutableMap<Any, Any> = mutableMapOf(
+            TransitKeys.TYPE to "command",
+            TransitKeys.COMMAND_TYPE to "cv-start-track-ndc",
+            TransitKeys.STREAM_TYPE to streamType.toKeyword(),
+            TransitKeys.NDC_X to ndcX,
+            TransitKeys.NDC_Y to ndcY
+        )
+        frameTimestamp?.let { command[TransitKeys.FRAME_TIMESTAMP] = it }
+        callback.sendCommand(command as Map<Any, Any>)
     }
 
     private fun sendRotaryVelocityCommand(
@@ -227,12 +235,22 @@ class MouseEventHandler(
         azDir: RotaryDirection,
         elDir: RotaryDirection,
     ) {
-        val command = CommandBuilder.rotarySetVelocity(azSpeed, elSpeed, azDir, elDir)
+        val command: Map<Any, Any> = mapOf(
+            TransitKeys.TYPE to "command",
+            TransitKeys.COMMAND_TYPE to "rotary-set-velocity",
+            TransitKeys.AZIMUTH_SPEED to azSpeed,
+            TransitKeys.ELEVATION_SPEED to elSpeed,
+            TransitKeys.AZIMUTH_DIRECTION to azDir.toKeyword(),
+            TransitKeys.ELEVATION_DIRECTION to elDir.toKeyword()
+        )
         callback.sendCommand(command)
     }
 
     private fun sendRotaryHaltCommand() {
-        val command = CommandBuilder.rotaryHalt()
+        val command: Map<Any, Any> = mapOf(
+            TransitKeys.TYPE to "command",
+            TransitKeys.COMMAND_TYPE to "rotary-halt"
+        )
         callback.sendCommand(command)
     }
 

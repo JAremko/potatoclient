@@ -3,6 +3,8 @@
    Tests both fast (*) and validating versions of deserialize functions."
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
+   [matcher-combinators.test] ;; extends clojure.test's `is` macro
+   [matcher-combinators.matchers :as matchers]
    [malli.core :as m]
    [malli.generator :as mg]
    [pronto.core :as pronto]
@@ -82,12 +84,10 @@
             binary-data (edn->cmd-bytes original-edn)
             deserialized (deserialize/deserialize-cmd-payload* binary-data)]
         (is (map? deserialized) "Should return a map")
-        (is (= (:protocol_version original-edn) 
-               (:protocol_version deserialized))
-            "Protocol version should match")
-        (is (= (:session_id original-edn)
-               (:session_id deserialized))
-            "Session ID should match")))
+        ;; Use matcher-combinators for partial matching
+        (is (match? {:protocol_version (:protocol_version original-edn)
+                     :session_id (:session_id original-edn)}
+                    deserialized))))
     
     (testing "Invalid binary data throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
@@ -98,8 +98,9 @@
     (testing "Empty binary data returns map with default values"
       (let [result (deserialize/deserialize-cmd-payload* (byte-array []))]
         (is (map? result) "Should return a map")
-        (is (= 0 (:protocol_version result)) "Should have default protocol_version of 0")
-        (is (= 0 (:session_id result)) "Should have default session_id of 0")))))
+        (is (match? {:protocol_version 0
+                     :session_id 0}
+                    result))))))
 
 (deftest test-deserialize-cmd-payload
   (testing "CMD deserialization with full validation"
@@ -145,8 +146,8 @@
                     nil
                     (catch clojure.lang.ExceptionInfo e
                       (ex-data e)))]
-        (is (= :deserialization-error (:type result))
-            "Should throw deserialization error for malformed data")))))
+        (is (match? {:type :deserialization-error}
+                    result))))))
 
 ;; ============================================================================
 ;; State Deserialization Tests

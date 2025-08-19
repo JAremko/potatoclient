@@ -8,7 +8,6 @@
             [potatoclient.logging :as logging]
             [potatoclient.transit.commands :as commands]
             [potatoclient.transit.core :as transit-core]
-            [potatoclient.transit.subprocess-launcher :as subprocess]
             [potatoclient.ui-specs :as specs]))
 
 ;; ============================================================================
@@ -127,8 +126,8 @@
                           :gesture-type (:gesture-type gesture-event)
                           :stream-type (:stream-type gesture-event)
                           :command command})
-      (subprocess/send-message :cmd
-                               (transit-core/create-message :command command)))
+      ;; TODO: Send command through in-process handler
+      (comment "Send command through in-process handler"))
     true))
 
 (>defn send-rotate-to-ndc
@@ -138,8 +137,9 @@
   [stream-type ndc-x ndc-y]
   [::specs/stream-type number? number? => boolean?]
   (let [command (build-rotate-to-ndc-command stream-type ndc-x ndc-y)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command command))))
+    ;; TODO: Send command through in-process handler
+    (comment "Send rotate-to-ndc command")
+    true))
 
 (>defn send-cv-track
   "Send a CV track command (double-tap handler).
@@ -148,8 +148,9 @@
   [stream-type ndc-x ndc-y frame-timestamp]
   [::specs/stream-type number? number? (? int?) => boolean?]
   (let [command (build-cv-track-command stream-type ndc-x ndc-y frame-timestamp)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command command))))
+    ;; TODO: Send command through in-process handler
+    (comment "Send cv-track command")
+    true))
 
 (>defn send-rotary-velocity
   "Send a rotary velocity command (pan handler).
@@ -160,8 +161,9 @@
    [:enum :clockwise :counter-clockwise] => boolean?]
   (let [command (build-rotary-velocity-command azimuth-speed elevation-speed
                                                azimuth-direction elevation-direction)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command command))))
+    ;; TODO: Send command through in-process handler
+    (comment "Send rotary-velocity command")
+    true))
 
 (>defn send-rotary-halt
   "Send a rotary halt command (pan stop handler).
@@ -170,8 +172,9 @@
   []
   [=> boolean?]
   (let [command (build-rotary-halt-command)]
-    (subprocess/send-message :cmd
-                             (transit-core/create-message :command command))))
+    ;; TODO: Send command through in-process handler
+    (comment "Send rotary-halt command")
+    true))
 
 ;; ============================================================================
 ;; Navigation Event Handlers

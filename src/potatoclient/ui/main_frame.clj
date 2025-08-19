@@ -15,7 +15,6 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.transit.subprocess-launcher :as launcher]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-viewer :as log-viewer]
             [seesaw.action :as action]
@@ -249,8 +248,6 @@
                                                               stream-processes)]
                          (when (seq transformed-processes)
                            (process/cleanup-all-processes transformed-processes)))
-                       ;; Stop Transit subprocesses
-                       (launcher/stop-all-subprocesses)
                        (logging/shutdown!)
                        (catch Exception e
                          (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))}))
