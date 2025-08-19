@@ -1,11 +1,9 @@
 package potatoclient.kotlin
 
-import kotlinx.coroutines.runBlocking
-import potatoclient.java.transit.EventType
-import potatoclient.java.transit.MessageKeys
-import potatoclient.kotlin.transit.TransitCommunicator
-import potatoclient.kotlin.transit.TransitKeys
-import potatoclient.kotlin.transit.TransitMessageProtocol
+import potatoclient.kotlin.ipc.IpcManager
+import potatoclient.kotlin.ipc.IpcKeys
+import potatoclient.kotlin.gestures.FrameDataProvider
+import potatoclient.kotlin.gestures.FrameData
 import java.awt.Component
 import java.net.URI
 import java.nio.ByteOrder
@@ -27,19 +25,13 @@ class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
     domain: String,
-) : MouseEventHandler.EventCallback,
-    WindowEventHandler.EventCallback,
-    GStreamerPipeline.EventCallback,
+) : GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener,
-    potatoclient.kotlin.gestures.FrameDataProvider {
-    // Core components - use original stdout for Transit
-    private val transitReader =
-        TransitCommunicator(
-            System.`in`,
-            potatoclient.kotlin.transit.StdoutInterceptor
-                .getOriginalStdout(),
-        )
-
+    FrameDataProvider {
+    
+    // IPC communication
+    private val ipcManager = IpcManager.getInstance(streamId)
+    
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
     private val shutdownLatch = CountDownLatch(1)
@@ -54,30 +46,23 @@ class VideoStreamManager(
         Executors.newSingleThreadScheduledExecutor { r ->
             Thread(r, "VideoStream-Reconnect-$streamId").apply { isDaemon = true }
         }
-    private val eventThrottleExecutor: ScheduledExecutorService =
-        Executors.newScheduledThreadPool(
-            Constants.EVENT_THROTTLE_POOL_SIZE,
-        ) { r ->
-            Thread(r, "VideoStream-EventThrottle-$streamId").apply { isDaemon = true }
-        }
 
     // Module instances
-    private val eventFilter = EventFilter()
-    private val messageProtocol = TransitMessageProtocol(streamId, transitReader)
-
-    init {
-        // Set the message protocol for the interceptor (already installed in main)
-        potatoclient.kotlin.transit.StdoutInterceptor
-            .setMessageProtocol(messageProtocol)
-    }
-
-    private val frameManager = FrameManager(streamId, domain, this, messageProtocol)
+    private val frameManager = FrameManager(streamId, domain, this, ipcManager)
     private var mouseEventHandler: MouseEventHandler? = null
     private var windowEventHandler: WindowEventHandler? = null
     private val webSocketClient: WebSocketClientBuiltIn
     private val gstreamerPipeline = GStreamerPipeline(this)
 
     init {
+        // Initialize IPC
+        ipcManager.initialize()
+        
+        // Register message handler for incoming commands
+        ipcManager.onMessage { message ->
+            handleIncomingMessage(message)
+        }
+        
         webSocketClient = createWebSocketClient()
     }
 
@@ -129,13 +114,27 @@ class VideoStreamManager(
                     }
                 },
                 onConnect = {
-                    // Connection established
+                    // Report websocket connection
+                    ipcManager.sendConnectionEvent(IpcKeys.CONNECTED, mapOf(
+                        "url" to streamUrl,
+                        "stream-id" to streamId
+                    ))
                 },
                 onClose = { code, reason ->
-                    // Connection closed
+                    // Report websocket disconnection
+                    ipcManager.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
+                        "code" to code,
+                        "reason" to reason,
+                        "stream-id" to streamId
+                    ))
                 },
                 onError = { error ->
-                    messageProtocol.sendException("WebSocket error", error as Exception)
+                    // Report websocket error
+                    ipcManager.sendConnectionEvent(IpcKeys.CONNECTION_ERROR, mapOf(
+                        "error" to error.message,
+                        "stream-id" to streamId
+                    ))
+                    ipcManager.sendLog("ERROR", "WebSocket error: ${error.message}")
                 },
             )
         } catch (e: Exception) {
@@ -144,25 +143,12 @@ class VideoStreamManager(
 
     fun start() {
         try {
-            messageProtocol.sendResponse("starting", mapOf(MessageKeys.STREAM_ID to streamId))
+            ipcManager.sendLog("INFO", "Starting video stream $streamId")
 
             // Create and show frame
             frameManager.createFrame()
-            frameManager.showFrame()
 
-            // Start command reader thread
-            Thread({
-                try {
-                    readCommands()
-                } catch (e: Exception) {
-                    messageProtocol.sendException("Command reader error", e)
-                }
-            }, "VideoStream-CommandReader-$streamId").apply {
-                isDaemon = true
-                start()
-            }
-
-            // Connect WebSocket
+            // Start WebSocket connection
             webSocketClient.connect()
 
             // Wait for shutdown
@@ -172,52 +158,32 @@ class VideoStreamManager(
                 Thread.currentThread().interrupt()
             }
         } catch (e: Exception) {
-            messageProtocol.sendException("Startup error", e)
+            ipcManager.sendLog("ERROR", "Startup error: ${e.message}")
         } finally {
             cleanup()
         }
     }
 
-    private fun readCommands() {
-        while (running.get()) {
-            try {
-                val message =
-                    runBlocking {
-                        transitReader.readMessage()
+    private fun handleIncomingMessage(message: Map<*, *>) {
+        val msgType = message[IpcKeys.MSG_TYPE]
+        val action = message[IpcKeys.ACTION]
+        
+        when (msgType) {
+            IpcKeys.COMMAND -> {
+                when (action) {
+                    IpcKeys.keyword("stop"), IpcKeys.keyword("shutdown") -> {
+                        stop()
                     }
-                if (message != null && message["msg-type"] == "command") {
-                    val payload = message["payload"] as? Map<*, *>
-                    handleCommand(payload ?: emptyMap<String, Any>())
+                    IpcKeys.keyword("pause") -> {
+                        gstreamerPipeline.pause()
+                    }
+                    IpcKeys.keyword("play") -> {
+                        gstreamerPipeline.play()
+                    }
+                    IpcKeys.keyword("reconnect") -> {
+                        webSocketClient.reconnect()
+                    }
                 }
-            } catch (e: Exception) {
-                if (running.get()) {
-                    messageProtocol.sendException("Command parsing error", e)
-                }
-            }
-        }
-    }
-
-    private fun handleCommand(command: Map<*, *>) {
-        val cmd = command["action"] as? String ?: return
-
-        when (cmd) {
-            "stop", "shutdown" -> {
-                stop()
-            }
-            "pause" -> {
-                // Could implement pause/resume for video
-            }
-            "resume" -> {
-                // Could implement pause/resume for video
-            }
-            "show" -> {
-                frameManager.showFrame()
-            }
-            "hide" -> {
-                frameManager.hideFrame()
-            }
-            else -> {
-                // Ignore unknown commands
             }
         }
     }
@@ -248,7 +214,6 @@ class VideoStreamManager(
 
             // Shutdown executors
             reconnectExecutor.shutdown()
-            eventThrottleExecutor.shutdown()
 
             try {
                 if (!reconnectExecutor.awaitTermination(
@@ -258,42 +223,21 @@ class VideoStreamManager(
                 ) {
                     reconnectExecutor.shutdownNow()
                 }
-                if (!eventThrottleExecutor.awaitTermination(
-                        Constants.EXECUTOR_SHUTDOWN_TIMEOUT_SECONDS,
-                        TimeUnit.SECONDS,
-                    )
-                ) {
-                    eventThrottleExecutor.shutdownNow()
-                }
             } catch (_: InterruptedException) {
                 reconnectExecutor.shutdownNow()
-                eventThrottleExecutor.shutdownNow()
                 Thread.currentThread().interrupt()
             }
 
-            // Send final response
-            messageProtocol.sendResponse("stopped", mapOf(MessageKeys.STREAM_ID to streamId))
+            // Send final disconnection event
+            ipcManager.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
+                "stream-id" to streamId
+            ))
+            
+            // Shutdown IPC
+            ipcManager.shutdown()
         } catch (e: Exception) {
-            messageProtocol.sendException("Cleanup error", e)
+            System.err.println("Cleanup error: ${e.message}")
         }
-    }
-
-    // MouseEventHandler.EventCallback implementation
-    // Note: onNavigationEvent removed - we only send gesture events now
-
-    // WindowEventHandler.EventCallback implementation
-    override fun onWindowEvent(
-        type: EventFilter.EventType,
-        eventName: String,
-        details: Map<String, Any>?,
-    ) {
-        val windowState = details?.get("windowState") as? Int
-        val x = details?.get("x") as? Int
-        val y = details?.get("y") as? Int
-        val width = details?.get("width") as? Int
-        val height = details?.get("height") as? Int
-
-        messageProtocol.sendWindowEvent(eventName, windowState, x, y, width, height)
     }
 
     // GStreamerPipeline.EventCallback implementation
@@ -302,34 +246,23 @@ class VideoStreamManager(
         message: String,
     ) {
         if (running.get()) {
-            messageProtocol.sendLog(level, message)
+            ipcManager.sendLog(level, message)
         }
     }
 
     override fun onPipelineError(message: String) {
-        messageProtocol.sendError("Pipeline error: $message")
+        ipcManager.sendLog("ERROR", "Pipeline error: $message")
         // Could trigger reconnection or other error handling
     }
 
     override fun isRunning(): Boolean = running.get()
 
-    // New MouseEventHandler.EventCallback methods for gestures
-    override fun onGestureEvent(event: Map<Any, Any>) {
-        // Send gesture event to main process via Transit
-        messageProtocol.sendEvent(EventType.GESTURE, event)
-    }
-
-    override fun sendCommand(command: Map<Any, Any>) {
-        // Send command directly to main process
-        messageProtocol.sendCommand(command)
-    }
-
     // FrameDataProvider implementation
-    override fun getFrameData(): potatoclient.kotlin.gestures.FrameData? {
+    override fun getFrameData(): FrameData? {
         val timestamp = currentFrameTimestamp.get()
         val duration = currentFrameDuration.get()
         return if (timestamp > 0) {
-            potatoclient.kotlin.gestures.FrameData(timestamp, duration)
+            FrameData(timestamp, duration)
         } else {
             null
         }
@@ -350,57 +283,41 @@ class VideoStreamManager(
             // Initialize GStreamer pipeline with video component
             gstreamerPipeline.initialize(videoComponent)
 
-            // Set up event handlers with gesture support
-            val streamType =
-                if (streamId.contains("heat", ignoreCase = true)) {
-                    potatoclient.kotlin.gestures.StreamType.HEAT
-                } else {
-                    potatoclient.kotlin.gestures.StreamType.DAY
-                }
-            mouseEventHandler =
-                MouseEventHandler(
-                    videoComponent,
-                    this,
-                    streamType,
-                    this, // as FrameDataProvider
-                )
+            // Set up mouse event handler with IPC
+            mouseEventHandler = MouseEventHandler(
+                videoComponent,
+                ipcManager,
+                this // as FrameDataProvider
+            )
             mouseEventHandler?.attachListeners()
 
-            windowEventHandler = WindowEventHandler(frame, this, eventFilter, eventThrottleExecutor)
+            // Set up window event handler with IPC and shutdown callback
+            windowEventHandler = WindowEventHandler(
+                frame,
+                ipcManager,
+                throttleMs = 100L,
+                onShutdown = {
+                    // Additional cleanup when window is closed
+                    cleanup()
+                }
+            )
             windowEventHandler?.attachListeners()
         } catch (e: Exception) {
-            messageProtocol.sendException("Frame setup error", e)
+            ipcManager.sendLog("ERROR", "Frame setup error: ${e.message}")
         }
     }
 
     override fun onFrameClosing() {
         // Only send the close event once to avoid multiple messages
         if (closeEventSent.compareAndSet(false, true)) {
-            // Send a window close event to the main process (not a response!)
-            // We need to send the event with additional data including streamId
-            messageProtocol.sendEvent(
-                EventType.WINDOW,
-                mapOf(
-                    MessageKeys.TYPE to EventType.CLOSE.keyword, // Use keyword
-                    MessageKeys.STREAM_ID to streamId,
-                ),
-            )
-            // Don't stop immediately - let the main process handle shutdown
-        } else {
-            // Frame closing already handled, ignore duplicate event
+            // Clean shutdown
+            stop()
         }
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            // Install stdout interceptor EARLY before any code runs
-            potatoclient.kotlin.transit.StdoutInterceptor
-                .installEarly()
-
-            // Give the parent process time to set up Transit reader
-            Thread.sleep(100)
-
             if (args.size < 3) {
                 System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain>")
                 exitProcess(1)
@@ -410,27 +327,16 @@ class VideoStreamManager(
             val streamUrl = args[1]
             val domain = args[2]
 
-            // Initialize logging for this subprocess
-            potatoclient.kotlin.transit.LoggingUtils
-                .initializeLogging("video-stream-$streamId")
-
-            // Install shutdown hook for clean exit
-            Runtime.getRuntime().addShutdownHook(
-                Thread {
-                    potatoclient.kotlin.transit.logInfo("Shutdown hook triggered for video stream $streamId")
-                },
-            )
-
             try {
                 val manager = VideoStreamManager(streamId, streamUrl, domain)
                 manager.start()
             } catch (e: Exception) {
-                // Log fatal error - no messageProtocol available in main yet
-                potatoclient.kotlin.transit.logError("Fatal error in video stream", e)
+                System.err.println("Failed to start video stream: ${e.message}")
+                e.printStackTrace()
                 exitProcess(1)
             } finally {
-                potatoclient.kotlin.transit.LoggingUtils
-                    .close()
+                // Exit cleanly
+                exitProcess(0)
             }
         }
     }
