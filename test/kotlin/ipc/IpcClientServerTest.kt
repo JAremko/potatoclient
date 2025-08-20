@@ -1,7 +1,5 @@
 package potatoclient.kotlin.ipc
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -33,7 +31,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testBasicClientServerCommunication() = runBlocking {
+    fun testBasicClientServerCommunication() {
         // Create and start server
         server = IpcServer.create(streamName)
         
@@ -75,7 +73,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testCommandMessage() = runBlocking {
+    fun testCommandMessage() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -107,7 +105,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testLogMessage() = runBlocking {
+    fun testLogMessage() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -140,7 +138,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testMetricMessage() = runBlocking {
+    fun testMetricMessage() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -172,7 +170,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testCloseRequest() = runBlocking {
+    fun testCloseRequest() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -193,7 +191,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testMultipleMessages() = runBlocking {
+    fun testMultipleMessages() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -239,7 +237,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testDirectSend() = runBlocking {
+    fun testDirectSend() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -276,7 +274,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testServerReceiveMessage() = runBlocking {
+    fun testServerReceiveMessage() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -288,7 +286,7 @@ class IpcClientServerTest {
         )
         
         // Receive using blocking method
-        delay(100) // Give time for message to arrive
+        Thread.sleep(100) // Give time for message to arrive
         val message = server!!.receiveMessage()
         
         assertNotNull(message)
@@ -298,7 +296,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testTryReceiveMessage() = runBlocking {
+    fun testTryReceiveMessage() {
         server = IpcServer.create(streamName)
         val serverPid = IpcServer.getCurrentPid()
         client = IpcClient.create(serverPid, streamName)
@@ -313,7 +311,7 @@ class IpcClientServerTest {
         )
         
         // Give time for message to arrive
-        delay(100)
+        Thread.sleep(100)
         
         // Should be able to receive
         val message = server!!.tryReceiveMessage()
@@ -327,7 +325,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testMultipleStreams() = runBlocking {
+    fun testMultipleStreams() {
         // Create servers for different streams
         val heatServer = IpcServer.create("heat")
         val dayServer = IpcServer.create("day")
@@ -389,7 +387,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testServerGet() = runBlocking {
+    fun testServerGet() {
         val server1 = IpcServer.create("stream1")
         val server2 = IpcServer.create("stream2")
         
@@ -410,13 +408,13 @@ class IpcClientServerTest {
     }
     
     @Test(expected = IllegalStateException::class)
-    fun testDuplicateServer() = runBlocking {
+    fun testDuplicateServer() {
         IpcServer.create("duplicate")
         IpcServer.create("duplicate") // Should throw
     }
     
     @Test(expected = IllegalStateException::class)
-    fun testClientNotConnected() = runBlocking {
+    fun testClientNotConnected() {
         val serverPid = IpcServer.getCurrentPid()
         val socketPath = IpcClient.generateSocketPath(serverPid, "test")
         val client = IpcClient(socketPath, "test")
@@ -426,7 +424,7 @@ class IpcClientServerTest {
     }
     
     @Test
-    fun testLifecycle() = runBlocking {
+    fun testLifecycle() {
         val server = IpcServer.create("lifecycle")
         assertTrue(server.isRunning())
         

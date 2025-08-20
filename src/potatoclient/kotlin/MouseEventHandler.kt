@@ -4,7 +4,7 @@ import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.GestureConfig
 import potatoclient.kotlin.gestures.GestureEvent
 import potatoclient.kotlin.gestures.GestureRecognizer
-import potatoclient.kotlin.ipc.IpcManager
+import potatoclient.kotlin.ipc.IpcClient
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -17,7 +17,7 @@ import java.awt.event.MouseWheelListener
  */
 class MouseEventHandler(
     private val videoComponent: Component,
-    private val ipcManager: IpcManager,
+    private val ipcClient: IpcClient,
     private val frameDataProvider: FrameDataProvider
 ) {
     // Gesture recognition components
@@ -33,7 +33,7 @@ class MouseEventHandler(
         config = gestureConfig,
         onGesture = { gesture ->
             // Send gesture directly to Clojure via IPC
-            ipcManager.sendGestureEvent(gesture)
+            ipcClient.sendGestureEvent(gesture)
         },
         frameDataProvider = frameDataProvider
     )

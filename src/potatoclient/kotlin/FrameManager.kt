@@ -1,7 +1,7 @@
 package potatoclient.kotlin
 
 import com.sun.jna.Platform
-import potatoclient.kotlin.ipc.IpcManager
+import potatoclient.kotlin.ipc.IpcClient
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Component
@@ -20,7 +20,7 @@ class FrameManager(
     private val streamId: String,
     private val domain: String,
     private val listener: FrameEventListener?,
-    private val ipcManager: IpcManager,
+    private val ipcClient: IpcClient,
 ) {
     @Volatile private var frame: JFrame? = null
 

@@ -24,11 +24,14 @@ public class UnixSocketCommunicator {
     private final Path socketPath;
     private final boolean isServer;
     private SocketChannel channel;
+    private java.nio.channels.ServerSocketChannel serverChannel;  // Keep server channel for async accept
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean connected = new AtomicBoolean(false);
     private final BlockingQueue<byte[]> incomingQueue = new LinkedBlockingQueue<>();
     private final ReentrantLock writeLock = new ReentrantLock();
     
     private Thread readerThread;
+    private Thread acceptThread;  // Thread for accepting connections
     private ByteBuffer readBuffer;
     private ByteBuffer writeBuffer;
     
@@ -48,7 +51,7 @@ public class UnixSocketCommunicator {
     }
     
     /**
-     * Start the communicator. For servers, this binds and accepts a connection.
+     * Start the communicator. For servers, this binds and starts accepting connections.
      * For clients, this connects to the server.
      */
     public void start() throws IOException {
@@ -62,26 +65,41 @@ public class UnixSocketCommunicator {
             // Clean up any existing socket file
             Files.deleteIfExists(socketPath);
             
-            // Create server channel and accept connection
-            var serverChannel = java.nio.channels.ServerSocketChannel.open(StandardProtocolFamily.UNIX);
+            // Create server channel
+            serverChannel = java.nio.channels.ServerSocketChannel.open(StandardProtocolFamily.UNIX);
             serverChannel.bind(address);
             
-            // Accept single connection (blocking)
-            channel = serverChannel.accept();
-            serverChannel.close(); // Close server channel after accepting
+            // Accept connections in a separate thread to avoid blocking
+            acceptThread = new Thread(() -> {
+                try {
+                    channel = serverChannel.accept();
+                    channel.configureBlocking(true);
+                    connected.set(true);
+                    
+                    // Start reader thread once connected
+                    readerThread = new Thread(this::readerLoop, "UnixSocket-Reader-" + socketPath.getFileName());
+                    readerThread.setDaemon(true);
+                    readerThread.start();
+                } catch (IOException e) {
+                    if (running.get()) {
+                        System.err.println("Accept error: " + e.getMessage());
+                    }
+                }
+            }, "UnixSocket-Accept-" + socketPath.getFileName());
+            acceptThread.setDaemon(true);
+            acceptThread.start();
         } else {
             // Connect as client
             channel = SocketChannel.open(StandardProtocolFamily.UNIX);
             channel.connect(address);
+            channel.configureBlocking(true);
+            connected.set(true);
+            
+            // Start reader thread
+            readerThread = new Thread(this::readerLoop, "UnixSocket-Reader-" + socketPath.getFileName());
+            readerThread.setDaemon(true);
+            readerThread.start();
         }
-        
-        // Configure channel
-        channel.configureBlocking(true);
-        
-        // Start reader thread
-        readerThread = new Thread(this::readerLoop, "UnixSocket-Reader-" + socketPath.getFileName());
-        readerThread.setDaemon(true);
-        readerThread.start();
     }
     
     /**
@@ -93,6 +111,10 @@ public class UnixSocketCommunicator {
     public void send(byte[] data) throws IOException {
         if (!running.get()) {
             throw new IllegalStateException("Communicator not running");
+        }
+        
+        if (!connected.get()) {
+            throw new IllegalStateException("Not connected yet");
         }
         
         if (data.length > MAX_MESSAGE_SIZE) {
@@ -215,12 +237,33 @@ public class UnixSocketCommunicator {
             return; // Already stopped
         }
         
+        connected.set(false);
+        
         // Close the channel
         if (channel != null) {
             try {
                 channel.close();
             } catch (IOException e) {
                 // Ignore close errors
+            }
+        }
+        
+        // Close server channel if we're a server
+        if (serverChannel != null) {
+            try {
+                serverChannel.close();
+            } catch (IOException e) {
+                // Ignore close errors
+            }
+        }
+        
+        // Interrupt accept thread if it exists
+        if (acceptThread != null) {
+            acceptThread.interrupt();
+            try {
+                acceptThread.join(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
         
@@ -251,7 +294,35 @@ public class UnixSocketCommunicator {
      * Check if the communicator is running.
      */
     public boolean isRunning() {
-        return running.get() && channel != null && channel.isOpen();
+        return running.get();
+    }
+    
+    /**
+     * Check if the communicator is connected.
+     */
+    public boolean isConnected() {
+        return connected.get() && channel != null && channel.isOpen();
+    }
+    
+    /**
+     * Wait for connection to be established (useful for servers).
+     * @param timeoutMs Maximum time to wait in milliseconds
+     * @return true if connected, false if timeout
+     */
+    public boolean waitForConnection(long timeoutMs) {
+        long startTime = System.currentTimeMillis();
+        while (!connected.get() && running.get()) {
+            if (System.currentTimeMillis() - startTime > timeoutMs) {
+                return false;
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return connected.get();
     }
     
     /**

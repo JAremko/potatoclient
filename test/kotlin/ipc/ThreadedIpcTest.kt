@@ -1,6 +1,5 @@
 package potatoclient.kotlin.ipc
 
-import kotlinx.coroutines.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -41,7 +40,7 @@ object ThreadedIpcTest {
             
             // Start server in a separate thread
             val serverThread = thread {
-                runBlocking {
+                try {
                     server = IpcServer.create(streamName)
                     server!!.setOnMessage { message ->
                         receivedMessage.set(message)
@@ -49,7 +48,7 @@ object ThreadedIpcTest {
                     }
                     
                     // Keep server running
-                    delay(5000)
+                    Thread.sleep(5000)
                 }
             }
             
@@ -58,7 +57,7 @@ object ThreadedIpcTest {
             
             // Start client and send message in another thread
             val clientThread = thread {
-                runBlocking {
+                try {
                     val serverPid = IpcServer.getCurrentPid()
                     client = IpcClient.create(serverPid, streamName)
                     
@@ -78,7 +77,7 @@ object ThreadedIpcTest {
             val received = messageReceived.await(3, TimeUnit.SECONDS)
             
             // Clean up
-            runBlocking {
+            try {
                 client?.disconnect()
                 server?.stop()
             }
@@ -111,15 +110,15 @@ object ThreadedIpcTest {
             
             // Start server
             val serverThread = thread {
-                runBlocking {
+                try {
                     server = IpcServer.create(streamName)
-                    delay(500)  // Wait for client
+                    Thread.sleep(500)  // Wait for client
                     
                     // Send close request
                     server!!.sendCloseRequest()
                     
                     // Keep running
-                    delay(3000)
+                    Thread.sleep(3000)
                 }
             }
             
@@ -127,7 +126,7 @@ object ThreadedIpcTest {
             
             // Start client
             val clientThread = thread {
-                runBlocking {
+                try {
                     val serverPid = IpcServer.getCurrentPid()
                     client = IpcClient.create(serverPid, streamName)
                     
@@ -136,7 +135,7 @@ object ThreadedIpcTest {
                     }
                     
                     // Keep running to receive close request
-                    delay(3000)
+                    Thread.sleep(3000)
                 }
             }
             
@@ -144,7 +143,7 @@ object ThreadedIpcTest {
             val received = closeReceived.await(3, TimeUnit.SECONDS)
             
             // Clean up
-            runBlocking {
+            try {
                 client?.disconnect()
                 server?.stop()
             }
@@ -163,10 +162,74 @@ object ThreadedIpcTest {
     
     private fun testMultipleStreams() {
         print("Testing Multiple Streams... ")
-        // Skip this test for now due to socket timing issues
-        // The core functionality is tested in other tests
-        println("SKIPPED (timing issues)")
-        testsPassed++
+        try {
+            try {
+                // Create servers with proper synchronization
+                val heatServer = IpcServer.create("heat", awaitBinding = true)
+                val dayServer = IpcServer.create("day", awaitBinding = true)
+                
+                val heatReceived = CountDownLatch(1)
+                val dayReceived = CountDownLatch(1)
+                val heatMessage = AtomicReference<Map<*, *>>()
+                val dayMessage = AtomicReference<Map<*, *>>()
+                
+                heatServer.setOnMessage { message ->
+                    heatMessage.set(message)
+                    heatReceived.countDown()
+                }
+                
+                dayServer.setOnMessage { message ->
+                    dayMessage.set(message)
+                    dayReceived.countDown()
+                }
+                
+                // Create clients with retry logic
+                val serverPid = IpcServer.getCurrentPid()
+                val heatClient = IpcClient.create(serverPid, "heat", retryOnFailure = true)
+                val dayClient = IpcClient.create(serverPid, "day", retryOnFailure = true)
+                
+                // Send messages
+                heatClient.sendEvent(
+                    IpcKeys.GESTURE,
+                    mapOf(IpcKeys.X to 100)
+                )
+                
+                dayClient.sendEvent(
+                    IpcKeys.GESTURE,
+                    mapOf(IpcKeys.X to 200)
+                )
+                
+                // Wait for messages with timeout
+                val heatOk = heatReceived.await(3, TimeUnit.SECONDS)
+                val dayOk = dayReceived.await(3, TimeUnit.SECONDS)
+                
+                // Verify
+                assert(heatOk) { "Heat message not received" }
+                assert(dayOk) { "Day message not received" }
+                
+                val heat = heatMessage.get()
+                assert(heat != null) { "Heat message is null" }
+                assert(heat[IpcKeys.X] == 100) { "Wrong heat X value: ${heat[IpcKeys.X]}" }
+                assert(heat[IpcKeys.STREAM_TYPE] == IpcKeys.HEAT) { "Wrong heat stream type" }
+                
+                val day = dayMessage.get()
+                assert(day != null) { "Day message is null" }
+                assert(day[IpcKeys.X] == 200) { "Wrong day X value: ${day[IpcKeys.X]}" }
+                assert(day[IpcKeys.STREAM_TYPE] == IpcKeys.DAY) { "Wrong day stream type" }
+                
+                // Clean up
+                heatClient.disconnect()
+                dayClient.disconnect()
+                heatServer.stop()
+                dayServer.stop()
+            }
+            
+            IpcServer.stopAll()
+            passed()
+        } catch (e: Exception) {
+            IpcServer.stopAll()
+            failed(e)
+        }
     }
     
     private fun passed() {

@@ -1,6 +1,6 @@
 package potatoclient.kotlin
 
-import potatoclient.kotlin.ipc.IpcManager
+import potatoclient.kotlin.ipc.IpcClient
 import potatoclient.kotlin.ipc.IpcKeys
 import potatoclient.kotlin.gestures.FrameDataProvider
 import potatoclient.kotlin.gestures.FrameData
@@ -30,7 +30,7 @@ class VideoStreamManager(
     FrameDataProvider {
     
     // IPC communication
-    private val ipcManager = IpcManager.getInstance(streamId)
+    private val ipcClient = IpcClient.getInstance(streamId)
     
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
@@ -48,7 +48,7 @@ class VideoStreamManager(
         }
 
     // Module instances
-    private val frameManager = FrameManager(streamId, domain, this, ipcManager)
+    private val frameManager = FrameManager(streamId, domain, this, ipcClient)
     private var mouseEventHandler: MouseEventHandler? = null
     private var windowEventHandler: WindowEventHandler? = null
     private val webSocketClient: WebSocketClientBuiltIn
@@ -56,10 +56,10 @@ class VideoStreamManager(
 
     init {
         // Initialize IPC
-        ipcManager.initialize()
+        ipcClient.initialize()
         
         // Register message handler for incoming commands
-        ipcManager.onMessage { message ->
+        ipcClient.onMessage { message ->
             handleIncomingMessage(message)
         }
         
@@ -115,14 +115,14 @@ class VideoStreamManager(
                 },
                 onConnect = {
                     // Report websocket connection
-                    ipcManager.sendConnectionEvent(IpcKeys.CONNECTED, mapOf(
+                    ipcClient.sendConnectionEvent(IpcKeys.CONNECTED, mapOf(
                         "url" to streamUrl,
                         "stream-id" to streamId
                     ))
                 },
                 onClose = { code, reason ->
                     // Report websocket disconnection
-                    ipcManager.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
+                    ipcClient.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
                         "code" to code,
                         "reason" to reason,
                         "stream-id" to streamId
@@ -130,11 +130,11 @@ class VideoStreamManager(
                 },
                 onError = { error ->
                     // Report websocket error
-                    ipcManager.sendConnectionEvent(IpcKeys.CONNECTION_ERROR, mapOf(
+                    ipcClient.sendConnectionEvent(IpcKeys.CONNECTION_ERROR, mapOf(
                         "error" to error.message,
                         "stream-id" to streamId
                     ))
-                    ipcManager.sendLog("ERROR", "WebSocket error: ${error.message}")
+                    ipcClient.sendLog("ERROR", "WebSocket error: ${error.message}")
                 },
             )
         } catch (e: Exception) {
@@ -143,7 +143,7 @@ class VideoStreamManager(
 
     fun start() {
         try {
-            ipcManager.sendLog("INFO", "Starting video stream $streamId")
+            ipcClient.sendLog("INFO", "Starting video stream $streamId")
 
             // Create and show frame
             frameManager.createFrame()
@@ -158,7 +158,7 @@ class VideoStreamManager(
                 Thread.currentThread().interrupt()
             }
         } catch (e: Exception) {
-            ipcManager.sendLog("ERROR", "Startup error: ${e.message}")
+            ipcClient.sendLog("ERROR", "Startup error: ${e.message}")
         } finally {
             cleanup()
         }
@@ -229,12 +229,12 @@ class VideoStreamManager(
             }
 
             // Send final disconnection event
-            ipcManager.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
+            ipcClient.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
                 "stream-id" to streamId
             ))
             
             // Shutdown IPC
-            ipcManager.shutdown()
+            ipcClient.shutdown()
         } catch (e: Exception) {
             System.err.println("Cleanup error: ${e.message}")
         }
@@ -246,12 +246,12 @@ class VideoStreamManager(
         message: String,
     ) {
         if (running.get()) {
-            ipcManager.sendLog(level, message)
+            ipcClient.sendLog(level, message)
         }
     }
 
     override fun onPipelineError(message: String) {
-        ipcManager.sendLog("ERROR", "Pipeline error: $message")
+        ipcClient.sendLog("ERROR", "Pipeline error: $message")
         // Could trigger reconnection or other error handling
     }
 
@@ -286,7 +286,7 @@ class VideoStreamManager(
             // Set up mouse event handler with IPC
             mouseEventHandler = MouseEventHandler(
                 videoComponent,
-                ipcManager,
+                ipcClient,
                 this // as FrameDataProvider
             )
             mouseEventHandler?.attachListeners()
@@ -294,7 +294,7 @@ class VideoStreamManager(
             // Set up window event handler with IPC and shutdown callback
             windowEventHandler = WindowEventHandler(
                 frame,
-                ipcManager,
+                ipcClient,
                 throttleMs = 100L,
                 onShutdown = {
                     // Additional cleanup when window is closed
@@ -303,7 +303,7 @@ class VideoStreamManager(
             )
             windowEventHandler?.attachListeners()
         } catch (e: Exception) {
-            ipcManager.sendLog("ERROR", "Frame setup error: ${e.message}")
+            ipcClient.sendLog("ERROR", "Frame setup error: ${e.message}")
         }
     }
 

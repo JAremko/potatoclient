@@ -1,7 +1,7 @@
 package potatoclient.kotlin
 
 import potatoclient.kotlin.ipc.IpcKeys
-import potatoclient.kotlin.ipc.IpcManager
+import potatoclient.kotlin.ipc.IpcClient
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.Point
@@ -23,7 +23,7 @@ import javax.swing.JFrame
  */
 class WindowEventHandler(
     private val frame: JFrame,
-    private val ipcManager: IpcManager,
+    private val ipcClient: IpcClient,
     private val throttleMs: Long = 100L,  // Default 100ms throttle for resize/move events
     private val onShutdown: (() -> Unit)? = null  // Optional shutdown callback
 ) {
@@ -44,14 +44,14 @@ class WindowEventHandler(
         // Window event listener
         frame.addWindowListener(object : WindowAdapter() {
             override fun windowOpened(e: WindowEvent) {
-                ipcManager.sendWindowEvent("focus")
+                ipcClient.sendWindowEvent("focus")
             }
 
             override fun windowClosing(e: WindowEvent) {
                 // Clean shutdown when window is closed
                 cleanup()
                 onShutdown?.invoke()  // Call custom shutdown handler if provided
-                ipcManager.shutdown()
+                ipcClient.shutdown()
                 System.exit(0)
             }
 
@@ -61,19 +61,19 @@ class WindowEventHandler(
             }
 
             override fun windowIconified(e: WindowEvent) {
-                ipcManager.sendWindowEvent("minimize")
+                ipcClient.sendWindowEvent("minimize")
             }
 
             override fun windowDeiconified(e: WindowEvent) {
-                ipcManager.sendWindowEvent("restore")
+                ipcClient.sendWindowEvent("restore")
             }
 
             override fun windowActivated(e: WindowEvent) {
-                ipcManager.sendWindowEvent("focus")
+                ipcClient.sendWindowEvent("focus")
             }
 
             override fun windowDeactivated(e: WindowEvent) {
-                ipcManager.sendWindowEvent("blur")
+                ipcClient.sendWindowEvent("blur")
             }
         })
 
@@ -87,12 +87,12 @@ class WindowEventHandler(
                     // Maximized
                     (newState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH &&
                     (oldState and Frame.MAXIMIZED_BOTH) != Frame.MAXIMIZED_BOTH -> {
-                        ipcManager.sendWindowEvent("maximize")
+                        ipcClient.sendWindowEvent("maximize")
                     }
                     // Restored from maximized
                     (oldState and Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH &&
                     (newState and Frame.MAXIMIZED_BOTH) == 0 -> {
-                        ipcManager.sendWindowEvent("restore")
+                        ipcClient.sendWindowEvent("restore")
                     }
                 }
                 lastState = newState
@@ -109,7 +109,7 @@ class WindowEventHandler(
                 if (newSize.width != oldSize.width || newSize.height != oldSize.height) {
                     // Throttle resize events
                     resizeThrottler.throttle {
-                        ipcManager.sendWindowEvent(
+                        ipcClient.sendWindowEvent(
                             "resize",
                             width = newSize.width,
                             height = newSize.height,
@@ -129,7 +129,7 @@ class WindowEventHandler(
                 if (newLocation.x != oldLocation.x || newLocation.y != oldLocation.y) {
                     // Throttle move events
                     moveThrottler.throttle {
-                        ipcManager.sendWindowEvent(
+                        ipcClient.sendWindowEvent(
                             "window-move",
                             x = newLocation.x,
                             y = newLocation.y,
