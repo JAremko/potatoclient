@@ -24,8 +24,13 @@
 (defn clean [_]
   (b/delete {:path "target"}))
 
+;; Forward declaration
+(declare compile-java-ipc)
+
 (defn compile-kotlin [_]
   (println "Compiling Kotlin sources...")
+  ;; First compile Java IPC classes that Kotlin depends on
+  (compile-java-ipc nil)
   ;; First ensure the kotlin compiler is available
   (let [kotlin-dir "tools/kotlin-2.2.0"
         kotlinc (str kotlin-dir "/bin/kotlinc")
