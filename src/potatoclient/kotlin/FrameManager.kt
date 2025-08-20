@@ -2,6 +2,7 @@ package potatoclient.kotlin
 
 import com.sun.jna.Platform
 import potatoclient.kotlin.ipc.IpcClient
+import potatoclient.kotlin.ipc.IpcKeys
 import java.awt.Canvas
 import java.awt.Color
 import java.awt.Component
@@ -80,7 +81,7 @@ class FrameManager(
                     iconImage = ImageIcon(iconURL).image
                 }
             } catch (e: IOException) {
-                ipcManager.sendLog("ERROR", "Failed to load window icon: ${e.message}")
+                ipcClient.sendLog(IpcKeys.ERROR, "Failed to load window icon: ${e.message}")
             }
 
             // Add window close listener

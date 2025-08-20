@@ -130,11 +130,11 @@ class VideoStreamManager(
                 },
                 onError = { error ->
                     // Report websocket error
-                    ipcClient.sendConnectionEvent(IpcKeys.CONNECTION_ERROR, mapOf(
-                        "error" to error.message,
+                    ipcClient.sendConnectionEvent(IpcKeys.CONNECTION_ERROR, mapOf<Any, Any>(
+                        "error" to (error.message ?: "Unknown error"),
                         "stream-id" to streamId
                     ))
-                    ipcClient.sendLog("ERROR", "WebSocket error: ${error.message}")
+                    ipcClient.sendLog(IpcKeys.ERROR, "WebSocket error: ${error.message}")
                 },
             )
         } catch (e: Exception) {
@@ -143,7 +143,7 @@ class VideoStreamManager(
 
     fun start() {
         try {
-            ipcClient.sendLog("INFO", "Starting video stream $streamId")
+            ipcClient.sendLog(IpcKeys.INFO, "Starting video stream $streamId")
 
             // Create and show frame
             frameManager.createFrame()
@@ -158,7 +158,7 @@ class VideoStreamManager(
                 Thread.currentThread().interrupt()
             }
         } catch (e: Exception) {
-            ipcClient.sendLog("ERROR", "Startup error: ${e.message}")
+            ipcClient.sendLog(IpcKeys.ERROR, "Startup error: ${e.message}")
         } finally {
             cleanup()
         }
@@ -175,13 +175,16 @@ class VideoStreamManager(
                         stop()
                     }
                     IpcKeys.keyword("pause") -> {
-                        gstreamerPipeline.pause()
+                        // TODO: Implement pause when gstreamerPipeline supports it
+                        // gstreamerPipeline.pause()
                     }
                     IpcKeys.keyword("play") -> {
-                        gstreamerPipeline.play()
+                        // TODO: Implement play when gstreamerPipeline supports it
+                        // gstreamerPipeline.play()
                     }
                     IpcKeys.keyword("reconnect") -> {
-                        webSocketClient.reconnect()
+                        // TODO: Implement reconnect when webSocketClient supports it
+                        // webSocketClient.reconnect()
                     }
                 }
             }
@@ -246,12 +249,19 @@ class VideoStreamManager(
         message: String,
     ) {
         if (running.get()) {
-            ipcClient.sendLog(level, message)
+            val logLevel = when(level) {
+            "DEBUG" -> IpcKeys.DEBUG
+            "INFO" -> IpcKeys.INFO
+            "WARN" -> IpcKeys.WARN
+            "ERROR" -> IpcKeys.ERROR
+            else -> IpcKeys.INFO
+        }
+        ipcClient.sendLog(logLevel, message)
         }
     }
 
     override fun onPipelineError(message: String) {
-        ipcClient.sendLog("ERROR", "Pipeline error: $message")
+        ipcClient.sendLog(IpcKeys.ERROR, "Pipeline error: $message")
         // Could trigger reconnection or other error handling
     }
 
@@ -303,7 +313,7 @@ class VideoStreamManager(
             )
             windowEventHandler?.attachListeners()
         } catch (e: Exception) {
-            ipcClient.sendLog("ERROR", "Frame setup error: ${e.message}")
+            ipcClient.sendLog(IpcKeys.ERROR, "Frame setup error: ${e.message}")
         }
     }
 
