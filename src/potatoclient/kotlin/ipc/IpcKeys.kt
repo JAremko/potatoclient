@@ -9,84 +9,84 @@ import com.cognitect.transit.TransitFactory
  */
 object IpcKeys {
     // Message envelope keys
-    @JvmField val MSG_TYPE = TransitFactory.keyword("msg-type")
-    @JvmField val MSG_ID = TransitFactory.keyword("msg-id")
-    @JvmField val TIMESTAMP = TransitFactory.keyword("timestamp")
-    @JvmField val PAYLOAD = TransitFactory.keyword("payload")
+    @JvmField val MSG_TYPE: Keyword = TransitFactory.keyword("msg-type")
+    @JvmField val MSG_ID: Keyword = TransitFactory.keyword("msg-id")
+    @JvmField val TIMESTAMP: Keyword = TransitFactory.keyword("timestamp")
+    @JvmField val PAYLOAD: Keyword = TransitFactory.keyword("payload")
     
     // Message types
-    @JvmField val EVENT = TransitFactory.keyword("event")
-    @JvmField val COMMAND = TransitFactory.keyword("command")
-    @JvmField val LOG = TransitFactory.keyword("log")
-    @JvmField val METRIC = TransitFactory.keyword("metric")
+    @JvmField val EVENT: Keyword = TransitFactory.keyword("event")
+    @JvmField val COMMAND: Keyword = TransitFactory.keyword("command")
+    @JvmField val LOG: Keyword = TransitFactory.keyword("log")
+    @JvmField val METRIC: Keyword = TransitFactory.keyword("metric")
     
     // Common keys
-    @JvmField val TYPE = TransitFactory.keyword("type")
-    @JvmField val ACTION = TransitFactory.keyword("action")
-    @JvmField val STREAM_TYPE = TransitFactory.keyword("stream-type")
-    @JvmField val STREAM_ID = TransitFactory.keyword("stream-id")
-    @JvmField val PROCESS = TransitFactory.keyword("process")
-    @JvmField val LEVEL = TransitFactory.keyword("level")
-    @JvmField val MESSAGE = TransitFactory.keyword("message")
-    @JvmField val DATA = TransitFactory.keyword("data")
-    @JvmField val DETAILS = TransitFactory.keyword("details")
+    @JvmField val TYPE: Keyword = TransitFactory.keyword("type")
+    @JvmField val ACTION: Keyword = TransitFactory.keyword("action")
+    @JvmField val STREAM_TYPE: Keyword = TransitFactory.keyword("stream-type")
+    @JvmField val STREAM_ID: Keyword = TransitFactory.keyword("stream-id")
+    @JvmField val PROCESS: Keyword = TransitFactory.keyword("process")
+    @JvmField val LEVEL: Keyword = TransitFactory.keyword("level")
+    @JvmField val MESSAGE: Keyword = TransitFactory.keyword("message")
+    @JvmField val DATA: Keyword = TransitFactory.keyword("data")
+    @JvmField val DETAILS: Keyword = TransitFactory.keyword("details")
     
     // Event types
-    @JvmField val GESTURE = TransitFactory.keyword("gesture")
-    @JvmField val WINDOW = TransitFactory.keyword("window")
-    @JvmField val CONNECTION = TransitFactory.keyword("connection")
+    @JvmField val GESTURE: Keyword = TransitFactory.keyword("gesture")
+    @JvmField val WINDOW: Keyword = TransitFactory.keyword("window")
+    @JvmField val CONNECTION: Keyword = TransitFactory.keyword("connection")
     
     // Gesture types
-    @JvmField val TAP = TransitFactory.keyword("tap")
-    @JvmField val DOUBLE_TAP = TransitFactory.keyword("double-tap")
-    @JvmField val PAN_START = TransitFactory.keyword("pan-start")
-    @JvmField val PAN_MOVE = TransitFactory.keyword("pan-move")
-    @JvmField val PAN_STOP = TransitFactory.keyword("pan-stop")
-    @JvmField val WHEEL_UP = TransitFactory.keyword("wheel-up")
-    @JvmField val WHEEL_DOWN = TransitFactory.keyword("wheel-down")
+    @JvmField val TAP: Keyword = TransitFactory.keyword("tap")
+    @JvmField val DOUBLE_TAP: Keyword = TransitFactory.keyword("double-tap")
+    @JvmField val PAN_START: Keyword = TransitFactory.keyword("pan-start")
+    @JvmField val PAN_MOVE: Keyword = TransitFactory.keyword("pan-move")
+    @JvmField val PAN_STOP: Keyword = TransitFactory.keyword("pan-stop")
+    @JvmField val WHEEL_UP: Keyword = TransitFactory.keyword("wheel-up")
+    @JvmField val WHEEL_DOWN: Keyword = TransitFactory.keyword("wheel-down")
     
     // Window actions
-    @JvmField val MINIMIZE = TransitFactory.keyword("minimize")
-    @JvmField val MAXIMIZE = TransitFactory.keyword("maximize")
-    @JvmField val RESTORE = TransitFactory.keyword("restore")
-    @JvmField val RESIZE = TransitFactory.keyword("resize")
-    @JvmField val FOCUS = TransitFactory.keyword("focus")
-    @JvmField val BLUR = TransitFactory.keyword("blur")
-    @JvmField val WINDOW_MOVE = TransitFactory.keyword("window-move")
-    @JvmField val CLOSE_REQUEST = TransitFactory.keyword("close-request")
+    @JvmField val MINIMIZE: Keyword = TransitFactory.keyword("minimize")
+    @JvmField val MAXIMIZE: Keyword = TransitFactory.keyword("maximize")
+    @JvmField val RESTORE: Keyword = TransitFactory.keyword("restore")
+    @JvmField val RESIZE: Keyword = TransitFactory.keyword("resize")
+    @JvmField val FOCUS: Keyword = TransitFactory.keyword("focus")
+    @JvmField val BLUR: Keyword = TransitFactory.keyword("blur")
+    @JvmField val WINDOW_MOVE: Keyword = TransitFactory.keyword("window-move")
+    @JvmField val CLOSE_REQUEST: Keyword = TransitFactory.keyword("close-request")
     
     // Connection actions
-    @JvmField val CONNECTED = TransitFactory.keyword("connected")
-    @JvmField val DISCONNECTED = TransitFactory.keyword("disconnected")
-    @JvmField val TIMEOUT = TransitFactory.keyword("timeout")
-    @JvmField val RECONNECTING = TransitFactory.keyword("reconnecting")
-    @JvmField val CONNECTION_ERROR = TransitFactory.keyword("connection-error")
+    @JvmField val CONNECTED: Keyword = TransitFactory.keyword("connected")
+    @JvmField val DISCONNECTED: Keyword = TransitFactory.keyword("disconnected")
+    @JvmField val TIMEOUT: Keyword = TransitFactory.keyword("timeout")
+    @JvmField val RECONNECTING: Keyword = TransitFactory.keyword("reconnecting")
+    @JvmField val CONNECTION_ERROR: Keyword = TransitFactory.keyword("connection-error")
     
     
     // Stream types
-    @JvmField val HEAT = TransitFactory.keyword("heat")
-    @JvmField val DAY = TransitFactory.keyword("day")
+    @JvmField val HEAT: Keyword = TransitFactory.keyword("heat")
+    @JvmField val DAY: Keyword = TransitFactory.keyword("day")
     
     // Coordinate keys
-    @JvmField val X = TransitFactory.keyword("x")
-    @JvmField val Y = TransitFactory.keyword("y")
-    @JvmField val NDC_X = TransitFactory.keyword("ndc-x")
-    @JvmField val NDC_Y = TransitFactory.keyword("ndc-y")
-    @JvmField val WIDTH = TransitFactory.keyword("width")
-    @JvmField val HEIGHT = TransitFactory.keyword("height")
-    @JvmField val DELTA_X = TransitFactory.keyword("delta-x")
-    @JvmField val DELTA_Y = TransitFactory.keyword("delta-y")
+    @JvmField val X: Keyword = TransitFactory.keyword("x")
+    @JvmField val Y: Keyword = TransitFactory.keyword("y")
+    @JvmField val NDC_X: Keyword = TransitFactory.keyword("ndc-x")
+    @JvmField val NDC_Y: Keyword = TransitFactory.keyword("ndc-y")
+    @JvmField val WIDTH: Keyword = TransitFactory.keyword("width")
+    @JvmField val HEIGHT: Keyword = TransitFactory.keyword("height")
+    @JvmField val DELTA_X: Keyword = TransitFactory.keyword("delta-x")
+    @JvmField val DELTA_Y: Keyword = TransitFactory.keyword("delta-y")
     
     // Gesture-specific keys
-    @JvmField val GESTURE_TYPE = TransitFactory.keyword("gesture-type")
-    @JvmField val FRAME_TIMESTAMP = TransitFactory.keyword("frame-timestamp")
+    @JvmField val GESTURE_TYPE: Keyword = TransitFactory.keyword("gesture-type")
+    @JvmField val FRAME_TIMESTAMP: Keyword = TransitFactory.keyword("frame-timestamp")
     
     
     // Log levels
-    @JvmField val DEBUG = TransitFactory.keyword("debug")
-    @JvmField val INFO = TransitFactory.keyword("info")
-    @JvmField val WARN = TransitFactory.keyword("warn")
-    @JvmField val ERROR = TransitFactory.keyword("error")
+    @JvmField val DEBUG: Keyword = TransitFactory.keyword("debug")
+    @JvmField val INFO: Keyword = TransitFactory.keyword("info")
+    @JvmField val WARN: Keyword = TransitFactory.keyword("warn")
+    @JvmField val ERROR: Keyword = TransitFactory.keyword("error")
     
     /**
      * Helper function to create a keyword from a string.
