@@ -70,11 +70,15 @@ object SimpleTestRunner {
             assert(window[IpcKeys.WIDTH] == 1920)
             assert(window[IpcKeys.HEIGHT] == 1080)
             
-            // Test command
-            val command = MessageBuilders.rotaryHalt(IpcKeys.DAY)
-            assert(command[IpcKeys.MSG_TYPE] == IpcKeys.COMMAND)
-            assert(command[IpcKeys.ACTION] == IpcKeys.ROTARY_HALT)
-            assert(command[IpcKeys.STREAM_TYPE] == IpcKeys.DAY)
+            // Test gesture event
+            val gesture = MessageBuilders.gestureEvent(
+                IpcKeys.TAP,
+                IpcKeys.DAY,
+                100, 200, 12345L
+            )
+            assert(gesture[IpcKeys.MSG_TYPE] == IpcKeys.EVENT)
+            assert(gesture[IpcKeys.TYPE] == IpcKeys.GESTURE)
+            assert(gesture[IpcKeys.GESTURE_TYPE] == IpcKeys.TAP)
             
             // Test log message
             val log = MessageBuilders.log(
@@ -165,11 +169,11 @@ object SimpleTestRunner {
             val connBytes = serverSocket.receive()
             assert(connBytes != null) { "Should receive connection event" }
             
-            // Test sending command
-            manager.sendCommand("rotary-halt", mapOf(IpcKeys.STREAM_TYPE to IpcKeys.HEAT))
+            // Test sending gesture
+            manager.sendGestureEvent(IpcKeys.TAP, 100, 200, 12345L)
             
-            val commandBytes = serverSocket.receive()
-            assert(commandBytes != null) { "Should receive command" }
+            val gestureBytes = serverSocket.receive()
+            assert(gestureBytes != null) { "Should receive gesture" }
             
             // Test sending log
             manager.sendLog("INFO", "Test log message")
