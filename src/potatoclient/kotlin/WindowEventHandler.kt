@@ -1,6 +1,5 @@
 package potatoclient.kotlin
 
-import potatoclient.kotlin.ipc.IpcKeys
 import potatoclient.kotlin.ipc.IpcClient
 import java.awt.Dimension
 import java.awt.Frame
@@ -16,6 +15,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import javax.swing.JFrame
+import kotlin.system.exitProcess
 
 /**
  * Unified window event handler that sends events via IPC.
@@ -24,18 +24,18 @@ import javax.swing.JFrame
 class WindowEventHandler(
     private val frame: JFrame,
     private val ipcClient: IpcClient,
-    private val throttleMs: Long = 100L,  // Default 100ms throttle for resize/move events
+    throttleMs: Long = 100L,  // Default 100ms throttle for resize/move events
     private val onShutdown: (() -> Unit)? = null  // Optional shutdown callback
 ) {
     // Throttling state
     private val resizeThrottler = EventThrottler(throttleMs)
     private val moveThrottler = EventThrottler(throttleMs)
-    
+
     // Track window state for relative data
     @Volatile private var lastSize = Dimension(frame.width, frame.height)
     @Volatile private var lastLocation = Point(frame.x, frame.y)
     @Volatile private var lastState = frame.extendedState
-    
+
     private val throttleExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor { r ->
         Thread(r, "WindowEventThrottle").apply { isDaemon = true }
     }
@@ -52,7 +52,7 @@ class WindowEventHandler(
                 cleanup()
                 onShutdown?.invoke()  // Call custom shutdown handler if provided
                 ipcClient.shutdown()
-                System.exit(0)
+                exitProcess(0)
             }
 
             override fun windowClosed(e: WindowEvent) {
@@ -81,7 +81,7 @@ class WindowEventHandler(
         frame.addWindowStateListener { e ->
             val oldState = e.oldState
             val newState = e.newState
-            
+
             if (oldState != newState) {
                 when {
                     // Maximized
@@ -104,7 +104,7 @@ class WindowEventHandler(
             override fun componentResized(e: ComponentEvent) {
                 val newSize = frame.size
                 val oldSize = lastSize
-                
+
                 // Only send if actually changed
                 if (newSize.width != oldSize.width || newSize.height != oldSize.height) {
                     // Throttle resize events
@@ -124,7 +124,7 @@ class WindowEventHandler(
             override fun componentMoved(e: ComponentEvent) {
                 val newLocation = frame.location
                 val oldLocation = lastLocation
-                
+
                 // Only send if actually moved
                 if (newLocation.x != oldLocation.x || newLocation.y != oldLocation.y) {
                     // Throttle move events
@@ -151,7 +151,7 @@ class WindowEventHandler(
             if (!throttleExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
                 throttleExecutor.shutdownNow()
             }
-        } catch (e: InterruptedException) {
+        } catch (_: InterruptedException) {
             throttleExecutor.shutdownNow()
         }
     }
@@ -162,11 +162,11 @@ class WindowEventHandler(
     private inner class EventThrottler(private val throttleMs: Long) {
         private val lastEventTime = AtomicLong(0)
         private val pendingTask = AtomicReference<ScheduledFuture<*>?>(null)
-        
+
         fun throttle(action: () -> Unit) {
             val now = System.currentTimeMillis()
             val last = lastEventTime.get()
-            
+
             if (now - last >= throttleMs) {
                 // Execute immediately if enough time has passed
                 if (lastEventTime.compareAndSet(last, now)) {
@@ -187,7 +187,7 @@ class WindowEventHandler(
                 oldTask?.cancel(false)
             }
         }
-        
+
         fun cleanup() {
             pendingTask.getAndSet(null)?.cancel(false)
         }

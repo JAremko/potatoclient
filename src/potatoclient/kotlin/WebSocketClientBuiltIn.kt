@@ -206,11 +206,10 @@ class WebSocketClientBuiltIn(
      * Log performance statistics
      */
     private fun logStats() {
-        val poolStats = bufferPool.getStats()
         val messages = messagesReceived.get()
         val bytes = bytesReceived.get()
 
-        potatoclient.kotlin.transit.logDebug("WebSocket Stats: messages=$messages, bytes=$bytes, $poolStats")
+        potatoclient.kotlin.transit.logDebug("WebSocket Stats: messages=$messages, bytes=$bytes")
     }
 
     fun isOpen(): Boolean {

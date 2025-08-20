@@ -2,7 +2,7 @@ package potatoclient.kotlin
 
 import java.nio.ByteBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * High-performance thread-safe pool for direct ByteBuffers.
@@ -16,55 +16,8 @@ class ByteBufferPool(
     // Use ConcurrentLinkedQueue for lock-free operations
     private val pool = ConcurrentLinkedQueue<ByteBuffer>()
 
-    // Separate currentSize for fast capacity checks
-    @Volatile
-    private var currentSize = 0
-
-    // Performance metrics - use padding to avoid false sharing
-    @Suppress("UnusedPrivateProperty") // Padding for false sharing prevention
-    @Volatile
-    private var p0: Long = 0L
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p1: Long = 0L
-    private val acquireCount = AtomicLong(0)
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p2: Long = 0L
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p3: Long = 0L
-    private val hitCount = AtomicLong(0)
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p4: Long = 0L
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p5: Long = 0L
-    private val missCount = AtomicLong(0)
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p6: Long = 0L
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p7: Long = 0L
-    private val returnCount = AtomicLong(0)
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p8: Long = 0L
-
-    @Suppress("UnusedPrivateProperty")
-    @Volatile
-    private var p9: Long = 0L
-    private val dropCount = AtomicLong(0)
+    // Use AtomicInteger for thread-safe size tracking
+    private val currentSize = AtomicInteger(0)
 
     init {
         // Pre-allocate half the pool to reduce startup allocations
@@ -75,7 +28,7 @@ class ByteBufferPool(
         }
         // Add all at once to minimize contention
         pool.addAll(buffers)
-        currentSize = preAllocate
+        currentSize.set(preAllocate)
     }
 
     /**
@@ -83,17 +36,14 @@ class ByteBufferPool(
      * The returned buffer is cleared and ready for use.
      */
     fun acquire(): ByteBuffer {
-        acquireCount.incrementAndGet()
         // Fast path - try to get from pool
         val buffer = pool.poll()
         return if (buffer != null) {
-            hitCount.incrementAndGet()
-            currentSize--
+            currentSize.decrementAndGet()
             buffer.clear()
             buffer
         } else {
             // Pool miss - allocate new buffer
-            missCount.incrementAndGet()
             allocateBuffer()
         }
     }
@@ -108,22 +58,15 @@ class ByteBufferPool(
             return // Don't pool wrong-sized buffers
         }
 
-        returnCount.incrementAndGet()
-
-        // Quick capacity check without synchronization
-        val size = currentSize
-        if (size < maxPoolSize) {
+        // Check if pool has space
+        if (currentSize.get() < maxPoolSize) {
             buffer.clear()
             if (pool.offer(buffer)) {
-                currentSize = size + 1
-            } else {
-                // Extremely rare - queue full despite size check
-                dropCount.incrementAndGet()
+                currentSize.incrementAndGet()
             }
-        } else {
-            dropCount.incrementAndGet()
-            // Pool is full, let GC handle it
+            // If offer fails (extremely rare), let GC handle it
         }
+        // Pool is full, let GC handle it
     }
 
     /**
@@ -135,7 +78,6 @@ class ByteBufferPool(
             acquire()
         } else {
             // Need larger buffer - don't use pool
-            missCount.incrementAndGet()
             if (direct) ByteBuffer.allocateDirect(minCapacity) else ByteBuffer.allocate(minCapacity)
         }
 
@@ -147,53 +89,32 @@ class ByteBufferPool(
         }
 
     /**
-     * Get pool statistics for monitoring
+     * Get the current pool size (for testing/monitoring).
      */
-    fun getStats(): PoolStats {
-        val acquires = acquireCount.get()
-        val hits = hitCount.get()
-        val misses = missCount.get()
-        val hitRate = if (acquires > 0) hits.toDouble() / acquires else 0.0
-
-        return PoolStats(
-            currentSize = currentSize,
-            maxSize = maxPoolSize,
-            bufferSize = bufferSize,
-            direct = direct,
-            acquireCount = acquires,
-            hitCount = hits,
-            missCount = misses,
-            returnCount = returnCount.get(),
-            dropCount = dropCount.get(),
-            hitRate = hitRate,
-        )
-    }
+    fun getCurrentSize(): Int = currentSize.get()
 
     /**
-     * Clear the pool and release resources
+     * Get the maximum pool size.
+     */
+    fun getMaxPoolSize(): Int = maxPoolSize
+
+    /**
+     * Get the buffer size.
+     */
+    fun getBufferSize(): Int = bufferSize
+
+    /**
+     * Check if this pool uses direct buffers.
+     */
+    fun isDirect(): Boolean = direct
+
+    /**
+     * Clear the pool and release resources.
      */
     fun clear() {
         while (pool.poll() != null) {
-            currentSize--
+            currentSize.decrementAndGet()
             // Direct buffers will be cleaned up by GC
         }
-    }
-
-    data class PoolStats(
-        val currentSize: Int,
-        val maxSize: Int,
-        val bufferSize: Int,
-        val direct: Boolean,
-        val acquireCount: Long,
-        val hitCount: Long,
-        val missCount: Long,
-        val returnCount: Long,
-        val dropCount: Long,
-        val hitRate: Double,
-    ) {
-        override fun toString(): String =
-            "ByteBufferPool[size=$currentSize/$maxSize, bufferSize=$bufferSize, direct=$direct, " +
-                "acquires=$acquireCount, hits=$hitCount, misses=$missCount, returns=$returnCount, " +
-                "drops=$dropCount, hitRate=${String.format(java.util.Locale.US, "%.2f", hitRate * 100)}%]"
     }
 }
