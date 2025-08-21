@@ -1,5 +1,29 @@
 # Claude AI Assistant Context
 
+## Current Architecture Status
+
+### Refactored Clojure UI (December 2024)
+The Clojure codebase has been significantly simplified to prepare for future Kotlin integration:
+
+**Current State:**
+- **UI-Only Focus**: Simplified to provide only UI components (startup dialog, main frame)
+- **State Management**: New `state.clj` namespace with UI-only state atom
+- **Stream Controls**: Stream toggle buttons are present but noop - ready for Kotlin integration
+- **Removed Components**: All IPC, transit communication, and process management code removed
+- **Preserved Components**: Java/Kotlin code intact for future integration
+
+**Key Changes:**
+- Moved app state atom to dedicated `potatoclient.state` namespace
+- Fixed all namespace/file naming conventions (underscores in filenames)
+- Removed `ipc.clj`, `process.clj`, and transit communication directories
+- Stream control buttons remain in UI but perform no operations (logging only)
+- Configuration and theme management remain functional
+
+**Next Steps:**
+- Integrate Kotlin video stream processes
+- Connect stream controls to Kotlin backend
+- Implement new IPC protocol between Clojure UI and Kotlin streams
+
 ## Development Tools
 
 ### Stream Spawner Tool
