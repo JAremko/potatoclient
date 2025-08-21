@@ -1,5 +1,38 @@
 # Claude AI Assistant Context
 
+## Development Tools
+
+### Stream Spawner Tool
+**For launching and testing video streams:**
+- **Location**: `/spawn-streams.sh` (project root)
+- **Documentation**: See `/tools/README.md` for comprehensive documentation
+- **Purpose**: Spawns multiple VideoStreamManager processes with IPC support
+
+**Quick Usage:**
+```bash
+# Launch both heat and day video streams
+./spawn-streams.sh [host]  # Default: sych.local
+
+# Streams will:
+# - Connect to wss://[host]/ws/ws_rec_video_heat and ws_rec_video_day
+# - Display windows side-by-side (heat on left, day on right)
+# - Log all events with clear [HEAT-*] or [DAY-*] prefixes
+# - Handle mouse gestures and window events
+```
+
+**Key Features:**
+- Multi-process architecture with proper parent PID handling
+- Hardware-accelerated video decoding (NVIDIA/Intel/AMD)
+- Transit-based IPC communication
+- Detailed event logging with source prefixes
+- Graceful shutdown on Ctrl+C
+
+**When to use:**
+- Testing video stream connectivity
+- Debugging gesture/window events
+- Verifying WebSocket connections
+- Testing multi-stream scenarios
+
 ## Important: Use Specialized Agents
 
 ### Proto-Class Explorer Agent

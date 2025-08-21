@@ -41,34 +41,92 @@ fun main(args: Array<String>) {
     val heatServer = IpcServer.create("heat", true)
     val dayServer = IpcServer.create("day", true)
     
-    // Set up message handlers
+    // Set up message handlers with detailed output
     heatServer.setOnMessage { message ->
         val msgType = message[IpcKeys.MSG_TYPE]
-        val level = message.get(IpcKeys.LEVEL) ?: ""
-        val text = message.get(IpcKeys.MESSAGE) ?: ""
         
         when (msgType) {
-            IpcKeys.LOG -> println("[heat] [$level] $text")
+            IpcKeys.LOG -> {
+                val level = message[IpcKeys.LEVEL] ?: "INFO"
+                val text = message[IpcKeys.MESSAGE] ?: ""
+                println("[HEAT-LOG] [$level] $text")
+            }
             IpcKeys.EVENT -> {
                 val type = message[IpcKeys.TYPE]
-                println("[heat] Event: $type")
+                when (type) {
+                    IpcKeys.GESTURE -> {
+                        val gestureType = message[IpcKeys.GESTURE_TYPE]
+                        val x = message[IpcKeys.X]
+                        val y = message[IpcKeys.Y]
+                        val ndcX = message[IpcKeys.NDC_X]
+                        val ndcY = message[IpcKeys.NDC_Y]
+                        println("[HEAT-GESTURE] $gestureType at pixel($x, $y) ndc($ndcX, $ndcY)")
+                    }
+                    IpcKeys.WINDOW -> {
+                        val action = message[IpcKeys.ACTION]
+                        val width = message[IpcKeys.WIDTH]
+                        val height = message[IpcKeys.HEIGHT]
+                        if (width != null && height != null) {
+                            println("[HEAT-WINDOW] $action ${width}x${height}")
+                        } else {
+                            println("[HEAT-WINDOW] $action")
+                        }
+                    }
+                    IpcKeys.CONNECTION -> {
+                        val action = message[IpcKeys.ACTION]
+                        println("[HEAT-CONNECTION] $action")
+                    }
+                    else -> println("[HEAT-EVENT] $type: $message")
+                }
             }
-            else -> println("[heat] $msgType")
+            IpcKeys.METRIC -> {
+                println("[HEAT-METRIC] $message")
+            }
+            else -> println("[HEAT-MSG] $msgType: $message")
         }
     }
     
     dayServer.setOnMessage { message ->
         val msgType = message[IpcKeys.MSG_TYPE]
-        val level = message.get(IpcKeys.LEVEL) ?: ""
-        val text = message.get(IpcKeys.MESSAGE) ?: ""
         
         when (msgType) {
-            IpcKeys.LOG -> println("[day] [$level] $text")
+            IpcKeys.LOG -> {
+                val level = message[IpcKeys.LEVEL] ?: "INFO"
+                val text = message[IpcKeys.MESSAGE] ?: ""
+                println("[DAY-LOG] [$level] $text")
+            }
             IpcKeys.EVENT -> {
                 val type = message[IpcKeys.TYPE]
-                println("[day] Event: $type")
+                when (type) {
+                    IpcKeys.GESTURE -> {
+                        val gestureType = message[IpcKeys.GESTURE_TYPE]
+                        val x = message[IpcKeys.X]
+                        val y = message[IpcKeys.Y]
+                        val ndcX = message[IpcKeys.NDC_X]
+                        val ndcY = message[IpcKeys.NDC_Y]
+                        println("[DAY-GESTURE] $gestureType at pixel($x, $y) ndc($ndcX, $ndcY)")
+                    }
+                    IpcKeys.WINDOW -> {
+                        val action = message[IpcKeys.ACTION]
+                        val width = message[IpcKeys.WIDTH]
+                        val height = message[IpcKeys.HEIGHT]
+                        if (width != null && height != null) {
+                            println("[DAY-WINDOW] $action ${width}x${height}")
+                        } else {
+                            println("[DAY-WINDOW] $action")
+                        }
+                    }
+                    IpcKeys.CONNECTION -> {
+                        val action = message[IpcKeys.ACTION]
+                        println("[DAY-CONNECTION] $action")
+                    }
+                    else -> println("[DAY-EVENT] $type: $message")
+                }
             }
-            else -> println("[day] $msgType")
+            IpcKeys.METRIC -> {
+                println("[DAY-METRIC] $message")
+            }
+            else -> println("[DAY-MSG] $msgType: $message")
         }
     }
     
