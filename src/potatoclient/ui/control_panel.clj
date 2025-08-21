@@ -1,6 +1,6 @@
 (ns potatoclient.ui.control_panel
   "Control panel UI component for managing video streams.
-  
+
   Provides the main control interface for connecting/disconnecting
   video streams and managing application settings."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
@@ -11,7 +11,8 @@
             [seesaw.border :as border]
             [seesaw.core :as seesaw]
             [seesaw.mig :as mig])
-  (:import (javax.swing JPanel)))
+  (:import (java.awt Color)
+           (javax.swing JPanel)))
 
 ;; UI styling constants
 
@@ -47,8 +48,8 @@
                                                                (i18n/tr :status-connected)
                                                                (i18n/tr :status-disconnected))
                                                        :foreground (if connected?
-                                                                     (java.awt.Color/GREEN)
-                                                                     (java.awt.Color/RED)))))
+                                                                     Color/GREEN
+                                                                     Color/RED))))
                  (bind/bind (bind/transform #(if (:connected? %)
                                                (str "PID: " (:pid %))
                                                ""))
@@ -95,7 +96,7 @@
                                   :icon (theme/key->icon :day))
 
         ;; Wire up actions
-        setup-toggle! (fn [toggle stream-key endpoint]
+        setup-toggle! (fn [toggle stream-key _]
                         (seesaw/listen toggle :action
                                        (fn [_]
                                          ;; Stream control is noop for now
@@ -140,7 +141,7 @@
 
 (>defn create
   "Create the control panel UI component.
-  
+
   Returns a panel containing all control elements for managing
   video streams and application settings."
   []

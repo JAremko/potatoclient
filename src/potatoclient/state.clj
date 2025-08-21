@@ -1,10 +1,12 @@
 (ns potatoclient.state
   "Application state management for PotatoClient UI.
-  
+
   This namespace provides the core UI state atom and basic accessors
   for managing application UI state."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
-            [potatoclient.runtime :as runtime]))
+            [potatoclient.runtime :as runtime])
+  (:import (java.net URI)
+           (java.util Locale)))
 
 ;; ============================================================================
 ;; State Atom
@@ -20,7 +22,7 @@
    :session {:user nil
              :started-at nil}})
 
-(defonce app-state 
+(defonce app-state
   (atom initial-state))
 
 ;; ============================================================================
@@ -57,7 +59,7 @@
   [=> string?]
   (if-let [url (get-connection-url)]
     (try
-      (let [uri (java.net.URI. url)
+      (let [uri (URI. url)
             host (.getHost uri)]
         (or host "localhost"))
       (catch Exception _
@@ -81,8 +83,8 @@
   (let [locale-map {:english ["en" "US"]
                     :ukrainian ["uk" "UA"]}
         [lang country] (get locale-map locale ["en" "US"])]
-    (java.util.Locale/setDefault
-      (java.util.Locale. ^String lang ^String country)))
+    (Locale/setDefault
+      (Locale. ^String lang ^String country)))
   (swap! app-state assoc-in [:ui :locale] locale))
 
 (>defn get-theme

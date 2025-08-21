@@ -1,4 +1,4 @@
-(ns potatoclient.ui_specs
+(ns potatoclient.ui-specs
   "Essential UI and video stream specs for PotatoClient.
    This replaces the legacy specs.clj with only the schemas actually in use."
   (:require [clojure.string :as str]
@@ -6,7 +6,8 @@
             [malli.util :as mu]
             [malli.registry :as mr]
             [potatoclient.malli.oneof :as oneof])
-  (:import (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
+  (:import (java.util.concurrent Future)
+           (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
            (java.awt Rectangle Color)))
 
@@ -444,7 +445,7 @@
    [:process any?]  ; Java Process object
    [:writer fn?]    ; Function to write Transit messages
    [:input-stream any?]  ; InputStream
-   [:output-stream any?] ; OutputStream  
+   [:output-stream any?] ; OutputStream
    [:stderr-reader any?] ; BufferedReader
    [:message-handler fn?] ; Message handler function
    [:stream-id string?]   ; Stream identifier
@@ -457,7 +458,7 @@
 (def future-instance
   "Java Future instance"
   [:fn {:error/message "must be a Future"}
-   #(instance? java.util.concurrent.Future %)])
+   #(instance? Future %)])
 
 (def window-state
   "Window state information"

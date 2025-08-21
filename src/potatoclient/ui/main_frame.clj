@@ -1,6 +1,6 @@
 (ns potatoclient.ui.main_frame
   "Main application frame construction and management.
-  
+
   Provides a clean-slate constructor for the main window that ensures
   proper initialization of all UI elements including theme-aware icons."
   (:require [clojure.java.io :as io]
@@ -13,12 +13,13 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.ui.control_panel :as control-panel]
-            [potatoclient.ui.log_viewer :as log-viewer]
+            [potatoclient.ui.control-panel :as control-panel]
+            [potatoclient.ui.log-viewer :as log-viewer]
             [seesaw.action :as action]
             [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
-  (:import (javax.swing Box JFrame JPanel)))
+  (:import (java.awt Rectangle)
+           (javax.swing Box JFrame JPanel)))
 
 ;; Additional schemas not in specs
 (def version
@@ -30,7 +31,7 @@
   [frame]
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)] => :potatoclient.ui_specs/window-state]
-  (let [^java.awt.Rectangle bounds (.getBounds frame)]
+  (let [^Rectangle bounds (.getBounds frame)]
     {:bounds {:x (.x bounds)
               :y (.y bounds)
               :width (.width bounds)
@@ -47,7 +48,7 @@
        #(instance? JFrame %)]]
   (doto frame
     (.setBounds (when-let [{:keys [x y width height]} (:bounds state)]
-                  (java.awt.Rectangle. x y width height)))
+                  (Rectangle. x y width height)))
     (.setExtendedState (:extended-state state))))
 
 (>defn- reload-frame!
@@ -167,13 +168,13 @@
                        :day {:endpoint "/ws/ws_rec_video_day"
                              :tooltip "Day Camera (1920x1080)"
                              :label-key :stream-day}}
-        {:keys [endpoint tooltip label-key]} (get stream-config stream-key)
+        {:keys [_ tooltip label-key]} (get stream-config stream-key)
         toggle-action (action/action
                         :name (i18n/tr label-key)
                         :icon (theme/key->icon stream-key)
                         :tip tooltip
                         :handler (fn [e]
-                                   (logging/log-debug 
+                                   (logging/log-debug
                                      {:msg (str "Stream toggle clicked (noop): " stream-key)
                                       :stream stream-key
                                       :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
@@ -237,7 +238,7 @@
                        ;; Stop video stream processes
                        (let [stream-processes (app-db/get-all-stream-processes)
                              ;; Transform keys from :heat-video/:day-video to :heat/:day
-                             transformed-processes (reduce-kv (fn [m k v]
+                             _ (reduce-kv (fn [m k v]
                                                                 (let [stream-key (case k
                                                                                    :heat-video :heat
                                                                                    :day-video :day
@@ -262,11 +263,11 @@
 
 (>defn create-main-frame
   "Create a new main application frame with clean state.
-  
+
   This function creates a fresh frame instance ensuring all components
   are properly initialized, including theme-aware icons. It accepts
   parameters for version info and optional window state for restoration.
-  
+
   IMPORTANT: This should be called on the Event Dispatch Thread."
   [params]
   [map? => [:fn {:error/message "must be a JFrame"}
