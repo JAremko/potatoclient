@@ -9,18 +9,16 @@
   (:import (java.io PushbackReader)))
 
 ;; Atom to hold translations and translator instance
-;; Atom holding all loaded translations.
-(defonce ^{:doc "Atom holding all loaded translations"}
-  translations-atom (atom {}))
+(defonce translations-atom 
+  (atom {}))
 
-;; Atom holding the tongue translator instance.
-(defonce ^{:doc "Atom holding the tongue translator instance"}
-  translator-atom (atom nil))
+(defonce translator-atom 
+  (atom nil))
 
 (>defn load-translation-file
   "Load a translation file from resources"
   [locale]
-  [:potatoclient.ui-specs/locale-code => (? [:map-of keyword? string?])]
+  [:potatoclient.ui_specs/locale-code => (? [:map-of keyword? string?])]
   (try
     (let [resource-path (str "i18n/" (name locale) ".edn")
           resource (io/resource resource-path)]
@@ -34,7 +32,7 @@
 (>defn load-translations!
   "Load all translation files from resources"
   []
-  [=> :potatoclient.ui-specs/translations-map]
+  [=> :potatoclient.ui_specs/translations-map]
   (let [locales [:en :uk]
         translations (reduce (fn [acc locale]
                                (if-let [translation (load-translation-file locale)]
@@ -49,7 +47,7 @@
 (>defn reload-translations!
   "Reload all translations - useful for development"
   []
-  [=> :potatoclient.ui-specs/translations-map]
+  [=> :potatoclient.ui_specs/translations-map]
   (logging/log-info {:msg "Reloading translations..."})
   (load-translations!))
 
@@ -59,10 +57,10 @@
 (>defn tr
   "Translate a key using the current locale."
   ([key]
-   [:potatoclient.ui-specs/translation-key => string?]
+   [:potatoclient.ui_specs/translation-key => string?]
    (tr key []))
   ([key args]
-   [:potatoclient.ui-specs/translation-key :potatoclient.ui-specs/translation-args => string?]
+   [:potatoclient.ui_specs/translation-key :potatoclient.ui_specs/translation-args => string?]
    (let [locale (case (state/get-locale)
                   :english :en
                   :ukrainian :uk

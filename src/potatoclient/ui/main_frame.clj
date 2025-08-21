@@ -1,4 +1,4 @@
-(ns potatoclient.ui.main-frame
+(ns potatoclient.ui.main_frame
   "Main application frame construction and management.
   
   Provides a clean-slate constructor for the main window that ensures
@@ -8,15 +8,13 @@
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
-            [potatoclient.ipc :as ipc]
             [potatoclient.logging :as logging]
-            [potatoclient.process :as process]
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
-            [potatoclient.ui.control-panel :as control-panel]
-            [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.control_panel :as control-panel]
+            [potatoclient.ui.log_viewer :as log-viewer]
             [seesaw.action :as action]
             [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
@@ -31,7 +29,7 @@
   "Extract window state for restoration."
   [frame]
   [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => :potatoclient.ui-specs/window-state]
+    #(instance? JFrame %)] => :potatoclient.ui_specs/window-state]
   (let [^java.awt.Rectangle bounds (.getBounds frame)]
     {:bounds {:x (.x bounds)
               :y (.y bounds)
@@ -44,7 +42,7 @@
   [frame state]
   [[:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
-   :potatoclient.ui-specs/window-state
+   :potatoclient.ui_specs/window-state
    => [:fn {:error/message "must be a JFrame"}
        #(instance? JFrame %)]]
   (doto frame
@@ -68,7 +66,7 @@
 (>defn- create-language-action
   "Create a language selection action."
   [lang-key display-name reload-fn]
-  [:potatoclient.ui-specs/locale string? ifn? => any?]
+  [:potatoclient.ui_specs/locale string? ifn? => any?]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
@@ -86,7 +84,7 @@
 (>defn- create-theme-action
   "Create a theme selection action."
   [theme-key reload-fn]
-  [:potatoclient.ui-specs/theme-key ifn? => any?]
+  [:potatoclient.ui_specs/theme-key ifn? => any?]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
         theme-name (i18n/tr theme-i18n-key)]
     (action/action
@@ -162,7 +160,7 @@
 (>defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
   [stream-key]
-  [:potatoclient.ui-specs/stream-key => any?]
+  [:potatoclient.ui_specs/stream-key => any?]
   (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
                               :tooltip "Heat Camera (900x720)"
                               :label-key :stream-thermal}
@@ -175,9 +173,10 @@
                         :icon (theme/key->icon stream-key)
                         :tip tooltip
                         :handler (fn [e]
-                                   (if (seesaw/config (seesaw/to-widget e) :selected?)
-                                     (ipc/start-stream stream-key endpoint)
-                                     (ipc/stop-stream stream-key))))
+                                   (logging/log-debug 
+                                     {:msg (str "Stream toggle clicked (noop): " stream-key)
+                                      :stream stream-key
+                                      :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
         button (seesaw/toggle :action toggle-action)]
 
     ;; Bind button state to app-db using seesaw.bind
@@ -246,8 +245,8 @@
                                                                   (assoc m stream-key v)))
                                                               {}
                                                               stream-processes)]
-                         (when (seq transformed-processes)
-                           (process/cleanup-all-processes transformed-processes)))
+                         ;; Stream cleanup removed - noop for now
+                         nil)
                        (logging/shutdown!)
                        (catch Exception e
                          (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))}))

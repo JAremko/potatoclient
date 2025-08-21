@@ -1,7 +1,7 @@
 (ns potatoclient.main
-  "Main entry point for PotatoClient - a multiprocess video streaming client."
+  "Main entry point for PotatoClient."
   (:require [clojure.spec.alpha :as s]
-            [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
+            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.core :as core]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])
@@ -47,24 +47,9 @@
                     (Thread. (fn []
                                (try
                                  (println "Shutdown hook triggered - cleaning up...")
-                                 ;; First stop logging to prevent new log messages during shutdown
-                                 (require 'potatoclient.logging)
-                                 (let [shutdown-logging (resolve 'potatoclient.logging/shutdown!)]
-                                   (when shutdown-logging (shutdown-logging)))
-
-                                 ;; Then clean up subprocesses
-                                 (require 'potatoclient.process)
-                                 (require 'potatoclient.transit.app-db)
-                                 (let [get-all-stream-processes (resolve 'potatoclient.transit.app-db/get-all-stream-processes)
-                                       cleanup-processes (resolve 'potatoclient.process/cleanup-all-processes)
-]
-                                   ;; Clean up video streams
-                                   (when (and get-all-stream-processes cleanup-processes)
-                                     (let [stream-processes (get-all-stream-processes)]
-                                       (when (seq stream-processes)
-                                         (cleanup-processes stream-processes))))
-                                   ;; Wait a bit for processes to terminate
-                                   (Thread/sleep 500))
+                                 ;; Stop logging
+                                 (logging/shutdown!)
+                                 (Thread/sleep 100)
                                  (catch Exception e
                                    (println "Error in shutdown hook:" (.getMessage e))))))))
 
@@ -107,4 +92,3 @@
         (logging/log-error {:msg (str "Fatal error during application startup: " (.getMessage e))})
         (.printStackTrace e))
       (System/exit 1))))
-

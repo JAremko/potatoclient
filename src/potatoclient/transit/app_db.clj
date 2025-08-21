@@ -3,7 +3,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
             [potatoclient.logging :as log]
             [potatoclient.runtime :as runtime]
-            [potatoclient.ui-specs :as specs]))
+            [potatoclient.ui_specs :as specs]))
 
 ;; Default initial state
 (def ^{:doc "Default initial application state"}
@@ -79,8 +79,8 @@
 
 ;; The single source of truth
 ;; Global application state atom following re-frame pattern.
-(defonce ^{:doc "Global application state atom following re-frame pattern"}
-  app-db (atom initial-state))
+(defonce app-db 
+  (atom initial-state))
 
 ;; Basic accessors with Guardrails
 (>defn get-server-state

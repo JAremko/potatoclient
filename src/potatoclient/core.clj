@@ -4,17 +4,15 @@
   (:require [clojure.java.io]
             [clojure.spec.alpha :as s]
             [clojure.string]
-            [com.fulcrologic.guardrails.core :refer [>defn >defn- =>]]
+            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.config :as config]
-            [potatoclient.gestures.config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
-            [potatoclient.process :as process]
             [potatoclient.runtime :as runtime]
+            [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.transit.app-db :as app-db]
-            [potatoclient.ui.main-frame :as main-frame]
-            [potatoclient.ui.startup-dialog :as startup-dialog]
+            [potatoclient.ui.main_frame :as main-frame]
+            [potatoclient.ui.startup_dialog :as startup-dialog]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -35,7 +33,7 @@
     "DEVELOPMENT"))
 
 (>defn- setup-shutdown-hook!
-  "Setup JVM shutdown hook to clean up processes."
+  "Setup JVM shutdown hook."
   []
   [=> nil?]
   (.addShutdownHook
@@ -44,10 +42,6 @@
       (fn []
         (try
           (logging/log-info {:msg "Shutting down PotatoClient..."})
-          ;; Stop video stream processes
-          (process/cleanup-all-processes)
-          ;; Give processes time to terminate
-          (Thread/sleep 100)
           ;; Shutdown logging
           (logging/shutdown!)
           (catch Exception e
@@ -59,7 +53,6 @@
   [=> nil?]
   (config/initialize!)
   (i18n/init!)
-  (potatoclient.gestures.config/load-gesture-config!)
   (setup-shutdown-hook!))
 
 (>defn- log-startup!
@@ -73,41 +66,6 @@
      :msg (format "Control Center started (v%s %s build)"
                   (get-version)
                   (get-build-type))}))
-
-(>defn- setup-state-monitoring!
-  "Set up monitoring for state changes through app-db"
-  []
-  [=> nil?]
-  ;; Monitor connection status
-  (add-watch app-db/app-db ::connection-monitor
-             (fn [_ _ old-state new-state]
-               (let [old-conn (get-in old-state [:app-state :connection :connected?])
-                     new-conn (get-in new-state [:app-state :connection :connected?])]
-                 (when (not= old-conn new-conn)
-                   (if new-conn
-                     (logging/log-info {:msg "WebSocket connected to server"})
-                     (logging/log-warn {:msg "WebSocket disconnected from server"}))))))
-
-  ;; Monitor critical system state
-  (add-watch app-db/app-db ::battery-monitor
-             (fn [_ _ old-state new-state]
-               (let [old-battery (get-in old-state [:server-state :system :battery-level])
-                     new-battery (get-in new-state [:server-state :system :battery-level])]
-                 (when (and new-battery
-                            (not= old-battery new-battery)
-                            (< new-battery 20))
-                   (logging/log-warn {:msg "Low battery warning" :level new-battery})))))
-  nil)
-
-;; Store ping timer reference
-(def ^:private ping-timer (atom nil))
-
-(>defn- setup-ping-sender!
-  "Set up periodic ping command sender (every 300ms like web frontend)."
-  []
-  [=> nil?]
-  ;; TODO: Implement in-process ping sending when needed
-  nil)
 
 (>defn -main
   "Application entry point."
@@ -128,24 +86,16 @@
                       domain (config/get-domain)]
                   (seesaw/show! frame)
                   (log-startup!)
-                  ;; Initialize Transit subprocess system
-                  (let [ws-url (str "wss://" domain "/ws/ws_cmd")
-                        state-url (str "wss://" domain "/ws/ws_state")]
-                    ;; Start command subprocess
-                    (launcher/start-command-subprocess ws-url domain)
-                    ;; Start state subprocess  
-                    (launcher/start-state-subprocess state-url domain)
-                    ;; Set up state monitoring
-                    (setup-state-monitoring!)
-                    ;; Start periodic ping sender (every 300ms like web frontend)
-                    (setup-ping-sender!)
-                    ;; Set initial UI state from config
-                    (when-let [saved-theme (:theme (config/load-config))]
-                      (app-db/set-theme! saved-theme))
-                    (when-let [saved-locale (:locale (config/load-config))]
-                      (app-db/set-locale! saved-locale))
-                    (logging/log-info {:msg "Transit subprocess system initialized"
-                                       :domain domain})))
+                  ;; Save connection URL to state
+                  (state/set-connection-url! (str "wss://" domain))
+                  (state/set-connected! true)
+                  ;; Set initial UI state from config
+                  (when-let [saved-theme (:theme (config/load-config))]
+                    (state/set-theme! saved-theme))
+                  (when-let [saved-locale (:locale (config/load-config))]
+                    (state/set-locale! saved-locale))
+                  (logging/log-info {:msg "Application initialized"
+                                     :domain domain}))
 
                 :cancel
                 ;; User clicked Cancel, exit application
@@ -160,4 +110,3 @@
                   (startup-dialog/show-startup-dialog nil handle-dialog-result))))]
       ;; Show the initial dialog
       (startup-dialog/show-startup-dialog nil handle-dialog-result))))
-

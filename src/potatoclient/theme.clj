@@ -5,7 +5,7 @@
             [malli.core :as m]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime]
-            [potatoclient.ui-specs :as specs]
+            [potatoclient.ui_specs :as specs]
             [seesaw.core :as seesaw])
   (:import com.github.weisj.darklaf.LafManager
            (com.github.weisj.darklaf.theme
@@ -22,13 +22,13 @@
 (>defn get-current-theme
   "Get the current theme key"
   []
-  [=> :potatoclient.ui-specs/theme-key]
+  [=> :potatoclient.ui_specs/theme-key]
   (:current-theme @theme-config))
 
 (>defn- apply-theme!
   "Apply the given theme using DarkLaf"
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => nil?]
+  [:potatoclient.ui_specs/theme-key => nil?]
   (case theme-key
     :sol-light (LafManager/setTheme (SolarizedLightTheme.))
     :sol-dark (LafManager/setTheme (SolarizedDarkTheme.))
@@ -41,7 +41,7 @@
 (>defn set-theme!
   "Set and apply a new theme"
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => boolean?]
+  [:potatoclient.ui_specs/theme-key => boolean?]
   (if (m/validate ::specs/theme-key theme-key)
     (do
       (swap! theme-config assoc :current-theme theme-key)
@@ -54,7 +54,7 @@
 (>defn initialize-theme!
   "Initialize the theming system with default or saved theme"
   [initial-theme]
-  [:potatoclient.ui-specs/theme-key => nil?]
+  [:potatoclient.ui_specs/theme-key => nil?]
   (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme))
   nil)
@@ -62,7 +62,7 @@
 (>defn get-theme-i18n-key
   "Get the i18n key for a theme"
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => keyword?]
+  [:potatoclient.ui_specs/theme-key => keyword?]
   (case theme-key
     :sol-light :theme-sol-light
     :sol-dark :theme-sol-dark
@@ -73,7 +73,7 @@
 (>defn get-available-themes
   "Get a vector of available theme keys"
   []
-  [=> [:sequential :potatoclient.ui-specs/theme-key]]
+  [=> [:sequential :potatoclient.ui_specs/theme-key]]
   [:sol-light :sol-dark :dark :hi-dark])
 
 (>defn- is-development-mode?
@@ -99,7 +99,7 @@
 (>defn key->icon
   "Load theme-aware icon by key. Returns nil if icon not found."
   [icon-key]
-  [keyword? => (? :potatoclient.ui-specs/icon)]
+  [keyword? => (? :potatoclient.ui_specs/icon)]
   (let [icon-name (name icon-key)
         theme-name (name (get-current-theme))
         path (str "skins/" theme-name "/icons/" icon-name ".png")

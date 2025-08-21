@@ -1,11 +1,10 @@
-(ns potatoclient.ui.control-panel
+(ns potatoclient.ui.control_panel
   "Control panel UI component for managing video streams.
   
   Provides the main control interface for connecting/disconnecting
   video streams and managing application settings."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
-            [potatoclient.ipc :as ipc]
             [potatoclient.theme :as theme]
             [potatoclient.transit.app-db :as app-db]
             [seesaw.bind :as bind]
@@ -19,7 +18,7 @@
 (>defn- create-stream-status-panel
   "Create a status panel for a single stream."
   [stream-key]
-  [:potatoclient.ui-specs/stream-key => [:fn {:error/message "must be a Swing panel"}
+  [:potatoclient.ui_specs/stream-key => [:fn {:error/message "must be a Swing panel"}
                                          #(instance? JPanel %)]]
   (let [stream-name (case stream-key
                       :heat (i18n/tr :stream-thermal)
@@ -99,9 +98,8 @@
         setup-toggle! (fn [toggle stream-key endpoint]
                         (seesaw/listen toggle :action
                                        (fn [_]
-                                         (if (seesaw/config toggle :selected?)
-                                           (ipc/start-stream stream-key endpoint)
-                                           (ipc/stop-stream stream-key))))
+                                         ;; Stream control is noop for now
+                                         nil))
                         ;; Bind toggle state to app-db
                         (bind/bind app-db/app-db
                                    (bind/transform (fn [db]
