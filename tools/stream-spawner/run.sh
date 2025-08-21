@@ -33,10 +33,11 @@ tools/kotlin-2.2.0/bin/kotlinc \
     tools/stream-spawner/src/StreamSpawner.kt \
     -d tools/stream-spawner/target
 
-# Run the spawner
+# Run the spawner with proper classpath
 echo ""
 echo "Starting video streams..."
 echo "Note: This requires VideoStreamManager to be properly configured"
 echo ""
-java -cp "$CLASSPATH:target/java-classes:target/kotlin-classes:tools/stream-spawner/target" \
+export CLASSPATH="$CLASSPATH:target/java-classes:target/kotlin-classes"
+java -cp "$CLASSPATH:tools/stream-spawner/target" \
     streamspawner.StreamSpawner "$@"

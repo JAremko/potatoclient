@@ -1,5 +1,7 @@
 package streamspawner
 
+import potatoclient.kotlin.ipc.IpcServer
+import potatoclient.kotlin.ipc.IpcKeys
 import java.lang.ProcessBuilder
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
@@ -18,8 +20,9 @@ class StreamSpawner(
         "day" to "/ws/ws_rec_video_day"
     )
     
-    // Running processes
+    // Running processes and IPC servers
     private val processes = mutableMapOf<String, Process>()
+    private val ipcServers = mutableMapOf<String, IpcServer>()
     private val shutdownLatch = CountDownLatch(1)
     
     /**
@@ -35,11 +38,18 @@ class StreamSpawner(
      * Get the classpath for running VideoStreamManager
      */
     private fun getClasspath(): String {
-        // We need to include all necessary paths
+        // Get the classpath from environment or build it
+        val envClasspath = System.getenv("CLASSPATH")
+        if (envClasspath != null && envClasspath.isNotEmpty()) {
+            return envClasspath
+        }
+        
+        // Fallback to building classpath manually
+        val projectRoot = java.io.File(".").absolutePath.replace("/tools/stream-spawner/.", "")
         val paths = listOf(
-            "../../target/classes",           // Compiled classes
-            "../../target/kotlin-classes",     // Kotlin classes
-            "../../lib/*"                      // Any JAR dependencies
+            "$projectRoot/target/java-classes",       // Java compiled classes
+            "$projectRoot/target/kotlin-classes",     // Kotlin classes
+            "$projectRoot/lib/*"                      // Any JAR dependencies
         )
         return paths.joinToString(":")
     }
@@ -55,14 +65,18 @@ class StreamSpawner(
         println("  Domain: $host")
         
         // Build the command to run VideoStreamManager
-        val command = listOf(
-            "java",
-            "-cp", getClasspath(),
-            "potatoclient.kotlin.VideoStreamManager",
-            streamId,
-            streamUrl,
-            host
-        )
+        val command = mutableListOf<String>()
+        command.add("java")
+        
+        // Use environment classpath if available, otherwise build it
+        val classpath = getClasspath()
+        command.add("-cp")
+        command.add(classpath)
+        
+        command.add("potatoclient.kotlin.VideoStreamManager")
+        command.add(streamId)
+        command.add(streamUrl)
+        command.add(host)
         
         if (debug) {
             println("  Command: ${command.joinToString(" ")}")
@@ -97,6 +111,39 @@ class StreamSpawner(
     }
     
     /**
+     * Create IPC server for a stream
+     */
+    private fun createIpcServer(streamId: String): IpcServer {
+        println("[StreamSpawner] Creating IPC server for $streamId...")
+        val server = IpcServer.create(streamId, true) // awaitBinding = true
+        
+        // Set up message handler to log received messages
+        server.setOnMessage { message ->
+            val msgType = message[IpcKeys.MSG_TYPE]
+            if (debug) {
+                println("[IPC-$streamId] Received: $msgType")
+            }
+            
+            // Handle different message types if needed
+            when (msgType) {
+                IpcKeys.EVENT -> {
+                    val eventType = message[IpcKeys.TYPE]
+                    if (debug) {
+                        println("[IPC-$streamId] Event type: $eventType")
+                    }
+                }
+                IpcKeys.LOG -> {
+                    val level = message[IpcKeys.LEVEL]
+                    val logMessage = message[IpcKeys.MESSAGE]
+                    println("[$streamId-LOG] [$level] $logMessage")
+                }
+            }
+        }
+        
+        return server
+    }
+    
+    /**
      * Start both heat and day streams
      */
     fun start() {
@@ -105,6 +152,19 @@ class StreamSpawner(
         println("========================================")
         println("Host: $host")
         println()
+        
+        // First create IPC servers for each stream
+        try {
+            println("Creating IPC servers...")
+            ipcServers["heat"] = createIpcServer("heat")
+            ipcServers["day"] = createIpcServer("day")
+            println("IPC servers ready!")
+            println()
+        } catch (e: Exception) {
+            System.err.println("Failed to create IPC servers: ${e.message}")
+            e.printStackTrace()
+            return
+        }
         
         // Spawn both streams
         try {
@@ -138,6 +198,7 @@ class StreamSpawner(
     fun shutdown() {
         println("\n[StreamSpawner] Shutting down streams...")
         
+        // First stop all processes
         processes.forEach { (streamId, process) ->
             if (process.isAlive) {
                 println("  Stopping $streamId stream...")
@@ -151,9 +212,16 @@ class StreamSpawner(
             }
         }
         
+        // Then stop IPC servers
+        ipcServers.forEach { (streamId, server) ->
+            println("  Stopping IPC server for $streamId...")
+            server.stop()
+        }
+        
         processes.clear()
+        ipcServers.clear()
         shutdownLatch.countDown()
-        println("[StreamSpawner] All streams stopped")
+        println("[StreamSpawner] All streams and IPC servers stopped")
     }
     
     companion object {

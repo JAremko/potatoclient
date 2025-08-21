@@ -25,12 +25,13 @@ class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
     domain: String,
+    private val parentPid: Long,
 ) : GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener,
     FrameDataProvider {
     
     // IPC communication
-    private val ipcClient = IpcClient.getInstance(streamId)
+    private val ipcClient = IpcClient.create(parentPid, streamId)
     
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
@@ -55,8 +56,7 @@ class VideoStreamManager(
     private val gstreamerPipeline = GStreamerPipeline(this)
 
     init {
-        // Initialize IPC
-        ipcClient.initialize()
+        // IPC client is already connected via create() in the constructor
         
         // Register message handler for incoming commands
         ipcClient.onMessage { message ->
@@ -328,17 +328,18 @@ class VideoStreamManager(
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            if (args.size < 3) {
-                System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain>")
+            if (args.size < 4) {
+                System.err.println("Usage: VideoStreamManager <streamId> <streamUrl> <domain> <parentPid>")
                 exitProcess(1)
             }
 
             val streamId = args[0]
             val streamUrl = args[1]
             val domain = args[2]
+            val parentPid = args[3].toLong()
 
             try {
-                val manager = VideoStreamManager(streamId, streamUrl, domain)
+                val manager = VideoStreamManager(streamId, streamUrl, domain, parentPid)
                 manager.start()
             } catch (e: Exception) {
                 System.err.println("Failed to start video stream: ${e.message}")
