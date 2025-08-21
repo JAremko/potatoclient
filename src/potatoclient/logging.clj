@@ -159,15 +159,7 @@
       {:level :info
        :id ::startup
        :data {:build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")}}
-      "PotatoClient logging initialized")
-
-    ;; Log where init was called from for debugging double-init
-    (let [stack-trace (Thread/currentThread)
-          stack (.getStackTrace stack-trace)]
-      (tel/log! {:level :debug
-                 :id ::init-stack
-                 :data {:caller (take 10 (map str stack))}}
-                "Logging init called from")))
+      "PotatoClient logging initialized"))
 
   ;; Ensure we return nil
   nil)
