@@ -25,14 +25,14 @@ class VideoStreamManager(
     private val streamId: String,
     private val streamUrl: String,
     domain: String,
-    private val parentPid: Long,
+    parentPid: Long,
 ) : GStreamerPipeline.EventCallback,
     FrameManager.FrameEventListener,
     FrameDataProvider {
-    
+
     // IPC communication
     private val ipcClient = IpcClient.create(parentPid, streamId)
-    
+
     // Thread-safe primitives
     private val running = AtomicBoolean(true)
     private val shutdownLatch = CountDownLatch(1)
@@ -57,12 +57,12 @@ class VideoStreamManager(
 
     init {
         // IPC client is already connected via create() in the constructor
-        
+
         // Register message handler for incoming commands
         ipcClient.onMessage { message ->
             handleIncomingMessage(message)
         }
-        
+
         webSocketClient = createWebSocketClient()
     }
 
@@ -167,7 +167,7 @@ class VideoStreamManager(
     private fun handleIncomingMessage(message: Map<*, *>) {
         val msgType = message[IpcKeys.MSG_TYPE]
         val action = message[IpcKeys.ACTION]
-        
+
         when (msgType) {
             IpcKeys.COMMAND -> {
                 when (action) {
@@ -235,7 +235,7 @@ class VideoStreamManager(
             ipcClient.sendConnectionEvent(IpcKeys.DISCONNECTED, mapOf(
                 "stream-id" to streamId
             ))
-            
+
             // Shutdown IPC
             ipcClient.shutdown()
         } catch (e: Exception) {

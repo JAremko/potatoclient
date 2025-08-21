@@ -207,8 +207,6 @@ class WebSocketClientBuiltIn(
      * Log performance statistics
      */
     private fun logStats() {
-        val messages = messagesReceived.get()
-        val bytes = bytesReceived.get()
 
         // Debug stats
         // println("[WebSocket] Stats: messages=$messages, bytes=$bytes")

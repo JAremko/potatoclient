@@ -123,8 +123,8 @@ class MouseEventHandler(
             val clampedX = ndcX.coerceIn(-1.0, 1.0)
             val clampedY = ndcY.coerceIn(-1.0, 1.0)
 
-            var x = ((clampedX + 1.0) / 2.0 * width).roundToInt().toInt()
-            var y = ((-clampedY + 1.0) / 2.0 * height).roundToInt().toInt() // Invert Y back
+            var x = ((clampedX + 1.0) / 2.0 * width).roundToInt()
+            var y = ((-clampedY + 1.0) / 2.0 * height).roundToInt() // Invert Y back
 
             // Clamp to valid pixel range
             x = x.coerceIn(0, width - 1)
