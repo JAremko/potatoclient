@@ -118,7 +118,7 @@ clean: clean-cache ## Clean all build artifacts
 
 # NREPL target
 .PHONY: nrepl
-nrepl: compile-java-utils compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
+nrepl: compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
 	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ EDN state validation enabled"
@@ -241,7 +241,7 @@ report-unspecced: ## Check which functions need Guardrails specs - mandatory for
 
 # Validate Action Registry
 .PHONY: validate-actions
-validate-actions: compile-java-proto compile-java-utils ## Validate Action Registry against protobuf structure
+validate-actions: ## Validate Action Registry against protobuf structure
 	@echo "Validating Action Registry..."
 	@echo "  • Compares registered actions with proto commands"
 	@echo "  • Identifies missing or extra actions"
@@ -311,16 +311,6 @@ rebuild: clean build ## Clean and rebuild the project
 # Ensure everything is compiled without unnecessary cleaning
 .PHONY: ensure-compiled
 ensure-compiled: clean-app ## Compile only if sources changed (smart compilation)
-	@if [ ! -d "src/potatoclient/java/cmd" ] || [ ! -d "src/potatoclient/java/ser" ]; then \
-		echo "Proto files missing, generating..."; \
-		$(MAKE) proto; \
-	fi
-	@if [ ! -d "target/classes/ser" ] || [ ! -d "target/classes/cmd" ]; then \
-		echo "Proto classes missing, compiling..."; \
-		$(MAKE) compile-java-proto; \
-	fi
-	@echo "Compiling Java utility classes..."
-	@$(MAKE) compile-java-utils
 	@echo "Recompiling Kotlin classes to ensure fresh code..."
 	@$(MAKE) compile-kotlin
 	@echo "All required files are compiled."
@@ -343,7 +333,7 @@ dev: ensure-compiled ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs,
 
 # Development with clean rebuild
 .PHONY: dev-clean
-dev-clean: clean-cache proto compile-java-proto compile-java-utils compile-kotlin ## Development with forced clean rebuild (regenerates everything)
+dev-clean: clean-cache compile-kotlin ## Development with forced clean rebuild (regenerates everything)
 	@echo "Running development version with clean rebuild..."
 	@$(MAKE) dev
 
