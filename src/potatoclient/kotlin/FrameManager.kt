@@ -44,7 +44,22 @@ class FrameManager(
             frame?.apply {
                 add(videoComponent)
                 pack()
-                setLocationRelativeTo(null)
+                
+                // Position windows side by side
+                val screenSize = java.awt.Toolkit.getDefaultToolkit().screenSize
+                val frameWidth = preferredSize.width
+                val x = if (streamId == Constants.StreamConfig.HEAT_STREAM_ID) {
+                    // Heat stream on the left
+                    (screenSize.width / 2 - frameWidth - 50).coerceAtLeast(0)
+                } else {
+                    // Day stream on the right
+                    (screenSize.width / 2 + 50).coerceAtMost(screenSize.width - frameWidth)
+                }
+                val y = (screenSize.height - preferredSize.height) / 2
+                setLocation(x, y)
+                
+                // Show the frame immediately
+                isVisible = true
             }
 
             frame?.let { f ->
