@@ -3,7 +3,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
             [potatoclient.logging :as log]
             [potatoclient.runtime :as runtime]
-            [potatoclient.ui_specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 ;; Default initial state
 (def ^{:doc "Default initial application state"}

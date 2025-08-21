@@ -1,4 +1,4 @@
-(ns potatoclient.ui.startup_dialog
+(ns potatoclient.ui.startup-dialog
   "Startup dialog for server connection with theme and localization support."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
@@ -28,7 +28,7 @@
 (>defn- create-language-action
   "Create a language selection action."
   [lang-key display-name dialog callback]
-  [:potatoclient.ui_specs/locale string?
+  [:potatoclient.ui-specs/locale string?
    [:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
    ifn? => any?]
@@ -48,7 +48,7 @@
 (>defn- create-theme-action
   "Create a theme selection action."
   [theme-key dialog callback]
-  [:potatoclient.ui_specs/theme-key
+  [:potatoclient.ui-specs/theme-key
    [:fn {:error/message "must be a JFrame"}
     #(instance? JFrame %)]
    ifn? => any?]

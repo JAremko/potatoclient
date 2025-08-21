@@ -1,4 +1,4 @@
-(ns potatoclient.ui.control_panel
+(ns potatoclient.ui.control-panel
   "Control panel UI component for managing video streams.
 
   Provides the main control interface for connecting/disconnecting
@@ -19,7 +19,7 @@
 (>defn- create-stream-status-panel
   "Create a status panel for a single stream."
   [stream-key]
-  [:potatoclient.ui_specs/stream-key => [:fn {:error/message "must be a Swing panel"}
+  [:potatoclient.ui-specs/stream-key => [:fn {:error/message "must be a Swing panel"}
                                          #(instance? JPanel %)]]
   (let [stream-name (case stream-key
                       :heat (i18n/tr :stream-thermal)

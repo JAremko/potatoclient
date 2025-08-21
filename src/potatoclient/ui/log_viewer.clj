@@ -1,4 +1,4 @@
-(ns potatoclient.ui.log_viewer
+(ns potatoclient.ui.log-viewer
   "Log viewer window for browsing and viewing log files.
   
   Uses idiomatic Seesaw patterns including:

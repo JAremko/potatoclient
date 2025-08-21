@@ -19,7 +19,7 @@
 (>defn- get-log-dir
   "Get the log directory path using platform-specific conventions"
   []
-  [=> :potatoclient.ui_specs/file]
+  [=> :potatoclient.ui-specs/file]
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
@@ -55,7 +55,7 @@
 (>defn- get-log-file-path
   "Get the path for the log file with timestamp and version"
   []
-  [=> :potatoclient.ui_specs/file]
+  [=> :potatoclient.ui-specs/file]
   (let [logs-dir (if (runtime/release-build?)
                    (get-log-dir)
                    (io/file "logs"))
@@ -219,7 +219,7 @@
 (>defn get-logs-directory
   "Get the logs directory path. Public function for UI access."
   []
-  [=> :potatoclient.ui_specs/file]
+  [=> :potatoclient.ui-specs/file]
   (if (runtime/release-build?)
     (get-log-dir)
     (io/file "logs")))

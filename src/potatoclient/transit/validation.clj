@@ -3,7 +3,7 @@
   (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
-            [potatoclient.ui_specs :as specs]))
+            [potatoclient.ui-specs :as specs]))
 
 (>defn- validate-with-schema
   "Validate a value against a schema and return [valid? errors]"

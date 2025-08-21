@@ -1,7 +1,6 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient."
-  (:require [clojure.spec.alpha :as s]
-            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
+  (:require [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.core :as core]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime])
@@ -56,7 +55,7 @@
 (>defn -main
   "Application entry point. Delegates to core namespace for actual initialization."
   [& args]
-  [(s/* any?) => nil?]
+  [[:* any?] => nil?]
   ;; Note: System properties for UI behavior should be set via JVM flags
   ;; at startup time, not programmatically here. See Makefile and Launch4j
   ;; configuration for proper flag setup.

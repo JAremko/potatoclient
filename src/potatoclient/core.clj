@@ -2,7 +2,6 @@
   "Core application logic for PotatoClient.
   Handles application initialization and lifecycle management."
   (:require [clojure.java.io]
-            [clojure.spec.alpha :as s]
             [clojure.string]
             [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.config :as config]
@@ -11,8 +10,8 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.ui.main_frame :as main-frame]
-            [potatoclient.ui.startup_dialog :as startup-dialog]
+            [potatoclient.ui.main-frame :as main-frame]
+            [potatoclient.ui.startup-dialog :as startup-dialog]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -65,12 +64,13 @@
             :build-type (get-build-type)}
      :msg (format "Control Center started (v%s %s build)"
                   (get-version)
-                  (get-build-type))}))
+                  (get-build-type))})
+  true)
 
 (>defn -main
   "Application entry point."
   [& _]
-  [(s/* any?) => nil?]
+  [[:* any?] => nil?]
   (initialize-application!)
   (seesaw/invoke-later
     ;; Preload theme icons before showing any UI
