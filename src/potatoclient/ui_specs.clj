@@ -1,11 +1,8 @@
 (ns potatoclient.ui-specs
   "Essential UI and video stream specs for PotatoClient.
-   This replaces the legacy specs.clj with only the schemas actually in use."
+   Uses the shared malli registry for global spec management."
   (:require [clojure.string :as str]
-            [malli.core :as m]
-            [malli.util :as mu]
-            [malli.registry :as mr]
-            [potatoclient.malli.oneof :as oneof])
+            [potatoclient.malli.registry :as registry])
   (:import (java.util.concurrent Future)
            (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
@@ -170,52 +167,56 @@
    [:extended-state {:optional true} int?]
    [:divider-locations {:optional true} [:sequential int?]]])
 
-(def app-state
-  "Full app state"
-  [:map
-   [:config config]
-   [:connection {:optional true} [:map
-                                  [:connected? boolean?]
-                                  [:url {:optional true} string?]
-                                  [:error {:optional true} string?]]]
-   [:processes {:optional true} [:map-of subprocess-type stream-process]]
-   [:streams {:optional true} [:map-of stream-type map?]]
-   [:zoom-table-index {:optional true} [:map-of stream-type int?]]])
-;; Schema Registry
+;; -----------------------------------------------------------------------------
+;; Registry Registration
 ;; -----------------------------------------------------------------------------
 
-(def registry
-  "Registry of all UI specs for qualified keyword lookups"
-  (merge (m/default-schemas)
-         (mu/schemas)
-         {:oneof oneof/-oneof-schema
-          ::theme-key theme-key
-          ::locale locale
-          ::locale-code locale-code
-          ::domain domain
-          ::stream-key stream-key
-          ::stream-type stream-type
-          ::future-instance future-instance
-          ::window-state window-state
-          ::config config
-          ::app-state app-state
-          ::window-bounds window-bounds
-          ::icon icon
-          ::file file
-          ::jframe jframe
-          ::jpanel jpanel
-          ::jtextfield jtextfield
-          ::jmenu jmenu
-          ::jmenubar jmenubar
-          ::action action
-          ::color color
-          ::rectangle rectangle
-          ::url url
-          ::url-history url-history
-          ::config-key config-key
-          ::translation-key translation-key
-          ::translation-args translation-args
-          ::translations-map translations-map}))
+;; Register all UI specs to the shared global registry
+(defn register-ui-specs!
+  "Register all UI specs to the global malli registry"
+  []
+  ;; Core domain schemas
+  (registry/register-spec! ::theme-key theme-key)
+  (registry/register-spec! ::locale locale)
+  (registry/register-spec! ::locale-code locale-code)
+  (registry/register-spec! ::domain domain)
+  (registry/register-spec! ::stream-key stream-key)
+  (registry/register-spec! ::stream-type stream-type)
+  
+  ;; Configuration schemas
+  (registry/register-spec! ::url url)
+  (registry/register-spec! ::config-key config-key)
+  (registry/register-spec! ::url-history-entry url-history-entry)
+  (registry/register-spec! ::url-history url-history)
+  (registry/register-spec! ::config config)
+  
+  ;; UI Component schemas
+  (registry/register-spec! ::file file)
+  (registry/register-spec! ::jframe jframe)
+  (registry/register-spec! ::jpanel jpanel)
+  (registry/register-spec! ::jtextfield jtextfield)
+  (registry/register-spec! ::jmenu jmenu)
+  (registry/register-spec! ::jmenubar jmenubar)
+  (registry/register-spec! ::action action)
+  (registry/register-spec! ::icon icon)
+  (registry/register-spec! ::rectangle rectangle)
+  (registry/register-spec! ::color color)
+  
+  ;; I18n schemas
+  (registry/register-spec! ::translation-key translation-key)
+  (registry/register-spec! ::translation-args translation-args)
+  (registry/register-spec! ::translations-map translations-map)
+  
+  ;; Window and state schemas
+  (registry/register-spec! ::window-bounds window-bounds)
+  (registry/register-spec! ::future-instance future-instance)
+  (registry/register-spec! ::window-state window-state))
 
-;; Set as default registry so qualified keywords work
-(mr/set-default-registry! registry)
+;; Initialize the global registry and register UI specs on namespace load
+(defonce ^:private registry-initialized
+  (do
+    ;; Setup the global registry if not already done
+    (registry/setup-global-registry!)
+    ;; Register all UI specs
+    (register-ui-specs!)
+    true))
