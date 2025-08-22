@@ -5,8 +5,8 @@
   video streams and managing application settings."
   (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
+            [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.transit.app-db :as app-db]
             [seesaw.bind :as bind]
             [seesaw.border :as border]
             [seesaw.core :as seesaw]
@@ -30,13 +30,13 @@
         info-label (seesaw/label :id (keyword (str (name stream-key) "-info"))
                                  :text "")]
 
-    ;; Bind status labels to app-db
-    (bind/bind app-db/app-db
-               (bind/transform (fn [db]
+    ;; Bind status labels to app-state
+    (bind/bind state/app-state
+               (bind/transform (fn [s]
                                  (let [process-key (case stream-key
                                                      :heat :heat-video
                                                      :day :day-video)
-                                       process (get-in db [:app-state :processes process-key])
+                                       process (get-in s [:processes process-key])
                                        running? (= :running (:status process))]
                                    {:connected? running?
                                     :pid (:pid process)})))
@@ -72,8 +72,8 @@
                                    :text "")]
 
     ;; Bind domain label to connection URL
-    (bind/bind app-db/app-db
-               (bind/transform #(or (get-in % [:app-state :connection :url]) ""))
+    (bind/bind state/app-state
+               (bind/transform #(or (get-in % [:connection :url]) ""))
                (bind/transform #(if (empty? %)
                                   (i18n/tr :no-server-configured)
                                   (str (i18n/tr :server-domain) ": " %)))
@@ -101,13 +101,13 @@
                                        (fn [_]
                                          ;; Stream control is noop for now
                                          nil))
-                        ;; Bind toggle state to app-db
-                        (bind/bind app-db/app-db
-                                   (bind/transform (fn [db]
+                        ;; Bind toggle state to app-state
+                        (bind/bind state/app-state
+                                   (bind/transform (fn [s]
                                                      (let [process-key (case stream-key
                                                                          :heat :heat-video
                                                                          :day :day-video)]
-                                                       (= :running (get-in db [:app-state :processes process-key :status])))))
+                                                       (= :running (get-in s [:processes process-key :status])))))
                                    (bind/property toggle :selected?)))]
 
     ;; Set up toggles

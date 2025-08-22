@@ -12,7 +12,6 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.transit.app-db :as app-db]
             [potatoclient.ui.control-panel :as control-panel]
             [potatoclient.ui.log-viewer :as log-viewer]
             [seesaw.action :as action]
@@ -180,13 +179,13 @@
                                       :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
         button (seesaw/toggle :action toggle-action)]
 
-    ;; Bind button state to app-db using seesaw.bind
-    (bind/bind potatoclient.transit.app-db/app-db
-               (bind/transform (fn [db]
+    ;; Bind button state to app-state using seesaw.bind
+    (bind/bind state/app-state
+               (bind/transform (fn [s]
                                  (let [process-key (case stream-key
                                                      :heat :heat-video
                                                      :day :day-video)]
-                                   (= :running (get-in db [:app-state :processes process-key :status])))))
+                                   (= :running (get-in s [:processes process-key :status])))))
                (bind/property button :selected?))
     button))
 
@@ -236,7 +235,7 @@
                                              :url-history (config/get-url-history)}]
                          (config/save-config! current-config))
                        ;; Stop video stream processes
-                       (let [stream-processes (app-db/get-all-stream-processes)
+                       (let [stream-processes (state/get-all-stream-processes)
                              ;; Transform keys from :heat-video/:day-video to :heat/:day
                              _ (reduce-kv (fn [m k v]
                                                                 (let [stream-key (case k
