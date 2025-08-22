@@ -204,6 +204,8 @@ class IpcClient(
         x: Int,
         y: Int,
         frameTimestamp: Long,
+        ndcX: Double? = null,
+        ndcY: Double? = null,
         deltaX: Int? = null,
         deltaY: Int? = null,
         scrollAmount: Int? = null
@@ -212,6 +214,7 @@ class IpcClient(
             gestureType,
             IpcKeys.streamType(streamName),
             x, y, frameTimestamp,
+            ndcX, ndcY,
             deltaX, deltaY, scrollAmount
         )
         sendMessage(message)
@@ -230,7 +233,7 @@ class IpcClient(
                 sendGestureEvent(IpcKeys.PAN_START, event.x, event.y, event.frameTimestamp)
             is potatoclient.kotlin.gestures.GestureEvent.PanMove -> 
                 sendGestureEvent(IpcKeys.PAN_MOVE, event.x, event.y, event.frameTimestamp, 
-                    event.deltaX, event.deltaY)
+                    deltaX = event.deltaX, deltaY = event.deltaY)
             is potatoclient.kotlin.gestures.GestureEvent.PanStop -> 
                 sendGestureEvent(IpcKeys.PAN_STOP, event.x, event.y, event.frameTimestamp)
             is potatoclient.kotlin.gestures.GestureEvent.WheelUp -> 
@@ -239,6 +242,31 @@ class IpcClient(
             is potatoclient.kotlin.gestures.GestureEvent.WheelDown -> 
                 sendGestureEvent(IpcKeys.WHEEL_DOWN, event.x, event.y, event.frameTimestamp,
                     scrollAmount = event.scrollAmount)
+        }
+    }
+    
+    /**
+     * Send a gesture event with NDC coordinates using GestureEvent object.
+     */
+    fun sendGestureEventWithNDC(event: potatoclient.kotlin.gestures.GestureEvent, ndcX: Double, ndcY: Double) {
+        when (event) {
+            is potatoclient.kotlin.gestures.GestureEvent.Tap -> 
+                sendGestureEvent(IpcKeys.TAP, event.x, event.y, event.frameTimestamp, ndcX, ndcY)
+            is potatoclient.kotlin.gestures.GestureEvent.DoubleTap -> 
+                sendGestureEvent(IpcKeys.DOUBLE_TAP, event.x, event.y, event.frameTimestamp, ndcX, ndcY)
+            is potatoclient.kotlin.gestures.GestureEvent.PanStart -> 
+                sendGestureEvent(IpcKeys.PAN_START, event.x, event.y, event.frameTimestamp, ndcX, ndcY)
+            is potatoclient.kotlin.gestures.GestureEvent.PanMove -> 
+                sendGestureEvent(IpcKeys.PAN_MOVE, event.x, event.y, event.frameTimestamp, 
+                    ndcX, ndcY, event.deltaX, event.deltaY)
+            is potatoclient.kotlin.gestures.GestureEvent.PanStop -> 
+                sendGestureEvent(IpcKeys.PAN_STOP, event.x, event.y, event.frameTimestamp, ndcX, ndcY)
+            is potatoclient.kotlin.gestures.GestureEvent.WheelUp -> 
+                sendGestureEvent(IpcKeys.WHEEL_UP, event.x, event.y, event.frameTimestamp,
+                    ndcX, ndcY, scrollAmount = event.scrollAmount)
+            is potatoclient.kotlin.gestures.GestureEvent.WheelDown -> 
+                sendGestureEvent(IpcKeys.WHEEL_DOWN, event.x, event.y, event.frameTimestamp,
+                    ndcX, ndcY, scrollAmount = event.scrollAmount)
         }
     }
 

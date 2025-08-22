@@ -25,13 +25,18 @@
     (:type message)))
 
 (defmethod handle-event :gesture
-  [stream-type {:keys [gesture-type x y ndc-x ndc-y] :as message}]
-  (println (format "[%s-GESTURE] %s at pixel(%s, %s) ndc(%.2f, %.2f)"
-                   (.toUpperCase (name stream-type))
-                   (name gesture-type)
-                   x y
-                   (or ndc-x 0.0)
-                   (or ndc-y 0.0))))
+  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount] :as message}]
+  (let [base-msg (format "[%s-GESTURE] %s at pixel(%s, %s)"
+                         (.toUpperCase (name stream-type))
+                         (name gesture-type)
+                         x y)
+        ndc-msg (if (and ndc-x ndc-y)
+                  (format " ndc(%.3f, %.3f)" ndc-x ndc-y)
+                  "")
+        scroll-msg (if scroll-amount
+                     (format " scroll:%d" scroll-amount)
+                     "")]
+    (println (str base-msg ndc-msg scroll-msg))))
 
 (defmethod handle-event :window
   [stream-type {:keys [action width height x y delta-x delta-y] :as message}]

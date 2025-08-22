@@ -63,6 +63,8 @@ object MessageBuilders {
         x: Int,
         y: Int,
         frameTimestamp: Long,
+        ndcX: Double? = null,
+        ndcY: Double? = null,
         deltaX: Int? = null,
         deltaY: Int? = null,
         scrollAmount: Int? = null
@@ -76,6 +78,10 @@ object MessageBuilders {
         put(IpcKeys.X, x)
         put(IpcKeys.Y, y)
         put(IpcKeys.FRAME_TIMESTAMP, frameTimestamp)
+        
+        // NDC coordinates if available
+        ndcX?.let { put(IpcKeys.NDC_X, it) }
+        ndcY?.let { put(IpcKeys.NDC_Y, it) }
         
         // Optional parameters for specific gesture types
         deltaX?.let { put(IpcKeys.DELTA_X, it) }

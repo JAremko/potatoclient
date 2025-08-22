@@ -32,8 +32,16 @@ class MouseEventHandler(
     private val gestureRecognizer = GestureRecognizer(
         config = gestureConfig,
         onGesture = { gesture ->
-            // Send gesture directly to Clojure via IPC
-            ipcClient.sendGestureEvent(gesture)
+            // Calculate NDC coordinates and send gesture with NDC to Clojure via IPC
+            val width = videoComponent.width
+            val height = videoComponent.height
+            if (width > 0 && height > 0) {
+                val ndc = pixelToNDC(gesture.x, gesture.y, width, height)
+                ipcClient.sendGestureEventWithNDC(gesture, ndc.x, ndc.y)
+            } else {
+                // Fallback if component size not available
+                ipcClient.sendGestureEvent(gesture)
+            }
         },
         frameDataProvider = frameDataProvider
     )
