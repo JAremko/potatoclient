@@ -1,0 +1,242 @@
+(ns clj-stream-spawner.ipc
+  "IPC server implementation using Unix Domain Sockets.
+   Wraps Java UnixSocketCommunicator with Transit serialization."
+  (:require 
+   [clj-stream-spawner.transit :as transit]
+   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
+   [malli.core :as m]
+   [taoensso.telemere :as t])
+  (:import 
+   [potatoclient.java.ipc SocketFactory UnixSocketCommunicator]
+   [java.nio.file Path Files LinkOption]
+   [java.util.concurrent LinkedBlockingQueue TimeUnit CountDownLatch]
+   [java.lang ProcessHandle]))
+
+;; ============================================================================
+;; Specs
+;; ============================================================================
+
+(def StreamType
+  [:enum :heat :day])
+
+(def IpcServer
+  [:map
+   [:stream-type StreamType]
+   [:socket-path [:fn #(instance? Path %)]]
+   [:communicator [:fn #(instance? UnixSocketCommunicator %)]]
+   [:message-queue [:fn #(instance? LinkedBlockingQueue %)]]
+   [:running? [:fn #(instance? clojure.lang.Atom %)]]
+   [:reader-thread [:fn #(or (nil? %) (instance? Thread %))]]
+   [:processor-thread [:fn #(or (nil? %) (instance? Thread %))]]])
+
+;; ============================================================================
+;; IPC Server Implementation
+;; ============================================================================
+
+(defn get-current-pid
+  "Get the current process PID."
+  []
+  (.pid (ProcessHandle/current)))
+
+(>defn- generate-socket-path
+  "Generate a socket path for a stream."
+  [stream-type]
+  [StreamType => [:fn #(instance? Path %)]]
+  (let [socket-name (str "ipc-" (get-current-pid) "-" (name stream-type))]
+    (SocketFactory/generateSocketPath socket-name)))
+
+(>defn- start-reader-thread
+  "Start the thread that reads messages from the socket."
+  [{:keys [stream-type communicator message-queue running?] :as server}]
+  [IpcServer => [:fn #(instance? Thread %)]]
+  (Thread.
+   (fn []
+     (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
+     (while @running?
+       (try
+         (when-let [message-bytes (.receive communicator)]
+           (let [message (transit/read-message message-bytes)]
+             (when-not (.offer message-queue message)
+               (t/log! :warn (str "[" (name stream-type) "-server] Message queue full, dropping message")))))
+         (catch InterruptedException _
+           (.interrupt (Thread/currentThread))
+           (reset! running? false))
+         (catch Exception e
+           (when @running?
+             (t/log! :error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage e)))
+             (Thread/sleep 100))))))
+   (str (name stream-type) "-server-reader")))
+
+(>defn- start-processor-thread
+  "Start the thread that processes messages from the queue."
+  [{:keys [stream-type message-queue running?] :as server} on-message]
+  [IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]] => [:fn #(instance? Thread %)]]
+  (Thread.
+   (fn []
+     (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
+     (while @running?
+       (try
+         (when-let [message (.poll message-queue 100 TimeUnit/MILLISECONDS)]
+           (when on-message
+             (on-message message)))
+         (catch InterruptedException _
+           (.interrupt (Thread/currentThread))
+           (reset! running? false))
+         (catch Exception e
+           (when @running?
+             (t/log! :error (str "[" (name stream-type) "-server] Error processing message: " (.getMessage e))))))))
+   (str (name stream-type) "-server-processor")))
+
+(>defn create-server
+  "Create and start an IPC server for a stream.
+   Returns a server map with control functions."
+  [stream-type & {:keys [on-message await-binding?]
+                   :or {await-binding? true}}]
+  [StreamType [:* :any] => IpcServer]
+  (let [socket-path (generate-socket-path stream-type)
+        _ (Files/deleteIfExists socket-path)
+        communicator (SocketFactory/createServer socket-path)
+        message-queue (LinkedBlockingQueue. 1000)
+        running? (atom false)
+        server {:stream-type stream-type
+                :socket-path socket-path
+                :communicator communicator
+                :message-queue message-queue
+                :running? running?
+                :reader-thread nil
+                :processor-thread nil}]
+    
+    ;; Start the socket
+    (.start communicator)
+    
+    ;; Wait for socket to be bound if requested
+    (when await-binding?
+      (let [retries (atom 10)]
+        (while (and (not (Files/exists socket-path (make-array LinkOption 0)))
+                    (pos? @retries))
+          (Thread/sleep 10)
+          (swap! retries dec))
+        (when-not (Files/exists socket-path (make-array LinkOption 0))
+          (throw (ex-info "Socket file not created" {:path (.toString socket-path)})))))
+    
+    (reset! running? true)
+    
+    ;; Start threads
+    (let [reader-thread (start-reader-thread server)
+          processor-thread (start-processor-thread server on-message)]
+      (.setDaemon reader-thread true)
+      (.setDaemon processor-thread true)
+      (.start reader-thread)
+      (.start processor-thread)
+      
+      (t/log! :info (str "[" (name stream-type) "-server] IPC server started on " (.toString socket-path)))
+      
+      (assoc server
+             :reader-thread reader-thread
+             :processor-thread processor-thread))))
+
+(>defn stop-server
+  "Stop an IPC server and clean up resources."
+  [server]
+  [IpcServer => :nil]
+  (let [{:keys [stream-type running? reader-thread processor-thread 
+                communicator socket-path]} server]
+    (when @running?
+      (t/log! :info (str "[" (name stream-type) "-server] Stopping IPC server"))
+      (reset! running? false)
+      
+      ;; Stop threads
+      (when reader-thread
+        (.interrupt reader-thread))
+      (when processor-thread
+        (.interrupt processor-thread))
+      
+      ;; Stop socket and remove from SocketFactory
+      (when communicator
+        (.stop communicator)
+        ;; Important: Remove from SocketFactory's static map
+        (SocketFactory/close communicator))
+      
+      ;; Clean up socket file
+      (try
+        (Files/deleteIfExists socket-path)
+        (catch Exception _))
+      
+      (t/log! :info (str "[" (name stream-type) "-server] IPC server stopped")))
+    nil))
+
+(>defn send-message
+  "Send a message through the IPC server."
+  [server message]
+  [IpcServer [:map-of :keyword :any] => :boolean]
+  (let [{:keys [stream-type communicator running?]} server]
+    (if @running?
+      (try
+        (let [message-bytes (transit/write-message message)]
+          (.send communicator message-bytes)
+          true)
+        (catch Exception e
+          (t/log! :error (str "[" (name stream-type) "-server] Failed to send message: " (.getMessage e)))
+          false))
+      (do
+        (t/log! :warn (str "[" (name stream-type) "-server] Cannot send message - server not running"))
+        false))))
+
+(>defn receive-message
+  "Receive a message from the queue (blocking with optional timeout)."
+  [server & {:keys [timeout-ms] :or {timeout-ms 0}}]
+  [IpcServer [:* :any] => [:maybe [:map-of :keyword :any]]]
+  (let [{:keys [message-queue running?]} server]
+    (when @running?
+      (if (pos? timeout-ms)
+        (.poll message-queue timeout-ms TimeUnit/MILLISECONDS)
+        (.take message-queue)))))
+
+(>defn try-receive-message
+  "Try to receive a message without blocking."
+  [server]
+  [IpcServer => [:maybe [:map-of :keyword :any]]]
+  (let [{:keys [message-queue]} server]
+    (.poll message-queue)))
+
+(>defn server-running?
+  "Check if the server is running."
+  [server]
+  [IpcServer => :boolean]
+  (let [{:keys [running? communicator]} server]
+    (and @running? 
+         communicator 
+         (.isRunning communicator))))
+
+;; ============================================================================
+;; Server Pool Management
+;; ============================================================================
+
+(def ^:private servers (atom {}))
+
+(>defn get-server
+  "Get an existing server for a stream type."
+  [stream-type]
+  [StreamType => [:maybe IpcServer]]
+  (get @servers stream-type))
+
+(>defn create-and-register-server
+  "Create a server and register it in the pool."
+  [stream-type & opts]
+  [StreamType [:* :any] => IpcServer]
+  (when-let [existing (get-server stream-type)]
+    (stop-server existing)
+    (swap! servers dissoc stream-type))
+  (let [server (apply create-server stream-type opts)]
+    (swap! servers assoc stream-type server)
+    server))
+
+(>defn stop-all-servers
+  "Stop all registered servers."
+  []
+  [=> :nil]
+  (doseq [[stream-type server] @servers]
+    (t/log! :info (str "Stopping " (name stream-type) " server"))
+    (stop-server server))
+  (reset! servers {})
+  nil)
