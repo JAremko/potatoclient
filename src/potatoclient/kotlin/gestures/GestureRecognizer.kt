@@ -55,6 +55,13 @@ class GestureRecognizer(
         Thread(r, "GestureRecognizer-ScrollFlush").apply { isDaemon = true }
     }
     private var scrollFlushTask: ScheduledFuture<*>? = null
+    
+    // Timer for tap grace period (to detect double-tap)
+    private val tapExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor { r ->
+        Thread(r, "GestureRecognizer-TapGrace").apply { isDaemon = true }
+    }
+    private var tapGraceTask: ScheduledFuture<*>? = null
+    private var pendingTap: GestureEvent.Tap? = null
 
     fun processMousePressed(
         x: Int,
@@ -81,6 +88,11 @@ class GestureRecognizer(
         val distance = sqrt(((x - startX) * (x - startX) + (y - startY) * (y - startY)).toDouble())
 
         if (currentState == GestureState.PENDING && distance > config.moveThreshold) {
+            // Cancel any pending tap since we're starting a pan
+            tapGraceTask?.cancel(false)
+            tapGraceTask = null
+            pendingTap = null
+            
             // Start pan gesture
             state.set(GestureState.PANNING)
             panStartNotified = true
@@ -115,19 +127,44 @@ class GestureRecognizer(
             GestureState.PENDING -> {
                 // Only process as tap if movement is minimal and duration is short
                 if (distance <= config.moveThreshold && elapsedTime < config.tapLongPressThreshold) {
-                    // Check for double tap
-                    if (time - lastTapTime < config.doubleTapThreshold &&
-                        abs(x - lastTapX) < config.doubleTapTolerance &&
-                        abs(y - lastTapY) < config.doubleTapTolerance
+                    val currentTap = GestureEvent.Tap(x, y, time, frameDataProvider.getCurrentFrameTimestamp())
+                    
+                    // Check if this could be a double tap
+                    val pending = pendingTap
+                    if (pending != null &&
+                        time - pending.timestamp < config.doubleTapThreshold &&
+                        abs(x - pending.x) < config.doubleTapTolerance &&
+                        abs(y - pending.y) < config.doubleTapTolerance
                     ) {
+                        // Cancel the pending single tap timer
+                        tapGraceTask?.cancel(false)
+                        tapGraceTask = null
+                        pendingTap = null
+                        
+                        // Send double tap immediately
                         onGesture(GestureEvent.DoubleTap(x, y, time, frameDataProvider.getCurrentFrameTimestamp()))
                         lastTapTime = 0 // Reset to prevent triple tap
+                        lastTapX = x
+                        lastTapY = y
                     } else {
-                        // Single tap
-                        onGesture(GestureEvent.Tap(x, y, time, frameDataProvider.getCurrentFrameTimestamp()))
+                        // Store this tap and wait for grace period
+                        pendingTap = currentTap
                         lastTapTime = time
                         lastTapX = x
                         lastTapY = y
+                        
+                        // Cancel any existing grace timer
+                        tapGraceTask?.cancel(false)
+                        
+                        // Start grace period timer
+                        tapGraceTask = tapExecutor.schedule({
+                            // Grace period expired, send the single tap
+                            val tap = pendingTap
+                            if (tap != null) {
+                                onGesture(tap)
+                                pendingTap = null
+                            }
+                        }, config.doubleTapThreshold.toLong(), TimeUnit.MILLISECONDS)
                     }
                 }
                 // No swipe detection - any other release is just ignored
@@ -207,10 +244,21 @@ class GestureRecognizer(
         pendingScrollDown.set(0)
         lastScrollX.set(0)
         lastScrollY.set(0)
+        
+        // Cancel tap grace timer and send pending tap if any
+        tapGraceTask?.cancel(false)
+        tapGraceTask = null
+        val tap = pendingTap
+        if (tap != null) {
+            onGesture(tap)
+            pendingTap = null
+        }
     }
     
     fun cleanup() {
         reset()
+        
+        // Shutdown scroll flush executor
         scrollFlushExecutor.shutdown()
         try {
             if (!scrollFlushExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
@@ -218,6 +266,17 @@ class GestureRecognizer(
             }
         } catch (e: InterruptedException) {
             scrollFlushExecutor.shutdownNow()
+            Thread.currentThread().interrupt()
+        }
+        
+        // Shutdown tap grace executor
+        tapExecutor.shutdown()
+        try {
+            if (!tapExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                tapExecutor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            tapExecutor.shutdownNow()
             Thread.currentThread().interrupt()
         }
     }
