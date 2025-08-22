@@ -3,6 +3,11 @@ package potatoclient.kotlin.gestures
 // EventFilter not needed in GestureRecognizer
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -18,6 +23,7 @@ data class GestureConfig(
     val doubleTapThreshold: Long = 300, // ms between taps
     val panUpdateInterval: Long = 120, // ms between pan updates
     val doubleTapTolerance: Int = 10, // pixels tolerance for double tap position
+    val scrollDebounceInterval: Long = 50, // ms between scroll events (accumulates scroll amounts)
 )
 
 class GestureRecognizer(
@@ -36,6 +42,19 @@ class GestureRecognizer(
     // Thread-safe tracking for pan gesture updates
     private val lastPanUpdate = AtomicLong(0)
     private var panStartNotified = false
+    
+    // Thread-safe tracking for scroll debouncing
+    private val lastScrollUpdate = AtomicLong(0)
+    private val pendingScrollUp = AtomicInteger(0)
+    private val pendingScrollDown = AtomicInteger(0)
+    private val lastScrollX = AtomicInteger(0)
+    private val lastScrollY = AtomicInteger(0)
+    
+    // Timer for flushing pending scroll events
+    private val scrollFlushExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor { r ->
+        Thread(r, "GestureRecognizer-ScrollFlush").apply { isDaemon = true }
+    }
+    private var scrollFlushTask: ScheduledFuture<*>? = null
 
     fun processMousePressed(
         x: Int,
@@ -129,17 +148,77 @@ class GestureRecognizer(
         rotation: Int,
         time: Long
     ) {
-        val frameTimestamp = frameDataProvider.getCurrentFrameTimestamp()
+        // Update last scroll position
+        lastScrollX.set(x)
+        lastScrollY.set(y)
+        
+        // Accumulate scroll amounts
         if (rotation < 0) {
-            onGesture(GestureEvent.WheelUp(x, y, abs(rotation), time, frameTimestamp))
+            pendingScrollUp.addAndGet(abs(rotation))
         } else if (rotation > 0) {
-            onGesture(GestureEvent.WheelDown(x, y, rotation, time, frameTimestamp))
+            pendingScrollDown.addAndGet(rotation)
         }
+        
+        // Cancel any existing flush task
+        scrollFlushTask?.cancel(false)
+        
+        // Schedule a new flush task
+        scrollFlushTask = scrollFlushExecutor.schedule({
+            flushPendingScrollEvents(System.currentTimeMillis())
+        }, config.scrollDebounceInterval, TimeUnit.MILLISECONDS)
+    }
+    
+    private fun flushPendingScrollEvents(time: Long) {
+        val frameTimestamp = frameDataProvider.getCurrentFrameTimestamp()
+        val x = lastScrollX.get()
+        val y = lastScrollY.get()
+        
+        // Send accumulated scroll up
+        val scrollUp = pendingScrollUp.getAndSet(0)
+        if (scrollUp > 0) {
+            onGesture(GestureEvent.WheelUp(x, y, scrollUp, time, frameTimestamp))
+        }
+        
+        // Send accumulated scroll down
+        val scrollDown = pendingScrollDown.getAndSet(0)
+        if (scrollDown > 0) {
+            onGesture(GestureEvent.WheelDown(x, y, scrollDown, time, frameTimestamp))
+        }
+        
+        lastScrollUpdate.set(time)
     }
     
     fun reset() {
         state.set(GestureState.IDLE)
         panStartNotified = false
         lastPanUpdate.set(0)
+        
+        // Cancel any pending flush task
+        scrollFlushTask?.cancel(false)
+        
+        // Flush any pending scroll events before reset
+        if (pendingScrollUp.get() > 0 || pendingScrollDown.get() > 0) {
+            flushPendingScrollEvents(System.currentTimeMillis())
+        }
+        
+        // Reset scroll tracking
+        lastScrollUpdate.set(0)
+        pendingScrollUp.set(0)
+        pendingScrollDown.set(0)
+        lastScrollX.set(0)
+        lastScrollY.set(0)
+    }
+    
+    fun cleanup() {
+        reset()
+        scrollFlushExecutor.shutdown()
+        try {
+            if (!scrollFlushExecutor.awaitTermination(100, TimeUnit.MILLISECONDS)) {
+                scrollFlushExecutor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            scrollFlushExecutor.shutdownNow()
+            Thread.currentThread().interrupt()
+        }
     }
 }

@@ -25,7 +25,8 @@ class MouseEventHandler(
         tapLongPressThreshold = 300,
         doubleTapThreshold = 300,
         panUpdateInterval = 120,
-        doubleTapTolerance = 10
+        doubleTapTolerance = 10,
+        scrollDebounceInterval = 50
     )
 
     private val gestureRecognizer = GestureRecognizer(
@@ -71,7 +72,7 @@ class MouseEventHandler(
     }
 
     fun cleanup() {
-        gestureRecognizer.reset()
+        gestureRecognizer.cleanup()
     }
 
     /**

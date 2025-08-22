@@ -80,7 +80,7 @@ object MessageBuilders {
         // Optional parameters for specific gesture types
         deltaX?.let { put(IpcKeys.DELTA_X, it) }
         deltaY?.let { put(IpcKeys.DELTA_Y, it) }
-        scrollAmount?.let { put("scroll-amount", it) }
+        scrollAmount?.let { put(IpcKeys.SCROLL_AMOUNT, it) }
     }
     
     /**

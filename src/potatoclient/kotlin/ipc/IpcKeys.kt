@@ -93,6 +93,7 @@ object IpcKeys {
     // Gesture-specific keys
     @JvmField val GESTURE_TYPE: Keyword = TransitFactory.keyword("gesture-type")
     @JvmField val FRAME_TIMESTAMP: Keyword = TransitFactory.keyword("frame-timestamp")
+    @JvmField val SCROLL_AMOUNT: Keyword = TransitFactory.keyword("scroll-amount")
     
     
     // Log levels
