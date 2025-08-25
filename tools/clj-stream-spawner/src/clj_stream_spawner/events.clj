@@ -24,7 +24,7 @@
     (:type message)))
 
 (defmethod handle-event :gesture
-  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount] :as _}]
+  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount]}]
   (let [base-msg (format "[%s-GESTURE] %s at pixel(%s, %s)"
                          (.toUpperCase (name stream-type))
                          (name gesture-type)
@@ -38,7 +38,7 @@
     (println (str base-msg ndc-msg scroll-msg))))
 
 (defmethod handle-event :window
-  [stream-type {:keys [action width height x y delta-x delta-y] :as _}]
+  [stream-type {:keys [action width height x y delta-x delta-y]}]
   (let [details (cond
                   (and width height) (format " %dx%d" width height)
                   (and x y) (format " at (%d, %d)" x y)
@@ -50,7 +50,7 @@
                      details))))
 
 (defmethod handle-event :connection
-  [stream-type {:keys [action details] :as _}]
+  [stream-type {:keys [action details]}]
   (println (format "[%s-CONNECTION] %s%s"
                    (.toUpperCase (name stream-type))
                    (name action)

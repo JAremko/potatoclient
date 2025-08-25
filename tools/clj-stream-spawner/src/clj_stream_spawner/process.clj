@@ -6,8 +6,9 @@
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [taoensso.telemere :as t])
   (:import
-    (java.io BufferedReader InputStreamReader)
+    (java.io BufferedReader File IOException InputStreamReader)
     (java.lang Process ProcessBuilder ProcessHandle)
+    (java.util List)
     (java.util.concurrent TimeUnit)))
 
 ;; ============================================================================
@@ -68,7 +69,7 @@
 (>defn- get-project-root
   "Get the project root directory."
   []
-  [=> [:fn #(instance? java.io.File %)]]
+  [=> [:fn #(instance? File %)]]
   (-> (io/file ".")
       (.getCanonicalPath)
       (str/replace #"/tools/clj-stream-spawner$" "")
@@ -90,7 +91,7 @@
            (println (str "[" (name stream-type) "-" stream-name "] " line))
            (recur)))
        (catch Exception e
-         (when-not (instance? java.io.IOException e)
+         (when-not (instance? IOException e)
            (t/log! :error (str "Error reading " stream-name " for " (name stream-type) ": " (.getMessage e)))))))
    (str (name stream-type) "-" stream-name "-gobbler")))
 
@@ -126,7 +127,7 @@
             (t/log! :debug (str "Command: " (str/join " " command))))
 
         ;; Create process
-        process-builder (doto (ProcessBuilder. ^java.util.List command)
+        process-builder (doto (ProcessBuilder. ^List command)
                           (.directory project-root)
                           (.redirectErrorStream false))
 
@@ -137,8 +138,8 @@
         stdout-reader (BufferedReader. (InputStreamReader. (.getInputStream process)))
         stderr-reader (BufferedReader. (InputStreamReader. (.getErrorStream process)))
 
-        stdout-thread (create-output-gobbler stream-type "stdout" stdout-reader)
-        stderr-thread (create-output-gobbler stream-type "stderr" stderr-reader)
+        ^Thread stdout-thread (create-output-gobbler stream-type "stdout" stdout-reader)
+        ^Thread stderr-thread (create-output-gobbler stream-type "stderr" stderr-reader)
 
         ;; Start gobbler threads
         _ (doto stdout-thread (.setDaemon true) (.start))
@@ -171,12 +172,12 @@
       (t/log! :info (str "Stopping " (name stream-type) " stream process - PID: " pid))
 
       ;; Try graceful shutdown
-      (.destroy process)
+      (.destroy ^Process process)
 
       ;; Wait for shutdown
-      (when-not (.waitFor process timeout-seconds TimeUnit/SECONDS)
+      (when-not (.waitFor ^Process process timeout-seconds TimeUnit/SECONDS)
         (t/log! :warn (str "Force killing " (name stream-type) " stream process - PID: " pid))
-        (.destroyForcibly process)
+        (.destroyForcibly ^Process process)
         (.waitFor process 2 TimeUnit/SECONDS))
 
       (t/log! :info (str (name stream-type) " stream process stopped - PID: " pid))))
@@ -221,7 +222,7 @@
   []
   [=> :nil]
   (t/log! :info "Stopping all stream processes...")
-  (doseq [[stream-type process-info] @processes]
+  (doseq [[_ process-info] @processes]
     (stop-process process-info))
   (reset! processes {})
   nil)

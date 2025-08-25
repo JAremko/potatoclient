@@ -122,8 +122,8 @@
     (reset! running? true)
 
     ;; Start threads
-    (let [reader-thread (start-reader-thread server)
-          processor-thread (start-processor-thread server on-message)]
+    (let [^Thread reader-thread (start-reader-thread server)
+          ^Thread processor-thread (start-processor-thread server on-message)]
       (.setDaemon reader-thread true)
       (.setDaemon processor-thread true)
       (.start reader-thread)
@@ -147,13 +147,13 @@
 
       ;; Stop threads
       (when reader-thread
-        (.interrupt reader-thread))
+        (.interrupt ^Thread reader-thread))
       (when processor-thread
-        (.interrupt processor-thread))
+        (.interrupt ^Thread processor-thread))
 
       ;; Stop socket and remove from SocketFactory
       (when communicator
-        (.stop communicator)
+        (.stop ^UnixSocketCommunicator communicator)
         ;; Important: Remove from SocketFactory's static map
         (SocketFactory/close communicator))
 
