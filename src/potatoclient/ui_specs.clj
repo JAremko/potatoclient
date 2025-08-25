@@ -2,7 +2,8 @@
   "Essential UI and video stream specs for PotatoClient.
    Uses the shared malli registry for global spec management."
   (:require [clojure.string :as str]
-            [potatoclient.malli.registry :as registry])
+            [potatoclient.malli.registry :as registry]
+            [potatoclient.url-parser :as url-parser])
   (:import (java.util.concurrent Future)
            (javax.swing JFrame JPanel JTextField JMenu JMenuBar Action Icon)
            (java.io File)
@@ -17,16 +18,12 @@
   [:enum :sol-light :sol-dark :dark :hi-dark])
 
 (def domain
-  "Domain name or IP address - validates hosts that can be used for WebSocket connections"
+  "Domain name or IP address - validates hosts that can be used for WebSocket connections.
+   Uses Instaparse grammar as the single source of truth for validation."
   [:and
    string?
    [:fn {:error/message "must be a valid domain name or IP address"}
-    (fn [s]
-      (and (not (str/blank? s))
-           (let [ip-pattern #"^(\d{1,3}\.){3}\d{1,3}$"
-                 domain-pattern #"^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$"]
-             (or (re-matches ip-pattern s)
-                 (re-matches domain-pattern s)))))]])
+    url-parser/valid-domain-or-ip?]])
 
 (def locale
   "Application locale"

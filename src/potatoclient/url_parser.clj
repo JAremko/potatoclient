@@ -1,10 +1,10 @@
 (ns potatoclient.url-parser
-  "URL parsing using Instaparse grammar and core.match for robust extraction"
+  "Unified URL parsing and validation using Instaparse grammar.
+   Single source of truth for all URL/domain/IP validation in the application."
   (:require [clojure.core.match :refer [match]]
             [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
-            [instaparse.core :as insta]
-            [potatoclient.i18n :as i18n]))
+            [instaparse.core :as insta]))
 
 ;; -----------------------------------------------------------------------------
 ;; Pre-processing to help parser
@@ -206,29 +206,29 @@
 
 (>defn validate-url-input
   "Validate user input and return either {:valid true :domain domain} 
-   or {:valid false :error localized-error-message}"
+   or {:valid false :error error-keyword}"
   [input]
   [string? => map?]
   (if (str/blank? input)
     {:valid false
-     :error (i18n/tr :url-error-empty)}
+     :error :url-error-empty}
     (if-let [domain (extract-domain input)]
       {:valid true
        :domain domain}
       {:valid false
-       :error (i18n/tr :url-error-invalid-format)})))
+       :error :url-error-invalid-format})))
 
-(>defn get-example-formats
-  "Get localized example URL formats for user help"
+(>defn get-example-format-keys
+  "Get example URL format keys for user help"
   []
-  [=> [:vector string?]]
-  [(i18n/tr :url-example-domain)      ; "example.com"
-   (i18n/tr :url-example-subdomain)   ; "app.example.com"
-   (i18n/tr :url-example-ip)          ; "192.168.1.100"
-   (i18n/tr :url-example-ipv6)        ; "[2001:db8::1]"
-   (i18n/tr :url-example-https)       ; "https://example.com"
-   (i18n/tr :url-example-wss)         ; "wss://example.com:8080/ws"
-   (i18n/tr :url-example-localhost)]) ; "localhost"
+  [=> [:vector keyword?]]
+  [:url-example-domain      ; "example.com"
+   :url-example-subdomain   ; "app.example.com"
+   :url-example-ip          ; "192.168.1.100"
+   :url-example-ipv6        ; "[2001:db8::1]"
+   :url-example-https       ; "https://example.com"
+   :url-example-wss         ; "wss://example.com:8080/ws"
+   :url-example-localhost]) ; "localhost"
 
 (>defn parse-tree-node-type
   "Get the type of node in the parse tree (the first element after :INPUT)"
@@ -245,3 +245,23 @@
         [:INPUT [:DOMAIN & _]] :DOMAIN
         [:INPUT [:EMPTY]] :EMPTY
         :else nil))))
+
+;; -----------------------------------------------------------------------------
+;; Validation API using Grammar
+;; -----------------------------------------------------------------------------
+
+(>defn valid-domain-or-ip?
+  "Check if string is a valid domain name or IP address using the grammar.
+   This is the single source of truth for domain/IP validation."
+  [s]
+  [string? => boolean?]
+  (let [parsed (parse-url s)]
+    (and (not (insta/failure? parsed))
+         (not= (parse-tree-node-type s) :EMPTY)
+         (some? (extract-host-from-ast parsed)))))
+
+(>defn valid-url?
+  "Check if string is a valid URL (has protocol)"
+  [s]
+  [string? => boolean?]
+  (= (parse-tree-node-type s) :URL))

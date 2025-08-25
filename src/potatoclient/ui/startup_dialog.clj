@@ -138,9 +138,9 @@
                                           (seesaw/dispose! @dialog)
                                           (callback :connect))
                                         (seesaw/alert @dialog
-                                                      (str (:error validation) "\n\n"
+                                                      (str (i18n/tr (:error validation)) "\n\n"
                                                            (i18n/tr :startup-valid-formats) ":\n"
-                                                           "• " (str/join "\n• " (url-parser/get-example-formats)))
+                                                           "• " (str/join "\n• " (map i18n/tr (url-parser/get-example-format-keys))))
                                                       :title (i18n/tr :startup-invalid-url)
                                                       :type :error)))))
         cancel-action (action/action
