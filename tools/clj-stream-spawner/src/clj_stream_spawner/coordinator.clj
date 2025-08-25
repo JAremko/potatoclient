@@ -1,15 +1,14 @@
 (ns clj-stream-spawner.coordinator
   "Coordinates heat and day camera streams with IPC and process management."
-  (:require 
-   [clj-stream-spawner.ipc :as ipc]
-   [clj-stream-spawner.process :as process]
-   [clj-stream-spawner.transit :as transit]
-   [clj-stream-spawner.events :as events]
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
-   [malli.core :as m]
-   [taoensso.telemere :as t])
+  (:require
+    [clj-stream-spawner.events :as events]
+    [clj-stream-spawner.ipc :as ipc]
+    [clj-stream-spawner.process :as process]
+    [clj-stream-spawner.transit :as transit]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+    [taoensso.telemere :as t])
   (:import
-   [java.util.concurrent CountDownLatch TimeUnit]))
+    (java.util.concurrent CountDownLatch TimeUnit)))
 
 ;; ============================================================================
 ;; Specs
@@ -96,9 +95,9 @@
   (try
     (t/log! :info (str "Starting IPC server for " (name stream-type) " stream"))
     (update-stream-state stream-type {:status :starting})
-    
+
     (let [handler (create-message-handler stream-type)
-          server (ipc/create-and-register-server stream-type 
+          server (ipc/create-and-register-server stream-type
                                                   :on-message handler
                                                   :await-binding? true)]
       (update-stream-state stream-type {:ipc-server server})
@@ -116,10 +115,10 @@
   (let [{:keys [host debug?]} @state]
     (try
       (t/log! :info (str "Starting process for " (name stream-type) " stream"))
-      
+
       ;; Small delay to ensure IPC server is ready
       (Thread/sleep 100)
-      
+
       (let [process-info (process/spawn-and-register stream-type host
                                                       :debug? debug?
                                                       :parent-pid (ipc/get-current-pid))]
@@ -161,16 +160,16 @@
     (when (#{:starting :running} status)
       (t/log! :info (str "Stopping " (name stream-type) " stream"))
       (update-stream-state stream-type {:status :stopping})
-      
+
       ;; Stop process first
       (when process
         (process/stop-process process))
-      
+
       ;; Then stop IPC server
       (when ipc-server
         (Thread/sleep 100) ; Give process time to disconnect
         (ipc/stop-server ipc-server))
-      
+
       (update-stream-state stream-type {:status :stopped
                                         :ipc-server nil
                                         :process nil})))
@@ -211,11 +210,11 @@
   [=> :nil]
   (t/log! :info "Shutting down coordinator...")
   (stop-all-streams)
-  
+
   ;; Signal shutdown
   (when-let [latch (:shutdown-latch @state)]
     (.countDown latch))
-  
+
   (reset! state nil)
   (t/log! :info "Coordinator shutdown complete")
   nil)
@@ -262,7 +261,7 @@
   [stream-type]
   [StreamType => :boolean]
   (if-let [server (:ipc-server (get-stream-state stream-type))]
-    (let [message (transit/create-command :close-request 
+    (let [message (transit/create-command :close-request
                                           {:stream-type stream-type})]
       (ipc/send-message server message))
     false))

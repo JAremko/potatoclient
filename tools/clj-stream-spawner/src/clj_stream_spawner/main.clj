@@ -1,10 +1,8 @@
 (ns clj-stream-spawner.main
   "Main entry point for the Clojure stream spawner."
-  (:require 
-   [clj-stream-spawner.coordinator :as coordinator]
-   [clojure.string :as str]
-   [com.fulcrologic.guardrails.malli.core :refer [>defn =>]]
-   [taoensso.telemere :as t])
+  (:require
+    [clj-stream-spawner.coordinator :as coordinator]
+    [taoensso.telemere :as t])
   (:gen-class))
 
 ;; ============================================================================
@@ -53,13 +51,13 @@ The spawner will:
                 (print-usage)
                 nil)
             (recur (rest rest) (assoc opts :host (first rest))))
-          
+
           ("--debug" "-d")
           (recur rest (assoc opts :debug? true))
-          
+
           "--help"
           nil
-          
+
           (do (println (str "Error: Unknown argument: " arg))
               (print-usage)
               nil))))))
@@ -90,24 +88,24 @@ The spawner will:
   (println "========================================")
   (println "Clojure Stream Spawner")
   (println "========================================")
-  
+
   ;; Parse arguments
   (if-let [{:keys [host debug?]} (parse-args args)]
     (do
       ;; Configure logging
       (when debug?
         (t/set-min-level! :debug))
-      
+
       (println (str "Host: " host))
       (println (str "Debug: " debug?))
       (println "")
-      
+
       ;; Initialize coordinator
       (coordinator/initialize host :debug? debug?)
-      
+
       ;; Set up shutdown hook
       (setup-shutdown-hook)
-      
+
       ;; Start streams
       (println "Starting video streams...")
       (let [{:keys [heat day]} (coordinator/start-all-streams)]
@@ -119,7 +117,7 @@ The spawner will:
             (println "")
             (println "========================================")
             (println "")
-            
+
             ;; Wait for shutdown
             (coordinator/wait-for-shutdown))
           (do
@@ -128,9 +126,9 @@ The spawner will:
             (println "Check the logs above for errors")
             (coordinator/shutdown)
             (System/exit 1))))
-      
+
       ;; Normal exit
       (System/exit 0))
-    
+
     ;; Args parsing failed
     (System/exit 1)))

@@ -1,15 +1,14 @@
 (ns clj-stream-spawner.process
   "Process management for spawning VideoStreamManager instances."
-  (:require 
-   [clojure.java.io :as io]
-   [clojure.string :as str]
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
-   [malli.core :as m]
-   [taoensso.telemere :as t])
-  (:import 
-   [java.lang ProcessBuilder Process ProcessHandle]
-   [java.io BufferedReader InputStreamReader]
-   [java.util.concurrent TimeUnit]))
+  (:require
+    [clojure.java.io :as io]
+    [clojure.string :as str]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+    [taoensso.telemere :as t])
+  (:import
+    (java.io BufferedReader InputStreamReader)
+    (java.lang Process ProcessBuilder ProcessHandle)
+    (java.util.concurrent TimeUnit)))
 
 ;; ============================================================================
 ;; Specs
@@ -46,7 +45,7 @@
    Gets the full classpath from the main project."
   []
   [=> :string]
-  (let [project-root (-> (io/file ".") 
+  (let [project-root (-> (io/file ".")
                         (.getCanonicalPath)
                         (str/replace #"/tools/clj-stream-spawner$" ""))]
     ;; Get the full classpath from the main project
@@ -57,7 +56,7 @@
       (if (zero? (.exitValue result))
         (let [classpath (slurp (.getInputStream result))]
           ;; Add target directories to classpath
-          (str (str/trim classpath) 
+          (str (str/trim classpath)
                ":" (str project-root "/target/classes")
                ":" (str project-root "/target/java-classes")))
         ;; Fallback to building classpath manually
@@ -108,7 +107,7 @@
   (let [stream-url (build-stream-url stream-type host)
         classpath (get-classpath)
         project-root (get-project-root)
-        
+
         ;; Build command
         command ["java"
                  "-cp" classpath
@@ -120,33 +119,33 @@
                  stream-url
                  host
                  (str (or parent-pid (.pid (ProcessHandle/current))))]
-        
+
         _ (when debug?
             (t/log! :debug (str "Spawning " (name stream-type) " stream"))
             (t/log! :debug (str "URL: " stream-url))
             (t/log! :debug (str "Command: " (str/join " " command))))
-        
+
         ;; Create process
         process-builder (doto (ProcessBuilder. ^java.util.List command)
                           (.directory project-root)
                           (.redirectErrorStream false))
-        
+
         process (.start process-builder)
         pid (.pid process)
-        
+
         ;; Create output gobblers
         stdout-reader (BufferedReader. (InputStreamReader. (.getInputStream process)))
         stderr-reader (BufferedReader. (InputStreamReader. (.getErrorStream process)))
-        
+
         stdout-thread (create-output-gobbler stream-type "stdout" stdout-reader)
         stderr-thread (create-output-gobbler stream-type "stderr" stderr-reader)
-        
+
         ;; Start gobbler threads
         _ (doto stdout-thread (.setDaemon true) (.start))
         _ (doto stderr-thread (.setDaemon true) (.start))]
-    
+
     (t/log! :info (str "Started " (name stream-type) " stream process - PID: " pid))
-    
+
     {:stream-type stream-type
      :process process
      :pid pid
@@ -170,16 +169,16 @@
   (let [{:keys [stream-type process pid]} process-info]
     (when (process-alive? process-info)
       (t/log! :info (str "Stopping " (name stream-type) " stream process - PID: " pid))
-      
+
       ;; Try graceful shutdown
       (.destroy process)
-      
+
       ;; Wait for shutdown
       (when-not (.waitFor process timeout-seconds TimeUnit/SECONDS)
         (t/log! :warn (str "Force killing " (name stream-type) " stream process - PID: " pid))
         (.destroyForcibly process)
         (.waitFor process 2 TimeUnit/SECONDS))
-      
+
       (t/log! :info (str (name stream-type) " stream process stopped - PID: " pid))))
   nil)
 

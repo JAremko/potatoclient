@@ -1,9 +1,8 @@
 (ns clj-stream-spawner.events
   "Event handling for IPC messages from video streams."
-  (:require 
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
-   [malli.core :as m]
-   [taoensso.telemere :as t]))
+  (:require
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+    [taoensso.telemere :as t]))
 
 ;; ============================================================================
 ;; Specs
@@ -21,11 +20,11 @@
 
 (defmulti handle-event
   "Handle event messages based on event type."
-  (fn [stream-type message]
+  (fn [_ message]
     (:type message)))
 
 (defmethod handle-event :gesture
-  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount] :as message}]
+  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount] :as _}]
   (let [base-msg (format "[%s-GESTURE] %s at pixel(%s, %s)"
                          (.toUpperCase (name stream-type))
                          (name gesture-type)
@@ -39,7 +38,7 @@
     (println (str base-msg ndc-msg scroll-msg))))
 
 (defmethod handle-event :window
-  [stream-type {:keys [action width height x y delta-x delta-y] :as message}]
+  [stream-type {:keys [action width height x y delta-x delta-y] :as _}]
   (let [details (cond
                   (and width height) (format " %dx%d" width height)
                   (and x y) (format " at (%d, %d)" x y)
@@ -51,7 +50,7 @@
                      details))))
 
 (defmethod handle-event :connection
-  [stream-type {:keys [action details] :as message}]
+  [stream-type {:keys [action details] :as _}]
   (println (format "[%s-CONNECTION] %s%s"
                    (.toUpperCase (name stream-type))
                    (name action)

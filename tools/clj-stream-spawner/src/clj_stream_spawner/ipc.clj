@@ -1,16 +1,16 @@
 (ns clj-stream-spawner.ipc
   "IPC server implementation using Unix Domain Sockets.
    Wraps Java UnixSocketCommunicator with Transit serialization."
-  (:require 
-   [clj-stream-spawner.transit :as transit]
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
-   [malli.core :as m]
-   [taoensso.telemere :as t])
-  (:import 
-   [potatoclient.java.ipc SocketFactory UnixSocketCommunicator]
-   [java.nio.file Path Files LinkOption]
-   [java.util.concurrent LinkedBlockingQueue TimeUnit CountDownLatch]
-   [java.lang ProcessHandle]))
+  (:require
+    [clj-stream-spawner.transit :as transit]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+    [taoensso.telemere :as t])
+  (:import
+    (clojure.lang Atom)
+    (java.lang ProcessHandle)
+    (java.nio.file Files LinkOption Path)
+    (java.util.concurrent LinkedBlockingQueue TimeUnit)
+    (potatoclient.java.ipc SocketFactory UnixSocketCommunicator)))
 
 ;; ============================================================================
 ;; Specs
@@ -25,7 +25,7 @@
    [:socket-path [:fn #(instance? Path %)]]
    [:communicator [:fn #(instance? UnixSocketCommunicator %)]]
    [:message-queue [:fn #(instance? LinkedBlockingQueue %)]]
-   [:running? [:fn #(instance? clojure.lang.Atom %)]]
+   [:running? [:fn #(instance? Atom %)]]
    [:reader-thread [:fn #(or (nil? %) (instance? Thread %))]]
    [:processor-thread [:fn #(or (nil? %) (instance? Thread %))]]])
 
@@ -47,10 +47,10 @@
 
 (>defn- start-reader-thread
   "Start the thread that reads messages from the socket."
-  [{:keys [stream-type communicator message-queue running?] :as server}]
+  [{:keys [stream-type communicator message-queue running?] :as _}]
   [IpcServer => [:fn #(instance? Thread %)]]
   (Thread.
-   (fn []
+    (fn []
      (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
      (while @running?
        (try
@@ -69,7 +69,7 @@
 
 (>defn- start-processor-thread
   "Start the thread that processes messages from the queue."
-  [{:keys [stream-type message-queue running?] :as server} on-message]
+  [{:keys [stream-type message-queue running?] :as _} on-message]
   [IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]] => [:fn #(instance? Thread %)]]
   (Thread.
    (fn []
@@ -95,7 +95,7 @@
   [StreamType [:* :any] => IpcServer]
   (let [socket-path (generate-socket-path stream-type)
         _ (Files/deleteIfExists socket-path)
-        communicator (SocketFactory/createServer socket-path)
+        communicator (SocketFactory/createServer ^Path socket-path)
         message-queue (LinkedBlockingQueue. 1000)
         running? (atom false)
         server {:stream-type stream-type
@@ -105,10 +105,10 @@
                 :running? running?
                 :reader-thread nil
                 :processor-thread nil}]
-    
+
     ;; Start the socket
     (.start communicator)
-    
+
     ;; Wait for socket to be bound if requested
     (when await-binding?
       (let [retries (atom 10)]
@@ -118,9 +118,9 @@
           (swap! retries dec))
         (when-not (Files/exists socket-path (make-array LinkOption 0))
           (throw (ex-info "Socket file not created" {:path (.toString socket-path)})))))
-    
+
     (reset! running? true)
-    
+
     ;; Start threads
     (let [reader-thread (start-reader-thread server)
           processor-thread (start-processor-thread server on-message)]
@@ -128,9 +128,9 @@
       (.setDaemon processor-thread true)
       (.start reader-thread)
       (.start processor-thread)
-      
+
       (t/log! :info (str "[" (name stream-type) "-server] IPC server started on " (.toString socket-path)))
-      
+
       (assoc server
              :reader-thread reader-thread
              :processor-thread processor-thread))))
@@ -139,29 +139,29 @@
   "Stop an IPC server and clean up resources."
   [server]
   [IpcServer => :nil]
-  (let [{:keys [stream-type running? reader-thread processor-thread 
+  (let [{:keys [stream-type running? reader-thread processor-thread
                 communicator socket-path]} server]
     (when @running?
       (t/log! :info (str "[" (name stream-type) "-server] Stopping IPC server"))
       (reset! running? false)
-      
+
       ;; Stop threads
       (when reader-thread
         (.interrupt reader-thread))
       (when processor-thread
         (.interrupt processor-thread))
-      
+
       ;; Stop socket and remove from SocketFactory
       (when communicator
         (.stop communicator)
         ;; Important: Remove from SocketFactory's static map
         (SocketFactory/close communicator))
-      
+
       ;; Clean up socket file
       (try
         (Files/deleteIfExists socket-path)
         (catch Exception _))
-      
+
       (t/log! :info (str "[" (name stream-type) "-server] IPC server stopped")))
     nil))
 
@@ -204,8 +204,8 @@
   [server]
   [IpcServer => :boolean]
   (let [{:keys [running? communicator]} server]
-    (and @running? 
-         communicator 
+    (and @running?
+         communicator
          (.isRunning communicator))))
 
 ;; ============================================================================

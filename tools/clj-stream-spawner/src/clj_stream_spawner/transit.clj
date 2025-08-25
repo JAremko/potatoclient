@@ -1,13 +1,12 @@
 (ns clj-stream-spawner.transit
   "Transit serialization/deserialization for IPC messages.
    Uses msgpack format for efficient binary encoding."
-  (:require 
-   [cognitect.transit :as transit]
-   [com.fulcrologic.guardrails.malli.core :refer [>defn =>]]
-   [malli.core :as m])
-  (:import 
-   [java.io ByteArrayInputStream ByteArrayOutputStream]
-   [com.cognitect.transit TransitFactory Keyword]))
+  (:require
+    [cognitect.transit :as transit]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn]])
+  (:import
+    (com.cognitect.transit Keyword TransitFactory)
+    (java.io ByteArrayInputStream ByteArrayOutputStream)))
 
 ;; ============================================================================
 ;; Specs
@@ -58,7 +57,7 @@
   [^Keyword transit-kw]
   [[:fn #(instance? Keyword %)] => :keyword]
   (let [s (.toString transit-kw)]
-    (keyword (if (.startsWith s ":") 
+    (keyword (if (.startsWith s ":")
                (subs s 1)
                s))))
 
