@@ -7,7 +7,7 @@
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
             [potatoclient.state :as state]
-            [potatoclient.theme :as theme]
+            [potatoclient.ui.menu-bar :as menu-bar]
             [potatoclient.url-parser :as url-parser]
             [seesaw.action :as action]
             [seesaw.border :as border]
@@ -25,61 +25,6 @@
   ;; Call the callback with :reload result
   (callback :reload))
 
-(>defn- create-language-action
-  "Create a language selection action."
-  [lang-key display-name dialog callback]
-  [:potatoclient.ui-specs/locale string?
-   [:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   ifn? => any?]
-  (let [flag-icon (case lang-key
-                    :english (seesaw/icon (io/resource "flags/en.png"))
-                    :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
-                    nil)]
-    (action/action
-      :name (str display-name "    ")
-      :icon flag-icon
-      :handler (fn [_]
-                 (when-not (= (state/get-locale) lang-key)
-                   (state/set-locale! lang-key)
-                   (config/update-config! :locale lang-key)
-                   (reload-dialog! dialog callback))))))
-
-(>defn- create-theme-action
-  "Create a theme selection action."
-  [theme-key dialog callback]
-  [:potatoclient.ui-specs/theme-key
-   [:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   ifn? => any?]
-  (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
-        theme-name (i18n/tr theme-i18n-key)]
-    (action/action
-      :name (str theme-name "    ")
-      :icon (theme/key->icon theme-key)
-      :handler (fn [_]
-                 (when-not (= (theme/get-current-theme) theme-key)
-                   (when (theme/set-theme! theme-key)
-                     (config/save-theme! theme-key)
-                     (reload-dialog! dialog callback)))))))
-
-(>defn- create-menu-bar
-  "Create menu bar for startup dialog."
-  [_dialog _callback]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   ifn? => any?]
-  (seesaw/menubar
-    :items [(seesaw/menu
-              :text (i18n/tr :menu-view-theme)
-              :icon (theme/key->icon :actions-group-theme)
-              :items (map #(create-theme-action % _dialog _callback)
-                          (theme/get-available-themes)))
-            (seesaw/menu
-              :text (i18n/tr :menu-view-language)
-              :icon (theme/key->icon :icon-languages)
-              :items [(create-language-action :english "English" _dialog _callback)
-                      (create-language-action :ukrainian "Українська" _dialog _callback)])]))
 
 (>defn- create-content-panel
   "Create the main content panel for the startup dialog."
@@ -173,8 +118,13 @@
               :content main-panel
               :on-close :nothing))
 
-    ;; Configure dialog properties
-    (seesaw/config! @dialog :menubar (create-menu-bar @dialog callback))
+    ;; Configure dialog properties with menu bar from menu-bar namespace
+    (seesaw/config! @dialog :menubar (menu-bar/create-menubar
+                                        {:reload-fn (fn [_] (reload-dialog! @dialog callback))
+                                         :include-theme? true
+                                         :include-language? true
+                                         :include-help? false
+                                         :include-stream-buttons? false}))
 
     ;; Make Connect button the default when Enter is pressed
     (let [root-pane (seesaw/to-root @dialog)]

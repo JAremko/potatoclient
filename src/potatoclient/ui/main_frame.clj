@@ -13,201 +13,14 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.control-panel :as control-panel]
-            [potatoclient.ui.log-viewer :as log-viewer]
-            [seesaw.action :as action]
-            [seesaw.bind :as bind]
+            [potatoclient.ui.menu-bar :as menu-bar]
             [seesaw.core :as seesaw])
-  (:import (java.awt Rectangle)
-           (javax.swing Box JFrame JPanel)))
+  (:import (javax.swing JFrame JPanel)))
 
 ;; Additional schemas not in specs
 (def version
   "Version schema for validation."
   :string)
-
-(>defn preserve-window-state
-  "Extract window state for restoration."
-  [frame]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => :potatoclient.ui-specs/window-state]
-  (let [^Rectangle bounds (.getBounds frame)]
-    {:bounds {:x (.x bounds)
-              :y (.y bounds)
-              :width (.width bounds)
-              :height (.height bounds)}
-     :extended-state (.getExtendedState frame)}))
-
-(>defn restore-window-state!
-  "Restore window state to a frame."
-  [frame state]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   :potatoclient.ui-specs/window-state
-   => [:fn {:error/message "must be a JFrame"}
-       #(instance? JFrame %)]]
-  (doto frame
-    (.setBounds (when-let [{:keys [x y width height]} (:bounds state)]
-                  (Rectangle. x y width height)))
-    (.setExtendedState (:extended-state state))))
-
-(>defn- reload-frame!
-  "Reload the frame following the ArcherBC2 pattern."
-  [frame frame-cons]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   ifn? => nil?]
-  (seesaw/invoke-later
-    (let [state (preserve-window-state frame)]
-      (seesaw/config! frame :on-close :nothing)
-      (seesaw/dispose! frame)
-      (let [new-frame (frame-cons state)]
-        (seesaw/show! new-frame)))))
-
-(>defn- create-language-action
-  "Create a language selection action."
-  [lang-key display-name reload-fn]
-  [:potatoclient.ui-specs/locale string? ifn? => any?]
-  (let [flag-icon (case lang-key
-                    :english (seesaw/icon (io/resource "flags/en.png"))
-                    :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
-                    nil)]
-    (action/action
-      :name (str display-name "    ")
-      :icon flag-icon
-      :handler (fn [e]
-                ;; Only proceed if selecting a different language
-                 (when-not (= (state/get-locale) lang-key)
-                   (state/set-locale! lang-key)
-                   (config/update-config! :locale lang-key)
-                   (reload-frame! (seesaw/to-root e) reload-fn))))))
-
-(>defn- create-theme-action
-  "Create a theme selection action."
-  [theme-key reload-fn]
-  [:potatoclient.ui-specs/theme-key ifn? => any?]
-  (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
-        theme-name (i18n/tr theme-i18n-key)]
-    (action/action
-      :name (str theme-name "    ")
-      :icon (theme/key->icon theme-key)
-      :handler (fn [e]
-                ;; Only proceed if selecting a different theme
-                 (when-not (= (theme/get-current-theme) theme-key)
-                   (when (theme/set-theme! theme-key)
-                     (config/save-theme! theme-key)
-                     (reload-frame! (seesaw/to-root e) reload-fn)))))))
-
-(>defn- create-theme-menu
-  "Create the Theme menu."
-  [reload-fn]
-  [ifn? => any?]
-  (seesaw/menu
-    :text (i18n/tr :menu-view-theme)
-    :icon (theme/key->icon :actions-group-theme)
-    :items (map #(create-theme-action % reload-fn)
-                (theme/get-available-themes))))
-
-(>defn- create-language-menu
-  "Create the Language menu."
-  [reload-fn]
-  [ifn? => any?]
-  (seesaw/menu
-    :text (i18n/tr :menu-view-language)
-    :icon (theme/key->icon :icon-languages)
-    :items [(create-language-action :english "English" reload-fn)
-            (create-language-action :ukrainian "Українська" reload-fn)]))
-
-(>defn- show-about-dialog
-  "Show the About dialog."
-  [parent]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => nil?]
-  (let [version (try
-                  (str/trim (slurp (io/resource "VERSION")))
-                  (catch Exception _ "dev"))
-        build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")]
-    (seesaw/alert parent
-                  (str (i18n/tr :about-text) "\n\n"
-                       (i18n/tr :app-version) ": " version " [" build-type "]")
-                  :title (i18n/tr :about-title)
-                  :type :info)))
-
-(>defn- open-logs-viewer
-  "Open the log viewer window."
-  []
-  [=> any?]
-  (log-viewer/show-log-viewer))
-
-(>defn- create-help-menu
-  "Create the Help menu."
-  [parent]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => any?]
-  (let [menu-items [(action/action
-                      :name (i18n/tr :menu-help-about)
-                      :icon (theme/key->icon :tab-icon-description)
-                      :handler (fn [_] (show-about-dialog parent)))]
-        menu-items (conj menu-items
-                         (action/action
-                           :name (i18n/tr :menu-help-view-logs)
-                           :icon (theme/key->icon :file-open)
-                           :handler (fn [_] (open-logs-viewer))))]
-    (seesaw/menu
-      :text (i18n/tr :menu-help)
-      :icon (theme/key->icon :actions-group-menu)
-      :items menu-items)))
-
-(>defn- create-stream-toggle-button
-  "Create a stream toggle button for the menu bar."
-  [stream-key]
-  [:potatoclient.ui-specs/stream-key => any?]
-  (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
-                              :tooltip "Heat Camera (900x720)"
-                              :label-key :stream-thermal}
-                       :day {:endpoint "/ws/ws_rec_video_day"
-                             :tooltip "Day Camera (1920x1080)"
-                             :label-key :stream-day}}
-        {:keys [_ tooltip label-key]} (get stream-config stream-key)
-        toggle-action (action/action
-                        :name (i18n/tr label-key)
-                        :icon (theme/key->icon stream-key)
-                        :tip tooltip
-                        :handler (fn [e]
-                                   (logging/log-debug
-                                     {:msg (str "Stream toggle clicked (noop): " stream-key)
-                                      :stream stream-key
-                                      :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
-        button (seesaw/toggle :action toggle-action)]
-
-    ;; Bind button state to app-state using seesaw.bind
-    (bind/bind state/app-state
-               (bind/transform (fn [s]
-                                 (let [process-key (case stream-key
-                                                     :heat :heat-video
-                                                     :day :day-video)]
-                                   (= :running (get-in s [:processes process-key :status])))))
-               (bind/property button :selected?))
-    button))
-
-(>defn- create-menu-bar
-  "Create the application menu bar."
-  [_reload-fn _parent]
-  [ifn? [:fn {:error/message "must be a JFrame"}
-         #(instance? JFrame %)] => any?]
-  (let [heat-button (doto (create-stream-toggle-button :heat)
-                      (seesaw/config! :text ""))
-        day-button (doto (create-stream-toggle-button :day)
-                     (seesaw/config! :text ""))]
-    (seesaw/menubar
-      :items [;; Left side - menus
-              (create-theme-menu _reload-fn)
-              (create-language-menu _reload-fn)
-              (create-help-menu _parent)
-             ;; Use horizontal glue to push buttons to the right
-              (Box/createHorizontalGlue)
-             ;; Right side - stream buttons
-              heat-button
-              day-button])))
 
 (>defn- create-main-content
   "Create the main content panel."
@@ -290,15 +103,21 @@
                 :size [800 :by 600]
                 :content (create-main-content))]
 
-    ;; Set up menu bar
-    (seesaw/config! frame :menubar (create-menu-bar frame-cons frame))
+    ;; Set up menu bar using the new menu-bar namespace
+    (seesaw/config! frame :menubar (menu-bar/create-menubar
+                                      {:reload-fn frame-cons
+                                       :parent frame
+                                       :include-stream-buttons? true
+                                       :include-help? true
+                                       :include-theme? true
+                                       :include-language? true}))
 
     ;; Add window close handler
     (add-window-close-handler! frame)
 
     ;; Restore window state if provided
     (when window-state
-      (restore-window-state! frame window-state))
+      (menu-bar/restore-window-state! frame window-state))
 
     ;; Log frame creation completion in dev mode
     (when-not (runtime/release-build?)
