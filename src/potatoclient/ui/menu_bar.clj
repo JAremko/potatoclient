@@ -16,6 +16,12 @@
   (:import (java.awt Rectangle)
            (javax.swing Box JFrame)))
 
+;; Namespace for UI binding watcher keys
+(def ^:private ui-watcher-prefix "potatoclient.ui.binding/")
+
+;; Forward declaration
+(declare cleanup-ui-watchers!)
+
 (>defn preserve-window-state
   "Extract window state for restoration."
   [frame]
@@ -49,6 +55,8 @@
    ifn? => nil?]
   (seesaw/invoke-later
     (let [state (preserve-window-state frame)]
+      ;; Clean up all UI watchers before disposing frame
+      (cleanup-ui-watchers!)
       (seesaw/config! frame :on-close :nothing)
       (seesaw/dispose! frame)
       (let [new-frame (frame-cons state)]
@@ -166,15 +174,18 @@
                                      {:msg (str "Stream toggle clicked (noop): " stream-key)
                                       :stream stream-key
                                       :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
-        button (seesaw/toggle :action toggle-action)]
-
-    (bind/bind state/app-state
-               (bind/transform (fn [s]
-                                 (let [process-key (case stream-key
-                                                     :heat :heat-video
-                                                     :day :day-video)]
-                                   (= :running (get-in s [:processes process-key :status])))))
-               (bind/property button :selected?))
+        button (seesaw/toggle :action toggle-action)
+        ;; Create a unique watcher key with our UI namespace prefix
+        watcher-key (keyword (str ui-watcher-prefix "stream-" (name stream-key) "-" (gensym)))]
+    
+    ;; Add watcher with our namespaced key for easy cleanup later
+    (add-watch state/app-state watcher-key
+               (fn [_ _ _ new-state]
+                 (let [process-key (case stream-key
+                                     :heat :heat-video
+                                     :day :day-video)
+                       selected? (= :running (get-in new-state [:processes process-key :status]))]
+                   (seesaw/config! button :selected? selected?))))
     button))
 
 (>defn create-menubar
@@ -198,15 +209,43 @@
         items (cond-> []
                 include-theme? (conj (create-theme-menu reload-fn))
                 include-language? (conj (create-language-menu reload-fn))
-                (and include-help? parent) (conj (create-help-menu parent)))]
-    (if include-stream-buttons?
-      (let [heat-button (doto (create-stream-toggle-button :heat)
-                          (seesaw/config! :text ""))
-            day-button (doto (create-stream-toggle-button :day)
-                         (seesaw/config! :text ""))]
-        (seesaw/menubar
-          :items (concat items
-                         [(Box/createHorizontalGlue)
-                          heat-button
-                          day-button])))
-      (seesaw/menubar :items items))))
+                (and include-help? parent) (conj (create-help-menu parent)))
+        menubar (if include-stream-buttons?
+                  (let [heat-button (doto (create-stream-toggle-button :heat)
+                                      (seesaw/config! :text ""))
+                        day-button (doto (create-stream-toggle-button :day)
+                                     (seesaw/config! :text ""))]
+                    (seesaw/menubar
+                      :items (concat items
+                                   [(Box/createHorizontalGlue)
+                                    heat-button
+                                    day-button])))
+                  (seesaw/menubar :items items))]
+    menubar))
+
+(>defn cleanup-ui-watchers!
+  "Clean up all UI-related watchers from app-state.
+  This removes any watcher whose key starts with our UI namespace prefix.
+  Should be called when frames are being disposed or reloaded."
+  []
+  [=> nil?]
+  (let [watchers (.getWatches state/app-state)
+        ui-watcher-keys (filter #(and (keyword? %)
+                                      (str/starts-with? (namespace %) 
+                                                       ui-watcher-prefix))
+                                (keys watchers))]
+    (doseq [watcher-key ui-watcher-keys]
+      (remove-watch state/app-state watcher-key)
+      (logging/log-debug {:msg "Removed UI watcher"
+                         :key watcher-key}))
+    (when (seq ui-watcher-keys)
+      (logging/log-debug {:msg "Cleaned up UI watchers"
+                         :count (count ui-watcher-keys)})))
+  nil)
+
+(>defn cleanup-menubar!
+  "Clean up all bindings associated with a menu bar.
+  For backward compatibility, but just calls cleanup-ui-watchers!."
+  [menubar]
+  [any? => nil?]
+  (cleanup-ui-watchers!))
