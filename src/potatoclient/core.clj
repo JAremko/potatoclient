@@ -67,6 +67,45 @@
                   (get-build-type))})
   true)
 
+(>defn- show-startup-dialog-recursive
+  "Show startup dialog with recursive reload support."
+  []
+  [=> nil?]
+  (startup-dialog/show-startup-dialog 
+    nil 
+    (fn [result]
+      (case result
+        :connect
+        ;; User clicked Connect, proceed with main frame
+        (let [params {:version (get-version)
+                      :build-type (get-build-type)}
+              frame (main-frame/create-main-frame params)
+              domain (config/get-domain)]
+          (seesaw/show! frame)
+          (log-startup!)
+          ;; Save connection URL to state
+          (state/set-connection-url! (str "wss://" domain))
+          (state/set-connected! true)
+          ;; Set initial UI state from config
+          (when-let [saved-theme (:theme (config/load-config))]
+            (state/set-theme! saved-theme))
+          (when-let [saved-locale (:locale (config/load-config))]
+            (state/set-locale! saved-locale))
+          (logging/log-info {:msg "Application initialized"
+                             :domain domain}))
+
+        :cancel
+        ;; User clicked Cancel, exit application
+        (do
+          (logging/log-info {:msg "User cancelled startup dialog, exiting..."})
+          (System/exit 0))
+
+        :reload
+        ;; Theme or language changed, show dialog again
+        (do
+          (theme/preload-theme-icons!)
+          (show-startup-dialog-recursive))))))
+
 (>defn -main
   "Application entry point."
   [& _]
@@ -75,38 +114,5 @@
   (seesaw/invoke-later
     ;; Preload theme icons before showing any UI
     (theme/preload-theme-icons!)
-    ;; Define callback handler for dialog results
-    (letfn [(handle-dialog-result [result]
-              (case result
-                :connect
-                ;; User clicked Connect, proceed with main frame
-                (let [params {:version (get-version)
-                              :build-type (get-build-type)}
-                      frame (main-frame/create-main-frame params)
-                      domain (config/get-domain)]
-                  (seesaw/show! frame)
-                  (log-startup!)
-                  ;; Save connection URL to state
-                  (state/set-connection-url! (str "wss://" domain))
-                  (state/set-connected! true)
-                  ;; Set initial UI state from config
-                  (when-let [saved-theme (:theme (config/load-config))]
-                    (state/set-theme! saved-theme))
-                  (when-let [saved-locale (:locale (config/load-config))]
-                    (state/set-locale! saved-locale))
-                  (logging/log-info {:msg "Application initialized"
-                                     :domain domain}))
-
-                :cancel
-                ;; User clicked Cancel, exit application
-                (do
-                  (logging/log-info {:msg "User cancelled startup dialog, exiting..."})
-                  (System/exit 0))
-
-                :reload
-                ;; Theme or language changed, show dialog again
-                (do
-                  (theme/preload-theme-icons!)
-                  (startup-dialog/show-startup-dialog nil handle-dialog-result))))]
-      ;; Show the initial dialog
-      (startup-dialog/show-startup-dialog nil handle-dialog-result))))
+    ;; Show the initial dialog
+    (show-startup-dialog-recursive)))
