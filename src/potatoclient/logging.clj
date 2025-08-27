@@ -1,5 +1,13 @@
 (ns potatoclient.logging
   "Centralized logging configuration using Telemere"
+  {:clj-kondo/config '{:linters {:unresolved-var {:exclude [tel/handler:console
+                                                             tel/handler:file
+                                                             tel/format-signal-fn
+                                                             tel/add-handler!
+                                                             tel/remove-handler!
+                                                             tel/set-min-level!
+                                                             tel/set-ns-filter!
+                                                             tel/stop-handlers!]}}}}
   (:require [clojure.java.io :as io]
             [clojure.string]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
