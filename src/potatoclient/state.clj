@@ -3,7 +3,8 @@
 
   This namespace provides the core UI state atom and basic accessors
   for managing application UI state."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
+  (:require [clojure.string :as str]
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
             [potatoclient.runtime :as runtime])
   (:import (java.net URI)
            (java.util Locale)))
@@ -358,6 +359,24 @@
   [keyword? => nil?]
   (remove-watch app-state key)
   nil)
+
+(>defn cleanup-seesaw-bindings!
+  "Remove all watchers added by seesaw.bind from app-state.
+  Seesaw bind uses gensym keys like :bindable-atom-watcherXXXXX
+  This scans and removes all such watchers."
+  []
+  [=> nil?]
+  (let [watchers (keys (.getWatches app-state))
+        ;; Seesaw bind creates keys like :bindable-atom-watcherXXXXX
+        seesaw-watchers (filter #(and (keyword? %)
+                                      (when-let [name-str (name %)]
+                                        (or (str/starts-with? name-str "bindable-atom-watcher")
+                                            (str/starts-with? name-str "bindable-agent-watcher")
+                                            (str/starts-with? name-str "bindable-ref-watcher"))))
+                               watchers)]
+    (doseq [watcher-key seesaw-watchers]
+      (remove-watch app-state watcher-key))
+    nil))
 
 (>defn current-state
   "Get a snapshot of entire app state (for debugging)."
