@@ -41,7 +41,7 @@
                                    {:connected? running?
                                     :pid (:pid process)})))
                (bind/tee
-                 (bind/bind (bind/transform #(:connected? %))
+                 (bind/bind (bind/transform :connected?)
                             (bind/b-do [connected?]
                                        (seesaw/config! status-label
                                                        :text (if connected?

@@ -5,7 +5,7 @@
    including unspecced functions, code coverage, and other metrics."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- ? =>]]
+            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.runtime :as runtime])
   (:import (java.io File)
            (java.time LocalDateTime)

@@ -4,8 +4,7 @@
   This namespace provides the core UI state atom and basic accessors
   for managing application UI state."
   (:require [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- | ?]]
-            [potatoclient.runtime :as runtime])
+            [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]])
   (:import (java.net URI)
            (java.util Locale)))
 
@@ -78,7 +77,7 @@
                                 :target-temp-c 25.0
                                 :power-percent 0}}})
 
-(defonce app-state
+(defonce ^{:doc "Main app state"} app-state
   (atom initial-state))
 
 ;; ============================================================================
