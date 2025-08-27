@@ -11,7 +11,6 @@
             [potatoclient.theme :as theme]
             [potatoclient.ui.log-viewer :as log-viewer]
             [seesaw.action :as action]
-            [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
   (:import (java.awt Rectangle)
            (javax.swing Box JFrame)))
@@ -177,7 +176,7 @@
         button (seesaw/toggle :action toggle-action)
         ;; Create a unique watcher key with our UI namespace prefix
         watcher-key (keyword (str ui-watcher-prefix "stream-" (name stream-key) "-" (gensym)))]
-    
+
     ;; Add watcher with our namespaced key for easy cleanup later
     (add-watch state/app-state watcher-key
                (fn [_ _ _ new-state]
@@ -190,7 +189,7 @@
 
 (>defn create-menubar
   "Create a menu bar with the specified options.
-  
+
   Options map can contain:
   - :reload-fn - Function to reload the frame with new settings
   - :parent - Parent frame (for dialogs)
@@ -231,7 +230,7 @@
   [=> nil?]
   (let [watchers (.getWatches state/app-state)
         ui-watcher-keys (filter #(and (keyword? %)
-                                      (str/starts-with? (namespace %) 
+                                      (str/starts-with? (namespace %)
                                                        ui-watcher-prefix))
                                 (keys watchers))]
     (doseq [watcher-key ui-watcher-keys]
@@ -246,6 +245,6 @@
 (>defn cleanup-menubar!
   "Clean up all bindings associated with a menu bar.
   For backward compatibility, but just calls cleanup-ui-watchers!."
-  [menubar]
+  [_]
   [any? => nil?]
   (cleanup-ui-watchers!))

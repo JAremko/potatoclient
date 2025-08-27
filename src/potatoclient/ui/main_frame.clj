@@ -4,7 +4,6 @@
   Provides a clean-slate constructor for the main window that ensures
   proper initialization of all UI elements including theme-aware icons."
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]
             [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
