@@ -1,6 +1,6 @@
 {:paths ["src" "resources"]
 
- :deps {org.clojure/clojure {:mvn/version "1.12.1"}
+ :deps {org.clojure/clojure {:mvn/version "1.12.2"}
         ;; Shared project with proto classes
         potatoclient/shared {:local/root "shared"}
         seesaw/seesaw {:mvn/version "1.5.0"}
@@ -10,34 +10,34 @@
         ;; Malli for data and function schema validation
         metosin/malli {:mvn/version "0.19.1"}
         ;; Kotlin dependencies
-        org.jetbrains.kotlin/kotlin-stdlib-jdk8 {:mvn/version "2.2.0"}
-        org.jetbrains.kotlin/kotlin-reflect {:mvn/version "2.2.0"}
-        org.jetbrains.kotlinx/kotlinx-coroutines-core {:mvn/version "1.9.0"}
+        org.jetbrains.kotlin/kotlin-stdlib-jdk8 {:mvn/version "2.2.10"}
+        org.jetbrains.kotlin/kotlin-reflect {:mvn/version "2.2.10"}
+        org.jetbrains.kotlinx/kotlinx-coroutines-core {:mvn/version "1.10.2"}
         ;; Java dependencies for the stream handler
-        com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.18.2"}
-        org.slf4j/slf4j-nop {:mvn/version "2.0.16"
+        com.fasterxml.jackson.core/jackson-databind {:mvn/version "2.19.2"}
+        org.slf4j/slf4j-nop {:mvn/version "2.0.17"
                              :exclusions [org.slf4j/slf4j-api]}
         ;; GStreamer for video playback
         org.freedesktop.gstreamer/gst1-java-core {:mvn/version "1.4.0"
                                                   :exclusions [net.java.dev.jna/jna]}
         ;; Add specific JNA version to avoid version range warning
-        net.java.dev.jna/jna {:mvn/version "5.15.0"}
+        net.java.dev.jna/jna {:mvn/version "5.17.0"}
         ;; Pronto - Clojure wrapper for Protocol Buffers (our fork with v4 support)
         com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
-                              :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"}
+                              :git/sha "5444ae5ec3b567a5565e6c1e90ba0850960331b6"}
         ;; Protocol Buffer dependencies
-        com.google.protobuf/protobuf-java {:mvn/version "4.31.1"}
-        com.google.protobuf/protobuf-java-util {:mvn/version "4.31.1"}
+        com.google.protobuf/protobuf-java {:mvn/version "4.32.0"}
+        com.google.protobuf/protobuf-java-util {:mvn/version "4.32.0"}
         ;; DarkLaf for theming support
-        com.github.weisj/darklaf-core {:mvn/version "3.0.2"}
+        com.github.weisj/darklaf-core {:mvn/version "3.1.0"}
         ;; Function specs
         com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         ;; Telemere for logging
-        com.taoensso/telemere {:mvn/version "1.0.0"}
+        com.taoensso/telemere {:mvn/version "1.1.0"}
         ;; Buf validate - needed for generated Java code compilation and Kotlin validation
-        build.buf/protovalidate {:mvn/version "0.3.2"}
+        build.buf/protovalidate {:mvn/version "0.13.0"}
         ;; Java WebSocket client library
-        org.java-websocket/Java-WebSocket {:mvn/version "1.5.7"}
+        org.java-websocket/Java-WebSocket {:mvn/version "1.6.0"}
         ;; Transit for efficient binary communication
         com.cognitect/transit-clj {:mvn/version "1.0.333"}
         com.cognitect/transit-java {:mvn/version "1.0.371"}
@@ -46,8 +46,8 @@
         org.clojure/core.match {:mvn/version "1.1.0"}}
 
  :aliases {:dev {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
-                 :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
-                              cider/cider-nrepl {:mvn/version "0.45.0"}}
+                 :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}
+                              cider/cider-nrepl {:mvn/version "0.57.0"}}
                  :jvm-opts ["-Djna.library.path=/usr/lib"
                             "-Dgstreamer.library.path=/usr/lib"
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -58,8 +58,8 @@
                             "-Dawt.useSystemAAFontSettings=on"]}
 
            :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
-                   :extra-deps {nrepl/nrepl {:mvn/version "1.1.0"}
-                                cider/cider-nrepl {:mvn/version "0.45.0"}}
+                   :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}
+                                cider/cider-nrepl {:mvn/version "0.57.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
                               "-Dgstreamer.library.path=/usr/lib"
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -97,30 +97,30 @@
            :compile-kotlin {:extra-paths ["src/potatoclient/kotlin"]
                             :jvm-opts ["--release" "17"]}
 
-           :mcp {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
+           :mcp {:extra-deps {org.slf4j/slf4j-nop {:mvn/version "2.0.17"}
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
-                                                       :git/tag "v0.1.6-alpha"
-                                                       :git/sha "4ad62f4"}}
+                                                       :git/tag "v0.1.8-alpha"
+                                                       :git/sha "776dff4"}}
                  :jvm-opts ["-Dguardrails.enabled=true"
                             "-Dpotatoclient.validation.enabled=true"]
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
 
-           :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.7"}}
+           :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}}
                    :ns-default build}
 
            :test {:extra-paths ["test" "target/classes" "target/test-classes"]
                   :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
-                                                                     :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}
+                                                                     :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
                                junit/junit {:mvn/version "4.13.2"}
-                               org.jetbrains.kotlin/kotlin-test-junit {:mvn/version "2.0.0"}}
+                               org.jetbrains.kotlin/kotlin-test-junit {:mvn/version "2.2.10"}}
                   :jvm-opts ["-Dguardrails.enabled=true"]
                   :main-opts ["-m" "cognitect.test-runner"]
                   :exec-fn cognitect.test-runner.api/test}
 
            :test-coverage {:extra-paths ["test" "target/classes" "target/test-classes"]
                           :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
-                                                                             :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"}
+                                                                             :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
                                        cloverage/cloverage {:mvn/version "1.2.4"}}
                           :jvm-opts ["-Dguardrails.enabled=true"]
                           :main-opts ["-m" "cloverage.coverage"
@@ -142,11 +142,11 @@
            :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
                     :main-opts ["-m" "cljfmt.main"]}
 
-           :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.06.05"}}
+           :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.07.28"}}
                   :main-opts ["-m" "clj-kondo.main"]}
                   
-           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}}
+           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                       :main-opts ["-m" "antq.core"]}
                       
-           :outdated-upgrade {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}}
+           :outdated-upgrade {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                               :main-opts ["-m" "antq.core" "--upgrade"]}}}

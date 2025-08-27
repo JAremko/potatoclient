@@ -18,7 +18,7 @@
   ;; Ensure proto classes are available
   (try
     (Class/forName "ser.JonSharedData$JonGUIState")
-    (Class/forName "build.buf.protovalidate.Validator")
+    (Class/forName "build.buf.protovalidate.ValidatorFactory")
     (f)
     (catch ClassNotFoundException e
       (println "\n=== Test Environment Not Ready ===")
@@ -33,7 +33,7 @@
 (registry/setup-global-registry!)
 
 ;; Initialize validator
-(def validator (delay (build.buf.protovalidate.Validator.)))
+(def validator (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
 
 ;; Import test harness to ensure proto classes are compiled
 (require '[potatoclient.test-harness :as harness])
@@ -82,9 +82,10 @@
           {:valid? true}
           {:valid? false
            :violations (mapv (fn [violation]
-                              {:field (.getFieldPath violation)
-                               :constraint (.getConstraintId violation)
-                               :message (.getMessage violation)})
+                              (let [proto-violation (.toProto violation)]
+                                {:field (str (.getField proto-violation))
+                                 :constraint (.getRuleId proto-violation)
+                                 :message (.getMessage proto-violation)}))
                             (.getViolations result))}))
       (catch Exception e
         (cond

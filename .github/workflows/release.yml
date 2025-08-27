@@ -17,21 +17,21 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Build Tools
       run: |
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
-    
+
     - name: Generate Proto Files
       run: |
         echo "Generating proto files..."
         make proto
-        
+
         # Verify proto files were generated
         echo "Generated proto files:"
         find src/potatoclient/java -name "*.java" | head -20
-    
+
     - name: Upload proto files
       uses: actions/upload-artifact@v4
       with:
@@ -44,24 +44,24 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Extract version from VERSION file
       id: extract_version
       run: |
         VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
-    
+
     - name: Setup Java for building
       uses: actions/setup-java@v4
       with:
         distribution: 'liberica'
         java-version: '17'
-    
+
     - name: Install Clojure CLI tools
       run: |
         curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
@@ -69,24 +69,24 @@ jobs:
         sudo ./linux-install.sh
         rm linux-install.sh
         clojure --version
-    
+
     - name: Setup Build Tools
       run: |
         echo "Setting up Kotlin compiler..."
         ./scripts/setup-kotlin.sh
         # Add Kotlin to PATH for the build
         echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
-        
+
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
         # Python3 is already installed on Ubuntu runners
-    
+
     - name: Download proto files
       uses: actions/download-artifact@v4
       with:
         name: proto-files
         path: src/potatoclient/java/
-    
+
     - name: Install system dependencies
       run: |
         sudo apt-get update
@@ -118,14 +118,14 @@ jobs:
           libsphinxbase3 \
           libpocketsphinx3 \
           librubberband2
-    
+
     - name: Build project
       run: |
         echo "Building release JAR..."
         # Proto files already generated, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         ls -la target/
-    
+
     - name: Download AppImage tools
       run: |
         # Download linuxdeploy with error handling
@@ -135,7 +135,7 @@ jobs:
           sleep 2
           wget -O linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
         fi
-        
+
         # Download appimagetool from the new repository with error handling
         echo "Downloading appimagetool..."
         if ! wget -O appimagetool-x86_64.AppImage https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage; then
@@ -143,47 +143,47 @@ jobs:
           sleep 2
           wget -O appimagetool-x86_64.AppImage https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
         fi
-        
+
         chmod +x *.AppImage
         ls -la *.AppImage
-    
-    - name: Create AppDir structure  
+
+    - name: Create AppDir structure
       run: |
         # Clean previous build
         rm -rf AppDir
         mkdir -p AppDir
-        
+
         # Create AppDir structure
         mkdir -p AppDir/usr/bin
         mkdir -p AppDir/usr/lib/potatoclient
         mkdir -p AppDir/usr/share/applications
         mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
         mkdir -p AppDir/usr/lib/jvm
-        
+
         # Download and extract Liberica JDK 17
         echo "Downloading Liberica JDK 17..."
         wget -q -O /tmp/liberica17.tar.gz "https://download.bell-sw.com/java/17.0.13+12/bellsoft-jdk17.0.13+12-linux-amd64.tar.gz"
         tar -xf /tmp/liberica17.tar.gz -C AppDir/usr/lib/jvm --strip-components=1
         rm /tmp/liberica17.tar.gz
-        
+
         # Copy application files
         cp target/potatoclient-*.jar AppDir/usr/lib/potatoclient/potatoclient.jar
         cp resources/main.png AppDir/usr/share/icons/hicolor/256x256/apps/potatoclient.png
-        
+
         # Copy launcher script from assets
         cp .github/actions/appimage-assets/potatoclient-launcher.sh AppDir/usr/bin/potatoclient
         chmod +x AppDir/usr/bin/potatoclient
-        
+
         # Copy desktop file from assets
         cp .github/actions/appimage-assets/potatoclient.desktop AppDir/usr/share/applications/
-        
+
         # Create AppRun symlink
         ln -sf usr/bin/potatoclient AppDir/AppRun
-        
+
         # Create desktop and icon symlinks at root
         ln -sf usr/share/applications/potatoclient.desktop AppDir/
         ln -sf usr/share/icons/hicolor/256x256/apps/potatoclient.png AppDir/
-    
+
     - name: Deploy dependencies with linuxdeploy
       run: |
         # First, temporarily remove Java executables to prevent linuxdeploy from processing them
@@ -191,7 +191,7 @@ jobs:
         while IFS= read -r file; do
             chmod -x "$file" 2>/dev/null || true
         done < /tmp/java_executables.txt
-        
+
         # Deploy only the GStreamer libraries
         ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
@@ -208,17 +208,17 @@ jobs:
             --library /usr/lib/x86_64-linux-gnu/libgstrtsp-1.0.so.0 \
             --library /usr/lib/x86_64-linux-gnu/libgstsdp-1.0.so.0 \
             --library /usr/lib/x86_64-linux-gnu/libgstnet-1.0.so.0 || true
-        
+
         # Restore Java executable permissions
         while IFS= read -r file; do
             chmod +x "$file" 2>/dev/null || true
         done < /tmp/java_executables.txt
         rm -f /tmp/java_executables.txt
-        
+
         # Manually copy codec libraries that GStreamer plugins depend on
         echo "Copying codec libraries..."
         mkdir -p AppDir/usr/lib
-        
+
         # Find and copy codec libraries - copy ALL versions to avoid mismatch
         for lib in libopenh264.so* libvpx.so* libx264.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
@@ -226,7 +226,7 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/
             done
         done
-        
+
         # Copy libav dependencies for H.264 support - CRITICAL for avdec_h264
         for lib in libavcodec.so* libavformat.so* libavutil.so* libswresample.so* libswscale.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
@@ -234,7 +234,7 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/
             done
         done
-        
+
         # Copy additional FFmpeg dependencies that libav needs
         for lib in libavfilter.so* libpostproc.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
@@ -242,7 +242,7 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/
             done
         done
-        
+
         # Copy any additional dependencies that might be needed
         # Copy sphinx libraries that gst-libav depends on
         for lib in libpocketsphinx.so* libsphinxbase.so*; do
@@ -251,7 +251,7 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/ || true
             done
         done
-        
+
         # Copy rubberband library that GStreamer pitch plugin depends on
         for lib in librubberband.so*; do
             for found_lib in $(find /usr/lib /usr/lib/x86_64-linux-gnu -name "$lib" 2>/dev/null); do
@@ -259,17 +259,17 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/ || true
             done
         done
-    
+
     - name: Run GStreamer plugin
       run: |
         # Make plugin script executable
         chmod +x .github/workflows/scripts/linuxdeploy-plugin-gstreamer.sh
-        
+
         # Run GStreamer plugin (without LINUXDEPLOY to avoid re-running it)
         echo "Running GStreamer plugin..."
         unset LINUXDEPLOY
         .github/workflows/scripts/linuxdeploy-plugin-gstreamer.sh --appdir AppDir
-        
+
         # Copy ALL GStreamer-related libraries to avoid version mismatches
         echo "Copying additional GStreamer dependencies..."
         for lib in libgstcodecparsers-1.0.so* libgstmpegts-1.0.so* libgstcodecs-1.0.so* libgstplay-1.0.so* libgstplayer-1.0.so* libgstwebrtc-1.0.so* libgstbadaudio-1.0.so*; do
@@ -278,12 +278,12 @@ jobs:
                 cp -P "$found_lib" AppDir/usr/lib/ || true
             done
         done
-    
+
     - name: Ensure GStreamer libraries are properly linked
       run: |
         echo "Ensuring GStreamer library symlinks..."
         cd AppDir/usr/lib
-        
+
         # Create all necessary symlinks for JNA
         for lib in libgst*.so.*; do
             if [ -f "$lib" ]; then
@@ -293,7 +293,7 @@ jobs:
                     echo "Creating symlink: $base_name -> $lib"
                     ln -sf "$lib" "$base_name"
                 fi
-                
+
                 # Create unversioned symlink for JNA (e.g., libgstapp.so)
                 short_name=$(echo "$base_name" | sed 's/-[0-9.]*\.so$/\.so/')
                 if [ "$short_name" != "$base_name" ] && [ ! -e "$short_name" ]; then
@@ -302,16 +302,16 @@ jobs:
                 fi
             fi
         done
-        
+
         # Verify critical libraries
         echo "Verifying critical GStreamer libraries:"
         for libname in gstapp gstreamer-1.0 gstbase-1.0 gstvideo-1.0; do
             echo "Checking lib${libname}:"
             ls -la lib${libname}* 2>/dev/null || echo "  WARNING: lib${libname} not found!"
         done
-        
+
         cd -
-        
+
         # Verify the plugin scanner exists
         echo "Verifying GStreamer plugin scanner:"
         if [ -f "AppDir/usr/lib/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner" ]; then
@@ -320,7 +320,7 @@ jobs:
         else
             echo "  ERROR: Plugin scanner not found!"
         fi
-        
+
         # Fix RPATH for all GStreamer plugins to use bundled libraries only
         echo "Fixing RPATH for GStreamer plugins to ensure isolation..."
         for plugin in AppDir/usr/lib/gstreamer-1.0/*.so; do
@@ -329,7 +329,7 @@ jobs:
                 patchelf --set-rpath '$ORIGIN/..:$ORIGIN' "$plugin"
             fi
         done
-        
+
         # Also fix RPATH for additional libraries
         for lib in AppDir/usr/lib/libgst*.so*; do
             if [ -f "$lib" ] && file "$lib" | grep -q ELF; then
@@ -337,7 +337,7 @@ jobs:
                 patchelf --set-rpath '$ORIGIN:$ORIGIN/..' "$lib"
             fi
         done
-    
+
     - name: Additional cleanup
       run: |
         echo "Cleaning up AppDir..."
@@ -346,28 +346,28 @@ jobs:
         rm -rf AppDir/usr/share/man
         rm -rf AppDir/usr/share/doc
         rm -rf AppDir/usr/include
-    
+
     - name: Build AppImage
       run: |
         # Show the size of the AppDir before building
         echo "AppDir size:"
         du -sh AppDir/
-        
+
         # Create AppImage with user-friendly naming
         echo "Creating AppImage..."
         ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage
-        
+
         # Test the AppImage
         echo "Testing AppImage..."
         ./PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage --version || echo "No version flag implemented"
-        
+
         # Test GStreamer library loading
         echo "Testing GStreamer library loading in AppImage..."
         ./PotatoClient-${{ steps.extract_version.outputs.VERSION }}-linux-x86_64.AppImage --appimage-extract-and-run &
         APP_PID=$!
         sleep 5
         kill $APP_PID 2>/dev/null || true
-    
+
     - name: Upload AppImage
       uses: actions/upload-artifact@v4
       with:
@@ -379,25 +379,25 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Extract version from VERSION file
       id: extract_version
       run: |
         VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
-    
+
     - name: Setup Java for building
       uses: actions/setup-java@v4
       with:
         distribution: 'liberica'
         java-version: '17'
         architecture: 'x64'
-    
+
     - name: Install Clojure CLI tools
       run: |
         curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
@@ -405,24 +405,24 @@ jobs:
         sudo ./linux-install.sh
         rm linux-install.sh
         clojure --version
-    
+
     - name: Setup Build Tools
       run: |
         echo "Setting up Kotlin compiler..."
         ./scripts/setup-kotlin.sh
         # Add Kotlin to PATH for the build
         echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
-        
+
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
         # Python3 is already installed on Ubuntu runners
-    
+
     - name: Download proto files
       uses: actions/download-artifact@v4
       with:
         name: proto-files
         path: src/potatoclient/java/
-    
+
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
@@ -430,14 +430,14 @@ jobs:
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
-    
+
     - name: Download Launch4j
       run: |
         echo "Downloading Launch4j 3.50..."
         wget -q -O launch4j.tgz https://sourceforge.net/projects/launch4j/files/launch4j-3/3.50/launch4j-3.50-linux-x64.tgz/download
         tar -xzf launch4j.tgz
         rm launch4j.tgz
-    
+
     - name: Download 64-bit JRE for Windows
       run: |
         echo "Downloading Liberica JRE 17 64-bit for Windows..."
@@ -445,28 +445,28 @@ jobs:
         unzip -q bellsoft-jre17.0.13+12-windows-amd64.zip
         mv jre-17.0.13 runtime
         rm bellsoft-jre17.0.13+12-windows-amd64.zip
-    
+
     - name: Download GStreamer for Windows
       run: |
         echo "Downloading GStreamer 1.26.3 for Windows 64-bit (latest stable)..."
         # Download GStreamer 1.26.3 x86_64 runtime installer
         wget -q https://gstreamer.freedesktop.org/data/pkg/windows/1.26.3/msvc/gstreamer-1.0-msvc-x86_64-1.26.3.msi
-        
+
         # Download GStreamer 1.26.3 x86_64 development files (includes additional plugins like libav)
         wget -q https://gstreamer.freedesktop.org/data/pkg/windows/1.26.3/msvc/gstreamer-1.0-devel-msvc-x86_64-1.26.3.msi
-        
+
         mkdir -p redist
         mv *.msi redist/
-    
+
     - name: Download Visual C++ Redistributables
       run: |
         echo "Downloading Visual C++ Redistributables for 64-bit..."
         # VC++ 2015-2022 x64 (required for modern applications)
         wget -q https://aka.ms/vs/17/release/vc_redist.x64.exe -O redist/vc_redist_x64.exe
-        
+
         # Also get VC++ 2013 x64 as GStreamer 1.8 might need it
         wget -q https://aka.ms/highdpimfc2013x64enu -O redist/vcredist_2013_x64.exe
-    
+
     - name: Create Windows executable
       run: |
         echo "Creating Windows executable with Launch4j..."
@@ -478,7 +478,7 @@ jobs:
         dos2unix launch4j/launch4j || sed -i 's/\r$//' launch4j/launch4j
         chmod +x launch4j/launch4j
         ./launch4j/launch4j .github/workflows/build.xml
-    
+
     - name: Package distribution
       run: |
         mkdir -p dist/PotatoClient
@@ -487,53 +487,53 @@ jobs:
         cp potatoclient.jar dist/PotatoClient/
         cp -r runtime dist/PotatoClient/
         cp -r redist dist/PotatoClient/
-        
+
         # Copy resources if they exist
         if [ -d "resources" ]; then
           cp -r resources dist/PotatoClient/
         fi
-        
+
         # Create version file
         echo "${{ steps.extract_version.outputs.VERSION }}" > dist/PotatoClient/version.txt
-        
+
         # Create README for dependencies
         cat > dist/PotatoClient/README-DEPENDENCIES.txt << EOF
         PotatoClient Dependencies for Windows
         =====================================
-        
+
         INSTALLER vs PORTABLE VERSION:
         - The installer (PotatoClient-setup.exe) requires administrator privileges
           to install system dependencies automatically.
         - The portable version (ZIP file) can run without admin rights if the
           dependencies are already installed.
-        
+
         If using the portable version and PotatoClient fails to start, please install:
-        
+
         1. GStreamer 1.26.3 (in redist folder):
            - Install gstreamer-1.0-msvc-x86_64-1.26.3.msi first (runtime)
            - Install gstreamer-1.0-devel-msvc-x86_64-1.26.3.msi second (includes H264 decoders)
-        
+
         2. Visual C++ Redistributables (in redist folder):
            - vc_redist_x64.exe (Visual C++ 2015-2022 redistributable)
            - vcredist_2013_x64.exe (may be needed for some plugins)
-        
+
         The application includes Java 17 runtime, so no Java installation is required.
-        
+
         System Requirements:
         - Windows 7 SP1 or newer (64-bit)
         - Administrator privileges (for installer only)
         - 4GB RAM minimum recommended
         EOF
-        
+
         # Create zip archive with user-friendly naming
         cd dist
         zip -r ../PotatoClient-${{ steps.extract_version.outputs.VERSION }}-windows-x64-portable.zip PotatoClient
         cd ..
-        
+
         echo "Package contents:"
         ls -la dist/PotatoClient/
         ls -la dist/PotatoClient/redist/
-    
+
     - name: Upload distribution for installer
       uses: actions/upload-artifact@v4
       with:
@@ -543,35 +543,35 @@ jobs:
   create-windows-installer:
     needs: build-windows
     runs-on: windows-2022
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Download distribution
       uses: actions/download-artifact@v4
       with:
         name: PotatoClient-dist
         path: dist/PotatoClient
-    
+
     - name: Install Inno Setup
       run: |
         choco install innosetup --yes
-    
+
     - name: Build installer
       shell: powershell
       run: |
         $Env:ISCC_PATH="${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
         $Env:APP_VERSION="${{ needs.build-windows.outputs.version }}"
-        
+
         Write-Host "Building installer with Inno Setup..."
         Write-Host "App version: $Env:APP_VERSION"
-        
+
         & "$Env:ISCC_PATH" /Qp "${{ github.workspace }}\.github\workflows\install.iss"
-        
+
         # Rename installer to use user-friendly naming
         Move-Item -Path "Output\PotatoClient-*.exe" -Destination "Output\PotatoClient-$Env:APP_VERSION-windows-x64-setup.exe"
-    
+
     - name: Upload installer
       uses: actions/upload-artifact@v4
       with:
@@ -583,54 +583,54 @@ jobs:
     runs-on: macos-14  # M1/M2 runner
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Extract version from VERSION file
       id: extract_version
       run: |
         VERSION=$(cat VERSION | tr -d '[:space:]')
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Extracted version: $VERSION"
-    
+
     - name: Setup Java for building
       uses: actions/setup-java@v4
       with:
         distribution: 'liberica'
         java-version: '17'
         architecture: 'aarch64'
-    
+
     - name: Install Clojure CLI tools
       run: |
         brew install clojure/tools/clojure
         clojure --version
-    
+
     - name: Setup Build Tools
       run: |
         echo "Setting up Kotlin compiler..."
         ./scripts/setup-kotlin.sh
         # Add Kotlin to PATH for the build
         echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
-        
+
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
         # Python3 is already installed on Ubuntu runners
-    
+
     - name: Download proto files
       uses: actions/download-artifact@v4
       with:
         name: proto-files
         path: src/potatoclient/java/
-    
+
     - name: Install GStreamer
       run: |
         echo "Installing GStreamer via Homebrew..."
         brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav
         echo "GStreamer version:"
         gst-launch-1.0 --version
-    
+
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
@@ -638,7 +638,7 @@ jobs:
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
-    
+
     - name: Download macOS JRE
       run: |
         echo "Downloading Liberica JRE 17 for macOS ARM64..."
@@ -654,7 +654,7 @@ jobs:
         echo "Found JRE directory: $JRE_DIR"
         mv "$JRE_DIR" runtime
         rm bellsoft-jre17.0.13+12-macos-aarch64.zip
-    
+
     - name: Create .app bundle
       run: |
         # Create app bundle structure
@@ -663,16 +663,16 @@ jobs:
         mkdir -p "$APP_DIR/Contents/MacOS"
         mkdir -p "$APP_DIR/Contents/Resources"
         mkdir -p "$APP_DIR/Contents/runtime"
-        
+
         # Copy resources
         cp .github/actions/macos-assets/Info.plist "$APP_DIR/Contents/"
         cp .github/actions/macos-assets/potatoclient-launcher "$APP_DIR/Contents/MacOS/"
         chmod +x "$APP_DIR/Contents/MacOS/potatoclient-launcher"
-        
+
         # Copy JAR and runtime
         cp target/potatoclient-*.jar "$APP_DIR/Contents/Resources/potatoclient.jar"
         cp -R runtime/* "$APP_DIR/Contents/runtime/"
-        
+
         # Convert icon to icns format
         if [ -f "resources/main.png" ]; then
           echo "Creating icns icon..."
@@ -691,52 +691,52 @@ jobs:
           cp icon.icns "$APP_DIR/Contents/Resources/"
           rm -rf icon.iconset icon.icns
         fi
-        
+
         # Update Info.plist with version
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.extract_version.outputs.VERSION }}" "$APP_DIR/Contents/Info.plist"
         /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.extract_version.outputs.VERSION }}" "$APP_DIR/Contents/Info.plist"
-        
+
         echo "App bundle created: $APP_DIR"
         ls -la "$APP_DIR/Contents/"
-    
+
     - name: Create DMG
       run: |
         # Create a temporary directory for DMG contents
         mkdir -p dmg-content
         cp -R PotatoClient.app dmg-content/
-        
+
         # Copy README
         cp .github/actions/macos-assets/README.txt dmg-content/
-        
+
         # Create Applications symlink
         ln -s /Applications dmg-content/Applications
-        
+
         # Optional: Download GStreamer installer and include it
         # echo "Downloading GStreamer installer for inclusion..."
         # wget -q https://gstreamer.freedesktop.org/data/pkg/osx/1.24.7/gstreamer-1.0-1.24.7-universal.pkg -O dmg-content/Install_GStreamer.pkg || echo "Failed to download GStreamer installer"
-        
+
         # Create DMG with user-friendly naming
         hdiutil create -volname "PotatoClient" \
                       -srcfolder dmg-content \
                       -ov -format UDZO \
                       "PotatoClient-${{ steps.extract_version.outputs.VERSION }}-macos-arm64.dmg"
-        
+
         # Clean up
         rm -rf dmg-content
-        
+
         echo "DMG created successfully"
         ls -la *.dmg
-    
+
     - name: Optional - Ad-hoc sign for development (no certificate required)
       run: |
         # Ad-hoc signing (using "-" as identity) allows local testing without Gatekeeper issues
         # This is NOT for distribution, just for development convenience
         echo "Ad-hoc signing the app bundle for development..."
         codesign --force --deep --sign - PotatoClient.app || echo "Ad-hoc signing failed, continuing without signature"
-        
+
         # Note: The DMG is already created, so this signed .app won't be in the DMG
         # For fully signed DMG, you'd need to sign before creating DMG
-    
+
     - name: Upload DMG
       uses: actions/upload-artifact@v4
       with:
@@ -747,19 +747,19 @@ jobs:
     needs: [generate-proto, build-appimage, build-windows, create-windows-installer, build-macos]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
-    
+
     - name: List downloaded files
       run: |
         echo "Downloaded files:"
         find . -type f -name "PotatoClient-*" | sort
-    
+
     - name: Generate release notes
       id: release_notes
       run: |
@@ -768,10 +768,10 @@ jobs:
         RELEASE_BODY="${RELEASE_BODY//\{\{VERSION\}\}/${{ needs.build-appimage.outputs.version }}}"
         RELEASE_BODY="${RELEASE_BODY//\{\{COMMIT_MESSAGE\}\}/${{ github.event.head_commit.message }}}"
         RELEASE_BODY="${RELEASE_BODY//\{\{COMMIT_SHA\}\}/${{ github.sha }}}"
-        
+
         # Write to file for the release action
         echo "$RELEASE_BODY" > release_notes.md
-        
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:

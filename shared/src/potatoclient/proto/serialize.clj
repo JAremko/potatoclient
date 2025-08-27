@@ -18,7 +18,7 @@
    [potatoclient.specs.state.root])
   (:import
    [com.google.protobuf ByteString]
-   [build.buf.protovalidate Validator]))
+   [build.buf.protovalidate Validator ValidatorFactory]))
 
 ;; Initialize registry with all specs - done lazily in functions to ensure specs are loaded
 
@@ -50,7 +50,7 @@
 
 (def ^:private validator
   (delay
-    (Validator.)))
+    (.build (ValidatorFactory/newBuilder))))
 
 ;; ============================================================================
 ;; Helper functions
@@ -92,9 +92,10 @@
                       {:type :buf-validate-error
                        :proto-type proto-type
                        :violations (mapv (fn [violation]
-                                          {:field (.getFieldPath violation)
-                                           :constraint (.getConstraintId violation)
-                                           :message (.getMessage violation)})
+                                          (let [proto-violation (.toProto violation)]
+                                            {:field (str (.getField proto-violation))
+                                             :constraint (.getRuleId proto-violation)
+                                             :message (.getMessage proto-violation)}))
                                         (.getViolations result))})))))
 
 ;; ============================================================================

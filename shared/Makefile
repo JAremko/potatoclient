@@ -1,7 +1,7 @@
 # Shared Project Makefile
 # Central proto generation and compilation for the entire PotatoClient project
 
-.PHONY: proto proto-clean test test-oneof test-malli test-serialization test-cmd compile help
+.PHONY: proto proto-clean test test-oneof test-malli test-serialization test-cmd compile help deps-outdated deps-upgrade deps-upgrade-all
 
 # Default target
 .DEFAULT_GOAL := help
@@ -75,7 +75,7 @@ test: ## Run all shared module tests
 		exit 1; \
 	fi
 	@echo "Running shared project tests..."
-	@clojure -J-Dguardrails.enabled=true -M:test
+	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test
 
 # Test categories - run specific test suites
 test-oneof: ## Run only oneof custom spec tests
@@ -90,7 +90,7 @@ test-oneof: ## Run only oneof custom spec tests
 		exit 1; \
 	fi
 	@echo "Running oneof tests..."
-	@clojure -J-Dguardrails.enabled=true -M:test-oneof
+	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-oneof
 
 test-malli: ## Run only malli spec tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -104,7 +104,7 @@ test-malli: ## Run only malli spec tests
 		exit 1; \
 	fi
 	@echo "Running malli spec tests..."
-	@clojure -J-Dguardrails.enabled=true -M:test-malli
+	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-malli
 
 test-serialization: ## Run only serialization/deserialization tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -118,7 +118,7 @@ test-serialization: ## Run only serialization/deserialization tests
 		exit 1; \
 	fi
 	@echo "Running serialization tests..."
-	@clojure -J-Dguardrails.enabled=true -M:test-serialization
+	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-serialization
 
 test-cmd: ## Run only command tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -132,7 +132,7 @@ test-cmd: ## Run only command tests
 		exit 1; \
 	fi
 	@echo "Running command tests..."
-	@clojure -J-Dguardrails.enabled=true -M:test-cmd
+	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-cmd
 
 # Clean everything EXCEPT proto artifacts
 clean: ## Clean build artifacts (preserves proto classes)
@@ -145,3 +145,39 @@ clean-all: proto-clean ## Clean ALL artifacts including proto classes
 	@echo "Cleaning all artifacts..."
 	@rm -rf target
 	@echo "All artifacts cleaned"
+
+# Check for outdated dependencies
+deps-outdated: ## Check for outdated dependencies using antq
+	@echo "Checking for outdated dependencies in shared module..."
+	@echo "  • Scans deps.edn for newer versions"
+	@echo "  • Shows available updates in a table"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@cd .. && clojure -M:outdated --directory=shared
+
+# Interactively upgrade dependencies
+deps-upgrade: ## Interactively upgrade outdated dependencies
+	@echo "Interactive dependency upgrade for shared module..."
+	@echo "  • Shows each outdated dependency"
+	@echo "  • Lets you choose which to upgrade"
+	@echo "  • Automatically updates deps.edn"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@cd .. && clojure -M:outdated-upgrade --directory=shared
+
+# Force upgrade all dependencies
+deps-upgrade-all: ## Upgrade all outdated dependencies (non-interactive)
+	@echo "Upgrading all outdated dependencies in shared module..."
+	@echo "  ⚠️  This will automatically update ALL outdated dependencies"
+	@echo "  • Updates deps.edn without confirmation"
+	@echo "  • Downloads all new versions"
+	@echo "  • Remember to test after upgrading!"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@read -p "Are you sure? (y/N) " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		cd .. && clojure -M:outdated-upgrade --force --directory=shared; \
+	else \
+		echo "Aborted."; \
+	fi

@@ -26,7 +26,7 @@
         (b/javac {:src-dirs ["src/java"]
                   :class-dir class-dir
                   :basis basis
-                  :javac-opts ["-source" "11" "-target" "11"]})
+                  :javac-opts ["-source" "17" "-target" "17"]})
         (println "Proto classes compiled successfully"))
       (println "Warning: No proto sources found in src/java"))))
 
@@ -40,14 +40,15 @@
     (b/javac {:src-dirs [pronto-java-src]
               :class-dir class-dir
               :basis basis
-              :javac-opts ["-source" "11" "-target" "11"]})))
+              :javac-opts ["-source" "17" "-target" "17"]})))
 
 (defn compile-clj
   "Compile Clojure sources."
   [_]
   (b/compile-clj {:basis basis
                   :src-dirs ["src"]
-                  :class-dir class-dir}))
+                  :class-dir class-dir
+                  :java-opts ["-Dguardrails.enabled=true" "-Dguardrails.throw=true"]}))
 
 (defn compile-all
   "Compile everything needed for tests."

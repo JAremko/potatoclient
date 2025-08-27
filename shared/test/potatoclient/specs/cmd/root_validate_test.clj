@@ -19,7 +19,7 @@
   ;; Ensure proto classes are available
   (try
     (Class/forName "cmd.JonSharedCmd$Root")
-    (Class/forName "build.buf.protovalidate.Validator")
+    (Class/forName "build.buf.protovalidate.ValidatorFactory")
     (f)
     (catch ClassNotFoundException e
       (println "\n=== Test Environment Not Ready ===")
@@ -48,7 +48,7 @@
 (pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
 
 ;; Initialize validator
-(def validator (delay (build.buf.protovalidate.Validator.)))
+(def validator (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
 
 (defn edn->proto
   "Convert EDN map to protobuf message via Pronto."
@@ -86,9 +86,10 @@
           {:valid? true}
           {:valid? false
            :violations (mapv (fn [violation]
-                              {:field (.getFieldPath violation)
-                               :constraint (.getConstraintId violation)
-                               :message (.getMessage violation)})
+                              (let [proto-violation (.toProto violation)]
+                                {:field (str (.getField proto-violation))
+                                 :constraint (.getRuleId proto-violation)
+                                 :message (.getMessage proto-violation)}))
                             (.getViolations result))}))
       (catch Exception e
         (cond
