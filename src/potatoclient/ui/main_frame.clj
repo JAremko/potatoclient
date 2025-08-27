@@ -41,10 +41,9 @@
                    ;; Run cleanup in a separate thread with timeout
                    (future
                      (try
-                       ;; Clean up menu bar bindings first
-                       (when-let [menubar (.getJMenuBar frame)]
-                         (menu-bar/cleanup-menubar! menubar)
-                         (logging/log-debug {:msg "Cleaned up menu bar bindings"}))
+                       ;; Clean up all seesaw bindings (menu bar and control panel)
+                       (state/cleanup-seesaw-bindings!)
+                       (logging/log-debug {:msg "Cleaned up all seesaw bindings"})
                        ;; Save current config state
                        (let [current-config {:theme (theme/get-current-theme)
                                              :locale (state/get-locale)

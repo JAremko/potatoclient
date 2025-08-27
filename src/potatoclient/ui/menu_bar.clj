@@ -10,6 +10,7 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.utils :as utils]
             [seesaw.action :as action]
             [seesaw.bind :as bind]
             [seesaw.core :as seesaw])
@@ -174,13 +175,15 @@
                       :heat :heat-video
                       :day :day-video)]
 
-    ;; Use seesaw's bind to sync button state with app-state
+    ;; Use seesaw's bind with debouncing to sync button state with app-state
+    ;; This prevents rapid intermediate state changes from causing UI flicker
     ;; Cleanup happens automatically via state/cleanup-seesaw-bindings!
     (bind/bind 
       state/app-state
-      (bind/transform 
-        (fn [state]
-          (= :running (get-in state [:processes process-key :status]))))
+      (bind/some 
+        (utils/mk-debounced-transform 
+          (fn [state]
+            (= :running (get-in state [:processes process-key :status])))))
       (bind/property button :selected?))
     
     button))

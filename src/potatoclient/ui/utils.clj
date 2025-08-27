@@ -89,7 +89,7 @@
         (future-cancel @timeout))
       (reset! timeout
               (future
-                (Thread/sleep wait-ms)
+                (Thread/sleep (long wait-ms))
                 (apply f args))))))
 
 (>defn throttle
@@ -152,7 +152,7 @@
   Usage:
     (with-busy-cursor frame
       (fn []
-        (Thread/sleep 2000)  ; Simulate long operation
+        (Thread/sleep (long 2000))  ; Simulate long operation
         (process-data)))
   
   The cursor is guaranteed to be restored even if an exception occurs."
