@@ -42,14 +42,14 @@ search proto-search: ## [STEP 1] Search for protobuf messages
 		echo "  make search QUERY=JonSharedCmd # Find by Java class"; \
 		exit 1; \
 	fi
-	@clojure -M:run:test-protos search $(QUERY)
+	@clojure -M:run search $(QUERY)
 
 .PHONY: list proto-list
-list proto-list: ensure-proto-classes ## [STEP 1] List all protobuf messages
-	@clojure -M:run:test-protos list $(FILTER)
+list proto-list: ## [STEP 1] List all protobuf messages
+	@clojure -M:run list $(FILTER)
 
 .PHONY: info proto-info
-info proto-info: ensure-proto-classes ## [STEP 2] Get detailed info using query from step 1
+info proto-info: ## [STEP 2] Get detailed info using query from step 1
 	@if [ -z "$(QUERY)" ]; then \
 		echo "Usage: make info QUERY='<result-from-search>'"; \
 		echo ""; \
@@ -57,7 +57,7 @@ info proto-info: ensure-proto-classes ## [STEP 2] Get detailed info using query 
 		echo "Example: make info QUERY='cmd.JonSharedCmd\$$Root'"; \
 		exit 1; \
 	fi
-	@clojure -M:run:test-protos info "$(QUERY)"
+	@clojure -M:run info "$(QUERY)"
 
 .PHONY: repl proto-repl
 repl proto-repl: ## Start a REPL for interactive exploration

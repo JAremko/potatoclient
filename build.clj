@@ -141,13 +141,13 @@
         kotlinc-exists? (.exists (io/file kotlinc))]
     (if kotlinc-exists?
       (let [test-class-dir "target/test-classes"
-            ;; Only compile SimpleTestRunner (not JUnit tests which have dependency issues)
-            test-runner-path "test/kotlin/ipc/SimpleTestRunner.kt"
+            ;; Only compile IpcClientServerTestRunner (not JUnit tests which have dependency issues)
+            test-runner-path "test/kotlin/ipc/IpcClientServerTestRunner.kt"
             ;; Include main classes and Kotlin dependencies
             classpath-with-deps (str class-dir ":" 
                                    test-class-dir ":"
                                    (str/join ":" (:classpath-roots (get-basis))))]
-        (println "Compiling SimpleTestRunner.kt...")
+        (println "Compiling IpcClientServerTestRunner.kt...")
         (io/make-parents (io/file test-class-dir "dummy.txt"))
         (let [result (shell/sh 
                        kotlinc
