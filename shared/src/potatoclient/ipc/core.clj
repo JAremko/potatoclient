@@ -1,8 +1,9 @@
-(ns clj-stream-spawner.ipc
+(ns potatoclient.ipc.core
   "IPC server implementation using Unix Domain Sockets.
    Wraps Java UnixSocketCommunicator with Transit serialization."
   (:require
-    [clj-stream-spawner.transit :as transit]
+    [potatoclient.ipc.transit :as transit]
+    [potatoclient.malli.registry :as registry]
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [taoensso.telemere :as t])
   (:import
@@ -28,6 +29,10 @@
    [:running? [:fn #(instance? Atom %)]]
    [:reader-thread [:fn #(or (nil? %) (instance? Thread %))]]
    [:processor-thread [:fn #(or (nil? %) (instance? Thread %))]]])
+
+;; Register specs with shared registry
+(registry/register-spec! :potatoclient.ipc/stream-type StreamType)
+(registry/register-spec! :potatoclient.ipc/server IpcServer)
 
 ;; ============================================================================
 ;; IPC Server Implementation

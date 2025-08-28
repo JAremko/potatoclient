@@ -1,7 +1,9 @@
 {:paths ["src" "resources"]
  
  :deps {org.clojure/clojure {:mvn/version "1.12.2"}
-        ;; Transit for IPC communication
+        ;; Use shared package for IPC and Transit
+        potatoclient/shared {:local/root "../../shared"}
+        ;; Transit for IPC communication (kept for backward compat)
         com.cognitect/transit-clj {:mvn/version "1.0.333"}
         com.cognitect/transit-java {:mvn/version "1.0.371"}
         ;; Logging

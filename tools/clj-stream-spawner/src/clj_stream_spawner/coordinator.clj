@@ -2,9 +2,9 @@
   "Coordinates heat and day camera streams with IPC and process management."
   (:require
     [clj-stream-spawner.events :as events]
-    [clj-stream-spawner.ipc :as ipc]
     [clj-stream-spawner.process :as process]
-    [clj-stream-spawner.transit :as transit]
+    [potatoclient.ipc.core :as ipc]
+    [potatoclient.ipc.transit :as transit]
     [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [taoensso.telemere :as t])
   (:import

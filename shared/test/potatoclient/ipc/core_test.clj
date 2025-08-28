@@ -1,11 +1,11 @@
-(ns clj-stream-spawner.ipc-test
+(ns potatoclient.ipc.core-test
   "Tests for IPC server functionality."
   (:require 
    [clojure.test :refer [deftest is testing use-fixtures]]
    [matcher-combinators.test]
    [matcher-combinators.matchers :as matchers]
-   [clj-stream-spawner.ipc :as ipc]
-   [clj-stream-spawner.transit :as transit])
+   [potatoclient.ipc.core :as ipc]
+   [potatoclient.ipc.transit :as transit])
   (:import 
    [java.util.concurrent CountDownLatch TimeUnit]
    [java.nio.file Files LinkOption]))

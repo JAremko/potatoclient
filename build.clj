@@ -36,10 +36,13 @@
         kotlinc (str kotlin-dir "/bin/kotlinc")
         kotlinc-exists? (.exists (io/file kotlinc))]
     (when-not kotlinc-exists?
-      (println "Kotlin compiler not found. Running setup script...")
-      (let [setup-result (shell/sh "./scripts/setup-kotlin.sh")]
-        (when (not= 0 (:exit setup-result))
-          (throw (ex-info "Failed to set up Kotlin" {:output (:out setup-result) :error (:err setup-result)})))))
+      (println "ERROR: Kotlin compiler not found at" kotlinc)
+      (println "Please install Kotlin 2.2.0 according to your system:")
+      (println "  - On macOS: brew install kotlin")
+      (println "  - On Linux: Use your package manager (apt, dnf, pacman, etc.)")
+      (println "  - Manual: Download from https://github.com/JetBrains/kotlin/releases/tag/v2.2.0")
+      (println "           and extract to" kotlin-dir)
+      (throw (ex-info "Kotlin compiler not found" {:kotlin-dir kotlin-dir})))
     
     ;; Get all Kotlin source files (including transit subdir)
     (let [kotlin-files (filter #(.endsWith (.getName %) ".kt")

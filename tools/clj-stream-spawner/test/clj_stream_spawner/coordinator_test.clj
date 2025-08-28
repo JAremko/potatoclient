@@ -5,8 +5,8 @@
    [matcher-combinators.test]
    [matcher-combinators.matchers :as matchers]
    [clj-stream-spawner.coordinator :as coordinator]
-   [clj-stream-spawner.ipc :as ipc]
-   [clj-stream-spawner.process :as process])
+   [clj-stream-spawner.process :as process]
+   [potatoclient.ipc.core :as ipc])
   (:import 
    [java.util.concurrent CountDownLatch]))
 

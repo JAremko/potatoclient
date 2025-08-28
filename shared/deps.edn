@@ -8,6 +8,12 @@
         ;; Function specs and runtime validation
         com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         
+        ;; Transit for IPC serialization
+        com.cognitect/transit-clj {:mvn/version "1.0.333"}
+        
+        ;; Logging for IPC
+        com.taoensso/telemere {:mvn/version "1.0.1"}
+        
         ;; Pronto - Clojure wrapper for Protocol Buffers
         com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
                               :git/sha "5444ae5ec3b567a5565e6c1e90ba0850960331b6"}
@@ -31,7 +37,7 @@
         ;; For expressive test assertions with nested data structures
         nubank/matcher-combinators {:mvn/version "3.9.2"}}
  
- :aliases {:test {:extra-paths ["test"]
+ :aliases {:test {:extra-paths ["test" "../target/java-classes"]
                   :extra-deps {io.github.cognitect-labs/test-runner 
                                {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                   :main-opts ["-m" "cognitect.test-runner"
@@ -56,6 +62,11 @@
                       :extra-deps {io.github.cognitect-labs/test-runner 
                                    {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                       :main-opts ["-m" "test-suites.cmd-suite"]}
+           
+           :test-ipc {:extra-paths ["test" "../target/java-classes"]
+                      :extra-deps {io.github.cognitect-labs/test-runner 
+                                   {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+                      :main-opts ["-m" "test-suites.ipc-suite"]}
            
            :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}}
                    :ns-default build}

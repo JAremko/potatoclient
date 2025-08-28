@@ -1,9 +1,10 @@
-(ns clj-stream-spawner.transit
+(ns potatoclient.ipc.transit
   "Transit serialization/deserialization for IPC messages.
    Uses msgpack format for efficient binary encoding."
   (:require
     [cognitect.transit :as transit]
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn]])
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
+    [potatoclient.malli.registry :as registry])
   (:import
     (com.cognitect.transit Keyword TransitFactory)
     (java.io ByteArrayInputStream ByteArrayOutputStream)))
@@ -17,6 +18,10 @@
 
 (def ByteArray
   [:fn #(bytes? %)])
+
+;; Register specs with shared registry
+(registry/register-spec! :potatoclient.ipc/transit-message TransitMessage)
+(registry/register-spec! :potatoclient.ipc/byte-array ByteArray)
 
 ;; ============================================================================
 ;; Transit Serialization

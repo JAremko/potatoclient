@@ -72,10 +72,13 @@ jobs:
 
     - name: Setup Build Tools
       run: |
-        echo "Setting up Kotlin compiler..."
-        ./scripts/setup-kotlin.sh
-        # Add Kotlin to PATH for the build
-        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        echo "Installing Kotlin compiler..."
+        # Install Kotlin using SDKMAN (available on GitHub Actions runners)
+        curl -s "https://get.sdkman.io" | bash
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+        sdk install kotlin 2.2.0
+        # Verify installation
+        kotlin -version
 
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
@@ -408,10 +411,13 @@ jobs:
 
     - name: Setup Build Tools
       run: |
-        echo "Setting up Kotlin compiler..."
-        ./scripts/setup-kotlin.sh
-        # Add Kotlin to PATH for the build
-        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        echo "Installing Kotlin compiler..."
+        # Install Kotlin using SDKMAN (available on GitHub Actions runners)
+        curl -s "https://get.sdkman.io" | bash
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+        sdk install kotlin 2.2.0
+        # Verify installation
+        kotlin -version
 
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
@@ -609,10 +615,13 @@ jobs:
 
     - name: Setup Build Tools
       run: |
-        echo "Setting up Kotlin compiler..."
-        ./scripts/setup-kotlin.sh
-        # Add Kotlin to PATH for the build
-        echo "$(pwd)/tools/kotlin-2.2.0/bin" >> $GITHUB_PATH
+        echo "Installing Kotlin compiler..."
+        # Install Kotlin using SDKMAN (available on GitHub Actions runners)
+        curl -s "https://get.sdkman.io" | bash
+        source "$HOME/.sdkman/bin/sdkman-init.sh"
+        sdk install kotlin 2.2.0
+        # Verify installation
+        kotlin -version
 
         echo "Setting up protoc..."
         ./scripts/download-protoc-29.5.sh
