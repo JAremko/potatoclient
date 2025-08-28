@@ -139,7 +139,7 @@
                     :ukrainian ["uk" "UA"]}
         [lang country] (get locale-map locale ["en" "US"])]
     (Locale/setDefault
-      (Locale. ^String lang ^String country)))
+      (Locale/forLanguageTag (str lang "-" country))))
   (swap! app-state assoc-in [:ui :locale] locale))
 
 (>defn get-theme
