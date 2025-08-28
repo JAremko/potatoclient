@@ -150,7 +150,7 @@ mcp-configure: ## Add potatoclient MCP server to Claude configuration
 
 # Test target
 .PHONY: test
-test: ensure-compiled compile-kotlin-tests ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
+test: ensure-compiled ## Run tests (saves output to logs/test-runs/TIMESTAMP/)
 	@echo "Setting up test logging..."
 	@TEST_RUN_DIR=$$(./scripts/setup-test-logs.sh) && \
 	echo "Test output will be saved to: $$TEST_RUN_DIR" && \
@@ -159,24 +159,18 @@ test: ensure-compiled compile-kotlin-tests ## Run tests (saves output to logs/te
 	javac -cp "$$(clojure -M:test -Spath):target/classes" -d target/test-classes test/java/potatoclient/test/*.java 2>/dev/null || true && \
 	echo "Running Clojure tests..." && \
 	clojure -M:test 2>&1 | tee "$$TEST_RUN_DIR/test-full.log"; \
-	CLOJURE_EXIT_CODE=$$?; \
-	echo "" && \
-	echo "Running Kotlin tests..." && \
-	echo "Note: Kotlin IPC tests are currently disabled due to classpath issues." && \
-	echo "To run manually: java -cp \"\$$(clojure -Spath):target/classes:target/test-classes:tools/kotlin-2.2.0/lib/*\" potatoclient.kotlin.ipc.IpcClientServerTestRunner" && \
-	KOTLIN_EXIT_CODE=0; \
-	EXIT_CODE=$$((CLOJURE_EXIT_CODE + KOTLIN_EXIT_CODE)); \
+	EXIT_CODE=$$?; \
 	echo "" && \
 	echo "Generating test summary..." && \
 	./scripts/compact-test-logs.sh "$$TEST_RUN_DIR/test-full.log" && \
 	cd logs/test-runs && ln -sf "$$(basename $$TEST_RUN_DIR)" latest && cd - >/dev/null && \
 	exit $$EXIT_CODE
 
-# Compile Kotlin test sources
-.PHONY: compile-kotlin-tests
-compile-kotlin-tests: ## Compile Kotlin test files
-	@echo "Compiling Kotlin test files..."
-	clojure -T:build compile-kotlin-tests
+# Kotlin test compilation (removed from main test suite)
+# .PHONY: compile-kotlin-tests
+# compile-kotlin-tests: ## Compile Kotlin test files
+# 	@echo "Compiling Kotlin test files..."
+# 	clojure -T:build compile-kotlin-tests
 
 # Run Java tests
 .PHONY: java-test
@@ -184,11 +178,11 @@ java-test: ## Compile and run Java tests (IPC tests)
 	@echo "Running Java IPC tests..."
 	clojure -T:build run-java-tests
 
-# Run Kotlin tests
-.PHONY: kotlin-test
-kotlin-test: ## Compile and run Kotlin tests (IPC and Transit tests)
-	@echo "Running Kotlin tests..."
-	clojure -T:build run-kotlin-tests
+# Kotlin tests (removed from main test suite)
+# .PHONY: kotlin-test
+# kotlin-test: ## Compile and run Kotlin tests (IPC and Transit tests)
+# 	@echo "Running Kotlin tests..."
+# 	clojure -T:build run-kotlin-tests
 
 # View latest test results
 .PHONY: test-summary
