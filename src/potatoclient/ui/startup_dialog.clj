@@ -96,10 +96,10 @@
         ;; Create buttons with actions
         connect-button (seesaw/button :action connect-action
                                       :font {:size 14}
-                                      :preferred-size [120 :by 35])
+                                      :preferred-size [120 :by 70])
         cancel-button (seesaw/button :action cancel-action
                                      :font {:size 14}
-                                     :preferred-size [120 :by 35])
+                                     :preferred-size [120 :by 70])
         buttons-panel (seesaw/flow-panel
                         :align :center
                         :hgap 15
