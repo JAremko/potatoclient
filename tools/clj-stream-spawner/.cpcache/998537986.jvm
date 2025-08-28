@@ -1,0 +1,2 @@
+-Dguardrails.enabled=true
+-Dclojure.main.report=stderr

@@ -59,13 +59,15 @@
   "Update the state of a specific stream."
   [stream-type updates]
   [StreamType [:map-of :keyword :any] => :any]
-  (swap! state update-in [:streams stream-type] merge updates))
+  (when @state
+    (swap! state update-in [:streams stream-type] merge updates)))
 
 (>defn- get-stream-state
   "Get the current state of a stream."
   [stream-type]
-  [StreamType => StreamState]
-  (get-in @state [:streams stream-type]))
+  [StreamType => [:maybe StreamState]]
+  (when @state
+    (get-in @state [:streams stream-type])))
 
 ;; ============================================================================
 ;; IPC Message Handlers
@@ -136,7 +138,7 @@
   [stream-type]
   [StreamType => :boolean]
   (let [current-state (get-stream-state stream-type)]
-    (if (= (:status current-state) :running)
+    (if (and current-state (= (:status current-state) :running))
       (do
         (t/log! :warn (str (name stream-type) " stream is already running"))
         true)
@@ -156,7 +158,7 @@
   "Stop a stream (process + IPC)."
   [stream-type]
   [StreamType => :nil]
-  (let [{:keys [status ipc-server process]} (get-stream-state stream-type)]
+  (when-let [{:keys [status ipc-server process]} (get-stream-state stream-type)]
     (when (#{:starting :running} status)
       (t/log! :info (str "Stopping " (name stream-type) " stream"))
       (update-stream-state stream-type {:status :stopping})
@@ -236,14 +238,17 @@
 (>defn get-status
   "Get the current status of all streams."
   []
-  [=> [:map [:heat StreamState] [:day StreamState]]]
-  (:streams @state))
+  [=> [:maybe [:map [:heat StreamState] [:day StreamState]]]]
+  (when @state
+    (:streams @state)))
 
 (>defn stream-running?
   "Check if a stream is running."
   [stream-type]
   [StreamType => :boolean]
-  (= :running (:status (get-stream-state stream-type))))
+  (if-let [stream-state (get-stream-state stream-type)]
+    (= :running (:status stream-state))
+    false))
 
 (>defn all-streams-running?
   "Check if both streams are running."

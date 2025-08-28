@@ -122,20 +122,6 @@ class IpcClient(
     }
 
     /**
-     * Send a command message to the server.
-     */
-    fun sendCommand(action: Keyword, commandData: Map<Any, Any>) {
-        val message = buildMap {
-            put(IpcKeys.MSG_TYPE, IpcKeys.COMMAND)
-            put(IpcKeys.ACTION, action)
-            put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
-            put(IpcKeys.STREAM_TYPE, IpcKeys.streamType(streamName))
-            putAll(commandData)
-        }
-        sendMessage(message)
-    }
-
-    /**
      * Send a log message to the server.
      */
     fun sendLog(level: Keyword, message: String, data: Map<Any, Any>? = null) {

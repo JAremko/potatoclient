@@ -77,19 +77,6 @@ object IpcKeys {
     @JvmField val DELTA_X: Keyword = TransitFactory.keyword("delta-x")
     @JvmField val DELTA_Y: Keyword = TransitFactory.keyword("delta-y")
     
-    // Command actions
-    @JvmField val ROTARY_GOTO_NDC: Keyword = TransitFactory.keyword("rotary-goto-ndc")
-    @JvmField val CV_START_TRACK_NDC: Keyword = TransitFactory.keyword("cv-start-track-ndc")
-    @JvmField val ROTARY_SET_VELOCITY: Keyword = TransitFactory.keyword("rotary-set-velocity")
-    @JvmField val ROTARY_HALT: Keyword = TransitFactory.keyword("rotary-halt")
-    
-    // Direction keys
-    @JvmField val AZIMUTH_SPEED: Keyword = TransitFactory.keyword("azimuth-speed")
-    @JvmField val ELEVATION_SPEED: Keyword = TransitFactory.keyword("elevation-speed")
-    @JvmField val AZIMUTH_DIRECTION: Keyword = TransitFactory.keyword("azimuth-direction")
-    @JvmField val CLOCKWISE: Keyword = TransitFactory.keyword("clockwise")
-    @JvmField val COUNTER_CLOCKWISE: Keyword = TransitFactory.keyword("counter-clockwise")
-    
     // Gesture-specific keys
     @JvmField val GESTURE_TYPE: Keyword = TransitFactory.keyword("gesture-type")
     @JvmField val FRAME_TIMESTAMP: Keyword = TransitFactory.keyword("frame-timestamp")
