@@ -8,11 +8,10 @@
             [tongue.core :as tongue])
   (:import (java.io PushbackReader)))
 
-;; Atom to hold translations and translator instance
-(defonce translations-atom 
+(defonce ^{:doc "Atom to hold translations instance"} translations-atom
   (atom {}))
 
-(defonce translator-atom 
+(defonce ^{:doc "Atom to hold translator instance"} translator-atom
   (atom nil))
 
 (>defn load-translation-file
