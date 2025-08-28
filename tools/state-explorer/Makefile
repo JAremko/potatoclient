@@ -184,11 +184,40 @@ analyze:
 	fi
 
 # Check for outdated dependencies
-deps-outdated:
+deps-outdated: ## Check for outdated dependencies using antq
 	@echo "Checking for outdated dependencies..."
-	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core"]}}}' -M:outdated
+	@echo "  • Scans deps.edn for newer versions"
+	@echo "  • Shows available updates in a table"
+	@echo "  • Includes both direct and transitive dependencies"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@cd ../.. && clojure -M:outdated --directory=tools/state-explorer
 
 # Interactively upgrade dependencies
-deps-upgrade:
+deps-upgrade: ## Interactively upgrade outdated dependencies
 	@echo "Interactive dependency upgrade..."
-	@clojure -Sdeps '{:aliases {:outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.7.1133"}} :main-opts ["-m" "antq.core" "--upgrade"]}}}' -M:outdated
+	@echo "  • Shows each outdated dependency"
+	@echo "  • Lets you choose which to upgrade"
+	@echo "  • Automatically updates deps.edn"
+	@echo "  • Downloads new dependencies"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@cd ../.. && clojure -M:outdated-upgrade --directory=tools/state-explorer
+
+# Force upgrade all dependencies
+deps-upgrade-all: ## Upgrade all outdated dependencies (non-interactive)
+	@echo "Upgrading all outdated dependencies..."
+	@echo "  ⚠️  This will automatically update ALL outdated dependencies"
+	@echo "  • Updates deps.edn without confirmation"
+	@echo "  • Downloads all new versions"
+	@echo "  • Remember to test after upgrading!"
+	@echo "  • Note: Pronto is pinned to our fork"
+	@echo ""
+	@read -p "Are you sure? (y/N) " -n 1 -r; \
+	echo ""; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		cd ../.. && clojure -M:outdated-upgrade --force --directory=tools/state-explorer; \
+		echo "✓ Dependencies upgraded. Remember to run 'make test' to verify!"; \
+	else \
+		echo "Upgrade cancelled."; \
+	fi

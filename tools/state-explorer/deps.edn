@@ -1,26 +1,26 @@
 {:paths ["src" "resources"]
  
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+ :deps {org.clojure/clojure {:mvn/version "1.12.2"}
         ;; Shared project with proto classes
         potatoclient/shared {:local/root "../../shared"}
         ;; WebSocket client library
-        hato/hato {:mvn/version "0.9.0"}
+        hato/hato {:mvn/version "1.0.0"}
         ;; Command-line argument parsing
-        org.clojure/tools.cli {:mvn/version "1.0.219"}
+        org.clojure/tools.cli {:mvn/version "1.1.230"}
         ;; JSON support (for potential JSON output)
-        org.clojure/data.json {:mvn/version "2.4.0"}
+        org.clojure/data.json {:mvn/version "2.5.1"}
         ;; Pronto for protobuf handling (using JAremko's fork via git)
         com.appsflyer/pronto {:git/url "https://github.com/JAremko/pronto.git"
                               :git/sha "5444ae5ec3b567a5565e6c1e90ba0850960331b6"}
         ;; Logging
-        org.clojure/tools.logging {:mvn/version "1.2.4"}
-        ch.qos.logback/logback-classic {:mvn/version "1.4.11"}
+        org.clojure/tools.logging {:mvn/version "1.3.0"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.18"}
         ;; Protocol Buffers runtime
-        com.google.protobuf/protobuf-java {:mvn/version "4.29.2"}
+        com.google.protobuf/protobuf-java {:mvn/version "4.32.0"}
         ;; Buf validate for protobuf validation
-        build.buf/protovalidate {:mvn/version "0.3.2"}
+        build.buf/protovalidate {:mvn/version "0.13.0"}
         ;; Pretty-printing for EDN
-        zprint/zprint {:mvn/version "1.2.8"}}
+        zprint/zprint {:mvn/version "1.3.0"}}
  
  :aliases
  {:run {:main-opts ["-m" "state-explorer.core"]}
@@ -31,10 +31,16 @@
          :main-opts ["-m" "cognitect.test-runner"
                      "-d" "test"]}
   
-  :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}
-                      cider/cider-nrepl {:mvn/version "0.28.5"}}
+  :repl {:extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}
+                      cider/cider-nrepl {:mvn/version "0.57.0"}}
          :main-opts ["-m" "nrepl.cmdline"
                      "--middleware" "[cider.nrepl/cider-middleware]"]}
   
-  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.6"}}
-          :ns-default build}}}
+  :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.10"}}
+          :ns-default build}
+  
+  :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
+             :main-opts ["-m" "antq.core"]}
+  
+  :outdated-upgrade {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
+                     :main-opts ["-m" "antq.core" "--upgrade"]}}}
