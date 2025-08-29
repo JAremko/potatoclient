@@ -1,13 +1,12 @@
 (ns potatoclient.ui.utils
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
-            [seesaw.core :as seesaw]
+  (:require [seesaw.core :as seesaw]
             [seesaw.cursor :as cursor])
   (:import (java.awt Component)
            (javax.swing.text JTextComponent)))
 
-(>defn mk-debounced-transform
+(defn mk-debounced-transform
   "Creates a debounced transform function for use with seesaw.bind.
   
   This prevents rapid updates from overwhelming the UI by only propagating
@@ -41,9 +40,8 @@
     (bind/bind *state
                (bind/some (mk-debounced-transform 
                            #(get-in % [:profile :settings :volume])))
-               (bind/value volume-slider))"
+               (bind/value volume-slider))" {:malli/schema [:=> [:cat :ifn] :ifn]}
   [xf]
-  [ifn? => ifn?]
   (let [*last-val (atom nil)]
     (fn [state]
       (let [last-val @*last-val
@@ -53,7 +51,7 @@
           (reset! *last-val new-val)
           new-val)))))
 
-(>defn debounce
+(defn debounce
   "Creates a debounced version of a function that delays execution until
   a specified quiet period has elapsed.
   
@@ -80,9 +78,8 @@
   - Auto-save functionality
   - Search-as-you-type features
   - Expensive computations triggered by user input
-  - API calls that shouldn't be made too frequently"
+  - API calls that shouldn't be made too frequently" {:malli/schema [:=> [:cat :ifn :pos-int] :ifn]}
   [f wait-ms]
-  [ifn? pos-int? => ifn?]
   (let [timeout (atom nil)]
     (fn [& args]
       (when @timeout
@@ -92,7 +89,7 @@
                 (Thread/sleep (long wait-ms))
                 (apply f args))))))
 
-(>defn throttle
+(defn throttle
   "Creates a throttled version of a function that limits execution to at most
   once per specified time period.
   
@@ -112,9 +109,8 @@
     ;; During rapid typing, preview updates at most every 100ms
   
   This differs from debounce in that it guarantees regular execution
-  during continuous calls, rather than waiting for a quiet period."
+  during continuous calls, rather than waiting for a quiet period." {:malli/schema [:=> [:cat :ifn :pos-int] :ifn]}
   [f period-ms]
-  [ifn? pos-int? => ifn?]
   (let [last-call (atom 0)]
     (fn [& args]
       (let [now (System/currentTimeMillis)
@@ -123,7 +119,7 @@
           (reset! last-call now)
           (apply f args))))))
 
-(>defn batch-updates
+(defn batch-updates
   "Batches multiple UI updates into a single EDT invocation for better performance.
   
   Parameters:
@@ -135,14 +131,13 @@
        #(seesaw/config! label2 :visible? false)  
        #(seesaw/config! button :enabled? true)])
   
-  This is more efficient than multiple separate invoke-later calls."
+  This is more efficient than multiple separate invoke-later calls." {:malli/schema [:=> [:cat [:sequential :ifn]] :nil]}
   [updates]
-  [[:sequential ifn?] => nil?]
   (seesaw/invoke-later
     (doseq [update-fn updates]
       (update-fn))))
 
-(>defn with-busy-cursor
+(defn with-busy-cursor
   "Executes a function while showing a busy cursor, then restores the original cursor.
   
   Parameters:
@@ -155,11 +150,8 @@
         (Thread/sleep (long 2000))  ; Simulate long operation
         (process-data)))
   
-  The cursor is guaranteed to be restored even if an exception occurs."
+  The cursor is guaranteed to be restored even if an exception occurs." {:malli/schema [:=> [:cat [:fn {:error/message "must be a Swing Component"} (fn* [p1__3804#] (instance? Component p1__3804#))] :ifn] :any]}
   [component f]
-  [[:fn {:error/message "must be a Swing Component"}
-    #(instance? Component %)]
-   ifn? => any?]
   (let [original-cursor (.getCursor component)
         busy-cursor (cursor/cursor :wait)]
     (try
@@ -170,7 +162,7 @@
         (seesaw.core/invoke-now
           (.setCursor component original-cursor))))))
 
-(>defn preserve-selection
+(defn preserve-selection
   "Preserves the selection and scroll position of a text component during updates.
   
   Parameters:
@@ -180,11 +172,8 @@
   Usage:
     (preserve-selection text-area
       (fn []
-        (seesaw/text! text-area (process-text (seesaw/text text-area)))))"
+        (seesaw/text! text-area (process-text (seesaw/text text-area)))))" {:malli/schema [:=> [:cat [:fn {:error/message "must be a text component"} (fn* [p1__3806#] (instance? JTextComponent p1__3806#))] :ifn] :nil]}
   [text-component update-fn]
-  [[:fn {:error/message "must be a text component"}
-    #(instance? JTextComponent %)]
-   ifn? => nil?]
   (let [caret-pos (.getCaretPosition text-component)
         selection-start (.getSelectionStart text-component)
         selection-end (.getSelectionEnd text-component)]

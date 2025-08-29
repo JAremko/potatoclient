@@ -10,24 +10,21 @@
                                                              tel/stop-handlers!]}}}}
   (:require [clojure.java.io :as io]
             [clojure.string]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.runtime :as runtime]
             [taoensso.telemere :as tel])
   (:import (java.time LocalDateTime)
            (java.time.format DateTimeFormatter)))
 
-(>defn- get-version
-  "Get application version"
+(defn- get-version
+  "Get application version" {:malli/schema [:=> [:cat] :string]}
   []
-  [=> string?]
   (try
     (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
     (catch Exception _ "dev")))
 
-(>defn- get-log-dir
-  "Get the log directory path using platform-specific conventions"
+(defn- get-log-dir
+  "Get the log directory path using platform-specific conventions" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/file]}
   []
-  [=> :potatoclient.ui-specs/file]
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
@@ -60,10 +57,9 @@
                         (io/file user-home ".local" "share"))]
         (io/file data-base "potatoclient" "logs")))))
 
-(>defn- get-log-file-path
-  "Get the path for the log file with timestamp and version"
+(defn- get-log-file-path
+  "Get the path for the log file with timestamp and version" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/file]}
   []
-  [=> :potatoclient.ui-specs/file]
   (let [logs-dir (if (runtime/release-build?)
                    (get-log-dir)
                    (io/file "logs"))
@@ -74,18 +70,16 @@
     (.mkdirs logs-dir)
     (io/file logs-dir filename)))
 
-(>defn- create-file-handler
-  "Create a file handler for Telemere"
+(defn- create-file-handler
+  "Create a file handler for Telemere" {:malli/schema [:=> [:cat] :fn]}
   []
-  [=> fn?]
   (tel/handler:file
     {:output-fn (tel/format-signal-fn)
      :path (.getAbsolutePath (get-log-file-path))}))
 
-(>defn- cleanup-old-logs!
-  "Keep only the newest N log files, delete older ones"
+(defn- cleanup-old-logs!
+  "Keep only the newest N log files, delete older ones" {:malli/schema [:=> [:cat :pos-int] :nil]}
   [max-files]
-  [pos-int? => nil?]
   (let [log-dir (if (runtime/release-build?)
                   (get-log-dir)
                   (io/file "logs"))]
@@ -108,10 +102,9 @@
 ;; Track if logging has been initialized
 (def ^:private initialized? (atom false))
 
-(>defn init!
-  "Initialize the logging system"
+(defn init!
+  "Initialize the logging system" {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   ;; Prevent double initialization
   (when (compare-and-set! initialized? false true)
     ;; Clean up old logs first (keep newest 50)
@@ -172,10 +165,9 @@
   ;; Ensure we return nil
   nil)
 
-(>defn shutdown!
-  "Shutdown the logging system"
+(defn shutdown!
+  "Shutdown the logging system" {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
   (tel/stop-handlers!)
   nil)
@@ -216,10 +208,9 @@
                               :event ~event-type}
                              ~data)}))
 
-(>defn get-logs-directory
-  "Get the logs directory path. Public function for UI access."
+(defn get-logs-directory
+  "Get the logs directory path. Public function for UI access." {:malli/schema [:=> [:cat] :potatoclient.ui-specs/file]}
   []
-  [=> :potatoclient.ui-specs/file]
   (if (runtime/release-build?)
     (get-log-dir)
     (io/file "logs")))

@@ -3,8 +3,7 @@
 
   This namespace provides the core UI state atom and basic accessors
   for managing application UI state."
-  (:require [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn ?]])
+  (:require [clojure.string :as str])
   (:import (java.net URI)
            (java.util Locale)))
 
@@ -84,34 +83,29 @@
 ;; Connection Management
 ;; ============================================================================
 
-(>defn get-connection-url
-  "Get current connection URL."
+(defn get-connection-url
+  "Get current connection URL." {:malli/schema [:=> [:cat] [:maybe :string]]}
   []
-  [=> (? string?)]
   (get-in @app-state [:connection :url]))
 
-(>defn set-connection-url!
-  "Set connection URL."
+(defn set-connection-url!
+  "Set connection URL." {:malli/schema [:=> [:cat :string] :map]}
   [url]
-  [string? => map?]
   (swap! app-state assoc-in [:connection :url] url))
 
-(>defn connected?
-  "Check if connected to server."
+(defn connected?
+  "Check if connected to server." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (get-in @app-state [:connection :connected?] false))
 
-(>defn set-connected!
-  "Set connection status."
+(defn set-connected!
+  "Set connection status." {:malli/schema [:=> [:cat :boolean] :map]}
   [connected?]
-  [boolean? => map?]
   (swap! app-state assoc-in [:connection :connected?] connected?))
 
-(>defn get-domain
-  "Get current domain from connection URL."
+(defn get-domain
+  "Get current domain from connection URL." {:malli/schema [:=> [:cat] :string]}
   []
-  [=> string?]
   (if-let [url (get-connection-url)]
     (try
       (let [uri (URI. url)
@@ -125,16 +119,14 @@
 ;; UI Configuration
 ;; ============================================================================
 
-(>defn get-locale
-  "Get current locale."
+(defn get-locale
+  "Get current locale." {:malli/schema [:=> [:cat] [:enum :english :ukrainian]]}
   []
-  [=> [:enum :english :ukrainian]]
   (get-in @app-state [:ui :locale] :english))
 
-(>defn set-locale!
-  "Set current locale and update Java default."
+(defn set-locale!
+  "Set current locale and update Java default." {:malli/schema [:=> [:cat [:enum :english :ukrainian]] :map]}
   [locale]
-  [[:enum :english :ukrainian] => map?]
   (let [locale-map {:english ["en" "US"]
                     :ukrainian ["uk" "UA"]}
         [lang country] (get locale-map locale ["en" "US"])]
@@ -142,51 +134,44 @@
       (Locale/forLanguageTag (str lang "-" country))))
   (swap! app-state assoc-in [:ui :locale] locale))
 
-(>defn get-theme
-  "Get current theme."
+(defn get-theme
+  "Get current theme." {:malli/schema [:=> [:cat] :keyword]}
   []
-  [=> keyword?]
   (get-in @app-state [:ui :theme] :sol-dark))
 
-(>defn set-theme!
-  "Set UI theme."
+(defn set-theme!
+  "Set UI theme." {:malli/schema [:=> [:cat :keyword] :map]}
   [theme]
-  [keyword? => map?]
   (swap! app-state assoc-in [:ui :theme] theme))
 
-(>defn fullscreen?
-  "Check if in fullscreen mode."
+(defn fullscreen?
+  "Check if in fullscreen mode." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (get-in @app-state [:ui :fullscreen?] false))
 
-(>defn set-fullscreen!
-  "Set fullscreen mode."
+(defn set-fullscreen!
+  "Set fullscreen mode." {:malli/schema [:=> [:cat :boolean] :map]}
   [fullscreen?]
-  [boolean? => map?]
   (swap! app-state assoc-in [:ui :fullscreen?] fullscreen?))
 
 ;; ============================================================================
 ;; Session Management
 ;; ============================================================================
 
-(>defn get-session
-  "Get current session info."
+(defn get-session
+  "Get current session info." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (get @app-state :session {}))
 
-(>defn start-session!
-  "Start a new session."
+(defn start-session!
+  "Start a new session." {:malli/schema [:=> [:cat [:maybe :string]] :map]}
   [user]
-  [(? string?) => map?]
   (swap! app-state assoc :session {:user user
                                    :started-at (System/currentTimeMillis)}))
 
-(>defn end-session!
-  "End current session."
+(defn end-session!
+  "End current session." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (swap! app-state assoc :session {:user nil
                                    :started-at nil}))
 
@@ -194,25 +179,19 @@
 ;; Process Management
 ;; ============================================================================
 
-(>defn get-process-state
-  "Get state of a specific process."
+(defn get-process-state
+  "Get state of a specific process." {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] [:maybe :map]]}
   [process-key]
-  [[:enum :state-proc :cmd-proc :heat-video :day-video] => (? map?)]
   (get-in @app-state [:processes process-key]))
 
-(>defn process-running?
-  "Check if a process is running."
+(defn process-running?
+  "Check if a process is running." {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] :boolean]}
   [process-key]
-  [[:enum :state-proc :cmd-proc :heat-video :day-video] => boolean?]
   (= :running (get-in @app-state [:processes process-key :status])))
 
-(>defn update-process-status!
-  "Update process status."
+(defn update-process-status!
+  "Update process status." {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :running :stopped :error]] :map]}
   [process-key pid status]
-  [[:enum :state-proc :cmd-proc :heat-video :day-video]
-   (? pos-int?)
-   [:enum :running :stopped :error]
-   => map?]
   (swap! app-state assoc-in [:processes process-key]
          {:pid pid :status status}))
 
@@ -220,151 +199,132 @@
 ;; Stream Process Management
 ;; ============================================================================
 
-(>defn add-stream-process!
-  "Add stream process info."
+(defn add-stream-process!
+  "Add stream process info." {:malli/schema [:=> [:cat [:enum :heat :day] :map] :map]}
   [stream-type process-map]
-  [[:enum :heat :day] map? => map?]
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
     (swap! app-state assoc-in [:stream-processes process-key] process-map)))
 
-(>defn get-stream-process
-  "Get stream process info."
+(defn get-stream-process
+  "Get stream process info." {:malli/schema [:=> [:cat [:enum :heat :day]] [:maybe :map]]}
   [stream-type]
-  [[:enum :heat :day] => (? map?)]
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
     (get-in @app-state [:stream-processes process-key])))
 
-(>defn remove-stream-process!
-  "Remove stream process."
+(defn remove-stream-process!
+  "Remove stream process." {:malli/schema [:=> [:cat [:enum :heat :day]] :map]}
   [stream-type]
-  [[:enum :heat :day] => map?]
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
     (swap! app-state update :stream-processes dissoc process-key)))
 
-(>defn get-all-stream-processes
-  "Get all stream processes."
+(defn get-all-stream-processes
+  "Get all stream processes." {:malli/schema [:=> [:cat] [:map-of :keyword :map]]}
   []
-  [=> [:map-of keyword? map?]]
   (get @app-state :stream-processes {}))
 
 ;; ============================================================================
 ;; Server State Management
 ;; ============================================================================
 
-(>defn get-server-state
-  "Get the current server state."
+(defn get-server-state
+  "Get the current server state." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (:server-state @app-state))
 
-(>defn update-server-state!
-  "Update server state."
+(defn update-server-state!
+  "Update server state." {:malli/schema [:=> [:cat :map] :map]}
   [updates]
-  [map? => map?]
   (swap! app-state update :server-state merge updates))
 
-(>defn get-subsystem-state
-  "Get state for a specific subsystem."
+(defn get-subsystem-state
+  "Get state for a specific subsystem." {:malli/schema [:=> [:cat :keyword] [:maybe :map]]}
   [subsystem]
-  [keyword? => (? map?)]
   (get-in @app-state [:server-state subsystem]))
 
 ;; ============================================================================
 ;; Extended UI Configuration
 ;; ============================================================================
 
-(>defn read-only-mode?
-  "Check if in read-only mode."
+(defn read-only-mode?
+  "Check if in read-only mode." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (get-in @app-state [:ui :read-only-mode?] false))
 
-(>defn set-read-only-mode!
-  "Set read-only mode."
+(defn set-read-only-mode!
+  "Set read-only mode." {:malli/schema [:=> [:cat :boolean] :map]}
   [enabled?]
-  [boolean? => map?]
   (swap! app-state assoc-in [:ui :read-only-mode?] enabled?))
 
-(>defn show-overlay?
-  "Check if overlay should be shown."
+(defn show-overlay?
+  "Check if overlay should be shown." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (get-in @app-state [:ui :show-overlay?] true))
 
-(>defn set-show-overlay!
-  "Set overlay visibility."
+(defn set-show-overlay!
+  "Set overlay visibility." {:malli/schema [:=> [:cat :boolean] :map]}
   [show?]
-  [boolean? => map?]
   (swap! app-state assoc-in [:ui :show-overlay?] show?))
 
 ;; ============================================================================
 ;; Extended Connection Management
 ;; ============================================================================
 
-(>defn get-connection-latency
-  "Get connection latency in milliseconds."
+(defn get-connection-latency
+  "Get connection latency in milliseconds." {:malli/schema [:=> [:cat] [:maybe :pos-int]]}
   []
-  [=> (? pos-int?)]
   (get-in @app-state [:connection :latency-ms]))
 
-(>defn get-reconnect-count
-  "Get reconnection attempt count."
+(defn get-reconnect-count
+  "Get reconnection attempt count." {:malli/schema [:=> [:cat] :int]}
   []
-  [=> int?]
   (get-in @app-state [:connection :reconnect-count] 0))
 
-(>defn set-connection-state!
-  "Set complete connection state."
+(defn set-connection-state!
+  "Set complete connection state." {:malli/schema [:=> [:cat :boolean [:maybe :string] [:maybe :pos-int]] :map]}
   [connected? url latency-ms]
-  [boolean? (? string?) (? pos-int?) => map?]
   (swap! app-state update :connection
          (fn [conn]
            (cond-> (assoc conn :connected? connected?)
              url (assoc :url url)
              latency-ms (assoc :latency-ms latency-ms)))))
 
-(>defn increment-reconnect-count!
-  "Increment reconnection attempt counter."
+(defn increment-reconnect-count!
+  "Increment reconnection attempt counter." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (swap! app-state update-in [:connection :reconnect-count] (fnil inc 0)))
 
-(>defn reset-reconnect-count!
-  "Reset reconnection attempt counter."
+(defn reset-reconnect-count!
+  "Reset reconnection attempt counter." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (swap! app-state assoc-in [:connection :reconnect-count] 0))
 
 ;; ============================================================================
 ;; State Observation
 ;; ============================================================================
 
-(>defn add-watch-handler
-  "Add a watch handler to app-state."
+(defn add-watch-handler
+  "Add a watch handler to app-state." {:malli/schema [:=> [:cat :keyword :fn] :nil]}
   [key handler-fn]
-  [keyword? fn? => nil?]
   (add-watch app-state key handler-fn)
   nil)
 
-(>defn remove-watch-handler
-  "Remove a watch handler from app-state."
+(defn remove-watch-handler
+  "Remove a watch handler from app-state." {:malli/schema [:=> [:cat :keyword] :nil]}
   [key]
-  [keyword? => nil?]
   (remove-watch app-state key)
   nil)
 
-(>defn cleanup-seesaw-bindings!
+(defn cleanup-seesaw-bindings!
   "Remove all watchers added by seesaw.bind from app-state.
   Seesaw bind uses gensym keys like :bindable-atom-watcherXXXXX
-  This scans and removes all such watchers."
+  This scans and removes all such watchers." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (let [watchers (keys (.getWatches app-state))
         ;; Seesaw bind creates keys like :bindable-atom-watcherXXXXX
         seesaw-watchers (filter #(and (keyword? %)
@@ -377,14 +337,12 @@
       (remove-watch app-state watcher-key))
     nil))
 
-(>defn current-state
-  "Get a snapshot of entire app state (for debugging)."
+(defn current-state
+  "Get a snapshot of entire app state (for debugging)." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   @app-state)
 
-(>defn reset-state!
-  "Reset entire app state to initial values."
+(defn reset-state!
+  "Reset entire app state to initial values." {:malli/schema [:=> [:cat] :map]}
   []
-  [=> map?]
   (reset! app-state initial-state))

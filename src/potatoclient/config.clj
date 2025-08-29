@@ -3,7 +3,6 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
             [potatoclient.theme :as theme]
@@ -13,10 +12,9 @@
 
 (def ^:private config-file-name "potatoclient-config.edn")
 
-(>defn- extract-domain*
-  "Extract domain/IP from various URL formats."
+(defn- extract-domain*
+  "Extract domain/IP from various URL formats." {:malli/schema [:=> [:cat :string] :potatoclient.ui-specs/domain]}
   [input]
-  [string? => :potatoclient.ui-specs/domain]
   (let [cleaned (str/trim input)]
     ;; If it's already just a domain/IP (no protocol, no path), return as-is
     (if (and (not (str/includes? cleaned "://"))
@@ -41,10 +39,9 @@
           cleaned
           domain)))))
 
-(>defn- get-config-dir
-  "Get the configuration directory path using platform-specific conventions"
+(defn- get-config-dir
+  "Get the configuration directory path using platform-specific conventions" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/file]}
   []
-  [=> :potatoclient.ui-specs/file]
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
@@ -76,24 +73,21 @@
                           (io/file user-home ".config"))]
         (io/file config-base "potatoclient")))))
 
-(>defn- get-config-file
-  "Get the configuration file"
+(defn- get-config-file
+  "Get the configuration file" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/file]}
   []
-  [=> :potatoclient.ui-specs/file]
   (io/file (get-config-dir) config-file-name))
 
-(>defn- ensure-config-dir!
-  "Ensure the configuration directory exists"
+(defn- ensure-config-dir!
+  "Ensure the configuration directory exists" {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (let [config-dir (get-config-dir)]
     (when-not (.exists ^File config-dir)
       (.mkdirs ^File config-dir))))
 
-(>defn load-config
-  "Load configuration from file, return minimal config if not found"
+(defn load-config
+  "Load configuration from file, return minimal config if not found" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/config]}
   []
-  [=> :potatoclient.ui-specs/config]
   (let [config-file (get-config-file)
         ;; Minimal config - no URL by default
         minimal-config {:theme :sol-dark
@@ -123,10 +117,9 @@
           minimal-config))
       minimal-config)))
 
-(>defn save-config!
-  "Save configuration to file"
+(defn save-config!
+  "Save configuration to file" {:malli/schema [:=> [:cat :potatoclient.ui-specs/config] :boolean]}
   [config]
-  [:potatoclient.ui-specs/config => boolean?]
   (if (m/validate ::specs/config config)
     (try
       (ensure-config-dir!)
@@ -140,30 +133,26 @@
       (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::specs/config config))})
       false)))
 
-(>defn save-theme!
-  "Save the current theme to config"
+(defn save-theme!
+  "Save the current theme to config" {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :boolean]}
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => boolean?]
   (let [config (load-config)]
     (save-config! (assoc config :theme theme-key))))
 
-(>defn update-config!
-  "Update a specific configuration key-value pair"
+(defn update-config!
+  "Update a specific configuration key-value pair" {:malli/schema [:=> [:cat :potatoclient.ui-specs/config-key [:or :potatoclient.ui-specs/theme-key :potatoclient.ui-specs/domain :potatoclient.ui-specs/locale :potatoclient.ui-specs/url-history]] :boolean]}
   [key value]
-  [:potatoclient.ui-specs/config-key [:or :potatoclient.ui-specs/theme-key :potatoclient.ui-specs/domain :potatoclient.ui-specs/locale :potatoclient.ui-specs/url-history] => boolean?]
   (let [config (load-config)]
     (save-config! (assoc config key value))))
 
-(>defn get-config-location
-  "Get the full path to the configuration file (for debugging)"
+(defn get-config-location
+  "Get the full path to the configuration file (for debugging)" {:malli/schema [:=> [:cat] :string]}
   []
-  [=> string?]
   (.getAbsolutePath ^File (get-config-file)))
 
-(>defn initialize!
-  "Initialize configuration system"
+(defn initialize!
+  "Initialize configuration system" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/config]}
   []
-  [=> :potatoclient.ui-specs/config]
   (let [config (load-config)
         config-file (get-config-file)]
     ;; Log config location on first run
@@ -185,32 +174,28 @@
 ;; URL History Management
 ;; -----------------------------------------------------------------------------
 
-(>defn get-url-history
-  "Get URL history from current config"
+(defn get-url-history
+  "Get URL history from current config" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/url-history]}
   []
-  [=> :potatoclient.ui-specs/url-history]
   (let [config (load-config)]
     (or (:url-history config) [])))
 
-(>defn get-recent-urls
-  "Get up to 10 most recent unique URLs as a vector, sorted by timestamp (newest first)"
+(defn get-recent-urls
+  "Get up to 10 most recent unique URLs as a vector, sorted by timestamp (newest first)" {:malli/schema [:=> [:cat] [:vector :string]]}
   []
-  [=> [:vector string?]]
   (vec (map :url
             (take 10
                   (sort-by :timestamp #(compare %2 %1) (get-url-history))))))
 
-(>defn get-most-recent-url
-  "Get the most recently used URL from history"
+(defn get-most-recent-url
+  "Get the most recently used URL from history" {:malli/schema [:=> [:cat] [:maybe :string]]}
   []
-  [=> (? string?)]
   (when-let [history (seq (get-url-history))]
     (:url (first (sort-by :timestamp #(compare %2 %1) history)))))
 
-(>defn get-domain
-  "Get the domain from the most recent URL or legacy domain field"
+(defn get-domain
+  "Get the domain from the most recent URL or legacy domain field" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/domain]}
   []
-  [=> :potatoclient.ui-specs/domain]
   (let [config (load-config)]
     ;; Try to get domain from most recent URL in history
     (if-let [recent-url (get-most-recent-url)]
@@ -218,10 +203,9 @@
       ;; Fallback to legacy domain field, or use localhost
       (or (:domain config) "localhost"))))
 
-(>defn add-url-to-history
-  "Add a URL to the history with current timestamp, maintaining max 10 unique URLs"
+(defn add-url-to-history
+  "Add a URL to the history with current timestamp, maintaining max 10 unique URLs" {:malli/schema [:=> [:cat :string] :nil]}
   [url]
-  [string? => nil?]
   (when (and url (not (clojure.string/blank? url)))
     (let [config (load-config)
           current-history (get-url-history)

@@ -1,7 +1,6 @@
 (ns potatoclient.theme
   "Theme management for PotatoClient using DarkLaf"
   (:require [clojure.java.io :as io]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [malli.core :as m]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime]
@@ -19,16 +18,14 @@
 ;; Theme configuration atom
 (def ^:private theme-config (atom {:current-theme :sol-dark}))
 
-(>defn get-current-theme
-  "Get the current theme key"
+(defn get-current-theme
+  "Get the current theme key" {:malli/schema [:=> [:cat] :potatoclient.ui-specs/theme-key]}
   []
-  [=> :potatoclient.ui-specs/theme-key]
   (:current-theme @theme-config))
 
-(>defn- apply-theme!
-  "Apply the given theme using DarkLaf"
+(defn- apply-theme!
+  "Apply the given theme using DarkLaf" {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :nil]}
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => nil?]
   (case theme-key
     :sol-light (LafManager/setTheme (SolarizedLightTheme.))
     :sol-dark (LafManager/setTheme (SolarizedDarkTheme.))
@@ -38,10 +35,9 @@
     (LafManager/setTheme (SolarizedDarkTheme.)))
   (LafManager/install))
 
-(>defn set-theme!
-  "Set and apply a new theme"
+(defn set-theme!
+  "Set and apply a new theme" {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :boolean]}
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => boolean?]
   (if (m/validate ::specs/theme-key theme-key)
     (do
       (swap! theme-config assoc :current-theme theme-key)
@@ -51,18 +47,16 @@
       (logging/log-error {:msg (str "Invalid theme key: " theme-key)})
       false)))
 
-(>defn initialize-theme!
-  "Initialize the theming system with default or saved theme"
+(defn initialize-theme!
+  "Initialize the theming system with default or saved theme" {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :nil]}
   [initial-theme]
-  [:potatoclient.ui-specs/theme-key => nil?]
   (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme))
   nil)
 
-(>defn get-theme-i18n-key
-  "Get the i18n key for a theme"
+(defn get-theme-i18n-key
+  "Get the i18n key for a theme" {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :keyword]}
   [theme-key]
-  [:potatoclient.ui-specs/theme-key => keyword?]
   (case theme-key
     :sol-light :theme-sol-light
     :sol-dark :theme-sol-dark
@@ -70,16 +64,14 @@
     :hi-dark :theme-hi-dark
     :theme-unknown))
 
-(>defn get-available-themes
-  "Get a vector of available theme keys"
+(defn get-available-themes
+  "Get a vector of available theme keys" {:malli/schema [:=> [:cat] [:sequential :potatoclient.ui-specs/theme-key]]}
   []
-  [=> [:sequential :potatoclient.ui-specs/theme-key]]
   [:sol-light :sol-dark :dark :hi-dark])
 
-(>defn- is-development-mode?
-  "Check if running in development mode."
+(defn- is-development-mode?
+  "Check if running in development mode." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (not (runtime/release-build?)))
 
 ;; Date formatter for logging
@@ -87,19 +79,17 @@
   (ThreadLocal/withInitial
     #(SimpleDateFormat. "HH:mm:ss.SSS")))
 
-(>defn- log-theme
-  "Log theme-related messages in development mode."
+(defn- log-theme
+  "Log theme-related messages in development mode." {:malli/schema [:=> [:cat :string :string] :string]}
   [level message]
-  [string? string? => string?]
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date.))]
     (format "[%s] THEME %s: %s" timestamp level message)))
 
 (declare key->icon)
 
-(>defn key->icon
-  "Load theme-aware icon by key. Returns nil if icon not found."
+(defn key->icon
+  "Load theme-aware icon by key. Returns nil if icon not found." {:malli/schema [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]]}
   [icon-key]
-  [keyword? => (? :potatoclient.ui-specs/icon)]
   (let [icon-name (name icon-key)
         theme-name (name (get-current-theme))
         path (str "skins/" theme-name "/icons/" icon-name ".png")
@@ -121,10 +111,9 @@
                                                 icon-name (.getMessage e)))))
           nil)))))
 
-(>defn preload-theme-icons!
-  "Preload all icons for the current theme to ensure they're available."
+(defn preload-theme-icons!
+  "Preload all icons for the current theme to ensure they're available." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (when (is-development-mode?)
     (println (log-theme "INFO" (format "Preloading icons for theme: %s" (name (get-current-theme))))))
   (let [icons-to-preload [:actions-group-menu :actions-group-theme :icon-languages

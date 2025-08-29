@@ -2,7 +2,6 @@
   "Reusable menu bar creation for application frames."
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
@@ -18,11 +17,9 @@
            (javax.swing Box JFrame)))
 
 
-(>defn preserve-window-state
-  "Extract window state for restoration."
+(defn preserve-window-state
+  "Extract window state for restoration." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3788#] (instance? JFrame p1__3788#))]] :potatoclient.ui-specs/window-state]}
   [frame]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => :potatoclient.ui-specs/window-state]
   (let [^Rectangle bounds (.getBounds frame)]
     {:bounds {:x (.x bounds)
               :y (.y bounds)
@@ -30,25 +27,17 @@
               :height (.height bounds)}
      :extended-state (.getExtendedState frame)}))
 
-(>defn restore-window-state!
-  "Restore window state to a frame."
+(defn restore-window-state!
+  "Restore window state to a frame." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3790#] (instance? JFrame p1__3790#))] :potatoclient.ui-specs/window-state] [:fn {:error/message "must be a JFrame"} (fn* [p1__3792#] (instance? JFrame p1__3792#))]]}
   [frame state]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   :potatoclient.ui-specs/window-state
-   => [:fn {:error/message "must be a JFrame"}
-       #(instance? JFrame %)]]
   (doto frame
     (.setBounds (when-let [{:keys [x y width height]} (:bounds state)]
                   (Rectangle. x y width height)))
     (.setExtendedState (:extended-state state))))
 
-(>defn- reload-frame!
-  "Reload the frame following the ArcherBC2 pattern."
+(defn- reload-frame!
+  "Reload the frame following the ArcherBC2 pattern." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3794#] (instance? JFrame p1__3794#))] :ifn] :nil]}
   [frame frame-cons]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   ifn? => nil?]
   (seesaw/invoke-later
     (let [window-state (preserve-window-state frame)]
       ;; Clean up all seesaw bindings before disposing frame
@@ -58,10 +47,9 @@
       (let [new-frame (frame-cons window-state)]
         (seesaw/show! new-frame)))))
 
-(>defn- create-language-action
-  "Create a language selection action."
+(defn- create-language-action
+  "Create a language selection action." {:malli/schema [:=> [:cat :potatoclient.ui-specs/locale :string :ifn] :any]}
   [lang-key display-name reload-fn]
-  [:potatoclient.ui-specs/locale string? ifn? => any?]
   (let [flag-icon (case lang-key
                     :english (seesaw/icon (io/resource "flags/en.png"))
                     :ukrainian (seesaw/icon (io/resource "flags/ua.png"))
@@ -75,10 +63,9 @@
                    (config/update-config! :locale lang-key)
                    (reload-frame! (seesaw/to-root e) reload-fn))))))
 
-(>defn- create-theme-action
-  "Create a theme selection action."
+(defn- create-theme-action
+  "Create a theme selection action." {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key :ifn] :any]}
   [theme-key reload-fn]
-  [:potatoclient.ui-specs/theme-key ifn? => any?]
   (let [theme-i18n-key (theme/get-theme-i18n-key theme-key)
         theme-name (i18n/tr theme-i18n-key)]
     (action/action
@@ -90,31 +77,27 @@
                      (config/save-theme! theme-key)
                      (reload-frame! (seesaw/to-root e) reload-fn)))))))
 
-(>defn- create-theme-menu
-  "Create the Theme menu."
+(defn- create-theme-menu
+  "Create the Theme menu." {:malli/schema [:=> [:cat :ifn] :any]}
   [reload-fn]
-  [ifn? => any?]
   (seesaw/menu
     :text (i18n/tr :menu-view-theme)
     :icon (theme/key->icon :actions-group-theme)
     :items (map #(create-theme-action % reload-fn)
                 (theme/get-available-themes))))
 
-(>defn- create-language-menu
-  "Create the Language menu."
+(defn- create-language-menu
+  "Create the Language menu." {:malli/schema [:=> [:cat :ifn] :any]}
   [reload-fn]
-  [ifn? => any?]
   (seesaw/menu
     :text (i18n/tr :menu-view-language)
     :icon (theme/key->icon :icon-languages)
     :items [(create-language-action :english "English" reload-fn)
             (create-language-action :ukrainian "Українська" reload-fn)]))
 
-(>defn- show-about-dialog
-  "Show the About dialog."
+(defn- show-about-dialog
+  "Show the About dialog." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3796#] (instance? JFrame p1__3796#))]] :nil]}
   [parent]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => nil?]
   (let [version (try
                   (str/trim (slurp (io/resource "VERSION")))
                   (catch Exception _ "dev"))
@@ -125,17 +108,14 @@
                   :title (i18n/tr :about-title)
                   :type :info)))
 
-(>defn- open-logs-viewer
-  "Open the log viewer window."
+(defn- open-logs-viewer
+  "Open the log viewer window." {:malli/schema [:=> [:cat] :any]}
   []
-  [=> any?]
   (log-viewer/show-log-viewer))
 
-(>defn- create-help-menu
-  "Create the Help menu."
+(defn- create-help-menu
+  "Create the Help menu." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3798#] (instance? JFrame p1__3798#))]] :any]}
   [parent]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => any?]
   (let [menu-items [(action/action
                       :name (i18n/tr :menu-help-about)
                       :icon (theme/key->icon :tab-icon-description)
@@ -150,10 +130,9 @@
       :icon (theme/key->icon :actions-group-menu)
       :items menu-items)))
 
-(>defn- create-stream-toggle-button
-  "Create a stream toggle button for the menu bar."
+(defn- create-stream-toggle-button
+  "Create a stream toggle button for the menu bar." {:malli/schema [:=> [:cat :potatoclient.ui-specs/stream-key] :any]}
   [stream-key]
-  [:potatoclient.ui-specs/stream-key => any?]
   (let [stream-config {:heat {:endpoint "/ws/ws_rec_video_heat"
                               :tooltip "Heat Camera (900x720)"
                               :label-key :stream-thermal}
@@ -188,7 +167,7 @@
     
     button))
 
-(>defn create-menubar
+(defn create-menubar
   "Create a menu bar with the specified options.
 
   Options map can contain:
@@ -197,9 +176,8 @@
   - :include-stream-buttons? - Whether to include stream toggle buttons (default: false)
   - :include-help? - Whether to include the Help menu (default: true)
   - :include-theme? - Whether to include the Theme menu (default: true)
-  - :include-language? - Whether to include the Language menu (default: true)"
+  - :include-language? - Whether to include the Language menu (default: true)" {:malli/schema [:=> [:cat :map] :any]}
   [opts]
-  [map? => any?]
   (let [{:keys [reload-fn parent include-stream-buttons? include-help?
                 include-theme? include-language?]
          :or {include-help? true
@@ -223,10 +201,9 @@
                   (seesaw/menubar :items items))]
     menubar))
 
-(>defn cleanup-menubar!
+(defn cleanup-menubar!
   "Clean up all bindings associated with a menu bar.
   This is now handled automatically by state/cleanup-seesaw-bindings!
-  Kept for backward compatibility."
+  Kept for backward compatibility." {:malli/schema [:=> [:cat :any] :nil]}
   [_]
-  [any? => nil?]
   (state/cleanup-seesaw-bindings!))

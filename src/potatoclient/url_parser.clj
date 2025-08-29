@@ -3,17 +3,15 @@
    Single source of truth for all URL/domain/IP validation in the application."
   (:require [clojure.core.match :refer [match]]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
             [instaparse.core :as insta]))
 
 ;; -----------------------------------------------------------------------------
 ;; Pre-processing to help parser
 ;; -----------------------------------------------------------------------------
 
-(>defn- looks-like-ipv4?
-  "Quick check if string looks like an IPv4 address"
+(defn- looks-like-ipv4?
+  "Quick check if string looks like an IPv4 address" {:malli/schema [:=> [:cat :string] :boolean]}
   [s]
-  [string? => boolean?]
   (boolean (re-matches #"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$" s)))
 
 ;; -----------------------------------------------------------------------------
@@ -63,36 +61,32 @@
 ;; Validation Functions
 ;; -----------------------------------------------------------------------------
 
-(>defn- valid-octet?
-  "Check if string represents a valid octet (0-255)"
+(defn- valid-octet?
+  "Check if string represents a valid octet (0-255)" {:malli/schema [:=> [:cat :string] :boolean]}
   [s]
-  [string? => boolean?]
   (try
     (<= 0 (Integer/parseInt s) 255)
     (catch NumberFormatException _
       false)))
 
-(>defn- valid-port?
-  "Check if string represents a valid port (1-65535)"
+(defn- valid-port?
+  "Check if string represents a valid port (1-65535)" {:malli/schema [:=> [:cat :string] :boolean]}
   [s]
-  [string? => boolean?]
   (try
     (let [port (Integer/parseInt s)]
       (<= 1 port 65535))
     (catch NumberFormatException _
       false)))
 
-(>defn- valid-ipv4?
-  "Validate IPv4 from parsed components"
+(defn- valid-ipv4?
+  "Validate IPv4 from parsed components" {:malli/schema [:=> [:cat :sequential] :boolean]}
   [octets]
-  [sequential? => boolean?]
   (and (= 4 (count octets))
        (every? valid-octet? octets)))
 
-(>defn- valid-ipv6?
-  "Basic IPv6 validation"
+(defn- valid-ipv6?
+  "Basic IPv6 validation" {:malli/schema [:=> [:cat :string] :boolean]}
   [addr]
-  [string? => boolean?]
   ;; Basic check - proper IPv6 validation is complex
   (boolean (and (str/includes? addr ":")
                 (re-matches #"^[0-9a-fA-F:]+$" addr))))
@@ -101,35 +95,31 @@
 ;; AST Processing with core.match
 ;; -----------------------------------------------------------------------------
 
-(>defn- extract-text
-  "Extract text content from parse tree node"
+(defn- extract-text
+  "Extract text content from parse tree node" {:malli/schema [:=> [:cat :any] :string]}
   [node]
-  [any? => string?]
   (cond
     (string? node) node
     (and (vector? node) (= :OCTET (first node))) (second node)
     (and (vector? node) (= :LABEL (first node))) (second node)
     :else (apply str (filter string? node))))
 
-(>defn- process-ipv4
-  "Process IPV4 node"
+(defn- process-ipv4
+  "Process IPV4 node" {:malli/schema [:=> [:cat :vector] [:maybe :string]]}
   [ipv4-node]
-  [vector? => (? string?)]
   (let [octets (map extract-text (filter #(and (vector? %) (= :OCTET (first %))) ipv4-node))]
     (when (valid-ipv4? octets)
       (str/join "." octets))))
 
-(>defn- process-domain
-  "Process DOMAIN node"
+(defn- process-domain
+  "Process DOMAIN node" {:malli/schema [:=> [:cat :vector] :string]}
   [domain-node]
-  [vector? => string?]
   (let [labels (map extract-text (filter #(and (vector? %) (= :LABEL (first %))) domain-node))]
     (str/join "." labels)))
 
-(>defn- extract-host
-  "Extract host from various node types"
+(defn- extract-host
+  "Extract host from various node types" {:malli/schema [:=> [:cat :any] [:maybe :string]]}
   [node]
-  [any? => (? string?)]
   (match node
     [:IPV4 & _] (process-ipv4 node)
     [:IPV6 addr] (when (valid-ipv6? addr) addr)
@@ -137,10 +127,9 @@
     [:DOMAIN & _] (process-domain node)
     _ nil))
 
-(>defn- extract-host-from-ast
-  "Extract host (domain or IP) from parsed AST"
+(defn- extract-host-from-ast
+  "Extract host (domain or IP) from parsed AST" {:malli/schema [:=> [:cat :any] [:maybe :string]]}
   [ast]
-  [any? => (? string?)]
   (match ast
     ;; Full URL
     [:INPUT [:URL _ [:AUTHORITY host & _] & _]]
@@ -168,10 +157,9 @@
 ;; Public API
 ;; -----------------------------------------------------------------------------
 
-(>defn parse-url
-  "Parse URL and return parse tree or failure"
+(defn parse-url
+  "Parse URL and return parse tree or failure" {:malli/schema [:=> [:cat :string] :any]}
   [input]
-  [string? => any?]
   (let [trimmed (str/trim input)
         result (url-grammar trimmed)]
     ;; If we parsed something as a domain, check if it might be an invalid IPv4
@@ -194,21 +182,19 @@
           result))
       result)))
 
-(>defn extract-domain
+(defn extract-domain
   "Extract domain/IP from various URL formats using Instaparse.
-   Returns extracted domain or nil if invalid."
+   Returns extracted domain or nil if invalid." {:malli/schema [:=> [:cat :string] [:maybe :string]]}
   [input]
-  [string? => (? string?)]
   (let [parsed (parse-url input)]
     (if (insta/failure? parsed)
       nil
       (extract-host-from-ast parsed))))
 
-(>defn validate-url-input
+(defn validate-url-input
   "Validate user input and return either {:valid true :domain domain} 
-   or {:valid false :error error-keyword}"
+   or {:valid false :error error-keyword}" {:malli/schema [:=> [:cat :string] :map]}
   [input]
-  [string? => map?]
   (if (str/blank? input)
     {:valid false
      :error :url-error-empty}
@@ -218,10 +204,9 @@
       {:valid false
        :error :url-error-invalid-format})))
 
-(>defn get-example-format-keys
-  "Get example URL format keys for user help"
+(defn get-example-format-keys
+  "Get example URL format keys for user help" {:malli/schema [:=> [:cat] [:vector :keyword]]}
   []
-  [=> [:vector keyword?]]
   [:url-example-domain      ; "example.com"
    :url-example-subdomain   ; "app.example.com"
    :url-example-ip          ; "192.168.1.100"
@@ -230,10 +215,9 @@
    :url-example-wss         ; "wss://example.com:8080/ws"
    :url-example-localhost]) ; "localhost"
 
-(>defn parse-tree-node-type
-  "Get the type of node in the parse tree (the first element after :INPUT)"
+(defn parse-tree-node-type
+  "Get the type of node in the parse tree (the first element after :INPUT)" {:malli/schema [:=> [:cat :string] [:maybe :keyword]]}
   [input]
-  [string? => (? keyword?)]
   (let [parsed (parse-url input)]
     (when-not (insta/failure? parsed)
       (match parsed
@@ -250,18 +234,16 @@
 ;; Validation API using Grammar
 ;; -----------------------------------------------------------------------------
 
-(>defn valid-domain-or-ip?
+(defn valid-domain-or-ip?
   "Check if string is a valid domain name or IP address using the grammar.
-   This is the single source of truth for domain/IP validation."
+   This is the single source of truth for domain/IP validation." {:malli/schema [:=> [:cat :string] :boolean]}
   [s]
-  [string? => boolean?]
   (let [parsed (parse-url s)]
     (and (not (insta/failure? parsed))
          (not= (parse-tree-node-type s) :EMPTY)
          (some? (extract-host-from-ast parsed)))))
 
-(>defn valid-url?
-  "Check if string is a valid URL (has protocol)"
+(defn valid-url?
+  "Check if string is a valid URL (has protocol)" {:malli/schema [:=> [:cat :string] :boolean]}
   [s]
-  [string? => boolean?]
   (= (parse-tree-node-type s) :URL))

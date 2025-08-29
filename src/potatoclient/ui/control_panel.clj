@@ -3,8 +3,7 @@
 
   Provides the main control interface for connecting/disconnecting
   video streams and managing application settings."
-  (:require [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
-            [potatoclient.i18n :as i18n]
+  (:require [potatoclient.i18n :as i18n]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [seesaw.bind :as bind]
@@ -16,11 +15,9 @@
 
 ;; UI styling constants
 
-(>defn- create-stream-status-panel
-  "Create a status panel for a single stream."
+(defn- create-stream-status-panel
+  "Create a status panel for a single stream." {:malli/schema [:=> [:cat :potatoclient.ui-specs/stream-key] [:fn {:error/message "must be a Swing panel"} (fn* [p1__3768#] (instance? JPanel p1__3768#))]]}
   [stream-key]
-  [:potatoclient.ui-specs/stream-key => [:fn {:error/message "must be a Swing panel"}
-                                         #(instance? JPanel %)]]
   (let [stream-name (case stream-key
                       :heat (i18n/tr :stream-thermal)
                       :day (i18n/tr :stream-day))
@@ -63,11 +60,9 @@
               [""]
               [info-label "span 2"]])))
 
-(>defn- create-connection-info-panel
-  "Create panel showing current connection information."
+(defn- create-connection-info-panel
+  "Create panel showing current connection information." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (fn* [p1__3770#] (instance? JPanel p1__3770#))]]}
   []
-  [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? JPanel %)]]
   (let [domain-label (seesaw/label :id :domain-info
                                    :text "")]
 
@@ -83,11 +78,9 @@
       :border (border/line-border :title (i18n/tr :connection-info))
       :center domain-label)))
 
-(>defn- create-stream-controls-panel
-  "Create panel with stream control buttons."
+(defn- create-stream-controls-panel
+  "Create panel with stream control buttons." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (fn* [p1__3772#] (instance? JPanel p1__3772#))]]}
   []
-  [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? JPanel %)]]
   (let [heat-toggle (seesaw/toggle :id :heat-toggle
                                    :text (i18n/tr :stream-thermal)
                                    :icon (theme/key->icon :heat))
@@ -121,11 +114,9 @@
                 :hgap 10
                 :items [heat-toggle day-toggle]))))
 
-(>defn- create-statistics-panel
-  "Create panel showing stream statistics."
+(defn- create-statistics-panel
+  "Create panel showing stream statistics." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (fn* [p1__3774#] (instance? JPanel p1__3774#))]]}
   []
-  [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? JPanel %)]]
   (let [stats-label (seesaw/text :id :stats-info
                                  :text (i18n/tr :no-statistics)
                                  :multi-line? true
@@ -139,14 +130,12 @@
       :center (seesaw/scrollable stats-label
                                  :border 0))))
 
-(>defn create
+(defn create
   "Create the control panel UI component.
 
   Returns a panel containing all control elements for managing
-  video streams and application settings."
+  video streams and application settings." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (fn* [p1__3776#] (instance? JPanel p1__3776#))]]}
   []
-  [=> [:fn {:error/message "must be a Swing panel"}
-       #(instance? JPanel %)]]
   (let [header (seesaw/label :text (i18n/tr :control-panel-title)
                              :halign :center)
         connection-panel (create-connection-info-panel)

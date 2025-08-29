@@ -1,0 +1,19 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        ;; For AST manipulation
+        rewrite-clj/rewrite-clj {:mvn/version "1.1.48"}
+        ;; For pattern matching
+        org.clojure/core.match {:mvn/version "1.1.0"}
+        ;; For validation
+        metosin/malli {:mvn/version "0.19.1"}
+        ;; For CLI
+        org.clojure/tools.cli {:mvn/version "1.1.230"}}
+ 
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {io.github.cognitect-labs/test-runner 
+                               {:git/url "https://github.com/cognitect-labs/test-runner"
+                                :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}}
+                  :main-opts ["-m" "cognitect.test-runner"
+                              "-d" "test"]}
+           
+           :run {:main-opts ["-m" "guardrails-migration.core"]}}}

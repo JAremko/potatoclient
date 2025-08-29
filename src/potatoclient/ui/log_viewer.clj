@@ -8,7 +8,6 @@
   - Built-in Seesaw functions instead of Java interop where possible"
   (:require [clojure.java.io]
             [clojure.string :as str]
-            [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
             [potatoclient.theme :as theme]
@@ -21,29 +20,22 @@
            (java.text SimpleDateFormat)
            (javax.swing JFrame JTable Timer)))
 
-(>defn- get-log-directory
-  "Get the log directory based on runtime mode."
+(defn- get-log-directory
+  "Get the log directory based on runtime mode." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a File"} (fn* [p1__3816#] (instance? File p1__3816#))]]}
   []
-  [=> [:fn {:error/message "must be a File"}
-       #(instance? File %)]]
   (logging/get-logs-directory))
 
-(>defn- parse-log-filename
-  "Parse log filename to extract version and timestamp."
+(defn- parse-log-filename
+  "Parse log filename to extract version and timestamp." {:malli/schema [:=> [:cat :string] [:maybe [:map [:version :string] [:timestamp :string] [:filename :string]]]]}
   [filename]
-  [string? => [:maybe [:map
-                       [:version string?]
-                       [:timestamp string?]
-                       [:filename string?]]]]
   (when-let [match (re-matches #"potatoclient-(.+?)-(\d{8}-\d{6})\.log" filename)]
     {:version (second match)
      :timestamp (nth match 2)
      :filename filename}))
 
-(>defn- format-timestamp
-  "Format timestamp string from yyyyMMdd-HHmmss to human-readable format."
+(defn- format-timestamp
+  "Format timestamp string from yyyyMMdd-HHmmss to human-readable format." {:malli/schema [:=> [:cat :string] :string]}
   [timestamp-str]
-  [string? => string?]
   (try
     (let [input-format (SimpleDateFormat. "yyyyMMdd-HHmmss")
           output-format (SimpleDateFormat. "yyyy-MM-dd HH:mm:ss")
@@ -52,10 +44,9 @@
     (catch Exception _
       timestamp-str)))
 
-(>defn- get-log-files
-  "Get all log files from the log directory, sorted by modification time."
+(defn- get-log-files
+  "Get all log files from the log directory, sorted by modification time." {:malli/schema [:=> [:cat] [:sequential :map]]}
   []
-  [=> [:sequential map?]]
   (let [log-dir (get-log-directory)]
     (if (.exists log-dir)
       (->> (.listFiles log-dir)
@@ -72,26 +63,22 @@
            (sort-by :last-modified >))
       [])))
 
-(>defn- format-file-size
-  "Format file size in bytes to human-readable format."
+(defn- format-file-size
+  "Format file size in bytes to human-readable format." {:malli/schema [:=> [:cat :int] :string]}
   [size]
-  [int? => string?]
   (cond
     (< size 1024) (str size " B")
     (< size (* 1024 1024)) (format "%.1f KB" (/ size 1024.0))
     :else (format "%.1f MB" (/ size (* 1024.0 1024.0)))))
 
-(>defn- copy-to-clipboard
-  "Copy text to system clipboard."
+(defn- copy-to-clipboard
+  "Copy text to system clipboard." {:malli/schema [:=> [:cat :string] :any]}
   [text]
-  [string? => any?]
   (clipboard/contents! text))
 
-(>defn- dispose-frame!
-  "Dispose frame without minimize animation when maximized."
+(defn- dispose-frame!
+  "Dispose frame without minimize animation when maximized." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (fn* [p1__3818#] (instance? JFrame p1__3818#))]] :nil]}
   [frame]
-  [[:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)] => nil?]
   (let [frame-title (.getTitle frame)]
           ;; Always minimize to taskbar first to avoid any unmaximize animation
     (.setExtendedState frame Frame/ICONIFIED)
@@ -114,10 +101,9 @@
       (.start timer)))
   nil)
 
-(>defn- format-log-content
-  "Add visual separators between log entries"
+(defn- format-log-content
+  "Add visual separators between log entries" {:malli/schema [:=> [:cat :string] :string]}
   [content]
-  [string? => string?]
   (let [lines (str/split-lines content)
         separator (str/join (repeat 80 "-"))]
     (->> lines
@@ -127,15 +113,9 @@
                   line)))
          (str/join "\n"))))
 
-(>defn- create-file-viewer
-  "Create a viewer window for displaying log file contents."
+(defn- create-file-viewer
+  "Create a viewer window for displaying log file contents." {:malli/schema [:=> [:cat [:fn {:error/message "must be a File"} (fn* [p1__3820#] (instance? File p1__3820#))] [:fn {:error/message "must be a JFrame"} (fn* [p1__3822#] (instance? JFrame p1__3822#))]] [:fn {:error/message "must be a JFrame"} (fn* [p1__3824#] (instance? JFrame p1__3824#))]]}
   [file parent-frame]
-  [[:fn {:error/message "must be a File"}
-    #(instance? File %)]
-   [:fn {:error/message "must be a JFrame"}
-    #(instance? JFrame %)]
-   => [:fn {:error/message "must be a JFrame"}
-       #(instance? JFrame %)]]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)
         text-area (seesaw/text
@@ -187,11 +167,9 @@
     (.setExtendedState frame Frame/MAXIMIZED_BOTH)
     frame))
 
-(>defn- pack-table-columns!
-  "Auto-size table columns based on content using Seesaw's table utilities."
+(defn- pack-table-columns!
+  "Auto-size table columns based on content using Seesaw's table utilities." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JTable"} (fn* [p1__3826#] (instance? JTable p1__3826#))]] :nil]}
   [table]
-  [[:fn {:error/message "must be a JTable"}
-    #(instance? JTable %)] => nil?]
   ;; Use Seesaw's table utilities where possible
   (let [col-model (.getColumnModel table)
         row-count (table/row-count table)]
@@ -216,11 +194,9 @@
         ;; Set preferred width with some padding
         (.setPreferredWidth column (+ @max-width 20))))))
 
-(>defn- create-log-table
-  "Create the main log file listing table."
+(defn- create-log-table
+  "Create the main log file listing table." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a JTable"} (fn* [p1__3828#] (instance? JTable p1__3828#))]]}
   []
-  [=> [:fn {:error/message "must be a JTable"}
-       #(instance? JTable %)]]
   (seesaw/table
     :id :log-table
     :model (table/table-model
@@ -231,11 +207,9 @@
     :show-grid? true
     :auto-resize :off))
 
-(>defn- update-log-list!
-  "Update the log table with current log files."
+(defn- update-log-list!
+  "Update the log table with current log files." {:malli/schema [:=> [:cat [:fn {:error/message "must be a JTable"} (fn* [p1__3830#] (instance? JTable p1__3830#))]] :nil]}
   [table]
-  [[:fn {:error/message "must be a JTable"}
-    #(instance? JTable %)] => nil?]
   (let [log-files (get-log-files)
         ;; Take only the most recent 20 files
         recent-files (take 20 log-files)
@@ -250,11 +224,9 @@
     ;; Auto-size columns after adding data
     (pack-table-columns! table)))
 
-(>defn create-log-viewer-frame
-  "Create the main log viewer window."
+(defn create-log-viewer-frame
+  "Create the main log viewer window." {:malli/schema [:=> [:cat] [:fn {:error/message "must be a JFrame"} (fn* [p1__3832#] (instance? JFrame p1__3832#))]]}
   []
-  [=> [:fn {:error/message "must be a JFrame"}
-       #(instance? JFrame %)]]
   (let [table (create-log-table)
         frame (seesaw/frame
                 :title (i18n/tr :log-viewer-title)
@@ -326,10 +298,9 @@
 
     frame))
 
-(>defn show-log-viewer
-  "Show the log viewer window, ensuring it runs on the EDT."
+(defn show-log-viewer
+  "Show the log viewer window, ensuring it runs on the EDT." {:malli/schema [:=> [:cat] :any]}
   []
-  [=> any?]
   (seesaw/invoke-now
     (logging/log-info {:id ::show-log-viewer-start})
     (let [log-files (get-log-files)]

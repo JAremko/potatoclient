@@ -2,7 +2,6 @@
   "Main entry point for PotatoClient."
   (:require [clojure.java.io]
             [clojure.string]
-            [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
@@ -14,26 +13,23 @@
             [seesaw.core :as seesaw])
   (:gen-class))
 
-(>defn- get-version
-  "Get application version from VERSION file."
+(defn- get-version
+  "Get application version from VERSION file." {:malli/schema [:=> [:cat] :string]}
   []
-  [=> string?]
   (try
     (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
     (catch Exception _ "dev")))
 
-(>defn- get-build-type
-  "Get build type (RELEASE or DEVELOPMENT)."
+(defn- get-build-type
+  "Get build type (RELEASE or DEVELOPMENT)." {:malli/schema [:=> [:cat] :string]}
   []
-  [=> string?]
   (if (runtime/release-build?)
     "RELEASE"
     "DEVELOPMENT"))
 
-(>defn- setup-shutdown-hook!
-  "Setup JVM shutdown hook."
+(defn- setup-shutdown-hook!
+  "Setup JVM shutdown hook." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (.addShutdownHook
     (Runtime/getRuntime)
     (Thread.
@@ -45,18 +41,16 @@
           (catch Exception e
             (println "Error during shutdown:" (.getMessage e))))))))
 
-(>defn- initialize-application!
-  "Initialize all application subsystems."
+(defn- initialize-application!
+  "Initialize all application subsystems." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (config/initialize!)
   (i18n/init!)
   (setup-shutdown-hook!))
 
-(>defn- log-startup!
-  "Log application startup."
+(defn- log-startup!
+  "Log application startup." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> boolean?]
   (logging/log-info
     {:id ::startup
      :data {:version (get-version)
@@ -66,10 +60,9 @@
                   (get-build-type))})
   true)
 
-(>defn- show-startup-dialog-recursive
-  "Show startup dialog with recursive reload support."
+(defn- show-startup-dialog-recursive
+  "Show startup dialog with recursive reload support." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (startup-dialog/show-startup-dialog
     nil
     (fn [result]
@@ -105,26 +98,23 @@
           (theme/preload-theme-icons!)
           (show-startup-dialog-recursive))))))
 
-(>defn- enable-guardrails!
-  "Enable Guardrails validation for non-release builds."
+(defn- enable-guardrails!
+  "Enable Guardrails validation for non-release builds." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (if (runtime/release-build?)
     (println "Running RELEASE build - Guardrails validation disabled for optimal performance")
     (println "Running DEVELOPMENT build - Guardrails validation enabled")))
 
-(>defn- enable-dev-mode!
-  "Enable additional development mode settings by loading the dev namespace."
+(defn- enable-dev-mode!
+  "Enable additional development mode settings by loading the dev namespace." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (when (or (System/getProperty "potatoclient.dev")
             (System/getenv "POTATOCLIENT_DEV"))
     (require 'potatoclient.dev)))
 
-(>defn- generate-unspecced-report!
-  "Generate unspecced functions report and exit."
+(defn- generate-unspecced-report!
+  "Generate unspecced functions report and exit." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (println "Generating unspecced functions report...")
   (require 'potatoclient.reports)
   (let [generate-fn (resolve 'potatoclient.reports/generate-unspecced-functions-report!)]
@@ -138,10 +128,9 @@
         (System/exit 1)))))
 
 
-(>defn -main
-  "Application entry point for PotatoClient."
+(defn -main
+  "Application entry point for PotatoClient." {:malli/schema [:=> [:cat [:* :any]] :nil]}
   [& args]
-  [[:* any?] => nil?]
   ;; Note: System properties for UI behavior should be set via JVM flags
   ;; at startup time, not programmatically here. See Makefile and Launch4j
   ;; configuration for proper flag setup.
