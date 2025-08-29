@@ -1,6 +1,7 @@
 (ns potatoclient.cmd.auto-generative-test
   "Automatic generative testing for all functions with Malli specs.
-   Discovers functions, generates inputs from their specs, and validates outputs."
+   Discovers functions, generates inputs from their specs, and validates outputs.
+   Also validates that generated commands pass protobuf serialization (buf validate)."
   (:require
    [clojure.test :refer [deftest is testing]]
    [malli.core :as m]
@@ -8,6 +9,7 @@
    [malli.error :as me]
    [potatoclient.malli.registry :as registry]
    [potatoclient.test-harness :as harness]
+   [potatoclient.cmd.validation :as validation]
    [clojure.string :as str]))
 
 ;; Ensure test harness is initialized
@@ -74,12 +76,22 @@
                                  (throw (ex-info (str "Function " f-name " threw exception")
                                                  {:args args
                                                   :error (.getMessage e)}))))]
-                  ;; Validate output
+                  ;; Validate output against Malli schema
                   (when-not (m/validate output-schema result)
                     (throw (ex-info (str "Output validation failed for " f-name)
                                     {:args args
                                      :result result
-                                     :explain (me/humanize (m/explain output-schema result))}))))))
+                                     :explain (me/humanize (m/explain output-schema result))})))
+                  ;; Validate protobuf serialization (buf validate equivalent)
+                  ;; This ensures the command is valid according to protobuf constraints
+                  (when (= output-schema :cmd/root)
+                    (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+                      (when-not (:valid? roundtrip-result)
+                        (throw (ex-info (str "Protobuf validation failed for " f-name)
+                                        {:args args
+                                         :result result
+                                         :error "Command failed protobuf roundtrip validation"
+                                         :diff (:pretty-diff roundtrip-result)}))))))))
             {:function f-name
              :tested true
              :num-tests num-tests}))))
@@ -113,7 +125,9 @@
       ;; Report summary
       (println "\n=== Generative Testing Summary ===")
       (println (str "Tested " (count successful) " functions successfully"))
-      (println (str "Each function tested " num-tests " times"))
+      (println (str "Each function tested " num-tests " times with:"))
+      (println "  - Malli schema validation")
+      (println "  - Protobuf serialization validation (buf validate)")
       (println (str "Total test cases: " (* (count successful) num-tests)))
       
       ;; Report successful namespaces
