@@ -12,7 +12,7 @@
    Note: Functions must be instrumented with mi/instrument! for runtime validation
    to catch invalid inputs. Without instrumentation, Malli schemas are metadata-only."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing use-fixtures]]
    [malli.core :as m]
    [malli.instrument :as mi]
    [potatoclient.cmd.validation :as validation]
@@ -31,15 +31,30 @@
 ;; Initialize registry
 (registry/setup-global-registry!)
 
-;; Collect and instrument all cmd functions for runtime validation
-(mi/collect! {:ns ['potatoclient.cmd.compass
-                   'potatoclient.cmd.gps
-                   'potatoclient.cmd.rotary]})
-(mi/instrument!)
+;; ============================================================================
+;; Test Fixtures for Instrumentation
+;; ============================================================================
+
+(defn instrument-fixture
+  "Fixture to instrument functions for runtime validation during tests"
+  [f]
+  ;; Collect and instrument cmd functions
+  (mi/collect! {:ns ['potatoclient.cmd.compass
+                     'potatoclient.cmd.gps
+                     'potatoclient.cmd.rotary]})
+  (mi/instrument!)
+  (try
+    (f)
+    (finally
+      ;; Unstrument after test
+      (mi/unstrument!))))
 
 ;; ============================================================================
 ;; Malli Schema Validation - Negative Tests
 ;; ============================================================================
+
+;; Use instrumentation fixture for tests that need runtime validation
+(use-fixtures :each instrument-fixture)
 
 (deftest malli-schema-catches-invalid-inputs
   (testing "Malli catches wrong argument types"
