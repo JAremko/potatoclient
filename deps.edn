@@ -67,6 +67,7 @@
                               "-Djdk.attach.allowAttachSelf"
                               "-Dguardrails.enabled=true"
                               "-Dpotatoclient.validation.enabled=true"
+                              "-Dpotatoclient.dev=true"
                               "-Dawt.useSystemAAFontSettings=on"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 

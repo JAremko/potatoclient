@@ -8,8 +8,25 @@
                           com.fulcrologic.guardrails.clj-kondo-hooks/>defn
 
                           com.fulcrologic.guardrails.malli.core/>defn-
-                          com.fulcrologic.guardrails.clj-kondo-hooks/>defn}}
- :linters {:clj-kondo.fulcro.>defn/invalid-gspec {:level :error}}
+                          com.fulcrologic.guardrails.clj-kondo-hooks/>defn
+
+                          com.fulcrologic.guardrails.malli.core/>fdef
+                          com.fulcrologic.guardrails.clj-kondo-hooks/>fdef
+
+                          com.fulcrologic.guardrails.core/>fdef
+                          com.fulcrologic.guardrails.clj-kondo-hooks/>fdef}}
+ :linters {:clj-kondo.fulcro.>defn/invalid-gspec {:level :error}
+           :unused-referred-var {:exclude {com.fulcrologic.guardrails.core [=> | <- ? >defn >defn- >def >fdef]
+                                           com.fulcrologic.guardrails.malli.core [=> | <- ? >defn >defn- >def >fdef every]}}}
  :lint-as {com.fulcrologic.guardrails.core/>def            clojure.spec.alpha/def
            com.fulcrologic.guardrails.malli.core/>def      clojure.spec.alpha/def
+           com.fulcrologic.guardrails.malli.core/=>        clojure.core/comment
+           com.fulcrologic.guardrails.core/=>              clojure.core/comment
+           com.fulcrologic.guardrails.malli.core/|         clojure.core/comment
+           com.fulcrologic.guardrails.core/|               clojure.core/comment
+           com.fulcrologic.guardrails.malli.core/<-        clojure.core/comment
+           com.fulcrologic.guardrails.core/<-              clojure.core/comment
+           com.fulcrologic.guardrails.malli.core/?         clojure.core/list
+           com.fulcrologic.guardrails.core/?               clojure.core/list
+           com.fulcrologic.guardrails.malli.core/every     clojure.core/list
            com.fulcrologic.guardrails.config/defexclusions clojure.core/declare}}

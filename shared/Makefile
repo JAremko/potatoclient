@@ -181,3 +181,19 @@ deps-upgrade-all: ## Upgrade all outdated dependencies (non-interactive)
 	else \
 		echo "Aborted."; \
 	fi
+
+# Generate clj-kondo type configs from Malli/Guardrails specs
+kondo-configs: ## Generate clj-kondo type configs from function specs
+	@echo "Generating clj-kondo type configs for shared module..."
+	@echo "  • Collecting Guardrails >defn function schemas"
+	@echo "  • Extracting type information from Malli specs"
+	@echo "  • Writing to .clj-kondo/metosin/malli-types-clj/config.edn"
+	@echo ""
+	@if [ ! -d "target/classes/cmd" ]; then \
+		echo "Proto classes not found. Compiling first..."; \
+		$(MAKE) compile; \
+	fi
+	@cd .. && clojure -J-Dguardrails.enabled=true -M:dev scripts/generate-kondo-configs.clj shared
+	@echo ""
+	@echo "✓ Type configs generated for shared module"
+	@echo "  Location: shared/.clj-kondo/metosin/malli-types-clj/config.edn"

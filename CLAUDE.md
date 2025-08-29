@@ -155,6 +155,31 @@ When Guardrails is enabled (`-Dguardrails.enabled=true`) and using Malli Guardra
 - Fix the code, not the test
 - If a test is failing, it's highlighting a real issue that needs resolution
 
+## Development Tools
+
+### Clj-kondo Type Config Generation
+The project can automatically generate clj-kondo type configurations from Guardrails function specs:
+
+**Make Targets:**
+- `make kondo-configs` - Generate type configs for entire project (root + shared modules)
+- `make kondo-configs-shared` - Generate type configs for shared module only
+- `cd shared && make kondo-configs` - Alternative for shared module
+
+**How it works:**
+1. Auto-discovers all Clojure namespaces in src directories
+2. Loads Malli registry and UI specs
+3. Collects function schemas from Guardrails `>defn` functions
+4. Generates clj-kondo type information for static analysis
+5. Writes to `.clj-kondo/metosin/malli-types-clj/config.edn`
+
+**Benefits:**
+- Arity checking based on your function specs
+- Type checking for function arguments and return values
+- Better IDE integration with accurate type hints
+- Catches type mismatches at edit time
+
+Run `make kondo-configs` after adding new Guardrails specs to keep type checking up to date.
+
 ## Development Guidelines
 
 ### When Working with Protobuf

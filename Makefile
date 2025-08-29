@@ -234,6 +234,32 @@ report-unspecced: ## Check which functions need Guardrails specs - mandatory for
 	@echo ""
 	@echo "Report saved to ./reports/unspecced-functions.md"
 
+# Generate clj-kondo type configs from Malli/Guardrails specs
+.PHONY: kondo-configs
+kondo-configs: ensure-compiled ## Generate clj-kondo type configs from function specs (includes shared module)
+	@echo "Generating clj-kondo type configs for entire project..."
+	@echo "  • Collecting Guardrails >defn function schemas"
+	@echo "  • Including shared module definitions"
+	@echo "  • Extracting type information from Malli specs"
+	@echo "  • Writing to .clj-kondo/metosin/malli-types-clj/config.edn"
+	@echo ""
+	@# Ensure shared module is compiled
+	@if [ ! -d "shared/target/classes/cmd" ]; then \
+		echo "Shared module proto classes not found. Compiling first..."; \
+		cd shared && $(MAKE) compile && cd ..; \
+	fi
+	@clojure -J-Dguardrails.enabled=true -M:dev scripts/generate-kondo-configs.clj root
+	@echo ""
+	@echo "✓ Type configs generated for entire project"
+	@echo "  Location: .clj-kondo/metosin/malli-types-clj/config.edn"
+	@echo "  Includes: Both root and shared module definitions"
+
+# Generate clj-kondo configs for shared module only
+.PHONY: kondo-configs-shared
+kondo-configs-shared: ## Generate clj-kondo type configs for shared module only
+	@echo "Generating clj-kondo type configs for shared module..."
+	@cd shared && $(MAKE) kondo-configs
+
 # Validate Action Registry
 .PHONY: validate-actions
 validate-actions: ## Validate Action Registry against protobuf structure

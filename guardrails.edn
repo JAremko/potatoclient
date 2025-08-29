@@ -2,9 +2,9 @@
  :expound {:show-valid-values? true
            :print-specs? true}
  :guardrails/mcps nil
- :guardrails/stack-trace :prune
- :guardrails/use-stderr? true
- :guardrails/compact? true
+ :guardrails/stack-trace :full
+ :guardrails/use-stderr? false
+ :guardrails/compact? false
  :guardrails/trace? true
  :throw? true
  :tap>? false}
