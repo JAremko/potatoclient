@@ -21,6 +21,7 @@
    [potatoclient.cmd.gps :as gps]
    [potatoclient.malli.registry :as registry]
    [potatoclient.test-harness :as harness]
+   [potatoclient.validation-harness :as val-harness]
    [potatoclient.proto.serialize :as serialize]))
 
 ;; Ensure test harness is initialized
@@ -30,6 +31,9 @@
 
 ;; Initialize registry
 (registry/setup-global-registry!)
+
+;; Ensure validation systems are working
+(val-harness/ensure-validation-working!)
 
 ;; ============================================================================
 ;; Test Fixtures for Instrumentation

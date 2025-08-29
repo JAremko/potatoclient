@@ -27,8 +27,12 @@
   []
   (enable-verbose-logging!)
   (enable-assertions!)
-  ;; Start Malli development instrumentation for functions with :malli/schema metadata
-  (dev-inst/start!)
+  ;; Start Malli development instrumentation with pretty thrower
+  ;; This will throw prettified exceptions instead of just printing errors
+  (dev-inst/start! {:report :throw ; :throw for exceptions, :print for stdout
+                    :width 100 ; Wider for better readability in dev
+                    :print-length 50 ; Show more items in collections
+                    :print-level 3}) ; Show deeper nesting
   ;; Add more development-specific settings here as needed
   (logging/log-info {:msg "Additional development settings enabled."}))
 

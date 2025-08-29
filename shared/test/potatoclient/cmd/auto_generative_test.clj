@@ -9,6 +9,7 @@
    [malli.error :as me]
    [potatoclient.malli.registry :as registry]
    [potatoclient.test-harness :as harness]
+   [potatoclient.validation-harness :as val-harness]
    [potatoclient.cmd.validation :as validation]
    [clojure.string :as str]))
 
@@ -19,6 +20,9 @@
 
 ;; Initialize registry
 (registry/setup-global-registry!)
+
+;; Ensure validation systems are working before we test
+(val-harness/ensure-validation-working!)
 
 ;; ============================================================================
 ;; Auto-discovery and Testing
