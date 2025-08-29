@@ -129,34 +129,8 @@
 ;; Convenience Function Tests
 ;; ============================================================================
 
-(deftest test-convenience-functions
-  (testing "calibrate-day-camera returns two valid commands"
-    (let [[set-cmd save-cmd] (lrf-align/calibrate-day-camera 640 480)]
-      ;; Test set command
-      (is (m/validate :cmd/root set-cmd))
-      (is (= 640 (get-in set-cmd [:lrf_calib :day :set :x])))
-      (is (= 480 (get-in set-cmd [:lrf_calib :day :set :y])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report set-cmd)]
-        (is (:valid? roundtrip-result)))
-      ;; Test save command
-      (is (m/validate :cmd/root save-cmd))
-      (is (= {} (get-in save-cmd [:lrf_calib :day :save])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report save-cmd)]
-        (is (:valid? roundtrip-result)))))
-  
-  (testing "calibrate-heat-camera returns two valid commands"
-    (let [[set-cmd save-cmd] (lrf-align/calibrate-heat-camera -320 -240)]
-      ;; Test set command
-      (is (m/validate :cmd/root set-cmd))
-      (is (= -320 (get-in set-cmd [:lrf_calib :heat :set :x])))
-      (is (= -240 (get-in set-cmd [:lrf_calib :heat :set :y])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report set-cmd)]
-        (is (:valid? roundtrip-result)))
-      ;; Test save command
-      (is (m/validate :cmd/root save-cmd))
-      (is (= {} (get-in save-cmd [:lrf_calib :heat :save])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report save-cmd)]
-        (is (:valid? roundtrip-result))))))
+;; Removed test-convenience-functions since those functions were removed
+;; Each cmd constructor should return a single valid cmd/root
 
 ;; ============================================================================
 ;; Generative Testing

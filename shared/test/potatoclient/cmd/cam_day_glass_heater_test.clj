@@ -80,45 +80,8 @@
 ;; Convenience Function Tests
 ;; ============================================================================
 
-(deftest test-convenience-functions
-  (testing "enable-heater returns two valid commands"
-    (let [[start-cmd turn-on-cmd] (heater/enable-heater)]
-      ;; Test start command
-      (is (m/validate :cmd/root start-cmd))
-      (is (= {} (get-in start-cmd [:day_cam_glass_heater :start])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report start-cmd)]
-        (is (:valid? roundtrip-result)))
-      ;; Test turn-on command
-      (is (m/validate :cmd/root turn-on-cmd))
-      (is (= {} (get-in turn-on-cmd [:day_cam_glass_heater :turn_on])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report turn-on-cmd)]
-        (is (:valid? roundtrip-result)))))
-  
-  (testing "disable-heater returns two valid commands"
-    (let [[turn-off-cmd stop-cmd] (heater/disable-heater)]
-      ;; Test turn-off command
-      (is (m/validate :cmd/root turn-off-cmd))
-      (is (= {} (get-in turn-off-cmd [:day_cam_glass_heater :turn_off])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report turn-off-cmd)]
-        (is (:valid? roundtrip-result)))
-      ;; Test stop command
-      (is (m/validate :cmd/root stop-cmd))
-      (is (= {} (get-in stop-cmd [:day_cam_glass_heater :stop])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report stop-cmd)]
-        (is (:valid? roundtrip-result)))))
-  
-  (testing "cycle-heater returns two valid commands"
-    (let [[off-cmd on-cmd] (heater/cycle-heater)]
-      ;; Test turn-off command
-      (is (m/validate :cmd/root off-cmd))
-      (is (= {} (get-in off-cmd [:day_cam_glass_heater :turn_off])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report off-cmd)]
-        (is (:valid? roundtrip-result)))
-      ;; Test turn-on command
-      (is (m/validate :cmd/root on-cmd))
-      (is (= {} (get-in on-cmd [:day_cam_glass_heater :turn_on])))
-      (let [roundtrip-result (validation/validate-roundtrip-with-report on-cmd)]
-        (is (:valid? roundtrip-result))))))
+;; Removed test-convenience-functions since those functions were removed
+;; Each cmd constructor should return a single valid cmd/root
 
 ;; ============================================================================
 ;; Generative Testing

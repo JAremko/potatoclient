@@ -47,27 +47,7 @@
   (core/create-command {:day_cam_glass_heater {:get_meteo {}}}))
 
 ;; ============================================================================
-;; Convenience Functions
+;; Removed Convenience Functions
 ;; ============================================================================
-
-(defn enable-heater
-  "Convenience function to start the subsystem and turn on the heater.
-   Returns a vector of two cmd roots: [start-cmd turn-on-cmd]." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(start)
-   (turn-on)])
-
-(defn disable-heater
-  "Convenience function to turn off the heater and stop the subsystem.
-   Returns a vector of two cmd roots: [turn-off-cmd stop-cmd]." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(turn-off)
-   (stop)])
-
-(defn cycle-heater
-  "Cycle the heater - turn it off then back on.
-   Useful for resetting the heater or clearing condensation patterns.
-   Returns a vector of two cmd roots: [turn-off-cmd turn-on-cmd]." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(turn-off)
-   (turn-on)])
+;; Removed functions that return vectors of commands
+;; Each cmd constructor should return a single valid cmd/root

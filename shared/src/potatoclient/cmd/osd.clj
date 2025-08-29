@@ -68,35 +68,5 @@
 ;; Convenience Functions
 ;; ============================================================================
 
-(defn toggle-osd
-  "Toggle OSD on both cameras - if either is on, turn both off; otherwise turn both on.
-   Returns a vector of two cmd roots: [day-cmd heat-cmd]." {:malli/schema [:=> [:cat :boolean :boolean] [:vector :cmd/root]]}
-  [day-enabled? heat-enabled?]
-  (if (or day-enabled? heat-enabled?)
-    ;; If either is on, turn both off
-    [(disable-day-osd) (disable-heat-osd)]
-    ;; If both are off, turn both on
-    [(enable-day-osd) (enable-heat-osd)]))
-
-(defn show-lrf-workflow
-  "Show the complete LRF workflow screens in sequence.
-   Returns a vector of cmd roots: [measure-screen-cmd result-screen-cmd default-screen-cmd].
-   This is useful for demonstrating the LRF measurement process." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(show-lrf-measure-screen)
-   (show-lrf-result-screen)
-   (show-default-screen)])
-
-(defn disable-all-osd
-  "Disable OSD on both day and heat cameras.
-   Returns a vector of two cmd roots: [day-disable-cmd heat-disable-cmd]." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(disable-day-osd)
-   (disable-heat-osd)])
-
-(defn enable-all-osd
-  "Enable OSD on both day and heat cameras.
-   Returns a vector of two cmd roots: [day-enable-cmd heat-enable-cmd]." {:malli/schema [:=> [:cat] [:vector :cmd/root]]}
-  []
-  [(enable-day-osd)
-   (enable-heat-osd)])
+;; Removed functions that return vectors of commands
+;; Each cmd constructor should return a single valid cmd/root

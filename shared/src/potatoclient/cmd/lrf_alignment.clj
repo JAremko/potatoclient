@@ -77,23 +77,7 @@
     {:lrf_calib {:heat {:reset {}}}}))
 
 ;; ============================================================================
-;; Convenience Functions
+;; Removed Convenience Functions
 ;; ============================================================================
-
-(defn calibrate-day-camera
-  "Convenience function to set and save day camera offsets in one operation.
-   X: Horizontal offset in pixels (-1920 to 1920)
-   Y: Vertical offset in pixels (-1080 to 1080)
-   Returns a vector of two cmd roots: [set-command save-command]." {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] [:vector :cmd/root]]}
-  [x y]
-  [(set-day-offsets x y)
-   (save-day-offsets)])
-
-(defn calibrate-heat-camera
-  "Convenience function to set and save heat camera offsets in one operation.
-   X: Horizontal offset in pixels (-1920 to 1920)
-   Y: Vertical offset in pixels (-1080 to 1080)
-   Returns a vector of two cmd roots: [set-command save-command]." {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] [:vector :cmd/root]]}
-  [x y]
-  [(set-heat-offsets x y)
-   (save-heat-offsets)])
+;; Removed functions that return vectors of commands
+;; Each cmd constructor should return a single valid cmd/root
