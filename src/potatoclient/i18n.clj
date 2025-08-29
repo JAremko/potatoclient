@@ -15,7 +15,7 @@
 
 (defn load-translation-file
   "Load a translation file from resources"
-  {:malli/schema [:=> [:cat :potatoclient.ui-specs/locale-code] 
+  {:malli/schema [:=> [:cat :potatoclient.ui-specs/locale-code]
                       [:maybe [:map-of :keyword :string]]]}
   [locale]
   (try
@@ -57,7 +57,7 @@
   "Translate a key using the current locale."
   {:malli/schema [:function
                   [:=> [:cat :potatoclient.ui-specs/translation-key] :string]
-                  [:=> [:cat :potatoclient.ui-specs/translation-key 
+                  [:=> [:cat :potatoclient.ui-specs/translation-key
                              :potatoclient.ui-specs/translation-args] :string]]}
   ([key]
    (tr key []))
