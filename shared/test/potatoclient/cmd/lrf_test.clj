@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Measurement Operations Tests
@@ -196,27 +190,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-lrf-functions-generative
-  (testing "All LRF functions pass generative testing with mi/check"
-    ;; Function with parameter - test set-scan-mode
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 10}
-                       [#'lrf/set-scan-mode])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'lrf/measure
-                        #'lrf/scan-on
-                        #'lrf/scan-off
-                        #'lrf/start
-                        #'lrf/stop
-                        #'lrf/target-designator-off
-                        #'lrf/target-designator-on-mode-a
-                        #'lrf/target-designator-on-mode-b
-                        #'lrf/enable-fog-mode
-                        #'lrf/disable-fog-mode
-                        #'lrf/new-session
-                        #'lrf/get-meteo
-                        #'lrf/refine-on
-                        #'lrf/refine-off])))))

@@ -2,9 +2,10 @@
   "Negative tests to ensure our validation catches errors.
    These tests deliberately pass invalid arguments to ensure proper error handling."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing use-fixtures]]
    [matcher-combinators.test] ;; extends clojure.test's `is` macro
    [matcher-combinators.matchers :as matchers]
+   [malli.instrument :as mi]
    [potatoclient.cmd.root :as root]
    [potatoclient.cmd.system :as sys]
    [potatoclient.cmd.core :as core]
@@ -18,6 +19,17 @@
 
 ;; Initialize registry
 (registry/setup-global-registry!)
+
+;; Setup instrumentation for validation tests
+(defn instrument-fixture [f]
+  (mi/collect! {:ns ['potatoclient.cmd.root
+                     'potatoclient.cmd.system
+                     'potatoclient.cmd.core]})
+  (mi/instrument!)
+  (f)
+  (mi/unstrument!))
+
+(use-fixtures :once instrument-fixture)
 
 ;; ============================================================================
 ;; Malli Function Argument Validation

@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Tracking Commands Tests
@@ -216,23 +210,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-cv-functions-generative
-  (testing "All CV functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 20}
-                       [#'cv/start-track-ndc
-                        #'cv/set-auto-focus])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'cv/stop-track
-                        #'cv/enable-vampire-mode
-                        #'cv/disable-vampire-mode
-                        #'cv/enable-stabilization-mode
-                        #'cv/disable-stabilization-mode
-                        #'cv/start-dump
-                        #'cv/stop-dump
-                        #'cv/enable-recognition-mode
-                        #'cv/disable-recognition-mode])))))

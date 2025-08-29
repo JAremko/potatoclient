@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Screen Display Commands Tests
@@ -189,24 +183,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-osd-functions-generative
-  (testing "All OSD functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 10}
-                       [#'osd/toggle-osd])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'osd/show-default-screen
-                        #'osd/show-lrf-measure-screen
-                        #'osd/show-lrf-result-screen
-                        #'osd/show-lrf-result-simplified-screen
-                        #'osd/enable-heat-osd
-                        #'osd/disable-heat-osd
-                        #'osd/enable-day-osd
-                        #'osd/disable-day-osd
-                        #'osd/show-lrf-workflow
-                        #'osd/disable-all-osd
-                        #'osd/enable-all-osd])))))

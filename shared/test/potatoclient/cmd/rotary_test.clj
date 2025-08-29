@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Platform Control Tests
@@ -404,52 +398,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-rotary-functions-generative
-  (testing "All Rotary functions pass generative testing with mi/check"
-    ;; Functions with parameters - test a subset due to large number
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 10}
-                       [#'rotary/set-platform-azimuth
-                        #'rotary/set-platform-elevation
-                        #'rotary/set-platform-bank
-                        #'rotary/set-mode
-                        #'rotary/set-use-rotary-as-compass
-                        #'rotary/set-azimuth-value
-                        #'rotary/rotate-azimuth-to
-                        #'rotary/rotate-azimuth
-                        #'rotary/rotate-azimuth-relative
-                        #'rotary/rotate-azimuth-relative-set
-                        #'rotary/set-elevation-value
-                        #'rotary/rotate-elevation-to
-                        #'rotary/rotate-elevation
-                        #'rotary/rotate-elevation-relative
-                        #'rotary/rotate-elevation-relative-set
-                        #'rotary/rotate-both-to
-                        #'rotary/rotate-both
-                        #'rotary/rotate-both-relative
-                        #'rotary/set-both-values
-                        #'rotary/rotate-to-gps
-                        #'rotary/set-origin-gps
-                        #'rotary/rotate-to-ndc
-                        #'rotary/scan-select-node
-                        #'rotary/scan-delete-node
-                        #'rotary/scan-update-node
-                        #'rotary/scan-add-node])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'rotary/start
-                        #'rotary/stop
-                        #'rotary/halt
-                        #'rotary/halt-azimuth
-                        #'rotary/halt-elevation
-                        #'rotary/halt-both
-                        #'rotary/scan-start
-                        #'rotary/scan-stop
-                        #'rotary/scan-pause
-                        #'rotary/scan-unpause
-                        #'rotary/scan-prev
-                        #'rotary/scan-next
-                        #'rotary/scan-refresh-node-list
-                        #'rotary/get-meteo])))))

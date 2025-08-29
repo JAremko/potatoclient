@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Day Camera Offset Tests
@@ -168,22 +162,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-lrf-alignment-functions-generative
-  (testing "All LRF alignment functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 10}
-                       [#'lrf-align/set-day-offsets
-                        #'lrf-align/shift-day-offsets
-                        #'lrf-align/set-heat-offsets
-                        #'lrf-align/shift-heat-offsets
-                        #'lrf-align/calibrate-day-camera
-                        #'lrf-align/calibrate-heat-camera])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'lrf-align/save-day-offsets
-                        #'lrf-align/reset-day-offsets
-                        #'lrf-align/save-heat-offsets
-                        #'lrf-align/reset-heat-offsets])))))

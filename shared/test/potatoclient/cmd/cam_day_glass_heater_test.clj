@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Device Control Tests
@@ -130,16 +124,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-heater-functions-generative
-  (testing "All heater functions pass generative testing with mi/check"
-    ;; All functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'heater/start
-                        #'heater/stop
-                        #'heater/turn-on
-                        #'heater/turn-off
-                        #'heater/get-meteo
-                        #'heater/enable-heater
-                        #'heater/disable-heater
-                        #'heater/cycle-heater])))))

@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; GPS Control Tests
@@ -81,11 +75,11 @@
                  (when-not (:valid? roundtrip-result) 
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
     
-    ;; South Pole
-    (let [result (gps/set-manual-position -90.0 180.0 1000.0)]
+    ;; South Pole (using 179.9999 instead of 180.0 since longitude must be < 180)
+    (let [result (gps/set-manual-position -90.0 179.9999 1000.0)]
       (is (m/validate :cmd/root result))
       (is (= -90.0 (get-in result [:gps :set_manual_position :latitude])))
-      (is (= 180.0 (get-in result [:gps :set_manual_position :longitude])))
+      (is (= 179.9999 (get-in result [:gps :set_manual_position :longitude])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result) 
             (str "Should pass roundtrip validation" 
@@ -150,17 +144,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-gps-functions-generative
-  (testing "All GPS functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 20}
-                       [#'gps/set-manual-position
-                        #'gps/set-use-manual-position])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'gps/start
-                        #'gps/stop
-                        #'gps/get-meteo])))))

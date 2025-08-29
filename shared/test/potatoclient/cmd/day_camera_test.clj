@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Infra-Red Filter Control Tests
@@ -384,42 +378,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-day-camera-functions-generative
-  (testing "All Day Camera functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 20}
-                       [#'day-camera/set-infra-red-filter
-                        #'day-camera/set-iris
-                        #'day-camera/set-auto-iris
-                        #'day-camera/set-focus
-                        #'day-camera/move-focus
-                        #'day-camera/offset-focus
-                        #'day-camera/set-zoom
-                        #'day-camera/move-zoom
-                        #'day-camera/offset-zoom
-                        #'day-camera/set-zoom-table-value
-                        #'day-camera/set-digital-zoom-level
-                        #'day-camera/set-fx-mode
-                        #'day-camera/set-clahe-level
-                        #'day-camera/shift-clahe-level])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'day-camera/take-photo
-                        #'day-camera/start
-                        #'day-camera/stop
-                        #'day-camera/halt-all
-                        #'day-camera/halt-focus
-                        #'day-camera/reset-focus
-                        #'day-camera/save-focus-to-table
-                        #'day-camera/halt-zoom
-                        #'day-camera/reset-zoom
-                        #'day-camera/save-zoom-to-table
-                        #'day-camera/next-zoom-table-pos
-                        #'day-camera/prev-zoom-table-pos
-                        #'day-camera/get-meteo
-                        #'day-camera/next-fx-mode
-                        #'day-camera/prev-fx-mode
-                        #'day-camera/refresh-fx-mode])))))

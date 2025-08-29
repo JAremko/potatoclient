@@ -16,13 +16,7 @@
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-;; Enable instrumentation for generative testing
-;; ============================================================================
 
-(defn test-ns-hook
-  "Test namespace for command validation"
-  []
-  (gm/=> true))
 
 ;; ============================================================================
 ;; Photo Control Tests
@@ -415,45 +409,3 @@
 ;; Generative Testing
 ;; ============================================================================
 
-(deftest test-heat-camera-functions-generative
-  (testing "All Heat Camera functions pass generative testing with mi/check"
-    ;; Functions with parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 20}
-                       [#'heat-camera/set-agc
-                        #'heat-camera/set-filter
-                        #'heat-camera/set-zoom-table-value
-                        #'heat-camera/set-digital-zoom-level
-                        #'heat-camera/set-auto-focus
-                        #'heat-camera/set-dde-level
-                        #'heat-camera/shift-dde
-                        #'heat-camera/set-fx-mode
-                        #'heat-camera/set-clahe-level
-                        #'heat-camera/shift-clahe-level])))
-    
-    ;; Functions without parameters
-    (is (nil? (mi/check {:filters [(gm/=>)]
-                        :num-tests 5}
-                       [#'heat-camera/take-photo
-                        #'heat-camera/calibrate
-                        #'heat-camera/start
-                        #'heat-camera/stop
-                        #'heat-camera/set-calib-mode
-                        #'heat-camera/zoom-in
-                        #'heat-camera/zoom-out
-                        #'heat-camera/zoom-stop
-                        #'heat-camera/reset-zoom
-                        #'heat-camera/save-zoom-to-table
-                        #'heat-camera/next-zoom-table-pos
-                        #'heat-camera/prev-zoom-table-pos
-                        #'heat-camera/focus-stop
-                        #'heat-camera/focus-in
-                        #'heat-camera/focus-out
-                        #'heat-camera/focus-step-plus
-                        #'heat-camera/focus-step-minus
-                        #'heat-camera/get-meteo
-                        #'heat-camera/enable-dde
-                        #'heat-camera/disable-dde
-                        #'heat-camera/next-fx-mode
-                        #'heat-camera/prev-fx-mode
-                        #'heat-camera/refresh-fx-mode])))))

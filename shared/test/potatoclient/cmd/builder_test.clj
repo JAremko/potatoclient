@@ -2,13 +2,14 @@
   "Tests for the command builder module.
    Ensures efficient proto-map building and field population."
   (:require
-   [clojure.test :refer [deftest is testing]]
+   [clojure.test :refer [deftest is testing use-fixtures]]
    [matcher-combinators.test] ;; extends clojure.test's `is` macro
    [matcher-combinators.matchers :as matchers]
    [clojure.test.check :as tc]
    [clojure.test.check.generators :as gen]
    [clojure.test.check.properties :as prop]
    [clojure.test.check.clojure-test :refer [defspec]]
+   [malli.instrument :as mi]
    [potatoclient.cmd.builder :as builder]
    [potatoclient.cmd.validation :as v]
    [potatoclient.proto.serialize :as serialize]
@@ -23,6 +24,15 @@
 
 ;; Initialize registry
 (registry/setup-global-registry!)
+
+;; Setup instrumentation for validation tests
+(defn instrument-fixture [f]
+  (mi/collect! {:ns ['potatoclient.cmd.builder]})
+  (mi/instrument!)
+  (f)
+  (mi/unstrument!))
+
+(use-fixtures :once instrument-fixture)
 
 ;; ============================================================================
 ;; Basic Functionality Tests

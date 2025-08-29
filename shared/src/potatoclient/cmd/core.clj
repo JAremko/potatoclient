@@ -140,7 +140,7 @@
   "Continuously consume commands from queue and send via WebSocket.
    This should be called from a dedicated thread.
    The send-fn is a function that takes binary data and sends it.
-   Returns a function to stop the consumer loop." {:malli/schema [:=> [:cat :fn] :fn]}
+   Returns a function to stop the consumer loop." {:malli/schema [:=> [:cat fn?] fn?]}
   [send-fn]
   (let [running (atom true)]
     (future
