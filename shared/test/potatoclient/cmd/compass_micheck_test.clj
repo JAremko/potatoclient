@@ -15,11 +15,20 @@
 
 (deftest compass-generative-test-with-mi-check
   (testing "Compass functions pass generative testing with mi/check"
-    ;; Collect schemas from compass namespace
-    (mi/collect! {:ns ['potatoclient.cmd.compass]})
+    ;; Clear any previous instrumentation and collected schemas
+    (mi/unstrument!)
     
-    ;; Run generative testing on all collected functions
-    (let [result (mi/check)]
-      (is (nil? result) 
+    ;; Fresh collection - only compass namespace
+    (mi/collect! {:ns ['potatoclient.cmd.compass] :mode :replace})
+    
+    ;; Run generative testing on compass functions only  
+    ;; Filter results to only show compass namespace issues
+    (let [all-results (mi/check)
+          compass-results (when all-results
+                           (into {} 
+                                 (filter #(= "potatoclient.cmd.compass" 
+                                            (namespace (key %))) 
+                                         all-results)))]
+      (is (empty? compass-results) 
           (str "All compass functions should pass generative testing. Issues found: " 
-               (when result (keys result)))))))
+               (when compass-results (keys compass-results)))))))
