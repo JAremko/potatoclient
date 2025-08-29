@@ -4,7 +4,7 @@
   (:require
     [potatoclient.ipc.transit :as transit]
     [potatoclient.malli.registry :as registry]
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
+    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
     [taoensso.telemere :as t])
   (:import
     (clojure.lang Atom)
@@ -52,7 +52,7 @@
 
 (>defn- start-reader-thread
   "Start the thread that reads messages from the socket."
-  [{:keys [stream-type communicator message-queue running?] :as _}]
+  [{:keys [stream-type communicator message-queue running?]}]
   [IpcServer => [:fn #(instance? Thread %)]]
   (Thread.
     (fn []
@@ -74,7 +74,7 @@
 
 (>defn- start-processor-thread
   "Start the thread that processes messages from the queue."
-  [{:keys [stream-type message-queue running?] :as _} on-message]
+  [{:keys [stream-type message-queue running?]} on-message]
   [IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]] => [:fn #(instance? Thread %)]]
   (Thread.
    (fn []
