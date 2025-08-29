@@ -185,3 +185,5 @@
         (logging/log-error {:msg (str "Fatal error during application startup: " (.getMessage e))})
         (.printStackTrace e))
       (System/exit 1))))
+
+;(-main)

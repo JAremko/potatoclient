@@ -4,6 +4,7 @@
   This namespace is automatically loaded when running in development mode
   to enable various debugging and development features."
   (:require [com.fulcrologic.guardrails.core :refer [>defn =>]]
+            [potatoclient.dev-instrumentation :as dev-inst]
             [potatoclient.logging :as logging]))
 
 (>defn enable-verbose-logging!
@@ -30,6 +31,8 @@
   [=> nil?]
   (enable-verbose-logging!)
   (enable-assertions!)
+  ;; Start Malli development instrumentation for functions with :malli/schema metadata
+  (dev-inst/start!)
   ;; Add more development-specific settings here as needed
   (logging/log-info {:msg "Additional development settings enabled."}))
 
