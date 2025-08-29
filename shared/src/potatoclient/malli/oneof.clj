@@ -90,7 +90,7 @@
                    :value value
                    :message "must have exactly one non-nil field"})
         
-        (> (count non-nil-oneof-fields) 1)
+        (defn (count non-nil-oneof-fields) 1)
         (conj acc {:path path
                    :in in
                    :schema form

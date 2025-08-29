@@ -141,14 +141,13 @@ clojure -M:test
 1. Create the command function in the appropriate namespace:
 ```clojure
 (ns potatoclient.cmd.my-subsystem
-  (:require [potatoclient.cmd.core :as core]
-            [com.fulcrologic.guardrails.core :refer [>defn =>]]))
+  (:require [potatoclient.cmd.core :as core]))
 
-(>defn my-command
+(defn my-command
   "Description of what this command does.
    Returns a fully formed cmd root ready to send."
+  {:malli/schema [:=> [:cat :string] :cmd/root]}
   [param]
-  [string? => :cmd/root]
   (core/create-command 
     {:my_subsystem {:my_command {:field param}}}))
 ```
@@ -190,12 +189,12 @@ The module includes comprehensive testing:
 
 ### Automatic Generative Testing with mi/check
 
-When Guardrails is enabled, you can use `malli.instrument/check` for automatic generative testing:
+You can use `malli.instrument/check` for automatic generative testing:
 
 ```clojure
 (require '[malli.instrument :as mi])
 
-;; Collect schemas from Guardrails functions
+;; Collect schemas from functions with :malli/schema metadata
 (mi/collect! {:ns ['potatoclient.cmd.compass]})
 
 ;; Run generative testing on all collected functions
@@ -220,10 +219,6 @@ Run specific test namespace:
 clojure -M:test -n potatoclient.cmd.integration-test
 ```
 
-Run with Guardrails enabled (for development):
-```bash
-clojure -J-Dguardrails.enabled=true -M:test
-```
 
 ## Protocol Consistency
 
@@ -249,17 +244,15 @@ The command system is optimized for performance:
 
 ### Mandatory Requirements
 
-1. **Use Malli Guardrails ONLY** - Clojure Spec is forbidden
-   - Always import: `com.fulcrologic.guardrails.malli.core`
-   - NEVER import: `com.fulcrologic.guardrails.core` (spec version)
+1. **Use Malli schemas ONLY** - Clojure Spec is forbidden
    - Use Malli schemas: `:int`, `:double`, `:boolean`, `:map`, etc.
    - NOT predicates: `int?`, `double?`, `boolean?` (these are spec-style)
 
-2. **All functions must have Guardrails** for runtime type checking
+2. **All functions must have :malli/schema metadata** for type checking
    ```clojure
-   (>defn my-function
+   (defn my-function
+     {:malli/schema [:=> [:cat :double] :cmd/root]}
      [arg]
-     [:double => :cmd/root]  ; Malli schemas, not predicates!
      ...)
    ```
 
@@ -279,8 +272,8 @@ The command system is optimized for performance:
 - **Numeric values in tests**: Always use doubles (e.g., `15.5`, not `15`) when testing functions that expect `:double`
 - **Oneof fields with nils**: Valid in our schemas, handled by `remove-nil-values` in validation
 - **Custom schemas**: Define in `specs/common.clj` and register them (e.g., `:nat-int`)
-- **Guardrails metadata**: Malli version adds `:malli/schema` to function metadata when `-Dguardrails.enabled=true`
-- **Generative testing with mi/check**: Works automatically with Malli Guardrails functions!
+- **Malli metadata**: Functions have `:malli/schema` metadata for type information
+- **Generative testing with mi/check**: Works automatically with Malli-annotated functions!
 
 ## License
 

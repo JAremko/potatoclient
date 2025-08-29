@@ -3,7 +3,6 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string :as str]
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [taoensso.telemere :as t])
   (:import
     (java.io BufferedReader File IOException InputStreamReader)
@@ -35,17 +34,15 @@
   {:heat "/ws/ws_rec_video_heat"
    :day "/ws/ws_rec_video_day"})
 
-(>defn- build-stream-url
-  "Build the WebSocket URL for a stream."
+(defn- build-stream-url
+  "Build the WebSocket URL for a stream." {:malli/schema [:=> [:cat StreamType :string] :string]}
   [stream-type host]
-  [StreamType :string => :string]
   (str "wss://" host (get stream-endpoints stream-type)))
 
-(>defn- get-classpath
+(defn- get-classpath
   "Get the classpath for running VideoStreamManager.
-   Gets the full classpath from the main project."
+   Gets the full classpath from the main project." {:malli/schema [:=> [:cat] :string]}
   []
-  [=> :string]
   (let [project-root (-> (io/file ".")
                         (.getCanonicalPath)
                         (str/replace #"/tools/clj-stream-spawner$" ""))]
@@ -66,10 +63,9 @@
                    (str project-root "/target/java-classes")
                    (str project-root "/lib/*")])))))
 
-(>defn- get-project-root
-  "Get the project root directory."
+(defn- get-project-root
+  "Get the project root directory." {:malli/schema [:=> [:cat] [:fn (fn* [p1__3756#] (instance? File p1__3756#))]]}
   []
-  [=> [:fn #(instance? File %)]]
   (-> (io/file ".")
       (.getCanonicalPath)
       (str/replace #"/tools/clj-stream-spawner$" "")
@@ -79,10 +75,9 @@
 ;; Stream Output Handling
 ;; ============================================================================
 
-(>defn- create-output-gobbler
-  "Create a thread that consumes process output."
+(defn- create-output-gobbler
+  "Create a thread that consumes process output." {:malli/schema [:=> [:cat StreamType :string [:fn (fn* [p1__3758#] (instance? BufferedReader p1__3758#))]] [:fn (fn* [p1__3760#] (instance? Thread p1__3760#))]]}
   [stream-type stream-name ^BufferedReader reader]
-  [StreamType :string [:fn #(instance? BufferedReader %)] => [:fn #(instance? Thread %)]]
   (Thread.
    (fn []
      (try
@@ -99,12 +94,11 @@
 ;; Process Spawning
 ;; ============================================================================
 
-(>defn spawn-stream-process
+(defn spawn-stream-process
   "Spawn a VideoStreamManager process for a stream.
-   Returns a ProcessInfo map with the process and monitoring threads."
+   Returns a ProcessInfo map with the process and monitoring threads." {:malli/schema [:=> [:cat StreamType :string [:* :any]] ProcessInfo]}
   [stream-type host & {:keys [parent-pid debug?]
                         :or {debug? false}}]
-  [StreamType :string [:* :any] => ProcessInfo]
   (let [stream-url (build-stream-url stream-type host)
         classpath (get-classpath)
         project-root (get-project-root)
@@ -157,16 +151,14 @@
 ;; Process Control
 ;; ============================================================================
 
-(>defn process-alive?
-  "Check if a process is still alive."
+(defn process-alive?
+  "Check if a process is still alive." {:malli/schema [:=> [:cat ProcessInfo] :boolean]}
   [process-info]
-  [ProcessInfo => :boolean]
   (.isAlive (:process process-info)))
 
-(>defn stop-process
-  "Stop a process gracefully, with force kill fallback."
+(defn stop-process
+  "Stop a process gracefully, with force kill fallback." {:malli/schema [:=> [:cat ProcessInfo [:* :any]] :nil]}
   [process-info & {:keys [timeout-seconds] :or {timeout-seconds 5}}]
-  [ProcessInfo [:* :any] => :nil]
   (let [{:keys [stream-type process pid]} process-info]
     (when (process-alive? process-info)
       (t/log! :info (str "Stopping " (name stream-type) " stream process - PID: " pid))
@@ -183,10 +175,9 @@
       (t/log! :info (str (name stream-type) " stream process stopped - PID: " pid))))
   nil)
 
-(>defn wait-for-process
-  "Wait for a process to terminate."
+(defn wait-for-process
+  "Wait for a process to terminate." {:malli/schema [:=> [:cat ProcessInfo [:* :any]] [:maybe :int]]}
   [process-info & {:keys [timeout-seconds]}]
-  [ProcessInfo [:* :any] => [:maybe :int]]
   (let [{:keys [process]} process-info]
     (if timeout-seconds
       (when (.waitFor process timeout-seconds TimeUnit/SECONDS)
@@ -201,26 +192,23 @@
 
 (def ^:private processes (atom {}))
 
-(>defn spawn-and-register
-  "Spawn a process and register it in the pool."
+(defn spawn-and-register
+  "Spawn a process and register it in the pool." {:malli/schema [:=> [:cat StreamType :string [:* :any]] ProcessInfo]}
   [stream-type host & opts]
-  [StreamType :string [:* :any] => ProcessInfo]
   (when (get @processes stream-type)
     (throw (ex-info "Process already exists" {:stream-type stream-type})))
   (let [process-info (apply spawn-stream-process stream-type host opts)]
     (swap! processes assoc stream-type process-info)
     process-info))
 
-(>defn get-process
-  "Get a registered process by stream type."
+(defn get-process
+  "Get a registered process by stream type." {:malli/schema [:=> [:cat StreamType] [:maybe ProcessInfo]]}
   [stream-type]
-  [StreamType => [:maybe ProcessInfo]]
   (get @processes stream-type))
 
-(>defn stop-all-processes
-  "Stop all registered processes."
+(defn stop-all-processes
+  "Stop all registered processes." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> :nil]
   (t/log! :info "Stopping all stream processes...")
   (doseq [[_ process-info] @processes]
     (stop-process process-info))

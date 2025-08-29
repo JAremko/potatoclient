@@ -8,7 +8,6 @@
    - Uses p-> for multiple mutations
    - Avoids repeated assoc operations"
   (:require
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [pronto.core :as p]
    [potatoclient.proto.serialize :as serialize]
    [potatoclient.proto.deserialize :as deserialize]
@@ -47,26 +46,24 @@
 ;; Test Support - Roundtrip Validation
 ;; ============================================================================
 
-(>defn- validate-roundtrip!
+(defn- validate-roundtrip!
   "Validate that a command survives serialization/deserialization.
    Used in test mode to ensure correctness.
-   Uses normalized comparison with proto template."
+   Uses normalized comparison with proto template." {:malli/schema [:=> [:cat :cmd/root] :nil]}
   [full-cmd]
-  [:cmd/root => nil?]
   (validation/assert-roundtrip full-cmd))
 
 ;; ============================================================================
 ;; Core Send Function - Automatically uses test mode when in test alias
 ;; ============================================================================
 
-(>defn send-command!
+(defn send-command!
   "Enqueue a fully formed command for sending.
    Takes a complete cmd root and adds it to the queue.
    In production, returns nil after enqueueing.
    In test mode, skips enqueueing but still validates.
-   Throws if validation fails."
+   Throws if validation fails." {:malli/schema [:=> [:cat :cmd/root] :nil]}
   [full-cmd]
-  [:cmd/root => nil?]
   ;; Validate with Malli and buf.validate via serialize
   ;; This will throw if validation fails
   (serialize/serialize-cmd-payload full-cmd)
@@ -83,74 +80,68 @@
   nil)
 
 
-(>defn create-command
+(defn create-command
   "Create a fully populated command from a payload.
    Takes a cmd payload map (just the oneof part) and returns the full command.
-   This is what command functions should use to build their return values."
+   This is what command functions should use to build their return values." {:malli/schema [:=> [:cat :map] :cmd/root]}
   [cmd-payload]
-  [map? => :cmd/root]  ;; Simple map check instead of complex :or spec
+  ;; Simple map check instead of complex :or spec
   (builder/populate-cmd-fields cmd-payload))
 
 ;; ============================================================================
 ;; Ping Command for Keep-Alive
 ;; ============================================================================
 
-(>defn create-ping-command
+(defn create-ping-command
   "Create a ping command to keep connection alive.
-   Returns the full command with all protocol fields."
+   Returns the full command with all protocol fields." {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  [=> :cmd/root]
   (builder/populate-cmd-fields {:ping {}}))
 
 ;; ============================================================================
 ;; Queue Reader Functions
 ;; ============================================================================
 
-(>defn poll-command-with-timeout
+(defn poll-command-with-timeout
   "Poll for the next command with timeout.
    If timeout expires, returns a ping command.
-   Timeout is in milliseconds."
+   Timeout is in milliseconds." {:malli/schema [:=> [:cat :nat-int] :cmd/root]}
   [timeout-ms]
-  [:nat-int => :cmd/root]
   (or (.poll command-queue timeout-ms TimeUnit/MILLISECONDS)
       ;; Timeout - send ping to keep connection alive
       (create-ping-command)))
 
-(>defn take-next-command
+(defn take-next-command
   "Take the next command, blocking up to 1 second.
-   Returns ping command if timeout."
+   Returns ping command if timeout." {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  [=> :cmd/root]
   (poll-command-with-timeout 1000))
 
 ;; ============================================================================
 ;; Queue Management
 ;; ============================================================================
 
-(>defn clear-queue!
-  "Clear all pending commands from the queue."
+(defn clear-queue!
+  "Clear all pending commands from the queue." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> nil?]
   (.clear command-queue)
   nil)
 
-(>defn queue-size
-  "Get the current number of commands in the queue."
+(defn queue-size
+  "Get the current number of commands in the queue." {:malli/schema [:=> [:cat] :nat-int]}
   []
-  [=> :nat-int]
   (.size command-queue))
 
 ;; ============================================================================
 ;; WebSocket Consumer (to be called from WebSocket thread)
 ;; ============================================================================
 
-(>defn consume-commands
+(defn consume-commands
   "Continuously consume commands from queue and send via WebSocket.
    This should be called from a dedicated thread.
    The send-fn is a function that takes binary data and sends it.
-   Returns a function to stop the consumer loop."
+   Returns a function to stop the consumer loop." {:malli/schema [:=> [:cat :fn] :fn]}
   [send-fn]
-  [:fn => :fn]
   (let [running (atom true)]
     (future
       (while @running
@@ -174,8 +165,7 @@
 ;; Test Helpers
 ;; ============================================================================
 
-(>defn in-test-mode?
-  "Check if running in test mode."
+(defn in-test-mode?
+  "Check if running in test mode." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> :boolean]
   test-mode?)

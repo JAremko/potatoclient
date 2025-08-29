@@ -8,7 +8,6 @@
    - deserialize-state-payload*: Fast deserialization without validation  
    - deserialize-state-payload: Full deserialization with buf.validate and Malli validation"
   (:require
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
    [malli.core :as m]
    [malli.error :as me]
    [pronto.core :as pronto]
@@ -46,11 +45,10 @@
 ;; ============================================================================
 
 
-(>defn- validate-with-buf
+(defn- validate-with-buf
   "Validate a protobuf message with buf.validate.
-   Returns nil if valid, throws ex-info with violations if invalid."
+   Returns nil if valid, throws ex-info with violations if invalid." {:malli/schema [:=> [:cat :any :keyword] :any]}
   [proto-msg proto-type]
-  [:any :keyword => :any]
   (let [result (.validate @validator proto-msg)]
     (when-not (.isSuccess result)
       (throw (ex-info "buf.validate validation failed"
@@ -63,11 +61,10 @@
                                              :message (.getMessage proto-violation)}))
                                         (.getViolations result))})))))
 
-(>defn- validate-with-malli
+(defn- validate-with-malli
   "Validate EDN data with Malli spec.
-   Returns nil if valid, throws ex-info with errors if invalid."
+   Returns nil if valid, throws ex-info with errors if invalid." {:malli/schema [:=> [:cat [:map] :keyword] :any]}
   [edn-data spec-key]
-  [[:map] :keyword => :any]
   (let [spec (try 
                 (m/schema spec-key)
                 (catch Exception e
@@ -90,12 +87,11 @@
 ;; CMD Deserialization
 ;; ============================================================================
 
-(>defn deserialize-cmd-payload*
+(defn deserialize-cmd-payload*
   "Fast deserialization of CMD payload without validation.
    Takes binary protobuf data and returns EDN.
-   Throws ex-info if deserialization fails."
+   Throws ex-info if deserialization fails." {:malli/schema [:=> [:cat :bytes] :map]}
   [binary-data]
-  [bytes? => map?]
   (try
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)]
@@ -106,13 +102,12 @@
                        :proto-type :cmd
                        :error (.getMessage e)})))))
 
-(>defn deserialize-cmd-payload
+(defn deserialize-cmd-payload
   "Deserialize CMD payload with full validation.
    Takes binary protobuf data and returns EDN.
    Performs buf.validate and Malli validation.
-   Throws ex-info if deserialization or validation fails."
+   Throws ex-info if deserialization or validation fails." {:malli/schema [:=> [:cat :bytes] :map]}
   [binary-data]
-  [bytes? => map?]
   (try
     ;; Parse proto
     (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
@@ -136,12 +131,11 @@
 ;; State Deserialization
 ;; ============================================================================
 
-(>defn deserialize-state-payload*
+(defn deserialize-state-payload*
   "Fast deserialization of State payload without validation.
    Takes binary protobuf data and returns EDN.
-   Throws ex-info if deserialization fails."
+   Throws ex-info if deserialization fails." {:malli/schema [:=> [:cat :bytes] :map]}
   [binary-data]
-  [bytes? => map?]
   (try
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)]
@@ -152,13 +146,12 @@
                        :proto-type :state
                        :error (.getMessage e)})))))
 
-(>defn deserialize-state-payload
+(defn deserialize-state-payload
   "Deserialize State payload with full validation.
    Takes binary protobuf data and returns EDN.
    Performs buf.validate and Malli validation.
-   Throws ex-info if deserialization or validation fails."
+   Throws ex-info if deserialization or validation fails." {:malli/schema [:=> [:cat :bytes] :map]}
   [binary-data]
-  [bytes? => map?]
   (try
     ;; Parse proto
     (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)

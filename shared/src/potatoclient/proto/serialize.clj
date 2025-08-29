@@ -8,7 +8,6 @@
    - serialize-state-payload*: Fast serialization without validation  
    - serialize-state-payload: Full serialization with Malli and buf.validate validation"
   (:require
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- =>]]
    [malli.core :as m]
    [malli.error :as me]
    [pronto.core :as pronto]
@@ -56,11 +55,10 @@
 ;; Helper functions
 ;; ============================================================================
 
-(>defn- validate-with-malli
+(defn- validate-with-malli
   "Validate EDN data with Malli spec.
-   Returns nil if valid, throws ex-info with errors if invalid."
+   Returns nil if valid, throws ex-info with errors if invalid." {:malli/schema [:=> [:cat [:map] :keyword] :any]}
   [edn-data spec-key]
-  [[:map] :keyword => :any]
   (ensure-registry!)
   (let [spec (try 
                 (m/schema spec-key)
@@ -81,11 +79,10 @@
                          :errors errors
                          :raw-explanation explanation}))))))
 
-(>defn- validate-with-buf
+(defn- validate-with-buf
   "Validate a protobuf message with buf.validate.
-   Returns nil if valid, throws ex-info with violations if invalid."
+   Returns nil if valid, throws ex-info with violations if invalid." {:malli/schema [:=> [:cat :any :keyword] :any]}
   [proto-msg proto-type]
-  [:any :keyword => :any]
   (let [result (.validate @validator proto-msg)]
     (when-not (.isSuccess result)
       (throw (ex-info "buf.validate validation failed"
@@ -102,12 +99,11 @@
 ;; CMD Serialization
 ;; ============================================================================
 
-(>defn serialize-cmd-payload*
+(defn serialize-cmd-payload*
   "Fast serialization of CMD payload without validation.
    Takes EDN data and returns binary protobuf data.
-   Throws ex-info if serialization fails."
+   Throws ex-info if serialization fails." {:malli/schema [:=> [:cat :map] :bytes]}
   [edn-data]
-  [map? => bytes?]
   (try
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
@@ -120,13 +116,12 @@
                        :proto-type :cmd
                        :error (.getMessage e)})))))
 
-(>defn serialize-cmd-payload
+(defn serialize-cmd-payload
   "Serialize CMD payload with full validation.
    Takes EDN data and returns binary protobuf data.
    Performs Malli validation before serialization and buf.validate after.
-   Throws ex-info if validation or serialization fails."
+   Throws ex-info if validation or serialization fails." {:malli/schema [:=> [:cat :map] :bytes]}
   [edn-data]
-  [map? => bytes?]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :cmd/root)
@@ -156,12 +151,11 @@
 ;; State Serialization
 ;; ============================================================================
 
-(>defn serialize-state-payload*
+(defn serialize-state-payload*
   "Fast serialization of State payload without validation.
    Takes EDN data and returns binary protobuf data.
-   Throws ex-info if serialization fails."
+   Throws ex-info if serialization fails." {:malli/schema [:=> [:cat :map] :bytes]}
   [edn-data]
-  [map? => bytes?]
   (try
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
@@ -175,13 +169,12 @@
                        :error (or (.getMessage e) (str e))
                        :cause e})))))
 
-(>defn serialize-state-payload
+(defn serialize-state-payload
   "Serialize State payload with full validation.
    Takes EDN data and returns binary protobuf data.
    Performs Malli validation before serialization and buf.validate after.
-   Throws ex-info if validation or serialization fails."
+   Throws ex-info if validation or serialization fails." {:malli/schema [:=> [:cat :map] :bytes]}
   [edn-data]
-  [map? => bytes?]
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :state/root)

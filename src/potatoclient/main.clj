@@ -98,12 +98,6 @@
           (theme/preload-theme-icons!)
           (show-startup-dialog-recursive))))))
 
-(defn- enable-guardrails!
-  "Enable Guardrails validation for non-release builds." {:malli/schema [:=> [:cat] :nil]}
-  []
-  (if (runtime/release-build?)
-    (println "Running RELEASE build - Guardrails validation disabled for optimal performance")
-    (println "Running DEVELOPMENT build - Guardrails validation enabled")))
 
 (defn- enable-dev-mode!
   "Enable additional development mode settings by loading the dev namespace." {:malli/schema [:=> [:cat] :nil]}
@@ -135,7 +129,6 @@
   ;; at startup time, not programmatically here. See Makefile and Launch4j
   ;; configuration for proper flag setup.
 
-  (enable-guardrails!)
   (enable-dev-mode!)
 
   (try
@@ -143,21 +136,6 @@
 
     ;; Check for special flags
     (cond
-      (some #{"--report-unspecced"} args)
-      (generate-unspecced-report!)
-
-      (some #{"--test-guardrails"} args)
-      (do
-        (println "Running Guardrails validation tests...")
-        (require 'potatoclient.guardrails-test)
-        (let [test-fn (resolve 'potatoclient.guardrails-test/test-guardrails!)]
-          (if test-fn
-            (do
-              (test-fn)
-              (System/exit 0))
-            (do
-              (println "Error: Could not find test function")
-              (System/exit 1)))))
 
       :else
       ;; Normal application startup

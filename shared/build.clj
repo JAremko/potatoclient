@@ -48,7 +48,7 @@
   (b/compile-clj {:basis basis
                   :src-dirs ["src"]
                   :class-dir class-dir
-                  :java-opts ["-Dguardrails.enabled=true" "-Dguardrails.throw=true"]}))
+                  :java-opts []}))
 
 (defn compile-all
   "Compile everything needed for tests."

@@ -31,7 +31,6 @@
         ;; DarkLaf for theming support
         com.github.weisj/darklaf-core {:mvn/version "3.1.0"}
         ;; Function specs
-        com.fulcrologic/guardrails {:mvn/version "1.2.9"}
         ;; Telemere for logging
         com.taoensso/telemere {:mvn/version "1.1.0"}
         ;; Buf validate - needed for generated Java code compilation and Kotlin validation
@@ -53,7 +52,6 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.main.report=stderr"
-                            "-Dguardrails.enabled=true"
                             "-Dpotatoclient.validation.enabled=true"
                             "-Dawt.useSystemAAFontSettings=on"]}
 
@@ -65,8 +63,7 @@
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                               "--enable-native-access=ALL-UNNAMED"
                               "-Djdk.attach.allowAttachSelf"
-                              "-Dguardrails.enabled=true"
-                              "-Dpotatoclient.validation.enabled=true"
+                                "-Dpotatoclient.validation.enabled=true"
                               "-Dpotatoclient.dev=true"
                               "-Dawt.useSystemAAFontSettings=on"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
@@ -77,7 +74,6 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.compile.warn-on-reflection=true"
-                            "-Dguardrails.enabled=true"
                             "-Dawt.useSystemAAFontSettings=on"]
                  :main-opts ["-m" "potatoclient.main"]}
 
@@ -102,7 +98,7 @@
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                                        :git/tag "v0.1.8-alpha"
                                                        :git/sha "776dff4"}}
-                 :jvm-opts ["-Dguardrails.enabled=true"
+                 :jvm-opts [
                             "-Dpotatoclient.validation.enabled=true"]
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
@@ -115,7 +111,7 @@
                                                                      :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
                                junit/junit {:mvn/version "4.13.2"}
                                org.jetbrains.kotlin/kotlin-test-junit {:mvn/version "2.2.10"}}
-                  :jvm-opts ["-Dguardrails.enabled=true"]
+                  :jvm-opts []
                   :main-opts ["-m" "cognitect.test-runner"]
                   :exec-fn cognitect.test-runner.api/test}
 
@@ -123,7 +119,7 @@
                           :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
                                                                              :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
                                        cloverage/cloverage {:mvn/version "1.2.4"}}
-                          :jvm-opts ["-Dguardrails.enabled=true"]
+                          :jvm-opts []
                           :main-opts ["-m" "cloverage.coverage"
                                       "-p" "src"
                                       "-s" "test"
@@ -138,7 +134,7 @@
                         :extra-deps {org.jacoco/org.jacoco.core {:mvn/version "0.8.13"}
                                      org.jacoco/org.jacoco.report {:mvn/version "0.8.13"}}
                         :jvm-opts ["-javaagent:target/jacocoagent.jar=destfile=target/jacoco.exec"
-                                   "-Dguardrails.enabled=true"]}
+     ]}
 
            :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
                     :main-opts ["-m" "cljfmt.main"]}

@@ -1,5 +1,5 @@
 (ns potatoclient.cmd.negative-test
-  "Negative tests to ensure our guardrails and validation catch errors.
+  "Negative tests to ensure our validation catches errors.
    These tests deliberately pass invalid arguments to ensure proper error handling."
   (:require
    [clojure.test :refer [deftest is testing]]
@@ -20,11 +20,11 @@
 (registry/setup-global-registry!)
 
 ;; ============================================================================
-;; Guardrails Function Argument Validation
+;; Malli Function Argument Validation
 ;; ============================================================================
 
-(deftest guardrails-argument-validation-test
-  (testing "Guardrails should catch invalid function arguments"
+(deftest malli-argument-validation-test
+  (testing "Malli validation should catch invalid function arguments"
     
     (testing "system/set-localization with invalid argument types"
       ;; Should take a keyword, not a string
@@ -96,11 +96,11 @@
 
 
 ;; ============================================================================
-;; Guardrails Validation Tests - Ensure Guardrails is actually checking specs
+;; Malli Validation Tests - Ensure Malli is actually checking specs
 ;; ============================================================================
 
-(deftest guardrails-validation-sanity-check
-  (testing "Guardrails actually validates function specs"
+(deftest malli-validation-sanity-check
+  (testing "Malli actually validates function specs"
     (testing "Return value validation"
       ;; create-command should return :cmd/root
       (let [valid-result (core/create-command {:ping {}})]

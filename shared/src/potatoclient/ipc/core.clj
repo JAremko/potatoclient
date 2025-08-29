@@ -4,7 +4,6 @@
   (:require
     [potatoclient.ipc.transit :as transit]
     [potatoclient.malli.registry :as registry]
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn- ?]]
     [taoensso.telemere :as t])
   (:import
     (clojure.lang Atom)
@@ -43,17 +42,15 @@
   []
   (.pid (ProcessHandle/current)))
 
-(>defn- generate-socket-path
-  "Generate a socket path for a stream."
+(defn- generate-socket-path
+  "Generate a socket path for a stream." {:malli/schema [:=> [:cat StreamType] [:fn (fn* [p1__3784#] (instance? Path p1__3784#))]]}
   [stream-type]
-  [StreamType => [:fn #(instance? Path %)]]
   (let [socket-name (str "ipc-" (get-current-pid) "-" (name stream-type))]
     (SocketFactory/generateSocketPath socket-name)))
 
-(>defn- start-reader-thread
-  "Start the thread that reads messages from the socket."
+(defn- start-reader-thread
+  "Start the thread that reads messages from the socket." {:malli/schema [:=> [:cat IpcServer] [:fn (fn* [p1__3786#] (instance? Thread p1__3786#))]]}
   [{:keys [stream-type communicator message-queue running?]}]
-  [IpcServer => [:fn #(instance? Thread %)]]
   (Thread.
     (fn []
      (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
@@ -72,10 +69,9 @@
              (Thread/sleep 100))))))
    (str (name stream-type) "-server-reader")))
 
-(>defn- start-processor-thread
-  "Start the thread that processes messages from the queue."
+(defn- start-processor-thread
+  "Start the thread that processes messages from the queue." {:malli/schema [:=> [:cat IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]]] [:fn (fn* [p1__3788#] (instance? Thread p1__3788#))]]}
   [{:keys [stream-type message-queue running?]} on-message]
-  [IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]] => [:fn #(instance? Thread %)]]
   (Thread.
    (fn []
      (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
@@ -92,12 +88,11 @@
              (t/log! :error (str "[" (name stream-type) "-server] Error processing message: " (.getMessage e))))))))
    (str (name stream-type) "-server-processor")))
 
-(>defn create-server
+(defn create-server
   "Create and start an IPC server for a stream.
-   Returns a server map with control functions."
+   Returns a server map with control functions." {:malli/schema [:=> [:cat StreamType [:* :any]] IpcServer]}
   [stream-type & {:keys [on-message await-binding?]
                    :or {await-binding? true}}]
-  [StreamType [:* :any] => IpcServer]
   (let [socket-path (generate-socket-path stream-type)
         _ (Files/deleteIfExists socket-path)
         communicator (SocketFactory/createServer ^Path socket-path)
@@ -140,10 +135,9 @@
              :reader-thread reader-thread
              :processor-thread processor-thread))))
 
-(>defn stop-server
-  "Stop an IPC server and clean up resources."
+(defn stop-server
+  "Stop an IPC server and clean up resources." {:malli/schema [:=> [:cat IpcServer] :nil]}
   [server]
-  [IpcServer => :nil]
   (let [{:keys [stream-type running? reader-thread processor-thread
                 communicator socket-path]} server]
     (when @running?
@@ -170,10 +164,9 @@
       (t/log! :info (str "[" (name stream-type) "-server] IPC server stopped")))
     nil))
 
-(>defn send-message
-  "Send a message through the IPC server."
+(defn send-message
+  "Send a message through the IPC server." {:malli/schema [:=> [:cat IpcServer [:map-of :keyword :any]] :boolean]}
   [server message]
-  [IpcServer [:map-of :keyword :any] => :boolean]
   (let [{:keys [stream-type communicator running?]} server]
     (if @running?
       (try
@@ -187,27 +180,24 @@
         (t/log! :warn (str "[" (name stream-type) "-server] Cannot send message - server not running"))
         false))))
 
-(>defn receive-message
-  "Receive a message from the queue (blocking with optional timeout)."
+(defn receive-message
+  "Receive a message from the queue (blocking with optional timeout)." {:malli/schema [:=> [:cat IpcServer [:* :any]] [:maybe [:map-of :keyword :any]]]}
   [server & {:keys [timeout-ms] :or {timeout-ms 0}}]
-  [IpcServer [:* :any] => [:maybe [:map-of :keyword :any]]]
   (let [{:keys [message-queue running?]} server]
     (when @running?
       (if (pos? timeout-ms)
         (.poll message-queue timeout-ms TimeUnit/MILLISECONDS)
         (.take message-queue)))))
 
-(>defn try-receive-message
-  "Try to receive a message without blocking."
+(defn try-receive-message
+  "Try to receive a message without blocking." {:malli/schema [:=> [:cat IpcServer] [:maybe [:map-of :keyword :any]]]}
   [server]
-  [IpcServer => [:maybe [:map-of :keyword :any]]]
   (let [{:keys [message-queue]} server]
     (.poll message-queue)))
 
-(>defn server-running?
-  "Check if the server is running."
+(defn server-running?
+  "Check if the server is running." {:malli/schema [:=> [:cat IpcServer] :boolean]}
   [server]
-  [IpcServer => :boolean]
   (let [{:keys [running? communicator]} server]
     (and @running?
          communicator
@@ -219,16 +209,14 @@
 
 (def ^:private servers (atom {}))
 
-(>defn get-server
-  "Get an existing server for a stream type."
+(defn get-server
+  "Get an existing server for a stream type." {:malli/schema [:=> [:cat StreamType] [:maybe IpcServer]]}
   [stream-type]
-  [StreamType => [:maybe IpcServer]]
   (get @servers stream-type))
 
-(>defn create-and-register-server
-  "Create a server and register it in the pool."
+(defn create-and-register-server
+  "Create a server and register it in the pool." {:malli/schema [:=> [:cat StreamType [:* :any]] IpcServer]}
   [stream-type & opts]
-  [StreamType [:* :any] => IpcServer]
   (when-let [existing (get-server stream-type)]
     (stop-server existing)
     (swap! servers dissoc stream-type))
@@ -236,10 +224,9 @@
     (swap! servers assoc stream-type server)
     server))
 
-(>defn stop-all-servers
-  "Stop all registered servers."
+(defn stop-all-servers
+  "Stop all registered servers." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> :nil]
   (doseq [[stream-type server] @servers]
     (t/log! :info (str "Stopping " (name stream-type) " server"))
     (stop-server server))

@@ -75,7 +75,7 @@ test: ## Run all shared module tests
 		exit 1; \
 	fi
 	@echo "Running shared project tests..."
-	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test
+	@clojure -M:test
 
 # Test categories - run specific test suites
 test-oneof: ## Run only oneof custom spec tests
@@ -90,7 +90,7 @@ test-oneof: ## Run only oneof custom spec tests
 		exit 1; \
 	fi
 	@echo "Running oneof tests..."
-	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-oneof
+	@clojure -M:test-oneof
 
 test-malli: ## Run only malli spec tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -104,7 +104,7 @@ test-malli: ## Run only malli spec tests
 		exit 1; \
 	fi
 	@echo "Running malli spec tests..."
-	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-malli
+	@clojure -M:test-malli
 
 test-serialization: ## Run only serialization/deserialization tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -118,7 +118,7 @@ test-serialization: ## Run only serialization/deserialization tests
 		exit 1; \
 	fi
 	@echo "Running serialization tests..."
-	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-serialization
+	@clojure -M:test-serialization
 
 test-cmd: ## Run only command tests
 	@if [ ! -d "target/classes/cmd" ]; then \
@@ -132,7 +132,7 @@ test-cmd: ## Run only command tests
 		exit 1; \
 	fi
 	@echo "Running command tests..."
-	@clojure -J-Dguardrails.enabled=true -J-Dguardrails.throw=true -M:test-cmd
+	@clojure -M:test-cmd
 
 # Clean everything EXCEPT proto artifacts
 clean: ## Clean build artifacts (preserves proto classes)
@@ -182,10 +182,10 @@ deps-upgrade-all: ## Upgrade all outdated dependencies (non-interactive)
 		echo "Aborted."; \
 	fi
 
-# Generate clj-kondo type configs from Malli/Guardrails specs
+# Generate clj-kondo type configs from Malli specs
 kondo-configs: ## Generate clj-kondo type configs from function specs
 	@echo "Generating clj-kondo type configs for shared module..."
-	@echo "  • Collecting Guardrails >defn function schemas"
+	@echo "  • Collecting Malli function schemas"
 	@echo "  • Extracting type information from Malli specs"
 	@echo "  • Writing to .clj-kondo/metosin/malli-types-clj/config.edn"
 	@echo ""
@@ -193,7 +193,7 @@ kondo-configs: ## Generate clj-kondo type configs from function specs
 		echo "Proto classes not found. Compiling first..."; \
 		$(MAKE) compile; \
 	fi
-	@cd .. && clojure -J-Dguardrails.enabled=true -M:dev scripts/generate-kondo-configs.clj shared
+	@cd .. && clojure -M:dev scripts/generate-kondo-configs.clj shared
 	@echo ""
 	@echo "✓ Type configs generated for shared module"
 	@echo "  Location: shared/.clj-kondo/metosin/malli-types-clj/config.edn"

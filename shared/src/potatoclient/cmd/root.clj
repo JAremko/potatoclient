@@ -2,30 +2,26 @@
   "Root-level command functions (ping, noop, frozen).
    These commands are at the root level of the cmd proto, not under any sub-message."
   (:require
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Root-level Empty Commands
 ;; ============================================================================
 
-(>defn ping
+(defn ping
   "Create a ping command to keep connection alive.
-   Returns a fully formed cmd root ready to send."
+   Returns a fully formed cmd root ready to send." {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  [=> :cmd/root]
   (core/create-command {:ping {}}))
 
-(>defn noop
+(defn noop
   "Create a no-operation command.
-   Returns a fully formed cmd root ready to send."
+   Returns a fully formed cmd root ready to send." {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  [=> :cmd/root]
   (core/create-command {:noop {}}))
 
-(>defn frozen
+(defn frozen
   "Create a frozen command to indicate system freeze state.
-   Returns a fully formed cmd root ready to send."
+   Returns a fully formed cmd root ready to send." {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  [=> :cmd/root]
   (core/create-command {:frozen {}}))

@@ -5,7 +5,6 @@
     [clj-stream-spawner.process :as process]
     [potatoclient.ipc.core :as ipc]
     [potatoclient.ipc.transit :as transit]
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn >defn-]]
     [taoensso.telemere :as t])
   (:import
     (java.util.concurrent CountDownLatch TimeUnit)))
@@ -39,10 +38,9 @@
 
 (def ^:private state (atom nil))
 
-(>defn- init-state
-  "Initialize coordinator state."
+(defn- init-state
+  "Initialize coordinator state." {:malli/schema [:=> [:cat :string :boolean] CoordinatorState]}
   [host debug?]
-  [:string :boolean => CoordinatorState]
   {:host host
    :debug? debug?
    :streams {:heat {:status :stopped
@@ -55,17 +53,15 @@
                    :error nil}}
    :shutdown-latch (CountDownLatch. 1)})
 
-(>defn- update-stream-state
-  "Update the state of a specific stream."
+(defn- update-stream-state
+  "Update the state of a specific stream." {:malli/schema [:=> [:cat StreamType [:map-of :keyword :any]] :any]}
   [stream-type updates]
-  [StreamType [:map-of :keyword :any] => :any]
   (when @state
     (swap! state update-in [:streams stream-type] merge updates)))
 
-(>defn- get-stream-state
-  "Get the current state of a stream."
+(defn- get-stream-state
+  "Get the current state of a stream." {:malli/schema [:=> [:cat StreamType] [:maybe StreamState]]}
   [stream-type]
-  [StreamType => [:maybe StreamState]]
   (when @state
     (get-in @state [:streams stream-type])))
 
@@ -73,10 +69,9 @@
 ;; IPC Message Handlers
 ;; ============================================================================
 
-(>defn- create-message-handler
-  "Create a message handler for a stream."
+(defn- create-message-handler
+  "Create a message handler for a stream." {:malli/schema [:=> [:cat StreamType] [:=> [:cat [:map-of :keyword :any]] :any]]}
   [stream-type]
-  [StreamType => [:=> [:cat [:map-of :keyword :any]] :any]]
   (fn [message]
     (let [msg-type (:msg-type message)]
       (case msg-type
@@ -90,10 +85,9 @@
 ;; Stream Lifecycle
 ;; ============================================================================
 
-(>defn- start-stream-ipc
-  "Start IPC server for a stream."
+(defn- start-stream-ipc
+  "Start IPC server for a stream." {:malli/schema [:=> [:cat StreamType] [:maybe ipc/IpcServer]]}
   [stream-type]
-  [StreamType => [:maybe ipc/IpcServer]]
   (try
     (t/log! :info (str "Starting IPC server for " (name stream-type) " stream"))
     (update-stream-state stream-type {:status :starting})
@@ -110,10 +104,9 @@
                                         :error (.getMessage e)})
       nil)))
 
-(>defn- start-stream-process
-  "Start VideoStreamManager process for a stream."
+(defn- start-stream-process
+  "Start VideoStreamManager process for a stream." {:malli/schema [:=> [:cat StreamType] [:maybe process/ProcessInfo]]}
   [stream-type]
-  [StreamType => [:maybe process/ProcessInfo]]
   (let [{:keys [host debug?]} @state]
     (try
       (t/log! :info (str "Starting process for " (name stream-type) " stream"))
@@ -133,10 +126,9 @@
                                           :error (.getMessage e)})
         nil))))
 
-(>defn start-stream
-  "Start a complete stream (IPC + process)."
+(defn start-stream
+  "Start a complete stream (IPC + process)." {:malli/schema [:=> [:cat StreamType] :boolean]}
   [stream-type]
-  [StreamType => :boolean]
   (let [current-state (get-stream-state stream-type)]
     (if (and current-state (= (:status current-state) :running))
       (do
@@ -154,10 +146,9 @@
               (update-stream-state stream-type {:status :failed})
               false)))))))
 
-(>defn stop-stream
-  "Stop a stream (process + IPC)."
+(defn stop-stream
+  "Stop a stream (process + IPC)." {:malli/schema [:=> [:cat StreamType] :nil]}
   [stream-type]
-  [StreamType => :nil]
   (when-let [{:keys [status ipc-server process]} (get-stream-state stream-type)]
     (when (#{:starting :running} status)
       (t/log! :info (str "Stopping " (name stream-type) " stream"))
@@ -181,35 +172,31 @@
 ;; Coordinator Control
 ;; ============================================================================
 
-(>defn start-all-streams
-  "Start both heat and day streams."
+(defn start-all-streams
+  "Start both heat and day streams." {:malli/schema [:=> [:cat] [:map [:heat :boolean] [:day :boolean]]]}
   []
-  [=> [:map [:heat :boolean] [:day :boolean]]]
   {:heat (start-stream :heat)
    :day (start-stream :day)})
 
-(>defn stop-all-streams
-  "Stop both heat and day streams."
+(defn stop-all-streams
+  "Stop both heat and day streams." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> :nil]
   (t/log! :info "Stopping all streams...")
   (stop-stream :heat)
   (stop-stream :day)
   nil)
 
-(>defn initialize
-  "Initialize the coordinator with configuration."
+(defn initialize
+  "Initialize the coordinator with configuration." {:malli/schema [:=> [:cat :string [:* :any]] CoordinatorState]}
   [host & {:keys [debug?] :or {debug? false}}]
-  [:string [:* :any] => CoordinatorState]
   (let [new-state (init-state host debug?)]
     (reset! state new-state)
     (t/log! :info (str "Coordinator initialized - Host: " host " Debug: " debug?))
     new-state))
 
-(>defn shutdown
-  "Shutdown the coordinator and all streams."
+(defn shutdown
+  "Shutdown the coordinator and all streams." {:malli/schema [:=> [:cat] :nil]}
   []
-  [=> :nil]
   (t/log! :info "Shutting down coordinator...")
   (stop-all-streams)
 
@@ -221,10 +208,9 @@
   (t/log! :info "Coordinator shutdown complete")
   nil)
 
-(>defn wait-for-shutdown
-  "Wait for the coordinator to shutdown."
+(defn wait-for-shutdown
+  "Wait for the coordinator to shutdown." {:malli/schema [:=> [:cat [:* :any]] :boolean]}
   [& {:keys [timeout-seconds]}]
-  [[:* :any] => :boolean]
   (if-let [latch (:shutdown-latch @state)]
     (if timeout-seconds
       (.await latch timeout-seconds TimeUnit/SECONDS)
@@ -235,25 +221,22 @@
 ;; Status & Monitoring
 ;; ============================================================================
 
-(>defn get-status
-  "Get the current status of all streams."
+(defn get-status
+  "Get the current status of all streams." {:malli/schema [:=> [:cat] [:maybe [:map [:heat StreamState] [:day StreamState]]]]}
   []
-  [=> [:maybe [:map [:heat StreamState] [:day StreamState]]]]
   (when @state
     (:streams @state)))
 
-(>defn stream-running?
-  "Check if a stream is running."
+(defn stream-running?
+  "Check if a stream is running." {:malli/schema [:=> [:cat StreamType] :boolean]}
   [stream-type]
-  [StreamType => :boolean]
   (if-let [stream-state (get-stream-state stream-type)]
     (= :running (:status stream-state))
     false))
 
-(>defn all-streams-running?
-  "Check if both streams are running."
+(defn all-streams-running?
+  "Check if both streams are running." {:malli/schema [:=> [:cat] :boolean]}
   []
-  [=> :boolean]
   (and (stream-running? :heat)
        (stream-running? :day)))
 
@@ -261,10 +244,9 @@
 ;; Control Messages
 ;; ============================================================================
 
-(>defn send-close-request
-  "Send a close request to a stream."
+(defn send-close-request
+  "Send a close request to a stream." {:malli/schema [:=> [:cat StreamType] :boolean]}
   [stream-type]
-  [StreamType => :boolean]
   (if-let [server (:ipc-server (get-stream-state stream-type))]
     (let [message (transit/create-command :close-request
                                           {:stream-type stream-type})]

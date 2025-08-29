@@ -8,7 +8,6 @@
    [potatoclient.cmd.validation :as validation]
    [malli.core :as m]
    [malli.instrument :as mi]
-   [com.fulcrologic.guardrails.malli.core :as gm]
    [potatoclient.test-harness :as harness]))
 
 ;; Ensure test harness is initialized
@@ -21,7 +20,7 @@
 ;; ============================================================================
 
 (defn test-ns-hook
-  "Enable Guardrails checking for this namespace"
+  "Test namespace for command validation"
   []
   (gm/=> true))
 

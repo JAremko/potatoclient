@@ -98,7 +98,6 @@ build-clean: compile-kotlin ## Build with forced clean rebuild
 .PHONY: release
 release: ## Build optimized JAR for distribution (stripped metadata, WARN/ERROR logging only, AOT compiled)
 	@echo "Building release version..."
-	@echo "  ✓ Guardrails completely removed from bytecode"
 	@echo "  ✓ Only WARN/ERROR logging to platform-specific locations"
 	@echo "  ✓ Window title shows [RELEASE]"
 	@echo "  ✓ Metadata stripped (smaller JAR)"
@@ -120,7 +119,6 @@ clean: clean-cache ## Clean all build artifacts
 .PHONY: nrepl
 nrepl: compile-kotlin ## REPL on port 7888 for interactive development (same validation features as make dev)
 	@echo "Starting NREPL server on port 7888..."
-	@echo "  ✓ Full Guardrails validation"
 	@echo "  ✓ EDN state validation enabled"
 	@echo "  ✓ All logging levels enabled"
 	@echo "  ✓ Connect your editor to port 7888"
@@ -223,22 +221,23 @@ coverage-analyze: ## Analyze existing coverage reports and list uncovered functi
 
 # Report unspecced functions
 .PHONY: report-unspecced
-report-unspecced: ## Check which functions need Guardrails specs - mandatory for all functions
+report-unspecced: ## Check which functions need Malli specs - mandatory for all functions
 	@echo "Generating unspecced functions report..."
 	@echo "  • Lists all functions that lack Malli instrumentation"
 	@echo "  • Groups them by namespace"
 	@echo "  • Provides statistics on coverage"
-	@echo "  • Remember: Use >defn and >defn- for ALL functions (never raw defn)"
+	@echo "  • Remember: Add :malli/schema metadata to ALL functions"
 	@echo ""
-	@cd tools/guardrails-check && bb report ../../src/potatoclient > ../../reports/unspecced-functions.md
+	@echo "Note: This report is no longer applicable - Guardrails has been removed"
+	@echo "All functions should now use Malli :malli/schema metadata instead"
 	@echo ""
 	@echo "Report saved to ./reports/unspecced-functions.md"
 
-# Generate clj-kondo type configs from Malli/Guardrails specs
+# Generate clj-kondo type configs from Malli specs
 .PHONY: kondo-configs
 kondo-configs: ensure-compiled ## Generate clj-kondo type configs from function specs (includes shared module)
 	@echo "Generating clj-kondo type configs for entire project..."
-	@echo "  • Collecting Guardrails >defn function schemas"
+	@echo "  • Collecting Malli function schemas"
 	@echo "  • Including shared module definitions"
 	@echo "  • Extracting type information from Malli specs"
 	@echo "  • Writing to .clj-kondo/metosin/malli-types-clj/config.edn"
@@ -248,7 +247,7 @@ kondo-configs: ensure-compiled ## Generate clj-kondo type configs from function 
 		echo "Shared module proto classes not found. Compiling first..."; \
 		cd shared && $(MAKE) compile && cd ..; \
 	fi
-	@clojure -J-Dguardrails.enabled=true -M:dev scripts/generate-kondo-configs.clj root
+	@clojure -M:dev scripts/generate-kondo-configs.clj root
 	@echo ""
 	@echo "✓ Type configs generated for entire project"
 	@echo "  Location: .clj-kondo/metosin/malli-types-clj/config.edn"
@@ -340,7 +339,7 @@ ensure-compiled: clean-app ## Compile only if sources changed (smart compilation
 .PHONY: dev
 dev: ensure-compiled ## PRIMARY DEVELOPMENT COMMAND - Full validation, all logs, warnings (takes 30-40s to start)
 	@echo "Running development version with:"
-	@echo "  ✓ Full Guardrails validation catches bugs immediately"
+	@echo "  ✓ Full Malli validation catches bugs immediately"
 	@echo "  ✓ EDN state validation enabled (protobuf constraint checking)"
 	@echo "  ✓ Reflection warnings for performance issues"
 	@echo "  ✓ All log levels (DEBUG, INFO, WARN, ERROR) to console and ./logs/"
@@ -360,9 +359,8 @@ dev-clean: clean-cache compile-kotlin ## Development with forced clean rebuild (
 
 # Run the JAR file in production-like mode
 .PHONY: run
-run: build ## Test the JAR in production-like mode (Guardrails disabled, near-production speed)
+run: build ## Test the JAR in production-like mode (near-production speed)
 	@echo "Running JAR in production-like mode..."
-	@echo "  ✓ Guardrails disabled"
 	@echo "  ✓ No reflection warnings"
 	@echo "  ✓ Standard logging levels"
 	@echo "  ✓ Window title shows [DEVELOPMENT]"
@@ -489,7 +487,6 @@ fmt-check:
 .PHONY: lint-clj
 lint-clj:
 	@echo "Linting Clojure code with clj-kondo..."
-	@echo "  • Guardrails support: >defn, >defn-, >def properly recognized"
 	@echo "  • Seesaw macros: UI construction functions linted correctly"
 	@echo "  • Telemere logging: Log macros understood without false positives"
 	@clojure -M:lint --lint src test || exit 1
@@ -547,7 +544,6 @@ lint: fmt-check ## Run all linters and generate filtered report (reports/lint/)
 	@echo "Generating filtered lint report..."
 	@echo "  • Filters Seesaw UI patterns (:text, :items, :border)"
 	@echo "  • Filters Telemere functions (handler:console)"
-	@echo "  • Filters Guardrails symbols (>, |, ?, =>)"
 	@echo "  • Filters standard library false warnings"
 	@bb scripts/lint-report-filtered.bb
 	@echo "✓ Filtered reports generated in reports/lint/"

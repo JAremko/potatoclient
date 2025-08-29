@@ -1,7 +1,6 @@
 (ns clj-stream-spawner.events
   "Event handling for IPC messages from video streams."
   (:require
-    [com.fulcrologic.guardrails.malli.core :refer [=> >defn]]
     [taoensso.telemere :as t]))
 
 ;; ============================================================================
@@ -66,10 +65,9 @@
 ;; Log Handler
 ;; ============================================================================
 
-(>defn handle-log
-  "Handle log messages from streams."
+(defn handle-log
+  "Handle log messages from streams." {:malli/schema [:=> [:cat StreamType Message] :any]}
   [stream-type message]
-  [StreamType Message => :any]
   (let [{:keys [level message data]} message
         level-str (when level (.toUpperCase (name level)))
         data-str (when data (str " | " data))]
@@ -83,10 +81,9 @@
 ;; Metric Handler
 ;; ============================================================================
 
-(>defn handle-metric
-  "Handle metric messages from streams."
+(defn handle-metric
+  "Handle metric messages from streams." {:malli/schema [:=> [:cat StreamType Message] :any]}
   [stream-type message]
-  [StreamType Message => :any]
   (println (format "[%s-METRIC] %s"
                    (.toUpperCase (name stream-type))
                    (dissoc message :msg-type :timestamp))))
@@ -95,11 +92,10 @@
 ;; Command Handler
 ;; ============================================================================
 
-(>defn handle-command
+(defn handle-command
   "Handle command messages from streams.
-   These are typically commands that need to be forwarded to the server."
+   These are typically commands that need to be forwarded to the server." {:malli/schema [:=> [:cat StreamType Message] :any]}
   [stream-type message]
-  [StreamType Message => :any]
   (let [{:keys [action] :as payload} (dissoc message :msg-type :timestamp)]
     (println (format "[%s-COMMAND] %s: %s"
                      (.toUpperCase (name stream-type))

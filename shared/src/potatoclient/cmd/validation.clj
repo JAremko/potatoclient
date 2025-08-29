@@ -2,7 +2,6 @@
   "Validation utilities for command roundtrip testing.
    Uses proto templates to ensure consistent comparison."
   (:require
-   [com.fulcrologic.guardrails.malli.core :refer [>defn >defn- => | ?]]
    [lambdaisland.deep-diff2 :as ddiff]
    [pronto.core :as p]
    [potatoclient.proto.serialize :as serialize]
@@ -19,11 +18,10 @@
 ;; Proto Template Creation
 ;; ============================================================================
 
-(>defn create-cmd-template
+(defn create-cmd-template
   "Create a base proto-map template with all fields present.
-   This gives us a map with all oneof fields set to nil/default values."
+   This gives us a map with all oneof fields set to nil/default values." {:malli/schema [:=> [:cat] [:map]]}
   []
-  [=> [:map]]
   ;; Create an empty proto instance and convert to EDN
   ;; This will have all fields with their default values
   (let [empty-proto (cmd.JonSharedCmd$Root/getDefaultInstance)
@@ -38,11 +36,10 @@
 ;; Validation Helpers
 ;; ============================================================================
 
-(>defn- remove-nil-values
+(defn- remove-nil-values
   "Recursively remove all keys with nil values from a map.
-   Used for test comparison only - nil values are valid in oneofs."
+   Used for test comparison only - nil values are valid in oneofs." {:malli/schema [:=> [:cat :map] :map]}
   [m]
-  [map? => map?]
   (into {}
         (for [[k v] m
               :when (not (nil? v))]
@@ -50,19 +47,17 @@
                (remove-nil-values v)
                v)])))
 
-(>defn remove-nil-oneof-fields
+(defn remove-nil-oneof-fields
   "Remove nil oneof fields from a command for comparison purposes.
    Proto deserialization adds nil for all oneof fields, which is valid
-   but makes comparison difficult. We remove nils for testing purposes only."
+   but makes comparison difficult. We remove nils for testing purposes only." {:malli/schema [:=> [:cat :cmd/root] :map]}
   [cmd]
-  [:cmd/root => map?]
   (remove-nil-values cmd))
 
-(>defn validate-roundtrip
+(defn validate-roundtrip
   "Validate that a command survives serialization/deserialization.
-   Returns true if valid, throws with detailed diff if not."
+   Returns true if valid, throws with detailed diff if not." {:malli/schema [:=> [:cat :cmd/root] :boolean]}
   [original-cmd]
-  [:cmd/root => :boolean]
   (let [;; Serialize to binary
         binary (serialize/serialize-cmd-payload original-cmd)
         ;; Deserialize back
@@ -78,11 +73,10 @@
                          :roundtrip normalized-roundtrip
                          :diff (ddiff/pretty-print diff)}))))))
 
-(>defn validate-roundtrip-with-report
+(defn validate-roundtrip-with-report
   "Validate roundtrip and return a detailed report.
-   Returns {:valid? true} or {:valid? false :diff <diff>}."
+   Returns {:valid? true} or {:valid? false :diff <diff>}." {:malli/schema [:=> [:cat :cmd/root] [:map]]}
   [original-cmd]
-  [:cmd/root => [:map]]
   (let [;; Serialize to binary
         binary (serialize/serialize-cmd-payload original-cmd)
         ;; Deserialize back
@@ -102,10 +96,9 @@
 ;; Test Helpers
 ;; ============================================================================
 
-(>defn roundtrip-test
-  "Helper for tests - performs roundtrip and returns normalized result."
+(defn roundtrip-test
+  "Helper for tests - performs roundtrip and returns normalized result." {:malli/schema [:=> [:cat :cmd/root] :cmd/root]}
   [cmd-root]
-  [:cmd/root => :cmd/root]
   (let [full-cmd (merge {:protocol_version 1
                          :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                          :session_id 0
@@ -119,11 +112,10 @@
     ;; Return roundtrip with nil oneof fields removed for comparison
     (remove-nil-oneof-fields roundtrip)))
 
-(>defn assert-roundtrip
+(defn assert-roundtrip
   "Assert that a command survives roundtrip.
-   Throws with pretty diff if validation fails."
+   Throws with pretty diff if validation fails." {:malli/schema [:=> [:cat :cmd/root] :nil]}
   [cmd]
-  [:cmd/root => :nil]
   (let [result (validate-roundtrip-with-report cmd)]
     (when-not (:valid? result)
       (throw (ex-info (str "Roundtrip validation failed:\n" (:pretty-diff result))

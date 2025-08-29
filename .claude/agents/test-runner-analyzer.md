@@ -64,8 +64,8 @@ When tests complete, always check:
 ⚠️ IMPORTANT: Per project principles, we NEVER disable or comment out failing tests. All tests MUST be made to pass. We fix the code, not the test. Failing tests highlight real issues that need resolution.
 
 **Additional Considerations**:
-- The project uses Clojure with Malli specs and Guardrails
-- Tests may fail due to missing Malli specs or guardrails
+- The project uses Clojure with Malli specs
+- Tests may fail due to missing Malli specs or incorrect schemas
 - Proto-related tests may need proto class compilation
 - Kotlin tests are compiled separately before execution
 

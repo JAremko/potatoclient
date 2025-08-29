@@ -147,11 +147,11 @@
                   proto-map)))))
 
 ;; ============================================================================
-;; Guardrails Tests - Invalid Arguments
+;; Malli Validation Tests - Invalid Arguments
 ;; ============================================================================
 
-(deftest guardrails-validation-test
-  (testing "Guardrails catch invalid arguments"
+(deftest malli-validation-test
+  (testing "Malli validation catches invalid arguments"
     
     (testing "populate-cmd-fields rejects non-maps"
       (is (thrown? Exception (builder/populate-cmd-fields "not-a-map")))

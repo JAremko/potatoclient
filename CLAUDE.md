@@ -78,34 +78,6 @@ The agent provides:
 - The agent ONLY runs tests and reports results - it does not fix tests or investigate root causes
 - When reporting failures, the agent includes this directive: "Per project Testing Philosophy: Fix the failing code to make tests pass. NEVER modify, disable, or delete the tests themselves."
 
-### Guardrails Scanner Agent
-**ALWAYS use the `guardrails-scanner` agent for:**
-- Finding Clojure functions using `defn`/`defn-` instead of Guardrails' `>defn`/`>defn-`
-- Checking Guardrails adoption statistics across the codebase
-- Identifying namespaces with unspecced functions
-- Searching for specific function patterns that lack Guardrails
-
-**How to use:**
-Provide full context when invoking:
-```
-Task: guardrails-scanner agent
-Prompt: "Check [src-dir] for functions not using Guardrails using bb command in /home/jare/git/potatoclient/tools/guardrails-check"
-```
-Example: "Check src/potatoclient for functions not using Guardrails using bb command in /home/jare/git/potatoclient/tools/guardrails-check"
-
-The agent provides:
-- List of functions using raw `defn` that should use `>defn`
-- Statistics on Guardrails adoption percentage
-- Namespace-grouped reports of unspecced functions
-- Recommendations to convert functions to use Guardrails
-
-**Technical Details:**
-- Tool location: `/home/jare/git/potatoclient/tools/guardrails-check`
-- Uses Babashka commands: `bb check`, `bb report`, `bb stats`, `bb find`
-- Default source directory: `src/potatoclient`
-- Output formats: EDN, Markdown
-
-**Note**: This tool specifically checks for Guardrails library usage (runtime validation), not general security vulnerabilities or error handling.
 
 ## Shared Module
 
@@ -127,17 +99,29 @@ This module ensures type safety and protocol consistency across all PotatoClient
 - No deprecated code or compatibility layers
 
 ### Code Quality Standards
-**All Functions Must Have:**
-1. **Guardrails (Malli version ONLY)** - Input validation and error handling
-   - Use `com.fulcrologic.guardrails.malli.core` 
-   - NEVER use `com.fulcrologic.guardrails.core` (Clojure Spec version is FORBIDDEN)
-   - Use Malli schemas (`:int`, `:double`, `:map`) not predicates (`int?`, `double?`)
-2. **Malli Specs** - Type specifications for all functions
-3. **Comprehensive Tests** - Every function must be tested
+**ALL Functions MUST Have Malli Metadata:**
+1. **Strict Malli Schemas** - MANDATORY for every single function
+   - Every `defn` and `defn-` MUST have `:malli/schema` metadata
+   - Use and expand specs from our shared registry (`potatoclient.malli.registry`)
+   - Reuse common specs: `:cmd/root`, `:state/root`, `:nat-int`, `:angle-degrees`, etc.
+   - Create new registry entries for repeated patterns - don't duplicate specs
+   - Use Malli schemas (`:int`, `:double`, `:map`) never predicates (`int?`, `double?`)
+   
+   Example:
+   ```clojure
+   (defn process-command
+     "Process a command and return result"
+     {:malli/schema [:=> [:cat :cmd/root] [:map [:status :keyword] [:result any?]]]}
+     [cmd]
+     ...)
+   ```
+
+2. **Comprehensive Tests** - Every function must be tested
+3. **Documentation** - Clear docstrings explaining purpose and usage
 
 ### Generative Testing with mi/check
-When Guardrails is enabled (`-Dguardrails.enabled=true`) and using Malli Guardrails:
-- Functions automatically get `:malli/schema` metadata
+With Malli schemas:
+- Functions with `:malli/schema` metadata can be tested automatically
 - Use `(mi/collect! {:ns ['namespace.name]})` to gather schemas
 - Use `(mi/check)` for automatic generative testing of all collected functions
 - This finds edge cases and constraint violations automatically
@@ -158,7 +142,7 @@ When Guardrails is enabled (`-Dguardrails.enabled=true`) and using Malli Guardra
 ## Development Tools
 
 ### Clj-kondo Type Config Generation
-The project can automatically generate clj-kondo type configurations from Guardrails function specs:
+The project can automatically generate clj-kondo type configurations from Malli function schemas:
 
 **Make Targets:**
 - `make kondo-configs` - Generate type configs for entire project (root + shared modules)
@@ -168,7 +152,7 @@ The project can automatically generate clj-kondo type configurations from Guardr
 **How it works:**
 1. Auto-discovers all Clojure namespaces in src directories
 2. Loads Malli registry and UI specs
-3. Collects function schemas from Guardrails `>defn` functions
+3. Collects function schemas from `:malli/schema` metadata
 4. Generates clj-kondo type information for static analysis
 5. Writes to `.clj-kondo/metosin/malli-types-clj/config.edn`
 
@@ -178,7 +162,7 @@ The project can automatically generate clj-kondo type configurations from Guardr
 - Better IDE integration with accurate type hints
 - Catches type mismatches at edit time
 
-Run `make kondo-configs` after adding new Guardrails specs to keep type checking up to date.
+Run `make kondo-configs` after adding new Malli schemas to keep type checking up to date.
 
 ## Development Guidelines
 
