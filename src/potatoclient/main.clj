@@ -10,7 +10,7 @@
             [potatoclient.theme :as theme]
             [potatoclient.ui.frames.initial.core :as initial-frame]
             [potatoclient.ui.frames.connection.core :as connection-frame]
-            [potatoclient.ui.frames.main.core :as main-frame]
+            [potatoclient.ui.main-frame :as main-frame]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -83,7 +83,7 @@
         ;; Connection successful, proceed with main frame
         (let [params {:version (get-version)
                       :build-type (get-build-type)}
-              frame (main-frame/create params)
+              frame (main-frame/create-main-frame params)
               domain (config/get-domain)]
           ;; Clean up before transitioning to main frame
           (state/cleanup-seesaw-bindings!)
@@ -96,14 +96,14 @@
             (state/set-locale! saved-locale))
           (logging/log-info {:msg "Application initialized"
                              :domain domain}))
-        
+
         :cancel
         ;; User cancelled connection, go back to initial frame
         (do
           ;; Clean up before going back
           (state/cleanup-seesaw-bindings!)
           (show-initial-frame-recursive))
-        
+
         :reload
         ;; Theme or language changed, show frame again
         (do
