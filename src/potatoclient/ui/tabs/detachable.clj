@@ -50,12 +50,14 @@
   "Close the detached window for a tab."
   {:malli/schema [:=> [:cat :keyword] :nil]}
   [tab-key]
+  (println (str "close-detached-window! called for " tab-key))
   (when-let [window (get @detached-windows tab-key)]
     ;; Save final window position
     (save-window-bounds! tab-key window)
 
-    ;; Clean up bindings for this window
+    ;; Clean up bindings for this window's CONTENT only (not the tab header)
     (let [binding-group (get-binding-group-key tab-key)]
+      (println (str "Cleaning binding group: " binding-group))
       (bg/clean-group binding-group state/app-state))
 
     ;; Close and dispose window
@@ -65,8 +67,15 @@
     ;; Remove from tracking
     (swap! detached-windows dissoc tab-key)
 
-    ;; Update state to reflect window is closed
+    ;; Update state to reflect window is closed - this should trigger the tab header binding
+    (println (str "Setting tab-window to false for " tab-key))
+    (println (str "Before update - has-window: " (state/tab-has-window? tab-key)))
     (state/set-tab-window! tab-key false)
+    (println (str "After update - has-window: " (state/tab-has-window? tab-key)))
+
+    ;; Force a state change notification by doing a no-op swap
+    (swap! state/app-state identity)
+    (println (str "Forced state notification for watchers"))
 
     ;; Update status
     (status-bar/set-info! (str "Closed window for " (make-window-title tab-key))))

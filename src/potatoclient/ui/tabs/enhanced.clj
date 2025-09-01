@@ -15,6 +15,14 @@
   (:import [javax.swing JTabbedPane JPanel JButton JFrame]
            [java.awt BorderLayout FlowLayout]))
 
+(defn cleanup-tab-watchers
+  "Remove all watchers for tabs. Call this when disposing of tabs."
+  {:malli/schema [:=> [:cat [:sequential :keyword]] :nil]}
+  [tab-keys]
+  (doseq [tab-key tab-keys]
+    (remove-watch state/app-state (keyword (str "checkbox-updater-" (name tab-key)))))
+  nil)
+
 (defn- create-tab-header
   "Create a tab header panel with title and window toggle button.
   
@@ -30,29 +38,42 @@
   [tab-key title parent-frame content-factory]
   (let [panel (JPanel. (FlowLayout. FlowLayout/LEFT 5 0))
         label (seesaw/label :text title)
-        ;; Use a checkbox which should work better with selection binding
-        checkbox (seesaw/checkbox :text "⧉" ; Window icon character
-                                  :selected? (state/tab-has-window? tab-key) ; Initialize from state
-                                  :tip (i18n/tr :detach-window-tip)
-                                  :font {:size 12})]
+        ;; Simple checkbox without confusing icon
+        checkbox (seesaw/checkbox :selected? (state/tab-has-window? tab-key) ; Initialize from state
+                                  :tip (i18n/tr :detach-window-tip))
+        ;; Track if we're updating programmatically to avoid loops
+        updating-atom (atom false)]
 
-    ;; Bind checkbox selection to app state
-    (bg/bind-group (keyword (str "tab-header-" (name tab-key)))
-                   state/app-state
-                   (bind/transform (fn [state]
-                                     (get-in state [:ui :tab-properties tab-key :has-window] false)))
-                   (bind/selection checkbox))
+    (println (str "Creating tab header for " tab-key ", initial state: " (state/tab-has-window? tab-key)))
+
+    ;; Watch state changes and update checkbox directly
+    (add-watch state/app-state (keyword (str "checkbox-updater-" (name tab-key)))
+               (fn [_ _ old-state new-state]
+                 (let [old-val (get-in old-state [:ui :tab-properties tab-key :has-window] false)
+                       new-val (get-in new-state [:ui :tab-properties tab-key :has-window] false)]
+                   (when (not= old-val new-val)
+                     (println (str "State watcher fired for " tab-key "! Old: " old-val " New: " new-val))
+                     (reset! updating-atom true)
+                     (.setSelected checkbox new-val)
+                     (println (str "Checkbox " tab-key " is now: " (.isSelected checkbox)))
+                     (reset! updating-atom false)))))
 
     ;; Handle checkbox changes - update window state based on checkbox state
     (seesaw/listen checkbox :action
                    (fn [e]
-                     (let [selected (seesaw/selection checkbox)]
-                       ;; Update window state based on checkbox
-                       (if selected
-                         (when-not (state/tab-has-window? tab-key)
-                           (detachable/create-detached-window! tab-key content-factory parent-frame))
-                         (when (state/tab-has-window? tab-key)
-                           (detachable/close-detached-window! tab-key))))))
+                     ;; Ignore if we're updating programmatically
+                     (when-not @updating-atom
+                       (let [selected (.isSelected checkbox)]
+                         (println (str "Checkbox " tab-key " clicked by user, selected: " selected
+                                       ", current state: " (state/tab-has-window? tab-key)))
+                         ;; Update window state based on checkbox
+                         (if selected
+                           (when-not (state/tab-has-window? tab-key)
+                             (println (str "Opening window for " tab-key))
+                             (detachable/create-detached-window! tab-key content-factory parent-frame))
+                           (when (state/tab-has-window? tab-key)
+                             (println (str "Closing window for " tab-key))
+                             (detachable/close-detached-window! tab-key)))))))
 
     ;; Add components to panel
     (.add panel label)
