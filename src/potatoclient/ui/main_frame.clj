@@ -11,19 +11,26 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.menu-bar :as menu-bar]
+            [potatoclient.ui.status-bar.core :as status-bar]
             [potatoclient.ui.tabs :as tabs]
             [potatoclient.ui.tabs-windows :as tabs-windows]
             [seesaw.core :as seesaw])
-  (:import (javax.swing JFrame JPanel)))
+  (:import (javax.swing JFrame JPanel)
+           (java.awt BorderLayout)))
 
 (def version "Version schema for validation." :string)
 
 (defn- create-main-content
   "Create the main content panel for the frame.
-  This includes tabs and control panels."
-  {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)]] [:fn {:error/message "must be a JTabbedPane"} (partial instance? javax.swing.JTabbedPane)]]}
+  This includes tabs and status bar."
+  {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)]] [:fn #(instance? JPanel %)]]}
   [parent-frame]
-  (tabs/create-default-tabs parent-frame))
+  (let [tabs-panel (tabs/create-default-tabs parent-frame)
+        status-bar (status-bar/create)
+        main-panel (JPanel. (BorderLayout.))]
+    (.add main-panel tabs-panel BorderLayout/CENTER)
+    (.add main-panel status-bar BorderLayout/SOUTH)
+    main-panel))
 
 (defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
@@ -115,6 +122,10 @@
 
     (when window-state
       (menu-bar/restore-window-state! frame window-state))
+
+    ;; Set initial status
+    (require '[potatoclient.ui.status-bar.messages :as status-msg])
+    ((resolve 'status-msg/set-ready!))
 
     (when-not (runtime/release-build?)
       (logging/log-info {:id :user/frame-created
