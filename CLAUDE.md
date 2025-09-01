@@ -400,6 +400,131 @@ The status bar is organized into modular namespaces:
 - Use meaningful names that reflect intent
 - Document complex logic inline when necessary
 
+## UI Binding and Debouncing
+
+### Grouped Binding System
+**Location**: `potatoclient.ui.bind-group`
+
+A powerful extension to Seesaw's binding system that allows selective cleanup of binding groups without affecting other bindings on the same atom.
+
+**Key Features:**
+- **Group-based management** - Organize bindings by logical groups (`:panel-a`, `:settings`, etc.)
+- **Selective cleanup** - Remove specific binding groups without affecting others
+- **Multiple groups per atom** - Same atom can have bindings in different groups
+- **Automatic cleanup** - Use `with-binding-group` macro for temporary bindings
+
+**Core Functions:**
+```clojure
+(require '[potatoclient.ui.bind-group :as bg])
+
+;; Create grouped binding
+(bg/bind-group :settings-panel source-atom target-atom)
+
+;; Clean specific group
+(bg/clean-group :settings-panel source-atom)
+
+;; Clean all groups on atom
+(bg/clean-all-groups source-atom)
+
+;; List active groups
+(bg/list-groups source-atom) ; => #{:panel-a :panel-b}
+```
+
+**Convenience Functions:**
+```clojure
+;; Bind to widget property
+(bg/bind-group-property :ui-group atom widget :text)
+
+;; Bind to selection (checkbox, combo)
+(bg/bind-group-selection :ui-group atom checkbox)
+
+;; Bind with transformation
+(bg/bind-group-transform :ui-group atom 
+                         #(str "Value: " %) 
+                         target)
+```
+
+**Temporary Bindings:**
+```clojure
+;; Auto-cleanup when scope exits
+(bg/with-binding-group [:temp-group my-atom]
+  (bg/bind-group :temp-group my-atom target)
+  ; ... use binding ...
+  ) ; automatically cleaned up here
+```
+
+### Debouncing System
+**Location**: `potatoclient.ui.debounce`
+
+Prevents excessive updates from rapid user input, improving performance and UX.
+
+**Key Functions:**
+```clojure
+(require '[potatoclient.ui.debounce :as debounce])
+
+;; Create debounced atom (300ms default)
+(def config (atom {:search ""}))
+(def debounced (debounce/debounce-atom config))
+
+;; Custom delay
+(def quick (debounce/debounce-atom config 100))
+
+;; Use in bindings
+(bg/bind-group :search 
+               debounced  ; Updates after user stops typing
+               (transform :search)
+               (property search-field :text))
+```
+
+**Common Patterns:**
+
+1. **Search fields** - Wait for user to stop typing:
+```clojure
+(def search-atom (atom ""))
+(def search-debounced (debounce/debounce-atom search-atom 500))
+
+(bg/bind-group :search-ui
+               (.getDocument search-field)
+               search-atom)  ; Immediate updates
+
+(bg/bind-group :search-api
+               search-debounced  ; Delayed updates
+               (b-do [query]
+                 (perform-search query)))
+```
+
+2. **Slider adjustments** - Reduce update frequency:
+```clojure
+(def value-atom (atom 50))
+(def value-debounced (debounce/debounce-atom value-atom 100))
+
+(bg/bind-group :slider-ui
+               slider-model
+               value-atom)
+
+(bg/bind-group :expensive-update
+               value-debounced
+               (b-do [v]
+                 (update-expensive-visualization v)))
+```
+
+3. **Form validation** - Validate after user stops:
+```clojure
+(def form-atom (atom {}))
+(def form-debounced (debounce/debounce-atom form-atom 1000))
+
+(bg/bind-group :form-validation
+               form-debounced
+               (b-do [form-data]
+                 (validate-and-show-errors form-data)))
+```
+
+**Best Practices:**
+- Use short delays (100-300ms) for responsive feel
+- Use longer delays (500-1000ms) for expensive operations
+- Combine with grouped bindings for clean lifecycle management
+- Consider user expectations - search may need longer delay than sliders
+
 ## IPC Protocol Architecture
 
 ### Unix Domain Socket IPC (Shared Module)
