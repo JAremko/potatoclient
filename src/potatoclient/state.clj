@@ -34,14 +34,33 @@
    [:reconnect-count nat-int?]])
 
 (def ui-state
-  "UI state specification"
+  "UI-related state spec.
+  
+  Includes:
+  - theme: Current theme (:sol-light or :sol-dark)
+  - locale: Current locale (e.g. \"en\" or \"uk\")
+  - fullscreen: Whether the app is in fullscreen mode
+  - show-overlay: Whether to show the HUD overlay
+  - read-only-mode: Whether UI is in read-only mode
+  - active-tab: Currently selected tab {:tag <tab-key>}
+  - tab-properties: Map of tab properties {<tab-key> {:has-window boolean
+                                                       :window-bounds {:x int :y int :width int :height int}}}"
   [:map {:closed true}
-   [:theme :potatoclient.ui-specs/theme-key]
-   [:locale :potatoclient.ui-specs/locale]
-   [:fullscreen? :boolean]
-   [:read-only-mode? :boolean]
-   [:show-overlay? :boolean]
-   [:status :potatoclient.ui-specs/status-message]])
+   [:theme :potatoclient.ui-specs/theme]
+   [:locale :string]
+   [:fullscreen :boolean]
+   [:show-overlay :boolean]
+   [:read-only-mode :boolean]
+   [:active-tab [:map {:closed true}
+                 [:tag :keyword]]]
+   [:tab-properties [:map-of :keyword [:map {:closed true}
+                                       [:has-window :boolean]
+                                       [:window-bounds {:optional true}
+                                        [:map {:closed true}
+                                         [:x :int]
+                                         [:y :int]
+                                         [:width :int]
+                                         [:height :int]]]]]]])
 
 (def processes-state
   "Processes state specification"
@@ -177,16 +196,16 @@
   (registry/register-spec! ::process-status process-status)
   (registry/register-spec! ::process-info process-info)
   (registry/register-spec! ::connection-state connection-state)
-  
+
   ;; UI and session specs
   (registry/register-spec! ::ui-state ui-state)
   (registry/register-spec! ::session-state session-state)
-  
+
   ;; Processes specs
   (registry/register-spec! ::processes-state processes-state)
   (registry/register-spec! ::stream-process-info stream-process-info)
   (registry/register-spec! ::stream-processes-state stream-processes-state)
-  
+
   ;; Server state specs
   (registry/register-spec! ::system-server-state system-server-state)
   (registry/register-spec! ::lrf-server-state lrf-server-state)
@@ -197,7 +216,7 @@
   (registry/register-spec! ::camera-heat-server-state camera-heat-server-state)
   (registry/register-spec! ::glass-heater-server-state glass-heater-server-state)
   (registry/register-spec! ::server-state server-state)
-  
+
   ;; Complete app state
   (registry/register-spec! ::app-state app-state-spec))
 
@@ -222,71 +241,36 @@
 ;; ============================================================================
 
 (def initial-state
-  "Initial application UI state"
-  {:connection {:url ""
-                :connected? false
-                :latency-ms nil
+  "Initial application state"
+  {:connection {:url nil
+                :connected false
+                :latency 0
                 :reconnect-count 0}
    :ui {:theme :sol-dark
-        :locale :english
-        :fullscreen? false
-        :read-only-mode? false
-        :show-overlay? true
-        :status {:message ""
-                 :type :info}}
-   :processes {:state-proc {:pid nil
-                            :status :stopped}
-               :cmd-proc {:pid nil
-                          :status :stopped}
-               :heat-video {:pid nil
-                            :status :stopped}
-               :day-video {:pid nil
-                           :status :stopped}}
+        :locale "en"
+        :fullscreen false
+        :show-overlay false
+        :read-only-mode false
+        :active-tab {:tag :controls}
+        :tab-properties {:controls {:has-window false}
+                         :day-camera {:has-window false}
+                         :thermal-camera {:has-window false}
+                         :modes {:has-window false}
+                         :media {:has-window false}}}
+   :processes {:heat-video {:status :stopped :pid nil}
+               :day-video {:status :stopped :pid nil}}
    :stream-processes {}
-   :session {:user nil
-             :started-at nil}
-   :server-state {:system {:battery-level 0
-                           :localization "en"
-                           :recording false
-                           :mode :day
-                           :temperature-c 20.0}
-                  :lrf {:distance 0.0
-                        :scan-mode "single"
-                        :target-locked false}
-                  :gps {:latitude 0.0
-                        :longitude 0.0
-                        :altitude 0.0
-                        :fix-type "none"
-                        :satellites 0
-                        :hdop 99.9
-                        :use-manual false}
-                  :compass {:heading 0.0
-                            :pitch 0.0
-                            :roll 0.0
-                            :unit "degrees"
-                            :calibrated false}
-                  :rotary {:azimuth 0.0
-                           :elevation 0.0
-                           :azimuth-velocity 0.0
-                           :elevation-velocity 0.0
-                           :moving false
-                           :mode :manual}
-                  :camera-day {:zoom 1.0
-                               :focus-mode :auto
-                               :exposure-mode :auto
-                               :brightness 50
-                               :contrast 50
-                               :recording false}
-                  :camera-heat {:zoom 1.0
-                                :palette :white-hot
-                                :brightness 50
-                                :contrast 50
-                                :nuc-status :idle
-                                :recording false}
-                  :glass-heater {:enabled false
-                                 :temperature-c 20.0
-                                 :target-temp-c 25.0
-                                 :power-percent 0}}})
+   :session {:id nil
+             :start-time nil
+             :events []}
+   :servers {:system {:connected false :last-ping nil :status :unknown}
+             :lrf {:connected false :last-ping nil :status :unknown}
+             :gps {:connected false :last-ping nil :status :unknown}
+             :compass {:connected false :last-ping nil :status :unknown}
+             :rotary {:connected false :last-ping nil :status :unknown}
+             :camera-day {:connected false :last-ping nil :status :unknown}
+             :camera-heat {:connected false :last-ping nil :status :unknown}
+             :glass-heater {:connected false :last-ping nil :status :unknown}}})
 
 (defonce ^{:doc "Main app state"} app-state
   (atom initial-state))
@@ -369,13 +353,13 @@
   "Check if in fullscreen mode."
   {:malli/schema [:=> [:cat] :boolean]}
   []
-  (get-in @app-state [:ui :fullscreen?] false))
+  (get-in @app-state [:ui :fullscreen] false))
 
 (defn set-fullscreen!
   "Set fullscreen mode."
   {:malli/schema [:=> [:cat :boolean] :map]}
   [fullscreen?]
-  (swap! app-state assoc-in [:ui :fullscreen?] fullscreen?))
+  (swap! app-state assoc-in [:ui :fullscreen] fullscreen?))
 
 ;; ============================================================================
 ;; Session Management
@@ -491,25 +475,77 @@
   "Check if in read-only mode."
   {:malli/schema [:=> [:cat] :boolean]}
   []
-  (get-in @app-state [:ui :read-only-mode?] false))
+  (get-in @app-state [:ui :read-only-mode] false))
 
 (defn set-read-only-mode!
   "Set read-only mode."
   {:malli/schema [:=> [:cat :boolean] :map]}
   [enabled?]
-  (swap! app-state assoc-in [:ui :read-only-mode?] enabled?))
+  (swap! app-state assoc-in [:ui :read-only-mode] enabled?))
 
 (defn show-overlay?
   "Check if overlay should be shown."
   {:malli/schema [:=> [:cat] :boolean]}
   []
-  (get-in @app-state [:ui :show-overlay?] true))
+  (get-in @app-state [:ui :show-overlay] true))
 
 (defn set-show-overlay!
   "Set overlay visibility."
   {:malli/schema [:=> [:cat :boolean] :map]}
   [show?]
-  (swap! app-state assoc-in [:ui :show-overlay?] show?))
+  (swap! app-state assoc-in [:ui :show-overlay] show?))
+
+;; ============================================================================
+;; Tab Management
+;; ============================================================================
+
+(defn get-active-tab
+  "Get the currently active tab."
+  {:malli/schema [:=> [:cat] :keyword]}
+  []
+  (get-in @app-state [:ui :active-tab :tag] :controls))
+
+(defn set-active-tab!
+  "Set the active tab."
+  {:malli/schema [:=> [:cat :keyword] :map]}
+  [tab-key]
+  (swap! app-state assoc-in [:ui :active-tab :tag] tab-key))
+
+(defn get-tab-property
+  "Get a property for a specific tab."
+  {:malli/schema [:=> [:cat :keyword :keyword] :any]}
+  [tab-key property]
+  (get-in @app-state [:ui :tab-properties tab-key property]))
+
+(defn set-tab-property!
+  "Set a property for a specific tab."
+  {:malli/schema [:=> [:cat :keyword :keyword :any] :map]}
+  [tab-key property value]
+  (swap! app-state assoc-in [:ui :tab-properties tab-key property] value))
+
+(defn tab-has-window?
+  "Check if a tab has its window open."
+  {:malli/schema [:=> [:cat :keyword] :boolean]}
+  [tab-key]
+  (get-tab-property tab-key :has-window))
+
+(defn set-tab-window!
+  "Set whether a tab has its window open."
+  {:malli/schema [:=> [:cat :keyword :boolean] :map]}
+  [tab-key has-window?]
+  (set-tab-property! tab-key :has-window has-window?))
+
+(defn get-tab-window-bounds
+  "Get the saved window bounds for a tab."
+  {:malli/schema [:=> [:cat :keyword] [:maybe [:map [:x :int] [:y :int] [:width :int] [:height :int]]]]}
+  [tab-key]
+  (get-tab-property tab-key :window-bounds))
+
+(defn set-tab-window-bounds!
+  "Save window bounds for a tab."
+  {:malli/schema [:=> [:cat :keyword :int :int :int :int] :map]}
+  [tab-key x y width height]
+  (set-tab-property! tab-key :window-bounds {:x x :y y :width width :height height}))
 
 ;; ============================================================================
 ;; Extended Connection Management
