@@ -49,7 +49,7 @@
           ;; Need to include src directory for Transit Java enums
           src-path "src"
           ;; Include shared module's compiled Java classes (IPC classes)
-          shared-classes "shared/target/java-classes"
+          shared-classes "shared/target/classes"
           classpath-with-proto (str class-dir ":" java-src-path ":" src-path ":" shared-classes ":" (str/join ":" (:classpath-roots (get-basis))))]
       (when (seq kotlin-paths)
         (println (str "Compiling " (count kotlin-paths) " Kotlin files..."))
