@@ -3,10 +3,11 @@
   (:require
     [malli.core :as m]
     [malli.error :as me]
+    [potatoclient.logging :as logging]
     [potatoclient.ui.status-bar.messages :as msg]))
 
 (defn validate
-  "Validate a value against a Malli spec. Reports validation errors to status bar.
+  "Validate a value against a Malli spec. Reports validation errors to status bar and logs.
    Returns true if valid, false if invalid.
    
    The spec can be:
@@ -15,7 +16,7 @@
    
    Examples:
    (validate :int 42)           ;; => true
-   (validate :int \"not-int\")    ;; => false (shows error in status bar)
+   (validate :int \"not-int\")    ;; => false (shows error in status bar and logs)
    (validate [:map [:x :int]] {:x 1}) ;; => true"
   {:malli/schema [:=> [:cat :any :any] :boolean]}
   [spec value]
@@ -25,15 +26,22 @@
     (if (m/validate schema value)
       true
       (do
-        (let [errors (me/humanize (m/explain schema value))
+        (let [explanation (m/explain schema value)
+              errors (me/humanize explanation)
               error-msg (str "Validation failed: " (pr-str errors))]
+          ;; Log the validation failure with details
+          (logging/log-warn {:msg "Validation failed"
+                             :spec (if (keyword? spec) spec (m/form schema))
+                             :value value
+                             :errors errors})
+          ;; Report to status bar
           (msg/set-error! error-msg))
         false))))
 
 (defn validate-with-details
   "Validate a value against a spec and return detailed results.
    Returns a map with :valid? and optionally :errors keys.
-   Also reports errors to status bar if invalid."
+   Also reports errors to status bar and logs if invalid."
   {:malli/schema [:=> [:cat :any :any] [:map
                                         [:valid? :boolean]
                                         [:errors {:optional true} :any]]]}
@@ -46,6 +54,12 @@
       (let [explanation (m/explain schema value)
             errors (me/humanize explanation)
             error-msg (str "Validation failed: " (pr-str errors))]
+        ;; Log the validation failure with details
+        (logging/log-warn {:msg "Validation failed (with details)"
+                           :spec (if (keyword? spec) spec (m/form schema))
+                           :value value
+                           :errors errors})
+        ;; Report to status bar
         (msg/set-error! error-msg)
         {:valid? false
          :errors errors}))))

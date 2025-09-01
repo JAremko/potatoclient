@@ -239,6 +239,147 @@ The project can automatically generate clj-kondo type configurations from Malli 
 
 Run `make kondo-configs` after adding new Malli schemas to keep type checking up to date.
 
+## User Feedback via Status Bar
+
+### CRITICAL: All User Actions Must Be Reflected in Status Bar
+**Every user action, operation result, and error MUST be communicated through the status bar**
+
+The status bar is the primary communication channel with users. It provides immediate feedback for all operations, ensuring users understand what the application is doing and whether operations succeed or fail.
+
+### Status Bar Architecture
+The status bar is organized into modular namespaces:
+- **`potatoclient.ui.status-bar.core`** - UI component creation
+- **`potatoclient.ui.status-bar.messages`** - Status message functions
+- **`potatoclient.ui.status-bar.validation`** - Validation with automatic status bar reporting
+- **`potatoclient.ui.status-bar.helpers`** - Utility functions
+
+### Required Functions to Use
+
+**Basic Status Updates:**
+```clojure
+(require '[potatoclient.ui.status-bar.messages :as status-bar])
+
+;; Information messages (green icon)
+(status-bar/set-info! "Operation completed successfully")
+
+;; Warning messages (orange icon)  
+(status-bar/set-warning! "Connection unstable")
+
+;; Error messages (red icon, clickable for details)
+(status-bar/set-error! "Failed to save configuration")
+
+;; Clear status
+(status-bar/clear!)
+
+;; Ready state
+(status-bar/set-ready!)
+```
+
+**Action-Specific Helpers:**
+```clojure
+;; Configuration operations
+(status-bar/set-config-saved!)
+(status-bar/set-logs-exported! "/path/to/logs.txt")
+
+;; Theme and language changes
+(status-bar/set-theme-changed! :sol-dark)
+(status-bar/set-language-changed! :ukrainian)
+
+;; Connection status
+(status-bar/set-connecting! "server.example.com")
+(status-bar/set-connected! "server.example.com")
+(status-bar/set-disconnected! "server.example.com")
+(status-bar/set-connection-failed! "Connection timeout")
+
+;; Stream operations
+(status-bar/set-stream-started! :heat)  ; or :day
+(status-bar/set-stream-stopped! :heat)
+```
+
+**Error Handling with Status Bar:**
+```clojure
+;; Wrap operations that might fail
+(status-bar/with-error-handler
+  (fn []
+    (risky-operation)))
+
+;; Use with-status macro for operations with progress
+(status-bar/with-status "Processing data..."
+  (process-large-dataset)
+  (save-results))
+;; Automatically shows "Ready" when complete
+```
+
+**Validation with Automatic Reporting:**
+```clojure
+(require '[potatoclient.ui.status-bar.validation :as v])
+
+;; Validates and reports errors to status bar + logs
+(v/validate :int user-input)  ; Returns boolean
+
+;; Get detailed validation results
+(v/validate-with-details schema data)  ; Returns {:valid? bool :errors ...}
+
+;; Silent validation (no status bar update)
+(v/valid? schema data)
+```
+
+### Guidelines for Status Bar Usage
+
+1. **ALWAYS provide feedback for user actions:**
+   - Button clicks
+   - Menu selections
+   - Configuration changes
+   - File operations
+   - Network operations
+
+2. **Use appropriate status types:**
+   - `:info` - Successful operations, general information
+   - `:warning` - Non-critical issues, degraded functionality
+   - `:error` - Failures requiring user attention
+
+3. **Be specific in messages:**
+   - ❌ "Error occurred"
+   - ✅ "Failed to connect: Connection timeout after 30s"
+
+4. **Show progress for long operations:**
+   ```clojure
+   (status-bar/set-info! "Exporting logs...")
+   ;; ... perform operation ...
+   (status-bar/set-logs-exported! output-path)
+   ```
+
+5. **Always restore ready state after operations:**
+   - Use `with-status` macro for automatic cleanup
+   - Or manually call `(status-bar/set-ready!)` after operations
+
+6. **Log errors for debugging:**
+   - All validation failures are automatically logged
+   - Use `with-error-handler` to capture and display exceptions
+   - Error details are stored and viewable by clicking error status
+
+### Example: Complete User Action Flow
+```clojure
+(defn save-user-configuration [config]
+  (status-bar/set-info! "Saving configuration...")
+  (try
+    ;; Validate first
+    (when-not (v/validate :config/schema config)
+      (throw (ex-info "Invalid configuration" {:config config})))
+    
+    ;; Perform save
+    (config/save! config)
+    
+    ;; Report success
+    (status-bar/set-config-saved!)
+    
+    (catch Exception e
+      ;; Report failure with details
+      (status-bar/set-error! 
+        (str "Failed to save configuration: " (.getMessage e)))
+      (throw e))))
+```
+
 ## Development Guidelines
 
 ### When Working with Protobuf
