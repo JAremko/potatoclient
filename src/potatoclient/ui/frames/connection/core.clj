@@ -126,46 +126,56 @@
                      :south buttons-panel
                      :border 20)]
     
-    ;; Create ping timer
-    (reset! ping-timer
-            (timer/timer
-              (fn [_]
-                (swap! attempts inc)
-                (update-ui!)
-                (future
-                  (let [latency (ping-host domain 1000)
-                        ping-label (seesaw/select content [:#ping-label])
-                        status-label (seesaw/select content [:#status-label])]
-                    (if latency
-                      (do
-                        (swap! successful-pings inc)
-                        (seesaw/invoke-later
-                          (seesaw/config! ping-label 
-                                         :text (str (i18n/tr :connection-ping) ": " latency "ms")
-                                         :foreground :green)
-                          (seesaw/config! status-label 
-                                         :text (i18n/tr :connection-successful)))
-                        ;; If we get 3 successful pings, consider connection good
-                        (when (>= @successful-pings 3)
-                          (.stop @ping-timer)
-                          (.stop @update-timer)
-                          (state/set-connection-latency! latency)
-                          (state/set-connected! true)
-                          (logging/log-info {:msg (str "Successfully connected to " domain " with latency " latency "ms")})
-                          (Thread/sleep 500) ;; Brief pause to show success
-                          (seesaw/invoke-later
-                            (seesaw/dispose! @dialog)
-                            (callback :connected))))
-                      (do
-                        (reset! successful-pings 0)
-                        (seesaw/invoke-later
-                          (seesaw/config! ping-label 
-                                         :text (i18n/tr :connection-ping-failed)
-                                         :foreground :red)
-                          (seesaw/config! status-label 
-                                         :text (i18n/tr :connection-attempting))))))))
-              :delay 1000
-              :initial-delay 100))
+    ;; Create ping function that runs sequentially
+    (let [ping-in-progress? (atom false)
+          do-ping! (fn do-ping []
+                    (when-not @ping-in-progress?
+                      (reset! ping-in-progress? true)
+                      (future
+                        (try
+                          (let [latency (ping-host domain 2000) ; 2 second timeout
+                                ping-label (seesaw/select content [:#ping-label])
+                                status-label (seesaw/select content [:#status-label])]
+                            ;; Only count attempt after ping completes
+                            (swap! attempts inc)
+                            (seesaw/invoke-later (update-ui!))
+                            
+                            (if latency
+                              (do
+                                (swap! successful-pings inc)
+                                (seesaw/invoke-later
+                                  (seesaw/config! ping-label 
+                                                 :text (str (i18n/tr :connection-ping) ": " latency "ms")
+                                                 :foreground :green)
+                                  (seesaw/config! status-label 
+                                                 :text (i18n/tr :connection-successful)))
+                                ;; Connect immediately on first successful ping
+                                (when @ping-timer (.stop @ping-timer))
+                                (when @update-timer (.stop @update-timer))
+                                (state/set-connection-latency! latency)
+                                (state/set-connected! true)
+                                (logging/log-info {:msg (str "Successfully connected to " domain " with latency " latency "ms")})
+                                (Thread/sleep 500) ;; Brief pause to show success
+                                (seesaw/invoke-later
+                                  (seesaw/dispose! @dialog)
+                                  (callback :connected)))
+                              (do
+                                (reset! successful-pings 0)
+                                (seesaw/invoke-later
+                                  (seesaw/config! ping-label 
+                                                 :text (i18n/tr :connection-ping-failed)
+                                                 :foreground :red)
+                                  (seesaw/config! status-label 
+                                                 :text (i18n/tr :connection-attempting))))))
+                          (finally
+                            (reset! ping-in-progress? false))))))]
+      
+      ;; Create ping timer that runs every second
+      (reset! ping-timer
+              (timer/timer
+                (fn [_] (do-ping!))
+                :delay 1000
+                :initial-delay 100)))
     
     ;; Create UI update timer (timer expects a function that takes an argument)
     (reset! update-timer
