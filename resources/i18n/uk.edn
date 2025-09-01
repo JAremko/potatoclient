@@ -132,4 +132,32 @@
  :url-example-ipv6 "[2001:db8::1]"
  :url-example-https "https://example.com"
  :url-example-wss "wss://example.com:8080/ws"
- :url-example-localhost "localhost"}
+ :url-example-localhost "localhost"
+ 
+ ;; Language names
+ :language-english "Англійська"
+ :language-ukrainian "Українська"
+ 
+ ;; Status bar messages
+ :status-theme-changed "Тему змінено на {1}"
+ :status-language-changed "Мову змінено на {1}"
+ :status-connecting-server "Підключення до {1}..."
+ :status-connected-server "Підключено до {1}"
+ :status-disconnected-server "Відключено від {1}"
+ :status-connection-failed "Помилка підключення: {1}"
+ :status-stream-started "Запущено {1} потік"
+ :status-stream-stopped "Зупинено {1} потік"
+ :status-config-saved "Конфігурацію збережено"
+ :status-config-loaded "Конфігурацію завантажено"
+ :status-logs-exported "Логи експортовано до {1}"
+ :status-error-occurred "Сталася помилка. Натисніть для деталей."
+ :status-ready "Готово"
+ 
+ ;; Tab titles
+ :tab-overview "Огляд"
+ 
+ ;; Error dialog
+ :error-dialog-title "Деталі помилки"
+ :error-dialog-copy "Копіювати в буфер"
+ :error-dialog-close "Закрити"
+ :error-dialog-copied "Деталі помилки скопійовано в буфер"}

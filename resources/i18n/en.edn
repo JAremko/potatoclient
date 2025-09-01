@@ -132,4 +132,32 @@
  :url-example-ipv6 "[2001:db8::1]"
  :url-example-https "https://example.com"
  :url-example-wss "wss://example.com:8080/ws"
- :url-example-localhost "localhost"}
+ :url-example-localhost "localhost"
+ 
+ ;; Language names
+ :language-english "English"
+ :language-ukrainian "Ukrainian"
+ 
+ ;; Status bar messages
+ :status-theme-changed "Theme changed to {1}"
+ :status-language-changed "Language changed to {1}"
+ :status-connecting-server "Connecting to {1}..."
+ :status-connected-server "Connected to {1}"
+ :status-disconnected-server "Disconnected from {1}"
+ :status-connection-failed "Connection failed: {1}"
+ :status-stream-started "Started {1} stream"
+ :status-stream-stopped "Stopped {1} stream"
+ :status-config-saved "Configuration saved"
+ :status-config-loaded "Configuration loaded"
+ :status-logs-exported "Logs exported to {1}"
+ :status-error-occurred "Error occurred. Click for details."
+ :status-ready "Ready"
+ 
+ ;; Tab titles
+ :tab-overview "Overview"
+ 
+ ;; Error dialog
+ :error-dialog-title "Error Details"
+ :error-dialog-copy "Copy to Clipboard"
+ :error-dialog-close "Close"
+ :error-dialog-copied "Error details copied to clipboard"}

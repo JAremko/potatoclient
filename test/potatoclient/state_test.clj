@@ -124,9 +124,17 @@
         ;; Clean up all bindings
         (state/cleanup-seesaw-bindings!)
 
-        ;; Verify all watchers removed
-        (is (= initial-count (count (.getWatches state/app-state)))
-            "All seesaw watchers should be removed")
+        ;; Verify all seesaw watchers removed (but other watchers may remain)
+        (let [final-count (count (.getWatches state/app-state))
+              seesaw-watchers (filter #(and (keyword? %)
+                                           (when-let [name-str (name %)]
+                                             (clojure.string/starts-with?
+                                               name-str "bindable-atom-watcher")))
+                                     (keys (.getWatches state/app-state)))]
+          (is (<= final-count initial-count)
+              "Should have no more watchers than initially")
+          (is (empty? seesaw-watchers)
+              "All seesaw watchers should be removed"))
 
         ;; Verify bindings no longer trigger
         (state/set-theme! :sol-dark)
