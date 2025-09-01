@@ -1,6 +1,6 @@
 (ns potatoclient.ui.log-viewer
   "Log viewer window for browsing and viewing log files.
-  
+
   Uses idiomatic Seesaw patterns including:
   - border-panel for layout management
   - listen for event handling
@@ -123,7 +123,10 @@
 
 (defn- create-file-viewer
   "Create a viewer window for displaying log file contents."
-  {:malli/schema [:=> [:cat [:fn {:error/message "must be a File"} (partial instance? File)] [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]}
+  {:malli/schema [:=> [:cat
+                       [:fn {:error/message "must be a File"} (partial instance? File)]
+                       [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]
+                       [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]}
   [file parent-frame]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)

@@ -69,6 +69,17 @@
  :startup-valid-formats "Допустимі формати"
  :startup-invalid-url "Невірна URL"
  
+ ;; Connection frame
+ :connection-title "Підключення"
+ :connecting-to "Підключення до"
+ :connection-attempting "Спроба підключення..."
+ :connection-waiting-ping "Очікування відповіді на пінг..."
+ :connection-attempts "Спроби"
+ :connection-time "Час з початку"
+ :connection-ping "Пінг"
+ :connection-successful "Підключення успішне!"
+ :connection-ping-failed "Пінг невдалий"
+ 
  ;; Configuration
  :config-server-address "Адреса сервера"
  :config-server-port "Порт сервера"

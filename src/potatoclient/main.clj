@@ -8,8 +8,9 @@
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.ui.main-frame :as main-frame]
-            [potatoclient.ui.startup-dialog :as startup-dialog]
+            [potatoclient.ui.frames.initial.core :as initial-frame]
+            [potatoclient.ui.frames.connection.core :as connection-frame]
+            [potatoclient.ui.frames.main.core :as main-frame]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -65,25 +66,25 @@
                   (get-build-type))})
   true)
 
-(defn- show-startup-dialog-recursive
-  "Show startup dialog with recursive reload support."
+(declare show-initial-frame-recursive)
+(declare show-connection-frame)
+
+(defn- show-connection-frame
+  "Show connection frame with ping monitoring."
   {:malli/schema [:=> [:cat] :nil]}
   []
-  (startup-dialog/show-startup-dialog
+  (connection-frame/show
     nil
     (fn [result]
       (case result
-        :connect
-        ;; User clicked Connect, proceed with main frame
+        :connected
+        ;; Connection successful, proceed with main frame
         (let [params {:version (get-version)
                       :build-type (get-build-type)}
-              frame (main-frame/create-main-frame params)
+              frame (main-frame/create params)
               domain (config/get-domain)]
           (seesaw/show! frame)
           (log-startup!)
-          ;; Save connection URL to state
-          (state/set-connection-url! (str "wss://" domain))
-          (state/set-connected! true)
           ;; Set initial UI state from config
           (when-let [saved-theme (:theme (config/load-config))]
             (state/set-theme! saved-theme))
@@ -91,18 +92,40 @@
             (state/set-locale! saved-locale))
           (logging/log-info {:msg "Application initialized"
                              :domain domain}))
+        
+        :cancel
+        ;; User cancelled connection, go back to initial frame
+        (show-initial-frame-recursive)
+        
+        :reload
+        ;; Theme or language changed, show frame again
+        (do
+          (theme/preload-theme-icons!)
+          (show-connection-frame))))))
+
+(defn- show-initial-frame-recursive
+  "Show initial frame with recursive reload support."
+  {:malli/schema [:=> [:cat] :nil]}
+  []
+  (initial-frame/show
+    nil
+    (fn [result]
+      (case result
+        :connect
+        ;; User clicked Connect, proceed to connection frame
+        (show-connection-frame)
 
         :cancel
         ;; User clicked Cancel, exit application
         (do
-          (logging/log-info {:msg "User cancelled startup dialog, exiting..."})
+          (logging/log-info {:msg "User cancelled initial frame, exiting..."})
           (System/exit 0))
 
         :reload
         ;; Theme or language changed, show dialog again
         (do
           (theme/preload-theme-icons!)
-          (show-startup-dialog-recursive))))))
+          (show-initial-frame-recursive))))))
 
 (defn- enable-dev-mode!
   "Enable additional development mode settings by loading the dev namespace."
@@ -151,8 +174,8 @@
         (seesaw/invoke-later
           ;; Preload theme icons before showing any UI
           (theme/preload-theme-icons!)
-          ;; Show the initial dialog
-          (show-startup-dialog-recursive))))
+          ;; Show the initial frame
+          (show-initial-frame-recursive))))
 
     (catch Exception e
       (binding [*out* *err*]

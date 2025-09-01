@@ -309,6 +309,12 @@
   []
   (get-in @app-state [:connection :latency-ms]))
 
+(defn set-connection-latency!
+  "Set connection latency in milliseconds."
+  {:malli/schema [:=> [:cat [:maybe :pos-int]] :map]}
+  [latency-ms]
+  (swap! app-state assoc-in [:connection :latency-ms] latency-ms))
+
 (defn get-reconnect-count
   "Get reconnection attempt count."
   {:malli/schema [:=> [:cat] :int]}

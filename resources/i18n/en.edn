@@ -69,6 +69,17 @@
  :startup-valid-formats "Valid formats"
  :startup-invalid-url "Invalid URL"
  
+ ;; Connection frame
+ :connection-title "Connecting"
+ :connecting-to "Connecting to"
+ :connection-attempting "Attempting to connect..."
+ :connection-waiting-ping "Waiting for ping response..."
+ :connection-attempts "Attempts"
+ :connection-time "Elapsed Time"
+ :connection-ping "Ping"
+ :connection-successful "Connection successful!"
+ :connection-ping-failed "Ping failed"
+ 
  ;; Configuration
  :config-server-address "Server Address"
  :config-server-port "Server Port"

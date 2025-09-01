@@ -25,6 +25,35 @@ The Clojure codebase has been significantly simplified to prepare for future Kot
 - Implement new IPC protocol between Clojure UI and Kotlin streams
 
 
+## Development Tools
+
+### I18n Translation Checker
+**Location**: `tools/i18n-checker/`
+
+A tool for checking translation completeness and consistency across locales.
+
+**Features:**
+- Finds all `i18n/tr` calls in the codebase using rewrite-clj for accurate parsing
+- Identifies missing translation keys (used in code but not defined)
+- Identifies unused translation keys (defined but not used in code)
+- Checks consistency between locales (keys missing in some locales)
+- Generates stub entries for missing keys
+
+**Usage:**
+```bash
+cd tools/i18n-checker
+./check.sh              # Generate report
+./check.sh --stubs en   # Generate English stub entries
+./check.sh --help       # Show help
+```
+
+**Runtime Detection (Dev Mode):**
+When running in development mode (`make dev`), the i18n system automatically:
+- Displays missing keys as `[MISSING: :key-name]` in the UI
+- Logs warnings for missing keys with locale information
+- Validates translation consistency on startup
+- Only reports each missing key once to avoid log spam
+
 ## Important: Use Specialized Agents
 
 ### Proto-Class Explorer Agent
