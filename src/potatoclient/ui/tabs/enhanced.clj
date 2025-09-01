@@ -30,25 +30,33 @@
   [tab-key title parent-frame content-factory]
   (let [panel (JPanel. (FlowLayout. FlowLayout/LEFT 5 0))
         label (seesaw/label :text title)
-        button (seesaw/toggle :text "⧉" ; Window icon character
-                              :selected? false
-                              :tip (i18n/tr :detach-window-tip)
-                              :font {:size 12})]
+        ;; Use a checkbox which should work better with selection binding
+        checkbox (seesaw/checkbox :text "⧉" ; Window icon character
+                                  :selected? (state/tab-has-window? tab-key) ; Initialize from state
+                                  :tip (i18n/tr :detach-window-tip)
+                                  :font {:size 12})]
 
-    ;; Bind button state to app state
+    ;; Bind checkbox selection to app state
     (bg/bind-group (keyword (str "tab-header-" (name tab-key)))
                    state/app-state
-                   (bind/transform (fn [_] (state/tab-has-window? tab-key)))
-                   (bind/property button :selected?))
+                   (bind/transform (fn [state]
+                                     (get-in state [:ui :tab-properties tab-key :has-window] false)))
+                   (bind/selection checkbox))
 
-    ;; Handle button clicks
-    (seesaw/listen button :action
-                   (fn [_]
-                     (detachable/toggle-detached-window! tab-key content-factory parent-frame)))
+    ;; Handle checkbox changes - update window state based on checkbox state
+    (seesaw/listen checkbox :action
+                   (fn [e]
+                     (let [selected (seesaw/selection checkbox)]
+                       ;; Update window state based on checkbox
+                       (if selected
+                         (when-not (state/tab-has-window? tab-key)
+                           (detachable/create-detached-window! tab-key content-factory parent-frame))
+                         (when (state/tab-has-window? tab-key)
+                           (detachable/close-detached-window! tab-key))))))
 
     ;; Add components to panel
     (.add panel label)
-    (.add panel button)
+    (.add panel checkbox)
     panel))
 
 (defn- create-tab-content-wrapper
