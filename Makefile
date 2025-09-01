@@ -390,6 +390,7 @@ clean-app: ## Clean Clojure and Kotlin compiled classes (preserves proto)
 	@echo "Cleaning Clojure and Kotlin classes..."
 	@rm -rf .cpcache/
 	@rm -rf target/classes/potatoclient/
+	@rm -rf target/classes/i18n/
 	@find src/potatoclient -name "*.class" -type f -delete 2>/dev/null || true
 
 # Build for macOS development (unsigned, uses system Java)

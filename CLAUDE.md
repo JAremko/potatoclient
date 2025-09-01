@@ -6,23 +6,29 @@
 The Clojure codebase has been significantly simplified to prepare for future Kotlin integration:
 
 **Current State:**
-- **UI-Only Focus**: Simplified to provide only UI components (startup dialog, main frame)
-- **State Management**: New `state.clj` namespace with UI-only state atom
+- **UI-Only Focus**: Main app simplified to provide only UI components (startup dialog, main frame)
+- **State Management**: New `state.clj` namespace with UI-only state atom in main app
 - **Stream Controls**: Stream toggle buttons are present but noop - ready for Kotlin integration
-- **Removed Components**: All IPC, transit communication, and process management code removed
+- **Shared Module IPC**: Complete IPC infrastructure available in shared module using Unix Domain Sockets
 - **Preserved Components**: Java/Kotlin code intact for future integration
 
 **Key Changes:**
 - Moved app state atom to dedicated `potatoclient.state` namespace
 - Fixed all namespace/file naming conventions (underscores in filenames)
-- Removed `ipc.clj`, `process.clj`, and transit communication directories
+- IPC infrastructure consolidated in shared module (`potatoclient.ipc.core` and `potatoclient.ipc.transit`)
 - Stream control buttons remain in UI but perform no operations (logging only)
 - Configuration and theme management remain functional
 
+**Architecture Notes:**
+- Main app IPC code was removed in favor of shared module's robust IPC implementation
+- Shared module provides `UnixSocketCommunicator.java` for high-performance socket communication
+- Transit serialization with msgpack format for efficient binary encoding
+- Complete message framing protocol with length-prefixed packets
+
 **Next Steps:**
-- Integrate Kotlin video stream processes
-- Connect stream controls to Kotlin backend
-- Implement new IPC protocol between Clojure UI and Kotlin streams
+- Integrate Kotlin video stream processes using shared module's IPC
+- Connect stream controls to Kotlin backend via Unix Domain Sockets
+- Leverage existing IPC infrastructure from shared module for Clojure-Kotlin communication
 
 
 ## Development Tools
@@ -98,14 +104,43 @@ Prompt: "Run tests in [working directory] using command: [test command]"
 ```
 Example: "Run tests in /home/jare/git/potatoclient using command: lein test"
 
-The agent provides:
-- Test execution with filtered results
-- Failure reporting (test name, error message, location)
-- Pass/fail summary statistics
+### I18n Checker Agent
+**ALWAYS use the `i18n-checker` agent for:**
+- Checking translation completeness
+- Identifying missing or unused i18n keys
+- Verifying consistency across locales
+- Generating translation stubs
 
-**Important Notes:**
-- The agent ONLY runs tests and reports results - it does not fix tests or investigate root causes
-- When reporting failures, the agent includes this directive: "Per project Testing Philosophy: Fix the failing code to make tests pass. NEVER modify, disable, or delete the tests themselves."
+**How to use:**
+```
+Task: i18n-checker agent
+Prompt: "Check translation completeness"
+```
+Or for specific tasks:
+```
+Task: i18n-checker agent
+Prompt: "Generate stub entries for missing Ukrainian translations"
+```
+
+The agent provides:
+- Complete analysis of i18n key usage
+- Missing keys that will cause runtime errors
+- Unused keys that can be cleaned up
+- Consistency issues between locales
+- Stub generation for missing translations
+
+**Technical Details:**
+- Tool location: `/home/jare/git/potatoclient/tools/i18n-checker`
+- Uses rewrite-clj for accurate AST parsing
+- Analyzes all .clj and .cljc files in src/
+- Supports English (en) and Ukrainian (uk) locales
+
+**IMPORTANT**: Always use this agent proactively when:
+- Adding new UI components with text
+- Modifying existing UI text or labels  
+- Adding new features that display messages
+- Before committing UI-related changes
+- When working with any i18n/tr calls
 
 
 ## Shared Module
@@ -113,10 +148,21 @@ The agent provides:
 The `shared` module (`./shared/README.md`) is the foundational library providing:
 - **Protocol Buffer definitions** for all system communication (commands and state messages)
 - **Malli specifications** that mirror protobuf constraints with runtime validation
+- **Command construction** with automatic field population and validation
 - **Serialization utilities** for EDN ↔ Protobuf binary conversion
+- **Inter-Process Communication (IPC)** using Unix Domain Sockets with Transit serialization
+- **Command queue system** for async command dispatch with automatic ping keepalive
+- **Multi-layer validation** (Malli, buf.validate, roundtrip testing)
 - **Single source of truth** for data structures, enums, and protocol compliance
 
-This module ensures type safety and protocol consistency across all PotatoClient subsystems. All other modules depend on it for message definitions and validation.
+### Key Capabilities:
+- **700+ test cases** ensuring robustness and reliability
+- **Organized test suites** for focused testing (cmd, ipc, malli, oneof, serialization)
+- **Generative testing** with malli.instrument/check for automatic edge case discovery
+- **High-performance IPC** with framed messaging and zero-copy ByteBuffer operations
+- **Complete command API** for all subsystems (optical, navigation, sensors, system control)
+
+This module ensures type safety and protocol consistency across all PotatoClient subsystems. All other modules depend on it for message definitions, validation, and inter-process communication.
 
 ## Project Principles
 
@@ -215,6 +261,30 @@ Run `make kondo-configs` after adding new Malli schemas to keep type checking up
 
 ## IPC Protocol Architecture
 
+### Unix Domain Socket IPC (Shared Module)
+The shared module provides a complete IPC infrastructure using Unix Domain Sockets with Transit serialization:
+
+**IPC Server Features:**
+- **Unix Domain Sockets** for fast, reliable local communication
+- **Transit msgpack** for efficient binary serialization
+- **Framed messages** with length-prefixed packets for reliable delivery
+- **Async processing** with separate reader/processor threads
+- **Message queue** with buffered handling (1000 message capacity)
+- **Server pool management** for multiple stream servers
+
+**Usage Example:**
+```clojure
+(require '[potatoclient.ipc.core :as ipc])
+
+;; Create IPC server
+(def server (ipc/create-server :heat
+              :on-message handle-message))
+
+;; Send/receive messages
+(ipc/send-message server {:type :event :data {...}})
+(ipc/receive-message server :timeout-ms 1000)
+```
+
 ### Transit Keywords - The Foundation
 **CRITICAL: Always use Transit Keywords for IPC communication**
 - **Kotlin/Java side**: Use `com.cognitect.transit.Keyword` via `TransitFactory.keyword("name")`
@@ -222,21 +292,29 @@ Run `make kondo-configs` after adding new Malli schemas to keep type checking up
 - **Never use strings** for message types, actions, or enum values - always use Transit Keywords
 - This eliminates type conversion issues and ensures protocol consistency
 
-### Implementation Notes
+### Implementation Architecture
+
+**Java Infrastructure (`UnixSocketCommunicator.java`):**
+- Bidirectional communication with framed messages
+- Direct ByteBuffer usage for zero-copy operations
+- Thread-safe with ReentrantLock for writes
+- Automatic reconnection handling
+- 10MB max message size with 4-byte length headers
+
+**Clojure IPC (`potatoclient.ipc.core`):**
+- High-level API wrapping Java infrastructure
+- Automatic Transit serialization/deserialization
+- Message type helpers (event, command, log, metric)
+- Server lifecycle management with cleanup
 
 **Kotlin Side (`TransitKeys.kt`):**
 - All message keys are pre-created Transit Keywords
 - Use `TransitKeys.MSG_TYPE`, `TransitKeys.EVENT`, etc.
 - Never use string literals for keys or enum values
 
-**Clojure Side:**
-- Transit Keywords automatically convert to Clojure keywords
-- No manual conversion needed - `:msg-type`, `:event`, etc. work directly
-- Use `case` or `cond` with keywords for message dispatch
-
 **Key Benefits:**
 1. Type safety - Transit Keywords are strongly typed
 2. No string conversion bugs
-3. Cleaner code on both sides
-4. Better performance (no string parsing)
+3. High performance with zero-copy operations
+4. Reliable framed messaging protocol
 5. IDE autocomplete support

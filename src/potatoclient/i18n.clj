@@ -30,7 +30,8 @@
         (with-open [rdr (-> resource io/reader PushbackReader.)]
           (edn/read rdr))))
     (catch Exception e
-      (logging/log-error {:msg (str "Failed to load translation file for locale: " locale " Error: " (.getMessage e))})
+      ;; Don't use logging here as it might not be initialized
+      (println (str "ERROR: Failed to load translation file for locale: " locale " Error: " (.getMessage e)))
       nil)))
 
 (defn load-translations!
@@ -46,6 +47,12 @@
                              locales)]
     (reset! translations-atom translations)
     (reset! translator-atom (tongue/build-translate translations))
+    ;; Debug: log how many keys were loaded (only if logging is available)
+    (when-not (runtime/release-build?)
+      (try
+        (doseq [[locale trans] translations]
+          (logging/log-debug {:msg (str "Loaded " (count trans) " keys for locale " locale)}))
+        (catch Exception _ nil)))
     translations))
 
 (defn reload-translations!
@@ -55,8 +62,8 @@
   (logging/log-info {:msg "Reloading translations..."})
   (load-translations!))
 
-;; Initialize translations on namespace load
-(load-translations!)
+;; Don't initialize translations on namespace load
+;; They will be loaded by init! which is called from main
 
 (defn- check-missing-key!
   "Check if a key exists in translations and log if missing in dev mode."
@@ -92,6 +99,9 @@
   ([key]
    (tr key []))
   ([key args]
+   ;; Ensure translations are loaded
+   (when (empty? @translations-atom)
+     (load-translations!))
    (let [locale (case (state/get-locale)
                   :english :en
                   :ukrainian :uk
@@ -143,9 +153,8 @@
   "Initialize localization system"
   {:malli/schema [:=> [:cat] :nil]}
   []
-  ;; Ensure translations are loaded
-  (when (empty? @translations-atom)
-    (load-translations!))
+  ;; Always load translations to ensure they're complete
+  (load-translations!)
   ;; Set initial locale
   (state/set-locale! (state/get-locale))
   ;; In dev mode, validate translations on startup
