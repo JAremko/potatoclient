@@ -227,7 +227,7 @@
     
     (doto dialog
       seesaw/pack!
-      (.setLocationRelativeTo parent))
+      (.setLocationRelativeTo nil))  ; nil centers on screen
     
     dialog))
 

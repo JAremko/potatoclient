@@ -21,7 +21,9 @@
         :locale :english
         :fullscreen? false
         :read-only-mode? false
-        :show-overlay? true}
+        :show-overlay? true
+        :status {:message ""
+                 :type :info}}
    :processes {:state-proc {:pid nil
                             :status :stopped}
                :cmd-proc {:pid nil

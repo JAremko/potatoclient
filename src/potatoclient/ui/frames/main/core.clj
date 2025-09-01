@@ -10,16 +10,20 @@
     [potatoclient.theme :as theme]
     [potatoclient.ui.control-panel :as control-panel]
     [potatoclient.ui.menu-bar :as menu-bar]
+    [potatoclient.ui.status-bar :as status-bar]
+    [potatoclient.ui.tabs.core :as tabs]
     [seesaw.core :as seesaw])
   (:import (javax.swing JFrame JPanel)))
 
 (def version "Version schema for validation." :string)
 
 (defn- create-main-content
-  "Create the main content panel."
+  "Create the main content panel with tabs and status bar."
   {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]]}
   []
-  (control-panel/create))
+  (seesaw/border-panel
+    :center (tabs/create)
+    :south (status-bar/create)))
 
 (defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
@@ -85,8 +89,11 @@
                                 :include-theme? true
                                 :include-language? true}))
     (add-window-close-handler! frame)
-    (when window-state
-      (menu-bar/restore-window-state! frame window-state))
+    (if window-state
+      ;; Restore previous position/size on reload
+      (menu-bar/restore-window-state! frame window-state)
+      ;; Center on screen for initial display
+      (.setLocationRelativeTo frame nil))
     (when-not (runtime/release-build?)
       (logging/log-info {:id :user/frame-created
                         :msg "Main frame created and configured"}))

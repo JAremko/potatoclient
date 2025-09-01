@@ -120,7 +120,7 @@
                      (callback :cancel)))
     (doto @dialog
       seesaw/pack!
-      (.setLocationRelativeTo parent))
+      (.setLocationRelativeTo nil))  ; nil centers on screen
     (logging/log-info {:id :user/show-dialog
                       :data {:url saved-url :domain domain}
                       :msg (str "Showing initial frame with URL: " saved-url)})

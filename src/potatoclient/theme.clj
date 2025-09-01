@@ -120,6 +120,12 @@
                                                 icon-name (.getMessage e)))))
           nil)))))
 
+(defn get-icon
+  "Get theme-aware icon by key. Alias for key->icon for clarity."
+  {:malli/schema [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]]}
+  [icon-key]
+  (key->icon icon-key))
+
 (defn preload-theme-icons!
   "Preload all icons for the current theme to ensure they're available."
   {:malli/schema [:=> [:cat] :nil]}
@@ -128,7 +134,7 @@
     (println (log-theme "INFO" (format "Preloading icons for theme: %s" (name (get-current-theme))))))
   (let [icons-to-preload [:actions-group-menu :actions-group-theme :icon-languages
                           :file-export :sol-dark :sol-light :dark :hi-dark
-                          :day :heat]]
+                          :day :heat :status-bar-icon-good :status-bar-icon-warn :status-bar-icon-bad]]
     (doseq [icon-key icons-to-preload]
       (key->icon icon-key))
     (when (is-development-mode?)

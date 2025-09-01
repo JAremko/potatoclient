@@ -157,6 +157,16 @@
   [:fn {:error/message "must be a Future"}
    #(instance? Future %)])
 
+(def status-type
+  "Status message type"
+  [:enum :info :warning :error])
+
+(def status-message
+  "Status bar message"
+  [:map
+   [:message string?]
+   [:type status-type]])
+
 (def window-state
   "Window state information"
   [:map
@@ -207,7 +217,11 @@
   ;; Window and state schemas
   (registry/register-spec! ::window-bounds window-bounds)
   (registry/register-spec! ::future-instance future-instance)
-  (registry/register-spec! ::window-state window-state))
+  (registry/register-spec! ::window-state window-state)
+  
+  ;; Status bar schemas
+  (registry/register-spec! ::status-type status-type)
+  (registry/register-spec! ::status-message status-message))
 
 ;; Initialize the global registry and register UI specs on namespace load
 (defonce ^:private registry-initialized

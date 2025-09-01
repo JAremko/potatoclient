@@ -73,6 +73,8 @@
   "Show connection frame with ping monitoring."
   {:malli/schema [:=> [:cat] :nil]}
   []
+  ;; Clean up any existing seesaw bindings before showing new frame
+  (state/cleanup-seesaw-bindings!)
   (connection-frame/show
     nil
     (fn [result]
@@ -83,6 +85,8 @@
                       :build-type (get-build-type)}
               frame (main-frame/create params)
               domain (config/get-domain)]
+          ;; Clean up before transitioning to main frame
+          (state/cleanup-seesaw-bindings!)
           (seesaw/show! frame)
           (log-startup!)
           ;; Set initial UI state from config
@@ -95,11 +99,16 @@
         
         :cancel
         ;; User cancelled connection, go back to initial frame
-        (show-initial-frame-recursive)
+        (do
+          ;; Clean up before going back
+          (state/cleanup-seesaw-bindings!)
+          (show-initial-frame-recursive))
         
         :reload
         ;; Theme or language changed, show frame again
         (do
+          ;; Clean up before reloading
+          (state/cleanup-seesaw-bindings!)
           (theme/preload-theme-icons!)
           (show-connection-frame))))))
 
@@ -107,6 +116,8 @@
   "Show initial frame with recursive reload support."
   {:malli/schema [:=> [:cat] :nil]}
   []
+  ;; Clean up any existing seesaw bindings before showing new frame
+  (state/cleanup-seesaw-bindings!)
   (initial-frame/show
     nil
     (fn [result]
@@ -124,6 +135,8 @@
         :reload
         ;; Theme or language changed, show dialog again
         (do
+          ;; Clean up before reloading
+          (state/cleanup-seesaw-bindings!)
           (theme/preload-theme-icons!)
           (show-initial-frame-recursive))))))
 
