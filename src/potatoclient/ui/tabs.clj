@@ -1,84 +1,19 @@
-(ns potatoclient.ui.tabs.enhanced
-  "Enhanced tabbed panel with horizontal layout and detachable windows.
+(ns potatoclient.ui.tabs
+  "Main tab system with horizontal layout and detachable windows.
   
   Provides a tabbed interface where each tab can be detached into its own
   window. Tab selection is managed through the app state atom for persistence
   and synchronized updates."
   (:require [potatoclient.i18n :as i18n]
             [potatoclient.state :as state]
-            [potatoclient.theme :as theme]
             [potatoclient.ui.bind-group :as bg]
             [potatoclient.ui.debounce :as debounce]
-            [potatoclient.ui.tabs.detachable :as detachable]
+            [potatoclient.ui.tabs-helpers :as helpers]
+            [potatoclient.ui.tabs-windows :as windows]
             [seesaw.core :as seesaw]
             [seesaw.bind :as bind])
-  (:import [javax.swing JTabbedPane JPanel JButton JFrame]
-           [java.awt BorderLayout FlowLayout]))
-
-(defn cleanup-tab-watchers
-  "Remove all watchers for tabs. Call this when disposing of tabs."
-  {:malli/schema [:=> [:cat [:sequential :keyword]] :nil]}
-  [tab-keys]
-  (doseq [tab-key tab-keys]
-    (remove-watch state/app-state (keyword (str "checkbox-updater-" (name tab-key)))))
-  nil)
-
-(defn- create-tab-header
-  "Create a tab header panel with title and window toggle button.
-  
-  Parameters:
-    tab-key - The tab identifier
-    title - The tab title text
-    parent-frame - The parent frame for detached windows
-    content-factory - Function that creates tab content with optional binding group
-  
-  Returns a JPanel with the tab header."
-  {:malli/schema [:=> [:cat :keyword :string [:fn #(instance? JFrame %)] [:=> [:cat [:maybe :keyword]] :any]]
-                  [:fn #(instance? JPanel %)]]}
-  [tab-key title parent-frame content-factory]
-  (let [panel (JPanel. (FlowLayout. FlowLayout/LEFT 5 0))
-        label (seesaw/label :text title)
-        ;; Simple checkbox without confusing icon
-        checkbox (seesaw/checkbox :selected? (state/tab-has-window? tab-key) ; Initialize from state
-                                  :tip (i18n/tr :detach-window-tip))
-        ;; Track if we're updating programmatically to avoid loops
-        updating-atom (atom false)]
-
-    (println (str "Creating tab header for " tab-key ", initial state: " (state/tab-has-window? tab-key)))
-
-    ;; Watch state changes and update checkbox directly
-    (add-watch state/app-state (keyword (str "checkbox-updater-" (name tab-key)))
-               (fn [_ _ old-state new-state]
-                 (let [old-val (get-in old-state [:ui :tab-properties tab-key :has-window] false)
-                       new-val (get-in new-state [:ui :tab-properties tab-key :has-window] false)]
-                   (when (not= old-val new-val)
-                     (println (str "State watcher fired for " tab-key "! Old: " old-val " New: " new-val))
-                     (reset! updating-atom true)
-                     (.setSelected checkbox new-val)
-                     (println (str "Checkbox " tab-key " is now: " (.isSelected checkbox)))
-                     (reset! updating-atom false)))))
-
-    ;; Handle checkbox changes - update window state based on checkbox state
-    (seesaw/listen checkbox :action
-                   (fn [e]
-                     ;; Ignore if we're updating programmatically
-                     (when-not @updating-atom
-                       (let [selected (.isSelected checkbox)]
-                         (println (str "Checkbox " tab-key " clicked by user, selected: " selected
-                                       ", current state: " (state/tab-has-window? tab-key)))
-                         ;; Update window state based on checkbox
-                         (if selected
-                           (when-not (state/tab-has-window? tab-key)
-                             (println (str "Opening window for " tab-key))
-                             (detachable/create-detached-window! tab-key content-factory parent-frame))
-                           (when (state/tab-has-window? tab-key)
-                             (println (str "Closing window for " tab-key))
-                             (detachable/close-detached-window! tab-key)))))))
-
-    ;; Add components to panel
-    (.add panel label)
-    (.add panel checkbox)
-    panel))
+  (:import [javax.swing JTabbedPane JPanel JFrame]
+           [java.awt BorderLayout]))
 
 (defn- create-tab-content-wrapper
   "Create a wrapper panel for tab content in the main window."
@@ -90,8 +25,8 @@
     (.add wrapper content BorderLayout/CENTER)
     wrapper))
 
-(defn create-enhanced-tabs
-  "Create an enhanced tabbed panel with horizontal tabs and detachable windows.
+(defn create-tabs
+  "Create a tabbed panel with horizontal tabs and detachable windows.
   
   Parameters:
     parent-frame - The parent frame for positioning detached windows
@@ -104,7 +39,7 @@
   Returns a JTabbedPane configured with all tabs.
   
   Example:
-    (create-enhanced-tabs frame
+    (create-tabs frame
       [{:key :controls
         :title \"Controls\"
         :content-factory (fn [binding-group]
@@ -127,7 +62,7 @@
             content (create-tab-content-wrapper key content-factory)
 
             ;; Create custom tab header with window button
-            header (create-tab-header key title parent-frame content-factory)]
+            header (helpers/create-tab-header key title parent-frame content-factory)]
 
         ;; Add tab to pane
         (.addTab tabbed-pane title content)
@@ -183,31 +118,31 @@
   Returns a configured JTabbedPane with all default tabs."
   {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)]] [:fn #(instance? JTabbedPane %)]]}
   [parent-frame]
-  (create-enhanced-tabs parent-frame
-                        [{:key :controls
-                          :title (i18n/tr :tab-controls)
-                          :content-factory (fn [binding-group]
-                                             (create-placeholder-content binding-group "Controls panel placeholder"))}
+  (create-tabs parent-frame
+               [{:key :controls
+                 :title (i18n/tr :tab-controls)
+                 :content-factory (fn [binding-group]
+                                    (create-placeholder-content binding-group "Controls panel placeholder"))}
 
-                         {:key :day-camera
-                          :title (i18n/tr :tab-day-camera)
-                          :content-factory (fn [binding-group]
-                                             (create-placeholder-content binding-group "Day Camera panel placeholder"))}
+                {:key :day-camera
+                 :title (i18n/tr :tab-day-camera)
+                 :content-factory (fn [binding-group]
+                                    (create-placeholder-content binding-group "Day Camera panel placeholder"))}
 
-                         {:key :thermal-camera
-                          :title (i18n/tr :tab-thermal-camera)
-                          :content-factory (fn [binding-group]
-                                             (create-placeholder-content binding-group "Thermal Camera panel placeholder"))}
+                {:key :thermal-camera
+                 :title (i18n/tr :tab-thermal-camera)
+                 :content-factory (fn [binding-group]
+                                    (create-placeholder-content binding-group "Thermal Camera panel placeholder"))}
 
-                         {:key :modes
-                          :title (i18n/tr :tab-modes)
-                          :content-factory (fn [binding-group]
-                                             (create-placeholder-content binding-group "Modes panel placeholder"))}
+                {:key :modes
+                 :title (i18n/tr :tab-modes)
+                 :content-factory (fn [binding-group]
+                                    (create-placeholder-content binding-group "Modes panel placeholder"))}
 
-                         {:key :media
-                          :title (i18n/tr :tab-media)
-                          :content-factory (fn [binding-group]
-                                             (create-placeholder-content binding-group "Media panel placeholder"))}]))
+                {:key :media
+                 :title (i18n/tr :tab-media)
+                 :content-factory (fn [binding-group]
+                                    (create-placeholder-content binding-group "Media panel placeholder"))}]))
 
 (defn reload-tabs!
   "Reload tabs and all detached windows (for theme/locale changes).
@@ -222,11 +157,12 @@
   [parent-frame tabbed-pane tabs-config]
   ;; Clean up all tab-related bindings
   (bg/clean-group :tab-selection state/app-state)
-  (doseq [{:keys [key]} tabs-config]
-    (bg/clean-group (keyword (str "tab-header-" (name key))) state/app-state))
+  
+  ;; Clean up tab header watchers
+  (helpers/cleanup-tab-watchers (map :key tabs-config))
 
   ;; Reload detached windows
-  (detachable/reload-all-windows! parent-frame tabs-config)
+  (windows/reload-all-windows! parent-frame tabs-config)
 
   ;; Clear and recreate tabs
   (.removeAll tabbed-pane)
@@ -234,7 +170,7 @@
   ;; Re-add all tabs
   (doseq [{:keys [key title content-factory]} tabs-config]
     (let [content (create-tab-content-wrapper key content-factory)
-          header (create-tab-header key title parent-frame content-factory)]
+          header (helpers/create-tab-header key title parent-frame content-factory)]
       (.addTab tabbed-pane title content)
       (let [index (.indexOfComponent tabbed-pane content)]
         (.setTabComponentAt tabbed-pane index header))))

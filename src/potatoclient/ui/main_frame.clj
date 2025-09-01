@@ -11,8 +11,8 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.menu-bar :as menu-bar]
-            [potatoclient.ui.tabs.enhanced :as enhanced-tabs]
-            [potatoclient.ui.tabs.detachable :as detachable]
+            [potatoclient.ui.tabs :as tabs]
+            [potatoclient.ui.tabs-windows :as tabs-windows]
             [seesaw.core :as seesaw])
   (:import (javax.swing JFrame JPanel)))
 
@@ -23,7 +23,7 @@
   This includes tabs and control panels."
   {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)]] [:fn {:error/message "must be a JTabbedPane"} (partial instance? javax.swing.JTabbedPane)]]}
   [parent-frame]
-  (enhanced-tabs/create-default-tabs parent-frame))
+  (tabs/create-default-tabs parent-frame))
 
 (defn- add-window-close-handler!
   "Add window close handler for proper cleanup."
@@ -35,7 +35,7 @@
                    (future
                      (try
           ;; Close all detached windows first
-                       (detachable/close-all-windows!)
+                       (tabs-windows/close-all-windows!)
                        (logging/log-debug {:msg "Closed all detached windows"})
 
           ;; Clean up bindings
