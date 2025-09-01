@@ -10,7 +10,7 @@
     [potatoclient.theme :as theme]
     [potatoclient.ui.control-panel :as control-panel]
     [potatoclient.ui.menu-bar :as menu-bar]
-    [potatoclient.ui.status-bar :as status-bar]
+    [potatoclient.ui.status-bar.core :as status-bar]
     [potatoclient.ui.tabs.core :as tabs]
     [seesaw.core :as seesaw])
   (:import (javax.swing JFrame JPanel)))
@@ -37,18 +37,18 @@
                        (state/cleanup-seesaw-bindings!)
                        (logging/log-debug {:msg "Cleaned up all seesaw bindings"})
                        (let [current-config {:theme (theme/get-current-theme)
-                                           :locale (state/get-locale)
-                                           :url-history (config/get-url-history)}]
+                                             :locale (state/get-locale)
+                                             :url-history (config/get-url-history)}]
                          (config/save-config! current-config))
                        (let [stream-processes (state/get-all-stream-processes)
                              _ (reduce-kv (fn [m k v]
-                                           (let [stream-key (case k
-                                                             :heat-video :heat
-                                                             :day-video :day
-                                                             k)]
-                                             (assoc m stream-key v)))
-                                         {}
-                                         stream-processes)]
+                                            (let [stream-key (case k
+                                                               :heat-video :heat
+                                                               :day-video :day
+                                                               k)]
+                                              (assoc m stream-key v)))
+                                          {}
+                                          stream-processes)]
                          nil)
                        (logging/shutdown!)
                        (catch Exception e
@@ -70,10 +70,10 @@
         frame-cons (fn [state] (create (assoc params :window-state state)))
         domain (config/get-domain)
         title (format "%s v%s [%s] - %s"
-                     (i18n/tr :app-title)
-                     version
-                     build-type
-                     domain)
+                      (i18n/tr :app-title)
+                      version
+                      build-type
+                      domain)
         frame (seesaw/frame
                 :title title
                 :icon (io/resource "main.png")
@@ -96,5 +96,5 @@
       (.setLocationRelativeTo frame nil))
     (when-not (runtime/release-build?)
       (logging/log-info {:id :user/frame-created
-                        :msg "Main frame created and configured"}))
+                         :msg "Main frame created and configured"}))
     frame))

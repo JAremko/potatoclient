@@ -2,7 +2,7 @@
   "Tests for status bar functionality."
   (:require [clojure.test :refer [deftest is testing]]
             [potatoclient.state :as state]
-            [potatoclient.ui.status-bar :as status-bar]
+            [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.status-bar.helpers :as helpers]
             [potatoclient.i18n :as i18n]))
 

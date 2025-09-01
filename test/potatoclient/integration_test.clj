@@ -2,7 +2,8 @@
   "Integration tests for state, status bar, and UI components."
   (:require [clojure.test :refer [deftest is testing]]
             [potatoclient.state :as state]
-            [potatoclient.ui.status-bar :as status-bar]
+            [potatoclient.ui.status-bar.core :as status-bar-core]
+            [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.status-bar.helpers :as helpers]
             [potatoclient.ui.tabs.core :as tabs]
             [potatoclient.i18n :as i18n])
@@ -55,7 +56,7 @@
     (i18n/load-translations!)
 
     ;; Test status bar creation
-    (let [status-bar (status-bar/create)]
+    (let [status-bar (status-bar-core/create)]
       (is (instance? JPanel status-bar) "Status bar should be a JPanel"))
 
     ;; Test tabs creation
