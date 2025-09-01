@@ -75,9 +75,19 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 	fi
 
 
+# Ensure shared module proto classes are compiled
+.PHONY: ensure-shared-compiled
+ensure-shared-compiled: ## Ensure shared module proto/java classes are compiled
+	@if [ ! -d "shared/target/classes/cmd" ] || [ ! -d "shared/target/classes/potatoclient/java/ipc" ]; then \
+		echo "Shared module classes not found. Compiling shared module..."; \
+		cd shared && $(MAKE) compile && cd ..; \
+	else \
+		echo "Shared module classes already compiled"; \
+	fi
+
 # Compile Kotlin sources
 .PHONY: compile-kotlin
-compile-kotlin: ## Compile Kotlin source files
+compile-kotlin: ensure-shared-compiled ## Compile Kotlin source files
 	@echo "Compiling Kotlin sources..."
 	clojure -T:build compile-kotlin
 
