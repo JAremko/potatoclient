@@ -42,31 +42,27 @@
                    (logging/log-info {:msg "Shutting down PotatoClient..."})
                    (future
                      (try
-          ;; Close all detached windows first
+                       ;; Stop all running streams first
+                       (when (resolve 'potatoclient.streams.core/shutdown)
+                         (try
+                           ((resolve 'potatoclient.streams.core/shutdown))
+                           (logging/log-debug {:msg "Stopped all stream processes"})
+                           (catch Exception e
+                             (logging/log-error {:msg (str "Error stopping streams: " (.getMessage e))}))))
+
+                       ;; Close all detached windows
                        (tabs-windows/close-all-windows!)
                        (logging/log-debug {:msg "Closed all detached windows"})
 
-          ;; Clean up bindings
+                       ;; Clean up bindings
                        (state/cleanup-seesaw-bindings!)
                        (logging/log-debug {:msg "Cleaned up all seesaw bindings"})
 
-          ;; Save configuration
+                       ;; Save configuration
                        (let [current-config {:theme (theme/get-current-theme)
                                              :locale (state/get-locale)
                                              :url-history (config/get-url-history)}]
                          (config/save-config! current-config))
-
-          ;; Clean up stream processes
-                       (let [stream-processes (state/get-all-stream-processes)
-                             _ (reduce-kv (fn [m k v]
-                                            (let [stream-key (case k
-                                                               :heat-video :heat
-                                                               :day-video :day
-                                                               k)]
-                                              (assoc m stream-key v)))
-                                          {}
-                                          stream-processes)]
-                         nil)
 
                        (logging/shutdown!)
                        (catch Exception e
@@ -74,7 +70,7 @@
                        (finally
                          (System/exit 0))))
 
-      ;; Fallback timeout
+                   ;; Fallback timeout
                    (future
                      (Thread/sleep 3000)
                      (println "Force exiting due to shutdown timeout...")

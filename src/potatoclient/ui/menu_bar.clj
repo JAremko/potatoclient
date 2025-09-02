@@ -158,26 +158,25 @@
                         :icon (theme/key->icon stream-key)
                         :tip tooltip
                         :handler (fn [e]
-                                   (let [selected? (seesaw/config (seesaw/to-widget e) :selected?)
-                                         stream-name (i18n/tr label-key)]
-                                     ;; Update status bar with user action
-                                     (if selected?
-                                       (status-msg/set-info! (str (i18n/tr :starting-stream) " " stream-name "..."))
-                                       (status-msg/set-info! (str (i18n/tr :stopping-stream) " " stream-name "...")))
-
+                                   (let [selected? (seesaw/config (seesaw/to-widget e) :selected?)]
                                      ;; Log for debugging
                                      (logging/log-debug
                                        {:msg (str "Stream toggle clicked: " stream-key)
                                         :stream stream-key
                                         :selected? selected?})
 
-                                     ;; TODO: Here we would actually start/stop the stream
-                                     ;; For now, simulate completion after a brief delay
-                                     (future
-                                       (Thread/sleep 500)
+                                     ;; Actually start/stop the stream
+                                     ;; The status bar will be updated by the stream system
+                                     (try
+                                       (require 'potatoclient.streams.core)
                                        (if selected?
-                                         (status-msg/set-stream-started! stream-key)
-                                         (status-msg/set-stream-stopped! stream-key))))))
+                                         ((resolve 'potatoclient.streams.core/start-stream) stream-key)
+                                         ((resolve 'potatoclient.streams.core/stop-stream) stream-key))
+                                       (catch Exception ex
+                                         (logging/log-error {:msg (str "Failed to toggle stream: " (.getMessage ex))
+                                                             :stream stream-key})
+                                         ;; Reset button state on error
+                                         (seesaw/config! (seesaw/to-widget e) :selected? (not selected?)))))))
         button (seesaw/toggle :action toggle-action)
         process-key (case stream-key
                       :heat :heat-video

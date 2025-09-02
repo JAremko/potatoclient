@@ -3,6 +3,7 @@
   (:require
     [potatoclient.logging :as logging]
     [potatoclient.streams.state :as state]
+    [potatoclient.streams.specs :as specs]
     [potatoclient.ui.status-bar.messages :as status-msg]))
 
 ;; ============================================================================
@@ -18,37 +19,64 @@
 ;; ============================================================================
 
 (defmethod handle-event :connection
-  [stream-type {:keys [connected url timestamp]}]
+  [stream-type {:keys [action details timestamp]}]
   (logging/log-info {:id :stream/connection-event
                      :stream stream-type
-                     :connected connected
-                     :url url})
-  (when connected
-    (state/set-stream-status! stream-type :running)))
+                     :action action
+                     :details details})
+  (case action
+    :connected
+    (do
+      (state/set-stream-status! stream-type :running nil)
+      (when-let [url (:url details)]
+        (logging/log-info {:id :stream/connected
+                           :stream stream-type
+                           :url url})))
+
+    (:disconnected :timeout :connection-error)
+    (do
+      (state/set-stream-status! stream-type :stopped nil)
+      (when-let [error (:error details)]
+        (state/set-stream-error! stream-type error)))
+
+    :reconnecting
+    (logging/log-info {:id :stream/reconnecting
+                       :stream stream-type
+                       :details details})
+
+    ;; Unknown action
+    nil))
 
 ;; ============================================================================
 ;; Gesture Events
 ;; ============================================================================
 
 (defmethod handle-event :gesture
-  [stream-type {:keys [gesture-type x y width height timestamp]}]
-  (logging/log-debug {:id :stream/gesture-event
-                      :stream stream-type
-                      :gesture gesture-type
-                      :coords {:x x :y y}
-                      :size {:width width :height height}}))
+  [stream-type {:keys [gesture-type x y ndc-x ndc-y scroll-amount timestamp]}]
+  (logging/log-debug (cond-> {:id :stream/gesture-event
+                              :stream stream-type
+                              :gesture gesture-type
+                              :coords {:x x :y y}}
+                       (and ndc-x ndc-y) (assoc :ndc {:x ndc-x :y ndc-y})
+                       scroll-amount (assoc :scroll scroll-amount))))
 
 ;; ============================================================================
 ;; Window Events
 ;; ============================================================================
 
 (defmethod handle-event :window
-  [stream-type {:keys [window-event x y width height timestamp]}]
-  (logging/log-debug {:id :stream/window-event
-                      :stream stream-type
-                      :event window-event
-                      :position {:x x :y y}
-                      :size {:width width :height height}}))
+  [stream-type {:keys [action width height x y delta-x delta-y timestamp]}]
+  (logging/log-debug (cond-> {:id :stream/window-event
+                              :stream stream-type
+                              :action action}
+                       (and x y) (assoc :position {:x x :y y})
+                       (and width height) (assoc :size {:width width :height height})
+                       (and delta-x delta-y) (assoc :delta {:x delta-x :y delta-y})))
+  ;; Store window position if moved/resized
+  (when (and (= action :window-move) x y)
+    (state/set-stream-window-position! stream-type x y))
+  (when (and (= action :resize) width height)
+    (state/set-stream-window-size! stream-type width height)))
 
 ;; ============================================================================
 ;; Error Events
@@ -104,27 +132,29 @@
   "Route messages from stream IPC"
   {:malli/schema [:=> [:cat :keyword :map] :nil]}
   [stream-type message]
-  (case (:msg-type message)
-    :event (handle-event stream-type message)
-    
-    :log (let [{:keys [level message timestamp]} message]
-           (logging/log-info {:id :stream/log
-                             :stream stream-type
-                             :level level
-                             :msg message}))
-    
-    :metric (let [{:keys [name value timestamp]} message]
-             (logging/log-debug {:id :stream/metric
+  ;; Validate message structure
+  (when (specs/validate-and-log message stream-type)
+    (case (:msg-type message)
+      :event (handle-event stream-type message)
+
+      :log (let [{:keys [level message timestamp]} message]
+             (logging/log-info {:id :stream/log
                                 :stream stream-type
-                                :metric name
-                                :value value}))
-    
-    :command (logging/log-debug {:id :stream/command
-                                 :stream stream-type
-                                 :command message})
-    
-    ;; Unknown message type
-    (logging/log-warn {:id :stream/unknown-message
-                       :stream stream-type
-                       :message message}))
+                                :level level
+                                :msg message}))
+
+      :metric (let [{:keys [name value timestamp]} message]
+                (logging/log-debug {:id :stream/metric
+                                    :stream stream-type
+                                    :metric name
+                                    :value value}))
+
+      :command (logging/log-debug {:id :stream/command
+                                   :stream stream-type
+                                   :command message})
+
+      ;; Unknown message type
+      (logging/log-warn {:id :stream/unknown-message
+                         :stream stream-type
+                         :message message})))
   nil)

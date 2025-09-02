@@ -63,20 +63,20 @@
   (let [process-key (config/get-process-key stream-type)]
     ;; Update app state
     (app-state/update-process-status! process-key pid status)
-    
+
     ;; Update status bar
     (case status
       :starting (let [name (get-in config/stream-config [stream-type :name])]
                   (status-msg/set-info! (str "Starting " name "...")))
-      :running  (status-msg/set-stream-started! stream-type)
+      :running (status-msg/set-stream-started! stream-type)
       :stopping (let [name (get-in config/stream-config [stream-type :name])]
                   (status-msg/set-info! (str "Stopping " name "...")))
-      :stopped  (status-msg/set-stream-stopped! stream-type)
-      :error    (let [name (get-in config/stream-config [stream-type :name])
-                      error (get-in (app-state/get-stream-process stream-type) [:error])]
-                  (status-msg/set-error! (str name " failed: " (or error "Unknown error"))))
+      :stopped (status-msg/set-stream-stopped! stream-type)
+      :error (let [name (get-in config/stream-config [stream-type :name])
+                   error (get-in (app-state/get-stream-process stream-type) [:error])]
+               (status-msg/set-error! (str name " failed: " (or error "Unknown error"))))
       nil)
-    
+
     ;; Log state change
     (logging/log-info {:id :stream/status-change
                        :stream stream-type
@@ -145,6 +145,22 @@
   {:malli/schema [:=> [:cat :keyword :map] :nil]}
   [stream-type window-info]
   (update-stream-process-info! stream-type {:window window-info})
+  nil)
+
+(defn set-stream-window-position!
+  "Set window position for a stream"
+  {:malli/schema [:=> [:cat :keyword :int :int] :nil]}
+  [stream-type x y]
+  (swap! app-state/app-state assoc-in [:streams stream-type :window :x] x)
+  (swap! app-state/app-state assoc-in [:streams stream-type :window :y] y)
+  nil)
+
+(defn set-stream-window-size!
+  "Set window size for a stream"
+  {:malli/schema [:=> [:cat :keyword :int :int] :nil]}
+  [stream-type width height]
+  (swap! app-state/app-state assoc-in [:streams stream-type :window :width] width)
+  (swap! app-state/app-state assoc-in [:streams stream-type :window :height] height)
   nil)
 
 (defn get-stream-window-info
