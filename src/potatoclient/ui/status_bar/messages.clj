@@ -2,8 +2,11 @@
   "Status bar message management."
   (:require
     [potatoclient.i18n :as i18n]
+    [potatoclient.logging :as logging]
+    [potatoclient.runtime :as runtime]
     [potatoclient.state :as state]
-    [potatoclient.ui.status-bar.helpers :as helpers]))
+    [potatoclient.ui.status-bar.helpers :as helpers]
+    [seesaw.invoke :as invoke]))
 
 ;; ============================================================================
 ;; Core Status Updates
@@ -13,8 +16,15 @@
   "Set status message with type."
   {:malli/schema [:=> [:cat [:maybe :string] :keyword] :map]}
   [message type]
-  (swap! state/app-state assoc-in [:ui :status] {:message (or message "")
-                                                 :type type}))
+  ;; Log in dev mode
+  (when-not (runtime/release-build?)
+    (logging/log-info {:id :status-bar/update
+                       :msg (str "Status bar update: " (or message "(empty)"))
+                       :type type}))
+  ;; Ensure UI updates happen on EDT
+  (invoke/invoke-later
+    (swap! state/app-state assoc-in [:ui :status] {:message (or message "")
+                                                   :type type})))
 
 (defn set-info!
   "Set info status message."

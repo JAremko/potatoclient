@@ -11,6 +11,7 @@
             [potatoclient.ui.frames.initial.core :as initial-frame]
             [potatoclient.ui.frames.connection.core :as connection-frame]
             [potatoclient.ui.main-frame :as main-frame]
+            [potatoclient.ui.status-bar.messages :as status-bar]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -94,6 +95,8 @@
             (state/set-theme! saved-theme))
           (when-let [saved-locale (:locale (config/load-config))]
             (state/set-locale! saved-locale))
+          ;; Set ready status after successful connection and main frame display
+          (status-bar/set-ready!)
           (logging/log-info {:msg "Application initialized"
                              :domain domain}))
 

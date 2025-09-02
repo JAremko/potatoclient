@@ -124,8 +124,10 @@
     (when window-state
       (menu-bar/restore-window-state! frame window-state))
 
-    ;; Set initial status only if no status exists
-    (when-not (get-in @state/app-state [:ui :status :message])
+    ;; Don't automatically set ready status - let the connection flow handle it
+    ;; Only set status if we're coming from a reload/refresh scenario where status is empty
+    (when (and (not (get-in @state/app-state [:ui :status :message]))
+               window-state) ; window-state indicates a reload scenario
       (status-bar/set-ready!))
 
     (when-not (runtime/release-build?)
