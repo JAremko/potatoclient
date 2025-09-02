@@ -2,7 +2,7 @@
   "LRF (Laser Range Finder) command functions for controlling laser measurement operations.
    Based on the Lrf message structure in jon_shared_cmd_lrf.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Measurement Operations

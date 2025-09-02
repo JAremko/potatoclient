@@ -55,48 +55,48 @@
   [{:keys [stream-type communicator message-queue running?]}]
   (Thread.
     (fn []
-     (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
-     (while @running?
-       (try
-         (when-let [message-bytes (.receive communicator)]
-           (let [message (transit/read-message message-bytes)]
-             (when-not (.offer message-queue message)
-               (t/log! :warn (str "[" (name stream-type) "-server] Message queue full, dropping message")))))
-         (catch InterruptedException _
-           (.interrupt (Thread/currentThread))
-           (reset! running? false))
-         (catch Exception e
-           (when @running?
-             (t/log! :error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage e)))
-             (Thread/sleep 100))))))
-   (str (name stream-type) "-server-reader")))
+      (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
+      (while @running?
+        (try
+          (when-let [message-bytes (.receive communicator)]
+            (let [message (transit/read-message message-bytes)]
+              (when-not (.offer message-queue message)
+                (t/log! :warn (str "[" (name stream-type) "-server] Message queue full, dropping message")))))
+          (catch InterruptedException _
+            (.interrupt (Thread/currentThread))
+            (reset! running? false))
+          (catch Exception e
+            (when @running?
+              (t/log! :error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage e)))
+              (Thread/sleep 100))))))
+    (str (name stream-type) "-server-reader")))
 
 (defn- start-processor-thread
   "Start the thread that processes messages from the queue."
   {:malli/schema [:=> [:cat IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]]] [:fn (partial instance? Thread)]]}
   [{:keys [stream-type message-queue running?]} on-message]
   (Thread.
-   (fn []
-     (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
-     (while @running?
-       (try
-         (when-let [message (.poll message-queue 100 TimeUnit/MILLISECONDS)]
-           (when on-message
-             (on-message message)))
-         (catch InterruptedException _
-           (.interrupt (Thread/currentThread))
-           (reset! running? false))
-         (catch Exception e
-           (when @running?
-             (t/log! :error (str "[" (name stream-type) "-server] Error processing message: " (.getMessage e))))))))
-   (str (name stream-type) "-server-processor")))
+    (fn []
+      (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
+      (while @running?
+        (try
+          (when-let [message (.poll message-queue 100 TimeUnit/MILLISECONDS)]
+            (when on-message
+              (on-message message)))
+          (catch InterruptedException _
+            (.interrupt (Thread/currentThread))
+            (reset! running? false))
+          (catch Exception e
+            (when @running?
+              (t/log! :error (str "[" (name stream-type) "-server] Error processing message: " (.getMessage e))))))))
+    (str (name stream-type) "-server-processor")))
 
 (defn create-server
   "Create and start an IPC server for a stream.
    Returns a server map with control functions."
   {:malli/schema [:=> [:cat StreamType [:* :any]] IpcServer]}
   [stream-type & {:keys [on-message await-binding?]
-                   :or {await-binding? true}}]
+                  :or {await-binding? true}}]
   (let [socket-path (generate-socket-path stream-type)
         _ (Files/deleteIfExists socket-path)
         communicator (SocketFactory/createServer ^Path socket-path)

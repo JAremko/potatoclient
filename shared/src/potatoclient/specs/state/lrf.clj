@@ -3,8 +3,8 @@
    Based on jon_shared_data_lrf.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; RgbColor message spec
 (def rgb-color-spec

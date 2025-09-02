@@ -3,8 +3,8 @@
    Based on jon_shared_data_camera_day.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataCameraDay message spec
 ;; All 11 fields from proto definition

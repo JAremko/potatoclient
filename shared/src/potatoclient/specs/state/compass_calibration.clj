@@ -2,8 +2,8 @@
   "Compass Calibration message spec matching buf.validate constraints and EDN output.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataCompassCalibration message spec
 ;; All 6 fields from proto definition

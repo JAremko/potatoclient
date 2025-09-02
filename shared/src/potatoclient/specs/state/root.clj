@@ -3,25 +3,25 @@
    Based on jon_shared_data.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [clojure.test.check.generators :as gen]
-   [potatoclient.malli.registry :as registry]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [clojure.test.check.generators :as gen]
+    [potatoclient.malli.registry :as registry]
    ;; Import common specs (includes meteo)
-   [potatoclient.specs.common]
+    [potatoclient.specs.common]
    ;; Import all state specs
-   [potatoclient.specs.state.system]
-   [potatoclient.specs.state.lrf]
-   [potatoclient.specs.state.time]
-   [potatoclient.specs.state.gps]
-   [potatoclient.specs.state.compass]
-   [potatoclient.specs.state.rotary]
-   [potatoclient.specs.state.camera-day]
-   [potatoclient.specs.state.camera-heat]
-   [potatoclient.specs.state.compass-calibration]
-   [potatoclient.specs.state.rec-osd]
-   [potatoclient.specs.state.day-cam-glass-heater]
-   [potatoclient.specs.state.actual-space-time]))
+    [potatoclient.specs.state.system]
+    [potatoclient.specs.state.lrf]
+    [potatoclient.specs.state.time]
+    [potatoclient.specs.state.gps]
+    [potatoclient.specs.state.compass]
+    [potatoclient.specs.state.rotary]
+    [potatoclient.specs.state.camera-day]
+    [potatoclient.specs.state.camera-heat]
+    [potatoclient.specs.state.compass-calibration]
+    [potatoclient.specs.state.rec-osd]
+    [potatoclient.specs.state.day-cam-glass-heater]
+    [potatoclient.specs.state.actual-space-time]))
 
 ;; Root state spec that matches JonGUIState protobuf structure
 ;; All fields with protocol_version being uint32 > 0 and all message fields required

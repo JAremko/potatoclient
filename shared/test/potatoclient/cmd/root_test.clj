@@ -2,19 +2,19 @@
   "Roundtrip tests for root-level commands (ping, noop, frozen).
    Validates that commands are constructed correctly and survive serialization/deserialization."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [potatoclient.cmd.root :as root]
-   [potatoclient.cmd.core :as core]
-   [potatoclient.cmd.validation :as validation]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.test-harness :as harness]
-   [malli.core :as m]))
+    [clojure.test :refer [deftest is testing]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [potatoclient.cmd.root :as root]
+    [potatoclient.cmd.core :as core]
+    [potatoclient.cmd.validation :as validation]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.test-harness :as harness]
+    [malli.core :as m]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -45,10 +45,10 @@
                   cmd)
           "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? result) 
+          (is (:valid? result)
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
                      (str "\n" (:pretty-diff result))))))))))
@@ -65,10 +65,10 @@
                   cmd)
           "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? result) 
+          (is (:valid? result)
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
                      (str "\n" (:pretty-diff result))))))))))
@@ -85,10 +85,10 @@
                   cmd)
           "Command structure should match expected")
       (is (validate-cmd cmd) "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? result) 
+          (is (:valid? result)
               (str "Command should survive serialization/deserialization"
                    (when-not (:valid? result)
                      (str "\n" (:pretty-diff result))))))))))
@@ -100,10 +100,10 @@
 (deftest test-mode-verification
   (testing "Commands should be validated in test mode"
     (is (core/in-test-mode?) "Should be running in test mode")
-    
+
     (testing "Invalid commands should throw"
       (is (thrown? Exception
-            (core/send-command! {:invalid_command {}}))
+                   (core/send-command! {:invalid_command {}}))
           "Invalid command should throw validation error"))))
 
 ;; ============================================================================
@@ -123,10 +123,10 @@
                    :ping {}}
                   ping-cmd)
           "Should create complete ping command with all protocol fields")
-      
+
       (testing "roundtrip validation"
         (let [validation-result (validation/validate-roundtrip-with-report ping-cmd)]
-          (is (:valid? validation-result) 
+          (is (:valid? validation-result)
               (str "Keep-alive ping should survive roundtrip"
                    (when-not (:valid? validation-result)
                      (str "\n" (:pretty-diff validation-result))))))))))

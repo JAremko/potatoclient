@@ -3,11 +3,11 @@
    Automatically compiles proto classes if they're not available.
    Uses Clojure 1.12's new process features for better control."
   (:require
-   [clojure.java.io :as io]
-   [clojure.string :as str]
-   [clojure.repl.deps :as deps])
+    [clojure.java.io :as io]
+    [clojure.string :as str]
+    [clojure.repl.deps :as deps])
   (:import
-   [java.io File]))
+    [java.io File]))
 
 (defn proto-classes-available?
   "Check if proto classes are compiled and on classpath."
@@ -28,7 +28,6 @@
     true
     (catch ClassNotFoundException _
       false)))
-
 
 (defn ensure-proto-classes!
   "Ensure proto classes are compiled and available."
@@ -67,7 +66,7 @@
     (println "Adding Pronto to classpath...")
     (try
       ;; In Clojure 1.12, we can add libs dynamically
-      (deps/add-lib 'com.appsflyer/pronto 
+      (deps/add-lib 'com.appsflyer/pronto
                     {:git/url "https://github.com/JAremko/pronto.git"
                      :git/sha "0fb034bc9c943d6a04177b23eb97436f9ca817f7"})
       (println "Pronto added successfully")
@@ -80,33 +79,33 @@
    Ensures all prerequisites are met before running tests."
   []
   (println "\n=== Initializing Test Harness ===")
-  
+
   ;; Ensure Pronto is available
   (ensure-pronto!)
-  
+
   ;; Ensure proto classes are compiled
   (ensure-proto-classes!)
-  
+
   ;; Verify everything is ready
   (let [proto-ok? (proto-classes-available?)
         pronto-ok? (pronto-classes-available?)]
-    
+
     (println "\nTest Harness Status:")
     (println (format "  Proto classes: %s" (if proto-ok? "✓" "✗")))
     (println (format "  Pronto library: %s" (if pronto-ok? "✓" "✗")))
-    
+
     (when-not (and proto-ok? pronto-ok?)
       (throw (ex-info "Test harness initialization failed"
                       {:proto proto-ok?
                        :pronto pronto-ok?})))
-    
+
     (println "  Ready for testing!")
     (println "=================================\n")
     true))
 
 ;; Auto-initialize when namespace is loaded
 ;; This ensures all test namespaces that require this will have the system ready
-(defonce initialized? 
+(defonce initialized?
   (try
     (initialize!)
     (catch Exception e

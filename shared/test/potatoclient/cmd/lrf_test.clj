@@ -1,22 +1,21 @@
 (ns potatoclient.cmd.lrf-test
   "Tests for LRF (Laser Range Finder) command functions."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [potatoclient.cmd.lrf :as lrf]
-   [potatoclient.cmd.validation :as validation]
-   [malli.core :as m]
-   [malli.instrument :as mi]
-   [potatoclient.test-harness :as harness]))
+    [clojure.test :refer [deftest is testing]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [potatoclient.cmd.lrf :as lrf]
+    [potatoclient.cmd.validation :as validation]
+    [malli.core :as m]
+    [malli.instrument :as mi]
+    [potatoclient.test-harness :as harness]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-
 
 ;; ============================================================================
 ;; Measurement Operations Tests
@@ -29,9 +28,9 @@
       (is (match? {:lrf {:measure {}}}
                   result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -46,7 +45,7 @@
                   result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "scan-off creates valid command"
     (let [result (lrf/scan-off)]
       (is (m/validate :cmd/root result))
@@ -54,7 +53,7 @@
                   result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "set-scan-mode creates valid command with 1 Hz continuous mode"
     (let [result (lrf/set-scan-mode :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS)]
       (is (m/validate :cmd/root result))
@@ -62,7 +61,7 @@
                   result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "set-scan-mode creates valid command with 10 Hz continuous mode"
     (let [result (lrf/set-scan-mode :JON_GUI_DATA_LRF_SCAN_MODE_10_HZ_CONTINUOUS)]
       (is (m/validate :cmd/root result))
@@ -70,11 +69,11 @@
                   result))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "set-scan-mode creates valid command with 200 Hz continuous mode"
     (let [result (lrf/set-scan-mode :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS)]
       (is (m/validate :cmd/root result))
-      (is (= :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS 
+      (is (= :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS
              (get-in result [:lrf :set_scan_mode :mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
@@ -90,7 +89,7 @@
       (is (= {} (get-in result [:lrf :start])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "stop creates valid command"
     (let [result (lrf/stop)]
       (is (m/validate :cmd/root result))
@@ -109,14 +108,14 @@
       (is (= {} (get-in result [:lrf :target_designator_off])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "target-designator-on-mode-a creates valid command"
     (let [result (lrf/target-designator-on-mode-a)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:lrf :target_designator_on_mode_a])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "target-designator-on-mode-b creates valid command"
     (let [result (lrf/target-designator-on-mode-b)]
       (is (m/validate :cmd/root result))
@@ -135,7 +134,7 @@
       (is (= {} (get-in result [:lrf :enable_fog_mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "disable-fog-mode creates valid command"
     (let [result (lrf/disable-fog-mode)]
       (is (m/validate :cmd/root result))
@@ -178,7 +177,7 @@
       (is (= {} (get-in result [:lrf :refine_on])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result)))))
-  
+
   (testing "refine-off creates valid command"
     (let [result (lrf/refine-off)]
       (is (m/validate :cmd/root result))

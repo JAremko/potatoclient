@@ -2,8 +2,8 @@
   "Rotary message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; ScanNode message spec
 ;; All 7 fields from proto definition

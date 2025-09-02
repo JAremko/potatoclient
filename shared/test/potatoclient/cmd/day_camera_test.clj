@@ -1,22 +1,21 @@
 (ns potatoclient.cmd.day-camera-test
   "Tests for Day Camera command functions."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [potatoclient.cmd.day-camera :as day-camera]
-   [potatoclient.cmd.validation :as validation]
-   [malli.core :as m]
-   [malli.instrument :as mi]
-   [potatoclient.test-harness :as harness]))
+    [clojure.test :refer [deftest is testing]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [potatoclient.cmd.day-camera :as day-camera]
+    [potatoclient.cmd.validation :as validation]
+    [malli.core :as m]
+    [malli.instrument :as mi]
+    [potatoclient.test-harness :as harness]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; ============================================================================
-
 
 ;; ============================================================================
 ;; Infra-Red Filter Control Tests
@@ -28,18 +27,18 @@
       (is (m/validate :cmd/root result))
       (is (= true (get-in result [:day_camera :set_infra_red_filter :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
-    
+
     (let [result (day-camera/set-infra-red-filter false)]
       (is (m/validate :cmd/root result))
       (is (= false (get-in result [:day_camera :set_infra_red_filter :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -52,19 +51,19 @@
       (is (m/validate :cmd/root result))
       (is (= 0.5 (get-in result [:day_camera :set_iris :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "set-auto-iris creates valid command"
     (let [result (day-camera/set-auto-iris true)]
       (is (m/validate :cmd/root result))
       (is (= true (get-in result [:day_camera :set_auto_iris :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -77,39 +76,39 @@
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :photo])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "start creates valid command"
     (let [result (day-camera/start)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :start])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "stop creates valid command"
     (let [result (day-camera/stop)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :stop])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "halt-all creates valid command"
     (let [result (day-camera/halt-all)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :halt_all])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -122,60 +121,60 @@
       (is (m/validate :cmd/root result))
       (is (= 0.75 (get-in result [:day_camera :focus :set_value :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "move-focus creates valid command"
     (let [result (day-camera/move-focus 0.8 0.5)]
       (is (m/validate :cmd/root result))
       (is (= 0.8 (get-in result [:day_camera :focus :move :target_value])))
       (is (= 0.5 (get-in result [:day_camera :focus :move :speed])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "halt-focus creates valid command"
     (let [result (day-camera/halt-focus)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :focus :halt])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "offset-focus creates valid command"
     (let [result (day-camera/offset-focus -0.2)]
       (is (m/validate :cmd/root result))
       (is (= -0.2 (get-in result [:day_camera :focus :offset :offset_value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "reset-focus creates valid command"
     (let [result (day-camera/reset-focus)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :focus :reset_focus])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "save-focus-to-table creates valid command"
     (let [result (day-camera/save-focus-to-table)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :focus :save_to_table_focus])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -188,90 +187,90 @@
       (is (m/validate :cmd/root result))
       (is (= 0.5 (get-in result [:day_camera :zoom :set_value :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "move-zoom creates valid command"
     (let [result (day-camera/move-zoom 0.9 0.3)]
       (is (m/validate :cmd/root result))
       (is (= 0.9 (get-in result [:day_camera :zoom :move :target_value])))
       (is (= 0.3 (get-in result [:day_camera :zoom :move :speed])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "halt-zoom creates valid command"
     (let [result (day-camera/halt-zoom)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :zoom :halt])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "offset-zoom creates valid command"
     (let [result (day-camera/offset-zoom 0.1)]
       (is (m/validate :cmd/root result))
       (is (= 0.1 (get-in result [:day_camera :zoom :offset :offset_value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "reset-zoom creates valid command"
     (let [result (day-camera/reset-zoom)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :zoom :reset_zoom])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "save-zoom-to-table creates valid command"
     (let [result (day-camera/save-zoom-to-table)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :zoom :save_to_table])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "set-zoom-table-value creates valid command"
     (let [result (day-camera/set-zoom-table-value 10)]
       (is (m/validate :cmd/root result))
       (is (= 10 (get-in result [:day_camera :zoom :set_zoom_table_value :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "next-zoom-table-pos creates valid command"
     (let [result (day-camera/next-zoom-table-pos)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :zoom :next_zoom_table_pos])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "prev-zoom-table-pos creates valid command"
     (let [result (day-camera/prev-zoom-table-pos)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :zoom :prev_zoom_table_pos])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -284,9 +283,9 @@
       (is (m/validate :cmd/root result))
       (is (= 2.0 (get-in result [:day_camera :set_digital_zoom_level :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -299,9 +298,9 @@
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :get_meteo])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -314,39 +313,39 @@
       (is (m/validate :cmd/root result))
       (is (= :JON_GUI_DATA_FX_MODE_DAY_A (get-in result [:day_camera :set_fx_mode :mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "next-fx-mode creates valid command"
     (let [result (day-camera/next-fx-mode)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :next_fx_mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "prev-fx-mode creates valid command"
     (let [result (day-camera/prev-fx-mode)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :prev_fx_mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "refresh-fx-mode creates valid command"
     (let [result (day-camera/refresh-fx-mode)]
       (is (m/validate :cmd/root result))
       (is (= {} (get-in result [:day_camera :refresh_fx_mode])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================
@@ -359,19 +358,19 @@
       (is (m/validate :cmd/root result))
       (is (= 0.7 (get-in result [:day_camera :set_clahe_level :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-  
+
   (testing "shift-clahe-level creates valid command"
     (let [result (day-camera/shift-clahe-level -0.3)]
       (is (m/validate :cmd/root result))
       (is (= -0.3 (get-in result [:day_camera :shift_clahe_level :value])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
-        (is (:valid? roundtrip-result) 
-            (str "Should pass roundtrip validation" 
-                 (when-not (:valid? roundtrip-result) 
+        (is (:valid? roundtrip-result)
+            (str "Should pass roundtrip validation"
+                 (when-not (:valid? roundtrip-result)
                    (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))
 
 ;; ============================================================================

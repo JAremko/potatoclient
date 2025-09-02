@@ -3,11 +3,10 @@
    Based on jon_shared_cmd_compass.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; Compass command specs - based on proto-explorer findings
 ;; This is a oneof structure with 11 command types
-
 
 ;; Configuration
 (def set-magnetic-declination-spec
@@ -25,7 +24,6 @@
 (def set-use-rotary-position-spec
   [:map {:closed true}
    [:flag [:boolean]]])
-
 
 ;; Main compass command spec using oneof - all 11 commands
 (def compass-command-spec

@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_system.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; System command specs - based on proto-explorer findings
 ;; This is a oneof structure with 13 command types

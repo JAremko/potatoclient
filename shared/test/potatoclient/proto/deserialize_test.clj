@@ -2,24 +2,24 @@
   "Tests for proto deserialization utility.
    Tests both fast (*) and validating versions of deserialize functions."
   (:require
-   [clojure.test :refer [deftest is testing use-fixtures]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [pronto.core :as pronto]
-   [pronto.utils]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.proto.deserialize :as deserialize]
-   [potatoclient.specs.cmd.root]
-   [potatoclient.specs.state.root]
-   [potatoclient.test-harness :as harness])
+    [clojure.test :refer [deftest is testing use-fixtures]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [pronto.core :as pronto]
+    [pronto.utils]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.proto.deserialize :as deserialize]
+    [potatoclient.specs.cmd.root]
+    [potatoclient.specs.state.root]
+    [potatoclient.test-harness :as harness])
   (:import
-   [com.google.protobuf ByteString]))
+    [com.google.protobuf ByteString]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -78,7 +78,7 @@
 
 (deftest test-deserialize-cmd-payload*
   (testing "Fast CMD deserialization without validation"
-    
+
     (testing "Valid CMD message deserializes correctly"
       (let [original-edn (generate-valid-cmd)
             binary-data (edn->cmd-bytes original-edn)
@@ -88,13 +88,13 @@
         (is (match? {:protocol_version (:protocol_version original-edn)
                      :session_id (:session_id original-edn)}
                     deserialized))))
-    
+
     (testing "Invalid binary data throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
-                   (deserialize/deserialize-cmd-payload* 
-                    (byte-array [1 2 3 4 5])))
+                   (deserialize/deserialize-cmd-payload*
+                     (byte-array [1 2 3 4 5])))
           "Should throw on invalid binary data"))
-    
+
     (testing "Empty binary data returns map with default values"
       (let [result (deserialize/deserialize-cmd-payload* (byte-array []))]
         (is (map? result) "Should return a map")
@@ -104,7 +104,7 @@
 
 (deftest test-deserialize-cmd-payload
   (testing "CMD deserialization with full validation"
-    
+
     (testing "Valid CMD message passes all validations"
       (let [original-edn (generate-valid-cmd)
             binary-data (edn->cmd-bytes original-edn)
@@ -112,7 +112,7 @@
         (is (map? deserialized) "Should return a map")
         (is (m/validate :cmd/root deserialized)
             "Deserialized data should be valid according to Malli spec")))
-    
+
     (testing "CMD with invalid protocol_version fails validation"
       (let [invalid-edn {:protocol_version 0  ; Invalid: must be > 0
                          :session_id 123
@@ -125,7 +125,7 @@
                               #"buf.validate validation failed"
                               (deserialize/deserialize-cmd-payload binary-data))
             "Should throw buf.validate error for invalid protocol_version")))
-    
+
     (testing "CMD with no oneof field fails buf.validate"
       (let [invalid-edn {:protocol_version 1
                          :session_id 123
@@ -138,14 +138,14 @@
                               #"buf.validate validation failed"
                               (deserialize/deserialize-cmd-payload binary-data))
             "Should throw buf.validate error for missing oneof field")))
-    
+
     (testing "Malformed binary data throws deserialization error"
       (let [result (try
-                    (deserialize/deserialize-cmd-payload 
-                     (byte-array [255 255 255 255]))
-                    nil
-                    (catch clojure.lang.ExceptionInfo e
-                      (ex-data e)))]
+                     (deserialize/deserialize-cmd-payload
+                       (byte-array [255 255 255 255]))
+                     nil
+                     (catch clojure.lang.ExceptionInfo e
+                       (ex-data e)))]
         (is (match? {:type :deserialization-error}
                     result))))))
 
@@ -155,29 +155,29 @@
 
 (deftest test-deserialize-state-payload*
   (testing "Fast State deserialization without validation"
-    
+
     (testing "Valid State message deserializes correctly"
       (let [original-edn (generate-valid-state)
             binary-data (edn->state-bytes original-edn)
             deserialized (deserialize/deserialize-state-payload* binary-data)]
         (is (map? deserialized) "Should return a map")
-        (is (= (:protocol_version original-edn) 
+        (is (= (:protocol_version original-edn)
                (:protocol_version deserialized))
             "Protocol version should match")
         ;; Check all required fields are present
         (is (contains? deserialized :system) "Should have system")
         (is (contains? deserialized :gps) "Should have gps")
         (is (contains? deserialized :compass) "Should have compass")))
-    
+
     (testing "Invalid binary data throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
-                   (deserialize/deserialize-state-payload* 
-                    (byte-array [1 2 3 4 5])))
+                   (deserialize/deserialize-state-payload*
+                     (byte-array [1 2 3 4 5])))
           "Should throw on invalid binary data"))))
 
 (deftest test-deserialize-state-payload
   (testing "State deserialization with full validation"
-    
+
     (testing "Valid State message passes all validations"
       (let [original-edn (generate-valid-state)
             binary-data (edn->state-bytes original-edn)
@@ -185,26 +185,26 @@
         (is (map? deserialized) "Should return a map")
         (is (m/validate :state/root deserialized)
             "Deserialized data should be valid according to Malli spec")))
-    
+
     (testing "State with invalid GPS coordinates fails validation"
       (let [base-state (generate-valid-state)
             invalid-edn (assoc base-state
-                              :gps (assoc (:gps base-state)
-                                         :latitude 91.0  ; Invalid: > 90
-                                         :longitude -181.0))  ; Invalid: < -180
+                               :gps (assoc (:gps base-state)
+                                           :latitude 91.0  ; Invalid: > 90
+                                           :longitude -181.0))  ; Invalid: < -180
             binary-data (edn->state-bytes invalid-edn)]
         (is (thrown-with-msg? clojure.lang.ExceptionInfo
                               #"buf.validate validation failed"
                               (deserialize/deserialize-state-payload binary-data))
             "Should throw buf.validate error for invalid GPS coordinates")))
-    
+
     (testing "Malformed binary data throws deserialization error"
       (let [result (try
-                    (deserialize/deserialize-state-payload 
-                     (byte-array [255 255 255 255]))
-                    nil
-                    (catch clojure.lang.ExceptionInfo e
-                      (ex-data e)))]
+                     (deserialize/deserialize-state-payload
+                       (byte-array [255 255 255 255]))
+                     nil
+                     (catch clojure.lang.ExceptionInfo e
+                       (ex-data e)))]
         (is (= :deserialization-error (:type result))
             "Should throw deserialization error for malformed data")))))
 
@@ -253,23 +253,23 @@
   (testing "Performance comparison between validating and non-validating versions"
     (let [cmd-samples (repeatedly 1000 generate-valid-cmd)
           cmd-bytes (mapv edn->cmd-bytes cmd-samples)
-          
+
           ;; Time fast version
           start-fast (System/currentTimeMillis)
           _ (doseq [bytes cmd-bytes]
               (deserialize/deserialize-cmd-payload* bytes))
           fast-time (- (System/currentTimeMillis) start-fast)
-          
+
           ;; Time validating version
           start-validating (System/currentTimeMillis)
           _ (doseq [bytes cmd-bytes]
               (deserialize/deserialize-cmd-payload bytes))
           validating-time (- (System/currentTimeMillis) start-validating)]
-      
+
       (println (format "\nPerformance comparison (1000 CMD messages):"))
       (println (format "  Fast version (*): %d ms" fast-time))
       (println (format "  Validating version: %d ms" validating-time))
-      
+
       ;; Since we disabled Malli validation, they should be similar
       ;; Just check that both complete reasonably fast
       (is (< fast-time 5000)
@@ -283,7 +283,7 @@
 
 (deftest test-error-information
   (testing "Errors contain useful debugging information"
-    
+
     (testing "buf.validate errors contain violation details"
       (let [invalid-edn {:protocol_version 0  ; Invalid
                          :session_id 123
@@ -300,9 +300,9 @@
               (is (= :buf-validate-error (:type data)))
               (is (vector? (:violations data)))
               (is (some #(re-find #"protocol_version" (:field %))
-                       (:violations data))
+                        (:violations data))
                   "Should include field name in violation"))))))
-    
+
     (testing "Malli errors contain human-readable information"
       ;; The test with no oneof field actually fails buf.validate, not Malli
       ;; So we verify that buf.validate catches it

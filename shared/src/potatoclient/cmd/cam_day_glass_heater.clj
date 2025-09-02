@@ -2,7 +2,7 @@
   "Day Camera Glass Heater command functions for controlling lens defogging/deicing.
    Based on the DayCamGlassHeater message structure in jon_shared_cmd_day_cam_glass_heater.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Device Control

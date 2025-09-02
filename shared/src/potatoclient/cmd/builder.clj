@@ -2,12 +2,12 @@
   "Efficient command building utilities using Pronto performance patterns.
    Provides functions to populate missing fields in proto-maps."
   (:require
-   [pronto.core :as p]
-   [potatoclient.proto.serialize :as serialize]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.cmd.root]) ; Load the specs
+    [pronto.core :as p]
+    [potatoclient.proto.serialize :as serialize]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
-   [cmd JonSharedCmd$Root]))
+    [cmd JonSharedCmd$Root]))
 
 ;; Initialize registry to access specs
 (registry/setup-global-registry!)
@@ -71,16 +71,16 @@
   {:malli/schema [:=> [:cat :cmd/root] :any]}
   [cmd]
   ;; Find the oneof field that's present
-  (let [oneof-fields #{:day_camera :heat_camera :gps :compass :lrf 
-                       :lrf_calib :rotary :osd :ping :noop :frozen 
+  (let [oneof-fields #{:day_camera :heat_camera :gps :compass :lrf
+                       :lrf_calib :rotary :osd :ping :noop :frozen
                        :system :cv :day_cam_glass_heater :lira}
-        oneof-entry (first (filter (fn [[k v]] 
-                                     (and (contains? oneof-fields k) 
+        oneof-entry (first (filter (fn [[k v]]
+                                     (and (contains? oneof-fields k)
                                           (some? v)))
                                    cmd))
         [oneof-key oneof-val] oneof-entry]
     ;; Create proto-map with all fields in one constructor call (most efficient per Pronto docs)
-    (p/proto-map serialize/cmd-mapper 
+    (p/proto-map serialize/cmd-mapper
                  JonSharedCmd$Root
                  :protocol_version (:protocol_version cmd)
                  :client_type (:client_type cmd)
@@ -113,7 +113,7 @@
    Returns the command if valid, throws if missing required fields."
   {:malli/schema [:=> [:cat [:map]] :cmd/root]}
   [cmd]
-  (let [required-fields [:protocol_version :client_type :session_id 
+  (let [required-fields [:protocol_version :client_type :session_id
                          :important :from_cv_subsystem]
         missing-fields (remove #(contains? cmd %) required-fields)]
     (if (empty? missing-fields)

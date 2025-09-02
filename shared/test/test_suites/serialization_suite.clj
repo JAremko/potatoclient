@@ -8,7 +8,7 @@
   (println "Running Serialization/Deserialization Tests")
   (println "========================================\n")
   (let [results (run-tests 'potatoclient.proto.serialize-test
-                          'potatoclient.proto.deserialize-test)]
+                           'potatoclient.proto.deserialize-test)]
     (println "\n========================================")
     (println "Serialization/Deserialization Tests Complete")
     (println "========================================\n")

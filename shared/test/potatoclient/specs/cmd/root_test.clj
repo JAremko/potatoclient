@@ -2,14 +2,14 @@
   "Hardcoded tests for cmd.Root spec validation.
    Tests specific edge cases and negative scenarios."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [potatoclient.malli.registry :as registry]
+    [clojure.test :refer [deftest is testing]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [potatoclient.malli.registry :as registry]
    ;; Load the spec definitions
-   [potatoclient.specs.cmd.root]))
+    [potatoclient.specs.cmd.root]))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
@@ -19,12 +19,12 @@
     (let [cmd-spec (m/schema :cmd/root)
           ;; Generate a valid base sample
           base-sample (mg/generate cmd-spec)]
-      
+
       (testing "Invalid protocol_version (0 - must be > 0)"
         (let [invalid-sample (assoc base-sample :protocol_version 0)]
           (is (not (m/validate cmd-spec invalid-sample))
               "Message with protocol_version=0 should fail Malli validation")))
-      
+
       (testing "Invalid GPS coordinates in GPS command"
         (when (:gps base-sample)
           (let [invalid-sample (assoc base-sample
@@ -34,15 +34,15 @@
                                              :altitude -500.0}})] ; Invalid: < -430
             (is (not (m/validate cmd-spec invalid-sample))
                 "Message with invalid GPS coordinates should fail"))))
-      
+
       (testing "Invalid compass angles"
         (when (:compass base-sample)
           (let [invalid-sample (assoc base-sample
                                       :compass {:set_offset_angle_azimuth
-                                               {:value 180.0}})]  ; Invalid: must be < 180
+                                                {:value 180.0}})]  ; Invalid: must be < 180
             (is (not (m/validate cmd-spec invalid-sample))
                 "Message with invalid compass offset should fail"))))
-      
+
       (testing "Invalid rotary relative angles"
         (when (:rotary base-sample)
           (let [invalid-sample (assoc base-sample
@@ -50,32 +50,32 @@
                                                                 {:value 181.0  ; Invalid: > 180
                                                                  :speed 0.5
                                                                  :direction :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE}}
-                                                     :elevation {:relative
-                                                                {:value 91.0  ; Invalid: > 90
-                                                                 :speed 0.5
-                                                                 :direction :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE}}}})]
+                                                      :elevation {:relative
+                                                                  {:value 91.0  ; Invalid: > 90
+                                                                   :speed 0.5
+                                                                   :direction :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE}}}})]
             (is (not (m/validate cmd-spec invalid-sample))
                 "Message with invalid rotary relative angles should fail"))))
-      
+
       (testing "Multiple oneof fields present (invalid)"
         (let [invalid-sample (-> base-sample
                                  (assoc :ping {})
                                  (assoc :noop {}))]
           (is (not (m/validate cmd-spec invalid-sample))
               "Message with multiple oneof fields should fail")))
-      
-      (testing "No oneof fields present (invalid)"  
+
+      (testing "No oneof fields present (invalid)"
         (let [invalid-sample (-> base-sample
-                                 (dissoc :ping :noop :system :gps :compass :lrf 
-                                        :lrf_calib :rotary :osd :cv :lira :frozen
-                                        :day_camera :heat_camera :day_cam_glass_heater))]
+                                 (dissoc :ping :noop :system :gps :compass :lrf
+                                         :lrf_calib :rotary :osd :cv :lira :frozen
+                                         :day_camera :heat_camera :day_cam_glass_heater))]
           (is (not (m/validate cmd-spec invalid-sample))
               "Message with no oneof fields should fail"))))))
 
 (deftest cmd-root-sanity-checks
   (testing "Sanity checks for valid cmd messages"
     (let [cmd-spec (m/schema :cmd/root)]
-      
+
       (testing "Valid ping command"
         (let [valid-sample {:protocol_version 1
                             :session_id 123
@@ -93,7 +93,7 @@
                        :client_type keyword?
                        :ping map?}
                       valid-sample))))
-      
+
       (testing "Valid system command"
         (let [valid-sample {:protocol_version 1
                             :session_id 456
@@ -111,10 +111,10 @@
                        :client_type keyword?
                        :system {:localization {:loc keyword?}}}
                       valid-sample))))))
-  
+
   (testing "Edge cases"
     (let [cmd-spec (m/schema :cmd/root)]
-      
+
       (testing "Maximum valid protocol_version"
         (let [valid-sample {:protocol_version 2147483647
                             :session_id 0
@@ -124,7 +124,7 @@
                             :noop {}}]
           (is (m/validate cmd-spec valid-sample)
               "Max protocol_version should be valid")))
-      
+
       (testing "Minimum valid session_id (0 is valid)"
         (let [valid-sample {:protocol_version 1
                             :session_id 0

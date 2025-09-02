@@ -2,7 +2,7 @@
   "LRF Alignment/Calibration command functions for adjusting laser-to-camera alignment.
    Based on the Lrf_calib message structure in jon_shared_cmd_lrf_align.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Day Camera Offset Operations
@@ -15,7 +15,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] :cmd/root]}
   [x y]
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:day {:set {:x x :y y}}}}))
 
 (defn shift-day-offsets
@@ -25,7 +25,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] :cmd/root]}
   [x y]
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:day {:shift {:x x :y y}}}}))
 
 (defn save-day-offsets
@@ -33,7 +33,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:day {:save {}}}}))
 
 (defn reset-day-offsets
@@ -41,7 +41,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:day {:reset {}}}}))
 
 ;; ============================================================================
@@ -55,7 +55,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] :cmd/root]}
   [x y]
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:heat {:set {:x x :y y}}}}))
 
 (defn shift-heat-offsets
@@ -65,7 +65,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :screen/pixel-offset-x :screen/pixel-offset-y] :cmd/root]}
   [x y]
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:heat {:shift {:x x :y y}}}}))
 
 (defn save-heat-offsets
@@ -73,7 +73,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:heat {:save {}}}}))
 
 (defn reset-heat-offsets
@@ -81,7 +81,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:lrf_calib {:heat {:reset {}}}}))
 
 ;; ============================================================================

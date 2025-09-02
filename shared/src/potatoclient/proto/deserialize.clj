@@ -8,20 +8,19 @@
    - deserialize-state-payload*: Fast deserialization without validation  
    - deserialize-state-payload: Full deserialization with buf.validate and Malli validation"
   (:require
-   [malli.core :as m]
-   [malli.error :as me]
-   [pronto.core :as pronto]
-   [pronto.utils]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.cmd.root]
-   [potatoclient.specs.state.root])
+    [malli.core :as m]
+    [malli.error :as me]
+    [pronto.core :as pronto]
+    [pronto.utils]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.cmd.root]
+    [potatoclient.specs.state.root])
   (:import
-   [com.google.protobuf ByteString]
-   [build.buf.protovalidate Validator ValidatorFactory]))
+    [com.google.protobuf ByteString]
+    [build.buf.protovalidate Validator ValidatorFactory]))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
-
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -44,7 +43,6 @@
 ;; Helper functions
 ;; ============================================================================
 
-
 (defn- validate-with-buf
   "Validate a protobuf message with buf.validate.
    Returns nil if valid, throws ex-info with violations if invalid."
@@ -56,24 +54,24 @@
                       {:type :buf-validate-error
                        :proto-type proto-type
                        :violations (mapv (fn [violation]
-                                          (let [proto-violation (.toProto violation)]
-                                            {:field (str (.getField proto-violation))
-                                             :constraint (.getRuleId proto-violation)
-                                             :message (.getMessage proto-violation)}))
-                                        (.getViolations result))})))))
+                                           (let [proto-violation (.toProto violation)]
+                                             {:field (str (.getField proto-violation))
+                                              :constraint (.getRuleId proto-violation)
+                                              :message (.getMessage proto-violation)}))
+                                         (.getViolations result))})))))
 
 (defn- validate-with-malli
   "Validate EDN data with Malli spec.
    Returns nil if valid, throws ex-info with errors if invalid."
   {:malli/schema [:=> [:cat [:map] :keyword] :any]}
   [edn-data spec-key]
-  (let [spec (try 
-                (m/schema spec-key)
-                (catch Exception e
-                  (throw (ex-info (str "Failed to resolve Malli schema: " spec-key)
-                                  {:type :schema-resolution-error
-                                   :spec spec-key
-                                   :error (.getMessage e)}))))
+  (let [spec (try
+               (m/schema spec-key)
+               (catch Exception e
+                 (throw (ex-info (str "Failed to resolve Malli schema: " spec-key)
+                                 {:type :schema-resolution-error
+                                  :spec spec-key
+                                  :error (.getMessage e)}))))
         valid? (m/validate spec edn-data)]
     (when-not valid?
       (let [explanation (m/explain spec edn-data)

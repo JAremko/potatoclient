@@ -2,14 +2,14 @@
   "Validation utilities for command roundtrip testing.
    Uses proto templates to ensure consistent comparison."
   (:require
-   [lambdaisland.deep-diff2 :as ddiff]
-   [pronto.core :as p]
-   [potatoclient.proto.serialize :as serialize]
-   [potatoclient.proto.deserialize :as deserialize]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.cmd.root]) ; Load the specs
+    [lambdaisland.deep-diff2 :as ddiff]
+    [pronto.core :as p]
+    [potatoclient.proto.serialize :as serialize]
+    [potatoclient.proto.deserialize :as deserialize]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
-   [cmd JonSharedCmd$Root]))
+    [cmd JonSharedCmd$Root]))
 
 ;; Initialize registry to access specs
 (registry/setup-global-registry!)
@@ -93,8 +93,8 @@
       {:valid? true}
       {:valid? false
        :diff (ddiff/diff normalized-original normalized-roundtrip)
-       :pretty-diff (with-out-str 
-                      (ddiff/pretty-print 
+       :pretty-diff (with-out-str
+                      (ddiff/pretty-print
                         (ddiff/diff normalized-original normalized-roundtrip)))})))
 
 ;; ============================================================================

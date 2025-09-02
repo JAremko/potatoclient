@@ -2,7 +2,7 @@
   "Compass command functions.
    Based on the Compass message structure in jon_shared_cmd_compass.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Control Commands (under :compass key in cmd root)

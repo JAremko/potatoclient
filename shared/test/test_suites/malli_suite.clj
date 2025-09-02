@@ -12,11 +12,11 @@
   (println "Running Malli Spec Tests")
   (println "========================================\n")
   (let [results (run-tests 'potatoclient.malli.registry-test
-                          'potatoclient.specs.cmd.root-test
-                          'potatoclient.specs.cmd.root-validate-test
-                          'potatoclient.specs.state.root-test
-                          'potatoclient.specs.state.root-validate-test
-                          'potatoclient.specs.state.root-gen-test)]
+                           'potatoclient.specs.cmd.root-test
+                           'potatoclient.specs.cmd.root-validate-test
+                           'potatoclient.specs.state.root-test
+                           'potatoclient.specs.state.root-validate-test
+                           'potatoclient.specs.state.root-gen-test)]
     (println "\n========================================")
     (println "Malli Spec Tests Complete")
     (println "========================================\n")

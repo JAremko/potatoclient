@@ -8,16 +8,16 @@
    - serialize-state-payload*: Fast serialization without validation  
    - serialize-state-payload: Full serialization with Malli and buf.validate validation"
   (:require
-   [malli.core :as m]
-   [malli.error :as me]
-   [pronto.core :as pronto]
-   [pronto.utils]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.cmd.root]
-   [potatoclient.specs.state.root])
+    [malli.core :as m]
+    [malli.error :as me]
+    [pronto.core :as pronto]
+    [pronto.utils]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.cmd.root]
+    [potatoclient.specs.state.root])
   (:import
-   [com.google.protobuf ByteString]
-   [build.buf.protovalidate Validator ValidatorFactory]))
+    [com.google.protobuf ByteString]
+    [build.buf.protovalidate Validator ValidatorFactory]))
 
 ;; Initialize registry with all specs - done lazily in functions to ensure specs are loaded
 
@@ -32,7 +32,6 @@
     (catch Exception _
       ;; Registry not set up, initialize it
       (registry/setup-global-registry!))))
-
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -61,13 +60,13 @@
   {:malli/schema [:=> [:cat [:map] :keyword] :any]}
   [edn-data spec-key]
   (ensure-registry!)
-  (let [spec (try 
-                (m/schema spec-key)
-                (catch Exception e
-                  (throw (ex-info (str "Failed to resolve Malli schema: " spec-key)
-                                  {:type :schema-resolution-error
-                                   :spec spec-key
-                                   :error (.getMessage e)}))))
+  (let [spec (try
+               (m/schema spec-key)
+               (catch Exception e
+                 (throw (ex-info (str "Failed to resolve Malli schema: " spec-key)
+                                 {:type :schema-resolution-error
+                                  :spec spec-key
+                                  :error (.getMessage e)}))))
         valid? (m/validate spec edn-data)]
     (when-not valid?
       (let [explanation (m/explain spec edn-data)
@@ -91,11 +90,11 @@
                       {:type :buf-validate-error
                        :proto-type proto-type
                        :violations (mapv (fn [violation]
-                                          (let [proto-violation (.toProto violation)]
-                                            {:field (str (.getField proto-violation))
-                                             :constraint (.getRuleId proto-violation)
-                                             :message (.getMessage proto-violation)}))
-                                        (.getViolations result))})))))
+                                           (let [proto-violation (.toProto violation)]
+                                             {:field (str (.getField proto-violation))
+                                              :constraint (.getRuleId proto-violation)
+                                              :message (.getMessage proto-violation)}))
+                                         (.getViolations result))})))))
 
 ;; ============================================================================
 ;; CMD Serialization
@@ -129,16 +128,16 @@
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :cmd/root)
-    
+
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
                                                cmd.JonSharedCmd$Root
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
-      
+
       ;; Validate proto with buf.validate
       (validate-with-buf proto-msg :cmd)
-      
+
       ;; Return binary data
       (.toByteArray proto-msg))
     (catch clojure.lang.ExceptionInfo e
@@ -184,16 +183,16 @@
   (try
     ;; Validate EDN with Malli first
     (validate-with-malli edn-data :state/root)
-    
+
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map state-mapper
                                                ser.JonSharedData$JonGUIState
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
-      
+
       ;; Validate proto with buf.validate
       (validate-with-buf proto-msg :state)
-      
+
       ;; Return binary data
       (.toByteArray proto-msg))
     (catch clojure.lang.ExceptionInfo e

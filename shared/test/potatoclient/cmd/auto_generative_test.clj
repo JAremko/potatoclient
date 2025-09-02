@@ -3,19 +3,19 @@
    Discovers functions, generates inputs from their specs, and validates outputs.
    Also validates that generated commands pass protobuf serialization (buf validate)."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [malli.error :as me]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.test-harness :as harness]
-   [potatoclient.validation-harness :as val-harness]
-   [potatoclient.cmd.validation :as validation]
-   [clojure.string :as str]))
+    [clojure.test :refer [deftest is testing]]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [malli.error :as me]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.test-harness :as harness]
+    [potatoclient.validation-harness :as val-harness]
+    [potatoclient.cmd.validation :as validation]
+    [clojure.string :as str]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -125,7 +125,7 @@
     (let [all-results (mapcat discover-and-test-namespace cmd-namespaces)
           successful (filter :tested all-results)
           failed (remove :tested all-results)]
-      
+
       ;; Report summary
       (println "\n=== Generative Testing Summary ===")
       (println (str "Tested " (count successful) " functions successfully"))
@@ -133,12 +133,12 @@
       (println "  - Malli schema validation")
       (println "  - Protobuf serialization validation (buf validate)")
       (println (str "Total test cases: " (* (count successful) num-tests)))
-      
+
       ;; Report successful namespaces
       (let [by-ns (group-by #(namespace (:function %)) successful)]
         (doseq [[ns funcs] (sort-by key by-ns)]
           (println (str "\n" ns ": " (count funcs) " functions tested"))))
-      
+
       ;; Check for failures
       (when (seq failed)
         (println "\n=== FAILURES ===")
@@ -147,7 +147,7 @@
           (println (str "  Error: " error))
           (when data
             (println (str "  Data: " (pr-str data))))))
-      
+
       ;; Assert all passed
       (is (empty? failed)
           (str "All functions should pass generative testing. "
@@ -160,28 +160,28 @@
 (deftest parameterless-functions-test
   (testing "All parameterless command functions produce valid cmd/root"
     (let [results (for [ns-sym cmd-namespaces]
-                   (do
-                     (require ns-sym)
-                     (let [ns-obj (find-ns ns-sym)]
-                       (for [[var-name var-obj] (ns-publics ns-obj)
-                             :let [metadata (meta var-obj)
-                                   schema (:malli/schema metadata)]
-                             :when (and schema
-                                       (= :=> (first schema))
-                                       (= [:cat] (second schema)))]
-                         (let [f (deref var-obj)
-                               full-name (symbol (str ns-sym) (str var-name))
-                               [_ _ output-schema] schema]
-                           (try
-                             (let [result (f)]
-                               (if (m/validate output-schema result)
-                                 {:function full-name :valid true :type output-schema}
-                                 {:function full-name :valid false
-                                  :error (str "Invalid output. Expected: " output-schema 
-                                             ", Got type: " (type result))}))
-                             (catch Exception e
-                               {:function full-name :valid false
-                                :error (.getMessage e)})))))))]
+                    (do
+                      (require ns-sym)
+                      (let [ns-obj (find-ns ns-sym)]
+                        (for [[var-name var-obj] (ns-publics ns-obj)
+                              :let [metadata (meta var-obj)
+                                    schema (:malli/schema metadata)]
+                              :when (and schema
+                                         (= :=> (first schema))
+                                         (= [:cat] (second schema)))]
+                          (let [f (deref var-obj)
+                                full-name (symbol (str ns-sym) (str var-name))
+                                [_ _ output-schema] schema]
+                            (try
+                              (let [result (f)]
+                                (if (m/validate output-schema result)
+                                  {:function full-name :valid true :type output-schema}
+                                  {:function full-name :valid false
+                                   :error (str "Invalid output. Expected: " output-schema
+                                               ", Got type: " (type result))}))
+                              (catch Exception e
+                                {:function full-name :valid false
+                                 :error (.getMessage e)})))))))]
       (let [all-results (flatten results)
             failures (remove :valid all-results)]
         (when (seq failures)
@@ -202,18 +202,18 @@
                 :let [metadata (meta var-obj)
                       schema (:malli/schema metadata)]
                 :when (and schema
-                          (= :=> (first schema))
-                          (let [[_ input-schema _] schema
-                                [cat-type & args] input-schema]
-                            (and (= :cat cat-type)
-                                 (seq args)
+                           (= :=> (first schema))
+                           (let [[_ input-schema _] schema
+                                 [cat-type & args] input-schema]
+                             (and (= :cat cat-type)
+                                  (seq args)
                                  ;; Only simple schemas
-                                 (every? #(or (keyword? %)
-                                             (and (vector? %)
-                                                  (= :enum (first %))))
-                                        args))))]
+                                  (every? #(or (keyword? %)
+                                               (and (vector? %)
+                                                    (= :enum (first %))))
+                                          args))))]
             [var-obj (symbol (str ns-sym) (str var-name)) schema])]
-      
+
       (doseq [[var-obj full-name schema] simple-arg-functions
               :when var-obj]
         (testing (str "Function: " full-name)

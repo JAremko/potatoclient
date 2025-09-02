@@ -2,9 +2,9 @@
   "System command functions matching TypeScript cmdSystem.ts.
    These commands are under the :system key in the cmd root proto."
   (:require
-   [potatoclient.cmd.core :as core]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.common])) ; Load enum specs
+    [potatoclient.cmd.core :as core]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.common])) ; Load enum specs
 
 ;; Initialize registry to access specs
 (registry/setup-global-registry!)

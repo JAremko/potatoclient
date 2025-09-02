@@ -11,9 +11,11 @@
 (def class-dir "target/classes")
 (def basis (b/create-basis {:project "deps.edn"}))
 
-(defn clean [_]
-  (b/delete {:path "target"})
-  (b/delete {:path "src/java"}))
+(defn clean 
+  "Clean build artifacts only - never touches source files"
+  [_]
+  (println "Cleaning build artifacts...")
+  (b/delete {:path "target"}))
 
 (defn compile-proto-sources
   "Compile proto Java source files to bytecode.

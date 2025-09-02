@@ -2,7 +2,7 @@
   "GPS command functions.
    Based on the GPS message structure in jon_shared_cmd_gps.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; GPS Control
@@ -34,10 +34,10 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root]}
   [latitude longitude altitude]
-  (core/create-command 
+  (core/create-command
     {:gps {:set_manual_position {:latitude latitude
-                                  :longitude longitude
-                                  :altitude altitude}}}))
+                                 :longitude longitude
+                                 :altitude altitude}}}))
 
 (defn set-use-manual-position
   "Enable or disable use of manual GPS position.
@@ -45,7 +45,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :boolean] :cmd/root]}
   [use-manual?]
-  (core/create-command 
+  (core/create-command
     {:gps {:set_use_manual_position {:flag use-manual?}}}))
 
 ;; ============================================================================

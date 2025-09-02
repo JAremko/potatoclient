@@ -2,19 +2,19 @@
   "Roundtrip tests for system commands.
    Validates that commands are constructed correctly and survive serialization/deserialization."
   (:require
-   [clojure.test :refer [deftest is testing]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [potatoclient.cmd.system :as sys]
-   [potatoclient.cmd.core :as core]
-   [potatoclient.cmd.validation :as validation]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.test-harness :as harness]
-   [malli.core :as m]))
+    [clojure.test :refer [deftest is testing]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [potatoclient.cmd.system :as sys]
+    [potatoclient.cmd.core :as core]
+    [potatoclient.cmd.validation :as validation]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.test-harness :as harness]
+    [malli.core :as m]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -40,12 +40,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest power-off-test
@@ -55,12 +55,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest reset-configs-test
@@ -70,12 +70,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest start-all-test
@@ -85,12 +85,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest stop-all-test
@@ -100,12 +100,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest mark-rec-important-test
@@ -115,12 +115,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest unmark-rec-important-test
@@ -130,12 +130,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest set-localization-test
@@ -145,26 +145,26 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? roundtrip-result)
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))
-    
-    (testing "with different localizations"
-      (doseq [loc [:JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
-                   :JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
-                   :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS]]
-        (let [cmd (sys/set-localization loc)
-              roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (match? {:system {:localization {:loc loc}}} cmd)
-              (str "Should create correct command for " loc))
-          (is (:valid? roundtrip-result)
-              (str "Should survive roundtrip for " loc
-                   (when-not (:valid? roundtrip-result) 
-                     (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))))
+
+      (testing "with different localizations"
+        (doseq [loc [:JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
+                     :JON_GUI_DATA_SYSTEM_LOCALIZATION_AR
+                     :JON_GUI_DATA_SYSTEM_LOCALIZATION_CS]]
+          (let [cmd (sys/set-localization loc)
+                roundtrip-result (validation/validate-roundtrip-with-report cmd)]
+            (is (match? {:system {:localization {:loc loc}}} cmd)
+                (str "Should create correct command for " loc))
+            (is (:valid? roundtrip-result)
+                (str "Should survive roundtrip for " loc
+                     (when-not (:valid? roundtrip-result)
+                       (str "\nDiff:\n" (:pretty-diff roundtrip-result)))))))))))
 
 (deftest enter-transport-test
   (testing "enter-transport command construction and roundtrip"
@@ -173,12 +173,12 @@
       (is (match? expected cmd) "Command structure should match expected")
       (is (validate-cmd cmd)
           "Command should be valid against spec")
-      
+
       (testing "roundtrip serialization"
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
-          (is (:valid? roundtrip-result) 
-              (str "Command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+          (is (:valid? roundtrip-result)
+              (str "Command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))
 
 (deftest geodesic-mode-test
@@ -189,22 +189,22 @@
         (is (match? expected cmd) "Enable command structure should match expected")
         (is (validate-cmd cmd)
             "Enable command should be valid against spec")
-        
+
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? roundtrip-result)
-              (str "Enable command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+              (str "Enable command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))
-    
+
     (testing "disable geodesic mode"
       (let [cmd (sys/disable-geodesic-mode)
             expected {:system {:geodesic_mode_disable {}}}]
         (is (match? expected cmd) "Disable command structure should match expected")
         (is (validate-cmd cmd)
             "Disable command should be valid against spec")
-        
+
         (let [roundtrip-result (validation/validate-roundtrip-with-report cmd)]
           (is (:valid? roundtrip-result)
-              (str "Disable command should survive serialization/deserialization" 
-                   (when-not (:valid? roundtrip-result) 
+              (str "Disable command should survive serialization/deserialization"
+                   (when-not (:valid? roundtrip-result)
                      (str "\nDiff:\n" (:pretty-diff roundtrip-result))))))))))

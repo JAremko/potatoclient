@@ -2,7 +2,7 @@
   "Day Camera command functions.
    Based on the DayCamera message structure in jon_shared_cmd_day_camera.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Infra-Red Filter Control
@@ -13,7 +13,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :boolean] :cmd/root]}
   [enabled?]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_infra_red_filter {:value enabled?}}}))
 
 ;; ============================================================================
@@ -25,7 +25,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_iris {:value value}}}))
 
 (defn set-auto-iris
@@ -33,7 +33,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :boolean] :cmd/root]}
   [enabled?]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_auto_iris {:value enabled?}}}))
 
 ;; ============================================================================
@@ -81,7 +81,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/focus] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:set_value {:value value}}}}))
 
 (defn move-focus
@@ -90,7 +90,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized :speed/normalized] :cmd/root]}
   [target-value speed]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:move {:target_value target-value
                                  :speed speed}}}}))
 
@@ -99,7 +99,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:halt {}}}}))
 
 (defn offset-focus
@@ -107,7 +107,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized-offset] :cmd/root]}
   [offset-value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:offset {:offset_value offset-value}}}}))
 
 (defn reset-focus
@@ -115,7 +115,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:reset_focus {}}}}))
 
 (defn save-focus-to-table
@@ -123,7 +123,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:focus {:save_to_table_focus {}}}}))
 
 ;; ============================================================================
@@ -135,7 +135,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/zoom] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:set_value {:value value}}}}))
 
 (defn move-zoom
@@ -144,7 +144,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized :speed/normalized] :cmd/root]}
   [target-value speed]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:move {:target_value target-value
                                 :speed speed}}}}))
 
@@ -153,7 +153,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:halt {}}}}))
 
 (defn offset-zoom
@@ -161,7 +161,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized-offset] :cmd/root]}
   [offset-value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:offset {:offset_value offset-value}}}}))
 
 (defn reset-zoom
@@ -169,7 +169,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:reset_zoom {}}}}))
 
 (defn save-zoom-to-table
@@ -177,7 +177,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:save_to_table {}}}}))
 
 (defn set-zoom-table-value
@@ -185,7 +185,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:set_zoom_table_value {:value value}}}}))
 
 (defn next-zoom-table-pos
@@ -193,7 +193,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:next_zoom_table_pos {}}}}))
 
 (defn prev-zoom-table-pos
@@ -201,7 +201,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:day_camera {:zoom {:prev_zoom_table_pos {}}}}))
 
 ;; ============================================================================
@@ -213,7 +213,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/digital-zoom] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_digital_zoom_level {:value value}}}))
 
 ;; ============================================================================
@@ -237,7 +237,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/fx-mode-day] :cmd/root]}
   [mode]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_fx_mode {:mode mode}}}))
 
 (defn next-fx-mode
@@ -270,7 +270,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:set_clahe_level {:value value}}}))
 
 (defn shift-clahe-level
@@ -278,5 +278,5 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized-offset] :cmd/root]}
   [shift-value]
-  (core/create-command 
+  (core/create-command
     {:day_camera {:shift_clahe_level {:value shift-value}}}))

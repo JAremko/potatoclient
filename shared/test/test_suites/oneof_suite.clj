@@ -11,10 +11,10 @@
   (println "Running Oneof Tests")
   (println "========================================\n")
   (let [results (run-tests 'potatoclient.malli.oneof-test
-                          'potatoclient.oneof-validation-test
-                          'potatoclient.oneof-base-fields-test
-                          'potatoclient.oneof-merge-test
-                          'potatoclient.cmd-oneof-test)]
+                           'potatoclient.oneof-validation-test
+                           'potatoclient.oneof-base-fields-test
+                           'potatoclient.oneof-merge-test
+                           'potatoclient.cmd-oneof-test)]
     (println "\n========================================")
     (println "Oneof Tests Complete")
     (println "========================================\n")

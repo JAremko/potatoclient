@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_day_cam_glass_heater.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; Day cam glass heater command specs - based on proto-explorer findings
 ;; This is a oneof structure with 5 command types

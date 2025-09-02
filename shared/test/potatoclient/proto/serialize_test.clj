@@ -2,25 +2,25 @@
   "Tests for proto serialization utility.
    Tests both fast (*) and validating versions of serialize functions."
   (:require
-   [clojure.test :refer [deftest is testing use-fixtures]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [pronto.core :as pronto]
-   [pronto.utils]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.proto.serialize :as serialize]
-   [potatoclient.proto.deserialize :as deserialize]
-   [potatoclient.specs.cmd.root]
-   [potatoclient.specs.state.root]
-   [potatoclient.test-harness :as harness])
+    [clojure.test :refer [deftest is testing use-fixtures]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [pronto.core :as pronto]
+    [pronto.utils]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.proto.serialize :as serialize]
+    [potatoclient.proto.deserialize :as deserialize]
+    [potatoclient.specs.cmd.root]
+    [potatoclient.specs.state.root]
+    [potatoclient.test-harness :as harness])
   (:import
-   [com.google.protobuf ByteString]))
+    [com.google.protobuf ByteString]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -116,12 +116,12 @@
             :sun_azimuth 180.0
             :sun_elevation 45.0
             :current_scan_node {:index 1
-                               :DayZoomTableValue 5
-                               :HeatZoomTableValue 5
-                               :azimuth 0.0
-                               :elevation 0.0
-                               :linger 1.0
-                               :speed 0.5}}
+                                :DayZoomTableValue 5
+                                :HeatZoomTableValue 5
+                                :azimuth 0.0
+                                :elevation 0.0
+                                :linger 1.0
+                                :speed 0.5}}
    :lrf {:is_scanning false
          :is_measuring false
          :measure_id 1
@@ -200,13 +200,13 @@
 
 (deftest test-serialize-cmd-payload*
   (testing "Fast CMD serialization without validation"
-    
+
     (testing "Valid CMD message serializes to bytes"
       (let [edn-data (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload* edn-data)]
         (is (bytes? binary-data) "Should return byte array")
         (is (pos? (count binary-data)) "Should have non-empty byte array")))
-    
+
     (testing "Serialized data can be deserialized back"
       (let [original-edn (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload* original-edn)
@@ -215,20 +215,20 @@
         (is (match? {:protocol_version (:protocol_version original-edn)
                      :session_id (:session_id original-edn)}
                     deserialized))))
-    
+
     (testing "Invalid EDN structure throws exception"
       (is (thrown? clojure.lang.ExceptionInfo
-                   (serialize/serialize-cmd-payload* 
-                    {:not-a-valid-field "test"}))
+                   (serialize/serialize-cmd-payload*
+                     {:not-a-valid-field "test"}))
           "Should throw on invalid EDN structure"))
-    
+
     (testing "Empty map serializes to minimal proto"
       (let [binary-data (serialize/serialize-cmd-payload* {})]
         (is (bytes? binary-data) "Should return byte array for empty map")))))
 
 (deftest test-serialize-cmd-payload
   (testing "CMD serialization with full validation"
-    
+
     (testing "Valid CMD message passes all validations and serializes"
       (let [edn-data (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload edn-data)]
@@ -244,7 +244,7 @@
                        :client_type keyword?
                        :ping map?}
                       deserialized)))))
-    
+
     (testing "CMD with invalid protocol_version fails Malli validation"
       (let [invalid-edn {:protocol_version 0  ; Invalid: must be > 0
                          :session_id 123
@@ -256,7 +256,7 @@
                               #"Malli validation failed"
                               (serialize/serialize-cmd-payload invalid-edn))
             "Should throw Malli validation error for invalid protocol_version")))
-    
+
     (testing "CMD with missing client_type gets default enum value that fails buf.validate"
       (let [invalid-edn {:protocol_version 1
                          :session_id 123
@@ -268,7 +268,7 @@
                               #"buf.validate validation failed"
                               (serialize/serialize-cmd-payload invalid-edn))
             "Should throw buf.validate error for unspecified enum value")))
-    
+
     (testing "CMD with no oneof field fails Malli validation"
       (let [invalid-edn {:protocol_version 1
                          :session_id 123
@@ -281,14 +281,14 @@
                               #"Malli validation failed"
                               (serialize/serialize-cmd-payload invalid-edn))
             "Should throw Malli validation error for missing oneof field")))
-    
+
     (testing "Valid CMD passes both Malli and buf.validate"
       (let [edn-data (valid-cmd-sample)
             binary-data (serialize/serialize-cmd-payload edn-data)]
         ;; Verify the happy path works
         (is (bytes? binary-data) "Should successfully serialize valid data")
         (is (pos? (count binary-data)) "Should have non-empty binary data")))
-    
+
     (testing "Multiple validation layers work correctly"
       ;; Test that a message with multiple oneof fields fails Malli
       (let [invalid-edn {:protocol_version 1
@@ -307,207 +307,207 @@
 ;; State Serialization Tests
 ;; ============================================================================
 
-(deftest test-serialize-state-payload*
-  (testing "Fast State serialization without validation"
-    
-    (testing "Valid State message serializes to bytes"
-      (let [edn-data (valid-state-sample)
-            binary-data (serialize/serialize-state-payload* edn-data)]
-        (is (bytes? binary-data) "Should return byte array")
-        (is (pos? (count binary-data)) "Should have non-empty byte array")))
-    
-    (testing "Serialized data can be deserialized back"
-      (let [original-edn (valid-state-sample)
-            binary-data (serialize/serialize-state-payload* original-edn)
-            deserialized (deserialize/deserialize-state-payload* binary-data)]
-        ;; Use matcher-combinators for cleaner assertions
-        (is (match? {:protocol_version (:protocol_version original-edn)
-                     :gps {:latitude (get-in original-edn [:gps :latitude])}}
-                    deserialized))))
-    
-    (testing "Invalid EDN structure throws exception"
-      (is (thrown? clojure.lang.ExceptionInfo
-                   (serialize/serialize-state-payload* 
-                    {:not-a-valid-field "test"}))
-          "Should throw on invalid EDN structure"))))
+  (deftest test-serialize-state-payload*
+    (testing "Fast State serialization without validation"
 
-(deftest test-serialize-state-payload
-  (testing "State serialization with full validation"
-    
-    (testing "Valid State message passes all validations and serializes"
-      (let [edn-data (valid-state-sample)
-            binary-data (serialize/serialize-state-payload edn-data)]
-        (is (bytes? binary-data) "Should return byte array")
-        (is (pos? (count binary-data)) "Should have non-empty byte array")
+      (testing "Valid State message serializes to bytes"
+        (let [edn-data (valid-state-sample)
+              binary-data (serialize/serialize-state-payload* edn-data)]
+          (is (bytes? binary-data) "Should return byte array")
+          (is (pos? (count binary-data)) "Should have non-empty byte array")))
+
+      (testing "Serialized data can be deserialized back"
+        (let [original-edn (valid-state-sample)
+              binary-data (serialize/serialize-state-payload* original-edn)
+              deserialized (deserialize/deserialize-state-payload* binary-data)]
+        ;; Use matcher-combinators for cleaner assertions
+          (is (match? {:protocol_version (:protocol_version original-edn)
+                       :gps {:latitude (get-in original-edn [:gps :latitude])}}
+                      deserialized))))
+
+      (testing "Invalid EDN structure throws exception"
+        (is (thrown? clojure.lang.ExceptionInfo
+                     (serialize/serialize-state-payload*
+                       {:not-a-valid-field "test"}))
+            "Should throw on invalid EDN structure"))))
+
+  (deftest test-serialize-state-payload
+    (testing "State serialization with full validation"
+
+      (testing "Valid State message passes all validations and serializes"
+        (let [edn-data (valid-state-sample)
+              binary-data (serialize/serialize-state-payload edn-data)]
+          (is (bytes? binary-data) "Should return byte array")
+          (is (pos? (count binary-data)) "Should have non-empty byte array")
         ;; Verify it can be deserialized
-        (let [deserialized (deserialize/deserialize-state-payload binary-data)]
-          (is (m/validate :state/root deserialized)
-              "Deserialized data should be valid"))))
-    
-    (testing "State with invalid GPS coordinates fails Malli validation"
-      (let [base-state (valid-state-sample)
-            invalid-edn (assoc base-state
-                              :gps (assoc (:gps base-state)
-                                         :latitude 91.0  ; Invalid: > 90
-                                         :longitude -181.0))]  ; Invalid: < -180
-        (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"Malli validation failed"
-                              (serialize/serialize-state-payload invalid-edn))
-            "Should throw Malli validation error for invalid GPS coordinates")))
-    
-    (testing "State with missing required field fails Malli validation"
-      (let [invalid-edn (dissoc (valid-state-sample) :system)]
-        (is (thrown-with-msg? clojure.lang.ExceptionInfo
-                              #"Malli validation failed"
-                              (serialize/serialize-state-payload invalid-edn))
-            "Should throw Malli validation error for missing required field")))))
+          (let [deserialized (deserialize/deserialize-state-payload binary-data)]
+            (is (m/validate :state/root deserialized)
+                "Deserialized data should be valid"))))
+
+      (testing "State with invalid GPS coordinates fails Malli validation"
+        (let [base-state (valid-state-sample)
+              invalid-edn (assoc base-state
+                                 :gps (assoc (:gps base-state)
+                                             :latitude 91.0  ; Invalid: > 90
+                                             :longitude -181.0))]  ; Invalid: < -180
+          (is (thrown-with-msg? clojure.lang.ExceptionInfo
+                                #"Malli validation failed"
+                                (serialize/serialize-state-payload invalid-edn))
+              "Should throw Malli validation error for invalid GPS coordinates")))
+
+      (testing "State with missing required field fails Malli validation"
+        (let [invalid-edn (dissoc (valid-state-sample) :system)]
+          (is (thrown-with-msg? clojure.lang.ExceptionInfo
+                                #"Malli validation failed"
+                                (serialize/serialize-state-payload invalid-edn))
+              "Should throw Malli validation error for missing required field")))))
 
 ;; ============================================================================
 ;; Round-trip Tests with Both Serialize and Deserialize
 ;; ============================================================================
 
-(deftest test-cmd-full-round-trip
-  (testing "CMD full round-trip: EDN -> serialize -> deserialize -> EDN"
-    (dotimes [_ 100]  ; Test with 100 random samples
-      (let [original-edn (generate-valid-cmd)
-            binary-data (serialize/serialize-cmd-payload original-edn)
-            deserialized (deserialize/deserialize-cmd-payload binary-data)]
+  (deftest test-cmd-full-round-trip
+    (testing "CMD full round-trip: EDN -> serialize -> deserialize -> EDN"
+      (dotimes [_ 100]  ; Test with 100 random samples
+        (let [original-edn (generate-valid-cmd)
+              binary-data (serialize/serialize-cmd-payload original-edn)
+              deserialized (deserialize/deserialize-cmd-payload binary-data)]
         ;; Check all top-level fields are preserved using matcher-combinators
-        (is (match? {:protocol_version (:protocol_version original-edn)
-                     :session_id (:session_id original-edn)
-                     :client_type (:client_type original-edn)
-                     :important (:important original-edn)
-                     :from_cv_subsystem (:from_cv_subsystem original-edn)}
-                    deserialized))))))
+          (is (match? {:protocol_version (:protocol_version original-edn)
+                       :session_id (:session_id original-edn)
+                       :client_type (:client_type original-edn)
+                       :important (:important original-edn)
+                       :from_cv_subsystem (:from_cv_subsystem original-edn)}
+                      deserialized))))))
 
-(deftest test-state-full-round-trip
-  (testing "State full round-trip: EDN -> serialize -> deserialize -> EDN"
-    (dotimes [_ 100]  ; Test with 100 random samples
-      (let [original-edn (generate-valid-state)
-            binary-data (serialize/serialize-state-payload original-edn)
-            deserialized (deserialize/deserialize-state-payload binary-data)]
+  (deftest test-state-full-round-trip
+    (testing "State full round-trip: EDN -> serialize -> deserialize -> EDN"
+      (dotimes [_ 100]  ; Test with 100 random samples
+        (let [original-edn (generate-valid-state)
+              binary-data (serialize/serialize-state-payload original-edn)
+              deserialized (deserialize/deserialize-state-payload binary-data)]
         ;; Check key fields are preserved
-        (is (= (:protocol_version original-edn)
-               (:protocol_version deserialized))
-            "Protocol version should be preserved")
+          (is (= (:protocol_version original-edn)
+                 (:protocol_version deserialized))
+              "Protocol version should be preserved")
         ;; Check nested structures
-        (when (:gps original-edn)
-          (is (= (get-in original-edn [:gps :latitude])
-                 (get-in deserialized [:gps :latitude]))
-              "GPS latitude should be preserved")
-          (is (= (get-in original-edn [:gps :longitude])
-                 (get-in deserialized [:gps :longitude]))
-              "GPS longitude should be preserved"))
-        (when (:system original-edn)
-          (is (= (get-in original-edn [:system :control_mode])
-                 (get-in deserialized [:system :control_mode]))
-              "System control mode should be preserved"))))))
+          (when (:gps original-edn)
+            (is (= (get-in original-edn [:gps :latitude])
+                   (get-in deserialized [:gps :latitude]))
+                "GPS latitude should be preserved")
+            (is (= (get-in original-edn [:gps :longitude])
+                   (get-in deserialized [:gps :longitude]))
+                "GPS longitude should be preserved"))
+          (when (:system original-edn)
+            (is (= (get-in original-edn [:system :control_mode])
+                   (get-in deserialized [:system :control_mode]))
+                "System control mode should be preserved"))))))
 
 ;; ============================================================================
 ;; Performance Comparison Tests
 ;; ============================================================================
 
-(deftest test-serialization-performance-comparison
-  (testing "Performance comparison between validating and non-validating serialize versions"
-    (let [cmd-samples (repeatedly 1000 generate-valid-cmd)
-          
+  (deftest test-serialization-performance-comparison
+    (testing "Performance comparison between validating and non-validating serialize versions"
+      (let [cmd-samples (repeatedly 1000 generate-valid-cmd)
+
           ;; Time fast version
-          start-fast (System/currentTimeMillis)
-          fast-results (doall (map serialize/serialize-cmd-payload* cmd-samples))
-          fast-time (- (System/currentTimeMillis) start-fast)
-          
+            start-fast (System/currentTimeMillis)
+            fast-results (doall (map serialize/serialize-cmd-payload* cmd-samples))
+            fast-time (- (System/currentTimeMillis) start-fast)
+
           ;; Time validating version
-          start-validating (System/currentTimeMillis)
-          validating-results (doall (map serialize/serialize-cmd-payload cmd-samples))
-          validating-time (- (System/currentTimeMillis) start-validating)]
-      
-      (println (format "\nSerialization performance comparison (1000 CMD messages):"))
-      (println (format "  Fast version (*): %d ms" fast-time))
-      (println (format "  Validating version: %d ms" validating-time))
-      
+            start-validating (System/currentTimeMillis)
+            validating-results (doall (map serialize/serialize-cmd-payload cmd-samples))
+            validating-time (- (System/currentTimeMillis) start-validating)]
+
+        (println (format "\nSerialization performance comparison (1000 CMD messages):"))
+        (println (format "  Fast version (*): %d ms" fast-time))
+        (println (format "  Validating version: %d ms" validating-time))
+
       ;; Since we disabled Malli validation, they should be similar  
       ;; Just check that both complete reasonably fast
-      
+
       ;; Both should complete in reasonable time
-      (is (< fast-time 5000)
-          "Fast version should complete in reasonable time")
-      (is (< validating-time 10000)
-          "Validating version should complete in reasonable time"))))
+        (is (< fast-time 5000)
+            "Fast version should complete in reasonable time")
+        (is (< validating-time 10000)
+            "Validating version should complete in reasonable time"))))
 
 ;; ============================================================================
 ;; Error Information Tests
 ;; ============================================================================
 
-(deftest test-serialization-error-information
-  (testing "Serialization errors contain useful debugging information"
-    
-    (testing "Malli validation errors contain field information"
-      (let [invalid-edn {:protocol_version 0  ; Invalid
-                         :session_id 123
-                         :important false
-                         :from_cv_subsystem false
-                         :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
-                         :ping {}}]
+  (deftest test-serialization-error-information
+    (testing "Serialization errors contain useful debugging information"
+
+      (testing "Malli validation errors contain field information"
+        (let [invalid-edn {:protocol_version 0  ; Invalid
+                           :session_id 123
+                           :important false
+                           :from_cv_subsystem false
+                           :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
+                           :ping {}}]
+          (try
+            (serialize/serialize-cmd-payload invalid-edn)
+            (is false "Should have thrown exception")
+            (catch clojure.lang.ExceptionInfo e
+              (let [data (ex-data e)]
+                (is (= :malli-validation-error (:type data)))
+                (is (= :cmd/root (:spec data)))
+                (is (contains? data :errors) "Should contain error details"))))))
+
+      (testing "Serialization errors for invalid structure"
         (try
-          (serialize/serialize-cmd-payload invalid-edn)
+          (serialize/serialize-cmd-payload* {:completely-invalid-field "test"})
           (is false "Should have thrown exception")
           (catch clojure.lang.ExceptionInfo e
             (let [data (ex-data e)]
-              (is (= :malli-validation-error (:type data)))
-              (is (= :cmd/root (:spec data)))
-              (is (contains? data :errors) "Should contain error details"))))))
-    
-    (testing "Serialization errors for invalid structure"
-      (try
-        (serialize/serialize-cmd-payload* {:completely-invalid-field "test"})
-        (is false "Should have thrown exception")
-        (catch clojure.lang.ExceptionInfo e
-          (let [data (ex-data e)]
-            (is (= :serialization-error (:type data)))
-            (is (= :cmd (:proto-type data)))
-            (is (string? (:error data)) "Should contain error message")))))))
+              (is (= :serialization-error (:type data)))
+              (is (= :cmd (:proto-type data)))
+              (is (string? (:error data)) "Should contain error message")))))))
 
 ;; ============================================================================
 ;; Consistency Tests
 ;; ============================================================================
 
-(deftest test-serialize-deserialize-consistency
-  (testing "Serialize and deserialize functions are consistent"
-    
-    (testing "CMD: serialize then deserialize preserves key fields"
-      (let [original (valid-cmd-sample)
-            serialized (serialize/serialize-cmd-payload original)
-            deserialized (deserialize/deserialize-cmd-payload serialized)]
+  (deftest test-serialize-deserialize-consistency
+    (testing "Serialize and deserialize functions are consistent"
+
+      (testing "CMD: serialize then deserialize preserves key fields"
+        (let [original (valid-cmd-sample)
+              serialized (serialize/serialize-cmd-payload original)
+              deserialized (deserialize/deserialize-cmd-payload serialized)]
         ;; Proto adds nil fields for all oneof options, so we can't do exact equality
         ;; Instead check that the important fields match
-        (is (= (:protocol_version original) (:protocol_version deserialized))
-            "Protocol version should match")
-        (is (= (:session_id original) (:session_id deserialized))
-            "Session ID should match")
-        (is (= (:client_type original) (:client_type deserialized))
-            "Client type should match")
-        (is (= (:ping original) (:ping deserialized))
-            "Ping field should match")))
-    
-    (testing "State: serialize then deserialize preserves key fields"
-      (let [original (valid-state-sample)
-            serialized (serialize/serialize-state-payload original)
-            deserialized (deserialize/deserialize-state-payload serialized)]
+          (is (= (:protocol_version original) (:protocol_version deserialized))
+              "Protocol version should match")
+          (is (= (:session_id original) (:session_id deserialized))
+              "Session ID should match")
+          (is (= (:client_type original) (:client_type deserialized))
+              "Client type should match")
+          (is (= (:ping original) (:ping deserialized))
+              "Ping field should match")))
+
+      (testing "State: serialize then deserialize preserves key fields"
+        (let [original (valid-state-sample)
+              serialized (serialize/serialize-state-payload original)
+              deserialized (deserialize/deserialize-state-payload serialized)]
         ;; Check key fields are preserved
-        (is (= (:protocol_version original) (:protocol_version deserialized))
-            "Protocol version should match")
-        (is (= (get-in original [:system :cpu_temperature])
-               (get-in deserialized [:system :cpu_temperature]))
-            "System CPU temperature should match")
-        (is (= (get-in original [:gps :latitude])
-               (get-in deserialized [:gps :latitude]))
-            "GPS latitude should match")))
-    
-    (testing "Fast versions are consistent with validating versions for valid data"
-      (let [cmd-data (valid-cmd-sample)
-            fast-bytes (serialize/serialize-cmd-payload* cmd-data)
-            validating-bytes (serialize/serialize-cmd-payload cmd-data)
-            fast-deserialized (deserialize/deserialize-cmd-payload* fast-bytes)
-            validating-deserialized (deserialize/deserialize-cmd-payload validating-bytes)]
-        (is (= fast-deserialized validating-deserialized)
-            "Fast and validating versions should produce equivalent results"))))))
+          (is (= (:protocol_version original) (:protocol_version deserialized))
+              "Protocol version should match")
+          (is (= (get-in original [:system :cpu_temperature])
+                 (get-in deserialized [:system :cpu_temperature]))
+              "System CPU temperature should match")
+          (is (= (get-in original [:gps :latitude])
+                 (get-in deserialized [:gps :latitude]))
+              "GPS latitude should match")))
+
+      (testing "Fast versions are consistent with validating versions for valid data"
+        (let [cmd-data (valid-cmd-sample)
+              fast-bytes (serialize/serialize-cmd-payload* cmd-data)
+              validating-bytes (serialize/serialize-cmd-payload cmd-data)
+              fast-deserialized (deserialize/deserialize-cmd-payload* fast-bytes)
+              validating-deserialized (deserialize/deserialize-cmd-payload validating-bytes)]
+          (is (= fast-deserialized validating-deserialized)
+              "Fast and validating versions should produce equivalent results"))))))

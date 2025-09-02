@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_cv.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; CV command specs - based on proto-explorer findings
 ;; This is a oneof structure with 11 command types
@@ -21,7 +21,6 @@
    [:x :screen/ndc-x]
    [:y :screen/ndc-y]
    [:frame_time :time/frame-time]])
-
 
 ;; Main CV command spec using oneof - all 11 commands
 (def cv-command-spec

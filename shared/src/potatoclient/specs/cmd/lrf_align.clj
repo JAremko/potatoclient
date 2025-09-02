@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_lrf_align.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; LRF alignment command specs - based on proto-explorer findings
 ;; This has a nested oneof structure: channel -> cmd

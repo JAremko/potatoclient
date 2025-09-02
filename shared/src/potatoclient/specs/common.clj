@@ -3,10 +3,10 @@
    All map specs use {:closed true} to catch typos and invalid keys.
    Specs match exact buf.validate constraints from proto files."
   (:require
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [potatoclient.malli.registry :as registry]
-   [clojure.test.check.generators :as gen]))
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [potatoclient.malli.registry :as registry]
+    [clojure.test.check.generators :as gen]))
 
 ;; ====================================================================
 ;; Basic type specs

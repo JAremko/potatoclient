@@ -2,7 +2,7 @@
   "Root-level command functions (ping, noop, frozen).
    These commands are at the root level of the cmd proto, not under any sub-message."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Root-level Empty Commands

@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_heat_camera.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; Zoom nested command (has its own oneof structure)
 
@@ -11,7 +11,6 @@
   "SetZoomTableValue with value >= 0"
   [:map {:closed true}
    [:value :proto/int32-positive]])
-
 
 (def zoom-spec
   "Zoom command with nested oneof"
@@ -44,14 +43,12 @@
   [:map {:closed true}
    [:value [:int {:min -100 :max 100}]]])
 
-
 ;; FX (Effects) mode messages
 
 (def set-fx-mode-spec
   "SetFxMode with heat FX mode enum (cannot be UNSPECIFIED)"
   [:map {:closed true}
    [:mode :enum/fx-mode-heat]])
-
 
 ;; CLAHE messages
 
@@ -74,7 +71,6 @@
 
 ;; Focus control messages
 
-
 (def set-auto-focus-spec
   "SetAutoFocus with boolean value"
   [:map {:closed true}
@@ -82,9 +78,7 @@
 
 ;; Zoom control messages (simple zoom commands, not the nested Zoom message)
 
-
 ;; Basic control messages
-
 
 ;; Main Heat Camera Root command spec using oneof - all 31 commands
 (def heat-camera-command-spec

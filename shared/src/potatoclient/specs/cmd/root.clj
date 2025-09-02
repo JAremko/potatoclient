@@ -5,24 +5,24 @@
    Pronto expects oneof fields to be flattened at the root level, not wrapped in :payload.
    The spec ensures exactly one oneof field is present."
   (:require
-   [malli.core :as m]
-   [malli.generator :as mg]
-   [clojure.test.check.generators :as gen]
-   [potatoclient.malli.registry :as registry]
+    [malli.core :as m]
+    [malli.generator :as mg]
+    [clojure.test.check.generators :as gen]
+    [potatoclient.malli.registry :as registry]
    ;; Import all command specs
-   [potatoclient.specs.common]
-   [potatoclient.specs.cmd.compass]
-   [potatoclient.specs.cmd.cv]
-   [potatoclient.specs.cmd.day-cam-glass-heater]
-   [potatoclient.specs.cmd.day-camera]
-   [potatoclient.specs.cmd.gps]
-   [potatoclient.specs.cmd.heat-camera]
-   [potatoclient.specs.cmd.lira]
-   [potatoclient.specs.cmd.lrf]
-   [potatoclient.specs.cmd.lrf-align]
-   [potatoclient.specs.cmd.osd]
-   [potatoclient.specs.cmd.rotary]
-   [potatoclient.specs.cmd.system]))
+    [potatoclient.specs.common]
+    [potatoclient.specs.cmd.compass]
+    [potatoclient.specs.cmd.cv]
+    [potatoclient.specs.cmd.day-cam-glass-heater]
+    [potatoclient.specs.cmd.day-camera]
+    [potatoclient.specs.cmd.gps]
+    [potatoclient.specs.cmd.heat-camera]
+    [potatoclient.specs.cmd.lira]
+    [potatoclient.specs.cmd.lrf]
+    [potatoclient.specs.cmd.lrf-align]
+    [potatoclient.specs.cmd.osd]
+    [potatoclient.specs.cmd.rotary]
+    [potatoclient.specs.cmd.system]))
 
 ;; The flat spec that matches protobuf structure
 ;; Uses oneof with base fields for the non-oneof fields

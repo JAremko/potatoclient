@@ -2,7 +2,7 @@
   "OSD (On-Screen Display) command functions for controlling display overlays.
    Based on the OSD message structure in jon_shared_cmd_osd.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Screen Display Commands

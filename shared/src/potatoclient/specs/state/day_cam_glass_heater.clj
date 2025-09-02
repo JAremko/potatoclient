@@ -3,8 +3,8 @@
    Based on jon_shared_data_day_cam_glass_heater.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataDayCamGlassHeater message spec
 ;; All 2 fields from proto definition

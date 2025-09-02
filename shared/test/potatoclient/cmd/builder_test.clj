@@ -2,24 +2,24 @@
   "Tests for the command builder module.
    Ensures efficient proto-map building and field population."
   (:require
-   [clojure.test :refer [deftest is testing use-fixtures]]
-   [matcher-combinators.test] ;; extends clojure.test's `is` macro
-   [matcher-combinators.matchers :as matchers]
-   [clojure.test.check :as tc]
-   [clojure.test.check.generators :as gen]
-   [clojure.test.check.properties :as prop]
-   [clojure.test.check.clojure-test :refer [defspec]]
-   [malli.instrument :as mi]
-   [potatoclient.cmd.builder :as builder]
-   [potatoclient.cmd.validation :as v]
-   [potatoclient.proto.serialize :as serialize]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.test-harness :as harness]
-   [pronto.core :as p]))
+    [clojure.test :refer [deftest is testing use-fixtures]]
+    [matcher-combinators.test] ;; extends clojure.test's `is` macro
+    [matcher-combinators.matchers :as matchers]
+    [clojure.test.check :as tc]
+    [clojure.test.check.generators :as gen]
+    [clojure.test.check.properties :as prop]
+    [clojure.test.check.clojure-test :refer [defspec]]
+    [malli.instrument :as mi]
+    [potatoclient.cmd.builder :as builder]
+    [potatoclient.cmd.validation :as v]
+    [potatoclient.proto.serialize :as serialize]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.test-harness :as harness]
+    [pronto.core :as p]))
 
 ;; Ensure test harness is initialized
 (when-not harness/initialized?
-  (throw (ex-info "Test harness failed to initialize!" 
+  (throw (ex-info "Test harness failed to initialize!"
                   {:initialized? harness/initialized?})))
 
 ;; Initialize registry
@@ -40,7 +40,7 @@
 
 (deftest populate-cmd-fields-test
   (testing "populate-cmd-fields adds missing required fields"
-    
+
     (testing "Minimal command gets all defaults"
       (let [minimal {:ping {}}
             result (builder/populate-cmd-fields minimal)]
@@ -51,7 +51,7 @@
                      :from_cv_subsystem false
                      :ping {}}
                     result))))
-    
+
     (testing "Commands with overrides"
       (let [payload {:ping {}}
             base-result (builder/populate-cmd-fields payload)
@@ -62,11 +62,11 @@
                      :important false
                      :from_cv_subsystem false}
                     base-result))
-        
+
         (is (match? {:session_id 12345
                      :important true}
                     custom-result))))
-    
+
     (testing "Different payload types"
       (let [noop-result (builder/populate-cmd-fields {:noop {}})
             frozen-result (builder/populate-cmd-fields {:frozen {}})
@@ -77,14 +77,14 @@
 
 (deftest populate-cmd-fields-with-overrides-test
   (testing "populate-cmd-fields-with-overrides applies custom defaults"
-    
+
     (testing "Override all defaults"
       (let [cmd {:frozen {}}
             overrides {:protocol_version 2
-                      :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
-                      :session_id 555
-                      :important true
-                      :from_cv_subsystem true}
+                       :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
+                       :session_id 555
+                       :important true
+                       :from_cv_subsystem true}
             result (builder/populate-cmd-fields-with-overrides cmd overrides)]
         (is (match? {:protocol_version 2
                      :client_type :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
@@ -92,7 +92,7 @@
                      :important true
                      :from_cv_subsystem true}
                     result))))
-    
+
     (testing "Partial overrides"
       (let [cmd {:system {:reboot {}}}
             overrides {:session_id 777}
@@ -115,7 +115,7 @@
 
 (deftest ensure-required-fields-test
   (testing "ensure-required-fields validates presence of required fields"
-    
+
     (testing "Valid command passes"
       (let [valid {:protocol_version 1
                    :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
@@ -124,16 +124,16 @@
                    :from_cv_subsystem false
                    :ping {}}]
         (is (= valid (builder/ensure-required-fields valid)))))
-    
+
     (testing "Missing fields throws"
       (is (thrown-with-msg? Exception #"missing required fields"
-            (builder/ensure-required-fields {:ping {}}))
+                            (builder/ensure-required-fields {:ping {}}))
           "Should throw for missing fields")
-      
+
       (is (thrown-with-msg? Exception #"missing required fields"
-            (builder/ensure-required-fields 
-              {:protocol_version 1
-               :ping {}}))
+                            (builder/ensure-required-fields
+                              {:protocol_version 1
+                               :ping {}}))
           "Should throw even with some fields present"))))
 
 ;; create-batch-commands removed - not needed
@@ -162,27 +162,27 @@
 
 (deftest malli-validation-test
   (testing "Malli validation catches invalid arguments"
-    
+
     (testing "populate-cmd-fields rejects non-maps"
       (is (thrown? Exception (builder/populate-cmd-fields "not-a-map")))
       (is (thrown? Exception (builder/populate-cmd-fields nil)))
       (is (thrown? Exception (builder/populate-cmd-fields 123))))
-    
+
     (testing "create-full-cmd validates payload structure"
       ;; Should have exactly one oneof field
-      (is (thrown? Exception 
-            (builder/create-full-cmd {} {}))
-          "Should reject empty payload")
-      
       (is (thrown? Exception
-            (builder/create-full-cmd {:ping {} :noop {}} {}))
+                   (builder/create-full-cmd {} {}))
+          "Should reject empty payload")
+
+      (is (thrown? Exception
+                   (builder/create-full-cmd {:ping {} :noop {}} {}))
           "Should reject multiple oneof fields"))
-    
+
     (testing "populate-cmd-fields-with-overrides validates arguments"
-      (is (thrown? Exception 
-            (builder/populate-cmd-fields-with-overrides {:ping {}} "not-a-map")))
-      (is (thrown? Exception 
-            (builder/populate-cmd-fields-with-overrides nil {}))))))
+      (is (thrown? Exception
+                   (builder/populate-cmd-fields-with-overrides {:ping {}} "not-a-map")))
+      (is (thrown? Exception
+                   (builder/populate-cmd-fields-with-overrides nil {}))))))
 
 ;; ============================================================================
 ;; Roundtrip Validation Tests
@@ -209,18 +209,18 @@
 
 (deftest performance-characteristics-test
   (testing "Builder operations are efficient"
-    
+
     (testing "Batch operations are faster than individual"
       ;; This is more of a sanity check than a real performance test
       (let [payloads (vec (repeat 100 {:ping {}}))
             start-batch (System/nanoTime)
             batch-results (mapv builder/populate-cmd-fields payloads)
             batch-time (- (System/nanoTime) start-batch)
-            
+
             start-individual (System/nanoTime)
             individual-results (mapv builder/populate-cmd-fields payloads)
             individual-time (- (System/nanoTime) start-individual)]
-        
+
         (is (= 100 (count batch-results)))
         (is (= 100 (count individual-results)))
         ;; We don't assert on timing as it's not reliable in tests,
@@ -250,23 +250,23 @@
                  important gen/boolean
                  from-cv gen/boolean
                  client-type client-type-gen]
-    (let [overrides {:session_id session-id
-                    :important important
-                    :from_cv_subsystem from-cv
-                    :client_type client-type}
-          cmd (builder/create-full-cmd payload overrides)]
-      (and (= session-id (:session_id cmd))
-           (= important (:important cmd))
-           (= from-cv (:from_cv_subsystem cmd))
-           (= client-type (:client_type cmd))
-           (= 1 (:protocol_version cmd))
-           (:valid? (v/validate-roundtrip-with-report cmd))))))
+                (let [overrides {:session_id session-id
+                                 :important important
+                                 :from_cv_subsystem from-cv
+                                 :client_type client-type}
+                      cmd (builder/create-full-cmd payload overrides)]
+                  (and (= session-id (:session_id cmd))
+                       (= important (:important cmd))
+                       (= from-cv (:from_cv_subsystem cmd))
+                       (= client-type (:client_type cmd))
+                       (= 1 (:protocol_version cmd))
+                       (:valid? (v/validate-roundtrip-with-report cmd))))))
 
 (defspec batch-commands-consistency 100
   (prop/for-all [payloads (gen/vector payload-gen 1 10)
                  session-id (gen/choose 0 1000000)]
-    (let [overrides {:session_id session-id}
-          results (mapv #(merge (merge builder/default-protocol-fields overrides) %) payloads)]
-      (and (= (count payloads) (count results))
-           (every? #(= session-id (:session_id %)) results)
-           (every? #(:valid? (v/validate-roundtrip-with-report %)) results)))))
+                (let [overrides {:session_id session-id}
+                      results (mapv #(merge (merge builder/default-protocol-fields overrides) %) payloads)]
+                  (and (= (count payloads) (count results))
+                       (every? #(= session-id (:session_id %)) results)
+                       (every? #(:valid? (v/validate-roundtrip-with-report %)) results)))))

@@ -3,7 +3,7 @@
    Based on jon_shared_cmd_rotary.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]))
 
 ;; ====================================================================
 ;; Azimuth command specs (nested within Axis)

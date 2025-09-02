@@ -2,8 +2,8 @@
   "System message spec matching buf.validate constraints and EDN output format.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-   [potatoclient.specs.common]
-   [potatoclient.malli.registry :as registry]))
+    [potatoclient.specs.common]
+    [potatoclient.malli.registry :as registry]))
 
 ;; JonGuiDataSystem message spec
 ;; All 23 fields from proto definition

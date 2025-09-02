@@ -8,15 +8,15 @@
    - Uses p-> for multiple mutations
    - Avoids repeated assoc operations"
   (:require
-   [pronto.core :as p]
-   [potatoclient.proto.serialize :as serialize]
-   [potatoclient.proto.deserialize :as deserialize]
-   [potatoclient.cmd.validation :as validation]
-   [potatoclient.cmd.builder :as builder]
-   [potatoclient.malli.registry :as registry]
-   [potatoclient.specs.cmd.root]) ; Load the specs
+    [pronto.core :as p]
+    [potatoclient.proto.serialize :as serialize]
+    [potatoclient.proto.deserialize :as deserialize]
+    [potatoclient.cmd.validation :as validation]
+    [potatoclient.cmd.builder :as builder]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
-   [java.util.concurrent LinkedBlockingQueue TimeUnit]))
+    [java.util.concurrent LinkedBlockingQueue TimeUnit]))
 
 ;; Initialize registry to access specs
 (registry/setup-global-registry!)
@@ -30,7 +30,7 @@
   (or (= "test" (System/getProperty "potatoclient.mode"))
       (= "test" (System/getenv "POTATOCLIENT_MODE"))
       ;; Check if test alias is active via classpath
-      (boolean (some #(re-find #"test" %) 
+      (boolean (some #(re-find #"test" %)
                      (seq (.split (System/getProperty "java.class.path") ":"))))))
 
 ;; ============================================================================
@@ -39,8 +39,6 @@
 
 (defonce ^LinkedBlockingQueue command-queue
   (LinkedBlockingQueue.))
-
-
 
 ;; ============================================================================
 ;; Test Support - Roundtrip Validation
@@ -69,18 +67,17 @@
   ;; Validate with Malli and buf.validate via serialize
   ;; This will throw if validation fails
   (serialize/serialize-cmd-payload full-cmd)
-  
+
   ;; In test mode, also validate roundtrip
   (when test-mode?
     (validate-roundtrip! full-cmd))
-  
+
   ;; If validation passed, add to queue (unless in test mode)
   (when-not test-mode?
     (.offer command-queue full-cmd))
-  
+
   ;; Always return nil
   nil)
-
 
 (defn create-command
   "Create a fully populated command from a payload.

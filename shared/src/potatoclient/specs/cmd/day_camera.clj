@@ -39,7 +39,6 @@
 
 ;; Focus-specific messages
 
-
 (def focus-spec
   "Focus command with nested oneof"
   [:oneof
@@ -55,7 +54,6 @@
 (def set-zoom-table-value-spec
   [:map {:closed true}
    [:value :proto/int32-positive]])
-
 
 (def zoom-spec
   "Zoom command with nested oneof"
@@ -80,16 +78,13 @@
   [:map {:closed true}
    [:value [:boolean]]])
 
-
 (def set-auto-iris-spec
   [:map {:closed true}
    [:value [:boolean]]])
 
-
 (def set-fx-mode-spec
   [:map {:closed true}
    [:mode :enum/fx-mode-day]])
-
 
 (def set-digital-zoom-level-spec
   [:map {:closed true}

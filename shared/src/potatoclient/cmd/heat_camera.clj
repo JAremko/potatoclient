@@ -2,7 +2,7 @@
   "Heat Camera (thermal imaging) command functions.
    Based on the HeatCamera message structure in jon_shared_cmd_heat_camera.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Photo Control
@@ -25,7 +25,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/heat-agc-mode] :cmd/root]}
   [mode]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_agc {:value mode}}}))
 
 (defn set-filter
@@ -34,7 +34,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/heat-filter] :cmd/root]}
   [filter]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_filter {:value filter}}}))
 
 ;; ============================================================================
@@ -117,7 +117,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:zoom {:set_zoom_table_value {:value value}}}}))
 
 (defn next-zoom-table-pos
@@ -125,7 +125,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:zoom {:next_zoom_table_pos {}}}}))
 
 (defn prev-zoom-table-pos
@@ -133,7 +133,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:zoom {:prev_zoom_table_pos {}}}}))
 
 ;; ============================================================================
@@ -145,7 +145,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/digital-zoom] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_digital_zoom_level {:value value}}}))
 
 ;; ============================================================================
@@ -157,7 +157,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :boolean] :cmd/root]}
   [enabled?]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_auto_focus {:value enabled?}}}))
 
 (defn focus-stop
@@ -229,7 +229,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat [:int {:min 0, :max 100}]] :cmd/root]}
   [level]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_dde_level {:value level}}}))
 
 (defn shift-dde
@@ -237,7 +237,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat [:int {:min -100, :max 100}]] :cmd/root]}
   [shift-value]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:shift_dde {:value shift-value}}}))
 
 ;; ============================================================================
@@ -250,7 +250,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/fx-mode-heat] :cmd/root]}
   [mode]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_fx_mode {:mode mode}}}))
 
 (defn next-fx-mode
@@ -283,7 +283,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:set_clahe_level {:value value}}}))
 
 (defn shift-clahe-level
@@ -291,5 +291,5 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized-offset] :cmd/root]}
   [shift-value]
-  (core/create-command 
+  (core/create-command
     {:heat_camera {:shift_clahe_level {:value shift-value}}}))

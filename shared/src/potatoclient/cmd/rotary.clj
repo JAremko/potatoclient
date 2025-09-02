@@ -2,7 +2,7 @@
   "Rotary Platform command functions for controlling azimuth and elevation axes.
    Based on the RotaryPlatform message structure in jon_shared_cmd_rotary.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Platform Control
@@ -39,7 +39,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat [:and [:double {:min -360.0, :max 360.0}] [:> -360.0] [:< 360.0]]] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_platform_azimuth {:value value}}}))
 
 (defn set-platform-elevation
@@ -48,7 +48,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/elevation] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_platform_elevation {:value value}}}))
 
 (defn set-platform-bank
@@ -57,7 +57,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/bank] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_platform_bank {:value value}}}))
 
 ;; ============================================================================
@@ -70,7 +70,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/rotary-mode] :cmd/root]}
   [mode]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_mode {:mode mode}}}))
 
 (defn set-use-rotary-as-compass
@@ -78,7 +78,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :boolean] :cmd/root]}
   [use-as-compass?]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_use_rotary_as_compass {:flag use-as-compass?}}}))
 
 ;; ============================================================================
@@ -90,7 +90,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:halt {}}}}}))
 
 (defn set-azimuth-value
@@ -100,7 +100,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/azimuth :enum/rotary-direction] :cmd/root]}
   [value direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:set_value {:value value
                                            :direction direction}}}}}))
 
@@ -112,7 +112,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction] :cmd/root]}
   [target-value speed direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:rotate_to {:target_value target-value
                                            :speed speed
                                            :direction direction}}}}}))
@@ -124,7 +124,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root]}
   [speed direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:rotate {:speed speed
                                         :direction direction}}}}}))
 
@@ -136,7 +136,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction] :cmd/root]}
   [value speed direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:relative {:value value
                                           :speed speed
                                           :direction direction}}}}}))
@@ -148,7 +148,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/relative-azimuth :enum/rotary-direction] :cmd/root]}
   [value direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:relative_set {:value value
                                               :direction direction}}}}}))
 
@@ -161,7 +161,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:halt {}}}}}))
 
 (defn set-elevation-value
@@ -170,7 +170,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/elevation] :cmd/root]}
   [value]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:set_value {:value value}}}}}))
 
 (defn rotate-elevation-to
@@ -180,7 +180,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/elevation :range/normalized] :cmd/root]}
   [target-value speed]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:rotate_to {:target_value target-value
                                              :speed speed}}}}}))
 
@@ -191,7 +191,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root]}
   [speed direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:rotate {:speed speed
                                           :direction direction}}}}}))
 
@@ -203,7 +203,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root]}
   [value speed direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:relative {:value value
                                             :speed speed
                                             :direction direction}}}}}))
@@ -215,7 +215,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/relative-elevation :enum/rotary-direction] :cmd/root]}
   [value direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:elevation {:relative_set {:value value
                                                 :direction direction}}}}}))
 
@@ -228,9 +228,9 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat] :cmd/root]}
   []
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:halt {}}
-                    :elevation {:halt {}}}}}))
+                     :elevation {:halt {}}}}}))
 
 (defn rotate-both-to
   "Rotate both axes to target positions.
@@ -242,12 +242,12 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction :angle/elevation :range/normalized] :cmd/root]}
   [azimuth azimuth-speed azimuth-direction elevation elevation-speed]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:rotate_to {:target_value azimuth
                                            :speed azimuth-speed
                                            :direction azimuth-direction}}
-                    :elevation {:rotate_to {:target_value elevation
-                                           :speed elevation-speed}}}}}))
+                     :elevation {:rotate_to {:target_value elevation
+                                             :speed elevation-speed}}}}}))
 
 (defn rotate-both
   "Rotate both axes continuously.
@@ -258,11 +258,11 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :range/normalized :enum/rotary-direction :range/normalized :enum/rotary-direction] :cmd/root]}
   [azimuth-speed azimuth-direction elevation-speed elevation-direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:rotate {:speed azimuth-speed
                                         :direction azimuth-direction}}
-                    :elevation {:rotate {:speed elevation-speed
-                                        :direction elevation-direction}}}}}))
+                     :elevation {:rotate {:speed elevation-speed
+                                          :direction elevation-direction}}}}}))
 
 (defn rotate-both-relative
   "Rotate both axes relative to current positions.
@@ -275,13 +275,13 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root]}
   [azimuth azimuth-speed azimuth-direction elevation elevation-speed elevation-direction]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:relative {:value azimuth
                                           :speed azimuth-speed
                                           :direction azimuth-direction}}
-                    :elevation {:relative {:value elevation
-                                          :speed elevation-speed
-                                          :direction elevation-direction}}}}}))
+                     :elevation {:relative {:value elevation
+                                            :speed elevation-speed
+                                            :direction elevation-direction}}}}}))
 
 (defn set-both-values
   "Set both axes to specific values.
@@ -291,10 +291,10 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :angle/azimuth :enum/rotary-direction :angle/elevation] :cmd/root]}
   [azimuth azimuth-direction elevation]
-  (core/create-command 
+  (core/create-command
     {:rotary {:axis {:azimuth {:set_value {:value azimuth
                                            :direction azimuth-direction}}
-                    :elevation {:set_value {:value elevation}}}}}))
+                     :elevation {:set_value {:value elevation}}}}}))
 
 ;; ============================================================================
 ;; GPS Integration
@@ -308,7 +308,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root]}
   [latitude longitude altitude]
-  (core/create-command 
+  (core/create-command
     {:rotary {:rotate_to_gps {:latitude latitude
                               :longitude longitude
                               :altitude altitude}}}))
@@ -321,7 +321,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root]}
   [latitude longitude altitude]
-  (core/create-command 
+  (core/create-command
     {:rotary {:set_origin_gps {:latitude latitude
                                :longitude longitude
                                :altitude altitude}}}))
@@ -338,7 +338,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y] :cmd/root]}
   [channel x y]
-  (core/create-command 
+  (core/create-command
     {:rotary {:rotate_to_ndc {:channel channel
                               :x x
                               :y y}}}))
@@ -402,7 +402,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive] :cmd/root]}
   [index]
-  (core/create-command 
+  (core/create-command
     {:rotary {:scan_select_node {:index index}}}))
 
 (defn scan-delete-node
@@ -411,7 +411,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive] :cmd/root]}
   [index]
-  (core/create-command 
+  (core/create-command
     {:rotary {:scan_delete_node {:index index}}}))
 
 (defn scan-update-node
@@ -425,7 +425,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root]}
   [index day-zoom heat-zoom azimuth elevation linger speed]
-  (core/create-command 
+  (core/create-command
     {:rotary {:scan_update_node {:index index
                                  :DayZoomTableValue day-zoom
                                  :HeatZoomTableValue heat-zoom
@@ -445,7 +445,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root]}
   [index day-zoom heat-zoom azimuth elevation linger speed]
-  (core/create-command 
+  (core/create-command
     {:rotary {:scan_add_node {:index index
                               :DayZoomTableValue day-zoom
                               :HeatZoomTableValue heat-zoom

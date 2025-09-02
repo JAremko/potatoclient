@@ -2,7 +2,7 @@
   "Computer Vision (CV) command functions.
    Based on the CV message structure in jon_shared_cmd_cv.proto."
   (:require
-   [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
 ;; Tracking Commands
@@ -15,7 +15,7 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y :time/frame-time] :cmd/root]}
   [channel x y frame-time]
-  (core/create-command 
+  (core/create-command
     {:cv {:start_track_ndc {:channel channel
                             :x x
                             :y y
@@ -38,9 +38,9 @@
    Returns a fully formed cmd root ready to send."
   {:malli/schema [:=> [:cat :enum/video-channel :boolean] :cmd/root]}
   [channel enabled?]
-  (core/create-command 
+  (core/create-command
     {:cv {:set_auto_focus {:channel channel
-                          :value enabled?}}}))
+                           :value enabled?}}}))
 
 ;; ============================================================================
 ;; Vampire Mode (Enhanced Night Vision)
