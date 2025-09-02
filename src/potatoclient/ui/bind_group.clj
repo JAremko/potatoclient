@@ -51,7 +51,7 @@
 
     ; Call each binding as a function to unsubscribe
     (doseq [binding bindings-to-clean]
-      (when (fn? binding)
+      (when (ifn? binding)
         (binding)))
 
     ; Remove the group from tracking

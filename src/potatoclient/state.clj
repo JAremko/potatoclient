@@ -226,7 +226,11 @@
   "Get current locale."
   {:malli/schema [:=> [:cat] [:enum :english :ukrainian]]}
   []
-  (get-in @app-state [:ui :locale] :english))
+  (let [locale-str (get-in @app-state [:ui :locale] "en")]
+    (case locale-str
+      "en" :english
+      "uk" :ukrainian
+      :english)))
 
 (defn set-locale!
   "Set current locale and update Java default."
@@ -234,10 +238,14 @@
   [locale]
   (let [locale-map {:english ["en" "US"]
                     :ukrainian ["uk" "UA"]}
-        [lang country] (get locale-map locale ["en" "US"])]
+        [lang country] (get locale-map locale ["en" "US"])
+        locale-str (case locale
+                     :english "en"
+                     :ukrainian "uk"
+                     "en")]
     (Locale/setDefault
-      (Locale/forLanguageTag (str lang "-" country))))
-  (swap! app-state assoc-in [:ui :locale] locale))
+      (Locale/forLanguageTag (str lang "-" country)))
+    (swap! app-state assoc-in [:ui :locale] locale-str)))
 
 (defn get-theme
   "Get current theme."

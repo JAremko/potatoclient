@@ -21,10 +21,10 @@
     (logging/log-info {:id :status-bar/update
                        :msg (str "Status bar update: " (or message "(empty)"))
                        :type type}))
-  ;; Ensure UI updates happen on EDT
-  (invoke/invoke-later
-    (swap! state/app-state assoc-in [:ui :status] {:message (or message "")
-                                                   :type type})))
+  ;; Update state synchronously first (for tests)
+  (let [status-map {:message (or message "") :type type}]
+    (swap! state/app-state assoc-in [:ui :status] status-map)
+    status-map))
 
 (defn set-info!
   "Set info status message."

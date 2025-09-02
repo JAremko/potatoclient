@@ -9,7 +9,7 @@
   (testing "validate function"
     (testing "with valid values"
       ;; Reset state before test
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (is (= true (validation/validate :int 42))
           "Should return true for valid integer")
@@ -20,13 +20,13 @@
       (is (= true (validation/validate [:map [:x :int]] {:x 1}))
           "Should return true for valid map")
 
-      ;; Check no error was set
-      (is (nil? (get-in @state/app-state [:ui :status :message]))
+      ;; Check no error was set (empty string is the initial state)
+      (is (= "" (get-in @state/app-state [:ui :status :message]))
           "Should not set error message for valid values"))
 
     (testing "with invalid values"
       ;; Reset state before test
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       ;; Capture logs to verify logging happens
       (let [log-output (with-out-str
@@ -53,7 +53,7 @@
           "Should set error message for invalid values")
 
       ;; Reset state
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (is (= false (validation/validate [:map [:x :int]] {:x "not-int"}))
           "Should return false for invalid map")
@@ -70,7 +70,7 @@
   (testing "validate-with-details function"
     (testing "with valid values"
       ;; Reset state
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (let [result (validation/validate-with-details :int 42)]
         (is (= true (:valid? result))
@@ -81,7 +81,7 @@
 
     (testing "with invalid values"
       ;; Reset state
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (let [result (validation/validate-with-details :int "not-int")]
         (is (= false (:valid? result))
@@ -94,7 +94,7 @@
             "Should set error status"))
 
       ;; Test complex validation
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (let [result (validation/validate-with-details
                      [:map [:x :int] [:y :string]]
@@ -115,27 +115,35 @@
   (testing "valid? predicate"
     (testing "does not report to status bar"
       ;; Reset state
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (is (= false (validation/valid? :int "not-int"))
           "Should return false for invalid value")
 
-      (is (nil? (get-in @state/app-state [:ui :status :message]))
+      ;; Check status message remains as initial state (empty string)
+      (is (= "" (get-in @state/app-state [:ui :status :message]))
           "Should not set error message")
 
       (is (= true (validation/valid? :int 42))
           "Should return true for valid value")
 
-      (is (nil? (get-in @state/app-state [:ui :status :message]))
+      ;; Check status message still empty
+      (is (= "" (get-in @state/app-state [:ui :status :message]))
           "Should not set any message"))))
 
 (deftest test-explain-validation
   (testing "explain-validation function"
     (testing "with valid values"
+      ;; Reset state before test
+      (reset! state/app-state state/initial-state)
+      
       (is (nil? (validation/explain-validation :int 42))
           "Should return nil for valid values"))
 
     (testing "with invalid values"
+      ;; Reset state before test
+      (reset! state/app-state state/initial-state)
+      
       (let [errors (validation/explain-validation :int "not-int")]
         (is (some? errors)
             "Should return errors for invalid value")
@@ -154,16 +162,20 @@
 
     (testing "does not report to status bar"
       ;; Reset state
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (validation/explain-validation :int "not-int")
 
-      (is (nil? (get-in @state/app-state [:ui :status :message]))
+      ;; Check status message remains as initial state (empty string)
+      (is (= "" (get-in @state/app-state [:ui :status :message]))
           "Should not set any status message"))))
 
 (deftest test-complex-schemas
   (testing "validation with complex Malli schemas"
     (testing "nested maps"
+      ;; Reset state before test
+      (reset! state/app-state state/initial-state)
+      
       (let [schema [:map
                     [:user [:map
                             [:name :string]
@@ -178,6 +190,9 @@
             "Should reject invalid name type")))
 
     (testing "vectors and sequences"
+      ;; Reset state before test
+      (reset! state/app-state state/initial-state)
+      
       (let [schema [:vector :int]]
         (is (validation/validate schema [1 2 3])
             "Should validate vector of integers")
@@ -196,6 +211,9 @@
             "Should reject sequence longer than max")))
 
     (testing "optional keys"
+      ;; Reset state before test
+      (reset! state/app-state state/initial-state)
+      
       (let [schema [:map
                     [:required :string]
                     [:optional {:optional true} :int]]]

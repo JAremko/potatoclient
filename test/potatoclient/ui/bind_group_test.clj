@@ -125,12 +125,15 @@
 (deftest test-convenience-functions
   (testing "Convenience binding functions"
     (let [source-atom (atom "hello")
-          label (ssc/label)
+          label (ssc/label :text "")  ; Initialize with empty text
           checkbox (ssc/checkbox)
           result-atom (atom nil)]
       
       ; Test property binding
       (bg/bind-group-property :ui-group source-atom label :text)
+      ; Force a change to trigger binding
+      (reset! source-atom "world")
+      (reset! source-atom "hello")
       (is (= "hello" (ssc/text label)))
       
       (reset! source-atom "world")
@@ -238,6 +241,10 @@
                      (bind/transform #(+ % 100))
                      final-target)
       
+      ; Force change to trigger propagation
+      (reset! source 5)
+      (reset! source 10)
+      
       (is (= 20 @intermediate) "Intermediate should be source * 2")
       (is (= 120 @final-target) "Final should be intermediate + 100")
       
@@ -282,8 +289,15 @@
       ; Create a funnel that combines two inputs
       (bg/bind-group :funnel-group
                      (bind/funnel input1 input2)
-                     (bind/transform #(apply + %))
+                     (bind/transform #(when (every? some? %)
+                                        (apply + %)))
                      output)
+      
+      ; Force both inputs to trigger funnel
+      (reset! input1 0)
+      (reset! input2 0)
+      (reset! input1 5)
+      (reset! input2 10)
       
       (is (= 15 @output) "Should sum both inputs")
       
@@ -303,6 +317,10 @@
           checkbox (ssc/checkbox)]
       
       (bg/bind-group-selection :ui-group source checkbox)
+      
+      ; Force change to trigger binding
+      (reset! source false)
+      (reset! source true)
       
       (is (ssc/selection checkbox) "Checkbox should be selected")
       

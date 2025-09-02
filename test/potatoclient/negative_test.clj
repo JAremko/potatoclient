@@ -1,6 +1,7 @@
 (ns potatoclient.negative-test
   "Negative tests and sanity checks for edge cases and invalid inputs."
   (:require [clojure.test :refer [deftest is testing]]
+            [malli.generator :as mg]
             [potatoclient.state :as state]
             [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.status-bar.helpers :as helpers]
@@ -158,27 +159,36 @@
 (deftest test-numeric-boundaries
   (testing "Numeric field boundaries"
     (state/reset-state!)
+    
+    ;; Generate a valid server-state structure first
+    (let [valid-server-state (mg/generate :state/root)]
+      
+      ;; Test exact boundaries for disk_space (0-100 percentage)
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :disk_space] 0))
+      (is (state/valid-state?) "Disk space 0 should be valid")
 
-    ;; Test exact boundaries for battery level
-    (swap! state/app-state assoc-in [:server-state :system :battery-level] 0)
-    (is (state/valid-state?) "Battery level 0 should be valid")
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :disk_space] 100))
+      (is (state/valid-state?) "Disk space 100 should be valid")
 
-    (swap! state/app-state assoc-in [:server-state :system :battery-level] 100)
-    (is (state/valid-state?) "Battery level 100 should be valid")
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :disk_space] -1))
+      (is (not (state/valid-state?)) "Disk space -1 should fail")
 
-    (swap! state/app-state assoc-in [:server-state :system :battery-level] -1)
-    (is (not (state/valid-state?)) "Battery level -1 should fail")
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :disk_space] 101))
+      (is (not (state/valid-state?)) "Disk space 101 should fail")
 
-    (swap! state/app-state assoc-in [:server-state :system :battery-level] 101)
-    (is (not (state/valid-state?)) "Battery level 101 should fail")
+      ;; Test cpu_load boundaries (0-100 percentage)
+      (state/reset-state!)
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :cpu_load] 0.0))
+      (is (state/valid-state?) "CPU load 0 should be valid")
 
-    ;; Test brightness boundaries
-    (state/reset-state!)
-    (swap! state/app-state assoc-in [:server-state :camera-day :brightness] 0)
-    (is (state/valid-state?) "Brightness 0 should be valid")
-
-    (swap! state/app-state assoc-in [:server-state :camera-day :brightness] 100)
-    (is (state/valid-state?) "Brightness 100 should be valid")))
+      (swap! state/app-state assoc :server-state 
+             (assoc-in valid-server-state [:system :cpu_load] 100.0))
+      (is (state/valid-state?) "CPU load 100 should be valid"))))
 
 (deftest test-large-values
   (testing "Very large values"

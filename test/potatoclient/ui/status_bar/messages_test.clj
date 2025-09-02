@@ -7,8 +7,8 @@
 
 (deftest test-status-updates
   (testing "Status update functions"
-    ;; Reset state before tests
-    (reset! state/app-state {})
+    ;; Reset state before tests - use valid initial state
+    (reset! state/app-state state/initial-state)
 
     (testing "set-status!"
       (msg/set-status! "Test message" :info)
@@ -49,7 +49,7 @@
 (deftest test-action-status-helpers
   (testing "Action-specific status helpers"
     ;; Reset state before tests
-    (reset! state/app-state {})
+    (reset! state/app-state state/initial-state)
 
     (testing "set-theme-changed!"
       (msg/set-theme-changed! :dark)
@@ -96,7 +96,7 @@
 (deftest test-stream-status-helpers
   (testing "Stream status helpers"
     ;; Reset state before tests
-    (reset! state/app-state {})
+    (reset! state/app-state state/initial-state)
 
     (testing "set-stream-started!"
       (msg/set-stream-started! :heat)
@@ -118,7 +118,7 @@
 (deftest test-config-and-log-status
   (testing "Config and log status helpers"
     ;; Reset state before tests
-    (reset! state/app-state {})
+    (reset! state/app-state state/initial-state)
 
     (testing "set-config-saved!"
       (msg/set-config-saved!)
@@ -141,7 +141,7 @@
 (deftest test-error-handling
   (testing "Error handler"
     ;; Reset state and error atom
-    (reset! state/app-state {})
+    (reset! state/app-state state/initial-state)
     (reset! helpers/last-error-atom nil)
 
     (testing "with-error-handler success"
@@ -176,7 +176,7 @@
 (deftest test-with-status-macro
   (testing "with-status macro"
     ;; Reset state
-    (reset! state/app-state {})
+    (reset! state/app-state state/initial-state)
 
     (testing "successful execution"
       (msg/with-status "Processing..."
@@ -189,7 +189,7 @@
             "Should have a message after completion")))
 
     (testing "execution with exception"
-      (reset! state/app-state {})
+      (reset! state/app-state state/initial-state)
 
       (is (thrown? Exception
                    (msg/with-status "Processing..."
