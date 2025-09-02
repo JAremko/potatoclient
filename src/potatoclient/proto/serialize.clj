@@ -12,26 +12,12 @@
     [malli.error :as me]
     [pronto.core :as pronto]
     [pronto.utils]
-    [potatoclient.malli.registry :as registry]
+    [potatoclient.init :as init]
     [potatoclient.specs.cmd.root]
     [potatoclient.specs.state.root])
   (:import
     [com.google.protobuf ByteString]
     [build.buf.protovalidate Validator ValidatorFactory]))
-
-;; Initialize registry with all specs - done lazily in functions to ensure specs are loaded
-
-(defn ensure-registry!
-  "Ensure the Malli registry is properly initialized with all specs."
-  []
-  ;; Check if :cmd/root is available - if it is, registry is set up
-  (try
-    (m/schema :cmd/root)
-    ;; Registry is already set up, nothing to do
-    nil
-    (catch Exception _
-      ;; Registry not set up, initialize it
-      (registry/setup-global-registry!))))
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -59,7 +45,7 @@
    Returns nil if valid, throws ex-info with errors if invalid."
   {:malli/schema [:=> [:cat [:map] :keyword] :any]}
   [edn-data spec-key]
-  (ensure-registry!)
+  (init/ensure-registry!)
   (let [spec (try
                (m/schema spec-key)
                (catch Exception e

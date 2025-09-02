@@ -2,6 +2,7 @@
   "IPC server implementation using Unix Domain Sockets.
    Wraps Java UnixSocketCommunicator with Transit serialization."
   (:require
+    [potatoclient.ipc.handlers :as handlers]
     [potatoclient.ipc.transit :as transit]
     [potatoclient.malli.registry :as registry]
     [taoensso.telemere :as t])
@@ -91,21 +92,15 @@
   "Start the thread that processes messages from the queue."
   {:malli/schema [:=> [:cat IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]]] [:fn (partial instance? Thread)]]}
   [{:keys [stream-type message-queue running?]} on-message]
-  (Thread.
-    (fn []
-      (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
-      (while @running?
-        (try
-          (when-let [message (.poll message-queue message-poll-timeout-ms TimeUnit/MILLISECONDS)]
-            (when on-message
-              (on-message message)))
-          (catch InterruptedException _
-            (.interrupt (Thread/currentThread))
-            (reset! running? false))
-          (catch Exception e
-            (when @running?
-              (t/log! :error (str "[" (name stream-type) "-server] Error processing message: " (.getMessage e))))))))
-    (str (name stream-type) "-server-processor")))
+  (let [handler (handlers/create-handler
+                  {:name (str (name stream-type) "-server")
+                   :handler-fn on-message
+                   :running? running?})]
+    (handlers/create-processor-thread
+      {:name (str (name stream-type) "-server-processor")
+       :queue message-queue
+       :handler handler
+       :daemon? true})))
 
 (defn create-server
   "Create and start an IPC server for a stream.
@@ -145,7 +140,6 @@
     (let [^Thread reader-thread (start-reader-thread server)
           ^Thread processor-thread (start-processor-thread server on-message)]
       (.setDaemon reader-thread true)
-      (.setDaemon processor-thread true)
       (.start reader-thread)
       (.start processor-thread)
 

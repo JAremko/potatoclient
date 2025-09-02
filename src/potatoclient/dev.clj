@@ -4,6 +4,7 @@
   This namespace is automatically loaded when running in development mode
   to enable various debugging and development features."
   (:require [potatoclient.dev-instrumentation :as dev-inst]
+            [potatoclient.init :as init]
             [potatoclient.logging :as logging]))
 
 (defn enable-verbose-logging!
@@ -28,6 +29,8 @@
   for all non-release builds in main.clj"
   {:malli/schema [:=> [:cat] :nil]}
   []
+  ;; Ensure core initialization is done first
+  (init/initialize!)
   (enable-verbose-logging!)
   (enable-assertions!)
   ;; Start Malli development instrumentation with pretty thrower

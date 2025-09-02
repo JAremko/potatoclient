@@ -1,25 +1,5 @@
 # Claude AI Assistant Context
 
-## Current Architecture Status (December 2024)
-
-### Fully Integrated Monolithic Structure
-The codebase has been unified into a single project, integrating the former shared module directly into the main application.
-
-**Current State:**
-- **Unified Codebase**: All shared module code now integrated into main project
-- **Single Build System**: One Makefile, one deps.edn, unified test suites
-- **Clean Structure**: All namespaces properly aligned with file paths
-- **State Ingress**: WebSocket connection for real-time state updates from server
-- **Performance Optimizations**: Icon caching and debounced UI updates
-
-**Recent Changes (Dec 2024):**
-- Integrated shared module (88 source files) into main project
-- Removed `tools/proto-explorer` and `tools/state-explorer` (functionality integrated)
-- Fixed state validation with proper `:state/root` schema registration
-- Added icon caching to prevent reload spam
-- Implemented debounced status bar updates (100ms delay)
-- Removed excessive debug logging for successful state updates
-
 ## Project Structure
 
 ### Directory Layout
@@ -51,17 +31,13 @@ potatoclient/
 └── target/               # Build artifacts
 ```
 
-### Namespace/File Alignment
-- **Perfect 1:1 mapping** between file paths and namespaces
-- Files use underscores: `day_camera.clj`
-- Namespaces use hyphens: `potatoclient.cmd.day-camera`
-- **88 source files**, **59 test files** all properly aligned
-
 ### Key Modules
 
 **Core Infrastructure:**
+- `init/` - Centralized initialization for registry and core systems
 - `malli/` - Schema registry with custom :oneof spec support
 - `ipc/` - Unix Domain Socket IPC with Transit serialization
+- `ipc/handlers` - Reusable message handler patterns (Protocol-based)
 - `proto/` - Protobuf EDN ↔ binary serialization
 
 **Command System:**
@@ -81,11 +57,17 @@ potatoclient/
 
 ## Development Tools
 
+### NREPL Development
+The project includes automatic NREPL initialization via `dev/user.clj`:
+- Registry automatically initialized on NREPL startup
+- Helper functions available: `(restart-logging!)`, `(reload-registry!)`
+- Full development environment with instrumentation support
+
 ### Make Targets
 ```bash
 # Development
 make dev          # Run with full validation and debug logging
-make nrepl        # Start NREPL server on port 7888
+make nrepl        # Start NREPL server on port 7888 with auto-init
 make clean        # Clean build artifacts
 make recompile    # Force recompile all Java and Kotlin sources
 
@@ -154,10 +136,12 @@ Prompt: "Check translation completeness"
 ```
 
 **Registry Management:**
+- Centralized initialization via `potatoclient.init/ensure-registry!`
 - Global registry at `potatoclient.malli.registry`
 - Common specs registered for reuse via `register-spec!`
 - Custom `:oneof` schema for protobuf oneOf fields
 - All map specs use `{:closed true}` for strict validation
+- Automatic initialization in main, dev, nrepl, and test entry points
 
 ### State Management
 
@@ -246,12 +230,27 @@ To ensure widgets display current atom values, trigger a change after binding:
 - Max message size: 10MB
 - Zero-copy ByteBuffer operations
 
+**Message Handler Patterns** (`potatoclient.ipc.handlers`):
+- `IMessageHandler` protocol for consistent handling
+- Composable handlers: filtering, transforming, logging
+- Thread-safe queue processing with error recovery
+- Reusable patterns for all IPC communication
+
 **Usage:**
 ```clojure
-(require '[potatoclient.ipc.core :as ipc])
+(require '[potatoclient.ipc.core :as ipc]
+         '[potatoclient.ipc.handlers :as handlers])
 
+;; Simple server
 (def server (ipc/create-server :heat
               :on-message handle-message))
+
+;; With advanced handler
+(def handler (handlers/create-handler
+               {:name "my-handler"
+                :handler-fn process-message
+                :error-fn handle-error
+                :running? running-atom}))
 
 (ipc/send-message server {:type :event :data {...}})
 ```
@@ -266,17 +265,20 @@ To ensure widgets display current atom values, trigger a change after binding:
 ### Code Quality Standards
 
 1. **Malli Schemas Required** - Every function must have `:malli/schema`
-2. **Comprehensive Tests** - 340+ tests with 2900+ assertions, organized into suites
-3. **Clear Documentation** - Docstrings for all public functions
-4. **No Legacy Code** - Pre-alpha, make breaking changes when needed
+2. **Comprehensive Tests** - 358 tests with 3091 assertions, organized into suites
+3. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
+4. **Clear Documentation** - Docstrings for all public functions
+5. **No Legacy Code** - Pre-alpha, make breaking changes when needed
 
 ### Testing Philosophy
 
 **Never disable failing tests - fix the code**
 - Use test suites for focused testing
-- Generative testing with `mi/check`
+- Property-based testing with `clojure.test.check`
+- Generative testing with Malli schemas
 - Test proto serialization roundtrips
 - Validate all command constraints
+- IPC handler property tests for message processing
 
 ### Performance Considerations
 
@@ -293,37 +295,24 @@ To ensure widgets display current atom values, trigger a change after binding:
 4. **Write tests immediately** - Not after "it works"
 5. **Check i18n completeness** - Run i18n-checker for new UI text
 
-## Recent Improvements (Dec 2024)
+### Initialization Pattern
 
-### Performance Optimizations
-- **Icon Caching**: Icons loaded once per theme, cached in-memory
-- **Debounced Status Bar**: 100ms delay prevents update flooding
-- **Reduced Logging**: Removed debug logs for successful operations
-- **Extracted Constants**: Replaced magic numbers with named constants (debounce delays, thread pool sizes)
+All entry points should use centralized initialization:
+```clojure
+(require '[potatoclient.init :as init])
 
-### Code Quality Improvements
-- **Validation Helper**: Extracted `resolve-schema` helper to reduce duplication
-- **Better Exception Handling**: Specific catch blocks for IOException, EdnReader exceptions, and SecurityException
-- **Removed Deprecated Code**: Deleted deprecated `register!` function, updated all usages to `register-spec!`
-- **Cleaner Abstractions**: Common patterns extracted into reusable functions
+;; For production/main
+(init/initialize!)
 
-### Structure Cleanup
-- **Integrated Shared Module**: 88 files merged into main project
-- **Removed Duplicate Files**: Cleaned up registry.clj duplicate
-- **Aligned Namespaces**: All files match namespace structure
-- **Unified Build**: Single Makefile, single deps.edn
+;; For tests
+(init/initialize-for-tests!)
 
-### State Management
-- **Fixed Validation**: Proper `:state/root` schema registration
-- **Optional Fields**: Made `target_color` optional in LRF spec
-- **Throttled Updates**: State changes batched every 100ms
-- **Locale Storage**: Refactored to use keywords (:english/:ukrainian) instead of strings
+;; For NREPL
+(init/initialize-for-nrepl!)
 
-### Testing Improvements
-- **Fixed Status Bar Tests**: Corrected state initialization checks
-- **Fixed Bind Group Tests**: Added proper Seesaw binding initialization
-- **Fixed Negative Tests**: Updated to use valid protobuf field names with Malli generators
-- **All Tests Passing**: 341 tests with 2925 assertions, 0 failures
+;; To ensure registry only (lightweight)
+(init/ensure-registry!)
+```
 
 ## Project Principles
 

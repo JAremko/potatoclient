@@ -6,13 +6,13 @@
     [pronto.core :as p]
     [potatoclient.proto.serialize :as serialize]
     [potatoclient.proto.deserialize :as deserialize]
-    [potatoclient.malli.registry :as registry]
+    [potatoclient.init :as init]
     [potatoclient.specs.cmd.root]) ; Load the specs
   (:import
     [cmd JonSharedCmd$Root]))
 
-;; Initialize registry to access specs
-(registry/setup-global-registry!)
+;; Ensure registry is initialized
+(init/ensure-registry!)
 
 ;; ============================================================================
 ;; Proto Template Creation

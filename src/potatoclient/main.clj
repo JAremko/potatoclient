@@ -4,6 +4,7 @@
             [clojure.string]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
+            [potatoclient.init :as init]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
@@ -70,6 +71,8 @@
   "Initialize all application subsystems."
   {:malli/schema [:=> [:cat] :nil]}
   []
+  ;; Initialize core systems first (Malli registry, etc.)
+  (init/initialize!)
   (config/initialize!)
   (i18n/init!)
   (setup-shutdown-hook!))

@@ -5,7 +5,8 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string :as str]
-    [clojure.repl.deps :as deps])
+    [clojure.repl.deps :as deps]
+    [potatoclient.init :as init])
   (:import
     [java.io File]))
 
@@ -86,6 +87,9 @@
   ;; Ensure proto classes are compiled
   (ensure-proto-classes!)
 
+  ;; Initialize core systems (Malli registry, etc.)
+  (init/initialize-for-tests!)
+
   ;; Verify everything is ready
   (let [proto-ok? (proto-classes-available?)
         pronto-ok? (pronto-classes-available?)]
@@ -93,6 +97,7 @@
     (println "\nTest Harness Status:")
     (println (format "  Proto classes: %s" (if proto-ok? "✓" "✗")))
     (println (format "  Pronto library: %s" (if pronto-ok? "✓" "✗")))
+    (println (format "  Malli registry: ✓"))
 
     (when-not (and proto-ok? pronto-ok?)
       (throw (ex-info "Test harness initialization failed"
