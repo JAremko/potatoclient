@@ -24,6 +24,9 @@
   []
   (:current-theme @theme-config))
 
+;; Forward declaration for icon cache clearing
+(declare clear-icon-cache!)
+
 (defn- apply-theme!
   "Apply the given theme using DarkLaf"
   {:malli/schema [:=> [:cat :potatoclient.ui-specs/theme-key] :nil]}
@@ -43,6 +46,8 @@
   [theme-key]
   (if (m/validate ::specs/theme-key theme-key)
     (do
+      ;; Clear icon cache when changing themes
+      (clear-icon-cache!)
       (swap! theme-config assoc :current-theme theme-key)
       (apply-theme! theme-key)
       true)
@@ -93,32 +98,48 @@
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date.))]
     (format "[%s] THEME %s: %s" timestamp level message)))
 
+;; Icon cache - key is [theme-key icon-key], value is the loaded icon
+(def ^:private icon-cache (atom {}))
+
+(defn clear-icon-cache!
+  "Clear the icon cache. Useful when changing themes."
+  []
+  (reset! icon-cache {}))
+
 (declare key->icon)
 
 (defn key->icon
-  "Load theme-aware icon by key. Returns nil if icon not found."
+  "Load theme-aware icon by key with caching. Returns nil if icon not found."
   {:malli/schema [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]]}
   [icon-key]
-  (let [icon-name (name icon-key)
-        theme-name (name (get-current-theme))
-        path (str "skins/" theme-name "/icons/" icon-name ".png")
-        resource (io/resource path)]
-    (when (is-development-mode?)
-      (if resource
-        (println (log-theme "INFO" (format "Loading icon: %s for theme: %s" icon-name theme-name)))
-        (println (log-theme "WARN" (format "Icon not found: %s for theme: %s (path: %s)"
-                                           icon-name theme-name path)))))
-    (when resource
-      (try
-        (let [icon (seesaw/icon resource)]
-          (when (is-development-mode?)
-            (println (log-theme "INFO" (format "Icon loaded successfully: %s" icon-name))))
-          icon)
-        (catch Exception e
-          (when (is-development-mode?)
-            (println (log-theme "ERROR" (format "Error loading icon: %s - %s"
-                                                icon-name (.getMessage e)))))
-          nil)))))
+  (let [theme-key (get-current-theme)
+        cache-key [theme-key icon-key]]
+    ;; Check cache first
+    (if-let [cached-icon (get @icon-cache cache-key)]
+      cached-icon
+      ;; Not in cache, load it
+      (let [icon-name (name icon-key)
+            theme-name (name theme-key)
+            path (str "skins/" theme-name "/icons/" icon-name ".png")
+            resource (io/resource path)]
+        (when (is-development-mode?)
+          (if resource
+            (println (log-theme "INFO" (format "Loading icon: %s for theme: %s" icon-name theme-name)))
+            (println (log-theme "WARN" (format "Icon not found: %s for theme: %s (path: %s)"
+                                               icon-name theme-name path)))))
+        (when resource
+          (try
+            (let [icon (seesaw/icon resource)]
+              (when (is-development-mode?)
+                (println (log-theme "INFO" (format "Icon loaded successfully: %s" icon-name))))
+              ;; Cache the loaded icon
+              (swap! icon-cache assoc cache-key icon)
+              icon)
+            (catch Exception e
+              (when (is-development-mode?)
+                (println (log-theme "ERROR" (format "Error loading icon: %s - %s"
+                                                    icon-name (.getMessage e)))))
+              nil)))))))
 
 (defn get-icon
   "Get theme-aware icon by key. Alias for key->icon for clarity."

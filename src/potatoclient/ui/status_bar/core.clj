@@ -4,6 +4,7 @@
     [clojure.string :as str]
     [potatoclient.i18n :as i18n]
     [potatoclient.state :as state]
+    [potatoclient.ui.debounce :as debounce]
     [potatoclient.ui.status-bar.helpers :as helpers]
     [potatoclient.ui.status-bar.messages :as msg]
     [seesaw.bind :as bind]
@@ -72,11 +73,14 @@
         status-panel (seesaw/flow-panel
                        :align :left
                        :hgap 5
-                       :items [icon-label text-field])]
+                       :items [icon-label text-field])
+        ;; Create a debounced atom for status updates (100ms delay)
+        ;; This prevents excessive updates from rapid state changes
+        status-debounced (debounce/debounce-atom state/app-state 100)]
 
-    ;; Bind to status in app state for future updates
+    ;; Bind to debounced status for UI updates
     (bind/bind
-      state/app-state
+      status-debounced
       (bind/transform #(get-in % [:ui :status]))
       (bind/tee
         ;; Update icon

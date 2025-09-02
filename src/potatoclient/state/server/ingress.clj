@@ -44,8 +44,7 @@
   ;; Validate state using status bar validation (reports errors automatically)
   (when (validation/validate :state/root edn-state)
     ;; Update app state
-    (swap! state/app-state assoc :server-state edn-state)
-    (logging/log-debug {:msg "State updated successfully"})))
+    (swap! state/app-state assoc :server-state edn-state)))
 
 (defn- handle-message
   "Handle incoming WebSocket message."
