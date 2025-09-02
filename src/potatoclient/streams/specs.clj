@@ -202,8 +202,8 @@
    [:type [:= :connection]]
    [:action [:= :disconnected]]
    [:details [:map {:closed true}
-              [:code :int]
-              [:reason :string]
+              [:code {:optional true} :int]
+              [:reason {:optional true} :string]
               [:stream-id :string]]]])
 
 (def ConnectionErrorEvent
