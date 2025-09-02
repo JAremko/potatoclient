@@ -1,6 +1,7 @@
 (ns potatoclient.ui.status-bar.core
   "Core status bar component."
   (:require
+    [clojure.string :as str]
     [potatoclient.i18n :as i18n]
     [potatoclient.state :as state]
     [potatoclient.ui.status-bar.helpers :as helpers]
@@ -63,15 +64,26 @@
   "Create status bar component bound to app state."
   {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]]}
   []
-  (let [icon-label (seesaw/label :icon (helpers/get-status-icon :info))
+  (let [;; Get current status or set ready if empty
+        current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})
+        _ (when (str/blank? (:message current-status))
+            (msg/set-ready!))
+
+        ;; Re-read after potentially setting ready
+        status (get-in @state/app-state [:ui :status])
+
+        ;; Create UI components with initial values
+        icon-label (seesaw/label :icon (helpers/get-status-icon (:type status :info)))
         text-field (seesaw/text :editable? false
                                 :focusable? false
-                                :text ""
-                                :foreground (color/default-color "TextField.foreground"))
+                                :text (if (str/blank? (:message status))
+                                        (i18n/tr :status-ready)
+                                        (:message status))
+                                :foreground (helpers/get-status-color (:type status :info)))
         status-panel (seesaw/horizontal-panel
                        :items [icon-label text-field])]
 
-    ;; Bind to status in app state
+    ;; Bind to status in app state for future updates
     (bind/bind
       state/app-state
       (bind/transform #(get-in % [:ui :status]))
@@ -84,9 +96,12 @@
         (bind/bind
           (bind/transform #(helpers/get-status-color (:type % :info)))
           (bind/property text-field :foreground))
-        ;; Update text
+        ;; Update text - show "Ready" if empty
         (bind/bind
-          (bind/transform #(:message % ""))
+          (bind/transform #(let [msg (:message % "")]
+                             (if (str/blank? msg)
+                               (i18n/tr :status-ready)
+                               msg)))
           (bind/value text-field))
         ;; Make clickable if error
         (bind/bind

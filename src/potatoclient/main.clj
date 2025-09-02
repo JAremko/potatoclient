@@ -95,8 +95,6 @@
             (state/set-theme! saved-theme))
           (when-let [saved-locale (:locale (config/load-config))]
             (state/set-locale! saved-locale))
-          ;; Set ready status after successful connection and main frame display
-          (status-bar/set-ready!)
           (logging/log-info {:msg "Application initialized"
                              :domain domain}))
 
