@@ -184,6 +184,7 @@
   []
   ;; Core domain schemas
   (registry/register-spec! ::theme-key theme-key)
+  (registry/register-spec! ::theme theme-key)  ; Also register as ::theme for backward compatibility
   (registry/register-spec! ::locale locale)
   (registry/register-spec! ::locale-code locale-code)
   (registry/register-spec! ::domain domain)

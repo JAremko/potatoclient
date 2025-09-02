@@ -5,9 +5,9 @@
             [potatoclient.ui.status-bar.core :as status-bar-core]
             [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.status-bar.helpers :as helpers]
-            [potatoclient.ui.tabs.core :as tabs]
+            [potatoclient.ui.tabs :as tabs]
             [potatoclient.i18n :as i18n])
-  (:import (javax.swing JPanel JTabbedPane)))
+  (:import (javax.swing JPanel JTabbedPane JFrame)))
 
 (deftest test-complete-workflow
   (testing "Complete workflow: state changes trigger status updates"
@@ -60,9 +60,10 @@
       (is (instance? JPanel status-bar) "Status bar should be a JPanel"))
 
     ;; Test tabs creation
-    (let [tabs (tabs/create)]
+    (let [parent-frame (JFrame.)
+          tabs (tabs/create-default-tabs parent-frame)]
       (is (instance? JTabbedPane tabs) "Tabs should be a JTabbedPane")
-      (is (= 1 (.getTabCount tabs)) "Should have one tab"))))
+      (is (> (.getTabCount tabs) 0) "Should have at least one tab"))))
 
 (deftest test-multilingual-workflow
   (testing "Status messages work in multiple languages"

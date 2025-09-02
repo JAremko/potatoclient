@@ -7,7 +7,8 @@
             [malli.core :as m]
             [potatoclient.malli.registry :as registry]
             [potatoclient.runtime :as runtime]
-            [potatoclient.ui-specs :as ui-specs])
+            [potatoclient.ui-specs :as ui-specs]
+            [potatoclient.specs.state.root])
   (:import (java.net URI)
            (java.util Locale)))
 
@@ -51,6 +52,9 @@
    [:fullscreen :boolean]
    [:show-overlay :boolean]
    [:read-only-mode :boolean]
+   [:status [:map {:closed true}
+             [:message :string]
+             [:type [:enum :info :warning :error]]]]
    [:active-tab [:map {:closed true}
                  [:tag :keyword]]]
    [:tab-properties [:map-of :keyword [:map {:closed true}
@@ -145,9 +149,9 @@
 
 (def initial-state
   "Initial application state"
-  {:connection {:url nil
-                :connected false
-                :latency 0
+  {:connection {:url ""
+                :connected? false
+                :latency-ms nil
                 :reconnect-count 0}
    :ui {:theme :sol-dark
         :locale "en"
@@ -161,12 +165,13 @@
                          :thermal-camera {:has-window false}
                          :modes {:has-window false}
                          :media {:has-window false}}}
-   :processes {:heat-video {:status :stopped :pid nil}
+   :processes {:state-proc {:status :stopped :pid nil}
+               :cmd-proc {:status :stopped :pid nil}
+               :heat-video {:status :stopped :pid nil}
                :day-video {:status :stopped :pid nil}}
    :stream-processes {}
-   :session {:id nil
-             :start-time nil
-             :events []}
+   :session {:user nil
+             :started-at nil}
    :server-state nil})
 
 (defonce ^{:doc "Main app state"} app-state

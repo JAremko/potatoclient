@@ -166,7 +166,7 @@
       (let [debug-info (bg/debug-groups)]
         (is (= 2 (get-in debug-info [atom1 :group-a])))
         (is (= 1 (get-in debug-info [atom1 :group-b])))
-        (is (= 1 (get-in debug-info [atom2 :group-x])))
+        (is (= 1 (get-in debug-info [atom2 :group-x]))))
       
       ; Cleanup
       (bg/clean-all-groups atom1)
