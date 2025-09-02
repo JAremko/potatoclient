@@ -45,7 +45,7 @@
   "Create the main content panel for the connection frame."
   {:malli/schema [:=> [:cat :string] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]]}
   [domain]
-  (let [title-label (seesaw/label 
+  (let [title-label (seesaw/label
                       :text (str (i18n/tr :connecting-to) " " domain)
                       :font {:size 18 :style :bold}
                       :halign :center)
@@ -96,11 +96,11 @@
   {:malli/schema [:=> [:cat [:map [:ping-label any?] [:status-label any?]] :int] :nil]}
   [{:keys [ping-label status-label]} latency]
   (seesaw/invoke-later
-    (seesaw/config! ping-label 
-                   :text (str (i18n/tr :connection-ping) ": " latency "ms")
-                   :foreground :green)
-    (seesaw/config! status-label 
-                   :text (i18n/tr :connection-successful)))
+    (seesaw/config! ping-label
+                    :text (str (i18n/tr :connection-ping) ": " latency "ms")
+                    :foreground :green)
+    (seesaw/config! status-label
+                    :text (i18n/tr :connection-successful)))
   nil)
 
 (defn- update-ping-failure-ui!
@@ -108,11 +108,11 @@
   {:malli/schema [:=> [:cat [:map [:ping-label any?] [:status-label any?]]] :nil]}
   [{:keys [ping-label status-label]}]
   (seesaw/invoke-later
-    (seesaw/config! ping-label 
-                   :text (i18n/tr :connection-ping-failed)
-                   :foreground :red)
-    (seesaw/config! status-label 
-                   :text (i18n/tr :connection-attempting)))
+    (seesaw/config! ping-label
+                    :text (i18n/tr :connection-ping-failed)
+                    :foreground :red)
+    (seesaw/config! status-label
+                    :text (i18n/tr :connection-attempting)))
   nil)
 
 (defn- handle-successful-connection!
@@ -131,7 +131,7 @@
 
 (defn- create-ping-monitor
   "Create ping monitoring function with state management."
-  {:malli/schema [:=> [:cat :string [:map [:attempts any?] [:successful-pings any?]] 
+  {:malli/schema [:=> [:cat :string [:map [:attempts any?] [:successful-pings any?]]
                        [:map [:ping-label any?] [:status-label any?] [:attempts-label any?] [:time-label any?]]
                        [:map [:dialog any?] [:ping-timer any?] [:update-timer any?]]
                        :ifn :ifn] :ifn]}
@@ -145,13 +145,13 @@
             (let [latency (ping-host domain 2000)] ; 2 second timeout
               (swap! (:attempts state) inc)
               (seesaw/invoke-later (update-ui!))
-              
+
               (if latency
                 (do
                   (swap! (:successful-pings state) inc)
                   (update-ping-success-ui! ui-refs latency)
-                  (handle-successful-connection! 
-                    domain latency 
+                  (handle-successful-connection!
+                    domain latency
                     @(:dialog timers)
                     @(:ping-timer timers)
                     @(:update-timer timers)
@@ -164,15 +164,15 @@
 
 (defn- create-update-ui-fn
   "Create UI update function for elapsed time and attempts."
-  {:malli/schema [:=> [:cat any? [:map [:attempts any?]] 
+  {:malli/schema [:=> [:cat any? [:map [:attempts any?]]
                        [:map [:attempts-label any?] [:time-label any?]]] :ifn]}
   [start-time state ui-refs]
   (fn []
     (let [elapsed (.getSeconds (Duration/between start-time (Instant/now)))]
-      (seesaw/config! (:attempts-label ui-refs) 
-                     :text (str (i18n/tr :connection-attempts) ": " @(:attempts state)))
-      (seesaw/config! (:time-label ui-refs) 
-                     :text (str (i18n/tr :connection-time) ": " (format-duration elapsed))))))
+      (seesaw/config! (:attempts-label ui-refs)
+                      :text (str (i18n/tr :connection-attempts) ": " @(:attempts state)))
+      (seesaw/config! (:time-label ui-refs)
+                      :text (str (i18n/tr :connection-time) ": " (format-duration elapsed))))))
 
 (defn- create-dialog
   "Create the connection dialog window."
@@ -183,52 +183,52 @@
   (let [cancel-action (action/action
                         :name (i18n/tr :startup-button-cancel)
                         :handler (fn [_]
-                                  (stop-timers! @(:ping-timer timers) @(:update-timer timers))
-                                  (seesaw/dispose! @(:dialog timers))
-                                  (callback :cancel)))
-        
+                                   (stop-timers! @(:ping-timer timers) @(:update-timer timers))
+                                   (seesaw/dispose! @(:dialog timers))
+                                   (callback :cancel)))
+
         cancel-button (seesaw/button
                         :action cancel-action
                         :font {:size 14}
-                        :preferred-size [120 :by 40])
-        
+                        :preferred-size [120 :by 70])
+
         buttons-panel (seesaw/flow-panel
                         :align :center
                         :items [cancel-button])
-        
+
         main-panel (seesaw/border-panel
                      :center content
                      :south buttons-panel
                      :border 20)
-        
+
         dialog (seesaw/frame
                  :title (i18n/tr :connection-title)
                  :icon (io/resource "main.png")
                  :resizable? false
                  :content main-panel
                  :on-close :nothing)]
-    
+
     (seesaw/config! dialog
                     :menubar (menu-bar/create-menubar
-                               {:reload-fn (fn [_] 
-                                            (stop-timers! @(:ping-timer timers) @(:update-timer timers))
-                                            (seesaw/dispose! dialog)
-                                            (callback :reload))
+                               {:reload-fn (fn [_]
+                                             (stop-timers! @(:ping-timer timers) @(:update-timer timers))
+                                             (seesaw/dispose! dialog)
+                                             (callback :reload))
                                 :include-theme? true
                                 :include-language? true
                                 :include-help? false
                                 :include-stream-buttons? false}))
-    
+
     (seesaw/listen dialog :window-closing
                    (fn [_]
                      (stop-timers! @(:ping-timer timers) @(:update-timer timers))
                      (seesaw/dispose! dialog)
                      (callback :cancel)))
-    
+
     (doto dialog
       seesaw/pack!
-      (.setLocationRelativeTo nil))  ; nil centers on screen
-    
+      (.setLocationRelativeTo nil)) ; nil centers on screen
+
     dialog))
 
 (defn show
@@ -237,44 +237,44 @@
   [parent callback]
   (let [domain (state/get-domain)
         content (create-content-panel domain)
-        
+
         ; State atoms
         state {:attempts (atom 0)
                :successful-pings (atom 0)}
-        
+
         ; Timer atoms
         timers {:dialog (atom nil)
                 :ping-timer (atom nil)
                 :update-timer (atom nil)}
-        
+
         ; Cache UI element references
         ui-refs {:ping-label (seesaw/select content [:#ping-label])
                  :status-label (seesaw/select content [:#status-label])
                  :attempts-label (seesaw/select content [:#attempts-label])
                  :time-label (seesaw/select content [:#time-label])}
-        
+
         start-time (Instant/now)
         update-ui! (create-update-ui-fn start-time state ui-refs)
         do-ping! (create-ping-monitor domain state ui-refs timers callback update-ui!)
-        
+
         dialog (create-dialog parent content callback timers)]
-    
+
     ; Store dialog reference
     (reset! (:dialog timers) dialog)
-    
+
     ; Create and start timers
     (reset! (:ping-timer timers)
             (timer/timer (fn [_] (do-ping!))
-                        :delay 1000
-                        :initial-delay 100))
-    
+                         :delay 1000
+                         :initial-delay 100))
+
     (reset! (:update-timer timers)
             (timer/timer (fn [_] (update-ui!))
-                        :delay 1000))
-    
+                         :delay 1000))
+
     (logging/log-info {:id :user/show-connection-frame
-                      :data {:domain domain}
-                      :msg (str "Showing connection frame for domain: " domain)})
-    
+                       :data {:domain domain}
+                       :msg (str "Showing connection frame for domain: " domain)})
+
     (seesaw/show! dialog)
     nil))

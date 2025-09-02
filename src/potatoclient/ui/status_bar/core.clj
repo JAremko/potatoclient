@@ -68,7 +68,10 @@
         icon-label (seesaw/label :icon (helpers/get-status-icon :info))
         text-field (seesaw/label :text (i18n/tr :status-ready)
                                  :foreground (helpers/get-status-color :info))
-        status-panel (seesaw/horizontal-panel
+        ;; Use flow-panel with align :left for left alignment
+        status-panel (seesaw/flow-panel
+                       :align :left
+                       :hgap 5
                        :items [icon-label text-field])]
 
     ;; Bind to status in app state for future updates
@@ -118,7 +121,7 @@
           (.setRepeats timer false)
           (.start timer))))
 
-    ;; Create the panel
+    ;; Create the panel with left-aligned content
     (seesaw/vertical-panel
       :items [(seesaw/separator :orientation :horizontal)
               status-panel])))
