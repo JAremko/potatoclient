@@ -43,15 +43,6 @@
  :statistics "Statistics"
  :no-statistics "No statistics available"
 
- ;; Tab names
- :tab-controls "Controls"
- :tab-day-camera "Day Camera"
- :tab-thermal-camera "Thermal Camera"
- :tab-modes "Modes"
- :tab-media "Media"
-
- ;; Tab window management
- :detach-window-tip "Open in separate window"
 
  ;; Log table
  :log-column-time "Time"
@@ -137,6 +128,17 @@
 
  ;; URL examples
  :url-example-domain "example.com"
+ 
+ ;; Tab system
+ :tab-controls "Controls"
+ :tab-day-camera "Day Camera"
+ :tab-thermal-camera "Thermal Camera"
+ :tab-modes "Modes"
+ :tab-media "Media"
+ :detach-window-tip "Detach to separate window"
+ :switched-to-tab "Switched to"
+ :window-opened "Opened window for"
+ :window-closed "Closed window for"
  :url-example-subdomain "app.example.com"
  :url-example-ip "192.168.1.100"
  :url-example-ipv6 "[2001:db8::1]"

@@ -22,11 +22,10 @@ proto: ## Regenerate proto Java sources and compile them (clean rebuild)
 	@echo "================================================"
 	@echo "Regenerating Proto Classes (Clean Rebuild)"
 	@echo "================================================"
-	@echo "Cleaning ALL artifacts for fresh rebuild..."
-	@rm -rf src/java target
+	@echo "Cleaning build artifacts..."
+	@rm -rf target
 	@echo "Generating proto Java sources..."
-	@# Note: If this hangs or fails, you can manually copy from:
-	@# /home/jare/git/potatoclient/examples/protogen/output/java/
+	@# Script now preserves IPC files and reuses Docker base image
 	./scripts/generate-protos.sh || (echo "Proto generation failed, trying fallback..." && \
 		mkdir -p src/java && \
 		cp -r ../examples/protogen/output/java/* src/java/ 2>/dev/null && \

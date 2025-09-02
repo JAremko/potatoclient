@@ -72,7 +72,13 @@
     (swap! state/app-state identity)
 
     ;; Update status
-    (status-bar/set-info! (str "Closed window for " (make-window-title tab-key))))
+    (status-bar/set-info! (str (i18n/tr :window-closed) " " (case tab-key
+                                                               :controls (i18n/tr :tab-controls)
+                                                               :day-camera (i18n/tr :tab-day-camera)
+                                                               :thermal-camera (i18n/tr :tab-thermal-camera)
+                                                               :modes (i18n/tr :tab-modes)
+                                                               :media (i18n/tr :tab-media)
+                                                               (name tab-key)))))
   nil)
 
 (defn create-detached-window!
@@ -143,7 +149,13 @@
     (.setVisible window true)
 
     ;; Update status
-    (status-bar/set-info! (str "Opened window for " (make-window-title tab-key)))
+    (status-bar/set-info! (str (i18n/tr :window-opened) " " (case tab-key
+                                                               :controls (i18n/tr :tab-controls)
+                                                               :day-camera (i18n/tr :tab-day-camera)
+                                                               :thermal-camera (i18n/tr :tab-thermal-camera)
+                                                               :modes (i18n/tr :tab-modes)
+                                                               :media (i18n/tr :tab-media)
+                                                               (name tab-key))))
 
     window))
 

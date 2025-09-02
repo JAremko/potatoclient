@@ -9,6 +9,7 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.status-bar.messages :as status-msg]
             [potatoclient.ui.utils :as utils]
             [seesaw.action :as action]
             [seesaw.bind :as bind]
@@ -64,6 +65,7 @@
                  (when-not (= (state/get-locale) lang-key)
                    (state/set-locale! lang-key)
                    (config/update-config! :locale lang-key)
+                   (status-msg/set-language-changed! lang-key)
                    (reload-frame! (seesaw/to-root e) reload-fn))))))
 
 (defn- create-theme-action
@@ -79,6 +81,7 @@
                  (when-not (= (theme/get-current-theme) theme-key)
                    (when (theme/set-theme! theme-key)
                      (config/save-theme! theme-key)
+                     (status-msg/set-theme-changed! theme-key)
                      (reload-frame! (seesaw/to-root e) reload-fn)))))))
 
 (defn- create-theme-menu

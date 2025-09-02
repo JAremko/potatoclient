@@ -8,6 +8,7 @@
             [potatoclient.state :as state]
             [potatoclient.ui.bind-group :as bg]
             [potatoclient.ui.debounce :as debounce]
+            [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.tabs-helpers :as helpers]
             [potatoclient.ui.tabs-windows :as windows]
             [seesaw.core :as seesaw]
@@ -51,7 +52,9 @@
   {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)] [:sequential :map]]
                   [:fn #(instance? JTabbedPane %)]]}
   [parent-frame tabs-config]
-  (let [tabbed-pane (JTabbedPane. JTabbedPane/TOP)]
+  (let [tabbed-pane (JTabbedPane. JTabbedPane/TOP)
+        ;; Flag to track if we're in initial setup
+        setting-up (atom true)]
 
     ;; Configure tabbed pane
     (.setTabLayoutPolicy tabbed-pane JTabbedPane/SCROLL_TAB_LAYOUT)
@@ -89,7 +92,15 @@
                        (let [index (.getSelectedIndex tabbed-pane)]
                          (when (>= index 0)
                            (when-let [tab-config (nth tabs-config index nil)]
-                             (state/set-active-tab! (:key tab-config))))))))
+                             (state/set-active-tab! (:key tab-config))
+                             ;; Update status bar only after initial setup
+                             (when-not @setting-up
+                               (status-bar/set-info! (str (i18n/tr :switched-to-tab) " " (:title tab-config))))))))))
+
+    ;; Mark setup as complete after a short delay
+    (future
+      (Thread/sleep 100)
+      (reset! setting-up false))
 
     tabbed-pane))
 

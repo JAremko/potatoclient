@@ -11,7 +11,8 @@
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
             [potatoclient.ui.menu-bar :as menu-bar]
-            [potatoclient.ui.status-bar.core :as status-bar]
+            [potatoclient.ui.status-bar.core :as status-bar-core]
+            [potatoclient.ui.status-bar.messages :as status-bar]
             [potatoclient.ui.tabs :as tabs]
             [potatoclient.ui.tabs-windows :as tabs-windows]
             [seesaw.core :as seesaw])
@@ -26,7 +27,7 @@
   {:malli/schema [:=> [:cat [:fn #(instance? JFrame %)]] [:fn #(instance? JPanel %)]]}
   [parent-frame]
   (let [tabs-panel (tabs/create-default-tabs parent-frame)
-        status-bar (status-bar/create)
+        status-bar (status-bar-core/create)
         main-panel (JPanel. (BorderLayout.))]
     (.add main-panel tabs-panel BorderLayout/CENTER)
     (.add main-panel status-bar BorderLayout/SOUTH)
@@ -123,9 +124,9 @@
     (when window-state
       (menu-bar/restore-window-state! frame window-state))
 
-    ;; Set initial status
-    (require '[potatoclient.ui.status-bar.messages :as status-msg])
-    ((resolve 'status-msg/set-ready!))
+    ;; Set initial status only if no status exists
+    (when-not (get-in @state/app-state [:ui :status :message])
+      (status-bar/set-ready!))
 
     (when-not (runtime/release-build?)
       (logging/log-info {:id :user/frame-created

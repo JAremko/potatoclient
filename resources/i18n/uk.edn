@@ -134,6 +134,17 @@
  :url-example-wss "wss://example.com:8080/ws"
  :url-example-localhost "localhost"
  
+ ;; Tab system
+ :tab-controls "Керування"
+ :tab-day-camera "Денна камера"
+ :tab-thermal-camera "Теплова камера"
+ :tab-modes "Режими"
+ :tab-media "Медіа"
+ :detach-window-tip "Відкрити в окремому вікні"
+ :switched-to-tab "Перемкнуто на"
+ :window-opened "Відкрито вікно для"
+ :window-closed "Закрито вікно для"
+ 
  ;; Language names
  :language-english "Англійська"
  :language-ukrainian "Українська"

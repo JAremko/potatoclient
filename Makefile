@@ -80,7 +80,7 @@ ensure-pronto: ## Ensure pronto Java classes are compiled
 ensure-shared-compiled: ## Ensure shared module proto/java classes are compiled
 	@if [ ! -d "shared/target/classes/cmd" ] || [ ! -d "shared/target/classes/potatoclient/java/ipc" ]; then \
 		echo "Shared module classes not found. Compiling shared module..."; \
-		cd shared && $(MAKE) compile && cd ..; \
+		cd shared && $(MAKE) proto && cd ..; \
 	else \
 		echo "Shared module classes already compiled"; \
 	fi
@@ -124,6 +124,8 @@ clean: clean-cache ## Clean all build artifacts
 	clojure -T:build clean
 	rm -rf target/
 	rm -rf dist/
+	# Also clean shared module completely to ensure fresh rebuild
+	cd shared && $(MAKE) clean-all || true
 
 # NREPL target
 .PHONY: nrepl

@@ -12,11 +12,10 @@ NC='\033[0m' # No Color
 # Configuration
 DOCKER_IMAGE="jettison-proto-generator:latest"
 DOCKER_BASE_IMAGE="jettison-proto-generator-base:latest"
-BASE_IMAGE_ARCHIVE="jettison-proto-generator-base.tar.gz"
-PROTOGEN_REPO="https://github.com/JAremko/protogen.git"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SHARED_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 ROOT_DIR="$(cd "$SHARED_DIR/.." && pwd)"
+LOCAL_PROTOGEN_DIR="$ROOT_DIR/examples/protogen"
 
 # Output directories for Java - now in shared/src/java
 OUTPUT_DIR="$SHARED_DIR/src/java"
@@ -48,26 +47,6 @@ check_docker_permissions() {
     fi
 }
 
-# Function to show Docker setup instructions
-show_docker_setup() {
-    echo
-    print_error "Docker permission issue detected!"
-    echo
-    echo "To use Docker without sudo, you need to add your user to the docker group:"
-    echo
-    echo -e "${BLUE}1. Add your user to the docker group:${NC}"
-    echo "   sudo usermod -aG docker $USER"
-    echo
-    echo -e "${BLUE}2. Log out and log back in for the changes to take effect${NC}"
-    echo "   (or run: newgrp docker)"
-    echo
-    echo -e "${BLUE}3. Verify Docker works without sudo:${NC}"
-    echo "   docker run hello-world"
-    echo
-    echo "Alternatively, you can run this script with sudo (not recommended)."
-    echo
-}
-
 # Function to apply compatibility fixes for Java
 apply_java_fixes() {
     local java_dir="$1"
@@ -86,65 +65,87 @@ apply_java_fixes() {
 cleanup_docker() {
     print_info "Cleaning up Docker resources..."
     
-    # Remove the main Docker image
+    # Remove the main Docker image (but keep base image)
     if docker image inspect "$DOCKER_IMAGE" &>/dev/null; then
         docker rmi -f "$DOCKER_IMAGE" >/dev/null 2>&1 || true
         print_success "Removed Docker image: $DOCKER_IMAGE"
     fi
     
-    # Keep the base Docker image for reuse - it doesn't affect our protos
+    # Keep the base Docker image for reuse
     if docker image inspect "$DOCKER_BASE_IMAGE" &>/dev/null; then
         print_info "Keeping base image for faster future builds: $DOCKER_BASE_IMAGE"
     fi
-    
-    # Prune any dangling images
-    docker image prune -f >/dev/null 2>&1 || true
 }
 
-# Function to cleanup temporary directory - ALWAYS runs even if disk is full
-cleanup_temp_dir() {
-    if [ -n "${MAIN_TEMP_DIR:-}" ] && [ -d "${MAIN_TEMP_DIR}" ]; then
-        print_info "Cleaning up temporary directory: $MAIN_TEMP_DIR"
-        # Use -f to force removal even if disk is full
-        rm -rf "$MAIN_TEMP_DIR" 2>/dev/null || {
-            print_warning "Failed to remove temp dir with rm -rf, trying alternative methods..."
-            # Try to remove files first to free space
-            find "$MAIN_TEMP_DIR" -type f -delete 2>/dev/null || true
-            # Then remove directories
-            find "$MAIN_TEMP_DIR" -type d -empty -delete 2>/dev/null || true
-            # Final attempt
-            rmdir "$MAIN_TEMP_DIR" 2>/dev/null || true
-        }
-        if [ -d "${MAIN_TEMP_DIR}" ]; then
-            print_error "Could not fully remove temp directory: $MAIN_TEMP_DIR"
-            print_error "Please manually remove it to free disk space"
+# Function to ensure base Docker image exists
+ensure_base_image() {
+    print_info "Checking for Docker base image..."
+    
+    if docker image inspect "$DOCKER_BASE_IMAGE" &>/dev/null; then
+        print_success "Base image found: $DOCKER_BASE_IMAGE"
+        return 0
+    fi
+    
+    print_warning "Base image not found. Need to build it..."
+    
+    # Check if local protogen exists
+    if [ ! -d "$LOCAL_PROTOGEN_DIR" ]; then
+        print_error "Local protogen not found at: $LOCAL_PROTOGEN_DIR"
+        print_info "Please clone https://github.com/JAremko/protogen.git to examples/protogen"
+        return 1
+    fi
+    
+    cd "$LOCAL_PROTOGEN_DIR"
+    
+    # Try to use pre-built base image tarball if it exists
+    BASE_IMAGE_ARCHIVE="jettison-proto-generator-base.tar.gz"
+    if [ -f "$BASE_IMAGE_ARCHIVE" ]; then
+        print_info "Found base image archive, loading..."
+        if docker load < "$BASE_IMAGE_ARCHIVE"; then
+            print_success "Base image loaded from archive"
+            cd - >/dev/null
+            return 0
         else
-            print_success "Temporary directory cleaned up"
+            print_warning "Failed to load base image from archive, will build from scratch"
+        fi
+    else
+        print_warning "Base image archive not found. Attempting LFS pull..."
+        
+        # Only attempt LFS pull if we don't have the base image
+        if command -v git-lfs &> /dev/null; then
+            print_info "Pulling LFS files to get pre-built base image..."
+            if timeout 60 git lfs pull --include="$BASE_IMAGE_ARCHIVE" 2>&1; then
+                if [ -f "$BASE_IMAGE_ARCHIVE" ]; then
+                    print_success "Base image archive downloaded via LFS"
+                    if docker load < "$BASE_IMAGE_ARCHIVE"; then
+                        print_success "Base image loaded from LFS archive"
+                        cd - >/dev/null
+                        return 0
+                    fi
+                fi
+            fi
+            print_warning "LFS pull failed or timed out"
         fi
     fi
+    
+    # If we get here, we need to build the base image from scratch
+    print_info "Building base image from scratch (this will take a while)..."
+    if make base; then
+        print_success "Base image built successfully"
+    else
+        print_error "Failed to build base image"
+        cd - >/dev/null
+        return 1
+    fi
+    
+    cd - >/dev/null
+    return 0
 }
 
 # Main execution
 main() {
-    print_info "PotatoClient Proto Generation using Protogen"
-    print_info "============================================"
-    
-    # Clean up any leftover protogen temp directories first
-    print_info "Checking for leftover temporary directories..."
-    leftover_dirs=$(find /tmp -maxdepth 1 -type d -name "protogen.*" 2>/dev/null || true)
-    if [ -n "$leftover_dirs" ]; then
-        print_warning "Found leftover protogen directories, cleaning up..."
-        echo "$leftover_dirs" | while read -r dir; do
-            if [ -d "$dir" ]; then
-                rm -rf "$dir" 2>/dev/null || true
-                if [ -d "$dir" ]; then
-                    print_warning "Could not remove: $dir"
-                else
-                    print_info "Removed: $dir"
-                fi
-            fi
-        done
-    fi
+    print_info "PotatoClient Proto Generation (Optimized)"
+    print_info "=========================================="
     
     # Check Docker permissions
     print_info "Checking Docker permissions..."
@@ -152,65 +153,37 @@ main() {
     docker_status=$?
     
     if [ $docker_status -eq 1 ]; then
-        show_docker_setup
+        print_error "Docker requires sudo. Please add your user to the docker group:"
+        echo "   sudo usermod -aG docker $USER"
+        echo "   Then log out and back in"
         exit 1
     elif [ $docker_status -eq 2 ]; then
         print_error "Docker is not installed or not running"
-        echo "Please install Docker first: https://docs.docker.com/get-docker/"
         exit 1
     fi
     
-    print_success "Docker is accessible without sudo"
+    print_success "Docker is accessible"
     
-    # Create main temporary directory
-    MAIN_TEMP_DIR=$(mktemp -d -t protogen.XXXXXX)
-    trap "cleanup_temp_dir; cleanup_docker" EXIT
-    
-    print_info "Using temporary directory: $MAIN_TEMP_DIR"
-    
-    # Clone protogen repository
-    print_info "Cloning protogen repository..."
-    PROTOGEN_DIR="$MAIN_TEMP_DIR/protogen"
-    
-    # Clone the repository (shallow clone for speed, skip LFS)
-    export GIT_LFS_SKIP_SMUDGE=1
-    if ! git clone --depth 1 "$PROTOGEN_REPO" "$PROTOGEN_DIR"; then
-        print_error "Failed to clone protogen repository"
+    # Ensure base image exists (only builds/pulls if needed)
+    if ! ensure_base_image; then
+        print_error "Failed to ensure base image exists"
         exit 1
     fi
     
-    # Try to pull LFS files with a timeout
-    if command -v git-lfs &> /dev/null; then
-        print_info "Attempting to pull LFS files (this may take a while)..."
-        cd "$PROTOGEN_DIR"
-        if timeout 60 git lfs pull 2>&1; then
-            print_success "LFS files pulled successfully"
-        else
-            print_warning "LFS pull timed out or failed, will build base image from scratch"
-            print_info "This will take longer but will still work"
-        fi
-        cd - >/dev/null
-    else
-        print_warning "Git LFS not found. Base image will be built from scratch."
-        print_info "To speed up future builds: sudo apt-get install git-lfs && git lfs install"
-    fi
-    
-    print_success "Protogen repository cloned"
-    
-    # Build and generate using protogen's Makefile
-    print_info "Running make generate in protogen..."
-    cd "$PROTOGEN_DIR"
-    
-    # Check if proto directory exists in the cloned repository
-    if [ ! -d "proto" ]; then
-        print_warning "Proto directory not found in cloned repository"
-        print_error "Please ensure the protogen repository at $PROTOGEN_REPO includes the proto files"
+    # Check if local protogen directory exists
+    if [ ! -d "$LOCAL_PROTOGEN_DIR" ]; then
+        print_error "Local protogen directory not found at: $LOCAL_PROTOGEN_DIR"
+        print_info "Please ensure examples/protogen exists"
         exit 1
     fi
+    
+    # Use local protogen directory
+    print_info "Using local protogen at: $LOCAL_PROTOGEN_DIR"
+    cd "$LOCAL_PROTOGEN_DIR"
     
     # Verify proto files exist
-    if [ -z "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
-        print_error "No .proto files found in the proto directory"
+    if [ ! -d "proto" ] || [ -z "$(find proto -name '*.proto' -type f 2>/dev/null)" ]; then
+        print_error "No proto files found in $LOCAL_PROTOGEN_DIR/proto"
         exit 1
     fi
     
@@ -220,54 +193,62 @@ main() {
     rm -rf output/
     
     # Run make generate which builds the Docker image and generates all bindings
+    print_info "Generating proto bindings..."
     if ! make generate; then
         print_error "Proto generation failed"
         exit 1
     fi
     
-    cd - >/dev/null
-    
     print_success "Proto generation completed"
     
-    # Use the output from protogen directly
-    TEMP_OUTPUT_DIR="$PROTOGEN_DIR/output"
+    # Copy generated files to shared module
+    print_info "Copying generated Java files..."
     
-    # Copy generated files to PotatoClient structure
-    print_info "Cleaning old proto bindings and copying new generated files..."
+    # Preserve IPC Java files before cleaning
+    IPC_BACKUP="/tmp/ipc-backup-$$"
+    if [ -d "$OUTPUT_DIR/potatoclient/java/ipc" ]; then
+        print_info "Preserving IPC Java files..."
+        cp -r "$OUTPUT_DIR/potatoclient/java/ipc" "$IPC_BACKUP"
+    fi
     
     # Clean ALL existing Java proto files to prevent stale bindings
-    print_info "Cleaning Java proto directories..."
     rm -rf "$OUTPUT_DIR/ser" "$OUTPUT_DIR/cmd" "$OUTPUT_DIR/jon" "$OUTPUT_DIR/com" "$OUTPUT_DIR/build" 2>/dev/null || true
     
     # Copy Java files from protogen output
-    if [ -d "$TEMP_OUTPUT_DIR/java" ]; then
+    if [ -d "output/java" ]; then
         mkdir -p "$OUTPUT_DIR"
-        cp -r "$TEMP_OUTPUT_DIR/java"/* "$OUTPUT_DIR/" 2>/dev/null || true
+        cp -r output/java/* "$OUTPUT_DIR/" 2>/dev/null || true
         print_success "Copied Java files to $OUTPUT_DIR/"
-        print_info "Note: Java bindings generated with buf.validate support"
     else
         print_error "No Java files found in output directory"
         exit 1
     fi
     
+    # Restore IPC Java files
+    if [ -d "$IPC_BACKUP" ]; then
+        print_info "Restoring IPC Java files..."
+        mkdir -p "$OUTPUT_DIR/potatoclient/java"
+        cp -r "$IPC_BACKUP" "$OUTPUT_DIR/potatoclient/java/ipc"
+        rm -rf "$IPC_BACKUP"
+        print_success "IPC Java files restored"
+    fi
+    
     # Apply compatibility fixes
     apply_java_fixes "$OUTPUT_DIR"
     
-    # Set permissions on generated files to 777 so anyone can delete/modify them
-    print_info "Setting file permissions on generated files..."
+    # Set permissions
     chmod -R 777 "$OUTPUT_DIR" 2>/dev/null || true
-    print_success "File permissions set to 777 for all generated files"
+    
+    cd - >/dev/null
+    
+    # Cleanup only the generated Docker image, not the base
+    cleanup_docker
     
     # Summary
-    print_info "============================================"
+    print_info "=========================================="
     print_success "Proto generation completed successfully!"
-    print_info "Generated files have been copied to:"
-    echo "  - Java: $OUTPUT_DIR/"
-    echo
-    print_info "Note: Protobuf bindings include buf.validate annotations"
-    print_info "Validation is conditional - runs in dev/test, skipped in release"
-    
-    print_info "Cleaning up temporary files and Docker images..."
+    print_info "Generated files: $OUTPUT_DIR/"
+    print_info "Base image preserved for next run"
 }
 
 # Run main function
