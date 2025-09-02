@@ -125,6 +125,34 @@
                      :message message}))
 
 ;; ============================================================================
+;; Message Normalization
+;; ============================================================================
+
+(defn- normalize-keys
+  "Convert string keys to keyword keys in a map, recursively."
+  [m]
+  (cond
+    (map? m)
+    (into {}
+          (map (fn [[k v]]
+                 [(if (string? k) (keyword k) k)
+                  (normalize-keys v)])
+               m))
+    
+    (sequential? m)
+    (mapv normalize-keys m)
+    
+    :else m))
+
+(defn- normalize-message
+  "Normalize message structure to handle both string and keyword keys."
+  [message]
+  ;; Only normalize the details field if it exists and contains string keys
+  (if-let [details (:details message)]
+    (assoc message :details (normalize-keys details))
+    message))
+
+;; ============================================================================
 ;; Message Router
 ;; ============================================================================
 
@@ -132,29 +160,31 @@
   "Route messages from stream IPC"
   {:malli/schema [:=> [:cat :keyword :map] :nil]}
   [stream-type message]
-  ;; Validate message structure
-  (when (specs/validate-and-log message stream-type)
-    (case (:msg-type message)
-      :event (handle-event stream-type message)
+  ;; Normalize message keys
+  (let [message (normalize-message message)]
+    ;; Validate message structure
+    (when (specs/validate-and-log message stream-type)
+      (case (:msg-type message)
+        :event (handle-event stream-type message)
 
-      :log (let [{:keys [level message timestamp]} message]
-             (logging/log-info {:id :stream/log
-                                :stream stream-type
-                                :level level
-                                :msg message}))
+        :log (let [{:keys [level message timestamp]} message]
+               (logging/log-info {:id :stream/log
+                                  :stream stream-type
+                                  :level level
+                                  :msg message}))
 
-      :metric (let [{:keys [name value timestamp]} message]
-                (logging/log-debug {:id :stream/metric
-                                    :stream stream-type
-                                    :metric name
-                                    :value value}))
+        :metric (let [{:keys [name value timestamp]} message]
+                  (logging/log-debug {:id :stream/metric
+                                      :stream stream-type
+                                      :metric name
+                                      :value value}))
 
-      :command (logging/log-debug {:id :stream/command
-                                   :stream stream-type
-                                   :command message})
+        :command (logging/log-debug {:id :stream/command
+                                     :stream stream-type
+                                     :command message})
 
-      ;; Unknown message type
-      (logging/log-warn {:id :stream/unknown-message
-                         :stream stream-type
-                         :message message})))
+        ;; Unknown message type
+        (logging/log-warn {:id :stream/unknown-message
+                           :stream stream-type
+                           :message message}))))
   nil)

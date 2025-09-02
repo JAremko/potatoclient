@@ -11,7 +11,8 @@ object IpcKeys {
     // Message envelope keys
     @JvmField val MSG_TYPE: Keyword = TransitFactory.keyword("msg-type")
 
-    @JvmField val MSG_ID: Keyword = TransitFactory.keyword("msg-id")
+    // MSG_ID removed - not needed for our IPC protocol
+    // @JvmField val MSG_ID: Keyword = TransitFactory.keyword("msg-id")
 
     @JvmField val TIMESTAMP: Keyword = TransitFactory.keyword("timestamp")
 

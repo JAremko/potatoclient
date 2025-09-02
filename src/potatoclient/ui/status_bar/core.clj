@@ -64,22 +64,12 @@
   "Create status bar component bound to app state."
   {:malli/schema [:=> [:cat] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]]}
   []
-  (let [;; Get current status or set ready if empty
-        current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})
-        _ (when (str/blank? (:message current-status))
-            (msg/set-ready!))
-
-        ;; Re-read after potentially setting ready
-        status (get-in @state/app-state [:ui :status])
-
-        ;; Create UI components with initial values
-        icon-label (seesaw/label :icon (helpers/get-status-icon (:type status :info)))
+  (let [;; Create UI components with default values first
+        icon-label (seesaw/label :icon (helpers/get-status-icon :info))
         text-field (seesaw/text :editable? false
                                 :focusable? false
-                                :text (if (str/blank? (:message status))
-                                        (i18n/tr :status-ready)
-                                        (:message status))
-                                :foreground (helpers/get-status-color (:type status :info)))
+                                :text (i18n/tr :status-ready)
+                                :foreground (helpers/get-status-color :info))
         status-panel (seesaw/horizontal-panel
                        :items [icon-label text-field])]
 
@@ -120,6 +110,13 @@
                            seesaw/pack!
                            seesaw/show!))))
 
+    ;; Defer initial status setup to ensure bindings are ready
+    (javax.swing.SwingUtilities/invokeLater
+      (fn []
+        (let [current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})]
+          (when (str/blank? (:message current-status))
+            (msg/set-ready!)))))
+    
     ;; Create the panel
     (seesaw/vertical-panel
       :items [(seesaw/separator :orientation :horizontal)

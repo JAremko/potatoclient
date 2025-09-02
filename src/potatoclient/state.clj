@@ -251,6 +251,7 @@
         :fullscreen false
         :show-overlay false
         :read-only-mode false
+        :status {:message "" :type :info}
         :active-tab {:tag :controls}
         :tab-properties {:controls {:has-window false}
                          :day-camera {:has-window false}

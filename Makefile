@@ -16,7 +16,7 @@ help: ## Show available commands
 	@echo "========================"
 	@echo ""
 	@echo "Development Commands:"
-	@grep -E '^(nrepl|dev|release|clean):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|dev|release|clean|recompile-kotlin):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Code Quality:"
 	@grep -E '^(fmt|lint|lint-raw|test|report-unspecced):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -139,3 +139,9 @@ ensure-compiled:
 	@if [ ! -d "target/classes/potatoclient/kotlin" ]; then \
 		clojure -T:build compile-kotlin; \
 	fi
+
+# Force recompile Kotlin sources (useful after changing Kotlin code)
+.PHONY: recompile-kotlin
+recompile-kotlin: ## Force recompile all Kotlin sources
+	@echo "Recompiling Kotlin sources..."
+	@clojure -T:build compile-kotlin

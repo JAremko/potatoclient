@@ -28,7 +28,6 @@
 (def MessageEnvelope
   [:map {:closed true}
    [:msg-type MessageType]
-   [:msg-id :string]
    [:timestamp :int]])
 
 ;; ============================================================================
@@ -38,7 +37,6 @@
 (def WindowResizeEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :window]]
    [:action [:= :resize]]
@@ -50,7 +48,6 @@
 (def WindowMoveEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :window]]
    [:action [:= :window-move]]
@@ -63,7 +60,6 @@
   "For focus, blur, minimize, maximize, restore, close-request"
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :window]]
    [:action [:enum :focus :blur :minimize :maximize :restore :close-request]]])
@@ -75,7 +71,6 @@
 (def GestureBaseFields
   "Common fields for all gesture events"
   [[:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:stream-type StreamType]
@@ -86,7 +81,6 @@
 (def GestureTapEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :tap :double-tap]]
@@ -100,7 +94,6 @@
 (def GesturePanStartStopEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :pan-start :pan-stop]]
@@ -114,7 +107,6 @@
 (def GesturePanMoveEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:= :pan-move]]
@@ -130,7 +122,6 @@
 (def GestureWheelEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :wheel-up :wheel-down]]
@@ -146,7 +137,6 @@
 (def GestureTapEventNoNDC
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :tap :double-tap]]
@@ -158,7 +148,6 @@
 (def GesturePanStartStopEventNoNDC
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :pan-start :pan-stop]]
@@ -170,7 +159,6 @@
 (def GesturePanMoveEventNoNDC
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:= :pan-move]]
@@ -184,7 +172,6 @@
 (def GestureWheelEventNoNDC
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :gesture]]
    [:gesture-type [:enum :wheel-up :wheel-down]]
@@ -201,7 +188,6 @@
 (def ConnectionConnectedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :connection]]
    [:action [:= :connected]]
@@ -212,7 +198,6 @@
 (def ConnectionDisconnectedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :connection]]
    [:action [:= :disconnected]]
@@ -224,7 +209,6 @@
 (def ConnectionErrorEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :connection]]
    [:action [:= :connection-error]]
@@ -236,7 +220,6 @@
   "For timeout, reconnecting actions"
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :connection]]
    [:action [:enum :timeout :reconnecting]]])
@@ -248,14 +231,12 @@
 (def StreamStartedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :stream-started]]])
 
 (def StreamStoppedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :stream-stopped]]
    [:reason :string]])
@@ -263,7 +244,6 @@
 (def StreamFailedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :stream-failed]]
    [:error :string]])
@@ -271,7 +251,6 @@
 (def StreamErrorEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :error]]
    [:error-message :string]
@@ -284,7 +263,6 @@
 (def LogMessage
   [:map {:closed true}
    [:msg-type [:= :log]]
-   [:msg-id :string]
    [:timestamp :int]
    [:level LogLevel]
    [:message :string]
@@ -293,7 +271,6 @@
 (def LogMessageWithData
   [:map {:closed true}
    [:msg-type [:= :log]]
-   [:msg-id :string]
    [:timestamp :int]
    [:level LogLevel]
    [:message :string]
@@ -307,7 +284,6 @@
 (def MetricMessage
   [:map {:closed true}
    [:msg-type [:= :metric]]
-   [:msg-id :string]
    [:timestamp :int]
    [:name :string]
    [:value :any]
@@ -316,7 +292,6 @@
 (def MetricMessageWithTags
   [:map {:closed true}
    [:msg-type [:= :metric]]
-   [:msg-id :string]
    [:timestamp :int]
    [:name :string]
    [:value :any]
@@ -330,7 +305,6 @@
 (def CommandMessage
   [:map {:closed false} ; Commands are flexible
    [:msg-type [:= :command]]
-   [:msg-id :string]
    [:timestamp :int]
    [:action :keyword]])
 

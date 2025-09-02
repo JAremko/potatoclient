@@ -1,7 +1,7 @@
 package potatoclient.kotlin.ipc
 
 import com.cognitect.transit.Keyword
-import java.util.UUID
+// import java.util.UUID - removed, no longer needed for msg-id
 
 /**
  * Helper functions for building IPC messages according to the protocol.
@@ -22,7 +22,7 @@ object MessageBuilders {
     ): Map<Any, Any> =
         buildMap {
             put(IpcKeys.MSG_TYPE, IpcKeys.EVENT)
-            put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+            // msg-id removed - not needed
             put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
             put(IpcKeys.TYPE, IpcKeys.WINDOW)
             put(IpcKeys.ACTION, action)
@@ -46,7 +46,7 @@ object MessageBuilders {
     ): Map<Any, Any> =
         buildMap {
             put(IpcKeys.MSG_TYPE, IpcKeys.EVENT)
-            put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+            // msg-id removed - not needed
             put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
             put(IpcKeys.TYPE, IpcKeys.CONNECTION)
             put(IpcKeys.ACTION, action)
@@ -72,7 +72,7 @@ object MessageBuilders {
     ): Map<Any, Any> =
         buildMap {
             put(IpcKeys.MSG_TYPE, IpcKeys.EVENT)
-            put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+            // msg-id removed - not needed
             put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
             put(IpcKeys.TYPE, IpcKeys.GESTURE)
             put(IpcKeys.GESTURE_TYPE, gestureType)
@@ -103,7 +103,7 @@ object MessageBuilders {
     ): Map<Any, Any> =
         buildMap {
             put(IpcKeys.MSG_TYPE, IpcKeys.LOG)
-            put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+            // msg-id removed - not needed
             put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
             put(IpcKeys.LEVEL, level)
             put(IpcKeys.MESSAGE, message)
@@ -123,7 +123,7 @@ object MessageBuilders {
     ): Map<Any, Any> =
         buildMap {
             put(IpcKeys.MSG_TYPE, IpcKeys.METRIC)
-            put(IpcKeys.MSG_ID, UUID.randomUUID().toString())
+            // msg-id removed - not needed
             put(IpcKeys.TIMESTAMP, System.currentTimeMillis())
             put(
                 IpcKeys.PAYLOAD,
