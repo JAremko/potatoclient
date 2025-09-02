@@ -82,12 +82,12 @@
       (case result
         :connected
         ;; Connection successful, proceed with main frame
-        (let [params {:version (get-version)
+        (let [;; Clean up BEFORE creating the main frame to preserve new bindings
+              _ (state/cleanup-seesaw-bindings!)
+              params {:version (get-version)
                       :build-type (get-build-type)}
               frame (main-frame/create-main-frame params)
               domain (config/get-domain)]
-          ;; Clean up before transitioning to main frame
-          (state/cleanup-seesaw-bindings!)
           (seesaw/show! frame)
           (log-startup!)
           ;; Set initial UI state from config

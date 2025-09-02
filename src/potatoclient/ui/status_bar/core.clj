@@ -66,10 +66,8 @@
   []
   (let [;; Create UI components with default values first
         icon-label (seesaw/label :icon (helpers/get-status-icon :info))
-        text-field (seesaw/text :editable? false
-                                :focusable? false
-                                :text (i18n/tr :status-ready)
-                                :foreground (helpers/get-status-color :info))
+        text-field (seesaw/label :text (i18n/tr :status-ready)
+                                 :foreground (helpers/get-status-color :info))
         status-panel (seesaw/horizontal-panel
                        :items [icon-label text-field])]
 
@@ -92,7 +90,7 @@
                              (if (str/blank? msg)
                                (i18n/tr :status-ready)
                                msg)))
-          (bind/value text-field))
+          (bind/property text-field :text))
         ;; Make clickable if error
         (bind/bind
           (bind/transform #(= (:type % :info) :error))
@@ -110,13 +108,16 @@
                            seesaw/pack!
                            seesaw/show!))))
 
-    ;; Defer initial status setup to ensure bindings are ready
-    (javax.swing.SwingUtilities/invokeLater
-      (fn []
-        (let [current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})]
-          (when (str/blank? (:message current-status))
-            (msg/set-ready!)))))
-    
+    ;; Set initial status after a small delay to ensure bindings are ready
+    (let [current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})]
+      (when (str/blank? (:message current-status))
+        (let [timer (javax.swing.Timer. 100
+                                        (reify java.awt.event.ActionListener
+                                          (actionPerformed [_ _]
+                                            (msg/set-ready!))))]
+          (.setRepeats timer false)
+          (.start timer))))
+
     ;; Create the panel
     (seesaw/vertical-panel
       :items [(seesaw/separator :orientation :horizontal)
