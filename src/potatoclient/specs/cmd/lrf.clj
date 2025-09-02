@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; LRF command specs - based on proto-explorer findings
+;; LRF command specs
 ;; This is a oneof structure with 15 command types
 
 ;; Scan control with mode setting

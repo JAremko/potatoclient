@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; System command specs - based on proto-explorer findings
+;; System command specs
 ;; This is a oneof structure with 13 command types
 
 ;; Localization

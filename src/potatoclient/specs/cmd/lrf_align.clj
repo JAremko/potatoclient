@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; LRF alignment command specs - based on proto-explorer findings
+;; LRF alignment command specs
 ;; This has a nested oneof structure: channel -> cmd
 
 ;; Offset commands

@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; OSD command specs - based on proto-explorer findings
+;; OSD command specs
 ;; This is a oneof structure with 8 command types
 
 ;; Main OSD command spec using oneof - all 8 commands

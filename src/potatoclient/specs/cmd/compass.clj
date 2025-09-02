@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; Compass command specs - based on proto-explorer findings
+;; Compass command specs
 ;; This is a oneof structure with 11 command types
 
 ;; Configuration

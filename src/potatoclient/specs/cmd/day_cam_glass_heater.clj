@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; Day cam glass heater command specs - based on proto-explorer findings
+;; Day cam glass heater command specs
 ;; This is a oneof structure with 5 command types
 
 ;; Main Day Cam Glass Heater command spec using oneof

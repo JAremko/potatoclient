@@ -5,7 +5,7 @@
   (:require
     [potatoclient.malli.registry :as registry]))
 
-;; LIRA command specs - based on proto-explorer findings
+;; LIRA command specs
 ;; This is a oneof structure with one command type
 
 ;; JonGuiDataLiraTarget specification
