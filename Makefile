@@ -8,7 +8,7 @@ JAR_VERSION = $(shell cat VERSION)
 JAR_NAME = potatoclient-$(JAR_VERSION).jar
 JAR_PATH = target/$(JAR_NAME)
 
-.PHONY: help nrepl dev release clean fmt lint lint-raw deps-outdated deps-upgrade test report-unspecced mcp-configure
+.PHONY: help nrepl dev release clean deps-outdated deps-upgrade test report-unspecced mcp-configure
 
 # Help target
 help: ## Show available commands
@@ -16,10 +16,10 @@ help: ## Show available commands
 	@echo "========================"
 	@echo ""
 	@echo "Development Commands:"
-	@grep -E '^(nrepl|dev|release|clean|recompile-kotlin):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@grep -E '^(nrepl|dev|release|clean|recompile):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
-	@echo "Code Quality:"
-	@grep -E '^(fmt|lint|lint-raw|test|report-unspecced):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
+	@echo "Testing:"
+	@grep -E '^(test|report-unspecced):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
 	@echo ""
 	@echo "Dependencies:"
 	@grep -E '^(deps-outdated|deps-upgrade):.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-20s %s\n", $$1, $$2}'
@@ -54,47 +54,8 @@ release: ## Build optimized release JAR (AOT, no debug info)
 # Clean build artifacts
 clean: ## Clean all build artifacts
 	@echo "Cleaning build artifacts..."
-	@rm -rf target/ dist/ .cpcache/
+	@rm -rf target/ dist/ .cpcache/ .ktlint/
 	@echo "Clean complete"
-
-# Format code
-fmt: ## Format Clojure and Kotlin code
-	@echo "Formatting Clojure code..."
-	@clojure -M:format fix
-	@echo "Formatting Kotlin code..."
-	@if [ -f .ktlint/ktlint ]; then \
-		.ktlint/ktlint -F "src/potatoclient/kotlin/**/*.kt" || true; \
-	else \
-		echo "ktlint not found. Installing..."; \
-		mkdir -p .ktlint; \
-		curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.5.0/ktlint && \
-		chmod a+x ktlint && \
-		mv ktlint .ktlint/; \
-		.ktlint/ktlint -F "src/potatoclient/kotlin/**/*.kt" || true; \
-	fi
-	@echo "Formatting complete"
-
-# Lint with filtering
-lint: ## Run linters and generate filtered report
-	@echo "Running linters..."
-	@clojure -M:lint --lint src test || true
-	@if [ -f .ktlint/ktlint ]; then \
-		.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" || true; \
-	fi
-	@echo "Generating filtered lint report..."
-	@bb scripts/lint-report-filtered.bb
-	@echo "Report: reports/lint/summary-filtered.md"
-
-# Lint raw - unfiltered
-lint-raw: ## Run linters and generate unfiltered report
-	@echo "Running linters (unfiltered)..."
-	@clojure -M:lint --lint src test || true
-	@if [ -f .ktlint/ktlint ]; then \
-		.ktlint/ktlint "src/potatoclient/kotlin/**/*.kt" || true; \
-	fi
-	@echo "Generating unfiltered lint report..."
-	@bb scripts/lint-report.bb
-	@echo "Report: reports/lint-report.md"
 
 # Check outdated dependencies
 deps-outdated: ## Check for outdated dependencies

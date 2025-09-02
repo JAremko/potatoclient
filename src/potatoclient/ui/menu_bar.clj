@@ -5,10 +5,9 @@
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
             [potatoclient.logging :as logging]
-            [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
             [potatoclient.theme :as theme]
-            [potatoclient.ui.log-viewer :as log-viewer]
+            [potatoclient.ui.help.menu :as help-menu]
             [potatoclient.ui.status-bar.messages :as status-msg]
             [potatoclient.ui.utils :as utils]
             [seesaw.action :as action]
@@ -104,43 +103,6 @@
     :items [(create-language-action :english "English" reload-fn)
             (create-language-action :ukrainian "Українська" reload-fn)]))
 
-(defn- show-about-dialog
-  "Show the About dialog."
-  {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] :nil]}
-  [parent]
-  (let [version (try
-                  (str/trim (slurp (io/resource "VERSION")))
-                  (catch Exception _ "dev"))
-        build-type (if (runtime/release-build?) "RELEASE" "DEVELOPMENT")]
-    (seesaw/alert parent
-                  (str (i18n/tr :about-text) "\n\n"
-                       (i18n/tr :app-version) ": " version " [" build-type "]")
-                  :title (i18n/tr :about-title)
-                  :type :info)))
-
-(defn- open-logs-viewer
-  "Open the log viewer window."
-  {:malli/schema [:=> [:cat] :any]}
-  []
-  (log-viewer/show-log-viewer))
-
-(defn- create-help-menu
-  "Create the Help menu."
-  {:malli/schema [:=> [:cat [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] :any]}
-  [parent]
-  (let [menu-items [(action/action
-                      :name (i18n/tr :menu-help-about)
-                      :icon (theme/key->icon :tab-icon-description)
-                      :handler (fn [_] (show-about-dialog parent)))]
-        menu-items (conj menu-items
-                         (action/action
-                           :name (i18n/tr :menu-help-view-logs)
-                           :icon (theme/key->icon :file-open)
-                           :handler (fn [_] (open-logs-viewer))))]
-    (seesaw/menu
-      :text (i18n/tr :menu-help)
-      :icon (theme/key->icon :actions-group-menu)
-      :items menu-items)))
 
 (defn- create-stream-toggle-button
   "Create a stream toggle button for the menu bar."
@@ -216,7 +178,8 @@
         items (cond-> []
                 include-theme? (conj (create-theme-menu reload-fn))
                 include-language? (conj (create-language-menu reload-fn))
-                (and include-help? parent) (conj (create-help-menu parent)))
+                (and include-help? parent) (conj (help-menu/create-help-menu {:parent parent
+                                                                                :include-logs? true})))
         menubar (if include-stream-buttons?
                   (let [heat-button (doto (create-stream-toggle-button :heat)
                                       (seesaw/config! :text ""))

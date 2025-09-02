@@ -91,7 +91,7 @@
     (.setExtendedState frame Frame/ICONIFIED)
           ;; Then dispose in next EDT cycle using a timer
     (let [timer (Timer.
-                  100  ; 100ms delay
+                  100 ; 100ms delay
                   (reify ActionListener
                     (actionPerformed [_ _]
                            ;; Ensure disposal happens on EDT
@@ -104,7 +104,7 @@
                             (logging/log-error {:id ::dispose-error
                                                 :frame-title frame-title
                                                 :error (.getMessage e)})))))))]
-      (.setRepeats timer false)  ; Ensure timer only fires once
+      (.setRepeats timer false) ; Ensure timer only fires once
       (.start timer)))
   nil)
 
@@ -126,7 +126,7 @@
   {:malli/schema [:=> [:cat
                        [:fn {:error/message "must be a File"} (partial instance? File)]
                        [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]
-                       [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]}
+                  [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]]}
   [file parent-frame]
   (let [raw-content (slurp file)
         content (format-log-content raw-content)
@@ -148,12 +148,7 @@
                       :icon (theme/key->icon :file-save)
                       :handler (fn [_]
                                  (copy-to-clipboard raw-content)
-                                 (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))
-        close-action (seesaw/action
-                       :name (i18n/tr :log-viewer-close)
-                       :icon (theme/key->icon :file-excel)
-                       :handler (fn [_]
-                                  (dispose-frame! frame)))]
+                                 (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))]
     ;; Build content using idiomatic border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
@@ -164,7 +159,7 @@
                                                  :vscroll :always
                                                  :hscroll :as-needed)
                       :south (seesaw/horizontal-panel
-                               :items [copy-action close-action])))
+                               :items [copy-action])))
 
     ;; Handle window close (X button)
     (seesaw/listen frame :window-closing
@@ -264,13 +259,7 @@
                                  (when-let [selected-row (seesaw/selection table)]
                                    (let [row-data (table/value-at table selected-row)]
                                      (when-let [file (:file row-data)]
-                                       (create-file-viewer file frame))))))
-
-        close-action (seesaw/action
-                       :name (i18n/tr :log-viewer-close)
-                       :icon (theme/key->icon :file-excel)
-                       :handler (fn [_]
-                                  (dispose-frame! frame)))]
+                                       (create-file-viewer file frame))))))]
 
     ;; Wire up event handlers using idiomatic listen
     (seesaw/listen table
@@ -302,7 +291,7 @@
                       :south (seesaw/flow-panel
                                :align :center
                                :hgap 5
-                               :items [refresh-action open-action close-action])))
+                               :items [refresh-action open-action])))
 
     ;; Initialize table data
     (update-log-list! table)

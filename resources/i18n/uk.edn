@@ -60,6 +60,16 @@
  :about-title "Про PotatoClient"
  :about-text "Клієнт відеопотоку з подвійними H.264 WebSocket потоками.\n\nГоловний процес керує інтерфейсом, підпроцеси обробляють відеопотоки."
  :about-button-close "Закрити"
+ :build-type "Тип збірки"
+ :ok "OK"
+ 
+ ;; Help menu additions
+ :menu-help-documentation "Документація"
+ :menu-help-online-help "Онлайн допомога"
+ :menu-help-shortcuts "Гарячі клавіші"
+ :menu-help-about-tip "Про цю програму"
+ :menu-help-logs-tip "Переглянути журнали програми"
+ :menu-help-tip "Отримати допомогу"
 
  ;; Startup dialog
  :startup-title "Підключення до сервера"

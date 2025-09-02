@@ -60,6 +60,16 @@
  :about-title "About PotatoClient"
  :about-text "Video streaming client with dual H.264 WebSocket streams.\n\nMain process handles UI, subprocesses handle video streams."
  :about-button-close "Close"
+ :build-type "Build Type"
+ :ok "OK"
+ 
+ ;; Help menu additions
+ :menu-help-documentation "Documentation"
+ :menu-help-online-help "Online Help"
+ :menu-help-shortcuts "Keyboard Shortcuts"
+ :menu-help-about-tip "About this application"
+ :menu-help-logs-tip "View application logs"
+ :menu-help-tip "Get help"
 
  ;; Startup dialog
  :startup-title "Connect to Server"
