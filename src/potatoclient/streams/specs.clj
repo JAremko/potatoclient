@@ -1,5 +1,6 @@
 (ns potatoclient.streams.specs
-  "Malli specs for stream IPC messages and validation."
+  "Malli specs for stream IPC messages with strict validation.
+  All specs are closed with no optional fields for maximum validation."
   (:require
     [malli.core :as m]
     [malli.error :as me]
@@ -8,7 +9,7 @@
     [potatoclient.ui.status-bar.messages :as status-msg]))
 
 ;; ============================================================================
-;; Base Specs
+;; Base Types
 ;; ============================================================================
 
 (def StreamType
@@ -21,93 +22,260 @@
   [:enum :debug :info :warn :error])
 
 ;; ============================================================================
-;; Window Event Specs
+;; Message Envelope (common to all messages)
 ;; ============================================================================
 
-(def WindowAction
-  [:enum :minimize :maximize :restore :resize :focus :blur :window-move :close-request])
+(def MessageEnvelope
+  [:map {:closed true}
+   [:msg-type MessageType]
+   [:msg-id :string]
+   [:timestamp :int]])
 
-(def WindowEventMessage
+;; ============================================================================
+;; Window Event Specs - Each action has its own precise spec
+;; ============================================================================
+
+(def WindowResizeEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :window]]
-   [:action WindowAction]
-   ;; Optional fields depending on action
-   [:width {:optional true} :int]
-   [:height {:optional true} :int]
-   [:x {:optional true} :int]
-   [:y {:optional true} :int]
-   [:delta-x {:optional true} :int]
-   [:delta-y {:optional true} :int]])
+   [:action [:= :resize]]
+   [:width :int]
+   [:height :int]
+   [:delta-x :int]
+   [:delta-y :int]])
 
-;; ============================================================================
-;; Gesture Event Specs
-;; ============================================================================
-
-(def GestureType
-  [:enum :tap :double-tap :pan-start :pan-move :pan-stop :wheel-up :wheel-down])
-
-(def GestureEventMessage
+(def WindowMoveEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
-   [:type [:= :gesture]]
-   [:gesture-type GestureType]
-   [:stream-type {:optional true} StreamType]
+   [:type [:= :window]]
+   [:action [:= :window-move]]
    [:x :int]
    [:y :int]
-   [:frame-timestamp {:optional true} :int]
-   ;; Optional NDC coordinates
-   [:ndc-x {:optional true} :double]
-   [:ndc-y {:optional true} :double]
-   ;; Optional for pan gestures
-   [:delta-x {:optional true} :int]
-   [:delta-y {:optional true} :int]
-   ;; Optional for wheel gestures
-   [:scroll-amount {:optional true} :int]])
+   [:delta-x :int]
+   [:delta-y :int]])
 
-;; ============================================================================
-;; Connection Event Specs
-;; ============================================================================
-
-(def ConnectionAction
-  [:enum :connected :disconnected :timeout :reconnecting :connection-error])
-
-(def ConnectionDetails
-  [:map {:closed true}
-   [:url {:optional true} :string]
-   [:stream-id {:optional true} :string]
-   [:code {:optional true} :int]
-   [:reason {:optional true} :string]
-   [:error {:optional true} :string]])
-
-(def ConnectionEventMessage
+(def WindowSimpleEvent
+  "For focus, blur, minimize, maximize, restore, close-request"
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :window]]
+   [:action [:enum :focus :blur :minimize :maximize :restore :close-request]]])
+
+;; ============================================================================
+;; Gesture Event Specs - Each gesture type has its own spec
+;; ============================================================================
+
+(def GestureBaseFields
+  "Common fields for all gesture events"
+  [[:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]])
+
+(def GestureTapEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :tap :double-tap]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:ndc-x :double]
+   [:ndc-y :double]])
+
+(def GesturePanStartStopEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :pan-start :pan-stop]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:ndc-x :double]
+   [:ndc-y :double]])
+
+(def GesturePanMoveEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:= :pan-move]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:delta-x :int]
+   [:delta-y :int]
+   [:ndc-x :double]
+   [:ndc-y :double]])
+
+(def GestureWheelEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :wheel-up :wheel-down]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:scroll-amount :int]
+   [:ndc-x :double]
+   [:ndc-y :double]])
+
+;; For gestures without NDC coordinates (when component size unavailable)
+(def GestureTapEventNoNDC
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :tap :double-tap]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]])
+
+(def GesturePanStartStopEventNoNDC
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :pan-start :pan-stop]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]])
+
+(def GesturePanMoveEventNoNDC
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:= :pan-move]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:delta-x :int]
+   [:delta-y :int]])
+
+(def GestureWheelEventNoNDC
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :gesture]]
+   [:gesture-type [:enum :wheel-up :wheel-down]]
+   [:stream-type StreamType]
+   [:x :int]
+   [:y :int]
+   [:frame-timestamp :int]
+   [:scroll-amount :int]])
+
+;; ============================================================================
+;; Connection Event Specs - Each action has its own spec
+;; ============================================================================
+
+(def ConnectionConnectedEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
    [:timestamp :int]
    [:type [:= :connection]]
-   [:action ConnectionAction]
-   [:details {:optional true} ConnectionDetails]])
+   [:action [:= :connected]]
+   [:details [:map {:closed true}
+              [:url :string]
+              [:stream-id :string]]]])
+
+(def ConnectionDisconnectedEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :connection]]
+   [:action [:= :disconnected]]
+   [:details [:map {:closed true}
+              [:code :int]
+              [:reason :string]
+              [:stream-id :string]]]])
+
+(def ConnectionErrorEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :connection]]
+   [:action [:= :connection-error]]
+   [:details [:map {:closed true}
+              [:error :string]
+              [:stream-id :string]]]])
+
+(def ConnectionSimpleEvent
+  "For timeout, reconnecting actions"
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :connection]]
+   [:action [:enum :timeout :reconnecting]]])
 
 ;; ============================================================================
 ;; Stream State Event Specs
 ;; ============================================================================
 
-(def StreamStateEventMessage
+(def StreamStartedEvent
   [:map {:closed true}
    [:msg-type [:= :event]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
-   [:type [:enum :stream-started :stream-stopped :stream-failed :error]]
-   ;; Optional fields for different event types
-   [:reason {:optional true} :string]
-   [:error {:optional true} :string]
-   [:error-message {:optional true} :string]
-   [:error-code {:optional true} :any]])
+   [:type [:= :stream-started]]])
+
+(def StreamStoppedEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :stream-stopped]]
+   [:reason :string]])
+
+(def StreamFailedEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :stream-failed]]
+   [:error :string]])
+
+(def StreamErrorEvent
+  [:map {:closed true}
+   [:msg-type [:= :event]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:type [:= :error]]
+   [:error-message :string]
+   [:error-code :any]])
 
 ;; ============================================================================
 ;; Log Message Spec
@@ -116,12 +284,21 @@
 (def LogMessage
   [:map {:closed true}
    [:msg-type [:= :log]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
    [:level LogLevel]
    [:message :string]
-   [:process {:optional true} :string]
-   [:data {:optional true} :map]])
+   [:process :string]])
+
+(def LogMessageWithData
+  [:map {:closed true}
+   [:msg-type [:= :log]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:level LogLevel]
+   [:message :string]
+   [:process :string]
+   [:data :map]])
 
 ;; ============================================================================
 ;; Metric Message Spec
@@ -130,58 +307,117 @@
 (def MetricMessage
   [:map {:closed true}
    [:msg-type [:= :metric]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
    [:name :string]
    [:value :any]
-   [:process {:optional true} :string]
-   [:tags {:optional true} [:map-of :string :string]]])
+   [:process :string]])
+
+(def MetricMessageWithTags
+  [:map {:closed true}
+   [:msg-type [:= :metric]]
+   [:msg-id :string]
+   [:timestamp :int]
+   [:name :string]
+   [:value :any]
+   [:process :string]
+   [:tags [:map-of :string :string]]])
 
 ;; ============================================================================
-;; Command Message Spec
+;; Command Message Spec (flexible by nature)
 ;; ============================================================================
 
 (def CommandMessage
-  [:map {:closed true}
+  [:map {:closed false} ; Commands are flexible
    [:msg-type [:= :command]]
-   [:msg-id {:optional true} :string]
+   [:msg-id :string]
    [:timestamp :int]
-   [:action :keyword]
-   ;; Command-specific data is flexible
-   [:* [:any :any]]])
+   [:action :keyword]])
 
 ;; ============================================================================
-;; Event Message Dispatch
+;; Message Dispatch Functions
 ;; ============================================================================
+
+(defn gesture-event-schema
+  "Get the precise schema for a gesture event based on type and NDC presence."
+  [message]
+  (let [has-ndc? (and (:ndc-x message) (:ndc-y message))
+        gesture-type (:gesture-type message)]
+    (case gesture-type
+      (:tap :double-tap)
+      (if has-ndc? GestureTapEvent GestureTapEventNoNDC)
+
+      (:pan-start :pan-stop)
+      (if has-ndc? GesturePanStartStopEvent GesturePanStartStopEventNoNDC)
+
+      :pan-move
+      (if has-ndc? GesturePanMoveEvent GesturePanMoveEventNoNDC)
+
+      (:wheel-up :wheel-down)
+      (if has-ndc? GestureWheelEvent GestureWheelEventNoNDC)
+
+      ;; Unknown gesture type - should never happen
+      [:map {:closed false} [:gesture-type :keyword]])))
+
+(defn window-event-schema
+  "Get the precise schema for a window event based on action."
+  [message]
+  (case (:action message)
+    :resize WindowResizeEvent
+    :window-move WindowMoveEvent
+    (:focus :blur :minimize :maximize :restore :close-request) WindowSimpleEvent
+    ;; Unknown action - should never happen
+    [:map {:closed false} [:action :keyword]]))
+
+(defn connection-event-schema
+  "Get the precise schema for a connection event based on action."
+  [message]
+  (case (:action message)
+    :connected ConnectionConnectedEvent
+    :disconnected ConnectionDisconnectedEvent
+    :connection-error ConnectionErrorEvent
+    (:timeout :reconnecting) ConnectionSimpleEvent
+    ;; Unknown action
+    [:map {:closed false} [:action :keyword]]))
 
 (defn event-message-schema
   "Get the appropriate schema for an event message based on its type."
   [message]
   (case (:type message)
-    :window WindowEventMessage
-    :gesture GestureEventMessage
-    :connection ConnectionEventMessage
-    (:stream-started :stream-stopped :stream-failed :error) StreamStateEventMessage
-    ;; Unknown event type - use a generic schema
-    [:map {:closed false}
-     [:msg-type [:= :event]]
-     [:type :keyword]]))
+    :window (window-event-schema message)
+    :gesture (gesture-event-schema message)
+    :connection (connection-event-schema message)
+    :stream-started StreamStartedEvent
+    :stream-stopped StreamStoppedEvent
+    :stream-failed StreamFailedEvent
+    :error StreamErrorEvent
+    ;; Unknown event type
+    [:map {:closed false} [:type :keyword]]))
 
-;; ============================================================================
-;; Message Dispatch
-;; ============================================================================
+(defn log-message-schema
+  "Get the appropriate schema for a log message."
+  [message]
+  (if (:data message)
+    LogMessageWithData
+    LogMessage))
+
+(defn metric-message-schema
+  "Get the appropriate schema for a metric message."
+  [message]
+  (if (:tags message)
+    MetricMessageWithTags
+    MetricMessage))
 
 (defn message-schema
   "Get the appropriate schema for a message based on its msg-type."
   [message]
   (case (:msg-type message)
     :event (event-message-schema message)
-    :log LogMessage
-    :metric MetricMessage
+    :log (log-message-schema message)
+    :metric (metric-message-schema message)
     :command CommandMessage
     ;; Unknown message type
-    [:map {:closed false}
-     [:msg-type :keyword]]))
+    [:map {:closed false} [:msg-type :keyword]]))
 
 ;; ============================================================================
 ;; Validation Functions
@@ -200,12 +436,15 @@
             error-msg (str "Stream IPC validation failed: "
                            (name source) " - "
                            (:msg-type message) "/"
-                           (:type message))]
+                           (:type message) "/"
+                           (or (:action message) (:gesture-type message)))]
         ;; Log the full details
         (logging/log-error {:id :stream/invalid-message
                             :source source
                             :msg-type (:msg-type message)
                             :event-type (:type message)
+                            :action (:action message)
+                            :gesture-type (:gesture-type message)
                             :errors errors
                             :message message})
         ;; Report to status bar - this is a bug that needs attention
@@ -213,17 +452,16 @@
     valid?))
 
 (defn validate-and-log
-  "Validate a message and log it appropriately based on environment.
-  In dev mode, logs all validation failures.
-  In production, only logs critical validation failures."
+  "Validate a message and log it appropriately.
+  In dev mode, also logs to console for visibility."
   [message stream-type]
   (let [valid? (validate-message message stream-type)]
     (when (and (not valid?)
                (not (potatoclient.runtime/release-build?)))
       ;; In dev mode, also log to console for visibility
       (println (str "[VALIDATION ERROR] Stream: " (name stream-type)
-                    " Message type: " (:msg-type message)
-                    " Event type: " (:type message))))
+                    " Message: " (:msg-type message) "/" (:type message)
+                    "/" (or (:action message) (:gesture-type message)))))
     valid?))
 
 ;; ============================================================================
@@ -235,15 +473,35 @@
   {:stream/type StreamType
    :stream/message-type MessageType
    :stream/log-level LogLevel
-   :stream/window-action WindowAction
-   :stream/window-event WindowEventMessage
-   :stream/gesture-type GestureType
-   :stream/gesture-event GestureEventMessage
-   :stream/connection-action ConnectionAction
-   :stream/connection-event ConnectionEventMessage
-   :stream/stream-state-event StreamStateEventMessage
+   ;; Window events
+   :stream/window-resize WindowResizeEvent
+   :stream/window-move WindowMoveEvent
+   :stream/window-simple WindowSimpleEvent
+   ;; Gesture events with NDC
+   :stream/gesture-tap GestureTapEvent
+   :stream/gesture-pan-start-stop GesturePanStartStopEvent
+   :stream/gesture-pan-move GesturePanMoveEvent
+   :stream/gesture-wheel GestureWheelEvent
+   ;; Gesture events without NDC
+   :stream/gesture-tap-no-ndc GestureTapEventNoNDC
+   :stream/gesture-pan-start-stop-no-ndc GesturePanStartStopEventNoNDC
+   :stream/gesture-pan-move-no-ndc GesturePanMoveEventNoNDC
+   :stream/gesture-wheel-no-ndc GestureWheelEventNoNDC
+   ;; Connection events
+   :stream/connection-connected ConnectionConnectedEvent
+   :stream/connection-disconnected ConnectionDisconnectedEvent
+   :stream/connection-error ConnectionErrorEvent
+   :stream/connection-simple ConnectionSimpleEvent
+   ;; Stream state events
+   :stream/stream-started StreamStartedEvent
+   :stream/stream-stopped StreamStoppedEvent
+   :stream/stream-failed StreamFailedEvent
+   :stream/stream-error StreamErrorEvent
+   ;; Other messages
    :stream/log-message LogMessage
+   :stream/log-message-with-data LogMessageWithData
    :stream/metric-message MetricMessage
+   :stream/metric-message-with-tags MetricMessageWithTags
    :stream/command-message CommandMessage})
 
 ;; Register all specs with the global registry
