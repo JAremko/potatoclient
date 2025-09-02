@@ -148,7 +148,12 @@
                       :icon (theme/key->icon :file-save)
                       :handler (fn [_]
                                  (copy-to-clipboard raw-content)
-                                 (seesaw/alert parent-frame (i18n/tr :log-viewer-copied))))]
+                                 ;; Simple modal dialog - focus returns automatically
+                                 (javax.swing.JOptionPane/showMessageDialog
+                                   frame
+                                   (i18n/tr :log-viewer-copied)
+                                   (i18n/tr :log-viewer-copy)
+                                   javax.swing.JOptionPane/INFORMATION_MESSAGE)))]
     ;; Build content using idiomatic border-panel
     (seesaw/config! frame :content
                     (seesaw/border-panel
