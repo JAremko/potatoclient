@@ -45,7 +45,7 @@
    [:actual_space_time :state/actual-space-time]])
 
 ;; Register the spec for global use
-(registry/register! :state/root jon-gui-state-spec)
+(registry/register-spec! :state/root jon-gui-state-spec)
 
 ;; Helper function to validate state messages
 (defn validate-state

@@ -213,4 +213,4 @@
    [:scan_update_node scan-update-node-spec]
    [:scan_add_node scan-add-node-spec]])
 
-(registry/register! :cmd/rotary rotary-command-spec)
+(registry/register-spec! :cmd/rotary rotary-command-spec)

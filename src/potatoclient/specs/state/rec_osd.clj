@@ -19,4 +19,4 @@
    [:day_crosshair_offset_horizontal :proto/int32]
    [:day_crosshair_offset_vertical :proto/int32]])
 
-(registry/register! :state/rec-osd rec-osd-message-spec)
+(registry/register-spec! :state/rec-osd rec-osd-message-spec)

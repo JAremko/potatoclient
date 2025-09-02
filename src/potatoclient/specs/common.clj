@@ -56,17 +56,17 @@
    [:< 360.0]])
 
 ;; Register angle specs
-(registry/register! :angle/azimuth azimuth-spec)
-(registry/register! :angle/elevation elevation-spec)
-(registry/register! :angle/bank bank-spec)
+(registry/register-spec! :angle/azimuth azimuth-spec)
+(registry/register-spec! :angle/elevation elevation-spec)
+(registry/register-spec! :angle/bank bank-spec)
 ;; Special case for sun elevation (proto bug)
-(registry/register! :angle/sun-elevation sun-elevation-spec)
+(registry/register-spec! :angle/sun-elevation sun-elevation-spec)
 ;; Offset angles
-(registry/register! :angle/offset-azimuth offset-azimuth-spec)
-(registry/register! :angle/offset-elevation offset-elevation-spec)
-(registry/register! :angle/relative-azimuth relative-azimuth-spec)
-(registry/register! :angle/relative-elevation relative-elevation-spec)
-(registry/register! :angle/magnetic-declination magnetic-declination-spec)
+(registry/register-spec! :angle/offset-azimuth offset-azimuth-spec)
+(registry/register-spec! :angle/offset-elevation offset-elevation-spec)
+(registry/register-spec! :angle/relative-azimuth relative-azimuth-spec)
+(registry/register-spec! :angle/relative-elevation relative-elevation-spec)
+(registry/register-spec! :angle/magnetic-declination magnetic-declination-spec)
 
 ;; ====================================================================
 ;; Speed specs (normalized 0-1)
@@ -75,7 +75,7 @@
   [:and [:double {:min 0.0 :max 1.0}]
    [:> 0.0]])
 
-(registry/register! :speed/normalized normalized-speed-spec)
+(registry/register-spec! :speed/normalized normalized-speed-spec)
 
 ;; ====================================================================
 ;; Range specs
@@ -96,11 +96,11 @@
   [:double {:min 1.0 :max 100.0}])
 
 ;; Register range specs
-(registry/register! :range/normalized normalized-range-spec)
-(registry/register! :range/normalized-offset normalized-offset-spec)
-(registry/register! :range/zoom zoom-level-spec)
-(registry/register! :range/focus focus-level-spec)
-(registry/register! :range/digital-zoom digital-zoom-spec)
+(registry/register-spec! :range/normalized normalized-range-spec)
+(registry/register-spec! :range/normalized-offset normalized-offset-spec)
+(registry/register-spec! :range/zoom zoom-level-spec)
+(registry/register-spec! :range/focus focus-level-spec)
+(registry/register-spec! :range/digital-zoom digital-zoom-spec)
 
 ;; ====================================================================
 ;; GPS Position specs (EXACT buf.validate constraints)
@@ -119,9 +119,9 @@
   [:double {:min -430.0 :max 100000.0}])
 
 ;; Register position specs
-(registry/register! :position/latitude latitude-spec)
-(registry/register! :position/longitude longitude-spec)
-(registry/register! :position/altitude altitude-spec)
+(registry/register-spec! :position/latitude latitude-spec)
+(registry/register-spec! :position/longitude longitude-spec)
+(registry/register-spec! :position/altitude altitude-spec)
 
 ;; Temperature specs
 ;; Temperature specs
@@ -129,22 +129,22 @@
   [:double {:min -273.15 :max 150.0}])
 
 ;; Register temperature specs
-(registry/register! :temperature/component component-temperature-spec)
+(registry/register-spec! :temperature/component component-temperature-spec)
 
 ;; Distance specs
 (def distance-decimeters-spec
   [:double {:min 0.0 :max 50000.0}])
 
 ;; Register distance specs
-(registry/register! :distance/meters distance-decimeters-spec)
+(registry/register-spec! :distance/meters distance-decimeters-spec)
 
 ;; Screen coordinate specs (NDC - Normalized Device Coordinates)
 (def ndc-coord-clamped-spec
   [:double {:min -1.0 :max 1.0}])
 
 ;; Register NDC specs
-(registry/register! :screen/ndc-x ndc-coord-clamped-spec)
-(registry/register! :screen/ndc-y ndc-coord-clamped-spec)
+(registry/register-spec! :screen/ndc-x ndc-coord-clamped-spec)
+(registry/register-spec! :screen/ndc-y ndc-coord-clamped-spec)
 
 ;; Pixel coordinate specs
 (def pixel-coord-spec
@@ -158,10 +158,10 @@
   [:int {:min -1080 :max 1080}])
 
 ;; Register pixel specs
-(registry/register! :screen/pixel-x pixel-coord-spec)
-(registry/register! :screen/pixel-y pixel-coord-spec)
-(registry/register! :screen/pixel-offset-x pixel-offset-x-spec)
-(registry/register! :screen/pixel-offset-y pixel-offset-y-spec)
+(registry/register-spec! :screen/pixel-x pixel-coord-spec)
+(registry/register-spec! :screen/pixel-y pixel-coord-spec)
+(registry/register-spec! :screen/pixel-offset-x pixel-offset-x-spec)
+(registry/register-spec! :screen/pixel-offset-y pixel-offset-y-spec)
 
 ;; Integer type specs for protobuf compatibility
 ;; int32: -2147483648 to 2147483647
@@ -200,18 +200,18 @@
   [:int {:min 0 :max 9223372036854775807}])
 
 ;; Register integer specs
-(registry/register! :nat-int nat-int-spec)
-(registry/register! :proto/int32 int32-spec)
-(registry/register! :proto/uint32 uint32-spec)
-(registry/register! :proto/int32-positive int32-positive-spec)
-(registry/register! :proto/protocol-version protocol-version-spec)
-(registry/register! :proto/session-id session-id-spec)
+(registry/register-spec! :nat-int nat-int-spec)
+(registry/register-spec! :proto/int32 int32-spec)
+(registry/register-spec! :proto/uint32 uint32-spec)
+(registry/register-spec! :proto/int32-positive int32-positive-spec)
+(registry/register-spec! :proto/protocol-version protocol-version-spec)
+(registry/register-spec! :proto/session-id session-id-spec)
 
 ;; Register time specs
-(registry/register! :time/unix-timestamp unix-timestamp-spec)
-(registry/register! :time/unix-timestamp-int64 unix-timestamp-int64-spec)
-(registry/register! :time/duration-seconds unix-timestamp-spec)
-(registry/register! :time/frame-time frame-time-spec)
+(registry/register-spec! :time/unix-timestamp unix-timestamp-spec)
+(registry/register-spec! :time/unix-timestamp-int64 unix-timestamp-int64-spec)
+(registry/register-spec! :time/duration-seconds unix-timestamp-spec)
+(registry/register-spec! :time/frame-time frame-time-spec)
 
 ;; Percentage specs
 ;; Percentage specs (cpu_load, gpu_load, etc.)
@@ -219,7 +219,7 @@
   [:double {:min 0.0 :max 100.0}])
 
 ;; Register percentage spec
-(registry/register! :percentage percentage-spec)
+(registry/register-spec! :percentage percentage-spec)
 
 ;; ====================================================================
 ;; Enum specs (Using keywords as in Pronto EDN output)
@@ -380,25 +380,25 @@
    :JON_GUI_DATA_REC_OSD_SCREEN_LRF_RESULT_SIMPLIFIED])
 
 ;; Register enum specs
-(registry/register! :enum/client-type client-type-enum-spec)
-(registry/register! :proto/client-type client-type-enum-spec) ; Also register as proto/client-type
-(registry/register! :enum/gps-fix-type gps-fix-type-enum-spec)
-(registry/register! :enum/rotary-direction rotary-direction-enum-spec)
-(registry/register! :enum/rotary-mode rotary-mode-enum-spec)
-(registry/register! :enum/video-channel video-channel-enum-spec)
-(registry/register! :enum/fx-mode-day fx-mode-day-enum-spec)
-(registry/register! :enum/fx-mode-heat fx-mode-heat-enum-spec)
-(registry/register! :enum/heat-filter heat-filter-enum-spec)
-(registry/register! :enum/heat-agc-mode heat-agc-mode-enum-spec)
-(registry/register! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
-(registry/register! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
-(registry/register! :enum/system-localizations system-localizations-enum-spec)
-(registry/register! :enum/gps-units gps-units-enum-spec)
-(registry/register! :enum/compass-units compass-units-enum-spec)
-(registry/register! :enum/accumulator-state accumulator-state-enum-spec)
-(registry/register! :enum/time-formats time-formats-enum-spec)
-(registry/register! :enum/lrf-laser-pointer-modes lrf-laser-pointer-modes-enum-spec)
-(registry/register! :enum/rec-osd-screen rec-osd-screen-enum-spec)
+(registry/register-spec! :enum/client-type client-type-enum-spec)
+(registry/register-spec! :proto/client-type client-type-enum-spec) ; Also register as proto/client-type
+(registry/register-spec! :enum/gps-fix-type gps-fix-type-enum-spec)
+(registry/register-spec! :enum/rotary-direction rotary-direction-enum-spec)
+(registry/register-spec! :enum/rotary-mode rotary-mode-enum-spec)
+(registry/register-spec! :enum/video-channel video-channel-enum-spec)
+(registry/register-spec! :enum/fx-mode-day fx-mode-day-enum-spec)
+(registry/register-spec! :enum/fx-mode-heat fx-mode-heat-enum-spec)
+(registry/register-spec! :enum/heat-filter heat-filter-enum-spec)
+(registry/register-spec! :enum/heat-agc-mode heat-agc-mode-enum-spec)
+(registry/register-spec! :enum/lrf-scan-modes lrf-scan-modes-enum-spec)
+(registry/register-spec! :enum/compass-calibrate-status compass-calibrate-status-enum-spec)
+(registry/register-spec! :enum/system-localizations system-localizations-enum-spec)
+(registry/register-spec! :enum/gps-units gps-units-enum-spec)
+(registry/register-spec! :enum/compass-units compass-units-enum-spec)
+(registry/register-spec! :enum/accumulator-state accumulator-state-enum-spec)
+(registry/register-spec! :enum/time-formats time-formats-enum-spec)
+(registry/register-spec! :enum/lrf-laser-pointer-modes lrf-laser-pointer-modes-enum-spec)
+(registry/register-spec! :enum/rec-osd-screen rec-osd-screen-enum-spec)
 
 ;; ====================================================================
 ;; Composite specs (CLOSED MAPS - catch typos and invalid keys)
@@ -426,10 +426,10 @@
    [:y :screen/pixel-y]])
 
 ;; Register composite specs
-(registry/register! :composite/gps-position gps-position-spec)
-(registry/register! :composite/compass-orientation compass-orientation-spec)
-(registry/register! :composite/screen-point-ndc screen-point-ndc-spec)
-(registry/register! :composite/screen-point-pixel screen-point-pixel-spec)
+(registry/register-spec! :composite/gps-position gps-position-spec)
+(registry/register-spec! :composite/compass-orientation compass-orientation-spec)
+(registry/register-spec! :composite/screen-point-ndc screen-point-ndc-spec)
+(registry/register-spec! :composite/screen-point-pixel screen-point-pixel-spec)
 
 ;; ====================================================================
 ;; Common message specs
@@ -449,7 +449,7 @@
   [:map {:closed true}])
 
 ;; Register common message specs
-(registry/register! :common/meteo meteo-spec)
+(registry/register-spec! :common/meteo meteo-spec)
 
 ;; Register common command specs
-(registry/register! :cmd/empty empty-command-spec)
+(registry/register-spec! :cmd/empty empty-command-spec)

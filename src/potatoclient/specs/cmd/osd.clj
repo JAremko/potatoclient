@@ -20,4 +20,4 @@
    [:enable_day_osd :cmd/empty]
    [:disable_day_osd :cmd/empty]])
 
-(registry/register! :cmd/osd osd-command-spec)
+(registry/register-spec! :cmd/osd osd-command-spec)

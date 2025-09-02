@@ -115,4 +115,4 @@
    [:set_clahe_level set-clahe-level-spec]
    [:shift_clahe_level shift-clahe-level-spec]])
 
-(registry/register! :cmd/heat-camera heat-camera-command-spec)
+(registry/register-spec! :cmd/heat-camera heat-camera-command-spec)

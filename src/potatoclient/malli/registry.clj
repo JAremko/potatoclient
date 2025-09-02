@@ -16,12 +16,6 @@
   (swap! registry-atom assoc spec-key spec))
 
 (defn
-  register!
-  "DEPRECATED: Use register-spec! instead"
-  [spec-key spec]
-  (register-spec! spec-key spec))
-
-(defn
   setup-global-registry!
   "Configure Malli to use a global registry for all specs.\n   This ensures specs can be reused across namespaces.\n   Automatically includes the :oneof custom schema."
   [& custom-schemas]

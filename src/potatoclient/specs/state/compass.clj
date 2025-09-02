@@ -18,4 +18,4 @@
    [:magneticDeclination :angle/magnetic-declination]
    [:calibrating :boolean]])
 
-(registry/register! :state/compass compass-message-spec)
+(registry/register-spec! :state/compass compass-message-spec)

@@ -6,9 +6,17 @@
   operations."
   (:import [java.util.concurrent ScheduledExecutorService Executors TimeUnit]))
 
+(def ^:private default-debounce-delay-ms
+  "Default delay in milliseconds for debounced updates."
+  300)
+
+(def ^:private thread-pool-size
+  "Number of threads in the scheduled executor pool."
+  2)
+
 (def ^:private executor
   "Shared scheduled executor for all debounce timers."
-  (Executors/newScheduledThreadPool 2))
+  (Executors/newScheduledThreadPool thread-pool-size))
 
 (defn debounce-atom
   "Creates a debounced view of a source atom.
@@ -36,7 +44,7 @@
     ;; after 500ms of no changes"
   {:malli/schema [:=> [:cat [:fn #(instance? clojure.lang.IDeref %)] [:? :nat-int]]
                   [:fn #(instance? clojure.lang.IDeref %)]]}
-  ([source-atom] (debounce-atom source-atom 300))
+  ([source-atom] (debounce-atom source-atom default-debounce-delay-ms))
   ([source-atom delay-ms]
    (let [debounced (atom @source-atom)
          scheduled-task (atom nil)]

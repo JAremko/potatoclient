@@ -30,4 +30,4 @@
    [:geodesic_mode_enable :cmd/empty]
    [:geodesic_mode_disable :cmd/empty]])
 
-(registry/register! :cmd/system system-command-spec)
+(registry/register-spec! :cmd/system system-command-spec)

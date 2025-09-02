@@ -6,6 +6,16 @@
     [potatoclient.logging :as logging]
     [potatoclient.ui.status-bar.messages :as msg]))
 
+(defn- resolve-schema
+  "Resolve a spec to a Malli schema.
+   If spec is a keyword, looks it up in the registry.
+   Otherwise returns the spec as-is (assuming it's already a schema)."
+  {:malli/schema [:=> [:cat :any] :any]}
+  [spec]
+  (if (keyword? spec)
+    (m/schema spec)
+    spec))
+
 (defn validate
   "Validate a value against a Malli spec. Reports validation errors to status bar and logs.
    Returns true if valid, false if invalid.
@@ -20,9 +30,7 @@
    (validate [:map [:x :int]] {:x 1}) ;; => true"
   {:malli/schema [:=> [:cat :any :any] :boolean]}
   [spec value]
-  (let [schema (if (keyword? spec)
-                 (m/schema spec)
-                 spec)]
+  (let [schema (resolve-schema spec)]
     (if (m/validate schema value)
       true
       (do
@@ -46,9 +54,7 @@
                                         [:valid? :boolean]
                                         [:errors {:optional true} :any]]]}
   [spec value]
-  (let [schema (if (keyword? spec)
-                 (m/schema spec)
-                 spec)]
+  (let [schema (resolve-schema spec)]
     (if (m/validate schema value)
       {:valid? true}
       (let [explanation (m/explain schema value)
@@ -69,17 +75,13 @@
    Silent version of validate."
   {:malli/schema [:=> [:cat :any :any] :boolean]}
   [spec value]
-  (let [schema (if (keyword? spec)
-                 (m/schema spec)
-                 spec)]
+  (let [schema (resolve-schema spec)]
     (m/validate schema value)))
 
 (defn explain-validation
   "Get human-readable validation errors without reporting to status bar."
   {:malli/schema [:=> [:cat :any :any] [:maybe :any]]}
   [spec value]
-  (let [schema (if (keyword? spec)
-                 (m/schema spec)
-                 spec)]
+  (let [schema (resolve-schema spec)]
     (when-not (m/validate schema value)
       (me/humanize (m/explain schema value)))))

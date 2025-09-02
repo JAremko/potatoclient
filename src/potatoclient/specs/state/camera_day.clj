@@ -23,4 +23,4 @@
    [:digital_zoom_level [:double {:min 1.0 :max 100000.0}]]  ; double in proto
    [:clahe_level :range/normalized]])  ; double in proto (0-1)
 
-(registry/register! :state/camera-day camera-day-message-spec)
+(registry/register-spec! :state/camera-day camera-day-message-spec)

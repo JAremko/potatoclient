@@ -19,4 +19,4 @@
    [:altitude :position/altitude]  ; double in proto
    [:timestamp :time/unix-timestamp]])
 
-(registry/register! :state/actual-space-time actual-space-time-message-spec)
+(registry/register-spec! :state/actual-space-time actual-space-time-message-spec)

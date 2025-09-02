@@ -17,4 +17,4 @@
    [:target_bank :angle/bank]
    [:status :enum/compass-calibrate-status]])
 
-(registry/register! :state/compass-calibration compass-calibration-message-spec)
+(registry/register-spec! :state/compass-calibration compass-calibration-message-spec)

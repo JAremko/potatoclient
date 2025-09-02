@@ -13,7 +13,7 @@
    [:green [:int {:min 0 :max 255}]]
    [:blue [:int {:min 0 :max 255}]]])
 
-(registry/register! :lrf/rgb-color rgb-color-spec)
+(registry/register-spec! :lrf/rgb-color rgb-color-spec)
 
 ;; JonGuiDataTarget message spec
 ;; All 21 fields from proto definition
@@ -42,7 +42,7 @@
    [:uuid_part3 :proto/int32]
    [:uuid_part4 :proto/int32]])
 
-(registry/register! :lrf/target lrf-target-spec)
+(registry/register-spec! :lrf/target lrf-target-spec)
 
 ;; JonGuiDataLrf message spec
 ;; All 7 fields from proto definition
@@ -57,4 +57,4 @@
    [:fogModeEnabled :boolean]
    [:is_refining :boolean]])
 
-(registry/register! :state/lrf lrf-message-spec)
+(registry/register-spec! :state/lrf lrf-message-spec)

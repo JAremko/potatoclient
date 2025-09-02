@@ -40,4 +40,4 @@
    [:calibrate_cencel :cmd/empty] ; Keep proto typo
    [:get_meteo :cmd/empty]])
 
-(registry/register! :cmd/compass compass-command-spec)
+(registry/register-spec! :cmd/compass compass-command-spec)

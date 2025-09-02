@@ -32,4 +32,4 @@
    [:refine_on :cmd/empty]
    [:refine_off :cmd/empty]])
 
-(registry/register! :cmd/lrf lrf-command-spec)
+(registry/register-spec! :cmd/lrf lrf-command-spec)

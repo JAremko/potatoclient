@@ -16,4 +16,4 @@
    [:zone_id :proto/int32]
    [:use_manual_time :boolean]])
 
-(registry/register! :state/time time-message-spec)
+(registry/register-spec! :state/time time-message-spec)

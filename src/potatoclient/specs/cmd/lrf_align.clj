@@ -33,5 +33,5 @@
    [:day offsets-spec]
    [:heat offsets-spec]])
 
-(registry/register! :cmd/lrf-align lrf-align-command-spec)
-(registry/register! :cmd/lrf_calib lrf-align-command-spec) ; Alternative name
+(registry/register-spec! :cmd/lrf-align lrf-align-command-spec)
+(registry/register-spec! :cmd/lrf_calib lrf-align-command-spec) ; Alternative name

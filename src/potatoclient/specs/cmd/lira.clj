@@ -33,4 +33,4 @@
   [:oneof
    [:refine_target refine-target-spec]])
 
-(registry/register! :cmd/lira lira-command-spec)
+(registry/register-spec! :cmd/lira lira-command-spec)

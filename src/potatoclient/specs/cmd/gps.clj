@@ -25,4 +25,4 @@
    [:set_use_manual_position set-use-manual-position-spec]
    [:get_meteo :cmd/empty]])
 
-(registry/register! :cmd/gps gps-command-spec)
+(registry/register-spec! :cmd/gps gps-command-spec)

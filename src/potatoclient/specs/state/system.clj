@@ -34,4 +34,4 @@
    [:cv_dumping :boolean]
    [:recognition_mode :boolean]])
 
-(registry/register! :state/system system-message-spec)
+(registry/register-spec! :state/system system-message-spec)

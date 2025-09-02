@@ -18,7 +18,7 @@
    [:linger [:double {:min 0.0}]]
    [:speed :speed/normalized]])
 
-(registry/register! :rotary/scan-node scan-node-spec)
+(registry/register-spec! :rotary/scan-node scan-node-spec)
 
 ;; JonGuiDataRotary message spec
 ;; All 17 fields from proto definition
@@ -44,4 +44,4 @@
    [:sun_elevation :angle/sun-elevation]  ; double in proto (0-360 due to proto constraint bug)
    [:current_scan_node :rotary/scan-node]])
 
-(registry/register! :state/rotary rotary-message-spec)
+(registry/register-spec! :state/rotary rotary-message-spec)

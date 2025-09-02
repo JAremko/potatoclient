@@ -17,4 +17,4 @@
    [:turn_off :cmd/empty]
    [:get_meteo :cmd/empty]])
 
-(registry/register! :cmd/day-cam-glass-heater day-cam-glass-heater-command-spec)
+(registry/register-spec! :cmd/day-cam-glass-heater day-cam-glass-heater-command-spec)

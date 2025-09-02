@@ -37,4 +37,4 @@
    [:recognition_mode_enable :cmd/empty]
    [:recognition_mode_disable :cmd/empty]])
 
-(registry/register! :cmd/cv cv-command-spec)
+(registry/register-spec! :cmd/cv cv-command-spec)

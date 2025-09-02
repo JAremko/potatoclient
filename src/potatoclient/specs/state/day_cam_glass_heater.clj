@@ -14,4 +14,4 @@
    [:temperature [:double {:min -273.15 :max 660.32}]]
    [:status :boolean]])
 
-(registry/register! :state/day-cam-glass-heater day-cam-glass-heater-message-spec)
+(registry/register-spec! :state/day-cam-glass-heater day-cam-glass-heater-message-spec)

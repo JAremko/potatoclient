@@ -52,7 +52,7 @@
    [:lira :cmd/lira]])
 
 ;; Register the spec
-(registry/register! :cmd/root jon-shared-cmd-root-spec)
+(registry/register-spec! :cmd/root jon-shared-cmd-root-spec)
 
 ;; Spec for just the payload (one of the oneof fields, without protocol fields)
 ;; This is what command functions accept as input
@@ -75,4 +75,4 @@
    [:map {:closed true} [:lira :cmd/lira]]])
 
 ;; Register the payload spec
-(registry/register! :cmd/payload cmd-payload-spec)
+(registry/register-spec! :cmd/payload cmd-payload-spec)

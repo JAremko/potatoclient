@@ -19,4 +19,4 @@
    [:fix_type :enum/gps-fix-type]
    [:use_manual :boolean]])
 
-(registry/register! :state/gps gps-message-spec)
+(registry/register-spec! :state/gps gps-message-spec)

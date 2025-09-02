@@ -111,4 +111,4 @@
    [:set_clahe_level set-clahe-level-spec]
    [:shift_clahe_level shift-clahe-level-spec]])
 
-(registry/register! :cmd/day-camera day-camera-command-spec)
+(registry/register-spec! :cmd/day-camera day-camera-command-spec)

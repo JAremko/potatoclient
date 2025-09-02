@@ -483,7 +483,7 @@
   "Register all stream specs with the global registry."
   []
   (doseq [[k spec] stream-specs]
-    (registry/register! k spec)))
+    (registry/register-spec! k spec)))
 
 ;; Auto-register on namespace load
 (register-specs!)

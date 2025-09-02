@@ -117,8 +117,20 @@
                                         :errors (m/explain ::specs/config migrated-data)}
                                  :msg "Invalid config detected, using minimal config"})
               minimal-config)))
-        (catch Exception e
-          (logging/log-error {:msg (str "Error loading config: " (.getMessage ^Exception e))})
+        (catch java.io.IOException e
+          (logging/log-error {:msg "Config file read error"
+                              :error (.getMessage ^Exception e)
+                              :file (.getPath config-file)})
+          minimal-config)
+        (catch clojure.lang.EdnReader$ReaderException e
+          (logging/log-error {:msg "Invalid config file format (EDN parsing failed)"
+                              :error (.getMessage ^Exception e)
+                              :file (.getPath config-file)})
+          minimal-config)
+        (catch RuntimeException e
+          (logging/log-error {:msg "Unexpected error loading config"
+                              :error (.getMessage ^Exception e)
+                              :file (.getPath config-file)})
           minimal-config))
       minimal-config)))
 
@@ -132,8 +144,19 @@
       (let [config-file (get-config-file)]
         (spit config-file (pr-str config)))
       true
+      (catch java.io.IOException e
+        (logging/log-error {:msg "Failed to write config file"
+                            :error (.getMessage ^Exception e)
+                            :file (.getPath (get-config-file))})
+        false)
+      (catch SecurityException e
+        (logging/log-error {:msg "Permission denied saving config"
+                            :error (.getMessage ^Exception e)
+                            :file (.getPath (get-config-file))})
+        false)
       (catch Exception e
-        (logging/log-error {:msg (str "Error saving config: " (.getMessage ^Exception e))})
+        (logging/log-error {:msg "Unexpected error saving config"
+                            :error (.getMessage ^Exception e)})
         false))
     (do
       (logging/log-error {:msg (str "Invalid config, not saving: " (m/explain ::specs/config config))})

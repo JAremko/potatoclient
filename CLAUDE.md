@@ -155,7 +155,7 @@ Prompt: "Check translation completeness"
 
 **Registry Management:**
 - Global registry at `potatoclient.malli.registry`
-- Common specs registered for reuse
+- Common specs registered for reuse via `register-spec!`
 - Custom `:oneof` schema for protobuf oneOf fields
 - All map specs use `{:closed true}` for strict validation
 
@@ -299,6 +299,13 @@ To ensure widgets display current atom values, trigger a change after binding:
 - **Icon Caching**: Icons loaded once per theme, cached in-memory
 - **Debounced Status Bar**: 100ms delay prevents update flooding
 - **Reduced Logging**: Removed debug logs for successful operations
+- **Extracted Constants**: Replaced magic numbers with named constants (debounce delays, thread pool sizes)
+
+### Code Quality Improvements
+- **Validation Helper**: Extracted `resolve-schema` helper to reduce duplication
+- **Better Exception Handling**: Specific catch blocks for IOException, EdnReader exceptions, and SecurityException
+- **Removed Deprecated Code**: Deleted deprecated `register!` function, updated all usages to `register-spec!`
+- **Cleaner Abstractions**: Common patterns extracted into reusable functions
 
 ### Structure Cleanup
 - **Integrated Shared Module**: 88 files merged into main project
@@ -316,6 +323,7 @@ To ensure widgets display current atom values, trigger a change after binding:
 - **Fixed Status Bar Tests**: Corrected state initialization checks
 - **Fixed Bind Group Tests**: Added proper Seesaw binding initialization
 - **Fixed Negative Tests**: Updated to use valid protobuf field names with Malli generators
+- **All Tests Passing**: 341 tests with 2925 assertions, 0 failures
 
 ## Project Principles
 
