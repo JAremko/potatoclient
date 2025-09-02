@@ -165,12 +165,15 @@ Prompt: "Check translation completeness"
 ```clojure
 ;; potatoclient.state/app-state
 {:ui {:status {...}         ; Status bar state
-      :theme :dark          ; Current theme
+      :theme :sol-dark      ; Current theme (:sol-dark or :sol-light)
+      :locale :english      ; Current locale (:english or :ukrainian)
       :tab-properties {...} ; Tab window states
-      :fullscreen false}
- :server-state {...}        ; Real-time state from server
- :config {...}              ; User configuration
- :processes {...}}          ; Process states
+      :fullscreen false}    ; Fullscreen mode
+ :server-state {...}        ; Real-time state from server (or nil)
+ :connection {...}          ; Connection state and metrics
+ :processes {...}           ; Process states
+ :stream-processes {...}    ; Stream process states
+ :session {...}}            ; Session information
 ```
 
 **State Ingress:**
@@ -219,6 +222,13 @@ The status bar provides immediate feedback for all operations:
   (bg/bind-group :temp my-atom target))
 ```
 
+**Important Note:** Seesaw bindings don't immediately propagate initial values.
+To ensure widgets display current atom values, trigger a change after binding:
+```clojure
+(bg/bind-group-property :ui-group my-atom label :text)
+(reset! my-atom @my-atom)  ; Force initial propagation
+```
+
 **Debouncing** (`potatoclient.ui.debounce`):
 ```clojure
 (require '[potatoclient.ui.debounce :as debounce])
@@ -256,7 +266,7 @@ The status bar provides immediate feedback for all operations:
 ### Code Quality Standards
 
 1. **Malli Schemas Required** - Every function must have `:malli/schema`
-2. **Comprehensive Tests** - 700+ tests, organized into suites
+2. **Comprehensive Tests** - 340+ tests with 2900+ assertions, organized into suites
 3. **Clear Documentation** - Docstrings for all public functions
 4. **No Legacy Code** - Pre-alpha, make breaking changes when needed
 
@@ -300,6 +310,12 @@ The status bar provides immediate feedback for all operations:
 - **Fixed Validation**: Proper `:state/root` schema registration
 - **Optional Fields**: Made `target_color` optional in LRF spec
 - **Throttled Updates**: State changes batched every 100ms
+- **Locale Storage**: Refactored to use keywords (:english/:ukrainian) instead of strings
+
+### Testing Improvements
+- **Fixed Status Bar Tests**: Corrected state initialization checks
+- **Fixed Bind Group Tests**: Added proper Seesaw binding initialization
+- **Fixed Negative Tests**: Updated to use valid protobuf field names with Malli generators
 
 ## Project Principles
 

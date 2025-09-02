@@ -39,7 +39,7 @@
   
   Includes:
   - theme: Current theme (:sol-light or :sol-dark)
-  - locale: Current locale (e.g. \"en\" or \"uk\")
+  - locale: Current locale (:english or :ukrainian)
   - fullscreen: Whether the app is in fullscreen mode
   - show-overlay: Whether to show the HUD overlay
   - read-only-mode: Whether UI is in read-only mode
@@ -48,7 +48,7 @@
                                                        :window-bounds {:x int :y int :width int :height int}}}"
   [:map {:closed true}
    [:theme :potatoclient.ui-specs/theme]
-   [:locale :string]
+   [:locale [:enum :english :ukrainian]]
    [:fullscreen :boolean]
    [:show-overlay :boolean]
    [:read-only-mode :boolean]
@@ -154,7 +154,7 @@
                 :latency-ms nil
                 :reconnect-count 0}
    :ui {:theme :sol-dark
-        :locale "en"
+        :locale :english
         :fullscreen false
         :show-overlay false
         :read-only-mode false
@@ -226,11 +226,7 @@
   "Get current locale."
   {:malli/schema [:=> [:cat] [:enum :english :ukrainian]]}
   []
-  (let [locale-str (get-in @app-state [:ui :locale] "en")]
-    (case locale-str
-      "en" :english
-      "uk" :ukrainian
-      :english)))
+  (get-in @app-state [:ui :locale] :english))
 
 (defn set-locale!
   "Set current locale and update Java default."
@@ -238,14 +234,10 @@
   [locale]
   (let [locale-map {:english ["en" "US"]
                     :ukrainian ["uk" "UA"]}
-        [lang country] (get locale-map locale ["en" "US"])
-        locale-str (case locale
-                     :english "en"
-                     :ukrainian "uk"
-                     "en")]
+        [lang country] (get locale-map locale ["en" "US"])]
     (Locale/setDefault
       (Locale/forLanguageTag (str lang "-" country)))
-    (swap! app-state assoc-in [:ui :locale] locale-str)))
+    (swap! app-state assoc-in [:ui :locale] locale)))
 
 (defn get-theme
   "Get current theme."
