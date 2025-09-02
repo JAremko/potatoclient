@@ -1,6 +1,6 @@
 {:app-title "PotatoClient"
  :app-version "Версія"
- 
+
  ;; Menu items
  :menu-file "Файл"
  :menu-file-export "Експортувати журнал"
@@ -11,20 +11,20 @@
  :menu-help "Допомога"
  :menu-help-about "Про програму"
  :menu-help-view-logs "Переглянути журнали"
- 
+
  ;; Theme names
  :theme-sol-light "Сонячна світла"
  :theme-sol-dark "Сонячна темна"
  :theme-dark "Темна"
  :theme-hi-dark "Висококонтрастна темна"
  :theme-unknown "Невідома"
- 
+
  ;; Connection status
  :status-disconnected "Від'єднано"
  :status-connecting "Підключення..."
  :status-connected "Підключено"
  :status-failed "Помилка підключення"
- 
+
  ;; Control panel
  :control-panel-title "Панель керування потоками"
  :control-label-system "Керування системою"
@@ -42,25 +42,25 @@
  :stream-controls "Керування потоками"
  :statistics "Статистика"
  :no-statistics "Статистика недоступна"
- 
+
  ;; Log table
  :log-column-time "Час"
  :log-column-type "Тип"
  :log-column-source "Джерело"
  :log-column-message "Повідомлення"
- 
+
  ;; Export dialog
  :export-title "Експорт журналу"
  :export-button-export "Експортувати"
  :export-button-cancel "Скасувати"
  :export-success "Журнал успішно експортовано"
  :export-error "Помилка експорту журналу"
- 
+
  ;; About dialog
  :about-title "Про PotatoClient"
  :about-text "Клієнт відеопотоку з подвійними H.264 WebSocket потоками.\n\nГоловний процес керує інтерфейсом, підпроцеси обробляють відеопотоки."
  :about-button-close "Закрити"
- 
+
  ;; Startup dialog
  :startup-title "Підключення до сервера"
  :startup-server-url "URL сервера:"
@@ -68,7 +68,7 @@
  :startup-button-cancel "Скасувати"
  :startup-valid-formats "Допустимі формати"
  :startup-invalid-url "Невірна URL"
- 
+
  ;; Connection frame
  :connection-title "Підключення"
  :connecting-to "Підключення до"
@@ -79,13 +79,13 @@
  :connection-ping "Пінг"
  :connection-successful "Підключення успішне!"
  :connection-ping-failed "Пінг невдалий"
- 
+
  ;; Configuration
  :config-server-address "Адреса сервера"
  :config-server-port "Порт сервера"
  :config-reconnect-delay "Затримка перепідключення (мс)"
  :config-max-reconnect-attempts "Макс. спроб перепідключення"
- 
+
  ;; Stream configuration
  :config-heat-stream "Налаштування теплового потоку"
  :config-day-stream "Налаштування денного потоку"
@@ -93,20 +93,20 @@
  :config-stream-height "Висота"
  :config-stream-framerate "Частота кадрів"
  :config-stream-decoder "Декодер"
- 
+
  ;; Decoder options
  :decoder-auto "Автовизначення"
  :decoder-nvidia "NVIDIA (nvh264dec)"
  :decoder-intel "Intel QSV (msdkh264dec)"
  :decoder-vaapi "VA-API (vaapih264dec)"
  :decoder-software "Програмний (avdec_h264)"
- 
+
  ;; Error messages
  :error-connection-failed "Не вдалося підключитися до сервера"
  :error-stream-failed "Не вдалося запустити потік"
  :error-subprocess-died "Підпроцес несподівано завершився"
  :error-export-failed "Не вдалося експортувати файл журналу"
- 
+
  ;; Log viewer
  :log-viewer-title "Перегляд журналів"
  :log-viewer-refresh "Оновити"
@@ -120,11 +120,11 @@
  :log-viewer-column-created "Створено"
  :log-viewer-column-size "Розмір"
  :log-viewer-file-title "Журнал: "
- 
+
  ;; URL validation errors
  :url-error-empty "Будь ласка, введіть адресу сервера"
  :url-error-invalid-format "Невірний формат адреси сервера"
- 
+
  ;; URL examples
  :url-example-domain "example.com"
  :url-example-subdomain "app.example.com"
@@ -133,7 +133,7 @@
  :url-example-https "https://example.com"
  :url-example-wss "wss://example.com:8080/ws"
  :url-example-localhost "localhost"
- 
+
  ;; Tab system
  :tab-controls "Керування"
  :tab-day-camera "Денна камера"
@@ -144,11 +144,11 @@
  :switched-to-tab "Перемкнуто на"
  :window-opened "Відкрито вікно для"
  :window-closed "Закрито вікно для"
- 
+
  ;; Language names
  :language-english "Англійська"
  :language-ukrainian "Українська"
- 
+
  ;; Status bar messages
  :status-theme-changed "Тему змінено на {1}"
  :status-language-changed "Мову змінено на {1}"
@@ -156,6 +156,8 @@
  :status-connected-server "Підключено до {1}"
  :status-disconnected-server "Відключено від {1}"
  :status-connection-failed "Помилка підключення: {1}"
+ :starting-stream "Запуск"
+ :stopping-stream "Зупинка"
  :status-stream-started "Запущено {1} потік"
  :status-stream-stopped "Зупинено {1} потік"
  :status-config-saved "Конфігурацію збережено"
@@ -163,10 +165,10 @@
  :status-logs-exported "Логи експортовано до {1}"
  :status-error-occurred "Сталася помилка. Натисніть для деталей."
  :status-ready "Готово"
- 
+
  ;; Tab titles
  :tab-overview "Огляд"
- 
+
  ;; Error dialog
  :error-dialog-title "Деталі помилки"
  :error-dialog-copy "Копіювати в буфер"

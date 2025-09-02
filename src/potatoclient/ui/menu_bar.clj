@@ -158,10 +158,26 @@
                         :icon (theme/key->icon stream-key)
                         :tip tooltip
                         :handler (fn [e]
-                                   (logging/log-debug
-                                     {:msg (str "Stream toggle clicked (noop): " stream-key)
-                                      :stream stream-key
-                                      :selected? (seesaw/config (seesaw/to-widget e) :selected?)})))
+                                   (let [selected? (seesaw/config (seesaw/to-widget e) :selected?)
+                                         stream-name (i18n/tr label-key)]
+                                     ;; Update status bar with user action
+                                     (if selected?
+                                       (status-msg/set-info! (str (i18n/tr :starting-stream) " " stream-name "..."))
+                                       (status-msg/set-info! (str (i18n/tr :stopping-stream) " " stream-name "...")))
+
+                                     ;; Log for debugging
+                                     (logging/log-debug
+                                       {:msg (str "Stream toggle clicked: " stream-key)
+                                        :stream stream-key
+                                        :selected? selected?})
+
+                                     ;; TODO: Here we would actually start/stop the stream
+                                     ;; For now, simulate completion after a brief delay
+                                     (future
+                                       (Thread/sleep 500)
+                                       (if selected?
+                                         (status-msg/set-stream-started! stream-key)
+                                         (status-msg/set-stream-stopped! stream-key))))))
         button (seesaw/toggle :action toggle-action)
         process-key (case stream-key
                       :heat :heat-video

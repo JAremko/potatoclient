@@ -43,8 +43,7 @@
  :statistics "Statistics"
  :no-statistics "No statistics available"
 
-
- ;; Log table
+;; Log table
  :log-column-time "Time"
  :log-column-type "Type"
  :log-column-source "Source"
@@ -128,7 +127,7 @@
 
  ;; URL examples
  :url-example-domain "example.com"
- 
+
  ;; Tab system
  :tab-controls "Controls"
  :tab-day-camera "Day Camera"
@@ -157,6 +156,8 @@
  :status-connected-server "Connected to {1}"
  :status-disconnected-server "Disconnected from {1}"
  :status-connection-failed "Connection failed: {1}"
+ :starting-stream "Starting"
+ :stopping-stream "Stopping"
  :status-stream-started "Started {1} stream"
  :status-stream-stopped "Stopped {1} stream"
  :status-config-saved "Configuration saved"
