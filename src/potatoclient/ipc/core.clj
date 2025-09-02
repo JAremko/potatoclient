@@ -13,6 +13,22 @@
     (potatoclient.java.ipc SocketFactory UnixSocketCommunicator)))
 
 ;; ============================================================================
+;; Constants
+;; ============================================================================
+
+(def ^:private error-retry-delay-ms
+  "Delay in milliseconds before retrying after an error."
+  100)
+
+(def ^:private message-poll-timeout-ms
+  "Timeout in milliseconds for polling messages from queue."
+  100)
+
+(def ^:private message-queue-capacity
+  "Maximum number of messages that can be queued."
+  1000)
+
+;; ============================================================================
 ;; Specs
 ;; ============================================================================
 
@@ -68,7 +84,7 @@
           (catch Exception e
             (when @running?
               (t/log! :error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage e)))
-              (Thread/sleep 100))))))
+              (Thread/sleep error-retry-delay-ms))))))
     (str (name stream-type) "-server-reader")))
 
 (defn- start-processor-thread
@@ -80,7 +96,7 @@
       (t/log! :info (str "[" (name stream-type) "-server] Processor thread started"))
       (while @running?
         (try
-          (when-let [message (.poll message-queue 100 TimeUnit/MILLISECONDS)]
+          (when-let [message (.poll message-queue message-poll-timeout-ms TimeUnit/MILLISECONDS)]
             (when on-message
               (on-message message)))
           (catch InterruptedException _
@@ -100,7 +116,7 @@
   (let [socket-path (generate-socket-path stream-type)
         _ (Files/deleteIfExists socket-path)
         communicator (SocketFactory/createServer ^Path socket-path)
-        message-queue (LinkedBlockingQueue. 1000)
+        message-queue (LinkedBlockingQueue. message-queue-capacity)
         running? (atom false)
         server {:stream-type stream-type
                 :socket-path socket-path

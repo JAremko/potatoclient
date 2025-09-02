@@ -16,6 +16,22 @@
             [seesaw.core :as seesaw])
   (:gen-class))
 
+;; ============================================================================
+;; Constants
+;; ============================================================================
+
+(def ^:private state-throttle-ms
+  "Throttle interval for state updates in milliseconds."
+  100)
+
+(def ^:private state-timeout-ms
+  "Timeout for state connections in milliseconds."
+  2000)
+
+(def ^:private initial-state-delay-ms
+  "Delay in milliseconds to wait for initial state to arrive."
+  500)
+
 (defn- get-version
   "Get application version from VERSION file."
   {:malli/schema [:=> [:cat] :string]}
@@ -90,11 +106,11 @@
               ;; Initialize and start state ingress
               _ (logging/log-info {:msg (str "Initializing state ingress for domain: " domain)})
               _ (state-server/initialize! {:domain domain
-                                           :throttle-ms 100
-                                           :timeout-ms 2000})
+                                           :throttle-ms state-throttle-ms
+                                           :timeout-ms state-timeout-ms})
               _ (state-server/start!)
               ;; Wait briefly for initial state to arrive
-              _ (Thread/sleep 500)
+              _ (Thread/sleep initial-state-delay-ms)
               ;; Clean up BEFORE creating the main frame to preserve new bindings
               _ (state/cleanup-seesaw-bindings!)
               params {:version (get-version)

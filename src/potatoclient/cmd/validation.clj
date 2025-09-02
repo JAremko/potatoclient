@@ -62,13 +62,11 @@
    Returns true if valid, throws with detailed diff if not."
   {:malli/schema [:=> [:cat :cmd/root] :boolean]}
   [original-cmd]
-  (let [;; Serialize to binary
-        binary (serialize/serialize-cmd-payload original-cmd)
-        ;; Deserialize back
-        roundtrip (deserialize/deserialize-cmd-payload binary)
-        ;; Normalize both by merging with template
-        normalized-original (remove-nil-oneof-fields original-cmd)
-        normalized-roundtrip (remove-nil-oneof-fields roundtrip)]
+  (let [normalized-original (remove-nil-oneof-fields original-cmd)
+        normalized-roundtrip (-> original-cmd
+                                serialize/serialize-cmd-payload
+                                deserialize/deserialize-cmd-payload
+                                remove-nil-oneof-fields)]
     (if (= normalized-original normalized-roundtrip)
       true
       (let [diff (ddiff/diff normalized-original normalized-roundtrip)]
@@ -82,20 +80,17 @@
    Returns {:valid? true} or {:valid? false :diff <diff>}."
   {:malli/schema [:=> [:cat :cmd/root] [:map]]}
   [original-cmd]
-  (let [;; Serialize to binary
-        binary (serialize/serialize-cmd-payload original-cmd)
-        ;; Deserialize back
-        roundtrip (deserialize/deserialize-cmd-payload binary)
-        ;; Normalize both by merging with template
-        normalized-original (remove-nil-oneof-fields original-cmd)
-        normalized-roundtrip (remove-nil-oneof-fields roundtrip)]
+  (let [normalized-original (remove-nil-oneof-fields original-cmd)
+        normalized-roundtrip (-> original-cmd
+                                serialize/serialize-cmd-payload
+                                deserialize/deserialize-cmd-payload
+                                remove-nil-oneof-fields)
+        diff (ddiff/diff normalized-original normalized-roundtrip)]
     (if (= normalized-original normalized-roundtrip)
       {:valid? true}
       {:valid? false
-       :diff (ddiff/diff normalized-original normalized-roundtrip)
-       :pretty-diff (with-out-str
-                      (ddiff/pretty-print
-                        (ddiff/diff normalized-original normalized-roundtrip)))})))
+       :diff diff
+       :pretty-diff (with-out-str (ddiff/pretty-print diff))})))
 
 ;; ============================================================================
 ;; Test Helpers

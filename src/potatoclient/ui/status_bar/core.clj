@@ -15,6 +15,18 @@
            (java.awt.datatransfer StringSelection)))
 
 ;; ============================================================================
+;; Constants
+;; ============================================================================
+
+(def ^:private status-update-delay-ms
+  "Delay in milliseconds for debouncing status bar updates."
+  100)
+
+(def ^:private initial-status-delay-ms
+  "Delay in milliseconds before setting initial status to ready."
+  100)
+
+;; ============================================================================
 ;; Error Dialog
 ;; ============================================================================
 
@@ -74,9 +86,9 @@
                        :align :left
                        :hgap 5
                        :items [icon-label text-field])
-        ;; Create a debounced atom for status updates (100ms delay)
+        ;; Create a debounced atom for status updates
         ;; This prevents excessive updates from rapid state changes
-        status-debounced (debounce/debounce-atom state/app-state 100)]
+        status-debounced (debounce/debounce-atom state/app-state status-update-delay-ms)]
 
     ;; Bind to debounced status for UI updates
     (bind/bind
@@ -118,7 +130,7 @@
     ;; Set initial status after a small delay to ensure bindings are ready
     (let [current-status (get-in @state/app-state [:ui :status] {:message "" :type :info})]
       (when (str/blank? (:message current-status))
-        (let [timer (javax.swing.Timer. 100
+        (let [timer (javax.swing.Timer. initial-status-delay-ms
                                         (reify java.awt.event.ActionListener
                                           (actionPerformed [_ _]
                                             (msg/set-ready!))))]

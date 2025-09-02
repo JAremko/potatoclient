@@ -10,6 +10,26 @@
     [potatoclient.ipc.transit :as transit]))
 
 ;; ============================================================================
+;; Constants
+;; ============================================================================
+
+(def ^:private ipc-startup-delay-ms
+  "Delay in milliseconds to ensure IPC server is ready before starting process."
+  100)
+
+(def ^:private process-stop-delay-ms
+  "Delay in milliseconds to allow process to disconnect before stopping IPC."
+  100)
+
+(def ^:private stream-restart-delay-ms
+  "Delay in milliseconds between stopping and restarting a stream."
+  500)
+
+(def ^:private batch-operation-delay-ms
+  "Delay in milliseconds between stream operations in batch mode."
+  500)
+
+;; ============================================================================
 ;; IPC Management
 ;; ============================================================================
 
@@ -77,7 +97,7 @@
       (if-let [ipc-server (start-ipc-server stream-type)]
         (do
           ;; Small delay to ensure IPC is ready
-          (Thread/sleep 100)
+          (Thread/sleep ipc-startup-delay-ms)
           
           ;; Start the process
           (let [host (config/get-stream-host)
@@ -102,7 +122,7 @@
     (process/stop-process stream-type)
     
     ;; Give process time to disconnect
-    (Thread/sleep 100)
+    (Thread/sleep process-stop-delay-ms)
     
     ;; Stop IPC server
     (stop-ipc-server stream-type)
@@ -116,7 +136,7 @@
   {:malli/schema [:=> [:cat :keyword] :boolean]}
   [stream-type]
   (stop-stream stream-type)
-  (Thread/sleep 500) ; Brief pause before restart
+  (Thread/sleep stream-restart-delay-ms)
   (start-stream stream-type))
 
 ;; ============================================================================
@@ -143,7 +163,7 @@
   {:malli/schema [:=> [:cat] :map]}
   []
   (stop-all-streams)
-  (Thread/sleep 500)
+  (Thread/sleep batch-operation-delay-ms)
   (start-all-streams))
 
 ;; ============================================================================

@@ -60,6 +60,40 @@
                        (when-let [validator (get validators active-key)]
                          (validator (get value active-key))))))))))
 
+(defn- validate-field-errors
+  "Validate a single field and collect errors"
+  [value field-key schema in acc]
+  (if-let [field-value (get value field-key)]
+    (if-not (m/validate schema field-value)
+      (if-let [explanation (m/explain schema field-value)]
+        (into acc (map (fn [error]
+                         (update error :in #(vec (concat in [field-key] %))))
+                       (:errors explanation)))
+        acc)
+      acc)
+    acc))
+
+(defn- validate-base-fields
+  "Validate all base (non-oneof) fields"
+  [value base-fields entries in acc]
+  (reduce (fn [acc k]
+            (if-let [schema-entry (first (filter #(= (first %) k) entries))]
+              (let [[_ _ schema] schema-entry]
+                (validate-field-errors value k schema in acc))
+              acc))
+          acc
+          base-fields))
+
+(defn- validate-active-oneof-field
+  "Validate the active oneof field"
+  [value active-key entries in base-errors]
+  (if active-key
+    (if-let [schema-entry (first (filter #(= (first %) active-key) entries))]
+      (let [[_ _ schema] schema-entry]
+        (validate-field-errors value active-key schema in base-errors))
+      base-errors)
+    base-errors))
+
 (defn- explain-oneof-value
   "Explain validation failures for oneof value"
   [value path in acc form field-keys base-fields oneof-fields entries validators]
@@ -99,38 +133,9 @@
 
         :else
         ;; Check validation of all fields
-        (let [;; First check base field validations
-              base-errors (reduce (fn [acc k]
-                                    (if-let [v (get value k)]
-                                      (if-let [schema-entry (first (filter #(= (first %) k) entries))]
-                                        (let [[_ _ schema] schema-entry]
-                                          (if-not (m/validate schema v)
-                                           ;; Use m/explain to get errors in the right format
-                                            (if-let [explanation (m/explain schema v)]
-                                              (into acc (map (fn [error]
-                                                               (update error :in #(vec (concat in [k] %))))
-                                                             (:errors explanation)))
-                                              acc)
-                                            acc))
-                                        acc)
-                                      acc))
-                                  acc
-                                  base-fields)
-              ;; Then check the active oneof field
+        (let [base-errors (validate-base-fields value base-fields entries in acc)
               active-key (first non-nil-oneof-fields)]
-          (if active-key
-            (if-let [schema-entry (first (filter #(= (first %) active-key) entries))]
-              (let [[_ _ schema] schema-entry]
-                (if-not (m/validate schema (get value active-key))
-                  ;; Use m/explain to get errors in the right format
-                  (if-let [explanation (m/explain schema (get value active-key))]
-                    (into base-errors (map (fn [error]
-                                             (update error :in #(vec (concat in [active-key] %))))
-                                           (:errors explanation)))
-                    base-errors)
-                  base-errors))
-              base-errors)
-            base-errors))))))
+          (validate-active-oneof-field value active-key entries in base-errors))))))
 
 (defn- parse-oneof-value
   "Parse value with oneof constraints"
