@@ -51,11 +51,11 @@ release: ## Build optimized release JAR (AOT, no debug info)
 	@echo "  • Direct linking enabled"
 	POTATOCLIENT_RELEASE=true clojure -T:build release
 
-# Clean main project artifacts only
-clean: ## Clean main project build artifacts
-	@echo "Cleaning main project artifacts..."
+# Clean build artifacts
+clean: ## Clean all build artifacts
+	@echo "Cleaning build artifacts..."
 	@rm -rf target/ dist/ .cpcache/
-	@echo "Clean complete (shared module preserved)"
+	@echo "Clean complete"
 
 # Format code
 fmt: ## Format Clojure and Kotlin code
@@ -130,18 +130,42 @@ mcp-configure: ## Add MCP server to Claude configuration
 # Ensure everything is compiled
 .PHONY: ensure-compiled
 ensure-compiled:
-	@# Ensure shared module is compiled
-	@if [ ! -d "shared/target/classes/cmd" ] || [ ! -d "shared/target/classes/potatoclient/java/ipc" ]; then \
-		echo "Compiling shared module..."; \
-		cd shared && $(MAKE) compile; \
-	fi
-	@# Compile Kotlin sources if needed
-	@if [ ! -d "target/classes/potatoclient/kotlin" ]; then \
-		clojure -T:build compile-kotlin; \
+	@# Compile Java and Kotlin sources if needed
+	@if [ ! -d "target/classes/cmd" ] || [ ! -d "target/classes/potatoclient/kotlin" ]; then \
+		echo "Compiling Java and Kotlin sources..."; \
+		clojure -T:build compile-all; \
 	fi
 
-# Force recompile Kotlin sources (useful after changing Kotlin code)
-.PHONY: recompile-kotlin
-recompile-kotlin: ## Force recompile all Kotlin sources
-	@echo "Recompiling Kotlin sources..."
-	@clojure -T:build compile-kotlin
+# Force recompile all sources
+.PHONY: recompile
+recompile: ## Force recompile all Java and Kotlin sources
+	@echo "Recompiling all sources..."
+	@rm -rf target/classes
+	@clojure -T:build compile-all
+
+# Test suites for specific components
+test-oneof: ensure-compiled ## Run oneof custom spec tests
+	@echo "Running oneof tests..."
+	@clojure -M:test-oneof
+
+test-malli: ensure-compiled ## Run malli spec tests
+	@echo "Running malli spec tests..."
+	@clojure -M:test-malli
+
+test-serialization: ensure-compiled ## Run serialization tests
+	@echo "Running serialization tests..."
+	@clojure -M:test-serialization
+
+test-cmd: ensure-compiled ## Run command tests
+	@echo "Running command tests..."
+	@clojure -M:test-cmd
+
+test-ipc: ensure-compiled ## Run IPC tests
+	@echo "Running IPC tests..."
+	@clojure -M:test-ipc
+
+# Generate clj-kondo configs from Malli specs
+kondo-configs: ensure-compiled ## Generate clj-kondo type configs
+	@echo "Generating clj-kondo type configs..."
+	@clojure -M:dev scripts/generate-kondo-configs.clj
+	@echo "Type configs generated"

@@ -26,7 +26,6 @@
 
 (defn compile-kotlin [_]
   (println "Compiling Kotlin sources...")
-  ;; Java IPC classes are now in the shared module
   ;; First ensure the kotlin compiler is available
   (let [kotlin-dir "tools/kotlin-2.2.0"
         kotlinc (str kotlin-dir "/bin/kotlinc")
@@ -48,9 +47,8 @@
           java-src-path "src/potatoclient/java"
           ;; Need to include src directory for Transit Java enums
           src-path "src"
-          ;; Include shared module's compiled Java classes (IPC classes)
-          shared-classes "shared/target/classes"
-          classpath-with-proto (str class-dir ":" java-src-path ":" src-path ":" shared-classes ":" (str/join ":" (:classpath-roots (get-basis))))]
+          ;; IPC classes are now in the main module
+          classpath-with-proto (str class-dir ":" java-src-path ":" src-path ":" (str/join ":" (:classpath-roots (get-basis))))]
       (when (seq kotlin-paths)
         (println (str "Compiling " (count kotlin-paths) " Kotlin files..."))
         ;; kotlinc needs to be redefined here since it's out of scope from the outer let
@@ -72,33 +70,41 @@
 (defn compile-java-proto [_]
   (println "Compiling Java protobuf classes...")
   ;; Check if proto files exist
-  (let [proto-dir (io/file "src/potatoclient/java/cmd")
+  (let [proto-dir (io/file "src/java")
         proto-exists? (.exists proto-dir)]
     (if proto-exists?
       (do
-        ;; Only compile the generated protobuf files, not old WebSocketManager
-        (b/javac {:src-dirs ["src/potatoclient/java/cmd" "src/potatoclient/java/ser"]
+        ;; Compile all Java sources including protobuf and IPC classes
+        (b/javac {:src-dirs ["src/java"]
                   :class-dir class-dir
                   :basis (get-basis)
                   :javac-opts ["--release" "17"]})
-        (println "Java protobuf compilation successful"))
-      (println "Proto files not found, skipping Java protobuf compilation"))))
+        (println "Java compilation successful"))
+      (println "Java sources not found, skipping Java compilation"))))
 
 
-;; Java IPC classes are now in the shared module
-;; No need to compile them here
+(defn compile-pronto [_]
+  (let [home (System/getProperty "user.home")
+        pronto-path (str home "/.gitlibs/libs/com.appsflyer/pronto/5444ae5ec3b567a5565e6c1e90ba0850960331b6")
+        pronto-java-src (str pronto-path "/src/java")]
+    (println "Compiling Pronto Java sources...")
+    (b/javac {:src-dirs [pronto-java-src]
+              :class-dir class-dir
+              :basis (get-basis)
+              :javac-opts ["--release" "17"]})))
 
 (defn compile-all [_]
-  ;; Compile Java protobuf first as Kotlin Transit classes depend on protobuf
+  ;; Compile Java protobuf and IPC classes first
   (compile-java-proto nil)
-  ;; Java IPC classes are now compiled in the shared module
+  ;; Compile Pronto Java classes
+  (compile-pronto nil)
+  ;; Then compile Kotlin as it depends on Java
   (compile-kotlin nil))
 
 (defn compile-java-tests [_]
   (println "Compiling Java test files...")
   ;; Ensure main Java classes are compiled first
   (compile-java-proto nil)
-  ;; Java IPC classes are now in the shared module
   ;; Only compile TestRunner.java (not JUnit tests which have dependency issues)
   (io/make-parents (io/file "target/test-classes/dummy.txt"))
   (let [result (shell/sh "javac" 
@@ -126,7 +132,6 @@
   (println "Compiling Kotlin test files...")
   ;; Ensure all Java classes are compiled first (Kotlin tests depend on them)
   (compile-java-proto nil)
-  ;; Java IPC classes are now in the shared module
   ;; Ensure main Kotlin classes are compiled
   (compile-kotlin nil)
   
@@ -158,7 +163,6 @@
   (println "Compiling ALL Kotlin test files with JUnit...")
   ;; Ensure all Java classes are compiled first (Kotlin tests depend on them)
   (compile-java-proto nil)
-  ;; Java IPC classes are now in the shared module
   ;; Ensure main Kotlin classes are compiled
   (compile-kotlin nil)
   
@@ -243,7 +247,6 @@
   (spit (io/file class-dir "RELEASE") "true")
   ;; Compile in correct order: Java proto first, then IPC, then Kotlin
   (compile-java-proto nil)
-  ;; Java IPC classes are now in the shared module
   (compile-kotlin nil)
   ;; Compile with release optimizations
   (b/compile-clj {:basis (get-basis)
