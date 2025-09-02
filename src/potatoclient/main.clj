@@ -7,6 +7,7 @@
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime]
             [potatoclient.state :as state]
+            [potatoclient.state.server.core :as state-server]
             [potatoclient.theme :as theme]
             [potatoclient.ui.frames.initial.core :as initial-frame]
             [potatoclient.ui.frames.connection.core :as connection-frame]
@@ -41,6 +42,9 @@
       (fn []
         (try
           (logging/log-info {:msg "Shutting down PotatoClient..."})
+          ;; Shutdown state ingress
+          (when (state-server/initialized?)
+            (state-server/shutdown!))
           ;; Shutdown logging
           (logging/shutdown!)
           (catch Exception e
@@ -81,13 +85,21 @@
     (fn [result]
       (case result
         :connected
-        ;; Connection successful, proceed with main frame
-        (let [;; Clean up BEFORE creating the main frame to preserve new bindings
+        ;; Connection successful, initialize state ingress and proceed with main frame
+        (let [domain (config/get-domain)
+              ;; Initialize and start state ingress
+              _ (logging/log-info {:msg (str "Initializing state ingress for domain: " domain)})
+              _ (state-server/initialize! {:domain domain
+                                           :throttle-ms 100
+                                           :timeout-ms 2000})
+              _ (state-server/start!)
+              ;; Wait briefly for initial state to arrive
+              _ (Thread/sleep 500)
+              ;; Clean up BEFORE creating the main frame to preserve new bindings
               _ (state/cleanup-seesaw-bindings!)
               params {:version (get-version)
                       :build-type (get-build-type)}
-              frame (main-frame/create-main-frame params)
-              domain (config/get-domain)]
+              frame (main-frame/create-main-frame params)]
           (seesaw/show! frame)
           (log-startup!)
           ;; Set initial UI state from config
@@ -95,7 +107,7 @@
             (state/set-theme! saved-theme))
           (when-let [saved-locale (:locale (config/load-config))]
             (state/set-locale! saved-locale))
-          (logging/log-info {:msg "Application initialized"
+          (logging/log-info {:msg "Application initialized with state ingress"
                              :domain domain}))
 
         :cancel

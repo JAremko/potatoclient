@@ -35,7 +35,7 @@
    [:observer_fix_type :enum/gps-fix-type]
    [:session_id :proto/int32-positive]
    [:target_id :proto/int32-positive]
-   [:target_color :lrf/rgb-color]
+   [:target_color {:optional true} [:maybe :lrf/rgb-color]]
    [:type :proto/int32]
    [:uuid_part1 :proto/int32]
    [:uuid_part2 :proto/int32]

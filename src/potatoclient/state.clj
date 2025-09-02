@@ -89,92 +89,6 @@
    [:user [:maybe :string]]
    [:started-at [:maybe pos-int?]]])
 
-(def system-server-state
-  "System server state"
-  [:map {:closed true}
-   [:battery-level [:and int? [:>= 0] [:<= 100]]]
-   [:localization :string]
-   [:recording :boolean]
-   [:mode [:enum :day :night :heat]]
-   [:temperature-c :double]])
-
-(def lrf-server-state
-  "LRF server state"
-  [:map {:closed true}
-   [:distance :double]
-   [:scan-mode :string]
-   [:target-locked :boolean]])
-
-(def gps-server-state
-  "GPS server state"
-  [:map {:closed true}
-   [:latitude :double]
-   [:longitude :double]
-   [:altitude :double]
-   [:fix-type :string]
-   [:satellites nat-int?]
-   [:hdop :double]
-   [:use-manual :boolean]])
-
-(def compass-server-state
-  "Compass server state"
-  [:map {:closed true}
-   [:heading :double]
-   [:pitch :double]
-   [:roll :double]
-   [:unit :string]
-   [:calibrated :boolean]])
-
-(def rotary-server-state
-  "Rotary server state"
-  [:map {:closed true}
-   [:azimuth :double]
-   [:elevation :double]
-   [:azimuth-velocity :double]
-   [:elevation-velocity :double]
-   [:moving :boolean]
-   [:mode [:enum :manual :auto :tracking]]])
-
-(def camera-day-server-state
-  "Day camera server state"
-  [:map {:closed true}
-   [:zoom :double]
-   [:focus-mode [:enum :auto :manual]]
-   [:exposure-mode [:enum :auto :manual]]
-   [:brightness [:and int? [:>= 0] [:<= 100]]]
-   [:contrast [:and int? [:>= 0] [:<= 100]]]
-   [:recording :boolean]])
-
-(def camera-heat-server-state
-  "Heat camera server state"
-  [:map {:closed true}
-   [:zoom :double]
-   [:palette [:enum :white-hot :black-hot :rainbow :ironbow]]
-   [:brightness [:and int? [:>= 0] [:<= 100]]]
-   [:contrast [:and int? [:>= 0] [:<= 100]]]
-   [:nuc-status [:enum :idle :in-progress :scheduled]]
-   [:recording :boolean]])
-
-(def glass-heater-server-state
-  "Glass heater server state"
-  [:map {:closed true}
-   [:enabled :boolean]
-   [:temperature-c :double]
-   [:target-temp-c :double]
-   [:power-percent [:and int? [:>= 0] [:<= 100]]]])
-
-(def server-state
-  "Complete server state specification"
-  [:map {:closed true}
-   [:system system-server-state]
-   [:lrf lrf-server-state]
-   [:gps gps-server-state]
-   [:compass compass-server-state]
-   [:rotary rotary-server-state]
-   [:camera-day camera-day-server-state]
-   [:camera-heat camera-heat-server-state]
-   [:glass-heater glass-heater-server-state]])
-
 (def app-state-spec
   "Complete application state specification"
   [:map {:closed true}
@@ -183,7 +97,7 @@
    [:processes processes-state]
    [:stream-processes stream-processes-state]
    [:session session-state]
-   [:server-state server-state]])
+   [:server-state [:maybe :state/root]]])
 
 ;; ============================================================================
 ;; Registry Registration
@@ -205,17 +119,6 @@
   (registry/register-spec! ::processes-state processes-state)
   (registry/register-spec! ::stream-process-info stream-process-info)
   (registry/register-spec! ::stream-processes-state stream-processes-state)
-
-  ;; Server state specs
-  (registry/register-spec! ::system-server-state system-server-state)
-  (registry/register-spec! ::lrf-server-state lrf-server-state)
-  (registry/register-spec! ::gps-server-state gps-server-state)
-  (registry/register-spec! ::compass-server-state compass-server-state)
-  (registry/register-spec! ::rotary-server-state rotary-server-state)
-  (registry/register-spec! ::camera-day-server-state camera-day-server-state)
-  (registry/register-spec! ::camera-heat-server-state camera-heat-server-state)
-  (registry/register-spec! ::glass-heater-server-state glass-heater-server-state)
-  (registry/register-spec! ::server-state server-state)
 
   ;; Complete app state
   (registry/register-spec! ::app-state app-state-spec))
@@ -264,14 +167,7 @@
    :session {:id nil
              :start-time nil
              :events []}
-   :servers {:system {:connected false :last-ping nil :status :unknown}
-             :lrf {:connected false :last-ping nil :status :unknown}
-             :gps {:connected false :last-ping nil :status :unknown}
-             :compass {:connected false :last-ping nil :status :unknown}
-             :rotary {:connected false :last-ping nil :status :unknown}
-             :camera-day {:connected false :last-ping nil :status :unknown}
-             :camera-heat {:connected false :last-ping nil :status :unknown}
-             :glass-heater {:connected false :last-ping nil :status :unknown}}})
+   :server-state nil})
 
 (defonce ^{:doc "Main app state"} app-state
   (atom initial-state))
