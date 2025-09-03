@@ -62,7 +62,6 @@
                             "-Dawt.useSystemAAFontSettings=on"]}
 
            :dev-run {:extra-paths ["dev" "target/classes"]
-                     :extra-deps {org.clojure/tools.namespace {:mvn/version "1.5.0"}}
                      :jvm-opts ["-Djna.library.path=/usr/lib"
                                 "-Dgstreamer.library.path=/usr/lib"
                                 "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
@@ -75,8 +74,7 @@
 
            :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}
-                                cider/cider-nrepl {:mvn/version "0.57.0"}
-                                org.clojure/tools.namespace {:mvn/version "1.5.0"}}
+                                cider/cider-nrepl {:mvn/version "0.57.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
                               "-Dgstreamer.library.path=/usr/lib"
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"

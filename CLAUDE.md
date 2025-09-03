@@ -59,52 +59,43 @@ potatoclient/
 
 ### Development Setup
 
-The project has a unified development setup with comprehensive tooling:
+The project has a simplified development setup using `malli.dev/start!` for instrumentation:
 
-**Core Development Files:**
-- `dev/init_dev.clj` - Shared initialization logic for both `make dev` and `make nrepl`
-- `dev/dev.clj` - Entry point for `make dev` (UI with instrumentation)
-- `dev/nrepl_server.clj` - NREPL server with pre-initialization (optional)
-- `dev/user.clj` - NREPL user namespace with development utilities
-- `dev/repl.clj` - REPL utility functions (reload, instrumentation control)
+**Development Files (in dev/ directory):**
+- `init_dev.clj` - Shared initialization logic for both `make dev` and `make nrepl`
+- `dev.clj` - Entry point for `make dev` (UI with instrumentation)  
+- `user.clj` - NREPL user namespace with development utilities and helper functions
 
 **Features:**
-- **Automatic namespace discovery** using tools.namespace (finds 90+ namespaces)
-- **Full project loading** in dependency order with error handling
-- **Malli instrumentation** with `malli.dev/start!` (454+ functions)
+- **Malli instrumentation** with `malli.dev/start!` 
 - **CLJ-Kondo config generation** automatic for static type checking
-- **Hot code reloading** with proper dependency management
-- **Auto-reinstrumentation** when schemas change
+- **Auto-reinstrumentation** when schemas change via registry watcher
+- **Pretty error reporting** with configurable formatting
 
 ### NREPL Development (`make nrepl`)
-Starts NREPL server with full development environment pre-initialized:
-- **Automatic initialization** before server starts (same as `make dev`)
-- Loads and instruments all 90+ project namespaces upfront
-- Shows "instrumented 454 function vars" in terminal output
+Starts NREPL server with development environment initialized:
+- **Automatic initialization** using `malli.dev/start!`
+- Collects and instruments function schemas from loaded namespaces
 - NREPL server on port 7888 with CIDER support
 - Can run in parallel with `make dev`
 
 Key REPL functions (available immediately):
 - `(help)` - Show all available commands and current status
-- `(reload!)` - Reload modified namespaces using tools.namespace
-- `(reload-all!)` - Reload all namespaces from scratch
-- `(clear-aliases!)` - Clear namespace aliases (fixes reload issues)
+- `(reinstrument!)` - Re-collect schemas and trigger re-instrumentation
 - `(check-functions!)` - Validate all function schemas with generative testing
 - `(set-throw-mode!)` - Throw exceptions on validation errors
 - `(set-print-mode!)` - Print validation errors (default)
-- `(instrumented-count)` - Count instrumented functions (shows ~454)
-- `(instrumented? 'fn)` - Check if specific function is instrumented
-- `(uninstrument! 'fn)` - Remove instrumentation from function
+- `(instrumented-count)` - Count instrumented functions
 - `(restart-logging!)` - Restart the logging system
 
 ### Development UI (`make dev`)
 Uses `dev/dev.clj` to run the app with full instrumentation:
-- Shows comprehensive initialization output in terminal
-- Loads all 90+ project namespaces using tools.namespace
-- Instruments 454+ functions with Malli schemas
+- Shows initialization output in terminal
+- Collects schemas from loaded namespaces via `malli.instrument/collect!`
+- Instruments functions with Malli schemas using `malli.dev/start!`
 - Starts the UI with validation enabled
 - Prints validation errors to console in real-time
-- Auto-reinstruments on schema changes via `malli.dev/start!`
+- Auto-reinstruments on schema changes via registry watcher
 - Can run in parallel with `make nrepl`
 
 ### Make Targets
@@ -402,27 +393,31 @@ Futures in Clojure swallow exceptions by default, which can hide critical errors
 
 ### Development Workflow
 
-**tools.namespace Integration:**
-The project uses `clojure.tools.namespace` for proper code reloading:
-- `(reload!)` - Intelligently reloads only changed namespaces in dependency order
-- `(reload-all!)` - Complete reload from scratch when needed
-- Proper cleanup of old definitions prevents stale code issues
-- Clear error reporting when refresh fails
-- `(clear-aliases!)` helper to fix namespace alias conflicts
-
-**Instrumentation Workflow:**
-1. Start with `make dev` or `make nrepl` - all functions instrumented
+**Malli Instrumentation Workflow:**
+1. Start with `make dev` or `make nrepl` - functions are instrumented via `malli.dev/start!`
 2. Edit code and save files
-3. Call `(reload!)` to refresh changed namespaces
-4. Functions are automatically re-instrumented via `malli.dev/start!`
+3. Call `(reinstrument!)` to re-collect schemas from all namespaces
+4. The registry watcher automatically re-instruments changed functions
 5. Validation errors appear immediately in console or REPL
 
-**Key Improvements:**
-- **Upfront initialization** - No waiting for instrumentation after NREPL connects
-- **Consistent experience** - Both `make dev` and `make nrepl` use same initialization
-- **Better error handling** - Refresh operations show clear error messages
-- **454+ functions instrumented** - Comprehensive validation coverage
-- **Auto-reinstrumentation** - Schema changes are picked up automatically
+**Re-instrumentation:**
+After modifying code with new or changed schemas:
+```clojure
+(require '[malli.instrument :as mi])
+(mi/collect! {:ns (all-ns)})  ; Re-collect schemas
+; The dev/start! watcher will auto-reinstrument
+```
+
+Or simply use the helper function:
+```clojure
+(reinstrument!)  ; Available in NREPL
+```
+
+**Key Features:**
+- **Automatic re-instrumentation** - Registry watcher detects schema changes
+- **Pretty error reporting** - Clear validation error messages
+- **CLJ-Kondo integration** - Automatic type config generation
+- **Generative testing** - Check functions with `(check-functions!)`
 
 ### Initialization Pattern
 
@@ -446,11 +441,11 @@ The project uses `clojure.tools.namespace` for proper code reloading:
 (init-dev/initialize!)
 ```
 
-This separation avoids circular dependencies and provides:
-- Full namespace discovery with tools.namespace
-- Automatic Malli instrumentation
+This provides:
+- Automatic Malli instrumentation via `malli.dev/start!`
 - CLJ-Kondo config generation
-- Better REPL workflow with code reloading
+- Registry watcher for auto-reinstrumentation
+- Pretty error reporting
 
 ## Project Principles
 
