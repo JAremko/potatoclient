@@ -79,7 +79,9 @@
             '[potatoclient.cmd.system]
             '[potatoclient.cmd.validation]
             '[potatoclient.config]
-            '[potatoclient.dev]
+            ;; '[potatoclient.dev]  ; Commented out to prevent duplicate initialization
+            ;;                       ; in NREPL mode. The dev namespace calls init/initialize!
+            ;;                       ; on load, but NREPL's user.clj already initializes the system.
             '[potatoclient.i18n]
             '[potatoclient.init]
             '[potatoclient.ipc.core]

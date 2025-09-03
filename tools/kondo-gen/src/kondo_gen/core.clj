@@ -191,7 +191,7 @@
       (System/exit 0)))
   
   (try
-    ;; Initialize registry
+    ;; Initialize registry only (not full application initialization)
     (print "Initializing Malli registry...")
     (flush)
     (init/ensure-registry!)

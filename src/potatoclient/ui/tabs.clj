@@ -5,6 +5,7 @@
   window. Tab selection is managed through the app state atom for persistence
   and synchronized updates."
   (:require [potatoclient.i18n :as i18n]
+            [potatoclient.logging :as logging]
             [potatoclient.state :as state]
             [potatoclient.ui.bind-group :as bg]
             [potatoclient.ui.debounce :as debounce]
@@ -99,8 +100,14 @@
 
     ;; Mark setup as complete after a short delay
     (future
-      (Thread/sleep 100)
-      (reset! setting-up false))
+      (try
+        (Thread/sleep 100)
+        (reset! setting-up false)
+        (catch Exception e
+          (logging/log-error {:msg "Error in tab setup completion"
+                              :error e})
+          ;; Still mark as complete even on error
+          (reset! setting-up false))))
 
     tabbed-pane))
 

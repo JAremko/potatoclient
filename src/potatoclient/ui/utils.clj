@@ -2,7 +2,8 @@
   "Utility functions for UI operations, including debouncing and other helpers
   adapted from the ArcherBC2 example project."
   (:require [seesaw.core :as seesaw]
-            [seesaw.cursor :as cursor])
+            [seesaw.cursor :as cursor]
+            [potatoclient.logging :as logging])
   (:import (java.awt Component)
            (javax.swing.text JTextComponent)))
 
@@ -87,8 +88,12 @@
         (future-cancel @timeout))
       (reset! timeout
               (future
-                (Thread/sleep (long wait-ms))
-                (apply f args))))))
+                (try
+                  (Thread/sleep (long wait-ms))
+                  (apply f args)
+                  (catch Exception e
+                    (logging/log-error {:msg "Error in debounced function"
+                                        :error e}))))))))
 
 (defn throttle
   "Creates a throttled version of a function that limits execution to at most

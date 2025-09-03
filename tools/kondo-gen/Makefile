@@ -12,7 +12,7 @@ help: ## Show this help
 
 run: ## Generate clj-kondo configs in project root
 	@echo "Generating clj-kondo configs..."
-	@cd ../.. && clojure -M:kondo-gen:run
+	@cd ../.. && clojure -M:kondo-gen
 
 test: ## Run tests
 	@echo "Running tests..."

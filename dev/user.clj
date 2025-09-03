@@ -83,10 +83,9 @@
     (inst-fn ns-sym)
     (println (str "Instrumented namespace: " ns-sym))))
 
-;; Auto-start instrumentation if in dev mode
-(when (init/development-mode?)
-  (println "\nDevelopment mode detected - starting Malli instrumentation...")
-  (start-instrumentation! {:report :print}))
+;; Note: Instrumentation is automatically started by init/initialize-for-nrepl!
+;; when in development mode, so we don't need to start it again here.
+;; The function start-instrumentation! is still available for manual control.
 
 ;; Print helpful message
 (println "\nUseful REPL functions available:")

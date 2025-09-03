@@ -298,7 +298,7 @@ To ensure widgets display current atom values, trigger a change after binding:
 ### Code Quality Standards
 
 1. **Malli Schemas Required** - Every function must have `:malli/schema`
-2. **Comprehensive Tests** - 358 tests with 3091 assertions, organized into suites
+2. **Comprehensive Tests** - Organized into test suites with extensive coverage
 3. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
 4. **Clear Documentation** - Docstrings for all public functions
 5. **No Legacy Code** - Pre-alpha, make breaking changes when needed
@@ -319,6 +319,52 @@ To ensure widgets display current atom values, trigger a change after binding:
 2. **Debounce rapid updates** (UI, validations)
 3. **Use throttling for high-frequency events** (state updates)
 4. **Batch operations when possible**
+
+### Future Error Handling
+
+**CRITICAL: All futures must have proper error handling**
+
+Futures in Clojure swallow exceptions by default, which can hide critical errors:
+
+```clojure
+;; BAD - Exceptions are silently swallowed
+(future
+  (process-data data))
+
+;; GOOD - Exceptions are caught and logged
+(future
+  (try
+    (process-data data)
+    (catch Exception e
+      (logging/log-error {:msg "Error processing data" :error e}))))
+```
+
+**Best Practices:**
+1. **Always wrap future body in try-catch** - Log exceptions at minimum
+2. **Consider using callbacks for error handling** - Pass error handler function
+3. **Monitor future completion** - Use `realized?` or `deref` with timeout
+4. **Avoid fire-and-forget patterns** - Track futures that need monitoring
+5. **Use thread pools for better control** - Consider `java.util.concurrent` for complex cases
+
+**Common Patterns:**
+```clojure
+;; With error callback
+(future
+  (try
+    (let [result (process-data data)]
+      (on-success result))
+    (catch Exception e
+      (on-error e))))
+
+;; With logging and state update
+(future
+  (try
+    (process-data data)
+    (catch Exception e
+      (logging/log-error {:msg "Processing failed" :error e})
+      (swap! state assoc :error (.getMessage e))
+      (update-ui-with-error!))))
+```
 
 ### When Adding Features
 
