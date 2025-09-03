@@ -2,7 +2,7 @@
   "Core infrastructure for command sending with queue and validation.
    Commands are validated, queued, and consumed by a WebSocket sender.
    The reader blocks with timeout and sends ping to maintain connection.
-   
+
    Uses Pronto efficiently based on performance guidelines:
    - Creates proto-maps with initial values (fastest)
    - Uses p-> for multiple mutations

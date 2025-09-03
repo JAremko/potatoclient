@@ -77,28 +77,18 @@
   []
   (when-not @initialized?
     (t/log! {:level :info :msg "Starting PotatoClient initialization..."})
-    
-    ;; 1. Initialize Malli registry first - required by everything else
+
+    ;; Initialize Malli registry - required by everything else
     (ensure-registry!)
-    
-    ;; 2. Set up development instrumentation if in dev mode
-    (when (development-mode?)
-      (t/log! {:level :info :msg "Development mode detected, starting Malli instrumentation..."})
-      (try
-        (require 'potatoclient.dev-instrumentation)
-        (when-let [start-fn (resolve 'potatoclient.dev-instrumentation/start!)]
-          ;; Use :throw in dev mode for immediate feedback on validation errors
-          (start-fn {:report :throw
-                     :width 120
-                     :print-length 50
-                     :print-level 4}))
-        (t/log! {:level :info :msg "Malli instrumentation started successfully"})
-        (catch Exception e
-          (t/log! {:level :warn :msg (str "Could not load dev instrumentation: " (.getMessage e))}))))
-    
-    ;; 3. Mark as initialized
+
+    ;; Mark as initialized
     (reset! initialized? true)
-    (t/log! {:level :info :msg "PotatoClient initialization complete"}))
+    (t/log! {:level :info :msg "PotatoClient initialization complete"})
+
+    ;; Note: Development-specific initialization (instrumentation, etc.)
+    ;; is now handled in dev/user.clj to avoid circular dependencies
+    ;; and provide better REPL workflow
+    )
   nil)
 
 ;; ============================================================================
@@ -123,16 +113,11 @@
 (defn initialize-for-nrepl!
   "Initialize the system specifically for NREPL.
    
-   This includes all normal initialization plus NREPL-specific setup."
+   NOTE: This is kept for backward compatibility, but the actual NREPL
+   initialization is now handled in dev/user.clj to provide better
+   development workflow and avoid circular dependencies."
   {:malli/schema [:=> [:cat] :nil]}
   []
   (initialize!)
-  ;; Set up NREPL-specific features
-  (when (nrepl-mode?)
-    (t/log! {:level :info :msg "NREPL mode detected, setting up REPL tools..."})
-    ;; Load development tools for REPL
-    (try
-      (require 'potatoclient.dev)
-      (catch Exception e
-        (t/log! {:level :warn :msg (str "Could not load dev namespace: " (.getMessage e))}))))
+  ;; NREPL-specific setup is now in dev/user.clj
   nil)

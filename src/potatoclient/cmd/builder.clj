@@ -29,9 +29,9 @@
 ;; ============================================================================
 
 (defn populate-cmd-fields
-  "Takes a command payload (just the oneof part like {:ping {}}) and 
+  "Takes a command payload (just the oneof part like {:ping {}}) and
    returns a complete cmd root with all required protocol fields populated.
-   
+
    This is the primary function for creating valid cmd roots from payloads."
   {:malli/schema [:=> [:cat [:map {:closed false}]] :cmd/root]}
   [payload]
@@ -42,7 +42,7 @@
 (defn populate-cmd-fields-with-overrides
   "Populate missing fields with specific override values.
    Useful for testing different configurations.
-   
+
    Takes a command and a map of override values for the protocol fields."
   {:malli/schema [:=> [:cat [:map {:closed false}] [:map {:closed false}]] :cmd/root]}
   [cmd overrides]
@@ -54,9 +54,9 @@
 (defn create-full-cmd
   "Create a full command from a payload with custom field values.
    Most efficient way to create a command when you know all values upfront.
-   
+
    Example:
-   (create-full-cmd {:ping {}} 
+   (create-full-cmd {:ping {}}
                     {:session_id 12345 :important true})"
   {:malli/schema [:=> [:cat :cmd/payload [:map {:closed false}]] :cmd/root]}
   [payload-cmd field-overrides]
@@ -66,7 +66,7 @@
 (defn create-proto-map-cmd
   "Create a proto-map command efficiently.
    Uses Pronto's proto-map constructor with all fields at once (fastest).
-   
+
    This is the most efficient way to create a proto-map command."
   {:malli/schema [:=> [:cat :cmd/root] :any]}
   [cmd]
@@ -92,7 +92,7 @@
 (defn update-proto-map-cmd
   "Efficiently update fields in an existing proto-map command.
    Uses p-> with hints for optimal performance.
-   
+
    Example:
    (update-proto-map-cmd my-proto-cmd {:session_id 999 :important true})"
   {:malli/schema [:=> [:cat :any [:map]] :any]}

@@ -61,15 +61,28 @@
                             "-Dpotatoclient.validation.enabled=true"
                             "-Dawt.useSystemAAFontSettings=on"]}
 
+           :dev-run {:extra-paths ["dev" "target/classes"]
+                     :extra-deps {org.clojure/tools.namespace {:mvn/version "1.5.0"}}
+                     :jvm-opts ["-Djna.library.path=/usr/lib"
+                                "-Dgstreamer.library.path=/usr/lib"
+                                "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
+                                "--enable-native-access=ALL-UNNAMED"
+                                "-Dclojure.compile.warn-on-reflection=true"
+                                "-Dpotatoclient.dev=true"
+                                "-Dpotatoclient.validation.enabled=true"
+                                "-Dawt.useSystemAAFontSettings=on"]
+                     :main-opts ["-m" "dev"]}
+
            :nrepl {:extra-paths ["dev" "src/potatoclient/kotlin" "target/classes"]
                    :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}
-                                cider/cider-nrepl {:mvn/version "0.57.0"}}
+                                cider/cider-nrepl {:mvn/version "0.57.0"}
+                                org.clojure/tools.namespace {:mvn/version "1.5.0"}}
                    :jvm-opts ["-Djna.library.path=/usr/lib"
                               "-Dgstreamer.library.path=/usr/lib"
                               "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                               "--enable-native-access=ALL-UNNAMED"
                               "-Djdk.attach.allowAttachSelf"
-                                "-Dpotatoclient.validation.enabled=true"
+                              "-Dpotatoclient.validation.enabled=true"
                               "-Dpotatoclient.dev=true"
                               "-Dawt.useSystemAAFontSettings=on"]
                    :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
@@ -106,8 +119,7 @@
                               com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                                        :git/tag "v0.1.8-alpha"
                                                        :git/sha "776dff4"}}
-                 :jvm-opts [
-                            "-Dpotatoclient.validation.enabled=true"]
+                 :jvm-opts ["-Dpotatoclient.validation.enabled=true"]
                  :exec-fn clojure-mcp.main/start-mcp-server
                  :exec-args {:port 7888}}
 
@@ -124,63 +136,59 @@
                   :exec-fn cognitect.test-runner.api/test}
 
            :test-coverage {:extra-paths ["test" "target/classes" "target/test-classes"]
-                          :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
-                                                                             :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
-                                       cloverage/cloverage {:mvn/version "1.2.4"}}
-                          :jvm-opts []
-                          :main-opts ["-m" "cloverage.coverage"
-                                      "-p" "src"
-                                      "-s" "test"
-                                      "--ns-exclude-regex" ".*instrumentation.*|.*cmd\\..*|.*proto.*|.*ipc.*"
-                                      "--codecov"
-                                      "--junit"
-                                      "--text"
-                                      "--html"
-                                      "--output" "target/coverage"]}
+                           :extra-deps {io.github.cognitect-labs/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
+                                                                              :sha "3f288f1f16d167723ad87cc35b1dfee3c1681e10"}
+                                        cloverage/cloverage {:mvn/version "1.2.4"}}
+                           :jvm-opts []
+                           :main-opts ["-m" "cloverage.coverage"
+                                       "-p" "src"
+                                       "-s" "test"
+                                       "--ns-exclude-regex" ".*instrumentation.*|.*cmd\\..*|.*proto.*|.*ipc.*"
+                                       "--codecov"
+                                       "--junit"
+                                       "--text"
+                                       "--html"
+                                       "--output" "target/coverage"]}
 
            :test-kotlin {:extra-paths ["test" "target/classes" "target/test-classes"]
-                        :extra-deps {org.jacoco/org.jacoco.core {:mvn/version "0.8.13"}
-                                     org.jacoco/org.jacoco.report {:mvn/version "0.8.13"}}
-                        :jvm-opts ["-javaagent:target/jacocoagent.jar=destfile=target/jacoco.exec"
-     ]}
+                         :extra-deps {org.jacoco/org.jacoco.core {:mvn/version "0.8.13"}
+                                      org.jacoco/org.jacoco.report {:mvn/version "0.8.13"}}
+                         :jvm-opts ["-javaagent:target/jacocoagent.jar=destfile=target/jacoco.exec"]}
 
            :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
                     :main-opts ["-m" "cljfmt.main"]}
-           
-           :kondo-gen {:extra-paths ["tools/kondo-gen/src" "target/classes"]
-                       :main-opts ["-m" "kondo-gen.core"]}
 
            :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.07.28"}}
                   :main-opts ["-m" "clj-kondo.main"]}
-                  
+
            :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                       :main-opts ["-m" "antq.core"]}
-                      
+
            :outdated-upgrade {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                               :main-opts ["-m" "antq.core" "--upgrade"]}
-                              
+
            ;; Test suites from shared module
            :test-oneof {:extra-paths ["test"]
-                        :extra-deps {io.github.cognitect-labs/test-runner 
+                        :extra-deps {io.github.cognitect-labs/test-runner
                                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                         :main-opts ["-m" "test-suites.oneof-suite"]}
-           
+
            :test-malli {:extra-paths ["test"]
-                        :extra-deps {io.github.cognitect-labs/test-runner 
+                        :extra-deps {io.github.cognitect-labs/test-runner
                                      {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                         :main-opts ["-m" "test-suites.malli-suite"]}
-           
+
            :test-serialization {:extra-paths ["test"]
-                                :extra-deps {io.github.cognitect-labs/test-runner 
+                                :extra-deps {io.github.cognitect-labs/test-runner
                                              {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                                 :main-opts ["-m" "test-suites.serialization-suite"]}
-           
+
            :test-cmd {:extra-paths ["test"]
-                      :extra-deps {io.github.cognitect-labs/test-runner 
+                      :extra-deps {io.github.cognitect-labs/test-runner
                                    {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                       :main-opts ["-m" "test-suites.cmd-suite"]}
-           
+
            :test-ipc {:extra-paths ["test" "target/java-classes"]
-                      :extra-deps {io.github.cognitect-labs/test-runner 
+                      :extra-deps {io.github.cognitect-labs/test-runner
                                    {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
                       :main-opts ["-m" "test-suites.ipc-suite"]}}}

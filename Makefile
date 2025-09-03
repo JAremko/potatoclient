@@ -36,11 +36,11 @@ nrepl: ensure-compiled ## Start NREPL server on port 7888 for editor integration
 # Development mode - run from source with full debugging
 dev: ensure-compiled ## Run from source with full validation and debugging
 	@echo "Starting development mode..."
-	@echo "  • Full Malli validation"
+	@echo "  • Full Malli instrumentation"
 	@echo "  • All logging levels enabled"
 	@echo "  • Reflection warnings"
-	@echo "  • EDN state validation"
-	GST_DEBUG=3 clojure -M:run
+	@echo "  • Auto-validation of functions"
+	GST_DEBUG=3 clojure -M:dev-run
 
 # Release build - AOT compiled, no debug info
 release: ## Build optimized release JAR (AOT, no debug info)
@@ -125,8 +125,5 @@ test-ipc: ensure-compiled ## Run IPC tests
 	@echo "Running IPC tests..."
 	@clojure -M:test-ipc
 
-# Generate clj-kondo configs from Malli specs
-kondo-configs: ensure-compiled ## Generate clj-kondo type configs
-	@echo "Generating clj-kondo type configs..."
-	@clojure -M:kondo-gen
-	@echo "Type configs generated"
+# Note: clj-kondo configs are now generated automatically by malli.dev
+# when running in nrepl or dev mode - no manual generation needed!

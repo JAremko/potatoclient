@@ -173,12 +173,16 @@
           (show-initial-frame-recursive))))))
 
 (defn- enable-dev-mode!
-  "Enable additional development mode settings by loading the dev namespace."
+  "Enable additional development mode settings.
+   Note: When running via 'make dev', instrumentation is already
+   set up by dev/dev.clj before main is called."
   {:malli/schema [:=> [:cat] :nil]}
   []
   (when (or (System/getProperty "potatoclient.dev")
             (System/getenv "POTATOCLIENT_DEV"))
-    (require 'potatoclient.dev)))
+    ;; Dev mode is already initialized by dev/dev.clj when using 'make dev'
+    ;; This is here for other entry points that might set the property
+    (logging/log-info {:msg "Running in development mode"})))
 
 (defn- generate-unspecced-report!
   "Generate unspecced functions report and exit."

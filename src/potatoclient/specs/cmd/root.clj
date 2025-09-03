@@ -1,7 +1,7 @@
 (ns potatoclient.specs.cmd.root
   "Root Command message spec (JonSharedCmd.Root) with flattened oneof structure.
    Based on jon_shared_cmd.proto.
-   
+
    Pronto expects oneof fields to be flattened at the root level, not wrapped in :payload.
    The spec ensures exactly one oneof field is present."
   (:require
