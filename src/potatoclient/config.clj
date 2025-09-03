@@ -7,7 +7,8 @@
             [potatoclient.logging :as logging]
             [potatoclient.theme :as theme]
             [potatoclient.ui-specs :as specs])
-  (:import (java.io File)
+  (:import (clojure.lang EdnReader$ReaderException)
+           (java.io File IOException)
            (java.util Date)))
 
 (def ^:private config-file-name "potatoclient-config.edn")
@@ -117,12 +118,12 @@
                                         :errors (m/explain ::specs/config migrated-data)}
                                  :msg "Invalid config detected, using minimal config"})
               minimal-config)))
-        (catch java.io.IOException e
+        (catch IOException e
           (logging/log-error {:msg "Config file read error"
                               :error (.getMessage ^Exception e)
                               :file (.getPath config-file)})
           minimal-config)
-        (catch clojure.lang.EdnReader$ReaderException e
+        (catch EdnReader$ReaderException e
           (logging/log-error {:msg "Invalid config file format (EDN parsing failed)"
                               :error (.getMessage ^Exception e)
                               :file (.getPath config-file)})
@@ -144,7 +145,7 @@
       (let [config-file (get-config-file)]
         (spit config-file (pr-str config)))
       true
-      (catch java.io.IOException e
+      (catch IOException e
         (logging/log-error {:msg "Failed to write config file"
                             :error (.getMessage ^Exception e)
                             :file (.getPath (get-config-file))})

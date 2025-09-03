@@ -439,7 +439,7 @@
   [:map {:closed true}
    [:temperature [:double {:min -273.15 :max 150.0}]]   ; Absolute zero to max sensor reading
    [:humidity [:double {:min 0.0 :max 100.0}]]          ; Percentage
-   [:pressure [:double {:min 0.0 :max 1200.0}]]])       ; Max atmospheric pressure with margin
+   [:pressure [:double {:min 0.0 :max 120000.0}]]])       ; Max atmospheric pressure with margin
 
 ;; ====================================================================
 ;; Common command specs (empty messages used across multiple commands)

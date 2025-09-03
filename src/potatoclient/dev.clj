@@ -12,7 +12,7 @@
   {:malli/schema [:=> [:cat] :nil]}
   []
   (logging/log-info {:msg "Enabling verbose logging for development..."})
-  ;; Add verbose logging configuration here
+  ;; TODO: Add verbose logging configuration here
   nil)
 
 (defn enable-assertions!
@@ -20,7 +20,7 @@
   {:malli/schema [:=> [:cat] :nil]}
   []
   (logging/log-info {:msg "Enabling assertions for development..."})
-  ;; Add assertion configuration here
+  ;; TODO: Add assertion configuration here
   nil)
 
 (defn enable-all-dev-settings!
