@@ -1,18 +1,28 @@
 (ns repl
   "REPL development utilities.
    
-   Loaded by user.clj when running in NREPL mode.
-   Provides a clean REPL environment with automatic Malli instrumentation."
+   These utilities are available after NREPL server starts.
+   The environment is already initialized by nrepl-server before loading this."
   (:require
     [clojure.tools.namespace.repl :as tnr]
     [malli.dev :as dev]
     [malli.dev.pretty :as pretty]
     [malli.instrument :as mi]
-    [init-dev]
     [potatoclient.logging :as logging]))
 
-;; Initialize development environment
-(def printer-opts (init-dev/initialize!))
+;; ============================================================================
+;; Pretty printer configuration
+;; ============================================================================
+
+;; Note: printer-opts is defined in user namespace when initialized
+(def printer-opts 
+  "Pretty printer options for error reporting."
+  (if (resolve 'user/printer-opts)
+    @(resolve 'user/printer-opts)
+    (pretty/-printer {:width 120
+                     :print-length 50
+                     :print-level 4
+                     :print-meta false})))
 
 ;; ============================================================================
 ;; REPL Utility Functions
@@ -118,13 +128,21 @@
 (defn instrumented-count
   "Show how many functions are currently instrumented."
   []
-  (count (mi/instrumented)))
+  (require 'malli.core)
+  (->> (malli.core/function-schemas)
+       vals
+       (mapcat vals)
+       count))
 
 (defn instrumented?
   "Check if a specific function is instrumented.
    Usage: (instrumented? 'my.ns/my-fn)"
   [fn-sym]
-  (contains? (set (mi/instrumented)) fn-sym))
+  (require 'malli.core)
+  (let [[ns-part name-part] (if (namespace fn-sym)
+                               [(symbol (namespace fn-sym)) (symbol (name fn-sym))]
+                               [*ns* fn-sym])]
+    (contains? (get-in (malli.core/function-schemas) [ns-part name-part]) :schema)))
 
 (defn uninstrument!
   "Remove instrumentation from a specific function.
@@ -138,26 +156,3 @@
 ;; ============================================================================
 
 (tnr/set-refresh-dirs "src" "test")
-
-;; ============================================================================
-;; Help Message
-;; ============================================================================
-
-(println "\n=== Available REPL Functions ===")
-(println "  (reload!)           - Reload modified namespaces")
-(println "  (reload-all!)       - Reload ALL namespaces from scratch")
-(println "  (clear-aliases!)    - Clear namespace aliases (fixes some reload issues)")
-(println "  (restart-logging!)  - Restart logging")
-(println "  (check-functions!)  - Check all function schemas")
-(println "  (set-throw-mode!)   - Throw on validation errors")
-(println "  (set-print-mode!)   - Print validation errors")
-(println "  (instrumented-count) - Count instrumented functions")
-(println "  (instrumented? 'fn) - Check if function is instrumented")
-(println "  (uninstrument! 'fn) - Remove instrumentation from function")
-
-(println "\n=== Workflow ===")
-(println "  1. Edit your code")
-(println "  2. Call (reload!) to refresh changed namespaces")
-(println "  3. Functions are auto-instrumented as you define them")
-(println "  4. Validation errors are printed (or thrown in throw-mode)")
-(println "=======================================\n")
