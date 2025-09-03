@@ -18,7 +18,7 @@
 
 (def process-status
   "Process status"
-  [:enum :starting :running :stopped :error])
+  [:enum :starting :running :stopping :stopped :error])
 
 (def process-info
   "Process information"
@@ -305,7 +305,7 @@
 
 (defn update-process-status!
   "Update process status."
-  {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :starting :running :stopped :error]] :map]}
+  {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :starting :running :stopping :stopped :error]] :map]}
   [process-key pid status]
   (swap! app-state assoc-in [:processes process-key]
          {:pid pid :status status}))
