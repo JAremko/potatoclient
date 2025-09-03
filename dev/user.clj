@@ -2,6 +2,8 @@
   "User namespace for NREPL development.
    Initializes the development environment with Malli instrumentation."
   (:require
+    ;; Initialize Malli registry first - required for m/=> declarations
+    [potatoclient.malli.init]
     [malli.dev :as dev]
     [malli.dev.pretty :as pretty]
     [malli.instrument :as mi]

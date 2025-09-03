@@ -16,16 +16,12 @@
    Returns a function to restore the original state."
   []
   (init/ensure-registry!)
-  ;; Save current instrumentation state
-  (let [original-instrumented (mi/instrumented)]
-    ;; Start instrumentation
-    (malli.dev/start! {:report (fn [_] nil)}) ; Silent reporting for tests
-    ;; Return cleanup function
-    (fn []
-      ;; Restore original instrumentation state
-      (malli.dev/stop!)
-      (doseq [var-name original-instrumented]
-        (mi/instrument! var-name)))))
+  ;; Start instrumentation
+  (malli.dev/start! {:report (fn [_] nil)}) ; Silent reporting for tests
+  ;; Return cleanup function
+  (fn []
+    ;; Stop instrumentation
+    (malli.dev/stop!)))
 
 (deftest test-magnetic-declination-type-checking
   (testing "Malli catches type errors for set-magnetic-declination when instrumented"

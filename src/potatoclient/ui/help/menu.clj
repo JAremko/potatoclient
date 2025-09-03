@@ -1,6 +1,7 @@
 (ns potatoclient.ui.help.menu
   "Help menu creation and management."
-  (:require [clojure.java.io :as io]
+  (:require
+            [malli.core :as m] [clojure.java.io :as io]
             [potatoclient.i18n :as i18n]
             [potatoclient.theme :as theme]
             [potatoclient.ui.help.about :as about]
@@ -12,18 +13,17 @@
 
 (defn- get-main-app-icon
   "Get the main app icon resized to menu size."
-  {:malli/schema [:=> [:cat] [:maybe ImageIcon]]}
   []
   (when-let [icon-resource (io/resource "main.png")]
     (let [icon (ImageIcon. icon-resource)
           img (.getImage icon)
           ;; Scale to 16x16 to match other menu icons
           scaled-img (.getScaledInstance img 16 16 Image/SCALE_SMOOTH)]
-      (ImageIcon. scaled-img))))
+      (ImageIcon. scaled-img)))) 
+ (m/=> get-main-app-icon [:=> [:cat] [:maybe [:fn (partial instance? ImageIcon)]]])
 
 (defn- create-menu-item
   "Create a styled menu item with icon and handler."
-  {:malli/schema [:=> [:cat :keyword [:any :keyword :nil] :ifn] [:fn (partial instance? JMenuItem)]]}
   [text-key icon-key-or-icon handler]
   (let [icon (if (keyword? icon-key-or-icon)
                (theme/key->icon icon-key-or-icon)
@@ -33,13 +33,14 @@
                                :listen [:action handler])]
     ;; Add padding for better visual appearance
     (.setBorder item (javax.swing.BorderFactory/createEmptyBorder 5 10 5 10))
-    item))
+    item)) 
+ (m/=> create-menu-item [:=> [:cat :keyword [:or :keyword :nil] :ifn] [:fn (partial instance? JMenuItem)]])
 
 (defn- add-separator
   "Add a separator to the menu."
-  {:malli/schema [:=> [:cat [:fn (partial instance? JMenu)]] :nil]}
   [menu]
-  (.add menu (JSeparator.)))
+  (.add menu (JSeparator.))) 
+ (m/=> add-separator [:=> [:cat [:fn (partial instance? JMenu)]] :nil])
 
 (defn create-help-menu
   "Create the Help menu with improved formatting and organization.
@@ -49,7 +50,6 @@
    - :include-logs? - Whether to include log viewer (default: true)
    - :include-shortcuts? - Whether to include keyboard shortcuts (default: false)
    - :include-docs? - Whether to include documentation links (default: false)"
-  {:malli/schema [:=> [:cat :map] [:fn (partial instance? JMenu)]]}
   [{:keys [parent include-logs? include-shortcuts? include-docs?]
     :or {include-logs? true
          include-shortcuts? false
@@ -91,11 +91,11 @@
                                  (fn [_] (when parent
                                            (about/show-about-dialog parent)))))
 
-    menu))
+    menu)) 
+ (m/=> create-help-menu [:=> [:cat :map] [:fn (partial instance? JMenu)]])
 
 (defn create-help-action
   "Create a help action for toolbars or other contexts."
-  {:malli/schema [:=> [:cat :keyword [:fn (partial instance? JFrame)]] :any]}
   [action-type parent]
   (case action-type
     :about (action/action
@@ -116,4 +116,5 @@
             :tip (i18n/tr :menu-help-tip)
             :handler (fn [_] (about/show-about-dialog parent)))
 
-    nil))
+    nil)) 
+ (m/=> create-help-action [:=> [:cat :keyword [:fn (partial instance? JFrame)]] :any])

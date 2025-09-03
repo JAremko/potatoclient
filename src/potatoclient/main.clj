@@ -1,6 +1,10 @@
 (ns potatoclient.main
   "Main entry point for PotatoClient."
-  (:require [clojure.java.io]
+  (:require
+            ;; Initialize Malli registry first - required for m/=> declarations
+            [potatoclient.malli.init]
+            [malli.core :as m] 
+            [clojure.java.io]
             [clojure.string]
             [potatoclient.config :as config]
             [potatoclient.i18n :as i18n]
@@ -35,23 +39,22 @@
 
 (defn- get-version
   "Get application version from VERSION file."
-  {:malli/schema [:=> [:cat] :string]}
   []
   (try
     (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
-    (catch Exception _ "dev")))
+    (catch Exception _ "dev"))) 
+ (m/=> get-version [:=> [:cat] :string])
 
 (defn- get-build-type
   "Get build type (RELEASE or DEVELOPMENT)."
-  {:malli/schema [:=> [:cat] :string]}
   []
   (if (runtime/release-build?)
     "RELEASE"
-    "DEVELOPMENT"))
+    "DEVELOPMENT")) 
+ (m/=> get-build-type [:=> [:cat] :string])
 
 (defn- setup-shutdown-hook!
   "Setup JVM shutdown hook."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (.addShutdownHook
     (Runtime/getRuntime)
@@ -65,21 +68,21 @@
           ;; Shutdown logging
           (logging/shutdown!)
           (catch Exception e
-            (println "Error during shutdown:" (.getMessage e))))))))
+            (println "Error during shutdown:" (.getMessage e)))))))) 
+ (m/=> setup-shutdown-hook! [:=> [:cat] :nil])
 
 (defn- initialize-application!
   "Initialize all application subsystems."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   ;; Initialize core systems first (Malli registry, etc.)
   (init/initialize!)
   (config/initialize!)
   (i18n/init!)
-  (setup-shutdown-hook!))
+  (setup-shutdown-hook!)) 
+ (m/=> initialize-application! [:=> [:cat] :nil])
 
 (defn- log-startup!
   "Log application startup."
-  {:malli/schema [:=> [:cat] :boolean]}
   []
   (logging/log-info
     {:id ::startup
@@ -88,14 +91,14 @@
      :msg (format "Control Center started (v%s %s build)"
                   (get-version)
                   (get-build-type))})
-  true)
+  true) 
+ (m/=> log-startup! [:=> [:cat] :boolean])
 
 (declare show-initial-frame-recursive)
 (declare show-connection-frame)
 
 (defn- show-connection-frame
   "Show connection frame with ping monitoring."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   ;; Clean up any existing seesaw bindings before showing new frame
   (state/cleanup-seesaw-bindings!)
@@ -142,11 +145,11 @@
           ;; Clean up before reloading
           (state/cleanup-seesaw-bindings!)
           (theme/preload-theme-icons!)
-          (show-connection-frame))))))
+          (show-connection-frame)))))) 
+ (m/=> show-connection-frame [:=> [:cat] :nil])
 
 (defn- show-initial-frame-recursive
   "Show initial frame with recursive reload support."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   ;; Clean up any existing seesaw bindings before showing new frame
   (state/cleanup-seesaw-bindings!)
@@ -170,23 +173,23 @@
           ;; Clean up before reloading
           (state/cleanup-seesaw-bindings!)
           (theme/preload-theme-icons!)
-          (show-initial-frame-recursive))))))
+          (show-initial-frame-recursive)))))) 
+ (m/=> show-initial-frame-recursive [:=> [:cat] :nil])
 
 (defn- enable-dev-mode!
   "Enable additional development mode settings.
    Note: When running via 'make dev', instrumentation is already
    set up by dev/dev.clj before main is called."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (when (or (System/getProperty "potatoclient.dev")
             (System/getenv "POTATOCLIENT_DEV"))
     ;; Dev mode is already initialized by dev/dev.clj when using 'make dev'
     ;; This is here for other entry points that might set the property
-    (logging/log-info {:msg "Running in development mode"})))
+    (logging/log-info {:msg "Running in development mode"}))) 
+ (m/=> enable-dev-mode! [:=> [:cat] :nil])
 
 (defn- generate-unspecced-report!
   "Generate unspecced functions report and exit."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (println "Generating unspecced functions report...")
   (require 'potatoclient.reports)
@@ -198,11 +201,11 @@
         (System/exit 0))
       (do
         (println "Error: Could not find report generation function")
-        (System/exit 1)))))
+        (System/exit 1))))) 
+ (m/=> generate-unspecced-report! [:=> [:cat] :nil])
 
 (defn -main
   "Application entry point for PotatoClient."
-  {:malli/schema [:=> [:cat [:* :any]] :nil]}
   [& args]
   ;; Note: System properties for UI behavior should be set via JVM flags
   ;; at startup time, not programmatically here. See Makefile and Launch4j
@@ -230,6 +233,7 @@
       (binding [*out* *err*]
         (logging/log-error {:msg (str "Fatal error during application startup: " (.getMessage e))})
         (.printStackTrace e))
-      (System/exit 1))))
+      (System/exit 1)))) 
+ (m/=> -main [:=> [:cat [:* :any]] :nil])
 
 ;(-main)

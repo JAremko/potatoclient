@@ -4,6 +4,7 @@
    This namespace ensures all core systems are properly initialized
    exactly once, regardless of the entry point (main, dev, nrepl, tests)."
   (:require
+            [malli.core :as m]
     [potatoclient.malli.registry :as registry]
     [taoensso.telemere :as t]))
 
@@ -31,9 +32,9 @@
 (defn ensure-registry!
   "Ensure the Malli registry is initialized.
    Safe to call multiple times - initialization only happens once."
-  {:malli/schema [:=> [:cat] :boolean]}
   []
   @registry-initialized?)
+;; Cannot use m/=> here - registry not initialized yet when this compiles
 
 ;; ============================================================================
 ;; Development Mode Detection
@@ -41,18 +42,18 @@
 
 (defn development-mode?
   "Check if running in development mode."
-  {:malli/schema [:=> [:cat] :boolean]}
   []
   (or (System/getProperty "potatoclient.dev")
       (System/getenv "POTATOCLIENT_DEV")
       (= "dev" (System/getProperty "potatoclient.env"))))
+;; Cannot use m/=> here - registry not initialized yet when this compiles
 
 (defn nrepl-mode?
   "Check if running in nREPL mode."
-  {:malli/schema [:=> [:cat] :boolean]}
   []
   (or (System/getProperty "potatoclient.nrepl")
       (some? (resolve 'nrepl.server/start-server))))
+;; Cannot use m/=> here - registry not initialized yet when this compiles
 
 ;; ============================================================================
 ;; Complete Initialization
@@ -73,7 +74,6 @@
    - dev namespace (development)
    - nREPL startup
    - test harness"
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (when-not @initialized?
     (t/log! {:level :info :msg "Starting PotatoClient initialization..."})
@@ -90,6 +90,7 @@
     ;; and provide better REPL workflow
     )
   nil)
+;; Cannot use m/=> here - registry not initialized yet when this compiles
 
 ;; ============================================================================
 ;; Test-specific Initialization
@@ -99,12 +100,12 @@
   "Initialize the system specifically for testing.
    
    This includes all normal initialization plus test-specific setup."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (initialize!)
   ;; Additional test-specific initialization can go here
   (t/log! {:level :info :msg "Test environment initialized"})
   nil)
+;; Cannot use m/=> here - registry not initialized yet when this compiles
 
 ;; ============================================================================
 ;; NREPL-specific Initialization
@@ -116,8 +117,8 @@
    NOTE: This is kept for backward compatibility, but the actual NREPL
    initialization is now handled in dev/user.clj to provide better
    development workflow and avoid circular dependencies."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (initialize!)
   ;; NREPL-specific setup is now in dev/user.clj
   nil)
+;; Cannot use m/=> here - registry not initialized yet when this compiles

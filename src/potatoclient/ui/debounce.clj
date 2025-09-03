@@ -4,6 +4,7 @@
   Provides tools to create debounced atoms that delay updates until a specified
   quiet period has passed, improving performance for UI bindings and expensive
   operations."
+  (:require [malli.core :as m])
   (:import [java.util.concurrent ScheduledExecutorService Executors TimeUnit]))
 
 (def ^:private default-debounce-delay-ms
@@ -42,8 +43,6 @@
     
     ;; config-debounced will only update once with {:search \"hello\"}
     ;; after 500ms of no changes"
-  {:malli/schema [:=> [:cat [:fn #(instance? clojure.lang.IDeref %)] [:? :nat-int]]
-                  [:fn #(instance? clojure.lang.IDeref %)]]}
   ([source-atom] (debounce-atom source-atom default-debounce-delay-ms))
   ([source-atom delay-ms]
    (let [debounced (atom @source-atom)
@@ -66,7 +65,8 @@
                     (reset! scheduled-task task))))
 
      ;; Return the debounced atom
-     debounced)))
+     debounced))) 
+ (m/=> debounce-atom [:=> [:cat [:fn (fn* [p1__4241#] (instance? clojure.lang.IDeref p1__4241#))] [:? :nat-int]] [:fn (fn* [p1__4243#] (instance? clojure.lang.IDeref p1__4243#))]])
 
 (defn debounce-transform
   "Creates a debounced transformation binding.
@@ -87,7 +87,6 @@
       slider-model
       (debounce-transform 100 #(expensive-calculation %))
       (bind/property visualization :data))"
-  {:malli/schema [:=> [:cat :any :nat-int [:=> [:cat :any] :any]] :any]}
   [source delay-ms transform-fn]
   (let [source-atom (atom nil)
         debounced (debounce-atom source-atom delay-ms)]
@@ -105,12 +104,13 @@
                    (handler (transform-fn new-val))))
       ;; Return unsubscribe function
       (fn []
-        (remove-watch debounced ::transform)))))
+        (remove-watch debounced ::transform))))) 
+ (m/=> debounce-transform [:=> [:cat :any :nat-int [:=> [:cat :any] :any]] :any])
 
 (defn cleanup-executor!
   "Shuts down the debounce executor service.
   Should be called on application shutdown."
-  {:malli/schema [:=> [:cat] :nil]}
   []
   (.shutdown executor)
-  nil)
+  nil) 
+ (m/=> cleanup-executor! [:=> [:cat] :nil])

@@ -2,6 +2,8 @@
   "Development runner - initializes instrumentation and starts the app.
    Used by 'make dev' to run the application with full development features."
   (:require
+    ;; Initialize Malli registry first - required for m/=> declarations
+    [potatoclient.malli.init]
     [init-dev]
     [potatoclient.main :as main]))
 
