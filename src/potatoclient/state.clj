@@ -31,7 +31,7 @@
   [:map {:closed true}
    [:url :string]
    [:connected? :boolean]
-   [:latency-ms [:maybe pos-int?]]
+   [:latency-ms [:maybe nat-int?]]
    [:reconnect-count nat-int?]])
 
 (def ui-state
@@ -461,7 +461,7 @@
 
 (defn set-connection-latency!
   "Set connection latency in milliseconds."
-  {:malli/schema [:=> [:cat [:maybe :pos-int]] :map]}
+  {:malli/schema [:=> [:cat [:maybe :nat-int]] :map]}
   [latency-ms]
   (swap! app-state assoc-in [:connection :latency-ms] latency-ms))
 

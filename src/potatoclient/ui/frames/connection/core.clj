@@ -159,6 +159,11 @@
                 (do
                   (reset! (:successful-pings state) 0)
                   (update-ping-failure-ui! ui-refs))))
+            (catch Exception e
+              (logging/log-error {:msg (str "Error in ping monitor: " (.getMessage e))
+                                  :error e})
+              (reset! (:successful-pings state) 0)
+              (update-ping-failure-ui! ui-refs))
             (finally
               (reset! ping-in-progress? false))))))))
 
