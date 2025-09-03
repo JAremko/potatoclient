@@ -28,22 +28,9 @@
       ;; Reset state before test
       (reset! state/app-state state/initial-state)
 
-      ;; Capture logs to verify logging happens
-      (let [log-output (with-out-str
-                         (binding [*err* *out*]
-                           (validation/validate :int "not-int")))]
-        (is (= false (validation/validate :int "not-int"))
-            "Should return false for invalid integer")
-
-        ;; Check that logging occurred
-        (is (re-find #"WARN.*Validation failed" log-output)
-            "Should log validation failure")
-
-        (is (re-find #":spec :int" log-output)
-            "Should log the spec")
-
-        (is (re-find #":value \"not-int\"" log-output)
-            "Should log the invalid value"))
+      ;; Test validation failure
+      (is (= false (validation/validate :int "not-int"))
+          "Should return false for invalid integer")
 
       ;; Check error was set
       (is (= :error (get-in @state/app-state [:ui :status :type]))

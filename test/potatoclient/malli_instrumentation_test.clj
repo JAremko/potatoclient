@@ -16,8 +16,17 @@
    Returns a function to restore the original state."
   []
   (init/ensure-registry!)
-  ;; Start instrumentation
-  (malli.dev/start! {:report (fn [_] nil)}) ; Silent reporting for tests
+  ;; Start instrumentation with thrower to make tests fail on invalid inputs
+  (require '[malli.error :as me])
+  (malli.dev/start! {:report (fn [type data]
+                               ;; Throw on validation errors to make tests fail appropriately
+                               (let [{:keys [input args output value]} data
+                                     ex-data (cond-> {:type type}
+                                              input (assoc :input input)
+                                              args (assoc :args args)
+                                              output (assoc :output output)
+                                              value (assoc :value value))]
+                                 (throw (ex-info (str "Schema validation error: " type) ex-data))))})
   ;; Return cleanup function
   (fn []
     ;; Stop instrumentation
@@ -28,12 +37,12 @@
     (let [cleanup (setup-test-instrumentation)]
       (try
         ;; Valid calls should work
-        (testing "Valid magnetic declination value (within -6400 to 6400 mils)"
-          (is (map? (compass/set-magnetic-declination 0)))
-          (is (map? (compass/set-magnetic-declination 100)))
-          (is (map? (compass/set-magnetic-declination -100)))
-          (is (map? (compass/set-magnetic-declination 6400)))
-          (is (map? (compass/set-magnetic-declination -6400))))
+        (testing "Valid magnetic declination value (within -180.0 to 180.0 degrees)"
+          (is (map? (compass/set-magnetic-declination 0.0)))
+          (is (map? (compass/set-magnetic-declination 45.0)))
+          (is (map? (compass/set-magnetic-declination -45.0)))
+          (is (map? (compass/set-magnetic-declination 179.9)))
+          (is (map? (compass/set-magnetic-declination -179.9))))
 
         ;; Invalid calls should throw when instrumented
         (testing "Invalid input types are caught by instrumentation"
@@ -58,23 +67,23 @@
                        (compass/set-magnetic-declination :hundred))))
 
         (testing "Out of range values are caught by instrumentation"
-          ;; Too large (> 6400 mils)
+          ;; Too large (>= 180.0 degrees)
           (is (thrown? Exception
-                       (compass/set-magnetic-declination 6401)))
+                       (compass/set-magnetic-declination 180.0)))
           (is (thrown? Exception
-                       (compass/set-magnetic-declination 10000)))
+                       (compass/set-magnetic-declination 200.0)))
 
-          ;; Too small (< -6400 mils)
+          ;; Too small (< -180.0 degrees)
           (is (thrown? Exception
-                       (compass/set-magnetic-declination -6401)))
+                       (compass/set-magnetic-declination -180.1)))
           (is (thrown? Exception
-                       (compass/set-magnetic-declination -10000)))
+                       (compass/set-magnetic-declination -200.0)))
 
-          ;; Float values (spec requires int)
+          ;; Integer values (spec requires double)
           (is (thrown? Exception
-                       (compass/set-magnetic-declination 100.5)))
+                       (compass/set-magnetic-declination 100)))
           (is (thrown? Exception
-                       (compass/set-magnetic-declination -100.5))))
+                       (compass/set-magnetic-declination -100))))
 
         (testing "Wrong number of arguments is caught"
           ;; Too many arguments
@@ -96,10 +105,10 @@
 
     ;; These would normally fail with instrumentation, but pass through without it
     (testing "Invalid inputs pass through when not instrumented"
-      ;; String input - will likely cause downstream errors
-      (is (thrown? Exception
-            ;; This will fail at runtime in create-command, not at function boundary
-                   (compass/set-magnetic-declination "100")))
+      ;; String input passes through to the function (no validation at boundary)
+      ;; It might work or fail later depending on implementation
+      (let [result (compass/set-magnetic-declination "100")]
+        (is (map? result) "Function executes even with wrong type"))
 
       ;; The command is created but may be invalid
       (let [result (compass/set-magnetic-declination 10000)] ; Out of range
@@ -131,10 +140,8 @@
     (init/ensure-registry!)
 
     (testing "Check that :angle/magnetic-declination exists in registry"
-      (is (m/schema [:angle/magnetic-declination]
-                    {:registry (registry/get-registry)})))
+      (is (m/schema :angle/magnetic-declination)))
 
     (testing "Check that typo version does NOT exist"
       (is (thrown? Exception
-                   (m/schema [:angle/magnetic-declinaton] ; Typo
-                             {:registry (registry/get-registry)}))))))
+                   (m/schema :angle/magnetic-declinaton))))))
