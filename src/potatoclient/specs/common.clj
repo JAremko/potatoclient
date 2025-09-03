@@ -14,6 +14,11 @@
 (def nat-int-spec
   [:and :int [:>= 0]])
 
+(def bytes-spec
+  "Spec for byte array (Java byte[])."
+  [:fn {:error/message "must be a byte array"}
+   #(instance? (Class/forName "[B") %)])
+
 ;; ====================================================================
 ;; Angle specs (degrees)
 ;; ====================================================================
@@ -201,6 +206,7 @@
 
 ;; Register integer specs
 (registry/register-spec! :nat-int nat-int-spec)
+(registry/register-spec! :bytes bytes-spec)
 (registry/register-spec! :proto/int32 int32-spec)
 (registry/register-spec! :proto/uint32 uint32-spec)
 (registry/register-spec! :proto/int32-positive int32-positive-spec)

@@ -80,6 +80,10 @@
    Ensures all prerequisites are met before running tests."
   []
   (println "\n=== Initializing Test Harness ===")
+  
+  ;; Set font antialiasing to suppress Darklaf warnings during tests
+  (when-not (System/getProperty "awt.useSystemAAFontSettings")
+    (System/setProperty "awt.useSystemAAFontSettings" "lcd_hrgb"))
 
   ;; Ensure Pronto is available
   (ensure-pronto!)

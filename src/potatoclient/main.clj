@@ -211,6 +211,11 @@
   ;; at startup time, not programmatically here. See Makefile and Launch4j
   ;; configuration for proper flag setup.
 
+  ;; Set font antialiasing for better text rendering (suppresses Darklaf warnings)
+  ;; Can be overridden via JVM flags if needed
+  (when-not (System/getProperty "awt.useSystemAAFontSettings")
+    (System/setProperty "awt.useSystemAAFontSettings" "lcd_hrgb"))
+
   (enable-dev-mode!)
 
   (try

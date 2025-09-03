@@ -30,14 +30,19 @@
 (defn- apply-theme!
   "Apply the given theme using DarkLaf"
   [theme-key]
-  (case theme-key
-    :sol-light (LafManager/setTheme (SolarizedLightTheme.))
-    :sol-dark (LafManager/setTheme (SolarizedDarkTheme.))
-    :dark (LafManager/setTheme (OneDarkTheme.))
-    :hi-dark (LafManager/setTheme (HighContrastDarkTheme.))
-    ;; Default fallback
-    (LafManager/setTheme (SolarizedDarkTheme.)))
-  (LafManager/install)) 
+  (let [new-theme (case theme-key
+                    :sol-light (SolarizedLightTheme.)
+                    :sol-dark (SolarizedDarkTheme.)
+                    :dark (OneDarkTheme.)
+                    :hi-dark (HighContrastDarkTheme.)
+                    ;; Default fallback
+                    (SolarizedDarkTheme.))
+        current-theme (LafManager/getTheme)]
+    ;; Only install if the theme is actually different
+    (when (or (nil? current-theme)
+              (not= (.getClass current-theme) (.getClass new-theme)))
+      (LafManager/setTheme new-theme)
+      (LafManager/install)))) 
  (m/=> apply-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :nil])
 
 (defn set-theme!

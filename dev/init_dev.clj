@@ -13,6 +13,10 @@
    Returns the pretty printer options for reuse."
   []
   (println "\n=== Initializing Development Environment ===")
+  
+  ;; Set font antialiasing to suppress Darklaf warnings
+  (when-not (System/getProperty "awt.useSystemAAFontSettings")
+    (System/setProperty "awt.useSystemAAFontSettings" "lcd_hrgb"))
 
   ;; 1. Set up Malli registry
   (println "Setting up Malli registry...")

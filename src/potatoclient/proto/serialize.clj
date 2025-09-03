@@ -8,6 +8,8 @@
    - serialize-state-payload*: Fast serialization without validation  
    - serialize-state-payload: Full serialization with Malli and buf.validate validation"
   (:require
+    ;; Initialize Malli registry first - required for m/=> declarations
+    [potatoclient.malli.init]
     [malli.core :as m]
     [malli.error :as me]
     [pronto.core :as pronto]
