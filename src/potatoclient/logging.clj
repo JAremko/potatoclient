@@ -178,7 +178,10 @@
   (when @initialized?
     (try
       (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
-      (tel/stop-handlers!)
+      (try
+        (tel/stop-handlers!)
+        (catch Exception e
+          (println (str "Error stopping Telemere handlers: " (.getMessage e)))))
       (reset! initialized? false)
       (catch Exception e
         ;; Can't use logging here as handlers might be stopped

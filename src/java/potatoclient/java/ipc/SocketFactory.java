@@ -24,7 +24,14 @@ public class SocketFactory {
         }
 
         // Register shutdown hook to clean up sockets
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> activeSockets.values().forEach(UnixSocketCommunicator::stop)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                activeSockets.values().forEach(UnixSocketCommunicator::stop);
+            } catch (Exception e) {
+                // Ignore exceptions during shutdown - sockets may already be closed
+                System.err.println("Error during socket cleanup: " + e.getMessage());
+            }
+        }));
     }
 
     /**

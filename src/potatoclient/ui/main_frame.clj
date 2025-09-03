@@ -42,7 +42,17 @@
                    (logging/log-info {:msg "Shutting down PotatoClient..."})
                    (future
                      (try
-                       ;; Stop all running streams first
+                       ;; Stop state ingress first to prevent new messages
+                       (when (resolve 'potatoclient.state.server.core/shutdown!)
+                         (try
+                           ((resolve 'potatoclient.state.server.core/shutdown!))
+                           (logging/log-debug {:msg "Stopped state ingress"})
+                           ;; Give time for any in-flight messages to complete
+                           (Thread/sleep 100)
+                           (catch Exception e
+                             (logging/log-error {:msg (str "Error stopping state ingress: " (.getMessage e))}))))
+                       
+                       ;; Stop all running streams
                        (when (resolve 'potatoclient.streams.core/shutdown)
                          (try
                            ((resolve 'potatoclient.streams.core/shutdown))
@@ -58,15 +68,25 @@
                        (state/cleanup-seesaw-bindings!)
                        (logging/log-debug {:msg "Cleaned up all seesaw bindings"})
 
-                       ;; Save configuration
+                       ;; Save configuration  
                        (let [current-config {:theme (theme/get-current-theme)
                                              :locale (state/get-locale)
                                              :url-history (config/get-url-history)}]
                          (config/save-config! current-config))
 
+                       ;; Force flush any pending log messages before shutdown
+                       (Thread/sleep 50)
+                       
                        (logging/shutdown!)
+                       
+                       ;; Give other threads a moment to finish
+                       (Thread/sleep 100)
+                       
                        (catch Exception e
-                         (logging/log-error {:msg (str "Error during shutdown: " (.getMessage e))}))
+                         ;; Can't use logging after shutdown - use println instead
+                         (println (str "Error during shutdown: " (.getMessage e)))
+                         (println "Stack trace:")
+                         (.printStackTrace e System/out))
                        (finally
                          (System/exit 0))))
 
