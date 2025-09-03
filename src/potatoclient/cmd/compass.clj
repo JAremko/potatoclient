@@ -40,12 +40,9 @@
 (defn set-magnetic-declination
   "Set the magnetic declination angle in mils.
    Returns a fully formed cmd root ready to send."
-  {:malli/schema [:=> [:cat int?] :cmd/root]}
+  {:malli/schema [:=> [:cat :angle/magnetic-declination] :cmd/root]}
   [value]
   (core/create-command {:compass {:set_magnetic_declination {:value value}}}))
-
-(set-magnetic-declination "f")
-
 
 (defn set-offset-angle-azimuth
   "Set the offset angle for azimuth in mils.

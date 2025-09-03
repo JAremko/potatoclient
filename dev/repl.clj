@@ -155,4 +155,4 @@
 ;; Set up namespace refresh dirs
 ;; ============================================================================
 
-(tnr/set-refresh-dirs "src" "test")
+(tnr/set-refresh-dirs "src")
