@@ -125,7 +125,7 @@
   ;; bg/bind-group bindings for detached windows
   ;; or regular seesaw/bind for main window (when binding-group is nil)
   (seesaw/label :text text :halign :center)) 
- (m/=> create-placeholder-content [:=> [:cat [:maybe :keyword] :string] [:fn (fn* [p1__4267#] (instance? JPanel p1__4267#))]])
+ (m/=> create-placeholder-content [:=> [:cat [:maybe :keyword] :string] [:fn {:error/message "must be a Swing JComponent"} (partial instance? javax.swing.JComponent)]])
 
 (defn create-default-tabs
   "Create the default set of tabs for the application.

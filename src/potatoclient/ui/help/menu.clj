@@ -34,12 +34,13 @@
     ;; Add padding for better visual appearance
     (.setBorder item (javax.swing.BorderFactory/createEmptyBorder 5 10 5 10))
     item)) 
- (m/=> create-menu-item [:=> [:cat :keyword [:or :keyword :nil] :ifn] [:fn (partial instance? JMenuItem)]])
+ (m/=> create-menu-item [:=> [:cat :keyword [:or :keyword :nil [:fn {:error/message "must be an Icon"} (partial instance? javax.swing.Icon)]] :ifn] [:fn (partial instance? JMenuItem)]])
 
 (defn- add-separator
   "Add a separator to the menu."
   [menu]
-  (.add menu (JSeparator.))) 
+  (.add menu (JSeparator.))
+  nil) 
  (m/=> add-separator [:=> [:cat [:fn (partial instance? JMenu)]] :nil])
 
 (defn create-help-menu
