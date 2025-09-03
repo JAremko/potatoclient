@@ -128,5 +128,5 @@ test-ipc: ensure-compiled ## Run IPC tests
 # Generate clj-kondo configs from Malli specs
 kondo-configs: ensure-compiled ## Generate clj-kondo type configs
 	@echo "Generating clj-kondo type configs..."
-	@clojure -M:dev scripts/generate-kondo-configs.clj
+	@clojure -M:kondo-gen
 	@echo "Type configs generated"

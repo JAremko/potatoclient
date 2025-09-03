@@ -343,7 +343,7 @@
 
 (defn add-watch-handler
   "Add a watch handler to app-state."
-  {:malli/schema [:=> [:cat :keyword :fn] :nil]}
+  {:malli/schema [:=> [:cat :keyword fn?] :nil]}
   [key handler-fn]
   (add-watch app-state key handler-fn)
   nil)

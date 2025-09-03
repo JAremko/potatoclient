@@ -25,6 +25,8 @@
   (:require [malli.dev :as dev]
             [malli.dev.pretty :as pretty]
             [malli.instrument :as mi]
+            [malli.registry :as mr]
+            [malli.experimental.lite :as mel]
             [potatoclient.logging :as logging]))
 
 (defn start!
@@ -53,7 +55,11 @@
           print-meta false}}]
    (logging/log-info {:msg "Starting Malli development instrumentation..."})
 
-   ;; Ensure ui-specs registry is loaded first
+   ;; Ensure registry is set up with all schemas first
+   (require '[potatoclient.init])
+   ((resolve 'potatoclient.init/ensure-registry!))
+   
+   ;; Load ui-specs registry  
    (require '[potatoclient.ui-specs])
 
    ;; Load all namespaces that have Malli schemas
@@ -113,7 +119,10 @@
             '[potatoclient.url-parser])
 
    ;; Collect all function schemas from loaded namespaces
-   (mi/collect! {:ns (all-ns)})
+   ;; This reads :malli/schema metadata from all public vars
+   (logging/log-info {:msg "Collecting function schemas from all namespaces..."})
+   (let [collected (mi/collect! {:ns (all-ns)})]
+     (logging/log-info {:msg (str "Collected schemas from " (count collected) " functions")}))
 
    ;; Configure pretty printer options
    (let [printer-opts (pretty/-printer {:width width
@@ -127,8 +136,12 @@
                     report)]
 
      ;; Start dev mode with configured error reporting
-     ;; This also generates clj-kondo configs automatically!
-     (dev/start! {:report reporter}))
+     ;; This instruments functions and watches for schema changes
+     ;; Also generates clj-kondo configs automatically!
+     (dev/start! {:report reporter})
+     
+     ;; Log that instrumentation is active
+     (logging/log-info {:msg "Malli dev mode started - watching for schema changes"}))
 
    (logging/log-info {:msg (str "Malli instrumentation active with "
                                 (if (= report :throw) "exception throwing" "error printing"))})

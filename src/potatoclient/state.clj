@@ -18,7 +18,7 @@
 
 (def process-status
   "Process status"
-  [:enum :running :stopped :error])
+  [:enum :starting :running :stopped :error])
 
 (def process-info
   "Process information"
@@ -305,7 +305,7 @@
 
 (defn update-process-status!
   "Update process status."
-  {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :running :stopped :error]] :map]}
+  {:malli/schema [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :starting :running :stopped :error]] :map]}
   [process-key pid status]
   (swap! app-state assoc-in [:processes process-key]
          {:pid pid :status status}))
@@ -499,7 +499,7 @@
 
 (defn add-watch-handler
   "Add a watch handler to app-state."
-  {:malli/schema [:=> [:cat :keyword :fn] :nil]}
+  {:malli/schema [:=> [:cat :keyword fn?] :nil]}
   [key handler-fn]
   (add-watch app-state key handler-fn)
   nil)
@@ -582,7 +582,7 @@
 (defn safe-swap!
   "Swap app-state with validation in development mode.
    In production, behaves like normal swap!"
-  {:malli/schema [:=> [:cat :fn [:* :any]] :map]}
+  {:malli/schema [:=> [:cat fn? [:* :any]] :map]}
   [f & args]
   (let [result (apply swap! app-state f args)]
     ;; Only validate in development

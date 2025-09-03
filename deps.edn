@@ -80,6 +80,8 @@
                             "-Dgstreamer.plugin.path=/usr/lib/gstreamer-1.0"
                             "--enable-native-access=ALL-UNNAMED"
                             "-Dclojure.compile.warn-on-reflection=true"
+                            "-Dpotatoclient.dev=true"
+                            "-Dpotatoclient.validation.enabled=true"
                             "-Dawt.useSystemAAFontSettings=on"]
                  :main-opts ["-m" "potatoclient.main"]}
 
@@ -144,6 +146,9 @@
 
            :format {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
                     :main-opts ["-m" "cljfmt.main"]}
+           
+           :kondo-gen {:extra-paths ["tools/kondo-gen/src" "target/classes"]
+                       :main-opts ["-m" "kondo-gen.core"]}
 
            :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2025.07.28"}}
                   :main-opts ["-m" "clj-kondo.main"]}

@@ -36,7 +36,7 @@
 (defn- create-message-handler
   "Create message handler for stream IPC.
    Returns a function that delegates to the events handler."
-  {:malli/schema [:=> [:cat :keyword] :fn]}
+  {:malli/schema [:=> [:cat :keyword] fn?]}
   [stream-type]
   (fn [message]
     (events/handle-message stream-type message)))

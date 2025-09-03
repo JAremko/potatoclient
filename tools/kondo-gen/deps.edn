@@ -1,0 +1,11 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.12.2"}
+        metosin/malli {:mvn/version "0.19.1"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+                  :main-opts ["-m" "kaocha.runner"]}
+           :run {:extra-paths ["../../src" "../../resources" "../../target/classes"]
+                 :extra-deps {com.taoensso/telemere {:mvn/version "1.1.0"}
+                              tongue/tongue {:mvn/version "0.4.4"}
+                              instaparse/instaparse {:mvn/version "1.5.0"}}
+                 :main-opts ["-m" "kondo-gen.core"]}}}

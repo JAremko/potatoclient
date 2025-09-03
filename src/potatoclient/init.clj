@@ -83,11 +83,16 @@
     
     ;; 2. Set up development instrumentation if in dev mode
     (when (development-mode?)
-      (t/log! {:level :info :msg "Development mode detected, loading dev tools..."})
+      (t/log! {:level :info :msg "Development mode detected, starting Malli instrumentation..."})
       (try
         (require 'potatoclient.dev-instrumentation)
         (when-let [start-fn (resolve 'potatoclient.dev-instrumentation/start!)]
-          (start-fn {:report :print}))
+          ;; Use :throw in dev mode for immediate feedback on validation errors
+          (start-fn {:report :throw
+                     :width 120
+                     :print-length 50
+                     :print-level 4}))
+        (t/log! {:level :info :msg "Malli instrumentation started successfully"})
         (catch Exception e
           (t/log! {:level :warn :msg (str "Could not load dev instrumentation: " (.getMessage e))}))))
     

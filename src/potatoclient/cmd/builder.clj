@@ -96,6 +96,7 @@
    Example:
    (update-proto-map-cmd my-proto-cmd {:session_id 999 :important true})"
   {:malli/schema [:=> [:cat :any [:map]] :any]}
+  #_{:clj-kondo/ignore [:unused-binding]}
   [proto-cmd updates]
   ;; Use p-> with hints for efficient updates
   (p/with-hints [(p/hint proto-cmd JonSharedCmd$Root serialize/cmd-mapper)]

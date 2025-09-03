@@ -75,7 +75,7 @@
 
 (defn- create-file-handler
   "Create a file handler for Telemere"
-  {:malli/schema [:=> [:cat] :fn]}
+  {:malli/schema [:=> [:cat] fn?]}
   []
   (tel/handler:file
     {:output-fn (tel/format-signal-fn)

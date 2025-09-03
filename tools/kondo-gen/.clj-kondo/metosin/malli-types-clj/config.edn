@@ -1,0 +1,8 @@
+{:linters {:unresolved-symbol {:exclude [(malli.core/=>)]},
+           :type-mismatch {:namespaces {kondo-gen.core-test {test-fn-3 {:arities {:varargs {:args [:int
+                                                                                                   {:op :rest,
+                                                                                                    :spec :int}],
+                                                                                            :ret :int,
+                                                                                            :min-arity 1}}},
+                                                             test-fn-1 {:arities {1 {:args [:int], :ret :int}}},
+                                                             test-fn-2 {:arities {2 {:args [:string :int], :ret :string}}}}}}}}

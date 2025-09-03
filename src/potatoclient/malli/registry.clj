@@ -23,7 +23,14 @@
     [oneof-registry
      (oneof/register-oneof-schema! {})
      base-registry
-     (merge oneof-registry {:bytes bytes?})]
+     (merge oneof-registry 
+            {:bytes bytes?
+             :pos-int pos-int?
+             :neg-int neg-int?
+             :nat-int nat-int?
+             :pos? pos?
+             :neg? neg?
+             :zero? zero?})]
     (mr/set-default-registry!
       (apply
         mr/composite-registry

@@ -41,7 +41,7 @@
 
 (defn- create-output-handler
   "Create thread to handle process output"
-  {:malli/schema [:=> [:cat :keyword :any :keyword] :fn]}
+  {:malli/schema [:=> [:cat :keyword :any :keyword] fn?]}
   [stream-type stream output-type]
   (fn []
     (try

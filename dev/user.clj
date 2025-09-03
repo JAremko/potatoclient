@@ -32,8 +32,68 @@
   (init/ensure-registry!)
   (println "Registry reloaded"))
 
+(defn start-instrumentation!
+  "Start Malli function instrumentation.
+   Options:
+   - :report - :print (logs errors) or :throw (throws on validation error) 
+   - :width - Pretty printer width (default 120)
+   - :print-length - Max collection items to print (default 50)"
+  ([] (start-instrumentation! {}))
+  ([opts]
+   (require '[potatoclient.dev-instrumentation])
+   (let [start-fn (resolve 'potatoclient.dev-instrumentation/start!)
+         default-opts {:report :throw
+                       :width 120
+                       :print-length 50
+                       :print-level 4}]
+     (if start-fn
+       (do
+         (start-fn (merge default-opts opts))
+         (println "Malli instrumentation started!"))
+       (println "Error: Could not load instrumentation")))))
+
+(defn stop-instrumentation!
+  "Stop Malli function instrumentation."
+  []
+  (require '[potatoclient.dev-instrumentation])
+  (when-let [stop-fn (resolve 'potatoclient.dev-instrumentation/stop!)]
+    (stop-fn)
+    (println "Malli instrumentation stopped!")))
+
+(defn check-functions!
+  "Check all functions against their schemas.
+   Returns map of function -> errors for any violations."
+  []
+  (require '[potatoclient.dev-instrumentation])
+  (when-let [check-fn (resolve 'potatoclient.dev-instrumentation/check-all)]
+    (let [results (check-fn)]
+      (if (empty? results)
+        (println "✓ All function schemas are valid!")
+        (do
+          (println (str "✗ Found " (count results) " function schema violations:"))
+          (doseq [[fn-var errors] results]
+            (println "  -" fn-var))))
+      results)))
+
+(defn instrument-ns!
+  "Instrument all functions in a specific namespace."
+  [ns-sym]
+  (require '[potatoclient.dev-instrumentation])
+  (when-let [inst-fn (resolve 'potatoclient.dev-instrumentation/instrument-ns!)]
+    (inst-fn ns-sym)
+    (println (str "Instrumented namespace: " ns-sym))))
+
+;; Auto-start instrumentation if in dev mode
+(when (init/development-mode?)
+  (println "\nDevelopment mode detected - starting Malli instrumentation...")
+  (start-instrumentation! {:report :print}))
+
 ;; Print helpful message
-(println "Useful REPL functions available:")
-(println "  (restart-logging!)  - Restart logging system")
-(println "  (reload-registry!)  - Reload Malli schemas")
+(println "\nUseful REPL functions available:")
+(println "  (restart-logging!)       - Restart logging system")
+(println "  (reload-registry!)       - Reload Malli schemas")
+(println "  (start-instrumentation!) - Start function validation")
+(println "  (stop-instrumentation!)  - Stop function validation")
+(println "  (check-functions!)       - Check all function schemas")
+(println "  (instrument-ns! 'ns)     - Instrument specific namespace")
 (println "")

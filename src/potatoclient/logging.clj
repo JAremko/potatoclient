@@ -75,7 +75,7 @@
 
 (defn- create-file-handler
   "Create a file handler for Telemere"
-  {:malli/schema [:=> [:cat] :fn]}
+  {:malli/schema [:=> [:cat] fn?]}
   []
   (tel/handler:file
     {:output-fn (tel/format-signal-fn)
@@ -175,9 +175,15 @@
   "Shutdown the logging system"
   {:malli/schema [:=> [:cat] :nil]}
   []
-  (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
-  (tel/stop-handlers!)
-  nil)
+  (when @initialized?
+    (try
+      (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
+      (tel/stop-handlers!)
+      (reset! initialized? false)
+      (catch Exception e
+        ;; Can't use logging here as handlers might be stopped
+        (println (str "Warning during logging shutdown: " (.getMessage e)))))
+    nil))
 
 ;; Convenience logging macros that match our previous API
 (defmacro log-info

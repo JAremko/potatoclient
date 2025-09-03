@@ -17,6 +17,11 @@
   "Valid theme identifiers"
   [:enum :sol-light :sol-dark :dark :hi-dark])
 
+(def ifn
+  "Schema for invokable function values (functions, keywords, maps, etc)"
+  [:fn {:error/message "must be invokable (function, keyword, map, etc)"}
+   ifn?])
+
 (def domain
   "Domain name or IP address - validates hosts that can be used for WebSocket connections.
    Uses Instaparse grammar as the single source of truth for validation."
@@ -190,6 +195,7 @@
   (registry/register-spec! ::domain domain)
   (registry/register-spec! ::stream-key stream-key)
   (registry/register-spec! ::stream-type stream-type)
+  (registry/register-spec! :ifn ifn)  ; Register :ifn for function schemas
 
   ;; Configuration schemas
   (registry/register-spec! ::url url)

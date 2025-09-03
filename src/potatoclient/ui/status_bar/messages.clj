@@ -139,7 +139,7 @@
 
 (defn with-error-handler
   "Execute function with error handling and status bar notification."
-  {:malli/schema [:=> [:cat :fn] :any]}
+  {:malli/schema [:=> [:cat :ifn] :any]}
   [f]
   (try
     (f)
