@@ -69,6 +69,20 @@
   [:map {:closed true}
    [:value :range/digital-zoom]])
 
+;; ROI (Region of Interest) control messages
+
+(def focus-roi-spec
+  "FocusROI with rectangle coordinates (protobuf expects full rectangle)"
+  :composite/ndc-roi)
+
+(def track-roi-spec
+  "TrackROI with rectangle coordinates"
+  :composite/ndc-roi)
+
+(def zoom-roi-spec
+  "ZoomROI with rectangle coordinates"
+  :composite/ndc-roi)
+
 ;; Focus control messages
 
 (def set-auto-focus-spec
@@ -80,7 +94,7 @@
 
 ;; Basic control messages
 
-;; Main Heat Camera Root command spec using oneof - all 31 commands
+;; Main Heat Camera Root command spec using oneof - all 34 commands (31 + 3 ROI)
 (def heat-camera-command-spec
   [:oneof
    [:zoom zoom-spec]
@@ -113,6 +127,9 @@
    [:set_calib_mode :cmd/empty]
    [:set_digital_zoom_level set-digital-zoom-level-spec]
    [:set_clahe_level set-clahe-level-spec]
-   [:shift_clahe_level shift-clahe-level-spec]])
+   [:shift_clahe_level shift-clahe-level-spec]
+   [:focus_roi focus-roi-spec]
+   [:track_roi track-roi-spec]
+   [:zoom_roi zoom-roi-spec]])
 
 (registry/register-spec! :cmd/heat-camera heat-camera-command-spec)

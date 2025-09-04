@@ -1,11 +1,11 @@
 (ns potatoclient.proto.deserialize
   "Proto deserialization utility with validation.
    Provides functions to deserialize protobuf binary data to EDN with optional validation.
-   
+
    Functions:
    - deserialize-cmd-payload*: Fast deserialization without validation
    - deserialize-cmd-payload: Full deserialization with buf.validate and Malli validation
-   - deserialize-state-payload*: Fast deserialization without validation  
+   - deserialize-state-payload*: Fast deserialization without validation
    - deserialize-state-payload: Full deserialization with buf.validate and Malli validation"
   (:require
     [malli.core :as m]
@@ -16,8 +16,11 @@
     [potatoclient.specs.cmd.root]
     [potatoclient.specs.state.root])
   (:import
+    (clojure.lang ExceptionInfo)
+    (cmd JonSharedCmd$Root)
     [com.google.protobuf ByteString]
-    [build.buf.protovalidate Validator ValidatorFactory]))
+    [build.buf.protovalidate Validator ValidatorFactory]
+    (ser JonSharedData$JonGUIState)))
 
 ;; Initialize registry with all specs
 (registry/setup-global-registry!)
@@ -28,8 +31,8 @@
 
 ;; Proto classes must be compiled before using this namespace
 ;; Run 'make compile' or 'clojure -T:build compile-all' first
-(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
-(pronto/defmapper state-mapper [ser.JonSharedData$JonGUIState])
+(pronto/defmapper cmd-mapper [JonSharedCmd$Root])
+(pronto/defmapper state-mapper [JonSharedData$JonGUIState])
 
 ;; ============================================================================
 ;; Validator - initialized lazily
@@ -57,7 +60,7 @@
                                              {:field (str (.getField proto-violation))
                                               :constraint (.getRuleId proto-violation)
                                               :message (.getMessage proto-violation)}))
-                                         (.getViolations result))}))))) 
+                                         (.getViolations result))})))))
  (m/=> validate-with-buf [:=> [:cat :any :keyword] :any])
 
 (defn- validate-with-malli
@@ -80,7 +83,7 @@
         (throw (ex-info "Malli validation failed"
                         {:type :malli-validation-error
                          :spec spec-key
-                         :errors errors})))))) 
+                         :errors errors}))))))
  (m/=> validate-with-malli [:=> [:cat [:map] :keyword] :any])
 
 ;; ============================================================================
@@ -93,14 +96,14 @@
    Throws ex-info if deserialization fails."
   [binary-data]
   (try
-    (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
+    (let [proto-msg (JonSharedCmd$Root/parseFrom binary-data)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)]
       (pronto/proto-map->clj-map proto-map))
     (catch Exception e
       (throw (ex-info "Failed to deserialize CMD payload"
                       {:type :deserialization-error
                        :proto-type :cmd
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> deserialize-cmd-payload* [:=> [:cat :bytes] :map])
 
 (defn deserialize-cmd-payload
@@ -111,14 +114,14 @@
   [binary-data]
   (try
     ;; Parse proto
-    (let [proto-msg (cmd.JonSharedCmd$Root/parseFrom binary-data)
+    (let [proto-msg (JonSharedCmd$Root/parseFrom binary-data)
           _ (validate-with-buf proto-msg :cmd)
           proto-map (pronto/proto->proto-map cmd-mapper proto-msg)
           edn-data (pronto/proto-map->clj-map proto-map)]
       ;; Validate EDN with Malli
       (validate-with-malli edn-data :cmd/root)
       edn-data)
-    (catch clojure.lang.ExceptionInfo e
+    (catch ExceptionInfo e
       ;; Re-throw our validation errors
       (throw e))
     (catch Exception e
@@ -126,7 +129,7 @@
       (throw (ex-info "Failed to deserialize CMD payload"
                       {:type :deserialization-error
                        :proto-type :cmd
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> deserialize-cmd-payload [:=> [:cat :bytes] :map])
 
 ;; ============================================================================
@@ -139,14 +142,14 @@
    Throws ex-info if deserialization fails."
   [binary-data]
   (try
-    (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
+    (let [proto-msg (JonSharedData$JonGUIState/parseFrom binary-data)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)]
       (pronto/proto-map->clj-map proto-map))
     (catch Exception e
       (throw (ex-info "Failed to deserialize State payload"
                       {:type :deserialization-error
                        :proto-type :state
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> deserialize-state-payload* [:=> [:cat :bytes] :map])
 
 (defn deserialize-state-payload
@@ -157,14 +160,14 @@
   [binary-data]
   (try
     ;; Parse proto
-    (let [proto-msg (ser.JonSharedData$JonGUIState/parseFrom binary-data)
+    (let [proto-msg (JonSharedData$JonGUIState/parseFrom binary-data)
           _ (validate-with-buf proto-msg :state)
           proto-map (pronto/proto->proto-map state-mapper proto-msg)
           edn-data (pronto/proto-map->clj-map proto-map)]
       ;; Validate EDN with Malli
       (validate-with-malli edn-data :state/root)
       edn-data)
-    (catch clojure.lang.ExceptionInfo e
+    (catch ExceptionInfo e
       ;; Re-throw our validation errors
       (throw e))
     (catch Exception e
@@ -172,5 +175,5 @@
       (throw (ex-info "Failed to deserialize State payload"
                       {:type :deserialization-error
                        :proto-type :state
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> deserialize-state-payload [:=> [:cat :bytes] :map])

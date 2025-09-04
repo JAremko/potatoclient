@@ -1,9 +1,9 @@
 (ns potatoclient.malli.init
   "Early initialization of Malli registry for load-time availability.
-   
+
    This namespace MUST be required before any namespace that uses m/=> declarations.
    It ensures all schemas are registered and available at load time.
-   
+
    Usage:
    - Add (:require [potatoclient.malli.init]) as the FIRST require in any namespace using m/=>
    - Or use :prep-lib in deps.edn to ensure it loads first"
@@ -20,4 +20,6 @@
 (require 'potatoclient.specs.state.root)  ; State specs
 
 ;; Export a flag to verify initialization
-(def initialized? true)
+(def initialized?
+   "Flag indicating Malli registry and specs have been initialized."
+  true)

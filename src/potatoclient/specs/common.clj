@@ -183,6 +183,11 @@
 (def int32-positive-spec
   [:int {:min 0 :max 2147483647}])
 
+;; Double type spec for protobuf compatibility
+(def double-spec
+  "Basic double type with no constraints"
+  :double)
+
 ;; Protocol and session specs
 (def protocol-version-spec
   ;; uint32 with gt: 0 constraint (must be > 0)
@@ -210,6 +215,7 @@
 (registry/register-spec! :proto/int32 int32-spec)
 (registry/register-spec! :proto/uint32 uint32-spec)
 (registry/register-spec! :proto/int32-positive int32-positive-spec)
+(registry/register-spec! :proto/double double-spec)
 (registry/register-spec! :proto/protocol-version protocol-version-spec)
 (registry/register-spec! :proto/session-id session-id-spec)
 
@@ -431,11 +437,28 @@
    [:x :screen/pixel-x]
    [:y :screen/pixel-y]])
 
+;; NDC (Normalized Device Coordinate) ROI specs
+(def ndc-point-spec
+  "NDC point with x, y coordinates (no constraints, can be outside [-1, 1])"
+  [:map {:closed true}
+   [:x :proto/double]
+   [:y :proto/double]])
+
+(def ndc-roi-spec
+  "NDC Region of Interest with x1, y1, x2, y2 coordinates in [-1.0, 1.0]"
+  [:map {:closed true}
+   [:x1 [:double {:min -1.0 :max 1.0}]]
+   [:y1 [:double {:min -1.0 :max 1.0}]]
+   [:x2 [:double {:min -1.0 :max 1.0}]]
+   [:y2 [:double {:min -1.0 :max 1.0}]]])
+
 ;; Register composite specs
 (registry/register-spec! :composite/gps-position gps-position-spec)
 (registry/register-spec! :composite/compass-orientation compass-orientation-spec)
 (registry/register-spec! :composite/screen-point-ndc screen-point-ndc-spec)
 (registry/register-spec! :composite/screen-point-pixel screen-point-pixel-spec)
+(registry/register-spec! :composite/ndc-point ndc-point-spec)
+(registry/register-spec! :composite/ndc-roi ndc-roi-spec)
 
 ;; ====================================================================
 ;; Common message specs

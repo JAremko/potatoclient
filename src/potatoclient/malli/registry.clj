@@ -7,7 +7,8 @@
     [malli.util :as mu]
     [potatoclient.malli.oneof :as oneof]))
 
-(defonce registry-atom (atom {}))
+(defonce ^{:doc "Mutable atom holding the global spec registry"} registry-atom
+         (atom {}))
 
 (defn
   register-spec!
@@ -23,7 +24,7 @@
     [oneof-registry
      (oneof/register-oneof-schema! {})
      base-registry
-     (merge oneof-registry 
+     (merge oneof-registry
             {:bytes bytes?
              :pos-int pos-int?
              :neg-int neg-int?

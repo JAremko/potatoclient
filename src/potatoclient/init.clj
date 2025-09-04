@@ -4,9 +4,9 @@
    This namespace ensures all core systems are properly initialized
    exactly once, regardless of the entry point (main, dev, nrepl, tests)."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [potatoclient.malli.registry :as registry]
-    [taoensso.telemere :as t]))
+    [potatoclient.logging :as logging]))
 
 ;; ============================================================================
 ;; Registry Initialization
@@ -16,17 +16,18 @@
   registry-initialized?
   (delay
     (try
-      (t/log! {:level :info :msg "Initializing Malli global registry..."})
+      (logging/log-info "Initializing Malli global registry...")
       (registry/setup-global-registry!)
       ;; Force loading of all spec namespaces to register their schemas
       ;; This ensures all schemas are available regardless of load order
+      (require 'potatoclient.specs.common) ; Load common specs first
       (require 'potatoclient.specs.cmd.root)
       (require 'potatoclient.specs.state.root)
       (require 'potatoclient.ui-specs)
-      (t/log! {:level :info :msg "Malli global registry initialized successfully"})
+      (logging/log-info "Malli global registry initialized successfully")
       true
       (catch Exception e
-        (t/log! {:level :error :msg (str "Failed to initialize Malli registry: " (.getMessage e))})
+        (logging/log-error (str "Failed to initialize Malli registry: " (.getMessage e)))
         (throw e)))))
 
 (defn ensure-registry!
@@ -76,14 +77,14 @@
    - test harness"
   []
   (when-not @initialized?
-    (t/log! {:level :info :msg "Starting PotatoClient initialization..."})
+    (logging/log-info "Starting PotatoClient initialization...")
 
     ;; Initialize Malli registry - required by everything else
     (ensure-registry!)
 
     ;; Mark as initialized
     (reset! initialized? true)
-    (t/log! {:level :info :msg "PotatoClient initialization complete"})
+    (logging/log-info "PotatoClient initialization complete")
 
     ;; Note: Development-specific initialization (instrumentation, etc.)
     ;; is now handled in dev/user.clj to avoid circular dependencies
@@ -103,7 +104,7 @@
   []
   (initialize!)
   ;; Additional test-specific initialization can go here
-  (t/log! {:level :info :msg "Test environment initialized"})
+  (logging/log-info "Test environment initialized")
   nil)
 ;; Cannot use m/=> here - registry not initialized yet when this compiles
 

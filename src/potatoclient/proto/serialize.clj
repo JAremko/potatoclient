@@ -1,11 +1,11 @@
 (ns potatoclient.proto.serialize
   "Proto serialization utility with validation.
    Provides functions to serialize EDN data to protobuf binary with optional validation.
-   
+
    Functions:
    - serialize-cmd-payload*: Fast serialization without validation
    - serialize-cmd-payload: Full serialization with Malli and buf.validate validation
-   - serialize-state-payload*: Fast serialization without validation  
+   - serialize-state-payload*: Fast serialization without validation
    - serialize-state-payload: Full serialization with Malli and buf.validate validation"
   (:require
     ;; Initialize Malli registry first - required for m/=> declarations
@@ -18,8 +18,11 @@
     [potatoclient.specs.cmd.root]
     [potatoclient.specs.state.root])
   (:import
+    (clojure.lang ExceptionInfo)
+    (cmd JonSharedCmd$Root)
     [com.google.protobuf ByteString]
-    [build.buf.protovalidate Validator ValidatorFactory]))
+    [build.buf.protovalidate Validator ValidatorFactory]
+    (ser JonSharedData$JonGUIState)))
 
 ;; ============================================================================
 ;; Pronto mappers for proto conversion
@@ -27,8 +30,8 @@
 
 ;; Proto classes must be compiled before using this namespace
 ;; Run 'make compile' or 'clojure -T:build compile-all' first
-(pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
-(pronto/defmapper state-mapper [ser.JonSharedData$JonGUIState])
+(pronto/defmapper cmd-mapper [JonSharedCmd$Root])
+(pronto/defmapper state-mapper [JonSharedData$JonGUIState])
 
 ;; ============================================================================
 ;; Validator - initialized lazily
@@ -64,7 +67,7 @@
                         {:type :malli-validation-error
                          :spec spec-key
                          :errors errors
-                         :raw-explanation explanation})))))) 
+                         :raw-explanation explanation}))))))
  (m/=> validate-with-malli [:=> [:cat [:map] :keyword] :any])
 
 (defn- validate-with-buf
@@ -81,7 +84,7 @@
                                              {:field (str (.getField proto-violation))
                                               :constraint (.getRuleId proto-violation)
                                               :message (.getMessage proto-violation)}))
-                                         (.getViolations result))}))))) 
+                                         (.getViolations result))})))))
  (m/=> validate-with-buf [:=> [:cat :any :keyword] :any])
 
 ;; ============================================================================
@@ -95,7 +98,7 @@
   [edn-data]
   (try
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
-                                               cmd.JonSharedCmd$Root
+                                               JonSharedCmd$Root
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
       (.toByteArray proto-msg))
@@ -103,7 +106,7 @@
       (throw (ex-info "Failed to serialize CMD payload"
                       {:type :serialization-error
                        :proto-type :cmd
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> serialize-cmd-payload* [:=> [:cat :map] :bytes])
 
 (defn serialize-cmd-payload
@@ -118,7 +121,7 @@
 
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map cmd-mapper
-                                               cmd.JonSharedCmd$Root
+                                               JonSharedCmd$Root
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
 
@@ -127,7 +130,7 @@
 
       ;; Return binary data
       (.toByteArray proto-msg))
-    (catch clojure.lang.ExceptionInfo e
+    (catch ExceptionInfo e
       ;; Re-throw our validation errors
       (throw e))
     (catch Exception e
@@ -135,7 +138,7 @@
       (throw (ex-info "Failed to serialize CMD payload"
                       {:type :serialization-error
                        :proto-type :cmd
-                       :error (.getMessage e)}))))) 
+                       :error (.getMessage e)})))))
  (m/=> serialize-cmd-payload [:=> [:cat :map] :bytes])
 
 ;; ============================================================================
@@ -149,7 +152,7 @@
   [edn-data]
   (try
     (let [proto-map (pronto/clj-map->proto-map state-mapper
-                                               ser.JonSharedData$JonGUIState
+                                               JonSharedData$JonGUIState
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
       (.toByteArray proto-msg))
@@ -158,7 +161,7 @@
                       {:type :serialization-error
                        :proto-type :state
                        :error (or (.getMessage e) (str e))
-                       :cause e}))))) 
+                       :cause e})))))
  (m/=> serialize-state-payload* [:=> [:cat :map] :bytes])
 
 (defn serialize-state-payload
@@ -173,7 +176,7 @@
 
     ;; Convert to proto
     (let [proto-map (pronto/clj-map->proto-map state-mapper
-                                               ser.JonSharedData$JonGUIState
+                                               JonSharedData$JonGUIState
                                                edn-data)
           proto-msg (pronto.utils/proto-map->proto proto-map)]
 
@@ -182,7 +185,7 @@
 
       ;; Return binary data
       (.toByteArray proto-msg))
-    (catch clojure.lang.ExceptionInfo e
+    (catch ExceptionInfo e
       ;; Re-throw our validation errors
       (throw e))
     (catch Exception e
@@ -191,5 +194,5 @@
                       {:type :serialization-error
                        :proto-type :state
                        :error (or (.getMessage e) (str e))
-                       :cause e}))))) 
+                       :cause e})))))
  (m/=> serialize-state-payload [:=> [:cat :map] :bytes])

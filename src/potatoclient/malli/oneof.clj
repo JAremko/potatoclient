@@ -1,17 +1,17 @@
 (ns potatoclient.malli.oneof
   "Oneof schema for EDN maps - cleaner implementation with less nesting.
-   
-   Usage: 
-   [:oneof 
-    [:ping :cmd/ping] 
-    [:cv :cmd/cv] 
+
+   Usage:
+   [:oneof
+    [:ping :cmd/ping]
+    [:cv :cmd/cv]
     [:rotary :cmd/rotary]]
-   
+
    With base fields (not counted in oneof constraint):
    [:oneof
-    [:protocol_version {:base true} [:int {:min 1}]]  
-    [:session_id {:base true} [:int {:min 1}]]        
-    [:ping :cmd/ping]                                  
+    [:protocol_version {:base true} [:int {:min 1}]]
+    [:session_id {:base true} [:int {:min 1}]]
+    [:ping :cmd/ping]
     [:noop :cmd/empty]]"
   (:require
     [clojure.set]
@@ -96,7 +96,7 @@
 
 (defn- explain-oneof-value
   "Explain validation failures for oneof value"
-  [value path in acc form field-keys base-fields oneof-fields entries validators]
+  [value path in acc form field-keys base-fields oneof-fields entries _validators]
   (cond
     (not (map? value))
     (conj acc {:path path
@@ -235,7 +235,9 @@
                              oneof-fields validators form options)))))
 
 ;; Create the schema instance
-(def oneof-schema (-oneof-schema))
+(def oneof-schema
+  "The :oneof schema type"
+  (-oneof-schema))
 
 ;; Generator for oneof schemas
 (defmethod mg/-schema-generator :oneof [schema options]

@@ -281,3 +281,36 @@
   (core/create-command
     {:day_camera {:shift_clahe_level {:value shift-value}}}))
 (m/=> shift-clahe-level [:=> [:cat :range/normalized-offset] :cmd/root])
+
+;; ============================================================================
+;; ROI (Region of Interest) Control
+;; ============================================================================
+
+(defn focus-roi
+  "Set focus to a region of interest.
+   Takes rectangle coordinates (x1, y1, x2, y2).
+   Note: While the TypeScript client calculates center point, the protobuf
+   expects the full rectangle. The server will handle the center calculation.
+   Returns a fully formed cmd root ready to send."
+  [x1 y1 x2 y2]
+  (core/create-command
+    {:day_camera {:focus_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
+(m/=> focus-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])
+
+(defn track-roi
+  "Start tracking a region of interest.
+   Takes rectangle coordinates (x1, y1, x2, y2).
+   Returns a fully formed cmd root ready to send."
+  [x1 y1 x2 y2]
+  (core/create-command
+    {:day_camera {:track_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
+(m/=> track-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])
+
+(defn zoom-roi
+  "Zoom to a region of interest.
+   Takes rectangle coordinates (x1, y1, x2, y2).
+   Returns a fully formed cmd root ready to send."
+  [x1 y1 x2 y2]
+  (core/create-command
+    {:day_camera {:zoom_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
+(m/=> zoom-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])

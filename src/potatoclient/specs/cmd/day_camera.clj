@@ -90,7 +90,21 @@
   [:map {:closed true}
    [:value :range/digital-zoom]])
 
-;; Main Day Camera Root command spec using oneof - all 17 commands
+;; ROI (Region of Interest) control messages
+
+(def focus-roi-spec
+  "FocusROI with rectangle coordinates (protobuf expects full rectangle)"
+  :composite/ndc-roi)
+
+(def track-roi-spec
+  "TrackROI with rectangle coordinates"
+  :composite/ndc-roi)
+
+(def zoom-roi-spec
+  "ZoomROI with rectangle coordinates"
+  :composite/ndc-roi)
+
+;; Main Day Camera Root command spec using oneof - all 20 commands (17 + 3 ROI)
 (def day-camera-command-spec
   [:oneof
    [:focus focus-spec]
@@ -109,6 +123,9 @@
    [:refresh_fx_mode :cmd/empty]
    [:set_digital_zoom_level set-digital-zoom-level-spec]
    [:set_clahe_level set-clahe-level-spec]
-   [:shift_clahe_level shift-clahe-level-spec]])
+   [:shift_clahe_level shift-clahe-level-spec]
+   [:focus_roi focus-roi-spec]
+   [:track_roi track-roi-spec]
+   [:zoom_roi zoom-roi-spec]])
 
 (registry/register-spec! :cmd/day-camera day-camera-command-spec)
