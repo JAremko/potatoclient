@@ -2,7 +2,7 @@
   "LRF (Laser Range Finder) command functions for controlling laser measurement operations.
    Based on the Lrf message structure in jon_shared_cmd_lrf.proto."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
@@ -13,8 +13,8 @@
   "Trigger a single distance measurement.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:measure {}}})) 
- (m/=> measure [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:measure {}}}))
+(m/=> measure [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Scan Operations
@@ -24,15 +24,15 @@
   "Enable continuous scanning mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:scan_on {}}})) 
- (m/=> scan-on [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:scan_on {}}}))
+(m/=> scan-on [:=> [:cat] :cmd/root])
 
 (defn scan-off
   "Disable continuous scanning mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:scan_off {}}})) 
- (m/=> scan-off [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:scan_off {}}}))
+(m/=> scan-off [:=> [:cat] :cmd/root])
 
 (defn set-scan-mode
   "Set the LRF scan mode.
@@ -45,8 +45,8 @@
    - :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS
    Returns a fully formed cmd root ready to send."
   [mode]
-  (core/create-command {:lrf {:set_scan_mode {:mode mode}}})) 
- (m/=> set-scan-mode [:=> [:cat :enum/lrf-scan-modes] :cmd/root])
+  (core/create-command {:lrf {:set_scan_mode {:mode mode}}}))
+(m/=> set-scan-mode [:=> [:cat :enum/lrf-scan-modes] :cmd/root])
 
 ;; ============================================================================
 ;; Device Control
@@ -56,15 +56,15 @@
   "Start the LRF device.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:start {}}})) 
- (m/=> start [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:start {}}}))
+(m/=> start [:=> [:cat] :cmd/root])
 
 (defn stop
   "Stop the LRF device.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:stop {}}})) 
- (m/=> stop [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:stop {}}}))
+(m/=> stop [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Target Designator Control
@@ -74,22 +74,22 @@
   "Turn off the target designator laser.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:target_designator_off {}}})) 
- (m/=> target-designator-off [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:target_designator_off {}}}))
+(m/=> target-designator-off [:=> [:cat] :cmd/root])
 
 (defn target-designator-on-mode-a
   "Turn on the target designator laser in mode A.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:target_designator_on_mode_a {}}})) 
- (m/=> target-designator-on-mode-a [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:target_designator_on_mode_a {}}}))
+(m/=> target-designator-on-mode-a [:=> [:cat] :cmd/root])
 
 (defn target-designator-on-mode-b
   "Turn on the target designator laser in mode B.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:target_designator_on_mode_b {}}})) 
- (m/=> target-designator-on-mode-b [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:target_designator_on_mode_b {}}}))
+(m/=> target-designator-on-mode-b [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Fog Mode Control
@@ -99,15 +99,15 @@
   "Enable fog mode for improved performance in foggy conditions.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:enable_fog_mode {}}})) 
- (m/=> enable-fog-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:enable_fog_mode {}}}))
+(m/=> enable-fog-mode [:=> [:cat] :cmd/root])
 
 (defn disable-fog-mode
   "Disable fog mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:disable_fog_mode {}}})) 
- (m/=> disable-fog-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:disable_fog_mode {}}}))
+(m/=> disable-fog-mode [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Session Management
@@ -117,8 +117,8 @@
   "Start a new measurement session.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:new_session {}}})) 
- (m/=> new-session [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:new_session {}}}))
+(m/=> new-session [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Meteo Data
@@ -128,8 +128,8 @@
   "Request meteorological data from the LRF.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:get_meteo {}}})) 
- (m/=> get-meteo [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:get_meteo {}}}))
+(m/=> get-meteo [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Refine Mode Control
@@ -139,12 +139,12 @@
   "Enable refine mode for improved measurement accuracy.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:refine_on {}}})) 
- (m/=> refine-on [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:refine_on {}}}))
+(m/=> refine-on [:=> [:cat] :cmd/root])
 
 (defn refine-off
   "Disable refine mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:lrf {:refine_off {}}})) 
- (m/=> refine-off [:=> [:cat] :cmd/root])
+  (core/create-command {:lrf {:refine_off {}}}))
+(m/=> refine-off [:=> [:cat] :cmd/root])

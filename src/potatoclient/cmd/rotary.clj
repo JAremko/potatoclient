@@ -2,7 +2,7 @@
   "Rotary Platform command functions for controlling azimuth and elevation axes.
    Based on the RotaryPlatform message structure in jon_shared_cmd_rotary.proto."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
@@ -13,22 +13,22 @@
   "Start the rotary platform.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:start {}}})) 
- (m/=> start [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:start {}}}))
+(m/=> start [:=> [:cat] :cmd/root])
 
 (defn stop
   "Stop the rotary platform.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:stop {}}})) 
- (m/=> stop [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:stop {}}}))
+(m/=> stop [:=> [:cat] :cmd/root])
 
 (defn halt
   "Halt all rotary platform movement immediately.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:halt {}}})) 
- (m/=> halt [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:halt {}}}))
+(m/=> halt [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Platform Position Setting
@@ -40,8 +40,8 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:rotary {:set_platform_azimuth {:value value}}})) 
- (m/=> set-platform-azimuth [:=> [:cat [:and [:double {:min -360.0, :max 360.0}] [:> -360.0] [:< 360.0]]] :cmd/root])
+    {:rotary {:set_platform_azimuth {:value value}}}))
+(m/=> set-platform-azimuth [:=> [:cat [:and [:double {:min -360.0, :max 360.0}] [:> -360.0] [:< 360.0]]] :cmd/root])
 
 (defn set-platform-elevation
   "Set the platform elevation reference angle.
@@ -49,8 +49,8 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:rotary {:set_platform_elevation {:value value}}})) 
- (m/=> set-platform-elevation [:=> [:cat :angle/elevation] :cmd/root])
+    {:rotary {:set_platform_elevation {:value value}}}))
+(m/=> set-platform-elevation [:=> [:cat :angle/elevation] :cmd/root])
 
 (defn set-platform-bank
   "Set the platform bank reference angle.
@@ -58,8 +58,8 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:rotary {:set_platform_bank {:value value}}})) 
- (m/=> set-platform-bank [:=> [:cat :angle/bank] :cmd/root])
+    {:rotary {:set_platform_bank {:value value}}}))
+(m/=> set-platform-bank [:=> [:cat :angle/bank] :cmd/root])
 
 ;; ============================================================================
 ;; Mode and Configuration
@@ -71,16 +71,16 @@
    Returns a fully formed cmd root ready to send."
   [mode]
   (core/create-command
-    {:rotary {:set_mode {:mode mode}}})) 
- (m/=> set-mode [:=> [:cat :enum/rotary-mode] :cmd/root])
+    {:rotary {:set_mode {:mode mode}}}))
+(m/=> set-mode [:=> [:cat :enum/rotary-mode] :cmd/root])
 
 (defn set-use-rotary-as-compass
   "Enable or disable using rotary platform as compass reference.
    Returns a fully formed cmd root ready to send."
   [use-as-compass?]
   (core/create-command
-    {:rotary {:set_use_rotary_as_compass {:flag use-as-compass?}}})) 
- (m/=> set-use-rotary-as-compass [:=> [:cat :boolean] :cmd/root])
+    {:rotary {:set_use_rotary_as_compass {:flag use-as-compass?}}}))
+(m/=> set-use-rotary-as-compass [:=> [:cat :boolean] :cmd/root])
 
 ;; ============================================================================
 ;; Azimuth Control (Single Axis)
@@ -91,8 +91,8 @@
    Returns a fully formed cmd root ready to send."
   []
   (core/create-command
-    {:rotary {:axis {:azimuth {:halt {}}}}})) 
- (m/=> halt-azimuth [:=> [:cat] :cmd/root])
+    {:rotary {:axis {:azimuth {:halt {}}}}}))
+(m/=> halt-azimuth [:=> [:cat] :cmd/root])
 
 (defn set-azimuth-value
   "Set azimuth to specific value with direction.
@@ -102,8 +102,8 @@
   [value direction]
   (core/create-command
     {:rotary {:axis {:azimuth {:set_value {:value value
-                                           :direction direction}}}}})) 
- (m/=> set-azimuth-value [:=> [:cat :angle/azimuth :enum/rotary-direction] :cmd/root])
+                                           :direction direction}}}}}))
+(m/=> set-azimuth-value [:=> [:cat :angle/azimuth :enum/rotary-direction] :cmd/root])
 
 (defn rotate-azimuth-to
   "Rotate azimuth to target value at specified speed with direction.
@@ -115,8 +115,8 @@
   (core/create-command
     {:rotary {:axis {:azimuth {:rotate_to {:target_value target-value
                                            :speed speed
-                                           :direction direction}}}}})) 
- (m/=> rotate-azimuth-to [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction] :cmd/root])
+                                           :direction direction}}}}}))
+(m/=> rotate-azimuth-to [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-azimuth
   "Rotate azimuth continuously at specified speed and direction.
@@ -126,8 +126,8 @@
   [speed direction]
   (core/create-command
     {:rotary {:axis {:azimuth {:rotate {:speed speed
-                                        :direction direction}}}}})) 
- (m/=> rotate-azimuth [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root])
+                                        :direction direction}}}}}))
+(m/=> rotate-azimuth [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-azimuth-relative
   "Rotate azimuth relative to current position.
@@ -139,8 +139,8 @@
   (core/create-command
     {:rotary {:axis {:azimuth {:relative {:value value
                                           :speed speed
-                                          :direction direction}}}}})) 
- (m/=> rotate-azimuth-relative [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction] :cmd/root])
+                                          :direction direction}}}}}))
+(m/=> rotate-azimuth-relative [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-azimuth-relative-set
   "Set azimuth relative to current position (immediate).
@@ -150,8 +150,8 @@
   [value direction]
   (core/create-command
     {:rotary {:axis {:azimuth {:relative_set {:value value
-                                              :direction direction}}}}})) 
- (m/=> rotate-azimuth-relative-set [:=> [:cat :angle/relative-azimuth :enum/rotary-direction] :cmd/root])
+                                              :direction direction}}}}}))
+(m/=> rotate-azimuth-relative-set [:=> [:cat :angle/relative-azimuth :enum/rotary-direction] :cmd/root])
 
 ;; ============================================================================
 ;; Elevation Control (Single Axis)
@@ -162,8 +162,8 @@
    Returns a fully formed cmd root ready to send."
   []
   (core/create-command
-    {:rotary {:axis {:elevation {:halt {}}}}})) 
- (m/=> halt-elevation [:=> [:cat] :cmd/root])
+    {:rotary {:axis {:elevation {:halt {}}}}}))
+(m/=> halt-elevation [:=> [:cat] :cmd/root])
 
 (defn set-elevation-value
   "Set elevation to specific value.
@@ -171,8 +171,8 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:rotary {:axis {:elevation {:set_value {:value value}}}}})) 
- (m/=> set-elevation-value [:=> [:cat :angle/elevation] :cmd/root])
+    {:rotary {:axis {:elevation {:set_value {:value value}}}}}))
+(m/=> set-elevation-value [:=> [:cat :angle/elevation] :cmd/root])
 
 (defn rotate-elevation-to
   "Rotate elevation to target value at specified speed.
@@ -182,8 +182,8 @@
   [target-value speed]
   (core/create-command
     {:rotary {:axis {:elevation {:rotate_to {:target_value target-value
-                                             :speed speed}}}}})) 
- (m/=> rotate-elevation-to [:=> [:cat :angle/elevation :range/normalized] :cmd/root])
+                                             :speed speed}}}}}))
+(m/=> rotate-elevation-to [:=> [:cat :angle/elevation :range/normalized] :cmd/root])
 
 (defn rotate-elevation
   "Rotate elevation continuously at specified speed and direction.
@@ -193,8 +193,8 @@
   [speed direction]
   (core/create-command
     {:rotary {:axis {:elevation {:rotate {:speed speed
-                                          :direction direction}}}}})) 
- (m/=> rotate-elevation [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root])
+                                          :direction direction}}}}}))
+(m/=> rotate-elevation [:=> [:cat :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-elevation-relative
   "Rotate elevation relative to current position.
@@ -206,8 +206,8 @@
   (core/create-command
     {:rotary {:axis {:elevation {:relative {:value value
                                             :speed speed
-                                            :direction direction}}}}})) 
- (m/=> rotate-elevation-relative [:=> [:cat :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root])
+                                            :direction direction}}}}}))
+(m/=> rotate-elevation-relative [:=> [:cat :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-elevation-relative-set
   "Set elevation relative to current position (immediate).
@@ -217,8 +217,8 @@
   [value direction]
   (core/create-command
     {:rotary {:axis {:elevation {:relative_set {:value value
-                                                :direction direction}}}}})) 
- (m/=> rotate-elevation-relative-set [:=> [:cat :angle/relative-elevation :enum/rotary-direction] :cmd/root])
+                                                :direction direction}}}}}))
+(m/=> rotate-elevation-relative-set [:=> [:cat :angle/relative-elevation :enum/rotary-direction] :cmd/root])
 
 ;; ============================================================================
 ;; Combined Axis Control
@@ -230,15 +230,15 @@
   []
   (core/create-command
     {:rotary {:axis {:azimuth {:halt {}}
-                     :elevation {:halt {}}}}})) 
- (m/=> halt-both [:=> [:cat] :cmd/root])
+                     :elevation {:halt {}}}}}))
+(m/=> halt-both [:=> [:cat] :cmd/root])
 
 (defn rotate-both-to
   "Rotate both axes to target positions.
    Azimuth: 0-360 degrees
    Azimuth speed: 0.0 to 1.0
    Azimuth direction: rotation direction enum
-   Elevation: -90 to 90 degrees  
+   Elevation: -90 to 90 degrees
    Elevation speed: 0.0 to 1.0
    Returns a fully formed cmd root ready to send."
   [azimuth azimuth-speed azimuth-direction elevation elevation-speed]
@@ -247,8 +247,8 @@
                                            :speed azimuth-speed
                                            :direction azimuth-direction}}
                      :elevation {:rotate_to {:target_value elevation
-                                             :speed elevation-speed}}}}})) 
- (m/=> rotate-both-to [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction :angle/elevation :range/normalized] :cmd/root])
+                                             :speed elevation-speed}}}}}))
+(m/=> rotate-both-to [:=> [:cat :angle/azimuth :range/normalized :enum/rotary-direction :angle/elevation :range/normalized] :cmd/root])
 
 (defn rotate-both
   "Rotate both axes continuously.
@@ -262,8 +262,8 @@
     {:rotary {:axis {:azimuth {:rotate {:speed azimuth-speed
                                         :direction azimuth-direction}}
                      :elevation {:rotate {:speed elevation-speed
-                                          :direction elevation-direction}}}}})) 
- (m/=> rotate-both [:=> [:cat :range/normalized :enum/rotary-direction :range/normalized :enum/rotary-direction] :cmd/root])
+                                          :direction elevation-direction}}}}}))
+(m/=> rotate-both [:=> [:cat :range/normalized :enum/rotary-direction :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn rotate-both-relative
   "Rotate both axes relative to current positions.
@@ -281,8 +281,8 @@
                                           :direction azimuth-direction}}
                      :elevation {:relative {:value elevation
                                             :speed elevation-speed
-                                            :direction elevation-direction}}}}})) 
- (m/=> rotate-both-relative [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root])
+                                            :direction elevation-direction}}}}}))
+(m/=> rotate-both-relative [:=> [:cat :angle/relative-azimuth :range/normalized :enum/rotary-direction :angle/relative-elevation :range/normalized :enum/rotary-direction] :cmd/root])
 
 (defn set-both-values
   "Set both axes to specific values.
@@ -294,8 +294,8 @@
   (core/create-command
     {:rotary {:axis {:azimuth {:set_value {:value azimuth
                                            :direction azimuth-direction}}
-                     :elevation {:set_value {:value elevation}}}}})) 
- (m/=> set-both-values [:=> [:cat :angle/azimuth :enum/rotary-direction :angle/elevation] :cmd/root])
+                     :elevation {:set_value {:value elevation}}}}}))
+(m/=> set-both-values [:=> [:cat :angle/azimuth :enum/rotary-direction :angle/elevation] :cmd/root])
 
 ;; ============================================================================
 ;; GPS Integration
@@ -311,8 +311,8 @@
   (core/create-command
     {:rotary {:rotate_to_gps {:latitude latitude
                               :longitude longitude
-                              :altitude altitude}}})) 
- (m/=> rotate-to-gps [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root])
+                              :altitude altitude}}}))
+(m/=> rotate-to-gps [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root])
 
 (defn set-origin-gps
   "Set GPS origin reference point for platform.
@@ -324,8 +324,8 @@
   (core/create-command
     {:rotary {:set_origin_gps {:latitude latitude
                                :longitude longitude
-                               :altitude altitude}}})) 
- (m/=> set-origin-gps [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root])
+                               :altitude altitude}}}))
+(m/=> set-origin-gps [:=> [:cat :position/latitude :position/longitude :position/altitude] :cmd/root])
 
 ;; ============================================================================
 ;; NDC (Normalized Device Coordinates) Control
@@ -341,8 +341,8 @@
   (core/create-command
     {:rotary {:rotate_to_ndc {:channel channel
                               :x x
-                              :y y}}})) 
- (m/=> rotate-to-ndc [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y] :cmd/root])
+                              :y y}}}))
+(m/=> rotate-to-ndc [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y] :cmd/root])
 
 ;; ============================================================================
 ;; Scan Operations
@@ -352,50 +352,50 @@
   "Start scanning operation.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_start {}}})) 
- (m/=> scan-start [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_start {}}}))
+(m/=> scan-start [:=> [:cat] :cmd/root])
 
 (defn scan-stop
   "Stop scanning operation.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_stop {}}})) 
- (m/=> scan-stop [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_stop {}}}))
+(m/=> scan-stop [:=> [:cat] :cmd/root])
 
 (defn scan-pause
   "Pause scanning operation.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_pause {}}})) 
- (m/=> scan-pause [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_pause {}}}))
+(m/=> scan-pause [:=> [:cat] :cmd/root])
 
 (defn scan-unpause
   "Resume paused scanning operation.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_unpause {}}})) 
- (m/=> scan-unpause [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_unpause {}}}))
+(m/=> scan-unpause [:=> [:cat] :cmd/root])
 
 (defn scan-prev
   "Move to previous scan position.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_prev {}}})) 
- (m/=> scan-prev [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_prev {}}}))
+(m/=> scan-prev [:=> [:cat] :cmd/root])
 
 (defn scan-next
   "Move to next scan position.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_next {}}})) 
- (m/=> scan-next [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_next {}}}))
+(m/=> scan-next [:=> [:cat] :cmd/root])
 
 (defn scan-refresh-node-list
   "Refresh the scan node list.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:scan_refresh_node_list {}}})) 
- (m/=> scan-refresh-node-list [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:scan_refresh_node_list {}}}))
+(m/=> scan-refresh-node-list [:=> [:cat] :cmd/root])
 
 (defn scan-select-node
   "Select a scan node by index.
@@ -403,8 +403,8 @@
    Returns a fully formed cmd root ready to send."
   [index]
   (core/create-command
-    {:rotary {:scan_select_node {:index index}}})) 
- (m/=> scan-select-node [:=> [:cat :proto/int32-positive] :cmd/root])
+    {:rotary {:scan_select_node {:index index}}}))
+(m/=> scan-select-node [:=> [:cat :proto/int32-positive] :cmd/root])
 
 (defn scan-delete-node
   "Delete a scan node by index.
@@ -412,8 +412,8 @@
    Returns a fully formed cmd root ready to send."
   [index]
   (core/create-command
-    {:rotary {:scan_delete_node {:index index}}})) 
- (m/=> scan-delete-node [:=> [:cat :proto/int32-positive] :cmd/root])
+    {:rotary {:scan_delete_node {:index index}}}))
+(m/=> scan-delete-node [:=> [:cat :proto/int32-positive] :cmd/root])
 
 (defn scan-update-node
   "Update a scan node's parameters.
@@ -432,8 +432,8 @@
                                  :azimuth azimuth
                                  :elevation elevation
                                  :linger linger
-                                 :speed speed}}})) 
- (m/=> scan-update-node [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root])
+                                 :speed speed}}}))
+(m/=> scan-update-node [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root])
 
 (defn scan-add-node
   "Add a new scan node.
@@ -452,8 +452,8 @@
                               :azimuth azimuth
                               :elevation elevation
                               :linger linger
-                              :speed speed}}})) 
- (m/=> scan-add-node [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root])
+                              :speed speed}}}))
+(m/=> scan-add-node [:=> [:cat :proto/int32-positive :proto/int32-positive :proto/int32-positive :angle/azimuth :angle/elevation [:double {:min 0.0}] :speed/normalized] :cmd/root])
 
 ;; ============================================================================
 ;; Meteo Data
@@ -463,5 +463,5 @@
   "Request meteorological data from rotary platform.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:rotary {:get_meteo {}}})) 
- (m/=> get-meteo [:=> [:cat] :cmd/root])
+  (core/create-command {:rotary {:get_meteo {}}}))
+(m/=> get-meteo [:=> [:cat] :cmd/root])

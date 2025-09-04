@@ -2,7 +2,7 @@
   "Validation utilities for command roundtrip testing.
    Uses proto templates to ensure consistent comparison."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [lambdaisland.deep-diff2 :as ddiff]
     [pronto.core :as p]
     [potatoclient.proto.serialize :as serialize]
@@ -25,14 +25,10 @@
   []
   ;; Create an empty proto instance and convert to EDN
   ;; This will have all fields with their default values
-  (let [empty-proto (cmd.JonSharedCmd$Root/getDefaultInstance)
+  (let [empty-proto (JonSharedCmd$Root/getDefaultInstance)
         proto-map (p/proto->proto-map serialize/cmd-mapper empty-proto)]
-    (p/proto-map->clj-map proto-map))) 
- (m/=> create-cmd-template [:=> [:cat] [:map]])
-
-(def ^:private cmd-template
-  "Cached template for cmd root with all fields."
-  (delay (create-cmd-template)))
+    (p/proto-map->clj-map proto-map)))
+(m/=> create-cmd-template [:=> [:cat] [:map]])
 
 ;; ============================================================================
 ;; Validation Helpers
@@ -47,16 +43,16 @@
               :when (not (nil? v))]
           [k (if (map? v)
                (remove-nil-values v)
-               v)]))) 
- (m/=> remove-nil-values [:=> [:cat :map] :map])
+               v)])))
+(m/=> remove-nil-values [:=> [:cat :map] :map])
 
 (defn remove-nil-oneof-fields
   "Remove nil oneof fields from a command for comparison purposes.
    Proto deserialization adds nil for all oneof fields, which is valid
    but makes comparison difficult. We remove nils for testing purposes only."
   [cmd]
-  (remove-nil-values cmd)) 
- (m/=> remove-nil-oneof-fields [:=> [:cat :cmd/root] :map])
+  (remove-nil-values cmd))
+(m/=> remove-nil-oneof-fields [:=> [:cat :cmd/root] :map])
 
 (defn validate-roundtrip
   "Validate that a command survives serialization/deserialization.
@@ -64,17 +60,17 @@
   [original-cmd]
   (let [normalized-original (remove-nil-oneof-fields original-cmd)
         normalized-roundtrip (-> original-cmd
-                                serialize/serialize-cmd-payload
-                                deserialize/deserialize-cmd-payload
-                                remove-nil-oneof-fields)]
+                                 serialize/serialize-cmd-payload
+                                 deserialize/deserialize-cmd-payload
+                                 remove-nil-oneof-fields)]
     (if (= normalized-original normalized-roundtrip)
       true
       (let [diff (ddiff/diff normalized-original normalized-roundtrip)]
         (throw (ex-info "Roundtrip validation failed"
                         {:original normalized-original
                          :roundtrip normalized-roundtrip
-                         :diff (ddiff/pretty-print diff)})))))) 
- (m/=> validate-roundtrip [:=> [:cat :cmd/root] :boolean])
+                         :diff (ddiff/pretty-print diff)}))))))
+(m/=> validate-roundtrip [:=> [:cat :cmd/root] :boolean])
 
 (defn validate-roundtrip-with-report
   "Validate roundtrip and return a detailed report.
@@ -82,16 +78,16 @@
   [original-cmd]
   (let [normalized-original (remove-nil-oneof-fields original-cmd)
         normalized-roundtrip (-> original-cmd
-                                serialize/serialize-cmd-payload
-                                deserialize/deserialize-cmd-payload
-                                remove-nil-oneof-fields)
+                                 serialize/serialize-cmd-payload
+                                 deserialize/deserialize-cmd-payload
+                                 remove-nil-oneof-fields)
         diff (ddiff/diff normalized-original normalized-roundtrip)]
     (if (= normalized-original normalized-roundtrip)
       {:valid? true}
       {:valid? false
        :diff diff
-       :pretty-diff (with-out-str (ddiff/pretty-print diff))}))) 
- (m/=> validate-roundtrip-with-report [:=> [:cat :cmd/root] [:map]])
+       :pretty-diff (with-out-str (ddiff/pretty-print diff))})))
+(m/=> validate-roundtrip-with-report [:=> [:cat :cmd/root] [:map]])
 
 ;; ============================================================================
 ;; Test Helpers
@@ -111,8 +107,8 @@
         ;; Deserialize back
         roundtrip (deserialize/deserialize-cmd-payload binary)]
     ;; Return roundtrip with nil oneof fields removed for comparison
-    (remove-nil-oneof-fields roundtrip))) 
- (m/=> roundtrip-test [:=> [:cat :cmd/root] :cmd/root])
+    (remove-nil-oneof-fields roundtrip)))
+(m/=> roundtrip-test [:=> [:cat :cmd/root] :cmd/root])
 
 (defn assert-roundtrip
   "Assert that a command survives roundtrip.
@@ -122,5 +118,5 @@
     (when-not (:valid? result)
       (throw (ex-info (str "Roundtrip validation failed:\n" (:pretty-diff result))
                       {:diff (:diff result)}))))
-  nil) 
- (m/=> assert-roundtrip [:=> [:cat :cmd/root] :nil])
+  nil)
+(m/=> assert-roundtrip [:=> [:cat :cmd/root] :nil])

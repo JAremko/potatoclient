@@ -8,10 +8,8 @@
    - Uses p-> for multiple mutations
    - Avoids repeated assoc operations"
   (:require
-            [malli.core :as m]
-    [pronto.core :as p]
+    [malli.core :as m]
     [potatoclient.proto.serialize :as serialize]
-    [potatoclient.proto.deserialize :as deserialize]
     [potatoclient.cmd.validation :as validation]
     [potatoclient.cmd.builder :as builder]
     [potatoclient.malli.registry :as registry]
@@ -38,7 +36,11 @@
 ;; Command Queue
 ;; ============================================================================
 
-(defonce ^LinkedBlockingQueue command-queue
+(defonce ^{:doc "Global command queue for outgoing commands.
+                 Commands are validated and enqueued here, then consumed
+                 by the WebSocket sender thread for transmission."
+           :tag LinkedBlockingQueue}
+  command-queue
   (LinkedBlockingQueue.))
 
 ;; ============================================================================
@@ -50,8 +52,8 @@
    Used in test mode to ensure correctness.
    Uses normalized comparison with proto template."
   [full-cmd]
-  (validation/assert-roundtrip full-cmd)) 
- (m/=> validate-roundtrip! [:=> [:cat :cmd/root] :nil])
+  (validation/assert-roundtrip full-cmd))
+(m/=> validate-roundtrip! [:=> [:cat :cmd/root] :nil])
 
 ;; ============================================================================
 ;; Core Send Function - Automatically uses test mode when in test alias
@@ -77,8 +79,8 @@
     (.offer command-queue full-cmd))
 
   ;; Always return nil
-  nil) 
- (m/=> send-command! [:=> [:cat :cmd/root] :nil])
+  nil)
+(m/=> send-command! [:=> [:cat :cmd/root] :nil])
 
 (defn create-command
   "Create a fully populated command from a payload.
@@ -86,8 +88,8 @@
    This is what command functions should use to build their return values."
   [cmd-payload]
   ;; Simple map check instead of complex :or spec
-  (builder/populate-cmd-fields cmd-payload)) 
- (m/=> create-command [:=> [:cat :map] :cmd/root])
+  (builder/populate-cmd-fields cmd-payload))
+(m/=> create-command [:=> [:cat :map] :cmd/root])
 
 ;; ============================================================================
 ;; Ping Command for Keep-Alive
@@ -97,8 +99,8 @@
   "Create a ping command to keep connection alive.
    Returns the full command with all protocol fields."
   []
-  (builder/populate-cmd-fields {:ping {}})) 
- (m/=> create-ping-command [:=> [:cat] :cmd/root])
+  (builder/populate-cmd-fields {:ping {}}))
+(m/=> create-ping-command [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Queue Reader Functions
@@ -111,15 +113,15 @@
   [timeout-ms]
   (or (.poll command-queue timeout-ms TimeUnit/MILLISECONDS)
       ;; Timeout - send ping to keep connection alive
-      (create-ping-command))) 
- (m/=> poll-command-with-timeout [:=> [:cat :nat-int] :cmd/root])
+      (create-ping-command)))
+(m/=> poll-command-with-timeout [:=> [:cat :nat-int] :cmd/root])
 
 (defn take-next-command
   "Take the next command, blocking up to 1 second.
    Returns ping command if timeout."
   []
-  (poll-command-with-timeout 1000)) 
- (m/=> take-next-command [:=> [:cat] :cmd/root])
+  (poll-command-with-timeout 1000))
+(m/=> take-next-command [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Queue Management
@@ -129,14 +131,14 @@
   "Clear all pending commands from the queue."
   []
   (.clear command-queue)
-  nil) 
- (m/=> clear-queue! [:=> [:cat] :nil])
+  nil)
+(m/=> clear-queue! [:=> [:cat] :nil])
 
 (defn queue-size
   "Get the current number of commands in the queue."
   []
-  (.size command-queue)) 
- (m/=> queue-size [:=> [:cat] :nat-int])
+  (.size command-queue))
+(m/=> queue-size [:=> [:cat] :nat-int])
 
 ;; ============================================================================
 ;; WebSocket Consumer (to be called from WebSocket thread)
@@ -165,15 +167,17 @@
             (println "Error sending command:" (.getMessage e))))))
     ;; Return stop function
     (fn stop-consumer []
-      (reset! running false)))) 
- (m/=> consume-commands [:=> [:cat fn?] fn?])
+      (reset! running false))))
+(m/=> consume-commands [:=> [:cat fn?] fn?])
 
 ;; ============================================================================
 ;; Test Helpers
 ;; ============================================================================
 
 (defn in-test-mode?
-  "Check if running in test mode."
+  "Check if the system is running in test mode.
+   Returns true if test mode is detected via system property,
+   environment variable, or test classpath."
   []
-  test-mode?) 
- (m/=> in-test-mode? [:=> [:cat] :boolean])
+  test-mode?)
+(m/=> in-test-mode? [:=> [:cat] :boolean])

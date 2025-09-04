@@ -2,7 +2,7 @@
   "Heat Camera (thermal imaging) command functions.
    Based on the HeatCamera message structure in jon_shared_cmd_heat_camera.proto."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [potatoclient.cmd.core :as core]))
 
 ;; ============================================================================
@@ -13,8 +13,8 @@
   "Take a photo with the heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:photo {}}})) 
- (m/=> take-photo [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:photo {}}}))
+(m/=> take-photo [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; AGC (Automatic Gain Control) and Filter Settings
@@ -26,8 +26,8 @@
    Returns a fully formed cmd root ready to send."
   [mode]
   (core/create-command
-    {:heat_camera {:set_agc {:value mode}}})) 
- (m/=> set-agc [:=> [:cat :enum/heat-agc-mode] :cmd/root])
+    {:heat_camera {:set_agc {:value mode}}}))
+(m/=> set-agc [:=> [:cat :enum/heat-agc-mode] :cmd/root])
 
 (defn set-filter
   "Set the heat camera filter (thermal visualization mode).
@@ -35,8 +35,8 @@
    Returns a fully formed cmd root ready to send."
   [filter]
   (core/create-command
-    {:heat_camera {:set_filter {:value filter}}})) 
- (m/=> set-filter [:=> [:cat :enum/heat-filter] :cmd/root])
+    {:heat_camera {:set_filter {:value filter}}}))
+(m/=> set-filter [:=> [:cat :enum/heat-filter] :cmd/root])
 
 ;; ============================================================================
 ;; Camera Control
@@ -46,29 +46,29 @@
   "Calibrate the heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:calibrate {}}})) 
- (m/=> calibrate [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:calibrate {}}}))
+(m/=> calibrate [:=> [:cat] :cmd/root])
 
 (defn start
   "Start the heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:start {}}})) 
- (m/=> start [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:start {}}}))
+(m/=> start [:=> [:cat] :cmd/root])
 
 (defn stop
   "Stop the heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:stop {}}})) 
- (m/=> stop [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:stop {}}}))
+(m/=> stop [:=> [:cat] :cmd/root])
 
 (defn set-calib-mode
   "Set calibration mode for the heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:set_calib_mode {}}})) 
- (m/=> set-calib-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:set_calib_mode {}}}))
+(m/=> set-calib-mode [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Zoom Control - Simple Commands
@@ -78,36 +78,36 @@
   "Start zooming in.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:zoom_in {}}})) 
- (m/=> zoom-in [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:zoom_in {}}}))
+(m/=> zoom-in [:=> [:cat] :cmd/root])
 
 (defn zoom-out
   "Start zooming out.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:zoom_out {}}})) 
- (m/=> zoom-out [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:zoom_out {}}}))
+(m/=> zoom-out [:=> [:cat] :cmd/root])
 
 (defn zoom-stop
   "Stop zoom movement.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:zoom_stop {}}})) 
- (m/=> zoom-stop [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:zoom_stop {}}}))
+(m/=> zoom-stop [:=> [:cat] :cmd/root])
 
 (defn reset-zoom
   "Reset zoom to default position.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:reset_zoom {}}})) 
- (m/=> reset-zoom [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:reset_zoom {}}}))
+(m/=> reset-zoom [:=> [:cat] :cmd/root])
 
 (defn save-zoom-to-table
   "Save current zoom position to table.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:save_to_table {}}})) 
- (m/=> save-zoom-to-table [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:save_to_table {}}}))
+(m/=> save-zoom-to-table [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Zoom Control - Table Operations (nested Zoom message)
@@ -118,24 +118,24 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:heat_camera {:zoom {:set_zoom_table_value {:value value}}}})) 
- (m/=> set-zoom-table-value [:=> [:cat :proto/int32-positive] :cmd/root])
+    {:heat_camera {:zoom {:set_zoom_table_value {:value value}}}}))
+(m/=> set-zoom-table-value [:=> [:cat :proto/int32-positive] :cmd/root])
 
 (defn next-zoom-table-pos
   "Move to next zoom table position.
    Returns a fully formed cmd root ready to send."
   []
   (core/create-command
-    {:heat_camera {:zoom {:next_zoom_table_pos {}}}})) 
- (m/=> next-zoom-table-pos [:=> [:cat] :cmd/root])
+    {:heat_camera {:zoom {:next_zoom_table_pos {}}}}))
+(m/=> next-zoom-table-pos [:=> [:cat] :cmd/root])
 
 (defn prev-zoom-table-pos
   "Move to previous zoom table position.
    Returns a fully formed cmd root ready to send."
   []
   (core/create-command
-    {:heat_camera {:zoom {:prev_zoom_table_pos {}}}})) 
- (m/=> prev-zoom-table-pos [:=> [:cat] :cmd/root])
+    {:heat_camera {:zoom {:prev_zoom_table_pos {}}}}))
+(m/=> prev-zoom-table-pos [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Digital Zoom
@@ -146,8 +146,8 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:heat_camera {:set_digital_zoom_level {:value value}}})) 
- (m/=> set-digital-zoom-level [:=> [:cat :range/digital-zoom] :cmd/root])
+    {:heat_camera {:set_digital_zoom_level {:value value}}}))
+(m/=> set-digital-zoom-level [:=> [:cat :range/digital-zoom] :cmd/root])
 
 ;; ============================================================================
 ;; Focus Control
@@ -158,43 +158,43 @@
    Returns a fully formed cmd root ready to send."
   [enabled?]
   (core/create-command
-    {:heat_camera {:set_auto_focus {:value enabled?}}})) 
- (m/=> set-auto-focus [:=> [:cat :boolean] :cmd/root])
+    {:heat_camera {:set_auto_focus {:value enabled?}}}))
+(m/=> set-auto-focus [:=> [:cat :boolean] :cmd/root])
 
 (defn focus-stop
   "Stop focus movement.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:focus_stop {}}})) 
- (m/=> focus-stop [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:focus_stop {}}}))
+(m/=> focus-stop [:=> [:cat] :cmd/root])
 
 (defn focus-in
   "Start focusing in (closer).
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:focus_in {}}})) 
- (m/=> focus-in [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:focus_in {}}}))
+(m/=> focus-in [:=> [:cat] :cmd/root])
 
 (defn focus-out
   "Start focusing out (farther).
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:focus_out {}}})) 
- (m/=> focus-out [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:focus_out {}}}))
+(m/=> focus-out [:=> [:cat] :cmd/root])
 
 (defn focus-step-plus
   "Step focus forward by one increment.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:focus_step_plus {}}})) 
- (m/=> focus-step-plus [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:focus_step_plus {}}}))
+(m/=> focus-step-plus [:=> [:cat] :cmd/root])
 
 (defn focus-step-minus
   "Step focus backward by one increment.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:focus_step_minus {}}})) 
- (m/=> focus-step-minus [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:focus_step_minus {}}}))
+(m/=> focus-step-minus [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; Meteo Data
@@ -204,8 +204,8 @@
   "Request meteorological data from heat camera.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:get_meteo {}}})) 
- (m/=> get-meteo [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:get_meteo {}}}))
+(m/=> get-meteo [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; DDE (Digital Detail Enhancement)
@@ -215,31 +215,31 @@
   "Enable Digital Detail Enhancement.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:enable_dde {}}})) 
- (m/=> enable-dde [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:enable_dde {}}}))
+(m/=> enable-dde [:=> [:cat] :cmd/root])
 
 (defn disable-dde
   "Disable Digital Detail Enhancement.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:disable_dde {}}})) 
- (m/=> disable-dde [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:disable_dde {}}}))
+(m/=> disable-dde [:=> [:cat] :cmd/root])
 
 (defn set-dde-level
   "Set the DDE level (0 to 100).
    Returns a fully formed cmd root ready to send."
   [level]
   (core/create-command
-    {:heat_camera {:set_dde_level {:value level}}})) 
- (m/=> set-dde-level [:=> [:cat [:int {:min 0, :max 100}]] :cmd/root])
+    {:heat_camera {:set_dde_level {:value level}}}))
+(m/=> set-dde-level [:=> [:cat [:int {:min 0, :max 100}]] :cmd/root])
 
 (defn shift-dde
   "Shift the DDE level by offset (-100 to 100).
    Returns a fully formed cmd root ready to send."
   [shift-value]
   (core/create-command
-    {:heat_camera {:shift_dde {:value shift-value}}})) 
- (m/=> shift-dde [:=> [:cat [:int {:min -100, :max 100}]] :cmd/root])
+    {:heat_camera {:shift_dde {:value shift-value}}}))
+(m/=> shift-dde [:=> [:cat [:int {:min -100, :max 100}]] :cmd/root])
 
 ;; ============================================================================
 ;; FX Mode Control
@@ -251,29 +251,29 @@
    Returns a fully formed cmd root ready to send."
   [mode]
   (core/create-command
-    {:heat_camera {:set_fx_mode {:mode mode}}})) 
- (m/=> set-fx-mode [:=> [:cat :enum/fx-mode-heat] :cmd/root])
+    {:heat_camera {:set_fx_mode {:mode mode}}}))
+(m/=> set-fx-mode [:=> [:cat :enum/fx-mode-heat] :cmd/root])
 
 (defn next-fx-mode
   "Switch to next FX mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:next_fx_mode {}}})) 
- (m/=> next-fx-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:next_fx_mode {}}}))
+(m/=> next-fx-mode [:=> [:cat] :cmd/root])
 
 (defn prev-fx-mode
   "Switch to previous FX mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:prev_fx_mode {}}})) 
- (m/=> prev-fx-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:prev_fx_mode {}}}))
+(m/=> prev-fx-mode [:=> [:cat] :cmd/root])
 
 (defn refresh-fx-mode
   "Refresh current FX mode.
    Returns a fully formed cmd root ready to send."
   []
-  (core/create-command {:heat_camera {:refresh_fx_mode {}}})) 
- (m/=> refresh-fx-mode [:=> [:cat] :cmd/root])
+  (core/create-command {:heat_camera {:refresh_fx_mode {}}}))
+(m/=> refresh-fx-mode [:=> [:cat] :cmd/root])
 
 ;; ============================================================================
 ;; CLAHE (Contrast Limited Adaptive Histogram Equalization)
@@ -284,13 +284,13 @@
    Returns a fully formed cmd root ready to send."
   [value]
   (core/create-command
-    {:heat_camera {:set_clahe_level {:value value}}})) 
- (m/=> set-clahe-level [:=> [:cat :range/normalized] :cmd/root])
+    {:heat_camera {:set_clahe_level {:value value}}}))
+(m/=> set-clahe-level [:=> [:cat :range/normalized] :cmd/root])
 
 (defn shift-clahe-level
   "Shift the CLAHE level by offset (-1.0 to 1.0).
    Returns a fully formed cmd root ready to send."
   [shift-value]
   (core/create-command
-    {:heat_camera {:shift_clahe_level {:value shift-value}}})) 
- (m/=> shift-clahe-level [:=> [:cat :range/normalized-offset] :cmd/root])
+    {:heat_camera {:shift_clahe_level {:value shift-value}}}))
+(m/=> shift-clahe-level [:=> [:cat :range/normalized-offset] :cmd/root])

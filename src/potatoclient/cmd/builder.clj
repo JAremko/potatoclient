@@ -2,7 +2,7 @@
   "Efficient command building utilities using Pronto performance patterns.
    Provides functions to populate missing fields in proto-maps."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [pronto.core :as p]
     [potatoclient.proto.serialize :as serialize]
     [potatoclient.init :as init]
@@ -37,8 +37,8 @@
   [payload]
   ;; Stricter validation - must be a non-nil map
   ;; Merge the payload with default protocol fields to create a complete cmd
-  (merge default-protocol-fields payload)) 
- (m/=> populate-cmd-fields [:=> [:cat [:map {:closed false}]] :cmd/root])
+  (merge default-protocol-fields payload))
+(m/=> populate-cmd-fields [:=> [:cat [:map {:closed false}]] :cmd/root])
 
 (defn populate-cmd-fields-with-overrides
   "Populate missing fields with specific override values.
@@ -49,8 +49,8 @@
   ;; Stricter validation - both must be non-nil maps
   (let [fields-to-use (merge default-protocol-fields overrides)
         complete-cmd (merge fields-to-use cmd)]
-    complete-cmd)) 
- (m/=> populate-cmd-fields-with-overrides [:=> [:cat [:map {:closed false}] [:map {:closed false}]] :cmd/root])
+    complete-cmd))
+(m/=> populate-cmd-fields-with-overrides [:=> [:cat [:map {:closed false}] [:map {:closed false}]] :cmd/root])
 
 (defn create-full-cmd
   "Create a full command from a payload with custom field values.
@@ -61,8 +61,8 @@
                     {:session_id 12345 :important true})"
   [payload-cmd field-overrides]
   ;; Validate payload structure and require non-nil map for overrides
-  (populate-cmd-fields-with-overrides payload-cmd field-overrides)) 
- (m/=> create-full-cmd [:=> [:cat :cmd/payload [:map {:closed false}]] :cmd/root])
+  (populate-cmd-fields-with-overrides payload-cmd field-overrides))
+(m/=> create-full-cmd [:=> [:cat :cmd/payload [:map {:closed false}]] :cmd/root])
 
 (defn create-proto-map-cmd
   "Create a proto-map command efficiently.
@@ -87,8 +87,8 @@
                  :session_id (:session_id cmd)
                  :important (:important cmd)
                  :from_cv_subsystem (:from_cv_subsystem cmd)
-                 oneof-key oneof-val))) 
- (m/=> create-proto-map-cmd [:=> [:cat :cmd/root] :any])
+                 oneof-key oneof-val)))
+(m/=> create-proto-map-cmd [:=> [:cat :cmd/root] :any])
 
 (defn update-proto-map-cmd
   "Efficiently update fields in an existing proto-map command.
@@ -100,11 +100,11 @@
   [proto-cmd updates]
   ;; Use p-> with hints for efficient updates
   (p/with-hints [(p/hint proto-cmd JonSharedCmd$Root serialize/cmd-mapper)]
-    (reduce-kv (fn [cmd k v]
-                 (p/p-> cmd (assoc k v)))
-               proto-cmd
-               updates))) 
- (m/=> update-proto-map-cmd [:=> [:cat :any [:map]] :any])
+                (reduce-kv (fn [cmd k v]
+                             (p/p-> cmd (assoc k v)))
+                           proto-cmd
+                           updates)))
+(m/=> update-proto-map-cmd [:=> [:cat :any [:map]] :any])
 
 ;; ============================================================================
 ;; Validation Helpers
@@ -121,5 +121,5 @@
       cmd
       (throw (ex-info "Command missing required fields"
                       {:missing-fields missing-fields
-                       :command cmd}))))) 
- (m/=> ensure-required-fields [:=> [:cat [:map]] :cmd/root])
+                       :command cmd})))))
+(m/=> ensure-required-fields [:=> [:cat [:map]] :cmd/root])
