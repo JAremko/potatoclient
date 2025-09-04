@@ -2,11 +2,10 @@
   "IPC server implementation using Unix Domain Sockets.
    Wraps Java UnixSocketCommunicator with Transit serialization."
   (:require
-            [malli.core :as m]
     [potatoclient.ipc.handlers :as handlers]
     [potatoclient.ipc.transit :as transit]
-    [potatoclient.malli.registry :as registry]
-    [taoensso.telemere :as t])
+    [potatoclient.logging :as logging]
+    [potatoclient.malli.registry :as registry])
   (:import
     (clojure.lang Atom)
     (java.lang ProcessHandle)
@@ -22,10 +21,6 @@
   "Delay in milliseconds before retrying after an error."
   100)
 
-(def ^:private message-poll-timeout-ms
-  "Timeout in milliseconds for polling messages from queue."
-  100)
-
 (def ^:private message-queue-capacity
   "Maximum number of messages that can be queued."
   1000)
@@ -35,15 +30,17 @@
 ;; ============================================================================
 
 (def StreamType
+  "Valid stream types for IPC communication."
   [:enum :heat :day])
 
 (def IpcServer
+  "Schema for an IPC server instance."
   [:map
    [:stream-type StreamType]
-   [:socket-path [:fn #(instance? Path %)]]
-   [:communicator [:fn #(instance? UnixSocketCommunicator %)]]
-   [:message-queue [:fn #(instance? LinkedBlockingQueue %)]]
-   [:running? [:fn #(instance? Atom %)]]
+   [:socket-path [:fn (partial instance? Path)]]
+   [:communicator [:fn (partial instance? UnixSocketCommunicator)]]
+   [:message-queue [:fn (partial instance? LinkedBlockingQueue)]]
+   [:running? [:fn (partial instance? Atom)]]
    [:reader-thread [:fn #(or (nil? %) (instance? Thread %))]]
    [:processor-thread [:fn #(or (nil? %) (instance? Thread %))]]])
 
@@ -56,42 +53,64 @@
 ;; ============================================================================
 
 (defn get-current-pid
-  "Get the current process PID."
-  []
+  "Get the current process PID.
+  Returns the PID as a long value."
+  ^Long []
   (.pid (ProcessHandle/current)))
 
 (defn- generate-socket-path
-  "Generate a socket path for a stream."
-  [stream-type]
+  "Generate a socket path for a stream.
+  Creates a unique socket path based on PID and stream type.
+
+  Args:
+    stream-type - One of :heat or :day
+
+  Returns:
+    Path - The generated socket path"
+  {:malli/schema [:=> [:cat StreamType] [:fn (partial instance? Path)]]}
+  ^Path [stream-type]
   (let [socket-name (str "ipc-" (get-current-pid) "-" (name stream-type))]
-    (SocketFactory/generateSocketPath socket-name))) 
- (m/=> generate-socket-path [:=> [:cat StreamType] [:fn (partial instance? Path)]])
+    (SocketFactory/generateSocketPath socket-name)))
 
 (defn- start-reader-thread
-  "Start the thread that reads messages from the socket."
-  [{:keys [stream-type communicator message-queue running?]}]
+  "Start the thread that reads messages from the socket.
+
+  Args:
+    server - Server map containing stream-type, communicator, message-queue, and running?
+
+  Returns:
+    Thread - The started reader thread"
+  {:malli/schema [:=> [:cat IpcServer] [:fn (partial instance? Thread)]]}
+  ^Thread [{:keys [stream-type ^UnixSocketCommunicator communicator ^LinkedBlockingQueue message-queue running?]}]
   (Thread.
     (fn []
-      (t/log! :info (str "[" (name stream-type) "-server] Reader thread started"))
+      (logging/log-info (str "[" (name stream-type) "-server] Reader thread started"))
       (while @running?
         (try
           (when-let [message-bytes (.receive communicator)]
             (let [message (transit/read-message message-bytes)]
               (when-not (.offer message-queue message)
-                (t/log! :warn (str "[" (name stream-type) "-server] Message queue full, dropping message")))))
+                (logging/log-warn (str "[" (name stream-type) "-server] Message queue full, dropping message")))))
           (catch InterruptedException _
             (.interrupt (Thread/currentThread))
             (reset! running? false))
-          (catch Exception e
+          (catch Exception ex
             (when @running?
-              (t/log! :error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage e)))
-              (Thread/sleep error-retry-delay-ms))))))
-    (str (name stream-type) "-server-reader"))) 
- (m/=> start-reader-thread [:=> [:cat IpcServer] [:fn (partial instance? Thread)]])
+              (logging/log-error (str "[" (name stream-type) "-server] Error reading message: " (.getMessage ex)))
+              (Thread/sleep ^long error-retry-delay-ms))))))
+    (str (name stream-type) "-server-reader")))
 
 (defn- start-processor-thread
-  "Start the thread that processes messages from the queue."
-  [{:keys [stream-type message-queue running?]} on-message]
+  "Start the thread that processes messages from the queue.
+
+  Args:
+    server - Server map containing stream-type, message-queue, and running?
+    on-message - Optional message handler function
+
+  Returns:
+    Thread - The started processor thread"
+  {:malli/schema [:=> [:cat IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]]] [:fn (partial instance? Thread)]]}
+  ^Thread [{:keys [stream-type ^LinkedBlockingQueue message-queue running?]} on-message]
   (let [handler (handlers/create-handler
                   {:name (str (name stream-type) "-server")
                    :handler-fn on-message
@@ -100,18 +119,18 @@
       {:name (str (name stream-type) "-server-processor")
        :queue message-queue
        :handler handler
-       :daemon? true}))) 
- (m/=> start-processor-thread [:=> [:cat IpcServer [:maybe [:=> [:cat [:map-of :keyword :any]] :any]]] [:fn (partial instance? Thread)]])
+       :daemon? true})))
 
 (defn create-server
   "Create and start an IPC server for a stream.
    Returns a server map with control functions."
+  {:malli/schema [:=> [:cat StreamType [:* :any]] IpcServer]}
   [stream-type & {:keys [on-message await-binding?]
                   :or {await-binding? true}}]
   (let [socket-path (generate-socket-path stream-type)
         _ (Files/deleteIfExists socket-path)
         communicator (SocketFactory/createServer ^Path socket-path)
-        message-queue (LinkedBlockingQueue. message-queue-capacity)
+        message-queue (LinkedBlockingQueue. ^int message-queue-capacity)
         running? (atom false)
         server {:stream-type stream-type
                 :socket-path socket-path
@@ -143,31 +162,38 @@
       (.start reader-thread)
       (.start processor-thread)
 
-      (t/log! :info (str "[" (name stream-type) "-server] IPC server started on " (.toString socket-path)))
+      (logging/log-info (str "[" (name stream-type) "-server] IPC server started on " (.toString socket-path)))
 
       (assoc server
-             :reader-thread reader-thread
-             :processor-thread processor-thread)))) 
- (m/=> create-server [:=> [:cat StreamType [:* :any]] IpcServer])
+        :reader-thread reader-thread
+        :processor-thread processor-thread))))
 
 (defn stop-server
-  "Stop an IPC server and clean up resources."
+  "Stop an IPC server and clean up resources.
+  Stops reader and processor threads, closes the socket, and removes the socket file.
+
+  Args:
+    server - The IPC server to stop
+
+  Returns:
+    nil"
+  {:malli/schema [:=> [:cat IpcServer] :nil]}
   [server]
-  (let [{:keys [stream-type running? reader-thread processor-thread
-                communicator socket-path]} server]
+  (let [{:keys [stream-type running? ^Thread reader-thread ^Thread processor-thread
+                ^UnixSocketCommunicator communicator ^Path socket-path]} server]
     (when @running?
-      (t/log! :info (str "[" (name stream-type) "-server] Stopping IPC server"))
+      (logging/log-info (str "[" (name stream-type) "-server] Stopping IPC server"))
       (reset! running? false)
 
       ;; Stop threads
       (when reader-thread
-        (.interrupt ^Thread reader-thread))
+        (.interrupt reader-thread))
       (when processor-thread
-        (.interrupt ^Thread processor-thread))
+        (.interrupt processor-thread))
 
       ;; Stop socket and remove from SocketFactory
       (when communicator
-        (.stop ^UnixSocketCommunicator communicator)
+        (.stop communicator)
         ;; Important: Remove from SocketFactory's static map
         (SocketFactory/close communicator))
 
@@ -176,82 +202,131 @@
         (Files/deleteIfExists socket-path)
         (catch Exception _))
 
-      (t/log! :info (str "[" (name stream-type) "-server] IPC server stopped")))
-    nil)) 
- (m/=> stop-server [:=> [:cat IpcServer] :nil])
+      (logging/log-info (str "[" (name stream-type) "-server] IPC server stopped")))
+    nil))
 
 (defn send-message
-  "Send a message through the IPC server."
-  [server message]
-  (let [{:keys [stream-type communicator running?]} server]
+  "Send a message through the IPC server.
+  Serializes the message using Transit and sends it through the Unix socket.
+
+  Args:
+    server - The IPC server to send through
+    message - The message map to send
+
+  Returns:
+    boolean - true if successful, false otherwise"
+  {:malli/schema [:=> [:cat IpcServer [:map-of :keyword :any]] :boolean]}
+  ^Boolean [server message]
+  (let [{:keys [stream-type ^UnixSocketCommunicator communicator running?]} server]
     (if @running?
       (try
         (let [message-bytes (transit/write-message message)]
           (.send communicator message-bytes)
           true)
-        (catch Exception e
-          (t/log! :error (str "[" (name stream-type) "-server] Failed to send message: " (.getMessage e)))
+        (catch Exception ex
+          (logging/log-error (str "[" (name stream-type) "-server] Failed to send message: " (.getMessage ex)))
           false))
       (do
-        (t/log! :warn (str "[" (name stream-type) "-server] Cannot send message - server not running"))
-        false)))) 
- (m/=> send-message [:=> [:cat IpcServer [:map-of :keyword :any]] :boolean])
+        (logging/log-warn (str "[" (name stream-type) "-server] Cannot send message - server not running"))
+        false))))
 
 (defn receive-message
-  "Receive a message from the queue (blocking with optional timeout)."
+  "Receive a message from the queue (blocking with optional timeout).
+  Blocks until a message is available or timeout expires.
+
+  Args:
+    server - The IPC server to receive from
+    :timeout-ms - Optional timeout in milliseconds (default 0 = infinite)
+
+  Returns:
+    The message map if available, nil otherwise"
+  {:malli/schema [:=> [:cat IpcServer [:* :any]] [:maybe [:map-of :keyword :any]]]}
   [server & {:keys [timeout-ms] :or {timeout-ms 0}}]
-  (let [{:keys [message-queue running?]} server]
+  (let [{:keys [^LinkedBlockingQueue message-queue running?]} server]
     (when @running?
       (if (pos? timeout-ms)
         (.poll message-queue timeout-ms TimeUnit/MILLISECONDS)
-        (.take message-queue))))) 
- (m/=> receive-message [:=> [:cat IpcServer [:* :any]] [:maybe [:map-of :keyword :any]]])
+        (.take message-queue)))))
 
 (defn try-receive-message
-  "Try to receive a message without blocking."
+  "Try to receive a message without blocking.
+  Returns immediately with a message if available, nil otherwise.
+
+  Args:
+    server - The IPC server to receive from
+
+  Returns:
+    The message map if available, nil otherwise"
+  {:malli/schema [:=> [:cat IpcServer] [:maybe [:map-of :keyword :any]]]}
   [server]
-  (let [{:keys [message-queue]} server]
-    (.poll message-queue))) 
- (m/=> try-receive-message [:=> [:cat IpcServer] [:maybe [:map-of :keyword :any]]])
+  (let [{:keys [^LinkedBlockingQueue message-queue]} server]
+    (.poll message-queue)))
 
 (defn server-running?
-  "Check if the server is running."
-  [server]
-  (let [{:keys [running? communicator]} server]
+  "Check if the server is running.
+  Returns true if the server is active and the socket is connected.
+
+  Args:
+    server - The IPC server to check
+
+  Returns:
+    boolean - true if running, false otherwise"
+  {:malli/schema [:=> [:cat IpcServer] :boolean]}
+  ^Boolean [server]
+  (let [{:keys [running? ^UnixSocketCommunicator communicator]} server]
     (and @running?
          communicator
-         (.isRunning communicator)))) 
- (m/=> server-running? [:=> [:cat IpcServer] :boolean])
+         (.isRunning communicator))))
 
 ;; ============================================================================
 ;; Server Pool Management
 ;; ============================================================================
 
-(def ^:private servers (atom {}))
+(def ^:private servers
+  "Registry of active IPC servers indexed by stream type."
+  (atom {}))
 
 (defn get-server
-  "Get an existing server for a stream type."
+  "Get an existing server for a stream type.
+
+  Args:
+    stream-type - One of :heat or :day
+
+  Returns:
+    The server instance if exists, nil otherwise"
+  {:malli/schema [:=> [:cat StreamType] [:maybe IpcServer]]}
   [stream-type]
-  (get @servers stream-type)) 
- (m/=> get-server [:=> [:cat StreamType] [:maybe IpcServer]])
+  (get @servers stream-type))
 
 (defn create-and-register-server
-  "Create a server and register it in the pool."
+  "Create a server and register it in the pool.
+  Stops any existing server for the same stream type before creating a new one.
+
+  Args:
+    stream-type - One of :heat or :day
+    opts - Optional keyword arguments passed to create-server
+
+  Returns:
+    The newly created server instance"
+  {:malli/schema [:=> [:cat StreamType [:* :any]] IpcServer]}
   [stream-type & opts]
   (when-let [existing (get-server stream-type)]
     (stop-server existing)
     (swap! servers dissoc stream-type))
   (let [server (apply create-server stream-type opts)]
     (swap! servers assoc stream-type server)
-    server)) 
- (m/=> create-and-register-server [:=> [:cat StreamType [:* :any]] IpcServer])
+    server))
 
 (defn stop-all-servers
-  "Stop all registered servers."
+  "Stop all registered servers.
+  Cleans up all active IPC servers and empties the registry.
+
+  Returns:
+    nil"
+  {:malli/schema [:=> [:cat] :nil]}
   []
-  (doseq [[stream-type server] @servers]
-    (t/log! :info (str "Stopping " (name stream-type) " server"))
+  (doseq [[_stream-type server] @servers]
+    (logging/log-info (str "Stopping " (name (:stream-type server)) " server"))
     (stop-server server))
   (reset! servers {})
-  nil) 
- (m/=> stop-all-servers [:=> [:cat] :nil])
+  nil)

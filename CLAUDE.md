@@ -310,6 +310,74 @@ To ensure widgets display current atom values, trigger a change after binding:
 - Kotlin: `TransitFactory.keyword("name")`
 - Clojure: Automatic conversion to keywords
 
+### Gesture Events Architecture
+
+**Complete Flow from Kotlin to Clojure:**
+
+1. **Kotlin Gesture Recognition** (`MouseEventHandler.kt` → `GestureRecognizer.kt`):
+   - Raw AWT/Swing mouse events captured from video component
+   - State machine with IDLE → PENDING → PANNING states
+   - Gesture thresholds:
+     - Move: 20px (pan trigger)
+     - Tap duration: 300ms max
+     - Double tap: 300ms window, 10px tolerance
+     - Pan throttle: 120ms between updates
+     - Scroll debounce: 50ms accumulation
+   - Each gesture includes frame timestamp for video sync
+
+2. **IPC Message Transport** (`IpcClient.kt`):
+   - Gesture events converted to Transit-encoded maps
+   - Includes NDC (Normalized Device Coordinates) [-1, 1]
+   - Message structure:
+     ```clojure
+     {:msg-type :event
+      :type :gesture
+      :gesture-type :tap/:double-tap/:pan-start/:pan-move/:pan-stop/:wheel-up/:wheel-down
+      :stream-type :heat/:day
+      :x 450 :y 300           ; Pixel coordinates
+      :ndc-x 0.5 :ndc-y -0.2  ; NDC coordinates
+      :delta-x 10 :delta-y 20 ; For pan-move
+      :scroll-amount 3        ; For wheel events
+      :frame-timestamp 12345  ; Video frame sync
+      :timestamp 67890}       ; System timestamp
+     ```
+   - Unix Domain Socket with 4-byte framing
+   - Transit msgpack serialization
+
+3. **Clojure Event Reception** (`ipc/core.clj`):
+   - Dedicated reader thread per stream (heat/day)
+   - Messages queued in `LinkedBlockingQueue` (1000 capacity)
+   - Processor thread with `IMessageHandler` pattern
+   - Routes to `streams/events/handle-message`
+
+4. **Event Processing** (`streams/events.clj`):
+   - Message normalization (string → keyword keys)
+   - Validation against Malli specs
+   - Routes by `:msg-type` → `:event` → `:gesture`
+   - Gesture handler logs with debug level:
+     ```clojure
+     {:id :stream/gesture-event
+      :stream :heat
+      :gesture :tap
+      :coords {:x 450 :y 300}
+      :ndc {:x 0.5 :y -0.2}
+      :scroll 3}
+     ```
+
+5. **Logging Output** (`logging.clj`):
+   - Development: `:trace` level (all events)
+   - Production: `:warn` level (errors only)
+   - Console: Formatted with timestamp
+   - File: `logs/potatoclient-{version}-{timestamp}.log`
+
+**Performance Optimizations:**
+- Pan update throttling (120ms intervals)
+- Scroll event debouncing (50ms accumulation)
+- Async reader/processor threads
+- Queue buffering (1000 messages)
+- Zero-copy ByteBuffer IPC
+- Dropping mode async logging
+
 ## Development Guidelines
 
 ### Code Quality Standards

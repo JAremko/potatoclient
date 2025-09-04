@@ -9,24 +9,26 @@
                                                             tel/set-ns-filter!
                                                             tel/stop-handlers!]}}}}
   (:require
-            [malli.core :as m] [clojure.java.io :as io]
-            [clojure.string]
-            [potatoclient.runtime :as runtime]
-            [taoensso.telemere :as tel])
+    [clojure.java.io :as io]
+    [clojure.string]
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.runtime :as runtime]
+    [taoensso.telemere :as tel])
   (:import (java.time LocalDateTime)
            (java.time.format DateTimeFormatter)))
 
 (defn- get-version
   "Get application version"
+  {:malli/schema [:=> [:cat] :string]}
   []
   (try
     (clojure.string/trim (slurp (clojure.java.io/resource "VERSION")))
-    (catch Exception _ "dev"))) 
- (m/=> get-version [:=> [:cat] :string])
+    (catch Exception _ "dev")))
 
 (defn- get-log-dir
   "Get the log directory path using platform-specific conventions"
-  []
+  {:malli/schema [:=> [:cat] [:fn (partial instance? java.io.File)]]}
+  ^java.io.File []
   (let [os-name (.toLowerCase ^String (System/getProperty "os.name"))]
     (cond
       ;; Windows - use LOCALAPPDATA if available, fallback to APPDATA
@@ -57,12 +59,12 @@
                                (not= xdg-data user-home))
                         xdg-data
                         (io/file user-home ".local" "share"))]
-        (io/file data-base "potatoclient" "logs"))))) 
- (m/=> get-log-dir [:=> [:cat] :potatoclient.ui-specs/file])
+        (io/file data-base "potatoclient" "logs")))))
 
 (defn- get-log-file-path
   "Get the path for the log file with timestamp and version"
-  []
+  {:malli/schema [:=> [:cat] [:fn (partial instance? java.io.File)]]}
+  ^java.io.File []
   (let [logs-dir (if (runtime/release-build?)
                    (get-log-dir)
                    (io/file "logs"))
@@ -71,19 +73,19 @@
                            (LocalDateTime/now))
         filename (format "potatoclient-%s-%s.log" version timestamp)]
     (.mkdirs logs-dir)
-    (io/file logs-dir filename))) 
- (m/=> get-log-file-path [:=> [:cat] :potatoclient.ui-specs/file])
+    (io/file logs-dir filename)))
 
 (defn- create-file-handler
   "Create a file handler for Telemere"
+  {:malli/schema [:=> [:cat] fn?]}
   []
   (tel/handler:file
     {:output-fn (tel/format-signal-fn)
-     :path (.getAbsolutePath (get-log-file-path))})) 
- (m/=> create-file-handler [:=> [:cat] fn?])
+     :path (.getAbsolutePath (get-log-file-path))}))
 
 (defn- cleanup-old-logs!
   "Keep only the newest N log files, delete older ones"
+  {:malli/schema [:=> [:cat :pos-int] :nil]}
   [max-files]
   (let [log-dir (if (runtime/release-build?)
                   (get-log-dir)
@@ -102,14 +104,14 @@
                   ;; Using println is appropriate for bootstrap logging
             (println (str "Deleted old log file: " (.getName file)))
             (catch Exception e
-              (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e)))))))))) 
- (m/=> cleanup-old-logs! [:=> [:cat :pos-int] :nil])
+              (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e))))))))))
 
 ;; Track if logging has been initialized
 (def ^:private initialized? (atom false))
 
 (defn init!
   "Initialize the logging system"
+  {:malli/schema [:=> [:cat] :nil]}
   []
   ;; Prevent double initialization
   (when (compare-and-set! initialized? false true)
@@ -169,15 +171,15 @@
       "PotatoClient logging initialized"))
 
   ;; Ensure we return nil
-  nil) 
- (m/=> init! [:=> [:cat] :nil])
+  nil)
 
 (defn shutdown!
   "Shutdown the logging system"
+  {:malli/schema [:=> [:cat] :nil]}
   []
   (when @initialized?
     (try
-      (tel/log! {:level :info :id ::shutdown} "Shutting down logging system")
+      (tel/log! {:level :info :id ::shutdown :msg "Shutting down logging system"})
       (try
         (tel/stop-handlers!)
         (catch Exception e
@@ -186,8 +188,7 @@
       (catch Exception e
         ;; Can't use logging here as handlers might be stopped
         (println (str "Warning during logging shutdown: " (.getMessage e)))))
-    nil)) 
- (m/=> shutdown! [:=> [:cat] :nil])
+    nil))
 
 ;; Convenience logging macros that match our previous API
 (defmacro log-info
@@ -227,8 +228,17 @@
 
 (defn get-logs-directory
   "Get the logs directory path. Public function for UI access."
-  []
+  {:malli/schema [:=> [:cat] [:fn (partial instance? java.io.File)]]}
+  ^java.io.File []
   (if (runtime/release-build?)
     (get-log-dir)
-    (io/file "logs"))) 
- (m/=> get-logs-directory [:=> [:cat] :potatoclient.ui-specs/file])
+    (io/file "logs")))
+
+;; Initialize the global registry on namespace load if needed
+;; This runs for its side effects - setting up the registry
+#_{:clj-kondo/ignore [:unused-private-var]}
+(defonce ^:private registry-initialized
+  (do
+    ;; Setup the global registry if not already done
+    (registry/setup-global-registry!)
+    true))

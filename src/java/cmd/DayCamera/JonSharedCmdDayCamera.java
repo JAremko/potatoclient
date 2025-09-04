@@ -2539,19 +2539,19 @@ public final class JonSharedCmdDayCamera {
     cmd.DayCamera.JonSharedCmdDayCamera.ShiftClaheLevelOrBuilder getShiftClaheLevelOrBuilder();
 
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-     * @return Whether the focusAtRoi field is set.
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+     * @return Whether the focusRoi field is set.
      */
-    boolean hasFocusAtRoi();
+    boolean hasFocusRoi();
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-     * @return The focusAtRoi.
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+     * @return The focusRoi.
      */
-    cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getFocusAtRoi();
+    cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getFocusRoi();
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
      */
-    cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder getFocusAtRoiOrBuilder();
+    cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder getFocusRoiOrBuilder();
 
     /**
      * <code>.cmd.DayCamera.TrackROI track_roi = 19;</code>
@@ -2645,7 +2645,7 @@ public final class JonSharedCmdDayCamera {
       SET_DIGITAL_ZOOM_LEVEL(15),
       SET_CLAHE_LEVEL(16),
       SHIFT_CLAHE_LEVEL(17),
-      FOCUS_AT_ROI(18),
+      FOCUS_ROI(18),
       TRACK_ROI(19),
       ZOOM_ROI(20),
       CMD_NOT_SET(0);
@@ -2682,7 +2682,7 @@ public final class JonSharedCmdDayCamera {
           case 15: return SET_DIGITAL_ZOOM_LEVEL;
           case 16: return SET_CLAHE_LEVEL;
           case 17: return SHIFT_CLAHE_LEVEL;
-          case 18: return FOCUS_AT_ROI;
+          case 18: return FOCUS_ROI;
           case 19: return TRACK_ROI;
           case 20: return ZOOM_ROI;
           case 0: return CMD_NOT_SET;
@@ -3227,35 +3227,35 @@ public final class JonSharedCmdDayCamera {
       return cmd.DayCamera.JonSharedCmdDayCamera.ShiftClaheLevel.getDefaultInstance();
     }
 
-    public static final int FOCUS_AT_ROI_FIELD_NUMBER = 18;
+    public static final int FOCUS_ROI_FIELD_NUMBER = 18;
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-     * @return Whether the focusAtRoi field is set.
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+     * @return Whether the focusRoi field is set.
      */
     @java.lang.Override
-    public boolean hasFocusAtRoi() {
+    public boolean hasFocusRoi() {
       return cmdCase_ == 18;
     }
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-     * @return The focusAtRoi.
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+     * @return The focusRoi.
      */
     @java.lang.Override
-    public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getFocusAtRoi() {
+    public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getFocusRoi() {
       if (cmdCase_ == 18) {
-         return (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_;
+         return (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_;
       }
-      return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+      return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
     }
     /**
-     * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+     * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
      */
     @java.lang.Override
-    public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder getFocusAtRoiOrBuilder() {
+    public cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder getFocusRoiOrBuilder() {
       if (cmdCase_ == 18) {
-         return (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_;
+         return (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_;
       }
-      return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+      return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
     }
 
     public static final int TRACK_ROI_FIELD_NUMBER = 19;
@@ -3386,7 +3386,7 @@ public final class JonSharedCmdDayCamera {
         output.writeMessage(17, (cmd.DayCamera.JonSharedCmdDayCamera.ShiftClaheLevel) cmd_);
       }
       if (cmdCase_ == 18) {
-        output.writeMessage(18, (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_);
+        output.writeMessage(18, (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_);
       }
       if (cmdCase_ == 19) {
         output.writeMessage(19, (cmd.DayCamera.JonSharedCmdDayCamera.TrackROI) cmd_);
@@ -3473,7 +3473,7 @@ public final class JonSharedCmdDayCamera {
       }
       if (cmdCase_ == 18) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(18, (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_);
+          .computeMessageSize(18, (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_);
       }
       if (cmdCase_ == 19) {
         size += com.google.protobuf.CodedOutputStream
@@ -3569,8 +3569,8 @@ public final class JonSharedCmdDayCamera {
               .equals(other.getShiftClaheLevel())) return false;
           break;
         case 18:
-          if (!getFocusAtRoi()
-              .equals(other.getFocusAtRoi())) return false;
+          if (!getFocusRoi()
+              .equals(other.getFocusRoi())) return false;
           break;
         case 19:
           if (!getTrackRoi()
@@ -3664,8 +3664,8 @@ public final class JonSharedCmdDayCamera {
           hash = (53 * hash) + getShiftClaheLevel().hashCode();
           break;
         case 18:
-          hash = (37 * hash) + FOCUS_AT_ROI_FIELD_NUMBER;
-          hash = (53 * hash) + getFocusAtRoi().hashCode();
+          hash = (37 * hash) + FOCUS_ROI_FIELD_NUMBER;
+          hash = (53 * hash) + getFocusRoi().hashCode();
           break;
         case 19:
           hash = (37 * hash) + TRACK_ROI_FIELD_NUMBER;
@@ -3860,8 +3860,8 @@ public final class JonSharedCmdDayCamera {
         if (shiftClaheLevelBuilder_ != null) {
           shiftClaheLevelBuilder_.clear();
         }
-        if (focusAtRoiBuilder_ != null) {
-          focusAtRoiBuilder_.clear();
+        if (focusRoiBuilder_ != null) {
+          focusRoiBuilder_.clear();
         }
         if (trackRoiBuilder_ != null) {
           trackRoiBuilder_.clear();
@@ -3979,8 +3979,8 @@ public final class JonSharedCmdDayCamera {
           result.cmd_ = shiftClaheLevelBuilder_.build();
         }
         if (cmdCase_ == 18 &&
-            focusAtRoiBuilder_ != null) {
-          result.cmd_ = focusAtRoiBuilder_.build();
+            focusRoiBuilder_ != null) {
+          result.cmd_ = focusRoiBuilder_.build();
         }
         if (cmdCase_ == 19 &&
             trackRoiBuilder_ != null) {
@@ -4073,8 +4073,8 @@ public final class JonSharedCmdDayCamera {
             mergeShiftClaheLevel(other.getShiftClaheLevel());
             break;
           }
-          case FOCUS_AT_ROI: {
-            mergeFocusAtRoi(other.getFocusAtRoi());
+          case FOCUS_ROI: {
+            mergeFocusRoi(other.getFocusRoi());
             break;
           }
           case TRACK_ROI: {
@@ -4236,7 +4236,7 @@ public final class JonSharedCmdDayCamera {
               } // case 138
               case 146: {
                 input.readMessage(
-                    getFocusAtRoiFieldBuilder().getBuilder(),
+                    getFocusRoiFieldBuilder().getBuilder(),
                     extensionRegistry);
                 cmdCase_ = 18;
                 break;
@@ -6702,71 +6702,71 @@ public final class JonSharedCmdDayCamera {
       }
 
       private com.google.protobuf.SingleFieldBuilder<
-          cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder> focusAtRoiBuilder_;
+          cmd.DayCamera.JonSharedCmdDayCamera.FocusROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder> focusRoiBuilder_;
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-       * @return Whether the focusAtRoi field is set.
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+       * @return Whether the focusRoi field is set.
        */
       @java.lang.Override
-      public boolean hasFocusAtRoi() {
+      public boolean hasFocusRoi() {
         return cmdCase_ == 18;
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
-       * @return The focusAtRoi.
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
+       * @return The focusRoi.
        */
       @java.lang.Override
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getFocusAtRoi() {
-        if (focusAtRoiBuilder_ == null) {
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getFocusRoi() {
+        if (focusRoiBuilder_ == null) {
           if (cmdCase_ == 18) {
-            return (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_;
+            return (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_;
           }
-          return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+          return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
         } else {
           if (cmdCase_ == 18) {
-            return focusAtRoiBuilder_.getMessage();
+            return focusRoiBuilder_.getMessage();
           }
-          return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+          return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
         }
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
-      public Builder setFocusAtRoi(cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI value) {
-        if (focusAtRoiBuilder_ == null) {
+      public Builder setFocusRoi(cmd.DayCamera.JonSharedCmdDayCamera.FocusROI value) {
+        if (focusRoiBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
           cmd_ = value;
           onChanged();
         } else {
-          focusAtRoiBuilder_.setMessage(value);
+          focusRoiBuilder_.setMessage(value);
         }
         cmdCase_ = 18;
         return this;
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
-      public Builder setFocusAtRoi(
-          cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder builderForValue) {
-        if (focusAtRoiBuilder_ == null) {
+      public Builder setFocusRoi(
+          cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder builderForValue) {
+        if (focusRoiBuilder_ == null) {
           cmd_ = builderForValue.build();
           onChanged();
         } else {
-          focusAtRoiBuilder_.setMessage(builderForValue.build());
+          focusRoiBuilder_.setMessage(builderForValue.build());
         }
         cmdCase_ = 18;
         return this;
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
-      public Builder mergeFocusAtRoi(cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI value) {
-        if (focusAtRoiBuilder_ == null) {
+      public Builder mergeFocusRoi(cmd.DayCamera.JonSharedCmdDayCamera.FocusROI value) {
+        if (focusRoiBuilder_ == null) {
           if (cmdCase_ == 18 &&
-              cmd_ != cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance()) {
-            cmd_ = cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.newBuilder((cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_)
+              cmd_ != cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance()) {
+            cmd_ = cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.newBuilder((cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_)
                 .mergeFrom(value).buildPartial();
           } else {
             cmd_ = value;
@@ -6774,19 +6774,19 @@ public final class JonSharedCmdDayCamera {
           onChanged();
         } else {
           if (cmdCase_ == 18) {
-            focusAtRoiBuilder_.mergeFrom(value);
+            focusRoiBuilder_.mergeFrom(value);
           } else {
-            focusAtRoiBuilder_.setMessage(value);
+            focusRoiBuilder_.setMessage(value);
           }
         }
         cmdCase_ = 18;
         return this;
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
-      public Builder clearFocusAtRoi() {
-        if (focusAtRoiBuilder_ == null) {
+      public Builder clearFocusRoi() {
+        if (focusRoiBuilder_ == null) {
           if (cmdCase_ == 18) {
             cmdCase_ = 0;
             cmd_ = null;
@@ -6797,50 +6797,50 @@ public final class JonSharedCmdDayCamera {
             cmdCase_ = 0;
             cmd_ = null;
           }
-          focusAtRoiBuilder_.clear();
+          focusRoiBuilder_.clear();
         }
         return this;
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder getFocusAtRoiBuilder() {
-        return getFocusAtRoiFieldBuilder().getBuilder();
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder getFocusRoiBuilder() {
+        return getFocusRoiFieldBuilder().getBuilder();
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
       @java.lang.Override
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder getFocusAtRoiOrBuilder() {
-        if ((cmdCase_ == 18) && (focusAtRoiBuilder_ != null)) {
-          return focusAtRoiBuilder_.getMessageOrBuilder();
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder getFocusRoiOrBuilder() {
+        if ((cmdCase_ == 18) && (focusRoiBuilder_ != null)) {
+          return focusRoiBuilder_.getMessageOrBuilder();
         } else {
           if (cmdCase_ == 18) {
-            return (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_;
+            return (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_;
           }
-          return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+          return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
         }
       }
       /**
-       * <code>.cmd.DayCamera.FocusAtROI focus_at_roi = 18;</code>
+       * <code>.cmd.DayCamera.FocusROI focus_roi = 18;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder> 
-          getFocusAtRoiFieldBuilder() {
-        if (focusAtRoiBuilder_ == null) {
+          cmd.DayCamera.JonSharedCmdDayCamera.FocusROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder> 
+          getFocusRoiFieldBuilder() {
+        if (focusRoiBuilder_ == null) {
           if (!(cmdCase_ == 18)) {
-            cmd_ = cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+            cmd_ = cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
           }
-          focusAtRoiBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder>(
-                  (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) cmd_,
+          focusRoiBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              cmd.DayCamera.JonSharedCmdDayCamera.FocusROI, cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder, cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder>(
+                  (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) cmd_,
                   getParentForChildren(),
                   isClean());
           cmd_ = null;
         }
         cmdCase_ = 18;
         onChanged();
-        return focusAtRoiBuilder_;
+        return focusRoiBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilder<
@@ -19724,29 +19724,41 @@ public final class JonSharedCmdDayCamera {
 
   }
 
-  public interface FocusAtROIOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:cmd.DayCamera.FocusAtROI)
+  public interface FocusROIOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:cmd.DayCamera.FocusROI)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>double x = 1 [(.buf.validate.field) = { ... }</code>
-     * @return The x.
+     * <code>double x1 = 1 [(.buf.validate.field) = { ... }</code>
+     * @return The x1.
      */
-    double getX();
+    double getX1();
 
     /**
-     * <code>double y = 2 [(.buf.validate.field) = { ... }</code>
-     * @return The y.
+     * <code>double y1 = 2 [(.buf.validate.field) = { ... }</code>
+     * @return The y1.
      */
-    double getY();
+    double getY1();
+
+    /**
+     * <code>double x2 = 3 [(.buf.validate.field) = { ... }</code>
+     * @return The x2.
+     */
+    double getX2();
+
+    /**
+     * <code>double y2 = 4 [(.buf.validate.field) = { ... }</code>
+     * @return The y2.
+     */
+    double getY2();
   }
   /**
-   * Protobuf type {@code cmd.DayCamera.FocusAtROI}
+   * Protobuf type {@code cmd.DayCamera.FocusROI}
    */
-  public static final class FocusAtROI extends
+  public static final class FocusROI extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:cmd.DayCamera.FocusAtROI)
-      FocusAtROIOrBuilder {
+      // @@protoc_insertion_point(message_implements:cmd.DayCamera.FocusROI)
+      FocusROIOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
       com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
@@ -19755,48 +19767,70 @@ public final class JonSharedCmdDayCamera {
         /* minor= */ 29,
         /* patch= */ 2,
         /* suffix= */ "",
-        FocusAtROI.class.getName());
+        FocusROI.class.getName());
     }
-    // Use FocusAtROI.newBuilder() to construct.
-    private FocusAtROI(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    // Use FocusROI.newBuilder() to construct.
+    private FocusROI(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
     }
-    private FocusAtROI() {
+    private FocusROI() {
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusAtROI_descriptor;
+      return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusROI_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusAtROI_fieldAccessorTable
+      return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusROI_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.class, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder.class);
+              cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.class, cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder.class);
     }
 
-    public static final int X_FIELD_NUMBER = 1;
-    private double x_ = 0D;
+    public static final int X1_FIELD_NUMBER = 1;
+    private double x1_ = 0D;
     /**
-     * <code>double x = 1 [(.buf.validate.field) = { ... }</code>
-     * @return The x.
+     * <code>double x1 = 1 [(.buf.validate.field) = { ... }</code>
+     * @return The x1.
      */
     @java.lang.Override
-    public double getX() {
-      return x_;
+    public double getX1() {
+      return x1_;
     }
 
-    public static final int Y_FIELD_NUMBER = 2;
-    private double y_ = 0D;
+    public static final int Y1_FIELD_NUMBER = 2;
+    private double y1_ = 0D;
     /**
-     * <code>double y = 2 [(.buf.validate.field) = { ... }</code>
-     * @return The y.
+     * <code>double y1 = 2 [(.buf.validate.field) = { ... }</code>
+     * @return The y1.
      */
     @java.lang.Override
-    public double getY() {
-      return y_;
+    public double getY1() {
+      return y1_;
+    }
+
+    public static final int X2_FIELD_NUMBER = 3;
+    private double x2_ = 0D;
+    /**
+     * <code>double x2 = 3 [(.buf.validate.field) = { ... }</code>
+     * @return The x2.
+     */
+    @java.lang.Override
+    public double getX2() {
+      return x2_;
+    }
+
+    public static final int Y2_FIELD_NUMBER = 4;
+    private double y2_ = 0D;
+    /**
+     * <code>double y2 = 4 [(.buf.validate.field) = { ... }</code>
+     * @return The y2.
+     */
+    @java.lang.Override
+    public double getY2() {
+      return y2_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -19813,11 +19847,17 @@ public final class JonSharedCmdDayCamera {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (java.lang.Double.doubleToRawLongBits(x_) != 0) {
-        output.writeDouble(1, x_);
+      if (java.lang.Double.doubleToRawLongBits(x1_) != 0) {
+        output.writeDouble(1, x1_);
       }
-      if (java.lang.Double.doubleToRawLongBits(y_) != 0) {
-        output.writeDouble(2, y_);
+      if (java.lang.Double.doubleToRawLongBits(y1_) != 0) {
+        output.writeDouble(2, y1_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(x2_) != 0) {
+        output.writeDouble(3, x2_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(y2_) != 0) {
+        output.writeDouble(4, y2_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -19828,13 +19868,21 @@ public final class JonSharedCmdDayCamera {
       if (size != -1) return size;
 
       size = 0;
-      if (java.lang.Double.doubleToRawLongBits(x_) != 0) {
+      if (java.lang.Double.doubleToRawLongBits(x1_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(1, x_);
+          .computeDoubleSize(1, x1_);
       }
-      if (java.lang.Double.doubleToRawLongBits(y_) != 0) {
+      if (java.lang.Double.doubleToRawLongBits(y1_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, y_);
+          .computeDoubleSize(2, y1_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(x2_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(3, x2_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(y2_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(4, y2_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -19846,17 +19894,23 @@ public final class JonSharedCmdDayCamera {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI)) {
+      if (!(obj instanceof cmd.DayCamera.JonSharedCmdDayCamera.FocusROI)) {
         return super.equals(obj);
       }
-      cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI other = (cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) obj;
+      cmd.DayCamera.JonSharedCmdDayCamera.FocusROI other = (cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) obj;
 
-      if (java.lang.Double.doubleToLongBits(getX())
+      if (java.lang.Double.doubleToLongBits(getX1())
           != java.lang.Double.doubleToLongBits(
-              other.getX())) return false;
-      if (java.lang.Double.doubleToLongBits(getY())
+              other.getX1())) return false;
+      if (java.lang.Double.doubleToLongBits(getY1())
           != java.lang.Double.doubleToLongBits(
-              other.getY())) return false;
+              other.getY1())) return false;
+      if (java.lang.Double.doubleToLongBits(getX2())
+          != java.lang.Double.doubleToLongBits(
+              other.getX2())) return false;
+      if (java.lang.Double.doubleToLongBits(getY2())
+          != java.lang.Double.doubleToLongBits(
+              other.getY2())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -19868,55 +19922,61 @@ public final class JonSharedCmdDayCamera {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + X_FIELD_NUMBER;
+      hash = (37 * hash) + X1_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getX()));
-      hash = (37 * hash) + Y_FIELD_NUMBER;
+          java.lang.Double.doubleToLongBits(getX1()));
+      hash = (37 * hash) + Y1_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getY()));
+          java.lang.Double.doubleToLongBits(getY1()));
+      hash = (37 * hash) + X2_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getX2()));
+      hash = (37 * hash) + Y2_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getY2()));
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(byte[] data)
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(java.io.InputStream input)
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -19924,26 +19984,26 @@ public final class JonSharedCmdDayCamera {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseDelimitedFrom(java.io.InputStream input)
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseDelimitedFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI parseFrom(
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -19956,7 +20016,7 @@ public final class JonSharedCmdDayCamera {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI prototype) {
+    public static Builder newBuilder(cmd.DayCamera.JonSharedCmdDayCamera.FocusROI prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -19972,26 +20032,26 @@ public final class JonSharedCmdDayCamera {
       return builder;
     }
     /**
-     * Protobuf type {@code cmd.DayCamera.FocusAtROI}
+     * Protobuf type {@code cmd.DayCamera.FocusROI}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:cmd.DayCamera.FocusAtROI)
-        cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROIOrBuilder {
+        // @@protoc_insertion_point(builder_implements:cmd.DayCamera.FocusROI)
+        cmd.DayCamera.JonSharedCmdDayCamera.FocusROIOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusAtROI_descriptor;
+        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusROI_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusAtROI_fieldAccessorTable
+        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusROI_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.class, cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.Builder.class);
+                cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.class, cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.Builder.class);
       }
 
-      // Construct using cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.newBuilder()
+      // Construct using cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.newBuilder()
       private Builder() {
 
       }
@@ -20005,25 +20065,27 @@ public final class JonSharedCmdDayCamera {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        x_ = 0D;
-        y_ = 0D;
+        x1_ = 0D;
+        y1_ = 0D;
+        x2_ = 0D;
+        y2_ = 0D;
         return this;
       }
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusAtROI_descriptor;
+        return cmd.DayCamera.JonSharedCmdDayCamera.internal_static_cmd_DayCamera_FocusROI_descriptor;
       }
 
       @java.lang.Override
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getDefaultInstanceForType() {
-        return cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance();
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getDefaultInstanceForType() {
+        return cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance();
       }
 
       @java.lang.Override
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI build() {
-        cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI result = buildPartial();
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI build() {
+        cmd.DayCamera.JonSharedCmdDayCamera.FocusROI result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -20031,40 +20093,52 @@ public final class JonSharedCmdDayCamera {
       }
 
       @java.lang.Override
-      public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI buildPartial() {
-        cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI result = new cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI(this);
+      public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI buildPartial() {
+        cmd.DayCamera.JonSharedCmdDayCamera.FocusROI result = new cmd.DayCamera.JonSharedCmdDayCamera.FocusROI(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI result) {
+      private void buildPartial0(cmd.DayCamera.JonSharedCmdDayCamera.FocusROI result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.x_ = x_;
+          result.x1_ = x1_;
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.y_ = y_;
+          result.y1_ = y1_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.x2_ = x2_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.y2_ = y2_;
         }
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI) {
-          return mergeFrom((cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI)other);
+        if (other instanceof cmd.DayCamera.JonSharedCmdDayCamera.FocusROI) {
+          return mergeFrom((cmd.DayCamera.JonSharedCmdDayCamera.FocusROI)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI other) {
-        if (other == cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI.getDefaultInstance()) return this;
-        if (other.getX() != 0D) {
-          setX(other.getX());
+      public Builder mergeFrom(cmd.DayCamera.JonSharedCmdDayCamera.FocusROI other) {
+        if (other == cmd.DayCamera.JonSharedCmdDayCamera.FocusROI.getDefaultInstance()) return this;
+        if (other.getX1() != 0D) {
+          setX1(other.getX1());
         }
-        if (other.getY() != 0D) {
-          setY(other.getY());
+        if (other.getY1() != 0D) {
+          setY1(other.getY1());
+        }
+        if (other.getX2() != 0D) {
+          setX2(other.getX2());
+        }
+        if (other.getY2() != 0D) {
+          setY2(other.getY2());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -20093,15 +20167,25 @@ public final class JonSharedCmdDayCamera {
                 done = true;
                 break;
               case 9: {
-                x_ = input.readDouble();
+                x1_ = input.readDouble();
                 bitField0_ |= 0x00000001;
                 break;
               } // case 9
               case 17: {
-                y_ = input.readDouble();
+                y1_ = input.readDouble();
                 bitField0_ |= 0x00000002;
                 break;
               } // case 17
+              case 25: {
+                x2_ = input.readDouble();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 25
+              case 33: {
+                y2_ = input.readDouble();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 33
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -20119,87 +20203,151 @@ public final class JonSharedCmdDayCamera {
       }
       private int bitField0_;
 
-      private double x_ ;
+      private double x1_ ;
       /**
-       * <code>double x = 1 [(.buf.validate.field) = { ... }</code>
-       * @return The x.
+       * <code>double x1 = 1 [(.buf.validate.field) = { ... }</code>
+       * @return The x1.
        */
       @java.lang.Override
-      public double getX() {
-        return x_;
+      public double getX1() {
+        return x1_;
       }
       /**
-       * <code>double x = 1 [(.buf.validate.field) = { ... }</code>
-       * @param value The x to set.
+       * <code>double x1 = 1 [(.buf.validate.field) = { ... }</code>
+       * @param value The x1 to set.
        * @return This builder for chaining.
        */
-      public Builder setX(double value) {
+      public Builder setX1(double value) {
 
-        x_ = value;
+        x1_ = value;
         bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
-       * <code>double x = 1 [(.buf.validate.field) = { ... }</code>
+       * <code>double x1 = 1 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
-      public Builder clearX() {
+      public Builder clearX1() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        x_ = 0D;
+        x1_ = 0D;
         onChanged();
         return this;
       }
 
-      private double y_ ;
+      private double y1_ ;
       /**
-       * <code>double y = 2 [(.buf.validate.field) = { ... }</code>
-       * @return The y.
+       * <code>double y1 = 2 [(.buf.validate.field) = { ... }</code>
+       * @return The y1.
        */
       @java.lang.Override
-      public double getY() {
-        return y_;
+      public double getY1() {
+        return y1_;
       }
       /**
-       * <code>double y = 2 [(.buf.validate.field) = { ... }</code>
-       * @param value The y to set.
+       * <code>double y1 = 2 [(.buf.validate.field) = { ... }</code>
+       * @param value The y1 to set.
        * @return This builder for chaining.
        */
-      public Builder setY(double value) {
+      public Builder setY1(double value) {
 
-        y_ = value;
+        y1_ = value;
         bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>double y = 2 [(.buf.validate.field) = { ... }</code>
+       * <code>double y1 = 2 [(.buf.validate.field) = { ... }</code>
        * @return This builder for chaining.
        */
-      public Builder clearY() {
+      public Builder clearY1() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        y_ = 0D;
+        y1_ = 0D;
         onChanged();
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:cmd.DayCamera.FocusAtROI)
+      private double x2_ ;
+      /**
+       * <code>double x2 = 3 [(.buf.validate.field) = { ... }</code>
+       * @return The x2.
+       */
+      @java.lang.Override
+      public double getX2() {
+        return x2_;
+      }
+      /**
+       * <code>double x2 = 3 [(.buf.validate.field) = { ... }</code>
+       * @param value The x2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setX2(double value) {
+
+        x2_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>double x2 = 3 [(.buf.validate.field) = { ... }</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearX2() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        x2_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private double y2_ ;
+      /**
+       * <code>double y2 = 4 [(.buf.validate.field) = { ... }</code>
+       * @return The y2.
+       */
+      @java.lang.Override
+      public double getY2() {
+        return y2_;
+      }
+      /**
+       * <code>double y2 = 4 [(.buf.validate.field) = { ... }</code>
+       * @param value The y2 to set.
+       * @return This builder for chaining.
+       */
+      public Builder setY2(double value) {
+
+        y2_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>double y2 = 4 [(.buf.validate.field) = { ... }</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearY2() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        y2_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:cmd.DayCamera.FocusROI)
     }
 
-    // @@protoc_insertion_point(class_scope:cmd.DayCamera.FocusAtROI)
-    private static final cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:cmd.DayCamera.FocusROI)
+    private static final cmd.DayCamera.JonSharedCmdDayCamera.FocusROI DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI();
+      DEFAULT_INSTANCE = new cmd.DayCamera.JonSharedCmdDayCamera.FocusROI();
     }
 
-    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getDefaultInstance() {
+    public static cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<FocusAtROI>
-        PARSER = new com.google.protobuf.AbstractParser<FocusAtROI>() {
+    private static final com.google.protobuf.Parser<FocusROI>
+        PARSER = new com.google.protobuf.AbstractParser<FocusROI>() {
       @java.lang.Override
-      public FocusAtROI parsePartialFrom(
+      public FocusROI parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -20218,17 +20366,17 @@ public final class JonSharedCmdDayCamera {
       }
     };
 
-    public static com.google.protobuf.Parser<FocusAtROI> parser() {
+    public static com.google.protobuf.Parser<FocusROI> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<FocusAtROI> getParserForType() {
+    public com.google.protobuf.Parser<FocusROI> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public cmd.DayCamera.JonSharedCmdDayCamera.FocusAtROI getDefaultInstanceForType() {
+    public cmd.DayCamera.JonSharedCmdDayCamera.FocusROI getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -21701,10 +21849,10 @@ public final class JonSharedCmdDayCamera {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_cmd_DayCamera_SaveToTableFocus_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_cmd_DayCamera_FocusAtROI_descriptor;
+    internal_static_cmd_DayCamera_FocusROI_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_cmd_DayCamera_FocusAtROI_fieldAccessorTable;
+      internal_static_cmd_DayCamera_FocusROI_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_cmd_DayCamera_TrackROI_descriptor;
   private static final 
@@ -21734,7 +21882,7 @@ public final class JonSharedCmdDayCamera {
       "\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"7\n\rSetCla" +
       "heLevel\022&\n\005value\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000" +
       "\000\000\000\000\000\000\000\"9\n\017ShiftClaheLevel\022&\n\005value\030\001 \001(" +
-      "\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\351\007\n\004Root\022%\n\005f" +
+      "\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\344\007\n\004Root\022%\n\005f" +
       "ocus\030\001 \001(\0132\024.cmd.DayCamera.FocusH\000\022#\n\004zo" +
       "om\030\002 \001(\0132\023.cmd.DayCamera.ZoomH\000\022*\n\010set_i" +
       "ris\030\003 \001(\0132\026.cmd.DayCamera.SetIrisH\000\022@\n\024s" +
@@ -21755,56 +21903,57 @@ public final class JonSharedCmdDayCamera {
       "\".cmd.DayCamera.SetDigitalZoomLevelH\000\0227\n" +
       "\017set_clahe_level\030\020 \001(\0132\034.cmd.DayCamera.S" +
       "etClaheLevelH\000\022;\n\021shift_clahe_level\030\021 \001(" +
-      "\0132\036.cmd.DayCamera.ShiftClaheLevelH\000\0221\n\014f" +
-      "ocus_at_roi\030\022 \001(\0132\031.cmd.DayCamera.FocusA" +
-      "tROIH\000\022,\n\ttrack_roi\030\023 \001(\0132\027.cmd.DayCamer" +
-      "a.TrackROIH\000\022*\n\010zoom_roi\030\024 \001(\0132\026.cmd.Day" +
-      "Camera.ZoomROIH\000B\014\n\003cmd\022\005\272H\002\010\001\"\010\n\006GetPos" +
-      "\"\014\n\nNextFxMode\"\014\n\nPrevFxMode\"\017\n\rRefreshF" +
-      "xMode\"\t\n\007HaltAll\"?\n\tSetFxMode\0222\n\004mode\030\001 " +
-      "\001(\0162\030.ser.JonGuiDataFxModeDayB\n\272H\007\202\001\004\020\001 " +
-      "\000\"4\n\023SetDigitalZoomLevel\022\035\n\005value\030\001 \001(\001B" +
-      "\016\272H\013\022\t)\000\000\000\000\000\000\360?\"\250\002\n\005Focus\022,\n\tset_value\030\001" +
-      " \001(\0132\027.cmd.DayCamera.SetValueH\000\022#\n\004move\030" +
-      "\002 \001(\0132\023.cmd.DayCamera.MoveH\000\022#\n\004halt\030\003 \001" +
-      "(\0132\023.cmd.DayCamera.HaltH\000\022\'\n\006offset\030\004 \001(" +
-      "\0132\025.cmd.DayCamera.OffsetH\000\0220\n\013reset_focu" +
-      "s\030\005 \001(\0132\031.cmd.DayCamera.ResetFocusH\000\022>\n\023" +
-      "save_to_table_focus\030\006 \001(\0132\037.cmd.DayCamer" +
-      "a.SaveToTableFocusH\000B\014\n\003cmd\022\005\272H\002\010\001\"\334\003\n\004Z" +
-      "oom\022,\n\tset_value\030\001 \001(\0132\027.cmd.DayCamera.S" +
-      "etValueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.DayCamera." +
-      "MoveH\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCamera.Hal" +
-      "tH\000\022@\n\024set_zoom_table_value\030\004 \001(\0132 .cmd." +
-      "DayCamera.SetZoomTableValueH\000\022>\n\023next_zo" +
-      "om_table_pos\030\005 \001(\0132\037.cmd.DayCamera.NextZ" +
-      "oomTablePosH\000\022>\n\023prev_zoom_table_pos\030\006 \001" +
-      "(\0132\037.cmd.DayCamera.PrevZoomTablePosH\000\022\'\n" +
-      "\006offset\030\007 \001(\0132\025.cmd.DayCamera.OffsetH\000\022." +
-      "\n\nreset_zoom\030\010 \001(\0132\030.cmd.DayCamera.Reset" +
-      "ZoomH\000\0223\n\rsave_to_table\030\t \001(\0132\032.cmd.DayC" +
-      "amera.SaveToTableH\000B\014\n\003cmd\022\005\272H\002\010\001\"\022\n\020Nex" +
-      "tZoomTablePos\"\022\n\020PrevZoomTablePos\"1\n\007Set" +
-      "Iris\022&\n\005value\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000" +
-      "\000\000\000\000\"\"\n\021SetInfraRedFilter\022\r\n\005value\030\001 \001(\010" +
-      "\"\034\n\013SetAutoIris\022\r\n\005value\030\001 \001(\010\"+\n\021SetZoo" +
-      "mTableValue\022\026\n\005value\030\001 \001(\005B\007\272H\004\032\002(\000\"\006\n\004S" +
-      "top\"\007\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMete" +
-      "o\"\013\n\tResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTa" +
-      "ble\"\022\n\020SaveToTableFocus\"T\n\nFocusAtROI\022\"\n" +
-      "\001x\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022\"\n\001y\030\002" +
-      " \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\236\001\n\010TrackR" +
-      "OI\022#\n\002x1\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022" +
-      "#\n\002y1\030\002 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002" +
-      "x2\030\003 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y2\030" +
-      "\004 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\235\001\n\007ZoomR" +
-      "OI\022#\n\002x1\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022" +
-      "#\n\002y1\030\002 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002" +
-      "x2\030\003 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y2\030" +
-      "\004 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277BQZOgit-co" +
-      "decommit.eu-central-1.amazonaws.com/v1/r" +
-      "epos/jettison/jonp/cmd/day_camerab\006proto" +
-      "3"
+      "\0132\036.cmd.DayCamera.ShiftClaheLevelH\000\022,\n\tf" +
+      "ocus_roi\030\022 \001(\0132\027.cmd.DayCamera.FocusROIH" +
+      "\000\022,\n\ttrack_roi\030\023 \001(\0132\027.cmd.DayCamera.Tra" +
+      "ckROIH\000\022*\n\010zoom_roi\030\024 \001(\0132\026.cmd.DayCamer" +
+      "a.ZoomROIH\000B\014\n\003cmd\022\005\272H\002\010\001\"\010\n\006GetPos\"\014\n\nN" +
+      "extFxMode\"\014\n\nPrevFxMode\"\017\n\rRefreshFxMode" +
+      "\"\t\n\007HaltAll\"?\n\tSetFxMode\0222\n\004mode\030\001 \001(\0162\030" +
+      ".ser.JonGuiDataFxModeDayB\n\272H\007\202\001\004\020\001 \000\"4\n\023" +
+      "SetDigitalZoomLevel\022\035\n\005value\030\001 \001(\001B\016\272H\013\022" +
+      "\t)\000\000\000\000\000\000\360?\"\250\002\n\005Focus\022,\n\tset_value\030\001 \001(\0132" +
+      "\027.cmd.DayCamera.SetValueH\000\022#\n\004move\030\002 \001(\013" +
+      "2\023.cmd.DayCamera.MoveH\000\022#\n\004halt\030\003 \001(\0132\023." +
+      "cmd.DayCamera.HaltH\000\022\'\n\006offset\030\004 \001(\0132\025.c" +
+      "md.DayCamera.OffsetH\000\0220\n\013reset_focus\030\005 \001" +
+      "(\0132\031.cmd.DayCamera.ResetFocusH\000\022>\n\023save_" +
+      "to_table_focus\030\006 \001(\0132\037.cmd.DayCamera.Sav" +
+      "eToTableFocusH\000B\014\n\003cmd\022\005\272H\002\010\001\"\334\003\n\004Zoom\022," +
+      "\n\tset_value\030\001 \001(\0132\027.cmd.DayCamera.SetVal" +
+      "ueH\000\022#\n\004move\030\002 \001(\0132\023.cmd.DayCamera.MoveH" +
+      "\000\022#\n\004halt\030\003 \001(\0132\023.cmd.DayCamera.HaltH\000\022@" +
+      "\n\024set_zoom_table_value\030\004 \001(\0132 .cmd.DayCa" +
+      "mera.SetZoomTableValueH\000\022>\n\023next_zoom_ta" +
+      "ble_pos\030\005 \001(\0132\037.cmd.DayCamera.NextZoomTa" +
+      "blePosH\000\022>\n\023prev_zoom_table_pos\030\006 \001(\0132\037." +
+      "cmd.DayCamera.PrevZoomTablePosH\000\022\'\n\006offs" +
+      "et\030\007 \001(\0132\025.cmd.DayCamera.OffsetH\000\022.\n\nres" +
+      "et_zoom\030\010 \001(\0132\030.cmd.DayCamera.ResetZoomH" +
+      "\000\0223\n\rsave_to_table\030\t \001(\0132\032.cmd.DayCamera" +
+      ".SaveToTableH\000B\014\n\003cmd\022\005\272H\002\010\001\"\022\n\020NextZoom" +
+      "TablePos\"\022\n\020PrevZoomTablePos\"1\n\007SetIris\022" +
+      "&\n\005value\030\001 \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\000\000\"" +
+      "\"\n\021SetInfraRedFilter\022\r\n\005value\030\001 \001(\010\"\034\n\013S" +
+      "etAutoIris\022\r\n\005value\030\001 \001(\010\"+\n\021SetZoomTabl" +
+      "eValue\022\026\n\005value\030\001 \001(\005B\007\272H\004\032\002(\000\"\006\n\004Stop\"\007" +
+      "\n\005Start\"\007\n\005Photo\"\006\n\004Halt\"\n\n\010GetMeteo\"\013\n\t" +
+      "ResetZoom\"\014\n\nResetFocus\"\r\n\013SaveToTable\"\022" +
+      "\n\020SaveToTableFocus\"\236\001\n\010FocusROI\022#\n\002x1\030\001 " +
+      "\001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y1\030\002 \001(\001" +
+      "B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002x2\030\003 \001(\001B\027\272" +
+      "H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y2\030\004 \001(\001B\027\272H\024\022" +
+      "\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\236\001\n\010TrackROI\022#\n\002x1\030\001" +
+      " \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y1\030\002 \001(" +
+      "\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002x2\030\003 \001(\001B\027" +
+      "\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y2\030\004 \001(\001B\027\272H\024" +
+      "\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\"\235\001\n\007ZoomROI\022#\n\002x1\030\001" +
+      " \001(\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y1\030\002 \001(" +
+      "\001B\027\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002x2\030\003 \001(\001B\027" +
+      "\272H\024\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277\022#\n\002y2\030\004 \001(\001B\027\272H\024" +
+      "\022\022\031\000\000\000\000\000\000\360?)\000\000\000\000\000\000\360\277BQZOgit-codecommit.e" +
+      "u-central-1.amazonaws.com/v1/repos/jetti" +
+      "son/jonp/cmd/day_camerab\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -21847,7 +21996,7 @@ public final class JonSharedCmdDayCamera {
     internal_static_cmd_DayCamera_Root_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_cmd_DayCamera_Root_descriptor,
-        new java.lang.String[] { "Focus", "Zoom", "SetIris", "SetInfraRedFilter", "Start", "Stop", "Photo", "SetAutoIris", "HaltAll", "SetFxMode", "NextFxMode", "PrevFxMode", "GetMeteo", "RefreshFxMode", "SetDigitalZoomLevel", "SetClaheLevel", "ShiftClaheLevel", "FocusAtRoi", "TrackRoi", "ZoomRoi", "Cmd", });
+        new java.lang.String[] { "Focus", "Zoom", "SetIris", "SetInfraRedFilter", "Start", "Stop", "Photo", "SetAutoIris", "HaltAll", "SetFxMode", "NextFxMode", "PrevFxMode", "GetMeteo", "RefreshFxMode", "SetDigitalZoomLevel", "SetClaheLevel", "ShiftClaheLevel", "FocusRoi", "TrackRoi", "ZoomRoi", "Cmd", });
     internal_static_cmd_DayCamera_GetPos_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_cmd_DayCamera_GetPos_fieldAccessorTable = new
@@ -21992,12 +22141,12 @@ public final class JonSharedCmdDayCamera {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_cmd_DayCamera_SaveToTableFocus_descriptor,
         new java.lang.String[] { });
-    internal_static_cmd_DayCamera_FocusAtROI_descriptor =
+    internal_static_cmd_DayCamera_FocusROI_descriptor =
       getDescriptor().getMessageTypes().get(30);
-    internal_static_cmd_DayCamera_FocusAtROI_fieldAccessorTable = new
+    internal_static_cmd_DayCamera_FocusROI_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_cmd_DayCamera_FocusAtROI_descriptor,
-        new java.lang.String[] { "X", "Y", });
+        internal_static_cmd_DayCamera_FocusROI_descriptor,
+        new java.lang.String[] { "X1", "Y1", "X2", "Y2", });
     internal_static_cmd_DayCamera_TrackROI_descriptor =
       getDescriptor().getMessageTypes().get(31);
     internal_static_cmd_DayCamera_TrackROI_fieldAccessorTable = new
