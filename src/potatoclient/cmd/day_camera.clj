@@ -288,29 +288,32 @@
 
 (defn focus-roi
   "Set focus to a region of interest.
-   Takes rectangle coordinates (x1, y1, x2, y2).
+   Takes rectangle coordinates (x1, y1, x2, y2) and frame time.
    Note: While the TypeScript client calculates center point, the protobuf
    expects the full rectangle. The server will handle the center calculation.
+   Frame time should be the timestamp of the frame being focused.
    Returns a fully formed cmd root ready to send."
-  [x1 y1 x2 y2]
+  [x1 y1 x2 y2 frame-time]
   (core/create-command
-    {:day_camera {:focus_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
-(m/=> focus-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])
+    {:day_camera {:focus_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+(m/=> focus-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])
 
 (defn track-roi
   "Start tracking a region of interest.
-   Takes rectangle coordinates (x1, y1, x2, y2).
+   Takes rectangle coordinates (x1, y1, x2, y2) and frame time.
+   Frame time should be the timestamp of the frame being tracked.
    Returns a fully formed cmd root ready to send."
-  [x1 y1 x2 y2]
+  [x1 y1 x2 y2 frame-time]
   (core/create-command
-    {:day_camera {:track_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
-(m/=> track-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])
+    {:day_camera {:track_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+(m/=> track-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])
 
 (defn zoom-roi
   "Zoom to a region of interest.
-   Takes rectangle coordinates (x1, y1, x2, y2).
+   Takes rectangle coordinates (x1, y1, x2, y2) and frame time.
+   Frame time should be the timestamp of the frame being zoomed.
    Returns a fully formed cmd root ready to send."
-  [x1 y1 x2 y2]
+  [x1 y1 x2 y2 frame-time]
   (core/create-command
-    {:day_camera {:zoom_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2}}}))
-(m/=> zoom-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double] :cmd/root])
+    {:day_camera {:zoom_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+(m/=> zoom-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])

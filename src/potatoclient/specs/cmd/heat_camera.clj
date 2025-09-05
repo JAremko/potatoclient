@@ -72,16 +72,16 @@
 ;; ROI (Region of Interest) control messages
 
 (def focus-roi-spec
-  "FocusROI with rectangle coordinates (protobuf expects full rectangle)"
-  :composite/ndc-roi)
+  "FocusROI with rectangle coordinates and frame_time (protobuf expects full rectangle)"
+  :composite/ndc-roi-with-timestamp)
 
 (def track-roi-spec
-  "TrackROI with rectangle coordinates"
-  :composite/ndc-roi)
+  "TrackROI with rectangle coordinates and frame_time"
+  :composite/ndc-roi-with-timestamp)
 
 (def zoom-roi-spec
-  "ZoomROI with rectangle coordinates"
-  :composite/ndc-roi)
+  "ZoomROI with rectangle coordinates and frame_time"
+  :composite/ndc-roi-with-timestamp)
 
 ;; Focus control messages
 

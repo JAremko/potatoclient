@@ -452,6 +452,15 @@
    [:x2 [:double {:min -1.0 :max 1.0}]]
    [:y2 [:double {:min -1.0 :max 1.0}]]])
 
+(def ndc-roi-with-timestamp-spec
+  "NDC Region of Interest with x1, y1, x2, y2 coordinates in [-1.0, 1.0] and frame_time timestamp"
+  [:map {:closed true}
+   [:x1 [:double {:min -1.0 :max 1.0}]]
+   [:y1 [:double {:min -1.0 :max 1.0}]]
+   [:x2 [:double {:min -1.0 :max 1.0}]]
+   [:y2 [:double {:min -1.0 :max 1.0}]]
+   [:frame_time :time/frame-time]])
+
 ;; Register composite specs
 (registry/register-spec! :composite/gps-position gps-position-spec)
 (registry/register-spec! :composite/compass-orientation compass-orientation-spec)
@@ -459,6 +468,7 @@
 (registry/register-spec! :composite/screen-point-pixel screen-point-pixel-spec)
 (registry/register-spec! :composite/ndc-point ndc-point-spec)
 (registry/register-spec! :composite/ndc-roi ndc-roi-spec)
+(registry/register-spec! :composite/ndc-roi-with-timestamp ndc-roi-with-timestamp-spec)
 
 ;; ====================================================================
 ;; Common message specs
