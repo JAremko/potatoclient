@@ -3,7 +3,8 @@
    Based on the RotaryPlatform message structure in jon_shared_cmd_rotary.proto."
   (:require
     [malli.core :as m]
-    [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]
+    [potatoclient.state :as state]))
 
 ;; ============================================================================
 ;; Platform Control
@@ -336,13 +337,18 @@
    Channel: :JON_GUI_DATA_VIDEO_CHANNEL_DAY or _HEAT
    X: -1.0 to 1.0 (normalized)
    Y: -1.0 to 1.0 (normalized)
+   Frame time should be the timestamp of the frame being rotated to.
+   State time is automatically obtained from the current server state.
    Returns a fully formed cmd root ready to send."
-  [channel x y]
-  (core/create-command
-    {:rotary {:rotate_to_ndc {:channel channel
-                              :x x
-                              :y y}}}))
-(m/=> rotate-to-ndc [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y] :cmd/root])
+  [channel x y frame-time]
+  (let [state-time (or (get-in @state/app-state [:server-state :system_monotonic_time_us]) 0)]
+    (core/create-command
+      {:rotary {:rotate_to_ndc {:channel channel
+                                :x x
+                                :y y
+                                :frame_time frame-time
+                                :state_time state-time}}})))
+(m/=> rotate-to-ndc [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y :time/frame-time] :cmd/root])
 
 ;; ============================================================================
 ;; Scan Operations

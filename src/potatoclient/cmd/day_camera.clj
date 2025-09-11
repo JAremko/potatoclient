@@ -3,7 +3,8 @@
    Based on the DayCamera message structure in jon_shared_cmd_day_camera.proto."
   (:require
     [malli.core :as m]
-    [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]
+    [potatoclient.state :as state]))
 
 ;; ============================================================================
 ;; Infra-Red Filter Control
@@ -292,28 +293,34 @@
    Note: While the TypeScript client calculates center point, the protobuf
    expects the full rectangle. The server will handle the center calculation.
    Frame time should be the timestamp of the frame being focused.
+   State time is automatically obtained from the current server state.
    Returns a fully formed cmd root ready to send."
   [x1 y1 x2 y2 frame-time]
-  (core/create-command
-    {:day_camera {:focus_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+  (let [state-time (or (get-in @state/app-state [:server-state :system_monotonic_time_us]) 0)]
+    (core/create-command
+      {:day_camera {:focus_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time :state_time state-time}}})))
 (m/=> focus-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])
 
 (defn track-roi
   "Start tracking a region of interest.
    Takes rectangle coordinates (x1, y1, x2, y2) and frame time.
    Frame time should be the timestamp of the frame being tracked.
+   State time is automatically obtained from the current server state.
    Returns a fully formed cmd root ready to send."
   [x1 y1 x2 y2 frame-time]
-  (core/create-command
-    {:day_camera {:track_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+  (let [state-time (or (get-in @state/app-state [:server-state :system_monotonic_time_us]) 0)]
+    (core/create-command
+      {:day_camera {:track_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time :state_time state-time}}})))
 (m/=> track-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])
 
 (defn zoom-roi
   "Zoom to a region of interest.
    Takes rectangle coordinates (x1, y1, x2, y2) and frame time.
    Frame time should be the timestamp of the frame being zoomed.
+   State time is automatically obtained from the current server state.
    Returns a fully formed cmd root ready to send."
   [x1 y1 x2 y2 frame-time]
-  (core/create-command
-    {:day_camera {:zoom_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time}}}))
+  (let [state-time (or (get-in @state/app-state [:server-state :system_monotonic_time_us]) 0)]
+    (core/create-command
+      {:day_camera {:zoom_roi {:x1 x1 :y1 y1 :x2 x2 :y2 y2 :frame_time frame-time :state_time state-time}}})))
 (m/=> zoom-roi [:=> [:cat :proto/double :proto/double :proto/double :proto/double :time/frame-time] :cmd/root])

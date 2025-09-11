@@ -3,7 +3,8 @@
    Based on the CV message structure in jon_shared_cmd_cv.proto."
   (:require
     [malli.core :as m]
-    [potatoclient.cmd.core :as core]))
+    [potatoclient.cmd.core :as core]
+    [potatoclient.state :as state]))
 
 ;; ============================================================================
 ;; Tracking Commands
@@ -13,13 +14,16 @@
   "Start tracking at normalized device coordinates.
    NDC coordinates range from -1.0 to 1.0.
    Frame time should be the timestamp of the frame being tracked.
+   State time is automatically obtained from the current server state.
    Returns a fully formed cmd root ready to send."
   [channel x y frame-time]
-  (core/create-command
-    {:cv {:start_track_ndc {:channel channel
-                            :x x
-                            :y y
-                            :frame_time frame-time}}}))
+  (let [state-time (or (get-in @state/app-state [:server-state :system_monotonic_time_us]) 0)]
+    (core/create-command
+      {:cv {:start_track_ndc {:channel channel
+                              :x x
+                              :y y
+                              :frame_time frame-time
+                              :state_time state-time}}})))
 (m/=> start-track-ndc [:=> [:cat :enum/video-channel :screen/ndc-x :screen/ndc-y :time/frame-time] :cmd/root])
 
 (defn stop-track

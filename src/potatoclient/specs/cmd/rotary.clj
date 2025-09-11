@@ -3,7 +3,8 @@
    Based on jon_shared_cmd_rotary.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-    [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.common]))
 
 ;; ====================================================================
 ;; Azimuth command specs (nested within Axis)
@@ -148,7 +149,9 @@
   [:map {:closed true}
    [:channel :enum/video-channel]
    [:x :screen/ndc-x]
-   [:y :screen/ndc-y]])
+   [:y :screen/ndc-y]
+   [:frame_time :time/frame-time]
+   [:state_time [:int {:min 0 :max potatoclient.specs.common/long-max-value}]]])
 
 ;; ====================================================================
 ;; Scan node operations

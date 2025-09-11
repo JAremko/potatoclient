@@ -9,6 +9,11 @@
     [clojure.test.check.generators :as gen]))
 
 ;; ====================================================================
+;; Constants
+;; ====================================================================
+(def ^:const long-max-value 9223372036854775807)
+
+;; ====================================================================
 ;; Basic type specs
 ;; ====================================================================
 (def nat-int-spec
@@ -203,11 +208,11 @@
 
 (def unix-timestamp-int64-spec
   ;; int64 timestamp (milliseconds since epoch)
-  [:int {:min 0 :max 9223372036854775807}])
+  [:int {:min 0 :max long-max-value}])
 
 (def frame-time-spec
   ;; uint64 frame time in nanoseconds/microseconds
-  [:int {:min 0 :max 9223372036854775807}])
+  [:int {:min 0 :max long-max-value}])
 
 ;; Register integer specs
 (registry/register-spec! :nat-int nat-int-spec)
@@ -453,13 +458,14 @@
    [:y2 [:double {:min -1.0 :max 1.0}]]])
 
 (def ndc-roi-with-timestamp-spec
-  "NDC Region of Interest with x1, y1, x2, y2 coordinates in [-1.0, 1.0] and frame_time timestamp"
+  "NDC Region of Interest with x1, y1, x2, y2 coordinates in [-1.0, 1.0], frame_time and state_time timestamps"
   [:map {:closed true}
    [:x1 [:double {:min -1.0 :max 1.0}]]
    [:y1 [:double {:min -1.0 :max 1.0}]]
    [:x2 [:double {:min -1.0 :max 1.0}]]
    [:y2 [:double {:min -1.0 :max 1.0}]]
-   [:frame_time :time/frame-time]])
+   [:frame_time :time/frame-time]
+   [:state_time [:int {:min 0 :max long-max-value}]]])
 
 ;; Register composite specs
 (registry/register-spec! :composite/gps-position gps-position-spec)

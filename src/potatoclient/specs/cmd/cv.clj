@@ -3,7 +3,8 @@
    Based on jon_shared_cmd_cv.proto.
    All maps use {:closed true} to catch typos and invalid keys."
   (:require
-    [potatoclient.malli.registry :as registry]))
+    [potatoclient.malli.registry :as registry]
+    [potatoclient.specs.common]))
 
 ;; CV command specs
 ;; This is a oneof structure with 11 command types
@@ -20,7 +21,8 @@
    [:channel :enum/video-channel]
    [:x :screen/ndc-x]
    [:y :screen/ndc-y]
-   [:frame_time :time/frame-time]])
+   [:frame_time :time/frame-time]
+   [:state_time [:int {:min 0 :max potatoclient.specs.common/long-max-value}]]])
 
 ;; Main CV command spec using oneof - all 11 commands
 (def cv-command-spec

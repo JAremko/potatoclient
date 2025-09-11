@@ -98,6 +98,10 @@
   "Generate valid linger values (>= 0.0)"
   (gen/double* {:min 0.0 :max 60.0 :infinite? false :NaN? false}))
 
+(def frame-time-gen
+  "Generate valid frame time values (uint64 range)"
+  (gen/large-integer* {:min 0 :max common/long-max-value}))
+
 ;; ============================================================================
 ;; Platform Control Commands Tests
 ;; ============================================================================
@@ -386,12 +390,16 @@
 (defspec rotate-to-ndc-with-valid-params num-tests
   (prop/for-all [channel video-channel-gen
                  x ndc-coord-gen
-                 y ndc-coord-gen]
-                (let [cmd (rotary/rotate-to-ndc channel x y)
+                 y ndc-coord-gen
+                 frame-time frame-time-gen]
+                (let [cmd (rotary/rotate-to-ndc channel x y frame-time)
                       result (v/validate-roundtrip-with-report cmd)]
                   (and (= channel (get-in cmd [:rotary :rotate_to_ndc :channel]))
                        (= x (get-in cmd [:rotary :rotate_to_ndc :x]))
                        (= y (get-in cmd [:rotary :rotate_to_ndc :y]))
+                       (= frame-time (get-in cmd [:rotary :rotate_to_ndc :frame_time]))
+                       ;; state_time should be set (from app-state)
+                       (number? (get-in cmd [:rotary :rotate_to_ndc :state_time]))
                        (:valid? result)))))
 
 ;; ============================================================================

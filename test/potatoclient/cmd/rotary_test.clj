@@ -279,11 +279,14 @@
 
 (deftest test-ndc-control
   (testing "rotate-to-ndc creates valid command"
-    (let [result (rotary/rotate-to-ndc :JON_GUI_DATA_VIDEO_CHANNEL_DAY 0.5 -0.5)]
+    (let [frame-time 123456789
+          result (rotary/rotate-to-ndc :JON_GUI_DATA_VIDEO_CHANNEL_DAY 0.5 -0.5 frame-time)]
       (is (m/validate :cmd/root result))
       (is (= :JON_GUI_DATA_VIDEO_CHANNEL_DAY (get-in result [:rotary :rotate_to_ndc :channel])))
       (is (= 0.5 (get-in result [:rotary :rotate_to_ndc :x])))
       (is (= -0.5 (get-in result [:rotary :rotate_to_ndc :y])))
+      (is (= frame-time (get-in result [:rotary :rotate_to_ndc :frame_time])))
+      (is (number? (get-in result [:rotary :rotate_to_ndc :state_time])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 

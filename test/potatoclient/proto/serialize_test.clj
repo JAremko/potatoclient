@@ -54,6 +54,7 @@
   "Return a known valid State message for testing."
   []
   {:protocol_version 1
+   :system_monotonic_time_us 1234567890123
    :system {:cpu_temperature 25.0
             :gpu_temperature 30.0
             :gpu_load 50.0
