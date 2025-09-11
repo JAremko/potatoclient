@@ -288,6 +288,18 @@
       (is (= frame-time (get-in result [:rotary :rotate_to_ndc :frame_time])))
       (is (number? (get-in result [:rotary :rotate_to_ndc :state_time])))
       (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
+        (is (:valid? roundtrip-result)))))
+  
+  (testing "halt-with-ndc creates valid command"
+    (let [frame-time 987654321
+          result (rotary/halt-with-ndc :JON_GUI_DATA_VIDEO_CHANNEL_HEAT -0.75 0.25 frame-time)]
+      (is (m/validate :cmd/root result))
+      (is (= :JON_GUI_DATA_VIDEO_CHANNEL_HEAT (get-in result [:rotary :halt_with_ndc :channel])))
+      (is (= -0.75 (get-in result [:rotary :halt_with_ndc :x])))
+      (is (= 0.25 (get-in result [:rotary :halt_with_ndc :y])))
+      (is (= frame-time (get-in result [:rotary :halt_with_ndc :frame_time])))
+      (is (number? (get-in result [:rotary :halt_with_ndc :state_time])))
+      (let [roundtrip-result (validation/validate-roundtrip-with-report result)]
         (is (:valid? roundtrip-result))))))
 
 ;; ============================================================================

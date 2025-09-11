@@ -153,6 +153,14 @@
    [:frame_time :time/frame-time]
    [:state_time [:int {:min 0 :max potatoclient.specs.common/long-max-value}]]])
 
+(def halt-with-ndc-spec
+  [:map {:closed true}
+   [:channel :enum/video-channel]
+   [:x :screen/ndc-x]
+   [:y :screen/ndc-y]
+   [:frame_time :time/frame-time]
+   [:state_time [:int {:min 0 :max potatoclient.specs.common/long-max-value}]]])
+
 ;; ====================================================================
 ;; Scan node operations
 ;; ====================================================================
@@ -186,7 +194,7 @@
    [:speed :speed/normalized]])
 
 ;; ====================================================================
-;; Main rotary command spec using oneof - all 24 commands
+;; Main rotary command spec using oneof - all 25 commands
 ;; ====================================================================
 
 (def rotary-command-spec
@@ -214,6 +222,7 @@
    [:scan_select_node scan-select-node-spec]
    [:scan_delete_node scan-delete-node-spec]
    [:scan_update_node scan-update-node-spec]
-   [:scan_add_node scan-add-node-spec]])
+   [:scan_add_node scan-add-node-spec]
+   [:halt_with_ndc halt-with-ndc-spec]])
 
 (registry/register-spec! :cmd/rotary rotary-command-spec)

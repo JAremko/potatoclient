@@ -402,6 +402,21 @@
                        (number? (get-in cmd [:rotary :rotate_to_ndc :state_time]))
                        (:valid? result)))))
 
+(defspec halt-with-ndc-with-valid-params num-tests
+  (prop/for-all [channel video-channel-gen
+                 x ndc-coord-gen
+                 y ndc-coord-gen
+                 frame-time frame-time-gen]
+                (let [cmd (rotary/halt-with-ndc channel x y frame-time)
+                      result (v/validate-roundtrip-with-report cmd)]
+                  (and (= channel (get-in cmd [:rotary :halt_with_ndc :channel]))
+                       (= x (get-in cmd [:rotary :halt_with_ndc :x]))
+                       (= y (get-in cmd [:rotary :halt_with_ndc :y]))
+                       (= frame-time (get-in cmd [:rotary :halt_with_ndc :frame_time]))
+                       ;; state_time should be set (from app-state)
+                       (number? (get-in cmd [:rotary :halt_with_ndc :state_time]))
+                       (:valid? result)))))
+
 ;; ============================================================================
 ;; Scan Operations Tests
 ;; ============================================================================
