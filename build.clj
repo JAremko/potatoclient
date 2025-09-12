@@ -216,7 +216,8 @@
 
 (defn uber [_]
   (clean nil)
-  (b/copy-dir {:src-dirs ["src" "resources"]
+  ;; Only copy resources, not source files - compilation will add the classes
+  (b/copy-dir {:src-dirs ["resources"]
                :target-dir class-dir})
   ;; Use compile-all to ensure correct order
   (compile-all nil)
@@ -231,7 +232,8 @@
   (clean nil)
   ;; Set environment variable for release build
   (System/setProperty "POTATOCLIENT_RELEASE" "true")
-  (b/copy-dir {:src-dirs ["src" "resources"]
+  ;; Only copy resources, not source files - compilation will add the classes
+  (b/copy-dir {:src-dirs ["resources"]
                :target-dir class-dir})
   ;; Create release marker file
   (spit (io/file class-dir "RELEASE") "true")
