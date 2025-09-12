@@ -107,16 +107,8 @@
     (fn [result]
       (case result
         :connected
-        ;; Connection successful, initialize state ingress and proceed with main frame
+        ;; Connection successful, state ingress already started in connection frame
         (let [domain (config/get-domain)
-              ;; Initialize and start state ingress
-              _ (logging/log-info {:msg (str "Initializing state ingress for domain: " domain)})
-              _ (state-server/initialize! {:domain domain
-                                           :throttle-ms state-throttle-ms
-                                           :timeout-ms state-timeout-ms})
-              _ (state-server/start!)
-              ;; Wait briefly for initial state to arrive
-              _ (Thread/sleep initial-state-delay-ms)
               ;; Clean up BEFORE creating the main frame to preserve new bindings
               _ (state/cleanup-seesaw-bindings!)
               params {:version (get-version)
@@ -145,7 +137,18 @@
           ;; Clean up before reloading
           (state/cleanup-seesaw-bindings!)
           (theme/preload-theme-icons!)
-          (show-connection-frame)))))) 
+          (show-connection-frame))
+        
+        :error
+        ;; Connection error, go back to initial frame
+        (do
+          (logging/log-error {:msg "Connection error, returning to initial frame"})
+          ;; Stop state ingress if it was started
+          (when (state-server/initialized?)
+            (state-server/shutdown!))
+          ;; Clean up before going back
+          (state/cleanup-seesaw-bindings!)
+          (show-initial-frame-recursive)))))) 
  (m/=> show-connection-frame [:=> [:cat] :nil])
 
 (defn- show-initial-frame-recursive

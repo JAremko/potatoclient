@@ -36,7 +36,7 @@
       (logging/log-error {:msg "Failed to convert proto to EDN" :error e})
       nil)))
 
-(defrecord StateIngressManager [config connection throttler executor running?])
+(defrecord StateIngressManager [config connection throttler executor running? connected? connection-stats])
 
 (defn- handle-state-update
   "Process and apply a state update to the app atom."
@@ -71,8 +71,45 @@
         (ws/close conn))
       (reset! (:connection manager) nil))))
 
+(defn- calculate-backoff-delay
+  "Calculate exponential backoff delay with jitter.
+   Starts at 1s, doubles each attempt up to max 30s, with 10% jitter."
+  [attempt]
+  (let [base-delay 1000  ; 1 second
+        max-delay 30000  ; 30 seconds
+        delay (min (* base-delay (bit-shift-left 1 (min attempt 5))) max-delay)
+        jitter (* delay 0.1 (- (rand) 0.5))]  ; +/- 5% jitter
+    (long (+ delay jitter))))
+
+(defn- update-connection-stats!
+  "Update connection statistics."
+  [manager status & {:keys [error]}]
+  (let [stats @(:connection-stats manager)
+        now (System/currentTimeMillis)]
+    (swap! (:connection-stats manager)
+           (fn [s]
+             (case status
+               :attempting (-> s
+                              (update :attempts inc)
+                              (assoc :last-attempt now
+                                     :status :connecting))
+               :connected (-> s
+                             (assoc :status :connected
+                                    :connected-at now
+                                    :consecutive-failures 0
+                                    :last-error nil))
+               :failed (-> s
+                          (update :consecutive-failures inc)
+                          (assoc :status :disconnected
+                                 :last-error (when error (.getMessage error))
+                                 :last-failure now))
+               :disconnected (-> s
+                               (assoc :status :disconnected
+                                      :disconnected-at now))
+               s)))))
+
 (defn- connect-loop
-  "Connection loop that maintains WebSocket connection with reconnection."
+  "Connection loop that maintains WebSocket connection with persistent retry."
   [manager]
   (while @(:running? manager)
     (try
@@ -82,13 +119,22 @@
 
         (let [domain (get-in @(:config manager) [:domain])
               url (str "wss://" domain "/ws/ws_state")
+              stats @(:connection-stats manager)
+              attempt (:consecutive-failures stats 0)
               first-connect? (nil? @(:connection manager))]
 
-          (logging/log-info {:msg (str "Connecting to state endpoint: " url)})
+          ;; Update connection stats
+          (update-connection-stats! manager :attempting)
+
+          (logging/log-info {:msg (str "Connecting to state endpoint: " url
+                                       " (attempt " (inc attempt) ")"
+                                       (when (> attempt 0)
+                                         (str " after " attempt " failures")))})
 
           ;; Update status bar for reconnection (not initial connection)
           (when-not first-connect?
-            (status-bar/set-warning! "Reconnecting to state server..."))
+            (status-bar/set-warning! 
+              (str "Reconnecting to state server (attempt " (inc attempt) ")...")))
 
           (let [last-message-time (atom (System/currentTimeMillis))
                 conn (ws/connect
@@ -98,29 +144,42 @@
                                       (handle-message manager data))
                         :on-connect (fn []
                                       (logging/log-info {:msg "State connection established"})
+                                      (reset! (:connected? manager) true)
+                                      (update-connection-stats! manager :connected)
                                       (when-not first-connect?
                                         (status-bar/set-info! "State connection restored")))
                         :on-close (fn [code reason]
                                     (logging/log-warn {:msg (str "State connection closed: " code " " reason)})
+                                    (reset! (:connected? manager) false)
+                                    (update-connection-stats! manager :disconnected)
                                     (when @(:running? manager)
                                       (status-bar/set-warning! "State connection lost")))
                         :on-error (fn [error]
-                                    (logging/log-error {:msg "State connection error" :error error}))})]
+                                    (logging/log-error {:msg "State connection error" :error error})
+                                    (update-connection-stats! manager :failed :error error))})]
 
             ;; Store connection and last message time
             (reset! (:connection manager) conn)
             (swap! (:config manager) assoc :last-message-time last-message-time))))
 
-      ;; Sleep before next check
-      (Thread/sleep 2000)
+      ;; Calculate backoff delay based on consecutive failures
+      (let [stats @(:connection-stats manager)
+            delay (if (= :connected (:status stats))
+                    2000  ; Normal check interval when connected
+                    (calculate-backoff-delay (:consecutive-failures stats 0)))]
+        (Thread/sleep delay))
 
       (catch InterruptedException _
         ;; Thread interrupted, exit loop
         (logging/log-debug {:msg "Connection loop interrupted"}))
       (catch Exception e
         (logging/log-error {:msg "Error in connection loop" :error e})
-        ;; Sleep before retry
-        (Thread/sleep 2000)))))
+        (update-connection-stats! manager :failed :error e)
+        ;; Calculate backoff delay for retry
+        (let [stats @(:connection-stats manager)
+              delay (calculate-backoff-delay (:consecutive-failures stats 0))]
+          (logging/log-debug {:msg (str "Retrying in " (/ delay 1000.0) " seconds")})
+          (Thread/sleep delay))))))
 
 (defn create-manager
   "Create a state ingress manager.
@@ -142,7 +201,16 @@
        :connection (atom nil)
        :throttler throttler
        :executor executor
-       :running? (atom false)})))
+       :running? (atom false)
+       :connected? (atom false)
+       :connection-stats (atom {:status :disconnected
+                                :attempts 0
+                                :consecutive-failures 0
+                                :last-attempt nil
+                                :last-error nil
+                                :connected-at nil
+                                :disconnected-at nil
+                                :start-time (System/currentTimeMillis)})})))
 
 (defn start
   "Start the state ingress manager."
@@ -162,11 +230,28 @@
 
     manager))
 
+(defn connected?
+  "Check if the state ingress is connected."
+  [manager]
+  (and @(:running? manager)
+       @(:connected? manager)
+       @(:connection manager)
+       (ws/connected? @(:connection manager))))
+
+(defn get-connection-stats
+  "Get current connection statistics."
+  [manager]
+  @(:connection-stats manager))
+
 (defn stop
   "Stop the state ingress manager."
   [manager]
   (when (compare-and-set! (:running? manager) true false)
     (logging/log-info {:msg "Stopping state ingress manager"})
+
+    ;; Reset connected flag and update stats
+    (reset! (:connected? manager) false)
+    (update-connection-stats! manager :disconnected)
 
     ;; Close connection
     (when-let [conn @(:connection manager)]

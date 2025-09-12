@@ -7,6 +7,7 @@
     [potatoclient.i18n :as i18n]
     [potatoclient.logging :as logging]
     [potatoclient.state :as state]
+    [potatoclient.state.server.core :as state-server]
     [potatoclient.ui.menu-bar :as menu-bar]
     [seesaw.action :as action]
     [seesaw.border :as border]
@@ -51,20 +52,36 @@
                       :halign :center)
         status-label (seesaw/label
                        :id :status-label
-                       :text (i18n/tr :connection-attempting)
+                       :text (str "<html><center>"
+                                 (i18n/tr :connection-attempting) "<br>"
+                                 "<span style='color:gray;font-size:10px;'>"
+                                 (i18n/tr :connection-waiting-ping)
+                                 "</span></center></html>")
                        :font {:size 14}
                        :halign :center)
         ping-label (seesaw/label
                      :id :ping-label
-                     :text (i18n/tr :connection-waiting-ping)
+                     :text ""
                      :font {:size 12}
                      :halign :center
-                     :foreground :gray)
+                     :foreground :gray
+                     :visible? false)  ; Hidden initially, shown when ping succeeds
+        ws-status-label (seesaw/label
+                          :id :ws-status-label
+                          :text (i18n/tr :connection-ws-not-connected)
+                          :font {:size 12}
+                          :halign :center
+                          :foreground :gray)
         attempts-label (seesaw/label
                          :id :attempts-label
                          :text (str (i18n/tr :connection-attempts) ": 0")
                          :font {:size 12}
                          :halign :center)
+        ws-attempts-label (seesaw/label
+                            :id :ws-attempts-label
+                            :text (i18n/tr :connection-ws-attempts [0])
+                            :font {:size 12}
+                            :halign :center)
         time-label (seesaw/label
                      :id :time-label
                      :text (str (i18n/tr :connection-time) ": 00:00")
@@ -78,9 +95,11 @@
       :constraints ["wrap 1, insets 30, gap 15, align center" "[grow, fill, align center]" "[]"]
       :items [[title-label ""]
               [status-label "gaptop 20"]
-              [progress-bar "gaptop 10"]
-              [ping-label "gaptop 20"]
+              [progress-bar "gaptop 15"]
+              [ping-label "gaptop 5"]
+              [ws-status-label "gaptop 15"]
               [attempts-label "gaptop 10"]
+              [ws-attempts-label "gaptop 5"]
               [time-label "gaptop 5"]]))) 
  (m/=> create-content-panel [:=> [:cat :string] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]])
 
@@ -97,38 +116,175 @@
   [{:keys [ping-label status-label]} latency]
   (seesaw/invoke-later
     (seesaw/config! ping-label
-                    :text (str (i18n/tr :connection-ping) ": " latency "ms")
-                    :foreground :green)
+                    :text (i18n/tr :connection-ping-success [latency])
+                    :foreground :green
+                    :visible? true)
     (seesaw/config! status-label
-                    :text (i18n/tr :connection-successful)))
+                    :text (str "<html><center>"
+                              "<span style='color:green;'>"
+                              (i18n/tr :connection-ping-success-connecting)
+                              "</span><br>"
+                              "<span style='color:gray;font-size:10px;'>"
+                              (i18n/tr :connection-ws-initializing)
+                              "</span></center></html>")))
   nil) 
- (m/=> update-ping-success-ui! [:=> [:cat [:map [:ping-label any?] [:status-label any?]] :int] :nil])
+ (m/=> update-ping-success-ui! [:=> [:cat any? :int] :nil])
 
 (defn- update-ping-failure-ui!
   "Update UI elements to show failed ping."
   [{:keys [ping-label status-label]}]
   (seesaw/invoke-later
     (seesaw/config! ping-label
-                    :text (i18n/tr :connection-ping-failed)
-                    :foreground :red)
+                    :text ""  ; Hide ping label on failure
+                    :visible? false)
     (seesaw/config! status-label
-                    :text (i18n/tr :connection-attempting)))
+                    :text (str "<html><center>"
+                              (i18n/tr :connection-attempting) "<br>"
+                              "<span style='color:red;font-size:10px;'>"
+                              (i18n/tr :connection-ping-failed)
+                              "</span></center></html>")))
   nil) 
- (m/=> update-ping-failure-ui! [:=> [:cat [:map [:ping-label any?] [:status-label any?]]] :nil])
+ (m/=> update-ping-failure-ui! [:=> [:cat any?] :nil])
+
+(defn- get-ws-status-text
+  "Get localized status text based on connection state."
+  [status failures]
+  (case status
+    :connected (i18n/tr :connection-ws-connected)
+    :connecting (if (> failures 0)
+                  (i18n/tr :connection-ws-connecting-retry [failures])
+                  (i18n/tr :connection-ws-connecting))
+    :disconnected (i18n/tr :connection-ws-disconnected)
+    (i18n/tr :connection-ws-unknown)))
+
+(defn- get-status-color
+  "Get color for status display."
+  [status]
+  (case status
+    :connected :green
+    :connecting :orange
+    :red))
+
+(defn- update-ws-status-ui!
+  "Update WebSocket status in UI."
+  [ui-refs]
+  (when (state-server/get-manager)
+    (let [stats (state-server/get-connection-stats)
+          status (:status stats :disconnected)
+          attempts (:attempts stats 0)
+          failures (:consecutive-failures stats 0)
+          status-text (get-ws-status-text status failures)
+          color (get-status-color status)]
+      (seesaw/invoke-later
+        (seesaw/config! (:ws-status-label @ui-refs)
+                        :text status-text
+                        :foreground color)
+        (seesaw/config! (:ws-attempts-label @ui-refs)
+                        :text (i18n/tr :connection-ws-attempts [attempts]))))))
+
+(defn- handle-connection-success!
+  "Handle successful state connection."
+  [ui-refs dialog callback]
+  (logging/log-info {:msg "State connection established successfully"})
+  (seesaw/invoke-later
+    (seesaw/config! (:status-label @ui-refs)
+                    :text (str "<html><center>"
+                              "<span style='color:green;font-weight:bold;'>"
+                              (i18n/tr :connection-state-connected)
+                              "</span></center></html>"))
+    (seesaw/config! (:ws-status-label @ui-refs)
+                    :text (i18n/tr :connection-ws-connected)
+                    :foreground :green)
+    ;; Brief pause to show success
+    (Thread/sleep 500)
+    (when (.isDisplayable dialog)
+      (seesaw/dispose! dialog))
+    (callback :connected)))
+
+(defn- log-long-running-attempt
+  "Log message for long-running connection attempts."
+  [start-time]
+  (let [elapsed (- (System/currentTimeMillis) start-time)]
+    (when (and (= 0 (mod elapsed 30000))  ; Every 30 seconds
+               (> elapsed 0))
+      (logging/log-info {:msg (str "Still attempting connection after " 
+                                   (/ elapsed 1000) " seconds. Attempts: " 
+                                   (:attempts (state-server/get-connection-stats)))}))))
+
+(defn- monitor-state-connection!
+  "Monitor state WebSocket connection with UI updates.
+   Returns a future that can be cancelled."
+  [ui-refs callback dialog]
+  (future
+    (try
+      (let [start-time (System/currentTimeMillis)
+            monitoring? (atom true)]
+        
+        ;; Store monitoring atom for cancellation
+        (swap! ui-refs assoc :monitoring? monitoring?)
+        
+        ;; Start update loop
+        (while @monitoring?
+          (update-ws-status-ui! ui-refs)
+          
+          ;; Check if connected
+          (when (or (state-server/connected?)
+                   (some? (:server-state @state/app-state)))
+            (reset! monitoring? false)
+            (handle-connection-success! ui-refs dialog callback))
+          
+          ;; Log long-running connection attempts
+          (log-long-running-attempt start-time)
+          
+          (Thread/sleep 500)))
+      (catch InterruptedException e
+        (logging/log-debug {:msg "State connection monitoring interrupted"}))
+      (catch Exception e
+        (logging/log-error {:msg "Error monitoring state connection" :error e})
+        (seesaw/invoke-later
+          (seesaw/config! (:status-label @ui-refs)
+                         :text (i18n/tr :connection-state-error)
+                         :foreground :red)
+          (Thread/sleep 2000)
+          (when (.isDisplayable dialog)
+            (seesaw/dispose! dialog))
+          (callback :error))))))
+ (m/=> wait-for-state-connection! [:=> [:cat :int] :boolean])
 
 (defn- handle-successful-connection!
   "Handle successful connection establishment."
-  [domain latency dialog ping-timer update-timer callback]
+  [domain latency dialog ping-timer update-timer callback ui-refs]
   (stop-timers! ping-timer update-timer)
   (state/set-connection-latency! latency)
   (state/set-connected! true)
   (logging/log-info {:msg (str "Successfully connected to " domain " with latency " latency "ms")})
-  (Thread/sleep 500) ; Brief pause to show success
+  
+  ;; Update UI to show we're connecting to state socket
   (seesaw/invoke-later
-    (seesaw/dispose! dialog)
-    (callback :connected))
+    (seesaw/config! (:status-label @ui-refs)
+                    :text (str "<html><center>"
+                              "<span style='color:green;'>"
+                              (i18n/tr :connection-ping-success-now-connecting)
+                              "</span><br>"
+                              "<span style='color:gray;font-size:10px;'>"
+                              (i18n/tr :connection-ws-initializing)
+                              "</span></center></html>"))
+    (seesaw/config! (:ws-status-label @ui-refs)
+                    :text (i18n/tr :connection-ws-initializing)
+                    :foreground :orange))
+  
+  ;; Initialize and start state ingress
+  (logging/log-info {:msg (str "Initializing state ingress for domain: " domain)})
+  (state-server/initialize! {:domain domain
+                             :throttle-ms 100
+                             :timeout-ms 2000})
+  (state-server/start!)
+  
+  ;; Monitor state connection with persistent retry
+  (let [monitor-future (monitor-state-connection! ui-refs callback dialog)]
+    (swap! ui-refs assoc :monitor-future monitor-future))
   nil) 
- (m/=> handle-successful-connection! [:=> [:cat :string :int any? any? any? :ifn] :nil])
+ (m/=> handle-successful-connection! [:=> [:cat :string :int any? any? any? :ifn any?] :nil])
 
 (defn- create-ping-monitor
   "Create ping monitoring function with state management."
@@ -146,16 +302,17 @@
               (if latency
                 (do
                   (swap! (:successful-pings state) inc)
-                  (update-ping-success-ui! ui-refs latency)
+                  (update-ping-success-ui! @ui-refs latency)
                   (handle-successful-connection!
                     domain latency
                     @(:dialog timers)
                     @(:ping-timer timers)
                     @(:update-timer timers)
-                    callback))
+                    callback
+                    ui-refs))
                 (do
                   (reset! (:successful-pings state) 0)
-                  (update-ping-failure-ui! ui-refs))))
+                  (update-ping-failure-ui! @ui-refs))))
             (catch Exception e
               (logging/log-error {:msg (str "Error in ping monitor: " (.getMessage e))
                                   :error e})
@@ -163,7 +320,7 @@
               (update-ping-failure-ui! ui-refs))
             (finally
               (reset! ping-in-progress? false)))))))) 
- (m/=> create-ping-monitor [:=> [:cat :string [:map [:attempts any?] [:successful-pings any?]] [:map [:ping-label any?] [:status-label any?] [:attempts-label any?] [:time-label any?]] [:map [:dialog any?] [:ping-timer any?] [:update-timer any?]] :ifn :ifn] :ifn])
+ (m/=> create-ping-monitor [:=> [:cat :string [:map [:attempts any?] [:successful-pings any?]] any? [:map [:dialog any?] [:ping-timer any?] [:update-timer any?]] :ifn :ifn] :ifn])
 
 (defn- create-update-ui-fn
   "Create UI update function for elapsed time and attempts."
@@ -178,11 +335,19 @@
 
 (defn- create-dialog
   "Create the connection dialog window."
-  [parent content callback timers]
+  [parent content callback timers ui-refs]
   (let [cancel-action (action/action
                         :name (i18n/tr :startup-button-cancel)
                         :handler (fn [_]
                                    (stop-timers! @(:ping-timer timers) @(:update-timer timers))
+                                   ;; Stop monitoring if active
+                                   (when-let [monitoring? (:monitoring? @ui-refs)]
+                                     (reset! monitoring? false))
+                                   (when-let [monitor-future (:monitor-future @ui-refs)]
+                                     (future-cancel monitor-future))
+                                   ;; Stop state server if it was started
+                                   (when (state-server/running?)
+                                     (state-server/stop!))
                                    (seesaw/dispose! @(:dialog timers))
                                    (callback :cancel)))
 
@@ -221,6 +386,14 @@
     (seesaw/listen dialog :window-closing
                    (fn [_]
                      (stop-timers! @(:ping-timer timers) @(:update-timer timers))
+                     ;; Stop monitoring if active
+                     (when-let [monitoring? (:monitoring? @ui-refs)]
+                       (reset! monitoring? false))
+                     (when-let [monitor-future (:monitor-future @ui-refs)]
+                       (future-cancel monitor-future))
+                     ;; Stop state server if it was started
+                     (when (state-server/running?)
+                       (state-server/stop!))
                      (seesaw/dispose! dialog)
                      (callback :cancel)))
 
@@ -229,7 +402,7 @@
       (.setLocationRelativeTo nil)) ; nil centers on screen
 
     dialog)) 
- (m/=> create-dialog [:=> [:cat [:maybe [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] any? :ifn [:map [:ping-timer any?] [:update-timer any?] [:dialog any?]]] [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]])
+ (m/=> create-dialog [:=> [:cat [:maybe [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] any? :ifn [:map [:ping-timer any?] [:update-timer any?] [:dialog any?]] any?] [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]])
 
 (defn show
   "Show the connection frame with ping monitoring."
@@ -246,17 +419,19 @@
                 :ping-timer (atom nil)
                 :update-timer (atom nil)}
 
-        ; Cache UI element references
-        ui-refs {:ping-label (seesaw/select content [:#ping-label])
-                 :status-label (seesaw/select content [:#status-label])
-                 :attempts-label (seesaw/select content [:#attempts-label])
-                 :time-label (seesaw/select content [:#time-label])}
+        ; Cache UI element references (using atom for mutable fields)
+        ui-refs (atom {:ping-label (seesaw/select content [:#ping-label])
+                       :status-label (seesaw/select content [:#status-label])
+                       :ws-status-label (seesaw/select content [:#ws-status-label])
+                       :attempts-label (seesaw/select content [:#attempts-label])
+                       :ws-attempts-label (seesaw/select content [:#ws-attempts-label])
+                       :time-label (seesaw/select content [:#time-label])})
 
         start-time (Instant/now)
-        update-ui! (create-update-ui-fn start-time state ui-refs)
+        update-ui! (create-update-ui-fn start-time state @ui-refs)
         do-ping! (create-ping-monitor domain state ui-refs timers callback update-ui!)
 
-        dialog (create-dialog parent content callback timers)]
+        dialog (create-dialog parent content callback timers ui-refs)]
 
     ; Store dialog reference
     (reset! (:dialog timers) dialog)

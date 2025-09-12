@@ -16,6 +16,11 @@
   []
   (and @manager @(:running? @manager)))
 
+(defn connected?
+  "Check if state ingress is connected to the WebSocket."
+  []
+  (and @manager (ingress/connected? @manager)))
+
 (defn initialize!
   "Initialize state ingress with domain.
    
@@ -76,3 +81,16 @@
     (logging/log-info {:msg "Shutting down state ingress"})
     (ingress/stop mgr)
     (reset! manager nil)))
+
+(defn get-manager
+  "Get the current state ingress manager.
+   Used for accessing internal stats and state."
+  []
+  @manager)
+
+(defn get-connection-stats
+  "Get connection statistics from the state ingress.
+   Returns nil if not initialized."
+  []
+  (when-let [mgr @manager]
+    (ingress/get-connection-stats mgr)))
