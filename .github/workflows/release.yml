@@ -12,35 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  generate-proto:
-    runs-on: ubuntu-22.04
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Build Tools
-      run: |
-        echo "Setting up protoc..."
-        ./scripts/download-protoc-29.5.sh
-
-    - name: Generate Proto Files
-      run: |
-        echo "Generating proto files..."
-        make proto
-
-        # Verify proto files were generated
-        echo "Generated proto files:"
-        find src/potatoclient/java -name "*.java" | head -20
-
-    - name: Upload proto files
-      uses: actions/upload-artifact@v4
-      with:
-        name: proto-files
-        path: src/potatoclient/java/
-        retention-days: 1
-
   build-appimage:
-    needs: generate-proto
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
@@ -80,16 +52,6 @@ jobs:
         # Verify installation
         kotlin -version
 
-        echo "Setting up protoc..."
-        ./scripts/download-protoc-29.5.sh
-        # Python3 is already installed on Ubuntu runners
-
-    - name: Download proto files
-      uses: actions/download-artifact@v4
-      with:
-        name: proto-files
-        path: src/potatoclient/java/
-
     - name: Install system dependencies
       run: |
         sudo apt-get update
@@ -125,7 +87,7 @@ jobs:
     - name: Build project
       run: |
         echo "Building release JAR..."
-        # Proto files already generated, the release target will handle compilation in correct order
+        # Proto files are already in src/java/, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         ls -la target/
 
@@ -378,7 +340,6 @@ jobs:
         path: PotatoClient-*.AppImage
 
   build-windows:
-    needs: generate-proto
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
@@ -419,20 +380,10 @@ jobs:
         # Verify installation
         kotlin -version
 
-        echo "Setting up protoc..."
-        ./scripts/download-protoc-29.5.sh
-        # Python3 is already installed on Ubuntu runners
-
-    - name: Download proto files
-      uses: actions/download-artifact@v4
-      with:
-        name: proto-files
-        path: src/potatoclient/java/
-
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
-        # Proto files already generated, the release target will handle compilation in correct order
+        # Proto files are already in src/java/, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
@@ -585,7 +536,6 @@ jobs:
         path: Output/PotatoClient-*.exe
 
   build-macos:
-    needs: generate-proto
     runs-on: macos-14  # M1/M2 runner
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
@@ -623,16 +573,6 @@ jobs:
         # Verify installation
         kotlin -version
 
-        echo "Setting up protoc..."
-        ./scripts/download-protoc-29.5.sh
-        # Python3 is already installed on Ubuntu runners
-
-    - name: Download proto files
-      uses: actions/download-artifact@v4
-      with:
-        name: proto-files
-        path: src/potatoclient/java/
-
     - name: Install GStreamer
       run: |
         echo "Installing GStreamer via Homebrew..."
@@ -643,7 +583,7 @@ jobs:
     - name: Build uberjar
       run: |
         echo "Building with Kotlin support..."
-        # Proto files already generated, the release target will handle compilation in correct order
+        # Proto files are already in src/java/, the release target will handle compilation in correct order
         POTATOCLIENT_RELEASE=true clojure -T:build release
         echo "Built JAR files:"
         ls -la target/
@@ -753,7 +693,7 @@ jobs:
         path: PotatoClient-*.dmg
 
   release:
-    needs: [generate-proto, build-appimage, build-windows, create-windows-installer, build-macos]
+    needs: [build-appimage, build-windows, create-windows-installer, build-macos]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 

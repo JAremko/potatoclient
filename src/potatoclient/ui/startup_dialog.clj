@@ -4,6 +4,7 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string :as str]
+    [malli.core :as m]
     [potatoclient.config :as config]
     [potatoclient.i18n :as i18n]
     [potatoclient.logging :as logging]
@@ -21,8 +22,8 @@
   "Reload the dialog with new theme/locale."
   [dialog callback]
   (seesaw/dispose! dialog)
-  (callback :reload)) 
- (m/=> reload-dialog! [:=> [:cat [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)] :ifn] :nil])
+  (callback :reload))
+(m/=> reload-dialog! [:=> [:cat [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)] :ifn] :nil])
 
 (defn-
   create-content-panel
@@ -57,7 +58,7 @@
       [[url-label ""]
        [url-combobox "growx, h 40!"]
        [(seesaw/separator) "growx, gaptop 10, gapbottom 10"]]))) 
- (m/=> create-content-panel [:=> [:cat [:maybe string?]] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]])
+(m/=> create-content-panel [:=> [:cat [:maybe string?]] [:fn {:error/message "must be a Swing panel"} (partial instance? JPanel)]])
 
 (defn
   show-startup-dialog
@@ -184,5 +185,5 @@
        :data {:url saved-url, :domain domain},
        :msg (str "Showing startup dialog with URL: " saved-url)})
     (seesaw/show! @dialog)
-    nil)) 
- (m/=> show-startup-dialog [:=> [:cat [:maybe [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] :ifn] :nil])
+    nil))
+(m/=> show-startup-dialog [:=> [:cat [:maybe [:fn {:error/message "must be a JFrame"} (partial instance? JFrame)]] :ifn] :nil]) 

@@ -229,33 +229,20 @@
 (defn release [_]
   "Build a release version with instrumentation disabled and full optimizations."
   (clean nil)
-  ;; Generate proto files first (skip if they already exist)
-  (let [proto-dir (io/file "src/potatoclient/java/cmd")
-        proto-exists? (.exists proto-dir)]
-    (if proto-exists?
-      (println "Proto files already exist, skipping generation...")
-      (do
-        (println "Generating proto files...")
-        (let [result (shell/sh "make" "proto")]
-          (when (not= 0 (:exit result))
-            (throw (ex-info "Proto generation failed" {:output (:out result) :error (:err result)})))))))
   ;; Set environment variable for release build
   (System/setProperty "POTATOCLIENT_RELEASE" "true")
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   ;; Create release marker file
   (spit (io/file class-dir "RELEASE") "true")
-  ;; Compile in correct order: Java proto first, then IPC, then Kotlin
+  ;; Compile in correct order: Java proto first, then Pronto, then Kotlin
   (compile-java-proto nil)
+  (compile-pronto nil)
   (compile-kotlin nil)
   ;; Compile with release optimizations
   (b/compile-clj {:basis (get-basis)
                   :src-dirs ["src"]
                   :class-dir class-dir
-                  :ns-compile (fn [sym]
-                                (not (contains? #{'potatoclient.reports
-                                                  'potatoclient.instrumentation}
-                                                sym)))
                   :compile-opts {:elide-meta [:doc :file :line :added]
                                  :direct-linking true}})
   (b/uber {:class-dir class-dir
