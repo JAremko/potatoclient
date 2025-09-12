@@ -1,8 +1,9 @@
 (ns potatoclient.streams.config
   "Stream configuration and endpoints."
   (:require
-            [malli.core :as m]
-    [potatoclient.config :as config]))
+   [clojure.java.io :as io]
+   [malli.core :as m]
+   [potatoclient.config :as config]))
 
 ;; ============================================================================
 ;; Stream Types
@@ -88,23 +89,28 @@
   "java") 
  (m/=> get-java-command [:=> [:cat] :string])
 
-(defn get-classpath
-  "Get classpath for VideoStreamManager using clojure -Spath"
+(defn- is-release-build?
+  "Check if running from a release build"
   []
-  ;; Get the full classpath from the main project
-  (let [project-root (System/getProperty "user.dir")
-        pb (java.lang.ProcessBuilder. ["clojure" "-Spath"])
-        _ (.directory pb (java.io.File. project-root))
-        process (.start pb)]
-    (.waitFor process)
-    (if (zero? (.exitValue process))
-      (let [classpath (slurp (.getInputStream process))]
-        ;; Add target directories to classpath
-        (str (clojure.string/trim classpath)
-             ":" project-root "/target/classes"
-             ":" project-root "/target/java-classes"
-             ":" project-root "/target/kotlin/classes"))
-      ;; Fallback to manual classpath
+  (not (nil? (io/resource "RELEASE"))))
+
+(defn get-classpath
+  "Get classpath for VideoStreamManager"
+  []
+  (if (is-release-build?)
+    ;; Release mode - use the JAR we're running from
+    ;; The RELEASE marker file indicates this is a production build
+    ;; All Kotlin classes are packaged in the same JAR
+    (let [this-class (class get-classpath)
+          protocol-path (.getProtectionDomain this-class)
+          code-source (.getCodeSource protocol-path)
+          location (when code-source (.getLocation code-source))
+          jar-path (when location (.getPath location))]
+      (or jar-path
+          ;; Fallback if we can't determine JAR path
+          (System/getProperty "java.class.path")))
+    ;; Development mode - use target directories
+    (let [project-root (System/getProperty "user.dir")]
       (str project-root "/target/classes:"
            project-root "/target/java-classes:"
            project-root "/target/kotlin/classes:"
