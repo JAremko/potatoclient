@@ -49,8 +49,13 @@ jobs:
         curl -s "https://get.sdkman.io" | bash
         source "$HOME/.sdkman/bin/sdkman-init.sh"
         sdk install kotlin 2.2.0
+        # Create symlink to expected location
+        mkdir -p tools
+        ln -s "$HOME/.sdkman/candidates/kotlin/2.2.0" tools/kotlin-2.2.0
         # Verify installation
         kotlin -version
+        # Verify symlink
+        ls -la tools/kotlin-2.2.0/bin/kotlinc
 
     - name: Install system dependencies
       run: |
@@ -377,8 +382,13 @@ jobs:
         curl -s "https://get.sdkman.io" | bash
         source "$HOME/.sdkman/bin/sdkman-init.sh"
         sdk install kotlin 2.2.0
+        # Create symlink to expected location
+        mkdir -p tools
+        ln -s "$HOME/.sdkman/candidates/kotlin/2.2.0" tools/kotlin-2.2.0
         # Verify installation
         kotlin -version
+        # Verify symlink
+        ls -la tools/kotlin-2.2.0/bin/kotlinc
 
     - name: Build uberjar
       run: |
@@ -570,8 +580,13 @@ jobs:
         curl -s "https://get.sdkman.io" | bash
         source "$HOME/.sdkman/bin/sdkman-init.sh"
         sdk install kotlin 2.2.0
+        # Create symlink to expected location
+        mkdir -p tools
+        ln -s "$HOME/.sdkman/candidates/kotlin/2.2.0" tools/kotlin-2.2.0
         # Verify installation
         kotlin -version
+        # Verify symlink
+        ls -la tools/kotlin-2.2.0/bin/kotlinc
 
     - name: Install GStreamer
       run: |
