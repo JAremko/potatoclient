@@ -12,14 +12,42 @@
 ;; File Discovery
 ;; ============================================================================
 
+(def ^:private excluded-paths
+  "Paths relative to src directory to exclude from spec checking since they run before registry initialization."
+  #{;; Main init file - runs before registry is fully initialized
+    "potatoclient/init.clj"
+    ;; Malli init file - part of registry initialization
+    "potatoclient/malli/init.clj"
+    ;; Oneof schema implementation - part of registry initialization
+    "potatoclient/malli/oneof.clj"
+    ;; Registry itself - defines the registry
+    "potatoclient/malli/registry.clj"})
+
+(defn get-relative-path
+  "Get path relative to the base directory."
+  [base-dir file-path]
+  (let [base-path (.toPath (io/file base-dir))
+        file-path (.toPath (io/file file-path))
+        relative-path (.relativize base-path file-path)]
+    (.toString relative-path)))
+
+(defn excluded-file?
+  "Check if a file should be excluded from spec checking based on relative path."
+  [base-dir file-path]
+  (let [relative-path (get-relative-path base-dir file-path)
+        ;; Normalize path separators to forward slashes for consistency
+        normalized-path (str/replace relative-path "\\" "/")]
+    (contains? excluded-paths normalized-path)))
+
 (defn find-clojure-files
-  "Recursively find all .clj files in directory."
+  "Recursively find all .clj files in directory, excluding those in the exclusion list."
   [dir]
   (let [dir-file (io/file dir)]
     (->> (file-seq dir-file)
          (filter #(.isFile %))
          (filter #(str/ends-with? (.getName %) ".clj"))
-         (map #(.getPath %)))))
+         (map #(.getPath %))
+         (remove #(excluded-file? dir %)))))
 
 ;; ============================================================================
 ;; AST Analysis
@@ -170,6 +198,7 @@
         :else
         (do
           (println (format "Scanning %s for missing arrow specs..." dir-path))
+          (println (format "Excluding (relative to scan dir): %s" (str/join ", " (sort excluded-paths))))
           (let [missing (find-missing-specs dir-path)]
             (format-output missing)
             ;; Exit with non-zero if missing specs found
