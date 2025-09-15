@@ -291,9 +291,9 @@
     (throttle/shutdown-throttler (:throttler manager))
 
     ;; Shutdown executor
-    (.shutdown (:executor manager))
+    (.shutdown (:executor manager)))
 
-    manager))
+  manager)
 (m/=> stop [:=> [:cat state-ingress-manager?] state-ingress-manager?])
 
 (defn restart
