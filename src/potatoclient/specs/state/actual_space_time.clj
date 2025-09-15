@@ -10,6 +10,7 @@
 ;; All 7 fields from proto definition
 
 (def actual-space-time-message-spec
+  "Actual space-time state spec - real-time position and orientation data"
   [:map {:closed true}
    [:azimuth :angle/azimuth]  ; double in proto
    [:elevation :angle/elevation]  ; double in proto

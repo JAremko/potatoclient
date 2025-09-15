@@ -96,6 +96,7 @@
 
 ;; Main Heat Camera Root command spec using oneof - all 34 commands (31 + 3 ROI)
 (def heat-camera-command-spec
+  "Heat camera command root spec - all thermal camera control operations"
   [:oneof
    [:zoom zoom-spec]
    [:set_agc set-agc-spec]

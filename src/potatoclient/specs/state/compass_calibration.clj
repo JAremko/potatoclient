@@ -9,6 +9,7 @@
 ;; All 6 fields from proto definition
 
 (def compass-calibration-message-spec
+  "Compass calibration state spec - calibration progress and status information"
   [:map {:closed true}
    [:stage :proto/int32-positive]
    [:final_stage [:int {:min 1 :max 2147483647}]]

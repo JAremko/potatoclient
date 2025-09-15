@@ -10,6 +10,7 @@
 ;; All 2 fields from proto definition
 
 (def day-cam-glass-heater-message-spec
+  "Day camera glass heater state spec - temperature and operational status of lens heater"
   [:map {:closed true}
    [:temperature [:double {:min -273.15 :max 660.32}]]
    [:status :boolean]])

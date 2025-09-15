@@ -9,6 +9,7 @@
 ;; All 23 fields from proto definition
 
 (def system-message-spec
+  "System state spec - system health, performance metrics, and operational status"
   [:map {:closed true}
    [:cpu_temperature :temperature/component]  ; double in proto
    [:gpu_temperature :temperature/component]  ; double in proto

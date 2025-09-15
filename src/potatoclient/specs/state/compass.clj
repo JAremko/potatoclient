@@ -9,6 +9,7 @@
 ;; All 7 fields from proto definition
 
 (def compass-message-spec
+  "Compass state spec - current heading and orientation data from compass sensor"
   [:map {:closed true}
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]

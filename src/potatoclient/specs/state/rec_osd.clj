@@ -10,6 +10,7 @@
 ;; All 7 fields from proto definition
 
 (def rec-osd-message-spec
+  "Recording OSD state spec - on-screen display configuration for recording sessions"
   [:map {:closed true}
    [:screen :enum/rec-osd-screen]
    [:heat_osd_enabled :boolean]

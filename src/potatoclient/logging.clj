@@ -11,6 +11,7 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string]
+    [malli.core :as m]
     [potatoclient.malli.registry :as registry]
     [potatoclient.runtime :as runtime]
     [taoensso.telemere :as tel])
@@ -60,6 +61,7 @@
                         xdg-data
                         (io/file user-home ".local" "share"))]
         (io/file data-base "potatoclient" "logs")))))
+(m/=> get-log-dir [:=> [:cat] [:fn #(instance? java.io.File %)]])
 
 (defn- get-log-file-path
   "Get the path for the log file with timestamp and version"
@@ -74,6 +76,7 @@
         filename (format "potatoclient-%s-%s.log" version timestamp)]
     (.mkdirs logs-dir)
     (io/file logs-dir filename)))
+(m/=> get-log-file-path [:=> [:cat] [:fn #(instance? java.io.File %)]])
 
 (defn- create-file-handler
   "Create a file handler for Telemere"
@@ -82,6 +85,7 @@
   (tel/handler:file
     {:output-fn (tel/format-signal-fn)
      :path (.getAbsolutePath (get-log-file-path))}))
+(m/=> create-file-handler [:=> [:cat] fn?])
 
 (defn- cleanup-old-logs!
   "Keep only the newest N log files, delete older ones"
@@ -105,6 +109,7 @@
             (println (str "Deleted old log file: " (.getName file)))
             (catch Exception e
               (println (str "Failed to delete log file: " (.getName file) " - " (.getMessage e))))))))))
+(m/=> cleanup-old-logs! [:=> [:cat pos-int?] :nil])
 
 ;; Track if logging has been initialized
 (def ^:private initialized? (atom false))
@@ -233,6 +238,7 @@
   (if (runtime/release-build?)
     (get-log-dir)
     (io/file "logs")))
+(m/=> get-logs-directory [:=> [:cat] [:fn #(instance? java.io.File %)]])
 
 ;; Initialize the global registry on namespace load if needed
 ;; This runs for its side effects - setting up the registry

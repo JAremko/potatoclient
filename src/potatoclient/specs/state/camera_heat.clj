@@ -10,6 +10,7 @@
 ;; All 11 fields from proto definition
 
 (def camera-heat-message-spec
+  "Heat camera state spec - current settings and status of the thermal camera"
   [:map {:closed true}
    [:zoom_pos :range/zoom]
    [:agc_mode :enum/heat-agc-mode]

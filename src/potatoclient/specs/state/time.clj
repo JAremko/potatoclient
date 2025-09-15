@@ -10,6 +10,7 @@
 ;; All 4 fields from proto definition
 
 (def time-message-spec
+  "Time state spec - system time synchronization and manual time override status"
   [:map {:closed true}
    [:timestamp :time/unix-timestamp]
    [:manual_timestamp :time/unix-timestamp]

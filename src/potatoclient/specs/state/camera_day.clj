@@ -10,6 +10,7 @@
 ;; All 11 fields from proto definition
 
 (def camera-day-message-spec
+  "Day camera state spec - current settings and status of the daylight camera"
   [:map {:closed true}
    [:focus_pos :range/focus]  ; double in proto (0-1)
    [:zoom_pos :range/zoom]  ; double in proto (0-1)  

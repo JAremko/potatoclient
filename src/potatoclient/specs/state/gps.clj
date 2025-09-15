@@ -9,6 +9,7 @@
 ;; All 8 fields from proto definition
 
 (def gps-message-spec
+  "GPS state spec - current GPS position, fix status, and satellite information"
   [:map {:closed true}
    [:longitude :position/longitude]
    [:latitude :position/latitude]

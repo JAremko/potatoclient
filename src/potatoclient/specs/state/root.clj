@@ -26,6 +26,7 @@
 ;; Root state spec that matches JonGUIState protobuf structure
 ;; All fields with protocol_version being uint32 > 0 and all message fields required
 (def jon-gui-state-spec
+  "Root server state spec - complete system state sent from server including all subsystem messages"
   [:map {:closed true}
    ;; protocol_version: uint32 with constraint gt: 0
    [:protocol_version [:and :proto/uint32 [:> 0]]]
