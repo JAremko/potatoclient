@@ -2,6 +2,7 @@
   "Theme management for PotatoClient using DarkLaf"
   (:require [clojure.java.io :as io]
             [malli.core :as m]
+            [potatoclient.init :as init]
             [potatoclient.logging :as logging]
             [potatoclient.runtime :as runtime]
             [potatoclient.ui-specs :as specs]
@@ -21,8 +22,8 @@
 (defn get-current-theme
   "Get the current theme key"
   []
-  (:current-theme @theme-config)) 
- (m/=> get-current-theme [:=> [:cat] :potatoclient.ui-specs/theme-key])
+  (:current-theme @theme-config))
+(m/=> get-current-theme [:=> [:cat] :potatoclient.ui-specs/theme-key])
 
 ;; Forward declaration for icon cache clearing
 (declare clear-icon-cache!)
@@ -42,8 +43,8 @@
     (when (or (nil? current-theme)
               (not= (.getClass current-theme) (.getClass new-theme)))
       (LafManager/setTheme new-theme)
-      (LafManager/install)))) 
- (m/=> apply-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :nil])
+      (LafManager/install))))
+(m/=> apply-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :nil])
 
 (defn set-theme!
   "Set and apply a new theme"
@@ -57,16 +58,16 @@
       true)
     (do
       (logging/log-error {:msg (str "Invalid theme key: " theme-key)})
-      false))) 
- (m/=> set-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :boolean])
+      false)))
+(m/=> set-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :boolean])
 
 (defn initialize-theme!
   "Initialize the theming system with default or saved theme"
   [initial-theme]
   (when (m/validate ::specs/theme-key initial-theme)
     (set-theme! initial-theme))
-  nil) 
- (m/=> initialize-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :nil])
+  nil)
+(m/=> initialize-theme! [:=> [:cat :potatoclient.ui-specs/theme-key] :nil])
 
 (defn get-theme-i18n-key
   "Get the i18n key for a theme"
@@ -76,20 +77,21 @@
     :sol-dark :theme-sol-dark
     :dark :theme-dark
     :hi-dark :theme-hi-dark
-    :theme-unknown)) 
- (m/=> get-theme-i18n-key [:=> [:cat :potatoclient.ui-specs/theme-key] :keyword])
+    :theme-unknown))
+(m/=> get-theme-i18n-key [:=> [:cat :potatoclient.ui-specs/theme-key] :keyword])
 
 (defn get-available-themes
   "Get a vector of available theme keys"
   []
-  [:sol-light :sol-dark :dark :hi-dark]) 
- (m/=> get-available-themes [:=> [:cat] [:sequential :potatoclient.ui-specs/theme-key]])
+  [:sol-light :sol-dark :dark :hi-dark])
+(m/=> get-available-themes [:=> [:cat] [:sequential :potatoclient.ui-specs/theme-key]])
 
 (defn- is-development-mode?
-  "Check if running in development mode."
+  "Check if running in development mode (not release build and not in tests)."
   []
-  (not (runtime/release-build?))) 
- (m/=> is-development-mode? [:=> [:cat] :boolean])
+  (and (not (runtime/release-build?))
+       (not (init/testing-context?))))
+(m/=> is-development-mode? [:=> [:cat] :boolean])
 
 ;; Date formatter for logging
 (def ^:private ^ThreadLocal log-formatter
@@ -100,8 +102,8 @@
   "Log theme-related messages in development mode."
   [level message]
   (let [timestamp (.format ^SimpleDateFormat (.get log-formatter) (Date.))]
-    (format "[%s] THEME %s: %s" timestamp level message))) 
- (m/=> log-theme [:=> [:cat :string :string] :string])
+    (format "[%s] THEME %s: %s" timestamp level message)))
+(m/=> log-theme [:=> [:cat :string :string] :string])
 
 ;; Icon cache - key is [theme-key icon-key], value is the loaded icon
 (def ^:private icon-cache (atom {}))
@@ -143,14 +145,14 @@
               (when (is-development-mode?)
                 (println (log-theme "ERROR" (format "Error loading icon: %s - %s"
                                                     icon-name (.getMessage e)))))
-              nil))))))) 
- (m/=> key->icon [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]])
+              nil)))))))
+(m/=> key->icon [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]])
 
 (defn get-icon
   "Get theme-aware icon by key. Alias for key->icon for clarity."
   [icon-key]
-  (key->icon icon-key)) 
- (m/=> get-icon [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]])
+  (key->icon icon-key))
+(m/=> get-icon [:=> [:cat :keyword] [:maybe :potatoclient.ui-specs/icon]])
 
 (defn preload-theme-icons!
   "Preload all icons for the current theme to ensure they're available."
@@ -163,5 +165,5 @@
     (doseq [icon-key icons-to-preload]
       (key->icon icon-key))
     (when (is-development-mode?)
-      (println (log-theme "INFO" "Icon preloading completed"))))) 
- (m/=> preload-theme-icons! [:=> [:cat] :nil])
+      (println (log-theme "INFO" "Icon preloading completed")))))
+(m/=> preload-theme-icons! [:=> [:cat] :nil])

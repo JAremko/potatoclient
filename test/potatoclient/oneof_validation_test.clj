@@ -125,7 +125,7 @@
                             :from_cv_subsystem false
                             :client_type :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                             :ping {}
-                            :extra-key "should not be here"  ; Extra key
+                            :extra-key "should not be here" ; Extra key
                             :osd nil :system nil :noop nil :cv nil :gps nil
                             :lrf nil :lira nil :lrf_calib nil :rotary nil
                             :day_cam_glass_heater nil :heat_camera nil
@@ -165,7 +165,7 @@
                   "Error should mention oneof constraint"))))))))
 
 (deftest test-explain-returns-nil-bug
-  (testing "Reproduce the exact bug where m/explain returns nil"
+  (testing "Regression test: ensure m/explain never returns nil when m/validate returns false"
     (let [spec (m/schema :cmd/root)
           found-bug? (atom false)]
 
@@ -185,21 +185,9 @@
             ;; This is the bug: validate returns false but explain returns nil
             (when (and (not valid?) (nil? explanation))
               (reset! found-bug? true)
-              (println (format "\nBUG REPRODUCED at iteration %d!" i))
-              (println "Result keys:" (sort (keys result)))
-              (println "Validating with open map (no :closed constraint):")
-              (let [open-spec (m/schema [:map
-                                         [:protocol_version :int]
-                                         [:session_id :int]])]
-                (println "  Open map validates?" (m/validate open-spec result))
-                ;; Check structure with matcher-combinators
-                (is (match? {:protocol_version int?
-                             :session_id int?}
-                            result)))
-
               ;; This should fail the test, demonstrating the bug
               (is false
                   (format "Bug: m/validate returned false but m/explain returned nil at iteration %d" i))))))
 
-      (when-not @found-bug?
-        (println "\nBug not reproduced in 200 iterations - may need more samples")))))
+      ;; If bug not found, that's good - the test passes
+      (is (not @found-bug?) "No validation inconsistency found"))))

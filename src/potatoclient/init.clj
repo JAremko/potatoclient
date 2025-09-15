@@ -97,14 +97,26 @@
 ;; Test-specific Initialization
 ;; ============================================================================
 
+(def ^:private ^:dynamic *testing-context*
+  "Dynamic var to indicate if we're in test mode"
+  false)
+
+(defn testing-context?
+  "Check if we're running in test mode"
+  []
+  *testing-context*)
+
+(m/=> testing-context? [:=> [:cat] :boolean])
+
 (defn initialize-for-tests!
   "Initialize the system specifically for testing.
    
    This includes all normal initialization plus test-specific setup."
   []
-  (initialize!)
-  ;; Additional test-specific initialization can go here
-  (logging/log-info "Test environment initialized")
+  (binding [*testing-context* true]
+    (initialize!)
+    ;; Additional test-specific initialization can go here
+    (logging/log-info "Test environment initialized"))
   nil)
 (m/=> initialize-for-tests! [:=> [:cat] :nil])
 

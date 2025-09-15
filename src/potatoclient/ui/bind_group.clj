@@ -1,9 +1,7 @@
 (ns potatoclient.ui.bind-group
   "Grouped binding utilities that extend seesaw.bind with key-based management.
    Allows creating groups of bindings that can be cleaned up selectively."
-  (:require
-    [malli.core :as m]
-    [seesaw.bind :as bind]))
+  (:require [seesaw.bind :as bind]))
 
 (def ^:private binding-groups
   "Tracks all active binding groups. Structure:
@@ -192,15 +190,3 @@
             [atom-ref (into {}
                             (for [[group-key bindings] group-map]
                               [group-key (count bindings)]))]))))
-
-;; Arrow specs for all functions
-(m/=> bind-group [:function [:varargs [:cat :any :any :any] :any] :any])
-(m/=> clean-group [:=> [:cat :any :any] :int])
-(m/=> clean-all-groups [:=> [:cat :any] :int])
-(m/=> list-groups [:=> [:cat :any] [:set :any]])
-(m/=> group-count [:=> [:cat :any :any] :int])
-(m/=> bind-group-property [:=> [:cat :any :any :any :keyword] :any])
-(m/=> bind-group-selection [:=> [:cat :any :any :any] :any])
-(m/=> bind-group-transform [:=> [:cat :any :any [:=> [:cat :any] :any] :any] :any])
-(m/=> replace-group [:=> [:cat :any :any [:sequential [:sequential :any]]] :nil])
-(m/=> debug-groups [:=> [:cat] [:map-of :any [:map-of :any :int]]])
