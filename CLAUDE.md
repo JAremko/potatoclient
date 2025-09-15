@@ -196,9 +196,14 @@ Prompt: "Check for missing arrow specs in src/"
 Task: test-runner-analyzer agent
 Prompt: "Run tests in /home/jare/git/potatoclient using command: make test"
 ```
-- Run after any code modifications
-- Run before committing changes
-- Never disable failing tests - fix the code
+- **MANDATORY**: Run after any code modifications
+- **MANDATORY**: Run before committing changes
+- **CRITICAL POLICY**: 
+  - ⚠️ **NEVER disable, skip, comment out, or delete failing tests**
+  - ✅ **FIX the code to make tests pass**
+  - ✅ **If functionality was removed, remove the corresponding test entirely**
+  - ❌ **Do NOT modify tests to make them pass - fix the implementation**
+  - All tests MUST pass - no exceptions
 
 ### I18n Checker Agent
 **ALWAYS use after adding UI text** to ensure translations are complete:
@@ -443,13 +448,22 @@ To ensure widgets display current atom values, trigger a change after binding:
 
 ### Testing Philosophy
 
-**Never disable failing tests - fix the code**
+**CRITICAL: Fix failing code, never modify tests to pass**
+
+**Core Testing Principles:**
+- ⚠️ **NEVER disable, skip, or comment out failing tests**
+- ✅ **FIX the implementation to make tests pass**
+- ✅ **Remove tests only when corresponding functionality is removed**
+- ❌ **Do NOT modify test assertions to make them pass**
+
+**Testing Practices:**
 - Use test suites for focused testing
 - Property-based testing with `clojure.test.check`
 - Generative testing with Malli schemas
 - Test proto serialization roundtrips
 - Validate all command constraints
 - IPC handler property tests for message processing
+- **ALL tests must pass before any commit**
 
 ### Performance Considerations
 
