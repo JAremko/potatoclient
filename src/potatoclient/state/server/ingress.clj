@@ -284,3 +284,20 @@
   (stop manager)
   (reset! (:config manager) new-config)
   (start manager))
+
+;; ====================================================================
+;; Arrow specs for Malli instrumentation
+;; ====================================================================
+(m/=> parse-state-message [:=> [:cat bytes?] [:maybe :map]])
+(m/=> proto->edn [:=> [:cat [:maybe :map]] [:maybe :state/root]])
+(m/=> handle-state-update [:=> [:cat [:fn #(instance? StateIngressManager %)] :state/root] :any])
+(m/=> check-connection-health [:=> [:cat [:fn #(instance? StateIngressManager %)]] :any])
+(m/=> calculate-backoff-delay [:=> [:cat nat-int?] [:int {:min 0}]])
+(m/=> update-connection-stats! [:=> [:cat [:fn #(instance? StateIngressManager %)] [:enum :attempting :connected :failed :disconnected]] :any])
+(m/=> connect-loop [:=> [:cat [:fn #(instance? StateIngressManager %)]] :any])
+(m/=> create-manager [:=> [:cat [:map [:domain :string]]] [:fn #(instance? StateIngressManager %)]])
+(m/=> start [:=> [:cat [:fn #(instance? StateIngressManager %)]] [:fn #(instance? StateIngressManager %)]])
+(m/=> connected? [:=> [:cat [:fn #(instance? StateIngressManager %)]] :boolean])
+(m/=> get-connection-stats [:=> [:cat [:fn #(instance? StateIngressManager %)]] :map])
+(m/=> stop [:=> [:cat [:fn #(instance? StateIngressManager %)]] [:fn #(instance? StateIngressManager %)]])
+(m/=> restart [:=> [:cat [:fn #(instance? StateIngressManager %)] [:map [:domain :string]]] [:fn #(instance? StateIngressManager %)]])

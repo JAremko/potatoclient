@@ -85,7 +85,7 @@
           zloc (z/of-string content)
           functions (atom #{})
           specs (atom #{})]
-      
+
       ;; Traverse the entire file
       (loop [loc zloc]
         (when-not (z/end? loc)
@@ -103,7 +103,7 @@
                         (swap! functions conj {:name fn-name
                                                :file file-path
                                                :line line})))
-                    
+
                     ;; Found arrow spec (any namespace, but symbol ends with =>)
                     (and (symbol? first-elem)
                          (str/ends-with? (name first-elem) "=>"))
@@ -111,11 +111,11 @@
                       (let [node (z/node loc)
                             line (get (meta node) :row 1)]
                         (swap! specs conj {:name fn-name
-                                          :file file-path
-                                          :line line}))))))))
-          
+                                           :file file-path
+                                           :line line}))))))))
+
           (recur (z/next loc))))
-      
+
       {:functions @functions
        :specs @specs})
     (catch Exception e
@@ -124,12 +124,32 @@
        :specs #{}})))
 
 ;; ============================================================================
+;; Coverage Calculation
+;; ============================================================================
+
+(defn calculate-coverage
+  "Calculate coverage statistics from functions and specs."
+  [all-functions all-specs]
+  (let [total-funcs (count all-functions)
+        spec-names (set (map :name all-specs))
+        covered (filter #(contains? spec-names (:name %)) all-functions)
+        missing (filter #(not (contains? spec-names (:name %))) all-functions)
+        coverage-pct (if (zero? total-funcs)
+                       100.0
+                       (* 100.0 (/ (count covered) total-funcs)))]
+    {:total total-funcs
+     :covered (count covered)
+     :missing (count missing)
+     :percentage coverage-pct
+     :missing-details missing}))
+
+;; ============================================================================
 ;; Main Analysis
 ;; ============================================================================
 
-(defn find-missing-specs
-  "Find all functions without arrow specs in the given directory.
-   Returns a sequence of {:name symbol :file path :line number} maps."
+(defn analyze-directory
+  "Analyze all functions and specs in the given directory.
+   Returns {:functions #{...} :specs #{...} :missing [...] :stats {...}}."
   [dir-path]
   (let [files (find-clojure-files dir-path)
         ;; Process files in parallel for speed
@@ -137,22 +157,33 @@
         ;; Combine all results
         all-functions (apply set/union (map :functions results))
         all-specs (apply set/union (map :specs results))
-        ;; Build lookup sets by function name
-        spec-names (set (map :name all-specs))
-        ;; Find functions without specs
-        missing (filter #(not (contains? spec-names (:name %))) all-functions)]
-    ;; Sort by file path and line number for clean output
-    (sort-by (juxt :file :line) missing)))
+        ;; Calculate coverage stats
+        stats (calculate-coverage all-functions all-specs)
+        ;; Sort missing by file path and line number for clean output
+        missing-sorted (sort-by (juxt :file :line) (:missing-details stats))]
+    {:functions all-functions
+     :specs all-specs
+     :missing missing-sorted
+     :stats stats}))
 
 ;; ============================================================================
 ;; Output Formatting
 ;; ============================================================================
 
 (defn format-output
-  "Format the missing specs for clean, concise output."
-  [missing-specs]
+  "Format the missing specs and coverage report."
+  [missing-specs total-stats]
+  ;; Always show coverage statistics
+  (println "\n📊 Arrow Spec Coverage Report")
+  (println "=" (str/join (repeat 40 "=")))
+  (println (format "Total functions:     %4d" (:total total-stats)))
+  (println (format "With arrow specs:    %4d" (:covered total-stats)))
+  (println (format "Missing arrow specs: %4d" (:missing total-stats)))
+  (println (format "Coverage:            %5.1f%%" (:percentage total-stats)))
+  (println "=" (str/join (repeat 40 "=")))
+
   (if (empty? missing-specs)
-    (println "\n✓ All functions have arrow specs defined!")
+    (println "\n✓ All functions have arrow specs defined! 🎉")
     (do
       (println (format "\n⚠ Found %d functions without arrow specs:\n" (count missing-specs)))
       ;; Group by file for cleaner output
@@ -175,14 +206,14 @@
     (do
       (println "Usage: arrow-spec-checker <directory>")
       (println "")
-      (println "Detects functions (defn/defn-) without arrow (=>) specs.")
+      (println "Detects functions (defn/defn-) without arrow (=>) specs and reports coverage.")
       (System/exit 1))
-    
+
     (> (count args) 1)
     (do
       (println "Error: Too many arguments. Expected only directory path.")
       (System/exit 1))
-    
+
     :else
     (let [dir-path (first args)
           dir-file (io/file dir-path)]
@@ -191,17 +222,17 @@
         (do
           (println (format "Error: Directory '%s' does not exist." dir-path))
           (System/exit 1))
-        
+
         (not (.isDirectory dir-file))
         (do
           (println (format "Error: '%s' is not a directory." dir-path))
           (System/exit 1))
-        
+
         :else
         (do
           (println (format "Scanning %s for missing arrow specs..." dir-path))
           (println (format "Excluding: %s, potatoclient/specs/**" (str/join ", " (sort excluded-paths))))
-          (let [missing (find-missing-specs dir-path)]
-            (format-output missing)
+          (let [analysis (analyze-directory dir-path)]
+            (format-output (:missing analysis) (:stats analysis))
             ;; Exit with non-zero if missing specs found
-            (System/exit (if (empty? missing) 0 1))))))))
+            (System/exit (if (empty? (:missing analysis)) 0 1))))))))

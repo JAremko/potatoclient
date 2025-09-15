@@ -1,5 +1,111 @@
 # Claude AI Assistant Context
 
+## CRITICAL POLICIES & CONVENTIONS
+
+### Code Organization Conventions
+
+#### Arrow Spec Placement
+**ALWAYS place arrow specs (m/=>) DIRECTLY AFTER each function definition**
+
+```clojure
+;; CORRECT - Arrow spec immediately follows function
+(defn process-command
+  "Process a command and return result"
+  [cmd]
+  ...)
+(m/=> process-command [:=> [:cat :cmd/root] [:map [:status :keyword]]])
+
+;; WRONG - Arrow specs grouped at end of file
+(defn process-command ...)
+(defn another-function ...)
+;; ... later in file ...
+(m/=> process-command ...)
+(m/=> another-function ...)
+```
+
+### Required Tool Usage After Code Changes
+
+**ALWAYS use these specialized agents proactively:**
+
+#### 1. Docstring Checker Agent
+**Run after ANY `def`, `defn`, `defn-`, or `defonce` additions/modifications:**
+```
+Task: docstring-checker agent
+Prompt: "Check for missing docstrings in src/"
+```
+- ALL definitions MUST have docstrings - no exceptions
+- Empty strings (`""`) are invalid - provide meaningful documentation
+
+#### 2. Spec Checker Agent  
+**Run after adding or modifying functions:**
+```
+Task: spec-checker agent
+Prompt: "Check for missing arrow specs in src/"
+```
+- Essential for `malli.dev/start!` instrumentation
+- ALL functions must have tight, precise specs - no `:any`
+- Reuse shared specs from `specs/common.clj`
+
+#### 3. Test Runner Analyzer Agent
+**Run after code changes to verify nothing is broken:**
+```
+Task: test-runner-analyzer agent
+Prompt: "Run tests in /home/jare/git/potatoclient using command: make test"
+```
+- **CRITICAL**: NEVER disable, skip, or comment out failing tests
+- FIX the code to make tests pass
+- All tests MUST pass before any commit
+
+#### 4. I18n Checker Agent
+**Run after adding UI text:**
+```
+Task: i18n-checker agent
+Prompt: "Check translation completeness"
+```
+
+### Testing Philosophy
+
+**CRITICAL: Fix failing code, never modify tests to pass**
+
+- ⚠️ **NEVER disable, skip, or comment out failing tests**
+- ✅ **FIX the implementation to make tests pass**
+- ✅ **Remove tests only when corresponding functionality is removed**
+- ❌ **Do NOT modify test assertions to make them pass**
+
+### Quality Standards
+
+1. **100% documentation coverage** - all definitions must have docstrings
+2. **100% spec coverage** - all functions must have arrow specs
+3. **Closed map specs** with `{:closed true}`
+4. **Generative testing** with schemas
+5. **Never delete tests** - make them pass
+
+### Malli Schema System
+
+**ALL functions MUST have arrow specs (m/=>) for instrumentation**
+
+```clojure
+;; PREFERRED - Arrow spec (auto-discovered by malli.dev/start!)
+(defn process-command
+  "Process a command and return result"
+  [cmd]
+  ...)
+(m/=> process-command [:=> [:cat :cmd/root] [:map [:status :keyword]]])
+
+;; LEGACY - Metadata schema (NOT auto-discovered, migrate to arrow specs)
+(defn process-command
+  "Process a command and return result"
+  {:malli/schema [:=> [:cat :cmd/root] [:map [:status :keyword]]]}
+  [cmd]
+  ...)
+```
+
+**Spec Requirements:**
+- Use **tight, precise specs** - avoid `:any`, `:map`, or overly permissive schemas
+- **Reuse shared specs** from `specs/common.clj` - don't reinvent domain concepts
+- **Extend existing specs** when adding constraints - use `[:and base-spec constraint]`
+- **Register reusable specs** in the global registry for consistency
+
 ## Project Structure
 
 ### Directory Layout
@@ -156,93 +262,32 @@ CLJ-Kondo configurations for static analysis are **automatically generated** by 
 - **IDE support** - instant static type checking in your editor
 - **No manual steps** - everything happens automatically in dev mode
 
-## Important: Use Specialized Agents
+## Specialized Agent Details
 
-**ALWAYS use these agents proactively when appropriate:**
+### Additional Agent Information
 
-### Docstring Checker Agent
-**ALWAYS use after adding or modifying definitions** to ensure documentation:
-```
-Task: docstring-checker agent
-Prompt: "Check for missing docstrings in src/"
-```
-- **Run automatically after ANY `def`, `defn`, `defn-`, or `defonce` additions/modifications**
-- **ALL definitions MUST have docstrings** - no exceptions for clarity and maintainability
+#### Docstring Checker Details
 - **Public functions** (`defn`) - MUST document purpose, parameters, and return values
 - **Private functions** (`defn-`) - MUST document implementation details and usage
 - **State definitions** (`def`, `defonce`) - MUST document purpose and structure
 - Supports both string docstrings and `^{:doc "..."}` metadata
-- Empty strings (`""`) are invalid - provide meaningful documentation
 
-### Spec Checker Agent
-**ALWAYS use after adding or modifying functions** to ensure arrow specs are defined:
-```
-Task: spec-checker agent
-Prompt: "Check for missing arrow specs in src/"
-```
-- Run automatically after adding new `defn` or `defn-` functions
-- Essential for `malli.dev/start!` instrumentation to work properly
+#### Spec Checker Details
 - Arrow specs enable runtime validation, metadata schemas do not
-- **ALL functions must have tight, precise specs** - no `:any` or overly permissive specs
 - **Reuse and extend shared specs** from [`specs/common.clj`](src/potatoclient/specs/common.clj):
   - Domain specs: `:angle/*`, `:position/*`, `:screen/*`, `:time/*`, etc.
   - Proto specs: `:proto/*`, `:enum/*` matching protobuf constraints
   - Composite specs: `:composite/*` for common data structures
 - **Register reusable specs** in the global registry via `registry/register-spec!`
 
-### Test Runner Analyzer Agent
-**ALWAYS use after code changes** to verify nothing is broken:
-```
-Task: test-runner-analyzer agent
-Prompt: "Run tests in /home/jare/git/potatoclient using command: make test"
-```
-- **MANDATORY**: Run after any code modifications
-- **MANDATORY**: Run before committing changes
-- **CRITICAL POLICY**: 
-  - ⚠️ **NEVER disable, skip, comment out, or delete failing tests**
-  - ✅ **FIX the code to make tests pass**
-  - ✅ **If functionality was removed, remove the corresponding test entirely**
-  - ❌ **Do NOT modify tests to make them pass - fix the implementation**
-  - All tests MUST pass - no exceptions
-
-### I18n Checker Agent
-**ALWAYS use after adding UI text** to ensure translations are complete:
-```
-Task: i18n-checker agent
-Prompt: "Check translation completeness"
-```
+#### I18n Checker Details
 - Run after adding any new `i18n/tr` calls
 - Run when adding new UI components with text
 - Generate stubs for missing translations
 
 ## Core Technologies
 
-### Malli Schema System
-**ALL functions MUST have arrow specs (m/=>) for instrumentation**
-
-```clojure
-;; PREFERRED - Arrow spec (auto-discovered by malli.dev/start!)
-(defn process-command
-  "Process a command and return result"
-  [cmd]
-  ...)
-(m/=> process-command [:=> [:cat :cmd/root] [:map [:status :keyword]]])
-
-;; LEGACY - Metadata schema (NOT auto-discovered, migrate to arrow specs)
-(defn process-command
-  "Process a command and return result"
-  {:malli/schema [:=> [:cat :cmd/root] [:map [:status :keyword]]]}
-  [cmd]
-  ...)
-```
-
-**Spec Requirements:**
-- Use **tight, precise specs** - avoid `:any`, `:map`, or overly permissive schemas
-- **Reuse shared specs** from `specs/common.clj` - don't reinvent domain concepts
-- **Extend existing specs** when adding constraints - use `[:and base-spec constraint]`
-- **Register reusable specs** in the global registry for consistency
-
-**Registry Management:**
+### Registry Management
 - Centralized initialization via `potatoclient.init/ensure-registry!`
 - Global registry at `potatoclient.malli.registry`
 - Common specs registered for reuse via `register-spec!`
@@ -437,24 +482,12 @@ To ensure widgets display current atom values, trigger a change after binding:
 
 ## Development Guidelines
 
-### Code Quality Standards
+### Code Quality Implementation Details
 
-1. **Documentation Required** - ALL definitions must have docstrings (use `docstring-checker`)
-2. **Arrow Specs Required** - Every function must have `m/=>` specs (use `spec-checker`)
-3. **Comprehensive Tests** - Organized into test suites with extensive coverage
-4. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
-5. **Clear Documentation** - Meaningful docstrings explaining purpose, not just restating the name
-6. **No Legacy Code** - Pre-alpha, make breaking changes when needed
-
-### Testing Philosophy
-
-**CRITICAL: Fix failing code, never modify tests to pass**
-
-**Core Testing Principles:**
-- ⚠️ **NEVER disable, skip, or comment out failing tests**
-- ✅ **FIX the implementation to make tests pass**
-- ✅ **Remove tests only when corresponding functionality is removed**
-- ❌ **Do NOT modify test assertions to make them pass**
+1. **Comprehensive Tests** - Organized into test suites with extensive coverage
+2. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
+3. **Clear Documentation** - Meaningful docstrings explaining purpose, not just restating the name
+4. **No Legacy Code** - Pre-alpha, make breaking changes when needed
 
 **Testing Practices:**
 - Use test suites for focused testing
@@ -610,13 +643,6 @@ This provides:
 - **Clean architecture over legacy support**
 - **Breaking changes when needed**
 - **No deprecated code**
-
-### Quality Standards
-- **100% documentation coverage** - all definitions must have docstrings
-- **100% spec coverage** - all functions must have arrow specs
-- **Closed map specs** with `{:closed true}`
-- **Generative testing** with schemas
-- **Never delete tests** - make them pass
 
 ### User Experience
 - **Immediate feedback** via status bar
