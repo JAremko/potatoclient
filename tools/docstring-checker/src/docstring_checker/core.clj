@@ -47,10 +47,10 @@
         ;; Need to skip metadata if present
         (let [node (z/node potential-doc-loc)]
           (cond
-            ;; Direct string docstring
+            ;; Direct string docstring (non-empty)
             (and (n/sexpr-able? node)
                  (string? (n/sexpr node)))
-            true
+            (not (str/blank? (n/sexpr node)))
             
             ;; Skip metadata and check next
             (and (= :meta (n/tag node))
@@ -58,7 +58,8 @@
             (let [after-meta (z/right potential-doc-loc)
                   after-meta-node (z/node after-meta)]
               (and (n/sexpr-able? after-meta-node)
-                   (string? (n/sexpr after-meta-node))))
+                   (string? (n/sexpr after-meta-node))
+                   (not (str/blank? (n/sexpr after-meta-node)))))
             
             :else false))))
     (catch Exception _ false)))
@@ -119,7 +120,9 @@
             (when-let [first-loc (try (z/down loc) (catch Exception _ nil))]
               (when (and first-loc (z/sexpr-able? first-loc))
                 (when-let [first-elem (try (z/sexpr first-loc) (catch Exception _ nil))]
-                  (when (contains? #{'def 'defn 'defn- 'defonce} first-elem)
+                  (when (contains? #{'def 'defn 'defn- 'defonce 
+                                     'defmacro 'defmulti 'defprotocol 
+                                     'defrecord 'deftype} first-elem)
                     (when-let [info (extract-definition-info loc first-elem)]
                       (let [node (z/node loc)
                             line (get (meta node) :row 1)
@@ -162,7 +165,12 @@
      :by-type {:def (count (get by-type 'def []))
                :defn (count (get by-type 'defn []))
                :defn- (count (get by-type 'defn- []))
-               :defonce (count (get by-type 'defonce []))}
+               :defonce (count (get by-type 'defonce []))
+               :defmacro (count (get by-type 'defmacro []))
+               :defmulti (count (get by-type 'defmulti []))
+               :defprotocol (count (get by-type 'defprotocol []))
+               :defrecord (count (get by-type 'defrecord []))
+               :deftype (count (get by-type 'deftype []))}
      :missing (sort-by (juxt :file :line) all-undocumented)}))
 
 ;; ============================================================================
@@ -211,7 +219,12 @@
     (do
       (println "Usage: docstring-checker <directory>")
       (println "")
-      (println "Detects Clojure definitions (def, defn, defn-, defonce) without docstrings.")
+      (println "Detects Clojure definitions without docstrings:")
+      (println "  - Functions: defn, defn-, defmacro")
+      (println "  - Variables: def, defonce") 
+      (println "  - Multimethods: defmulti")
+      (println "  - Types: defprotocol, defrecord, deftype")
+      (println "")
       (println "Recognizes both string docstrings and ^{:doc \"...\"} metadata.")
       (System/exit 1))
     

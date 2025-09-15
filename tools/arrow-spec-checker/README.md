@@ -1,55 +1,142 @@
 # Arrow Spec Checker
 
-A fast tool to detect Clojure functions without arrow (`=>`) spec definitions.
+A high-performance tool for identifying Clojure functions without arrow (`=>`) spec definitions, essential for `malli.dev/start!` instrumentation.
 
 ## Purpose
 
-This tool finds all `defn` and `defn-` functions in your codebase that don't have corresponding arrow specs (e.g., `m/=>` or any `=>` form). It helps ensure all functions have proper Malli instrumentation specs defined.
+Arrow specs are critical for runtime validation in Clojure applications using Malli. This tool:
+- Finds all `defn` and `defn-` functions lacking arrow specs
+- Ensures comprehensive instrumentation coverage for `malli.dev/start!`
+- Provides actionable reports with file paths and line numbers
+- Helps maintain code quality through spec completeness
+
+## Why Arrow Specs Matter
+
+**Arrow specs (`m/=>`) are auto-discovered by `malli.dev/start!`**, while metadata schemas (`:malli/schema`) are not. This makes arrow specs essential for:
+- Runtime validation during development
+- Automatic instrumentation without manual registration
+- Generative testing with proper function signatures
+- Static analysis via CLJ-Kondo integration
 
 ## Usage
 
-### From the tool directory:
+### Quick Start
 ```bash
+# From project root
 cd tools/arrow-spec-checker
 ./check.sh                  # Check ../../src by default
 ./check.sh /path/to/dir     # Check specific directory
 ```
 
-### Direct with Clojure:
+### Direct Clojure Execution
 ```bash
 clojure -M:run /path/to/source
 ```
 
-## How it Works
+### Integration with Development Workflow
+```bash
+# After adding new functions
+./check.sh src/
 
-1. **Parallel Processing**: Uses `pmap` to analyze files concurrently for speed
-2. **AST Analysis**: Uses `rewrite-clj` to parse Clojure code properly
-3. **Set Difference**: Builds sets of function definitions and arrow specs, then finds the difference
-4. **Clean Output**: Groups results by file with line numbers
+# Before enabling instrumentation
+./check.sh && make dev
 
-## Output
-
-The tool provides:
-- Clean list of files and line numbers where functions lack arrow specs
-- Exit code 0 if all functions have specs
-- Exit code 1 if missing specs found (useful for CI)
-
-## Example Output
-
+# As part of CI pipeline
+./check.sh || exit 1
 ```
-⚠ Found 3 functions without arrow specs:
 
-/src/myapp/core.clj
-   42: process-data
-   78: validate-input
+## How It Works
 
-/src/myapp/utils.clj
-  156: format-output
+1. **Parallel Processing**: Uses `pmap` for concurrent file analysis
+2. **AST-Based Analysis**: Leverages `rewrite-clj` for accurate parsing
+3. **Intelligent Detection**: 
+   - Identifies all `defn` and `defn-` definitions
+   - Finds all arrow spec forms (`=>` with any namespace)
+   - Calculates the difference to identify missing specs
+4. **Grouped Reporting**: Organizes results by file with line numbers
+
+## Output Format
+
+### Success Case
 ```
+✅ All 127 functions have arrow specs defined!
+Functions analyzed: 127
+Arrow specs found: 127
+Coverage: 100%
+```
+
+### Missing Specs Report
+```
+⚠️ FUNCTIONS WITHOUT ARROW SPECS (12)
+==========================================
+
+📁 src/potatoclient/streams/events.clj (5 missing)
+  Line 42: handle-gesture-event
+  Line 78: normalize-message
+  Line 156: process-event-queue
+  Line 201: validate-gesture
+  Line 234: log-event
+
+📁 src/potatoclient/ui/components.clj (4 missing)
+  Line 23: create-button
+  Line 67: update-label
+  Line 89: refresh-panel
+  Line 112: dispose-frame
+
+📁 src/potatoclient/state/core.clj (3 missing)
+  Line 15: initialize-state
+  Line 48: reset-state
+  Line 92: validate-state
+
+❌ 12 functions need arrow specs for full instrumentation support
+```
+
+## Arrow Spec vs Metadata Schema
+
+```clojure
+;; ✅ GOOD - Arrow spec (auto-discovered by malli.dev/start!)
+(defn process-command
+  "Process a command and return result"
+  [cmd]
+  ...)
+(m/=> process-command [:=> [:cat :cmd/root] [:map [:status :keyword]]])
+
+;; ❌ BAD - Metadata schema (NOT auto-discovered)
+(defn process-command
+  "Process a command and return result"
+  {:malli/schema [:=> [:cat :cmd/root] [:map [:status :keyword]]]}
+  [cmd]
+  ...)
+```
+
+## Exit Codes
+
+- **0**: All functions have arrow specs
+- **1**: Missing specs found (useful for CI/CD pipelines)
+
+## Best Practices
+
+1. **Run after adding new functions** to catch missing specs early
+2. **Include in CI pipeline** to enforce spec coverage
+3. **Focus on high-traffic modules** for maximum instrumentation benefit
+4. **Don't skip private functions** - `defn-` also benefits from specs
+5. **Consider migration** for legacy code using metadata schemas
 
 ## Implementation Details
 
-- Only counts explicit arrow specs (`=>` forms)
-- Ignores metadata schemas (`:malli/schema`)
-- Handles any namespace for `=>` (e.g., `m/=>`, `malli/=>`, etc.)
-- Robust error handling for malformed code
+- **Language**: Clojure with rewrite-clj for AST parsing
+- **Performance**: Parallel processing with `pmap`
+- **Accuracy**: Handles malformed code gracefully
+- **Flexibility**: Accepts any namespace for `=>` (m/=>, malli/=>, etc.)
+- **Scope**: Analyzes both public (`defn`) and private (`defn-`) functions
+
+## Common Issues and Solutions
+
+### Issue: Functions in init.clj can't use arrow specs
+**Solution**: Due to registry initialization order, these functions may need metadata schemas or delayed spec registration.
+
+### Issue: Large codebases take time to analyze
+**Solution**: The tool uses parallel processing, but you can check specific directories to speed up analysis during development.
+
+### Issue: False positives for macro-generated functions
+**Solution**: The tool only analyzes literal `defn` forms in source code. Generated functions may need manual verification.
