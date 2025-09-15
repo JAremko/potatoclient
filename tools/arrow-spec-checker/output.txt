@@ -1,0 +1,115 @@
+Arrow Spec Checker
+==================
+
+Scanning /home/jare/git/potatoclient/tools/arrow-spec-checker/../../src for missing arrow specs...
+Excluding (relative to scan dir): potatoclient/init.clj, potatoclient/malli/init.clj, potatoclient/malli/oneof.clj, potatoclient/malli/registry.clj
+
+⚠ Found 73 functions without arrow specs:
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ipc/handlers.clj
+    63: create-handler
+    84: process-queue
+   125: create-processor-thread
+   181: create-composite-handler
+   219: create-filtering-handler
+   260: create-transforming-handler
+   313: create-logging-handler
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/logging.clj
+    28: get-log-dir
+    64: get-log-file-path
+    78: create-file-handler
+    86: cleanup-old-logs!
+   176: shutdown!
+   229: get-logs-directory
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/specs/state/root.clj
+    60: generate-sample-state
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/state.clj
+   110: register-state-specs!
+   139: ensure-specs-registered!
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/state/server/core.clj
+     9: initialized?
+    14: running?
+    51: start!
+    61: stop!
+    68: restart!
+    77: shutdown!
+    85: get-manager
+    91: get-connection-stats
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/state/server/ingress.clj
+    20: parse-state-message
+    29: proto->edn
+    54: handle-state-update
+    72: check-connection-health
+    87: calculate-backoff-delay
+    97: update-connection-stats!
+   124: connect-loop
+   197: create-manager
+   254: get-connection-stats
+   281: restart
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/state/server/throttle.clj
+     6: create-throttler
+    65: shutdown-throttler
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/state/server/websocket.clj
+    13: create-trust-all-ssl-context
+    25: create-websocket-listener
+    71: connect
+   109: close
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/streams/config.clj
+    92: is-release-build?
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/streams/events.clj
+   132: normalize-keys
+   148: normalize-message
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/streams/specs.clj
+   341: gesture-event-schema
+   362: window-event-schema
+   372: connection-event-schema
+   383: event-message-schema
+   397: log-message-schema
+   404: metric-message-schema
+   411: message-schema
+   426: validate-message
+   454: validate-and-log
+   508: register-specs!
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/theme.clj
+   109: clear-icon-cache!
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ui/bind_group.clj
+    11: bind-group
+    40: clean-group
+    66: clean-all-groups
+    78: list-groups
+    88: group-count
+   119: bind-group-property
+   133: bind-group-selection
+   146: bind-group-transform
+   165: replace-group
+   183: debug-groups
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ui/connection_monitor.clj
+    20: handle-disconnection!
+    37: monitor-loop
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ui/dialogs/connection_lost.clj
+    46: monitor-reconnection!
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ui/frames/connection/core.clj
+   149: get-ws-status-text
+   168: update-ws-status-ui!
+   185: handle-connection-success!
+   204: log-long-running-attempt
+   214: monitor-state-connection!
+
+/home/jare/git/potatoclient/tools/arrow-spec-checker/../../src/potatoclient/ui_specs.clj
+   187: register-ui-specs!
+

@@ -23,7 +23,9 @@
   [:map {:closed true}
    [:offset_value :range/normalized-offset]])
 
-(def halt-spec :cmd/empty)
+(def halt-spec
+  "Halt command spec - empty message to stop current operation"
+  :cmd/empty)
 
 ;; CLAHE-specific messages
 
@@ -52,6 +54,7 @@
 ;; Zoom-specific messages
 
 (def set-zoom-table-value-spec
+  "Specification for setting zoom table position using an integer index value"
   [:map {:closed true}
    [:value :proto/int32-positive]])
 
@@ -71,22 +74,27 @@
 ;; Simple command messages
 
 (def set-iris-spec
+  "Specification for iris aperture setting with normalized value [0.0, 1.0]"
   [:map {:closed true}
    [:value :range/normalized]])
 
 (def set-infra-red-filter-spec
+  "Specification for enabling/disabling the infrared filter"
   [:map {:closed true}
    [:value [:boolean]]])
 
 (def set-auto-iris-spec
+  "Specification for enabling/disabling automatic iris adjustment"
   [:map {:closed true}
    [:value [:boolean]]])
 
 (def set-fx-mode-spec
+  "Specification for setting the day camera effects mode (e.g., normal, B&W, inverted)"
   [:map {:closed true}
    [:mode :enum/fx-mode-day]])
 
 (def set-digital-zoom-level-spec
+  "Specification for setting digital zoom level [0.0, 3.0]"
   [:map {:closed true}
    [:value :range/digital-zoom]])
 
@@ -106,6 +114,9 @@
 
 ;; Main Day Camera Root command spec using oneof - all 20 commands (17 + 3 ROI)
 (def day-camera-command-spec
+  "Root specification for all day camera commands using protobuf oneof pattern.
+   Validates one of 20 possible command types including focus, zoom, iris control,
+   effects modes, ROI operations, and camera control (start/stop/photo)."
   [:oneof
    [:focus focus-spec]
    [:zoom zoom-spec]
