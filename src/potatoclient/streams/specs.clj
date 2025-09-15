@@ -13,12 +13,15 @@
 ;; ============================================================================
 
 (def StreamType
+  "Video stream type enumeration (thermal or daylight camera)."
   [:enum :heat :day])
 
 (def MessageType
+  "IPC message type categories for stream communication."
   [:enum :event :log :metric :command])
 
 (def LogLevel
+  "Log message severity levels from debug to error."
   [:enum :debug :info :warn :error])
 
 ;; ============================================================================
@@ -26,6 +29,7 @@
 ;; ============================================================================
 
 (def MessageEnvelope
+  "Common envelope fields for all IPC messages with type and timestamp."
   [:map {:closed true}
    [:msg-type MessageType]
    [:timestamp :int]])
@@ -35,6 +39,7 @@
 ;; ============================================================================
 
 (def WindowResizeEvent
+  "Window resize event with new dimensions and delta changes."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -46,6 +51,7 @@
    [:delta-y :int]])
 
 (def WindowMoveEvent
+  "Window move event with new position and delta changes."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -79,6 +85,7 @@
    [:frame-timestamp :int]])
 
 (def GestureTapEvent
+  "Tap or double-tap gesture event with pixel and NDC coordinates."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -92,6 +99,7 @@
    [:ndc-y :double]])
 
 (def GesturePanStartStopEvent
+  "Pan gesture start/stop event with position and NDC coordinates."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -105,6 +113,7 @@
    [:ndc-y :double]])
 
 (def GesturePanMoveEvent
+  "Pan gesture move event with position, deltas, and NDC coordinates."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -120,6 +129,7 @@
    [:ndc-y :double]])
 
 (def GestureWheelEvent
+  "Mouse wheel scroll event with position, amount, and NDC coordinates."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -135,6 +145,7 @@
 
 ;; For gestures without NDC coordinates (when component size unavailable)
 (def GestureTapEventNoNDC
+  "Tap gesture event without NDC coordinates (component size unavailable)."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -146,6 +157,7 @@
    [:frame-timestamp :int]])
 
 (def GesturePanStartStopEventNoNDC
+  "Pan start/stop event without NDC coordinates (component size unavailable)."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -157,6 +169,7 @@
    [:frame-timestamp :int]])
 
 (def GesturePanMoveEventNoNDC
+  "Pan move event without NDC coordinates (component size unavailable)."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -170,6 +183,7 @@
    [:delta-y :int]])
 
 (def GestureWheelEventNoNDC
+  "Wheel scroll event without NDC coordinates (component size unavailable)."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -186,6 +200,7 @@
 ;; ============================================================================
 
 (def ConnectionConnectedEvent
+  "Stream connection established event with URL and stream ID."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -196,6 +211,7 @@
               [:stream-id :string]]]])
 
 (def ConnectionDisconnectedEvent
+  "Stream connection disconnected event with optional code and reason."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -207,6 +223,7 @@
               [:stream-id :string]]]])
 
 (def ConnectionErrorEvent
+  "Stream connection error event with error message and stream ID."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -229,12 +246,14 @@
 ;; ============================================================================
 
 (def StreamStartedEvent
+  "Video stream started successfully event."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
    [:type [:= :stream-started]]])
 
 (def StreamStoppedEvent
+  "Video stream stopped event with reason."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -242,6 +261,7 @@
    [:reason :string]])
 
 (def StreamFailedEvent
+  "Video stream failed event with error message."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -249,6 +269,7 @@
    [:error :string]])
 
 (def StreamErrorEvent
+  "Generic stream error event with message and optional error code."
   [:map {:closed true}
    [:msg-type [:= :event]]
    [:timestamp :int]
@@ -261,6 +282,7 @@
 ;; ============================================================================
 
 (def LogMessage
+  "Log message from stream process with level and source process."
   [:map {:closed true}
    [:msg-type [:= :log]]
    [:timestamp :int]
@@ -269,6 +291,7 @@
    [:process :string]])
 
 (def LogMessageWithData
+  "Log message with additional structured data payload."
   [:map {:closed true}
    [:msg-type [:= :log]]
    [:timestamp :int]
@@ -282,6 +305,7 @@
 ;; ============================================================================
 
 (def MetricMessage
+  "Performance metric message with name, value, and source process."
   [:map {:closed true}
    [:msg-type [:= :metric]]
    [:timestamp :int]
@@ -290,6 +314,7 @@
    [:process :string]])
 
 (def MetricMessageWithTags
+  "Performance metric message with additional tag metadata."
   [:map {:closed true}
    [:msg-type [:= :metric]]
    [:timestamp :int]
@@ -303,6 +328,7 @@
 ;; ============================================================================
 
 (def CommandMessage
+  "Command message with flexible structure for various control actions."
   [:map {:closed false} ; Commands are flexible
    [:msg-type [:= :command]]
    [:timestamp :int]
@@ -443,7 +469,7 @@
 ;; ============================================================================
 
 (def stream-specs
-  "All stream-related specs for registry."
+  "Complete collection of stream IPC message specs for global registry."
   {:stream/type StreamType
    :stream/message-type MessageType
    :stream/log-level LogLevel

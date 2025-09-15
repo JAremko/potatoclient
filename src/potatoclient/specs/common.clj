@@ -17,6 +17,7 @@
 ;; Basic type specs
 ;; ====================================================================
 (def nat-int-spec
+  "Non-negative integer spec for natural numbers (0 or positive)."
   [:and :int [:>= 0]])
 
 (def bytes-spec
@@ -30,38 +31,47 @@
 ;; Azimuth: 0-360 degrees (compass heading)
 ;; All proto fields now use double
 (def azimuth-spec
+  "Azimuth angle in degrees [0.0, 360.0) representing compass heading."
   [:and [:double {:min 0.0 :max 360.0}]
    [:< 360.0]])
 
 (def elevation-spec
+  "Elevation angle in degrees [-90.0, 90.0] where negative is below horizon."
   [:double {:min -90.0 :max 90.0}])
 
 (def bank-spec
+  "Bank (roll) angle in degrees [-180.0, 180.0) for rotational orientation."
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 ;; Offset/Relative angle specs (for compass offsets and relative rotations)
 (def offset-azimuth-spec
+  "Azimuth offset in degrees [-180.0, 180.0) for compass adjustments."
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def offset-elevation-spec
+  "Elevation offset in degrees [-90.0, 90.0] for vertical adjustments."
   [:double {:min -90.0 :max 90.0}])
 
 (def relative-azimuth-spec
+  "Relative azimuth rotation in degrees [-180.0, 180.0) from current position."
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 (def relative-elevation-spec
+  "Relative elevation rotation in degrees [-90.0, 90.0] from current position."
   [:double {:min -90.0 :max 90.0}])
 
 (def magnetic-declination-spec
+  "Magnetic declination in degrees [-180.0, 180.0) for true/magnetic north conversion."
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 ;; Sun elevation spec - sun can be below horizon but proto incorrectly constrains to 0-360
 ;; We'll match proto's constraint even though it's semantically wrong
 (def sun-elevation-spec
+  "Sun elevation angle [0.0, 360.0) - proto constraint bug, should be [-90, 90]."
   [:and [:double {:min 0.0 :max 360.0}]
    [:< 360.0]])
 
@@ -82,6 +92,7 @@
 ;; Speed specs (normalized 0-1)
 ;; ====================================================================
 (def normalized-speed-spec
+  "Normalized speed value (0.0, 1.0] where 1.0 is maximum speed."
   [:and [:double {:min 0.0 :max 1.0}]
    [:> 0.0]])
 
@@ -93,16 +104,23 @@
 ;; Range values in proto (zoom_pos, focus_pos, iris_pos, clahe_level)
 
 (def normalized-range-spec
+  "Normalized range value [0.0, 1.0] for zoom, focus, iris positions."
   [:double {:min 0.0 :max 1.0}])
 
 (def normalized-offset-spec
+  "Normalized offset value [-1.0, 1.0] for relative adjustments."
   [:double {:min -1.0 :max 1.0}])
 
-(def zoom-level-spec normalized-range-spec)
-(def focus-level-spec normalized-range-spec)
+(def zoom-level-spec
+  "Zoom level position [0.0, 1.0] where 0 is wide, 1 is telephoto."
+  normalized-range-spec)
+(def focus-level-spec
+  "Focus level position [0.0, 1.0] where 0 is near, 1 is far."
+  normalized-range-spec)
 
 ;; Digital zoom spec (must be >= 1.0, with reasonable bounds)
 (def digital-zoom-spec
+  "Digital zoom multiplier [1.0, 100.0] where 1.0 is no zoom."
   [:double {:min 1.0 :max 100.0}])
 
 ;; Register range specs
@@ -117,15 +135,18 @@
 ;; ====================================================================
 ;; Latitude: double ∈ [-90, 90]
 (def latitude-spec
+  "GPS latitude in decimal degrees [-90.0, 90.0]."
   [:double {:min -90.0 :max 90.0}])
 
 ;; Longitude: double ∈ [-180, 180] (note: some proto fields use < 180)
 (def longitude-spec
+  "GPS longitude in decimal degrees [-180.0, 180.0)."
   [:and [:double {:min -180.0 :max 180.0}]
    [:< 180.0]])
 
 ;; Altitude: double ∈ [-430, 100000] Kármán line (Dead Sea shore to edge of space)
 (def altitude-spec
+  "GPS altitude in meters [-430, 100000] from Dead Sea to Kármán line."
   [:double {:min -430.0 :max 100000.0}])
 
 ;; Register position specs
@@ -136,6 +157,7 @@
 ;; Temperature specs
 ;; Temperature specs
 (def component-temperature-spec
+  "Component temperature in Celsius [-273.15, 150.0]."
   [:double {:min -273.15 :max 150.0}])
 
 ;; Register temperature specs
@@ -143,6 +165,7 @@
 
 ;; Distance specs
 (def distance-decimeters-spec
+  "Distance measurement in decimeters [0.0, 50000.0]."
   [:double {:min 0.0 :max 50000.0}])
 
 ;; Register distance specs
@@ -150,6 +173,7 @@
 
 ;; Screen coordinate specs (NDC - Normalized Device Coordinates)
 (def ndc-coord-clamped-spec
+  "Normalized Device Coordinate [-1.0, 1.0] for screen positioning."
   [:double {:min -1.0 :max 1.0}])
 
 ;; Register NDC specs
@@ -158,13 +182,16 @@
 
 ;; Pixel coordinate specs
 (def pixel-coord-spec
+  "Screen pixel coordinate [0, ∞) for absolute positioning."
   [:int {:min 0}])
 
 ;; Pixel offset specs (for LRF alignment)
 (def pixel-offset-x-spec
+  "Horizontal pixel offset [-1920, 1920] for LRF alignment adjustments."
   [:int {:min -1920 :max 1920}])
 
 (def pixel-offset-y-spec
+  "Vertical pixel offset [-1080, 1080] for LRF alignment adjustments."
   [:int {:min -1080 :max 1080}])
 
 ;; Register pixel specs
@@ -178,14 +205,17 @@
 ;; uint32: 0 to 4294967295 in protobuf, but in Java it's stored as signed int
 ;;         so we need to limit to int32 max to avoid overflow
 (def int32-spec
+  "32-bit signed integer [-2147483648, 2147483647] for protobuf compatibility."
   [:int {:min -2147483648 :max 2147483647}])
 
 (def uint32-spec
-  ;; Even though protobuf uint32 can be 0 to 4294967295,
-  ;; in Java it's represented as signed int, so max is 2147483647
+  "32-bit unsigned integer [0, 2147483647] limited by Java's signed int representation.
+  Even though protobuf uint32 can be 0 to 4294967295,
+  in Java it's represented as signed int, so max is 2147483647."
   [:int {:min 0 :max 2147483647}])
 
 (def int32-positive-spec
+  "Positive 32-bit integer [0, 2147483647] for non-negative values."
   [:int {:min 0 :max 2147483647}])
 
 ;; Double type spec for protobuf compatibility
@@ -195,22 +225,27 @@
 
 ;; Protocol and session specs
 (def protocol-version-spec
+  "Protocol version number > 0 for versioning communication protocol."
   ;; uint32 with gt: 0 constraint (must be > 0)
   [:and :proto/uint32 [:> 0]])
 
 (def session-id-spec
+  "Session identifier [0, 2147483647] for tracking client connections."
   ;; uint32 with no additional constraints (can be 0)
   :proto/uint32)
 
 ;; Time specs
 (def unix-timestamp-spec
+  "Unix timestamp in seconds since epoch [0, 2147483647]."
   [:int {:min 0 :max 2147483647}])
 
 (def unix-timestamp-int64-spec
+  "Unix timestamp in milliseconds since epoch [0, 9223372036854775807]."
   ;; int64 timestamp (milliseconds since epoch)
   [:int {:min 0 :max long-max-value}])
 
 (def frame-time-spec
+  "Video frame timestamp in nanoseconds/microseconds [0, 9223372036854775807]."
   ;; uint64 frame time in nanoseconds/microseconds
   [:int {:min 0 :max long-max-value}])
 
@@ -233,6 +268,7 @@
 ;; Percentage specs
 ;; Percentage specs (cpu_load, gpu_load, etc.)
 (def percentage-spec
+  "Percentage value [0.0, 100.0] for CPU/GPU load metrics."
   [:double {:min 0.0 :max 100.0}])
 
 ;; Register percentage spec
@@ -244,6 +280,7 @@
 
 ;; Client Type (Cannot be UNSPECIFIED per buf.validate)
 (def client-type-enum-spec
+  "Client connection type enumeration (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
    :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
@@ -252,6 +289,7 @@
 
 ;; GPS Fix Type (Cannot be UNSPECIFIED per buf.validate)
 (def gps-fix-type-enum-spec
+  "GPS fix quality enumeration from no fix to 3D fix (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_GPS_FIX_TYPE_NONE
    :JON_GUI_DATA_GPS_FIX_TYPE_1D
@@ -261,12 +299,14 @@
 
 ;; Rotary Direction (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-direction-enum-spec
+  "Rotary turret rotation direction (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_ROTARY_DIRECTION_CLOCKWISE
    :JON_GUI_DATA_ROTARY_DIRECTION_COUNTER_CLOCKWISE])
 
 ;; Rotary Mode (Cannot be UNSPECIFIED per buf.validate)
 (def rotary-mode-enum-spec
+  "Rotary turret operational mode (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_ROTARY_MODE_INITIALIZATION
    :JON_GUI_DATA_ROTARY_MODE_SPEED
@@ -277,11 +317,13 @@
 
 ;; Video Channel (Cannot be UNSPECIFIED per buf.validate)
 (def video-channel-enum-spec
+  "Video channel selection for thermal or daylight camera (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT
    :JON_GUI_DATA_VIDEO_CHANNEL_DAY])
 
 (def fx-mode-day-enum-spec
+  "Day camera effects mode A-F (DEFAULT not allowed by buf.validate)."
   [:enum
    ;; Note: DEFAULT is not allowed by buf.validate (not_in: [0])
    :JON_GUI_DATA_FX_MODE_DAY_A
@@ -292,6 +334,7 @@
    :JON_GUI_DATA_FX_MODE_DAY_F])
 
 (def fx-mode-heat-enum-spec
+  "Heat camera effects mode A-F (DEFAULT not allowed by buf.validate)."
   [:enum
    ;; Note: DEFAULT is not allowed by buf.validate (not_in: [0])
    :JON_GUI_DATA_FX_MODE_HEAT_A
@@ -303,6 +346,7 @@
 
 ;; Heat Camera Filter enum (thermal visualization modes)
 (def heat-filter-enum-spec
+  "Thermal camera visualization modes (hot white/black, sepia variants)."
   [:enum
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_WHITE
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_FILTER_HOT_BLACK
@@ -311,12 +355,14 @@
 
 ;; Heat Camera AGC Mode enum
 (def heat-agc-mode-enum-spec
+  "Heat camera automatic gain control modes 1-3."
   [:enum
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_1
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_2
    :JON_GUI_DATA_VIDEO_CHANNEL_HEAT_AGC_MODE_3])
 
 (def lrf-scan-modes-enum-spec
+  "Laser rangefinder continuous scan rates from 1Hz to 200Hz."
   [:enum
    :JON_GUI_DATA_LRF_SCAN_MODE_1_HZ_CONTINUOUS
    :JON_GUI_DATA_LRF_SCAN_MODE_4_HZ_CONTINUOUS
@@ -326,6 +372,7 @@
    :JON_GUI_DATA_LRF_SCAN_MODE_200_HZ_CONTINUOUS])
 
 (def compass-calibrate-status-enum-spec
+  "Compass calibration status from idle to finished/error."
   [:enum
    :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_NOT_CALIBRATING
    :JON_GUI_DATA_COMPASS_CALIBRATE_STATUS_CALIBRATING_SHORT
@@ -335,6 +382,7 @@
 
 ;; System Localizations enum (Cannot be UNSPECIFIED per buf.validate)
 (def system-localizations-enum-spec
+  "System language localization options (EN, UA, AR, CS) - cannot be UNSPECIFIED."
   [:enum
    :JON_GUI_DATA_SYSTEM_LOCALIZATION_EN
    :JON_GUI_DATA_SYSTEM_LOCALIZATION_UA
@@ -343,6 +391,7 @@
 
 ;; GPS Units enum
 (def gps-units-enum-spec
+  "GPS coordinate display format (decimal degrees, DMS, DDM)."
   [:enum
    :JON_GUI_DATA_GPS_UNITS_UNSPECIFIED
    :JON_GUI_DATA_GPS_UNITS_DECIMAL_DEGREES
@@ -351,6 +400,7 @@
 
 ;; Compass Units enum
 (def compass-units-enum-spec
+  "Compass angle display units (degrees, mils, grad, mrad)."
   [:enum
    :JON_GUI_DATA_COMPASS_UNITS_UNSPECIFIED
    :JON_GUI_DATA_COMPASS_UNITS_DEGREES
@@ -360,6 +410,7 @@
 
 ;; Accumulator State enum
 (def accumulator-state-enum-spec
+  "Battery charge state from empty to full with 6 intermediate levels."
   [:enum
    :JON_GUI_DATA_ACCUMULATOR_STATE_UNSPECIFIED
    :JON_GUI_DATA_ACCUMULATOR_STATE_UNKNOWN
@@ -375,6 +426,7 @@
 
 ;; Time Formats enum
 (def time-formats-enum-spec
+  "Time display format (HMS or full date-time)."
   [:enum
    :JON_GUI_DATA_TIME_FORMAT_UNSPECIFIED
    :JON_GUI_DATA_TIME_FORMAT_H_M_S
@@ -382,6 +434,7 @@
 
 ;; LRF Laser Pointer Modes enum
 (def lrf-laser-pointer-modes-enum-spec
+  "Laser rangefinder pointer modes (off, on mode 1, on mode 2)."
   [:enum
    :JON_GUI_DATA_LRF_LASER_POINTER_MODE_UNSPECIFIED
    :JON_GUI_DATA_LRF_LASER_POINTER_MODE_OFF
@@ -390,6 +443,7 @@
 
 ;; REC OSD Screen enum (Cannot be UNSPECIFIED per buf.validate)
 (def rec-osd-screen-enum-spec
+  "Recording OSD screen type for display overlay (cannot be UNSPECIFIED)."
   [:enum
    :JON_GUI_DATA_REC_OSD_SCREEN_MAIN
    :JON_GUI_DATA_REC_OSD_SCREEN_LRF_MEASURE
@@ -421,23 +475,27 @@
 ;; Composite specs (CLOSED MAPS - catch typos and invalid keys)
 ;; ====================================================================
 (def gps-position-spec
+  "GPS position with latitude, longitude, and altitude components."
   [:map {:closed true}
    [:latitude :position/latitude]
    [:longitude :position/longitude]
    [:altitude :position/altitude]])
 
 (def compass-orientation-spec
+  "3D orientation with azimuth, elevation, and bank angles."
   [:map {:closed true}
    [:azimuth :angle/azimuth]
    [:elevation :angle/elevation]
    [:bank :angle/bank]])
 
 (def screen-point-ndc-spec
+  "Screen point in Normalized Device Coordinates [-1, 1]."
   [:map {:closed true}
    [:x :screen/ndc-x]
    [:y :screen/ndc-y]])
 
 (def screen-point-pixel-spec
+  "Screen point in pixel coordinates [0, ∞)."
   [:map {:closed true}
    [:x :screen/pixel-x]
    [:y :screen/pixel-y]])
