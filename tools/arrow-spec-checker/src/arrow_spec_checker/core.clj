@@ -37,7 +37,9 @@
   (let [relative-path (get-relative-path base-dir file-path)
         ;; Normalize path separators to forward slashes for consistency
         normalized-path (str/replace relative-path "\\" "/")]
-    (contains? excluded-paths normalized-path)))
+    (or (contains? excluded-paths normalized-path)
+        ;; Exclude all files in specs directory
+        (str/starts-with? normalized-path "potatoclient/specs/"))))
 
 (defn find-clojure-files
   "Recursively find all .clj files in directory, excluding those in the exclusion list."
@@ -198,7 +200,7 @@
         :else
         (do
           (println (format "Scanning %s for missing arrow specs..." dir-path))
-          (println (format "Excluding (relative to scan dir): %s" (str/join ", " (sort excluded-paths))))
+          (println (format "Excluding: %s, potatoclient/specs/**" (str/join ", " (sort excluded-paths))))
           (let [missing (find-missing-specs dir-path)]
             (format-output missing)
             ;; Exit with non-zero if missing specs found
