@@ -158,32 +158,70 @@ CLJ-Kondo configurations for static analysis are **automatically generated** by 
 
 ## Important: Use Specialized Agents
 
+**ALWAYS use these agents proactively when appropriate:**
+
+### Spec Checker Agent
+**ALWAYS use after adding or modifying functions** to ensure arrow specs are defined:
+```
+Task: spec-checker agent
+Prompt: "Check for missing arrow specs in src/"
+```
+- Run automatically after adding new `defn` or `defn-` functions
+- Essential for `malli.dev/start!` instrumentation to work properly
+- Arrow specs enable runtime validation, metadata schemas do not
+- **ALL functions must have tight, precise specs** - no `:any` or overly permissive specs
+- **Reuse and extend shared specs** from [`specs/common.clj`](src/potatoclient/specs/common.clj):
+  - Domain specs: `:angle/*`, `:position/*`, `:screen/*`, `:time/*`, etc.
+  - Proto specs: `:proto/*`, `:enum/*` matching protobuf constraints
+  - Composite specs: `:composite/*` for common data structures
+- **Register reusable specs** in the global registry via `registry/register-spec!`
+
 ### Test Runner Analyzer Agent
-Use for running tests and getting detailed failure reports:
+**ALWAYS use after code changes** to verify nothing is broken:
 ```
 Task: test-runner-analyzer agent
 Prompt: "Run tests in /home/jare/git/potatoclient using command: make test"
 ```
+- Run after any code modifications
+- Run before committing changes
+- Never disable failing tests - fix the code
 
 ### I18n Checker Agent
-Use for translation validation and stub generation:
+**ALWAYS use after adding UI text** to ensure translations are complete:
 ```
 Task: i18n-checker agent
 Prompt: "Check translation completeness"
 ```
+- Run after adding any new `i18n/tr` calls
+- Run when adding new UI components with text
+- Generate stubs for missing translations
 
 ## Core Technologies
 
 ### Malli Schema System
-**ALL functions MUST have `:malli/schema` metadata**
+**ALL functions MUST have arrow specs (m/=>) for instrumentation**
 
 ```clojure
+;; PREFERRED - Arrow spec (auto-discovered by malli.dev/start!)
+(defn process-command
+  "Process a command and return result"
+  [cmd]
+  ...)
+(m/=> process-command [:=> [:cat :cmd/root] [:map [:status :keyword]]])
+
+;; LEGACY - Metadata schema (NOT auto-discovered, migrate to arrow specs)
 (defn process-command
   "Process a command and return result"
   {:malli/schema [:=> [:cat :cmd/root] [:map [:status :keyword]]]}
   [cmd]
   ...)
 ```
+
+**Spec Requirements:**
+- Use **tight, precise specs** - avoid `:any`, `:map`, or overly permissive schemas
+- **Reuse shared specs** from `specs/common.clj` - don't reinvent domain concepts
+- **Extend existing specs** when adding constraints - use `[:and base-spec constraint]`
+- **Register reusable specs** in the global registry for consistency
 
 **Registry Management:**
 - Centralized initialization via `potatoclient.init/ensure-registry!`
@@ -454,10 +492,26 @@ Futures in Clojure swallow exceptions by default, which can hide critical errors
 ### When Adding Features
 
 1. **Define Malli specs first** - Data contracts before implementation
-2. **Add to registry if reusable** - Don't duplicate specs
-3. **Update status bar** - User feedback for all actions
-4. **Write tests immediately** - Not after "it works"
-5. **Check i18n completeness** - Run i18n-checker for new UI text
+2. **Add arrow specs to all functions** - Use `spec-checker` agent to verify
+3. **Add to registry if reusable** - Don't duplicate specs
+4. **Update status bar** - User feedback for all actions
+5. **Write tests immediately** - Use `test-runner-analyzer` agent to verify
+6. **Check i18n completeness** - Use `i18n-checker` agent for new UI text
+
+**Automated Verification Workflow:**
+```bash
+# After adding/modifying functions:
+Task: spec-checker agent
+Prompt: "Check for missing arrow specs"
+
+# After completing implementation:
+Task: test-runner-analyzer agent  
+Prompt: "Run all tests"
+
+# After adding UI text:
+Task: i18n-checker agent
+Prompt: "Check translation completeness"
+```
 
 ### Development Workflow
 

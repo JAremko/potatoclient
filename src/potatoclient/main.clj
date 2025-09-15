@@ -18,6 +18,7 @@
             [potatoclient.ui.frames.connection.core :as connection-frame]
             [potatoclient.ui.main-frame :as main-frame]
             [potatoclient.ui.status-bar.messages :as status-bar]
+            [potatoclient.ui.connection-monitor :as connection-monitor]
             [seesaw.core :as seesaw])
   (:gen-class))
 
@@ -113,15 +114,31 @@
               _ (state/cleanup-seesaw-bindings!)
               params {:version (get-version)
                       :build-type (get-build-type)}
-              frame (main-frame/create-main-frame params)]
+              frame (main-frame/create-main-frame params)
+              ;; Define callback to return to initial menu
+              return-to-initial (fn []
+                                  (logging/log-info {:msg "Returning to initial menu from main frame"})
+                                  ;; Stop monitoring
+                                  (connection-monitor/stop-monitoring!)
+                                  ;; Stop state server
+                                  (when (state-server/initialized?)
+                                    (state-server/shutdown!))
+                                  ;; Clean up and dispose frame
+                                  (state/cleanup-seesaw-bindings!)
+                                  (seesaw/dispose! frame)
+                                  ;; Show initial frame again
+                                  (seesaw/invoke-later
+                                   (show-initial-frame-recursive)))]
           (seesaw/show! frame)
           (log-startup!)
+          ;; Start monitoring for connection loss
+          (connection-monitor/start-monitoring! frame return-to-initial)
           ;; Set initial UI state from config
           (when-let [saved-theme (:theme (config/load-config))]
             (state/set-theme! saved-theme))
           (when-let [saved-locale (:locale (config/load-config))]
             (state/set-locale! saved-locale))
-          (logging/log-info {:msg "Application initialized with state ingress"
+          (logging/log-info {:msg "Application initialized with state ingress and monitoring"
                              :domain domain}))
 
         :cancel

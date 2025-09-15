@@ -196,4 +196,14 @@
  :error-dialog-title "Деталі помилки"
  :error-dialog-copy "Копіювати в буфер"
  :error-dialog-close "Закрити"
- :error-dialog-copied "Деталі помилки скопійовано в буфер"}
+ :error-dialog-copied "Деталі помилки скопійовано в буфер"
+ 
+ ;; Connection lost dialog
+ :connection-lost-title "З'єднання втрачено"
+ :connection-lost-message "Втрачено з'єднання з сервером стану"
+ :connection-lost-description "Додаток спробує перепідключитися автоматично"
+ :connection-lost-reconnecting "Спроба перепідключення..."
+ :connection-lost-reconnecting-attempts "Перепідключення (спроба {1})..."
+ :connection-lost-reconnected "З'єднання відновлено!"
+ :connection-lost-disconnected "Від'єднано"
+ :connection-lost-cancel "Скасувати та повернутися до меню"}

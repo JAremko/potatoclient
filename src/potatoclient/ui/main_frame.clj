@@ -42,7 +42,15 @@
                    (logging/log-info {:msg "Shutting down PotatoClient..."})
                    (future
                      (try
-                       ;; Stop state ingress first to prevent new messages
+                       ;; Stop connection monitoring first
+                       (when (resolve 'potatoclient.ui.connection-monitor/stop-monitoring!)
+                         (try
+                           ((resolve 'potatoclient.ui.connection-monitor/stop-monitoring!))
+                           (logging/log-debug {:msg "Stopped connection monitor"})
+                           (catch Exception e
+                             (logging/log-error {:msg (str "Error stopping connection monitor: " (.getMessage e))}))))
+                       
+                       ;; Stop state ingress to prevent new messages
                        (when (resolve 'potatoclient.state.server.core/shutdown!)
                          (try
                            ((resolve 'potatoclient.state.server.core/shutdown!))

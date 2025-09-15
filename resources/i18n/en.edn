@@ -196,4 +196,14 @@
  :error-dialog-title "Error Details"
  :error-dialog-copy "Copy to Clipboard"
  :error-dialog-close "Close"
- :error-dialog-copied "Error details copied to clipboard"}
+ :error-dialog-copied "Error details copied to clipboard"
+ 
+ ;; Connection lost dialog
+ :connection-lost-title "Connection Lost"
+ :connection-lost-message "Lost connection to the state server"
+ :connection-lost-description "The application will attempt to reconnect automatically"
+ :connection-lost-reconnecting "Attempting to reconnect..."
+ :connection-lost-reconnecting-attempts "Reconnecting (attempt {1})..."
+ :connection-lost-reconnected "Connection restored!"
+ :connection-lost-disconnected "Disconnected"
+ :connection-lost-cancel "Cancel and Return to Menu"}

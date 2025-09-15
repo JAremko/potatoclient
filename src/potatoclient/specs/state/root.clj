@@ -8,7 +8,7 @@
     [clojure.test.check.generators :as gen]
     [potatoclient.malli.registry :as registry]
    ;; Import common specs (includes meteo)
-    [potatoclient.specs.common]
+    [potatoclient.specs.common :refer [long-max-value]]
    ;; Import all state specs
     [potatoclient.specs.state.system]
     [potatoclient.specs.state.lrf]
@@ -30,7 +30,7 @@
    ;; protocol_version: uint32 with constraint gt: 0
    [:protocol_version [:and :proto/uint32 [:> 0]]]
    ;; system_monotonic_time_us: uint64 with constraint gte: 0
-   [:system_monotonic_time_us [:int {:min 0 :max potatoclient.specs.common/long-max-value}]]
+   [:system_monotonic_time_us [:int {:min 0 :max long-max-value}]]
    ;; All subsystem state messages - all are required per buf.validate
    [:system :state/system]
    [:meteo_internal :common/meteo]
