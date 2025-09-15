@@ -97,14 +97,14 @@
 ;; Test-specific Initialization
 ;; ============================================================================
 
-(def ^:private ^:dynamic *testing-context*
-  "Dynamic var to indicate if we're in test mode"
-  false)
+(def ^:private testing-context-atom
+  "Atom to indicate if we're in test mode"
+  (atom false))
 
 (defn testing-context?
   "Check if we're running in test mode"
   []
-  *testing-context*)
+  @testing-context-atom)
 
 (m/=> testing-context? [:=> [:cat] :boolean])
 
@@ -113,10 +113,10 @@
    
    This includes all normal initialization plus test-specific setup."
   []
-  (binding [*testing-context* true]
-    (initialize!)
-    ;; Additional test-specific initialization can go here
-    (logging/log-info "Test environment initialized"))
+  (reset! testing-context-atom true)
+  (initialize!)
+  ;; Additional test-specific initialization can go here
+  (logging/log-info "Test environment initialized")
   nil)
 (m/=> initialize-for-tests! [:=> [:cat] :nil])
 
