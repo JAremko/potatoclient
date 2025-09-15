@@ -111,7 +111,10 @@
 (defn clear-icon-cache!
   "Clear the icon cache. Useful when changing themes."
   []
-  (reset! icon-cache {}))
+  (reset! icon-cache {})
+  nil)
+
+(m/=> clear-icon-cache! [:=> [:cat] :nil])
 
 (declare key->icon)
 

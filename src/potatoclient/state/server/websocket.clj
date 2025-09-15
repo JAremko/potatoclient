@@ -1,7 +1,8 @@
 (ns potatoclient.state.server.websocket
   "WebSocket client for state ingress from /ws/ws_state endpoint.
    Handles connection, reconnection, and message reception."
-  (:require [potatoclient.logging :as logging])
+  (:require [potatoclient.logging :as logging]
+            [malli.core :as m])
   (:import [java.net URI]
            [java.net.http HttpClient WebSocket WebSocket$Listener]
            [java.nio ByteBuffer]
@@ -21,6 +22,8 @@
         ssl-context (SSLContext/getInstance "TLS")]
     (.init ssl-context nil (into-array TrustManager [trust-manager]) nil)
     ssl-context))
+
+(m/=> create-trust-all-ssl-context [:=> [:cat] any?])
 
 (defn- create-websocket-listener
   "Create a WebSocket listener with message handling."
@@ -68,6 +71,8 @@
       (logging/log-error {:msg "WebSocket error" :error error})
       (on-error error))))
 
+(m/=> create-websocket-listener [:=> [:cat any? fn? fn? fn? fn?] any?])
+
 (defn connect
   "Connect to WebSocket endpoint with automatic binary message handling.
    
@@ -106,12 +111,22 @@
     {:client client
      :ws ws}))
 
+(m/=> connect [:=> [:cat [:map {:closed false}
+                          [:url :string]
+                          [:on-message fn?]
+                          [:on-connect {:optional true} fn?]
+                          [:on-close {:optional true} fn?]
+                          [:on-error {:optional true} fn?]]]
+               [:map [:client any?] [:ws any?]]])
+
 (defn close
   "Close WebSocket connection."
   [{:keys [ws]}]
   (when ws
     (.sendClose ws WebSocket/NORMAL_CLOSURE "Client closing")
     (.join (.abort ws))))
+
+(m/=> close [:=> [:cat [:map [:ws any?]]] :nil])
 
 (defn connected?
   "Check if WebSocket is connected."

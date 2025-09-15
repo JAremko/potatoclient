@@ -1,7 +1,7 @@
 (ns potatoclient.streams.events
   "Event handling for stream IPC messages."
   (:require
-            [malli.core :as m]
+    [malli.core :as m]
     [potatoclient.logging :as logging]
     [potatoclient.streams.state :as state]
     [potatoclient.streams.specs :as specs]
@@ -139,11 +139,13 @@
                  [(if (string? k) (keyword k) k)
                   (normalize-keys v)])
                m))
-    
+
     (sequential? m)
     (mapv normalize-keys m)
-    
+
     :else m))
+
+(m/=> normalize-keys [:=> [:cat :any] :any])
 
 (defn- normalize-message
   "Normalize message structure to handle both string and keyword keys."
@@ -152,6 +154,8 @@
   (if-let [details (:details message)]
     (assoc message :details (normalize-keys details))
     message))
+
+(m/=> normalize-message [:=> [:cat :map] :map])
 
 ;; ============================================================================
 ;; Message Router
@@ -187,5 +191,5 @@
         (logging/log-warn {:id :stream/unknown-message
                            :stream stream-type
                            :message message}))))
-  nil) 
- (m/=> handle-message [:=> [:cat :keyword :map] :nil])
+  nil)
+(m/=> handle-message [:=> [:cat :keyword :map] :nil])

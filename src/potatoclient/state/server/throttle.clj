@@ -1,6 +1,7 @@
 (ns potatoclient.state.server.throttle
   "State update throttling to limit update frequency.
    Ensures state updates don't overwhelm the UI."
+  (:require [malli.core :as m])
   (:import [java.util.concurrent Executors ScheduledExecutorService TimeUnit]))
 
 (defn create-throttler
@@ -62,8 +63,12 @@
          (catch InterruptedException _
            (.shutdownNow executor))))}))
 
+(m/=> create-throttler [:=> [:cat [:map {:closed false} [:interval-ms {:optional true} :pos-int] [:on-drop {:optional true} fn?]]] [:map [:submit fn?] [:shutdown fn?]]])
+
 (defn shutdown-throttler
   "Shutdown a throttler, canceling any pending executions."
   [throttler]
   (when-let [shutdown (:shutdown throttler)]
     (shutdown)))
+
+(m/=> shutdown-throttler [:=> [:cat [:map [:shutdown fn?]]] :nil])

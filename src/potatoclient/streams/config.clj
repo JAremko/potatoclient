@@ -94,6 +94,8 @@
   []
   (not (nil? (io/resource "RELEASE"))))
 
+(m/=> is-release-build? [:=> [:cat] :boolean])
+
 (defn get-classpath
   "Get classpath for VideoStreamManager"
   []

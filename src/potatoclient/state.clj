@@ -127,6 +127,8 @@
   ;; Complete app state
   (registry/register-spec! ::app-state app-state-spec))
 
+(m/=> register-state-specs! [:=> [:cat] :nil])
+
 ;; Specs will be registered after ui-specs are loaded
 ;; This is handled by ensure-specs-registered! below
 
@@ -142,6 +144,8 @@
   (when-not @specs-registered?
     (register-state-specs!)
     (reset! specs-registered? true)))
+
+(m/=> ensure-specs-registered! [:=> [:cat] :nil])
 
 ;; ============================================================================
 ;; State Atom
@@ -184,26 +188,26 @@
 (defn get-connection-url
   "Get current connection URL."
   []
-  (get-in @app-state [:connection :url])) 
- (m/=> get-connection-url [:=> [:cat] [:maybe :string]])
+  (get-in @app-state [:connection :url]))
+(m/=> get-connection-url [:=> [:cat] [:maybe :string]])
 
 (defn set-connection-url!
   "Set connection URL."
   [url]
-  (swap! app-state assoc-in [:connection :url] url)) 
- (m/=> set-connection-url! [:=> [:cat :string] :map])
+  (swap! app-state assoc-in [:connection :url] url))
+(m/=> set-connection-url! [:=> [:cat :string] :map])
 
 (defn connected?
   "Check if connected to server."
   []
-  (get-in @app-state [:connection :connected?] false)) 
- (m/=> connected? [:=> [:cat] :boolean])
+  (get-in @app-state [:connection :connected?] false))
+(m/=> connected? [:=> [:cat] :boolean])
 
 (defn set-connected!
   "Set connection status."
   [connected?]
-  (swap! app-state assoc-in [:connection :connected?] connected?)) 
- (m/=> set-connected! [:=> [:cat :boolean] :map])
+  (swap! app-state assoc-in [:connection :connected?] connected?))
+(m/=> set-connected! [:=> [:cat :boolean] :map])
 
 (defn get-domain
   "Get current domain from connection URL."
@@ -215,8 +219,8 @@
         (or host "localhost"))
       (catch Exception _
         "localhost"))
-    "localhost")) 
- (m/=> get-domain [:=> [:cat] :string])
+    "localhost"))
+(m/=> get-domain [:=> [:cat] :string])
 
 ;; ============================================================================
 ;; UI Configuration
@@ -225,8 +229,8 @@
 (defn get-locale
   "Get current locale."
   []
-  (get-in @app-state [:ui :locale] :english)) 
- (m/=> get-locale [:=> [:cat] [:enum :english :ukrainian]])
+  (get-in @app-state [:ui :locale] :english))
+(m/=> get-locale [:=> [:cat] [:enum :english :ukrainian]])
 
 (defn set-locale!
   "Set current locale and update Java default."
@@ -236,32 +240,32 @@
         [lang country] (get locale-map locale ["en" "US"])]
     (Locale/setDefault
       (Locale/forLanguageTag (str lang "-" country)))
-    (swap! app-state assoc-in [:ui :locale] locale))) 
- (m/=> set-locale! [:=> [:cat [:enum :english :ukrainian]] :map])
+    (swap! app-state assoc-in [:ui :locale] locale)))
+(m/=> set-locale! [:=> [:cat [:enum :english :ukrainian]] :map])
 
 (defn get-theme
   "Get current theme."
   []
-  (get-in @app-state [:ui :theme] :sol-dark)) 
- (m/=> get-theme [:=> [:cat] :keyword])
+  (get-in @app-state [:ui :theme] :sol-dark))
+(m/=> get-theme [:=> [:cat] :keyword])
 
 (defn set-theme!
   "Set UI theme."
   [theme]
-  (swap! app-state assoc-in [:ui :theme] theme)) 
- (m/=> set-theme! [:=> [:cat :keyword] :map])
+  (swap! app-state assoc-in [:ui :theme] theme))
+(m/=> set-theme! [:=> [:cat :keyword] :map])
 
 (defn fullscreen?
   "Check if in fullscreen mode."
   []
-  (get-in @app-state [:ui :fullscreen] false)) 
- (m/=> fullscreen? [:=> [:cat] :boolean])
+  (get-in @app-state [:ui :fullscreen] false))
+(m/=> fullscreen? [:=> [:cat] :boolean])
 
 (defn set-fullscreen!
   "Set fullscreen mode."
   [fullscreen?]
-  (swap! app-state assoc-in [:ui :fullscreen] fullscreen?)) 
- (m/=> set-fullscreen! [:=> [:cat :boolean] :map])
+  (swap! app-state assoc-in [:ui :fullscreen] fullscreen?))
+(m/=> set-fullscreen! [:=> [:cat :boolean] :map])
 
 ;; ============================================================================
 ;; Session Management
@@ -270,22 +274,22 @@
 (defn get-session
   "Get current session info."
   []
-  (get @app-state :session {})) 
- (m/=> get-session [:=> [:cat] :map])
+  (get @app-state :session {}))
+(m/=> get-session [:=> [:cat] :map])
 
 (defn start-session!
   "Start a new session."
   [user]
   (swap! app-state assoc :session {:user user
-                                   :started-at (System/currentTimeMillis)})) 
- (m/=> start-session! [:=> [:cat [:maybe :string]] :map])
+                                   :started-at (System/currentTimeMillis)}))
+(m/=> start-session! [:=> [:cat [:maybe :string]] :map])
 
 (defn end-session!
   "End current session."
   []
   (swap! app-state assoc :session {:user nil
-                                   :started-at nil})) 
- (m/=> end-session! [:=> [:cat] :map])
+                                   :started-at nil}))
+(m/=> end-session! [:=> [:cat] :map])
 
 ;; ============================================================================
 ;; Process Management
@@ -294,21 +298,21 @@
 (defn get-process-state
   "Get state of a specific process."
   [process-key]
-  (get-in @app-state [:processes process-key])) 
- (m/=> get-process-state [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] [:maybe :map]])
+  (get-in @app-state [:processes process-key]))
+(m/=> get-process-state [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] [:maybe :map]])
 
 (defn process-running?
   "Check if a process is running."
   [process-key]
-  (= :running (get-in @app-state [:processes process-key :status]))) 
- (m/=> process-running? [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] :boolean])
+  (= :running (get-in @app-state [:processes process-key :status])))
+(m/=> process-running? [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video]] :boolean])
 
 (defn update-process-status!
   "Update process status."
   [process-key pid status]
   (swap! app-state assoc-in [:processes process-key]
-         {:pid pid :status status})) 
- (m/=> update-process-status! [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :starting :running :stopping :stopped :error]] :map])
+         {:pid pid :status status}))
+(m/=> update-process-status! [:=> [:cat [:enum :state-proc :cmd-proc :heat-video :day-video] [:maybe :pos-int] [:enum :starting :running :stopping :stopped :error]] :map])
 
 ;; ============================================================================
 ;; Stream Process Management
@@ -320,8 +324,8 @@
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
-    (swap! app-state assoc-in [:stream-processes process-key] process-map))) 
- (m/=> add-stream-process! [:=> [:cat [:enum :heat :day] :map] :map])
+    (swap! app-state assoc-in [:stream-processes process-key] process-map)))
+(m/=> add-stream-process! [:=> [:cat [:enum :heat :day] :map] :map])
 
 (defn get-stream-process
   "Get stream process info."
@@ -329,8 +333,8 @@
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
-    (get-in @app-state [:stream-processes process-key]))) 
- (m/=> get-stream-process [:=> [:cat [:enum :heat :day]] [:maybe :map]])
+    (get-in @app-state [:stream-processes process-key])))
+(m/=> get-stream-process [:=> [:cat [:enum :heat :day]] [:maybe :map]])
 
 (defn remove-stream-process!
   "Remove stream process."
@@ -338,14 +342,14 @@
   (let [process-key (case stream-type
                       :heat :heat-video
                       :day :day-video)]
-    (swap! app-state update :stream-processes dissoc process-key))) 
- (m/=> remove-stream-process! [:=> [:cat [:enum :heat :day]] :map])
+    (swap! app-state update :stream-processes dissoc process-key)))
+(m/=> remove-stream-process! [:=> [:cat [:enum :heat :day]] :map])
 
 (defn get-all-stream-processes
   "Get all stream processes."
   []
-  (get @app-state :stream-processes {})) 
- (m/=> get-all-stream-processes [:=> [:cat] [:map-of :keyword :map]])
+  (get @app-state :stream-processes {}))
+(m/=> get-all-stream-processes [:=> [:cat] [:map-of :keyword :map]])
 
 ;; ============================================================================
 ;; Server State Management
@@ -354,20 +358,20 @@
 (defn get-server-state
   "Get the current server state."
   []
-  (:server-state @app-state)) 
- (m/=> get-server-state [:=> [:cat] :map])
+  (:server-state @app-state))
+(m/=> get-server-state [:=> [:cat] :map])
 
 (defn update-server-state!
   "Update server state."
   [updates]
-  (swap! app-state update :server-state merge updates)) 
- (m/=> update-server-state! [:=> [:cat :map] :map])
+  (swap! app-state update :server-state merge updates))
+(m/=> update-server-state! [:=> [:cat :map] :map])
 
 (defn get-subsystem-state
   "Get state for a specific subsystem."
   [subsystem]
-  (get-in @app-state [:server-state subsystem])) 
- (m/=> get-subsystem-state [:=> [:cat :keyword] [:maybe :map]])
+  (get-in @app-state [:server-state subsystem]))
+(m/=> get-subsystem-state [:=> [:cat :keyword] [:maybe :map]])
 
 ;; ============================================================================
 ;; Extended UI Configuration
@@ -376,26 +380,26 @@
 (defn read-only-mode?
   "Check if in read-only mode."
   []
-  (get-in @app-state [:ui :read-only-mode] false)) 
- (m/=> read-only-mode? [:=> [:cat] :boolean])
+  (get-in @app-state [:ui :read-only-mode] false))
+(m/=> read-only-mode? [:=> [:cat] :boolean])
 
 (defn set-read-only-mode!
   "Set read-only mode."
   [enabled?]
-  (swap! app-state assoc-in [:ui :read-only-mode] enabled?)) 
- (m/=> set-read-only-mode! [:=> [:cat :boolean] :map])
+  (swap! app-state assoc-in [:ui :read-only-mode] enabled?))
+(m/=> set-read-only-mode! [:=> [:cat :boolean] :map])
 
 (defn show-overlay?
   "Check if overlay should be shown."
   []
-  (get-in @app-state [:ui :show-overlay] true)) 
- (m/=> show-overlay? [:=> [:cat] :boolean])
+  (get-in @app-state [:ui :show-overlay] true))
+(m/=> show-overlay? [:=> [:cat] :boolean])
 
 (defn set-show-overlay!
   "Set overlay visibility."
   [show?]
-  (swap! app-state assoc-in [:ui :show-overlay] show?)) 
- (m/=> set-show-overlay! [:=> [:cat :boolean] :map])
+  (swap! app-state assoc-in [:ui :show-overlay] show?))
+(m/=> set-show-overlay! [:=> [:cat :boolean] :map])
 
 ;; ============================================================================
 ;; Tab Management
@@ -404,50 +408,50 @@
 (defn get-active-tab
   "Get the currently active tab."
   []
-  (get-in @app-state [:ui :active-tab :tag] :controls)) 
- (m/=> get-active-tab [:=> [:cat] :keyword])
+  (get-in @app-state [:ui :active-tab :tag] :controls))
+(m/=> get-active-tab [:=> [:cat] :keyword])
 
 (defn set-active-tab!
   "Set the active tab."
   [tab-key]
-  (swap! app-state assoc-in [:ui :active-tab :tag] tab-key)) 
- (m/=> set-active-tab! [:=> [:cat :keyword] :map])
+  (swap! app-state assoc-in [:ui :active-tab :tag] tab-key))
+(m/=> set-active-tab! [:=> [:cat :keyword] :map])
 
 (defn get-tab-property
   "Get a property for a specific tab."
   [tab-key property]
-  (get-in @app-state [:ui :tab-properties tab-key property])) 
- (m/=> get-tab-property [:=> [:cat :keyword :keyword] :any])
+  (get-in @app-state [:ui :tab-properties tab-key property]))
+(m/=> get-tab-property [:=> [:cat :keyword :keyword] :any])
 
 (defn set-tab-property!
   "Set a property for a specific tab."
   [tab-key property value]
-  (swap! app-state assoc-in [:ui :tab-properties tab-key property] value)) 
- (m/=> set-tab-property! [:=> [:cat :keyword :keyword :any] :map])
+  (swap! app-state assoc-in [:ui :tab-properties tab-key property] value))
+(m/=> set-tab-property! [:=> [:cat :keyword :keyword :any] :map])
 
 (defn tab-has-window?
   "Check if a tab has its window open."
   [tab-key]
-  (get-tab-property tab-key :has-window)) 
- (m/=> tab-has-window? [:=> [:cat :keyword] :boolean])
+  (get-tab-property tab-key :has-window))
+(m/=> tab-has-window? [:=> [:cat :keyword] :boolean])
 
 (defn set-tab-window!
   "Set whether a tab has its window open."
   [tab-key has-window?]
-  (set-tab-property! tab-key :has-window has-window?)) 
- (m/=> set-tab-window! [:=> [:cat :keyword :boolean] :map])
+  (set-tab-property! tab-key :has-window has-window?))
+(m/=> set-tab-window! [:=> [:cat :keyword :boolean] :map])
 
 (defn get-tab-window-bounds
   "Get the saved window bounds for a tab."
   [tab-key]
-  (get-tab-property tab-key :window-bounds)) 
- (m/=> get-tab-window-bounds [:=> [:cat :keyword] [:maybe [:map [:x :int] [:y :int] [:width :int] [:height :int]]]])
+  (get-tab-property tab-key :window-bounds))
+(m/=> get-tab-window-bounds [:=> [:cat :keyword] [:maybe [:map [:x :int] [:y :int] [:width :int] [:height :int]]]])
 
 (defn set-tab-window-bounds!
   "Save window bounds for a tab."
   [tab-key x y width height]
-  (set-tab-property! tab-key :window-bounds {:x x :y y :width width :height height})) 
- (m/=> set-tab-window-bounds! [:=> [:cat :keyword :int :int :int :int] :map])
+  (set-tab-property! tab-key :window-bounds {:x x :y y :width width :height height}))
+(m/=> set-tab-window-bounds! [:=> [:cat :keyword :int :int :int :int] :map])
 
 ;; ============================================================================
 ;; Extended Connection Management
@@ -456,20 +460,20 @@
 (defn get-connection-latency
   "Get connection latency in milliseconds."
   []
-  (get-in @app-state [:connection :latency-ms])) 
- (m/=> get-connection-latency [:=> [:cat] [:maybe :pos-int]])
+  (get-in @app-state [:connection :latency-ms]))
+(m/=> get-connection-latency [:=> [:cat] [:maybe :pos-int]])
 
 (defn set-connection-latency!
   "Set connection latency in milliseconds."
   [latency-ms]
-  (swap! app-state assoc-in [:connection :latency-ms] latency-ms)) 
- (m/=> set-connection-latency! [:=> [:cat [:maybe :nat-int]] :map])
+  (swap! app-state assoc-in [:connection :latency-ms] latency-ms))
+(m/=> set-connection-latency! [:=> [:cat [:maybe :nat-int]] :map])
 
 (defn get-reconnect-count
   "Get reconnection attempt count."
   []
-  (get-in @app-state [:connection :reconnect-count] 0)) 
- (m/=> get-reconnect-count [:=> [:cat] :int])
+  (get-in @app-state [:connection :reconnect-count] 0))
+(m/=> get-reconnect-count [:=> [:cat] :int])
 
 (defn set-connection-state!
   "Set complete connection state."
@@ -478,20 +482,20 @@
          (fn [conn]
            (cond-> (assoc conn :connected? connected?)
              url (assoc :url url)
-             latency-ms (assoc :latency-ms latency-ms))))) 
- (m/=> set-connection-state! [:=> [:cat :boolean [:maybe :string] [:maybe :pos-int]] :map])
+             latency-ms (assoc :latency-ms latency-ms)))))
+(m/=> set-connection-state! [:=> [:cat :boolean [:maybe :string] [:maybe :pos-int]] :map])
 
 (defn increment-reconnect-count!
   "Increment reconnection attempt counter."
   []
-  (swap! app-state update-in [:connection :reconnect-count] (fnil inc 0))) 
- (m/=> increment-reconnect-count! [:=> [:cat] :map])
+  (swap! app-state update-in [:connection :reconnect-count] (fnil inc 0)))
+(m/=> increment-reconnect-count! [:=> [:cat] :map])
 
 (defn reset-reconnect-count!
   "Reset reconnection attempt counter."
   []
-  (swap! app-state assoc-in [:connection :reconnect-count] 0)) 
- (m/=> reset-reconnect-count! [:=> [:cat] :map])
+  (swap! app-state assoc-in [:connection :reconnect-count] 0))
+(m/=> reset-reconnect-count! [:=> [:cat] :map])
 
 ;; ============================================================================
 ;; State Observation
@@ -501,15 +505,15 @@
   "Add a watch handler to app-state."
   [key handler-fn]
   (add-watch app-state key handler-fn)
-  nil) 
- (m/=> add-watch-handler [:=> [:cat :keyword fn?] :nil])
+  nil)
+(m/=> add-watch-handler [:=> [:cat :keyword fn?] :nil])
 
 (defn remove-watch-handler
   "Remove a watch handler from app-state."
   [key]
   (remove-watch app-state key)
-  nil) 
- (m/=> remove-watch-handler [:=> [:cat :keyword] :nil])
+  nil)
+(m/=> remove-watch-handler [:=> [:cat :keyword] :nil])
 
 (defn cleanup-seesaw-bindings!
   "Remove all watchers added by seesaw.bind from app-state.
@@ -526,20 +530,20 @@
                                 watchers)]
     (doseq [watcher-key seesaw-watchers]
       (remove-watch app-state watcher-key))
-    nil)) 
- (m/=> cleanup-seesaw-bindings! [:=> [:cat] :nil])
+    nil))
+(m/=> cleanup-seesaw-bindings! [:=> [:cat] :nil])
 
 (defn current-state
   "Get a snapshot of entire app state (for debugging)."
   []
-  @app-state) 
- (m/=> current-state [:=> [:cat] :map])
+  @app-state)
+(m/=> current-state [:=> [:cat] :map])
 
 (defn reset-state!
   "Reset entire app state to initial values."
   []
-  (reset! app-state initial-state)) 
- (m/=> reset-state! [:=> [:cat] :map])
+  (reset! app-state initial-state))
+(m/=> reset-state! [:=> [:cat] :map])
 
 ;; ============================================================================
 ;; State Validation
@@ -551,8 +555,8 @@
   []
   (ensure-specs-registered!)
   (when-not (m/validate app-state-spec @app-state)
-    (m/explain app-state-spec @app-state))) 
- (m/=> validate-state [:=> [:cat] [:maybe :map]])
+    (m/explain app-state-spec @app-state)))
+(m/=> validate-state [:=> [:cat] [:maybe :map]])
 
 (defn validate-state!
   "Validate state and throw exception if invalid.
@@ -560,15 +564,15 @@
   []
   (when-let [errors (validate-state)]
     (throw (ex-info "Invalid app state" {:errors errors})))
-  nil) 
- (m/=> validate-state! [:=> [:cat] :nil])
+  nil)
+(m/=> validate-state! [:=> [:cat] :nil])
 
 (defn valid-state?
   "Check if current state is valid."
   []
   (ensure-specs-registered!)
-  (m/validate app-state-spec @app-state)) 
- (m/=> valid-state? [:=> [:cat] :boolean])
+  (m/validate app-state-spec @app-state))
+(m/=> valid-state? [:=> [:cat] :boolean])
 
 (defn validate-partial
   "Validate a partial state update against a specific schema."
@@ -576,8 +580,8 @@
   (let [registry (registry/get-registry)
         schema (get registry schema-key)]
     (when (and schema (not (m/validate schema value)))
-      (m/explain schema value)))) 
- (m/=> validate-partial [:=> [:cat :keyword :any] [:maybe :map]])
+      (m/explain schema value))))
+(m/=> validate-partial [:=> [:cat :keyword :any] [:maybe :map]])
 
 (defn safe-swap!
   "Swap app-state with validation in development mode.
@@ -590,8 +594,8 @@
       (let [errors (validate-state)]
         (println "WARNING: State validation failed after swap!")
         (println "Errors:" errors)))
-    result)) 
- (m/=> safe-swap! [:=> [:cat fn? [:* :any]] :map])
+    result))
+(m/=> safe-swap! [:=> [:cat fn? [:* :any]] :map])
 
 (defn safe-reset!
   "Reset app-state with validation in development mode."
@@ -601,5 +605,5 @@
              (not (m/validate app-state-spec new-state)))
     (let [errors (m/explain app-state-spec new-state)]
       (throw (ex-info "Cannot reset to invalid state" {:errors errors}))))
-  (reset! app-state new-state)) 
- (m/=> safe-reset! [:=> [:cat :map] :map])
+  (reset! app-state new-state))
+(m/=> safe-reset! [:=> [:cat :map] :map])

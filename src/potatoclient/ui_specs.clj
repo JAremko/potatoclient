@@ -2,6 +2,7 @@
   "Essential UI and video stream specs for PotatoClient.
    Uses the shared malli registry for global spec management."
   (:require [clojure.string :as str]
+            [malli.core :as m]
             [potatoclient.malli.registry :as registry]
             [potatoclient.url-parser :as url-parser])
   (:import (java.util.concurrent Future)
@@ -189,13 +190,13 @@
   []
   ;; Core domain schemas
   (registry/register-spec! ::theme-key theme-key)
-  (registry/register-spec! ::theme theme-key)  ; Also register as ::theme for backward compatibility
+  (registry/register-spec! ::theme theme-key) ; Also register as ::theme for backward compatibility
   (registry/register-spec! ::locale locale)
   (registry/register-spec! ::locale-code locale-code)
   (registry/register-spec! ::domain domain)
   (registry/register-spec! ::stream-key stream-key)
   (registry/register-spec! ::stream-type stream-type)
-  (registry/register-spec! :ifn ifn)  ; Register :ifn for function schemas
+  (registry/register-spec! :ifn ifn) ; Register :ifn for function schemas
 
   ;; Configuration schemas
   (registry/register-spec! ::url url)
@@ -225,10 +226,12 @@
   (registry/register-spec! ::window-bounds window-bounds)
   (registry/register-spec! ::future-instance future-instance)
   (registry/register-spec! ::window-state window-state)
-  
+
   ;; Status bar schemas
   (registry/register-spec! ::status-type status-type)
   (registry/register-spec! ::status-message status-message))
+
+(m/=> register-ui-specs! [:=> [:cat] :nil])
 
 ;; Initialize the global registry and register UI specs on namespace load
 (defonce ^:private registry-initialized

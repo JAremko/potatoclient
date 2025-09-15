@@ -80,7 +80,7 @@
    Ensures all prerequisites are met before running tests."
   []
   (println "\n=== Initializing Test Harness ===")
-  
+
   ;; Set font antialiasing to suppress Darklaf warnings during tests
   (when-not (System/getProperty "awt.useSystemAAFontSettings")
     (System/setProperty "awt.useSystemAAFontSettings" "lcd_hrgb"))
@@ -114,11 +114,11 @@
 
 ;; Auto-initialize when namespace is loaded
 ;; This ensures all test namespaces that require this will have the system ready
-(defonce initialized?
-  "Tracks whether the test harness has been successfully initialized.
+(defonce ^{:doc "Tracks whether the test harness has been successfully initialized.
   Automatically attempts initialization when namespace loads, setting to true
   on success or false on failure. Test suites check this value to ensure
-  proper setup before running tests."
+  proper setup before running tests."}
+  initialized?
   (try
     (initialize!)
     (catch Exception e
