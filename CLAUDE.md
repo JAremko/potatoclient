@@ -160,6 +160,20 @@ CLJ-Kondo configurations for static analysis are **automatically generated** by 
 
 **ALWAYS use these agents proactively when appropriate:**
 
+### Docstring Checker Agent
+**ALWAYS use after adding or modifying definitions** to ensure documentation:
+```
+Task: docstring-checker agent
+Prompt: "Check for missing docstrings in src/"
+```
+- **Run automatically after ANY `def`, `defn`, `defn-`, or `defonce` additions/modifications**
+- **ALL definitions MUST have docstrings** - no exceptions for clarity and maintainability
+- **Public functions** (`defn`) - MUST document purpose, parameters, and return values
+- **Private functions** (`defn-`) - MUST document implementation details and usage
+- **State definitions** (`def`, `defonce`) - MUST document purpose and structure
+- Supports both string docstrings and `^{:doc "..."}` metadata
+- Empty strings (`""`) are invalid - provide meaningful documentation
+
 ### Spec Checker Agent
 **ALWAYS use after adding or modifying functions** to ensure arrow specs are defined:
 ```
@@ -420,11 +434,12 @@ To ensure widgets display current atom values, trigger a change after binding:
 
 ### Code Quality Standards
 
-1. **Malli Schemas Required** - Every function must have `:malli/schema`
-2. **Comprehensive Tests** - Organized into test suites with extensive coverage
-3. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
-4. **Clear Documentation** - Docstrings for all public functions
-5. **No Legacy Code** - Pre-alpha, make breaking changes when needed
+1. **Documentation Required** - ALL definitions must have docstrings (use `docstring-checker`)
+2. **Arrow Specs Required** - Every function must have `m/=>` specs (use `spec-checker`)
+3. **Comprehensive Tests** - Organized into test suites with extensive coverage
+4. **Property-Based Testing** - Extensive use of generative testing with Malli schemas
+5. **Clear Documentation** - Meaningful docstrings explaining purpose, not just restating the name
+6. **No Legacy Code** - Pre-alpha, make breaking changes when needed
 
 ### Testing Philosophy
 
@@ -492,14 +507,19 @@ Futures in Clojure swallow exceptions by default, which can hide critical errors
 ### When Adding Features
 
 1. **Define Malli specs first** - Data contracts before implementation
-2. **Add arrow specs to all functions** - Use `spec-checker` agent to verify
-3. **Add to registry if reusable** - Don't duplicate specs
-4. **Update status bar** - User feedback for all actions
-5. **Write tests immediately** - Use `test-runner-analyzer` agent to verify
-6. **Check i18n completeness** - Use `i18n-checker` agent for new UI text
+2. **Add docstrings to all definitions** - Use `docstring-checker` agent to verify
+3. **Add arrow specs to all functions** - Use `spec-checker` agent to verify
+4. **Add to registry if reusable** - Don't duplicate specs
+5. **Update status bar** - User feedback for all actions
+6. **Write tests immediately** - Use `test-runner-analyzer` agent to verify
+7. **Check i18n completeness** - Use `i18n-checker` agent for new UI text
 
 **Automated Verification Workflow:**
 ```bash
+# After adding/modifying definitions:
+Task: docstring-checker agent
+Prompt: "Check for missing docstrings"
+
 # After adding/modifying functions:
 Task: spec-checker agent
 Prompt: "Check for missing arrow specs"
@@ -578,7 +598,8 @@ This provides:
 - **No deprecated code**
 
 ### Quality Standards
-- **100% Malli coverage** for functions
+- **100% documentation coverage** - all definitions must have docstrings
+- **100% spec coverage** - all functions must have arrow specs
 - **Closed map specs** with `{:closed true}`
 - **Generative testing** with schemas
 - **Never delete tests** - make them pass
