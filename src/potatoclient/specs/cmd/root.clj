@@ -27,6 +27,7 @@
 ;; The flat spec that matches protobuf structure
 ;; Uses oneof with base fields for the non-oneof fields
 (def jon-shared-cmd-root-spec
+  "Root command spec - top-level command structure with protocol fields and payload"
   [:oneof
    ;; Base fields (always present, not part of oneof constraint)
    [:protocol_version {:base true} :proto/protocol-version]
@@ -57,6 +58,7 @@
 ;; Spec for just the payload (one of the oneof fields, without protocol fields)
 ;; This is what command functions accept as input
 (def cmd-payload-spec
+  "Command payload spec - validates individual command payloads without protocol fields"
   [:or
    [:map {:closed true} [:day_camera :cmd/day-camera]]
    [:map {:closed true} [:heat_camera :cmd/heat-camera]]

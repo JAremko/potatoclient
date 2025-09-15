@@ -1,7 +1,8 @@
 (ns potatoclient.ui.bind-group
   "Grouped binding utilities that extend seesaw.bind with key-based management.
    Allows creating groups of bindings that can be cleaned up selectively."
-  (:require [seesaw.bind :as bind]))
+  (:require [seesaw.bind :as bind]
+            [malli.core :as m]))
 
 (def ^:private binding-groups
   "Tracks all active binding groups. Structure:
@@ -36,6 +37,7 @@
              (fnil conj []) binding))
 
     binding))
+(m/=> bind-group [:=> [:cat :any :any :any [:* :any]] :any])
 
 (defn clean-group
   "Removes all bindings associated with a specific group key for an atom.
@@ -62,6 +64,7 @@
       (swap! binding-groups dissoc atom-ref))
 
     (count bindings-to-clean)))
+(m/=> clean-group [:=> [:cat :any :any] :int])
 
 (defn clean-all-groups
   "Removes all binding groups for a specific atom.
@@ -74,6 +77,7 @@
   (let [groups (get @binding-groups atom-ref {})
         group-keys (keys groups)]
     (reduce + 0 (map #(clean-group % atom-ref) group-keys))))
+(m/=> clean-all-groups [:=> [:cat :any] :int])
 
 (defn list-groups
   "Returns a list of active group keys for an atom.
@@ -84,6 +88,7 @@
    Returns a set of group keys."
   [atom-ref]
   (set (keys (get @binding-groups atom-ref {}))))
+(m/=> list-groups [:=> [:cat :any] [:set :any]])
 
 (defn group-count
   "Returns the number of bindings in a specific group.
@@ -95,6 +100,7 @@
    Returns the count of bindings in the group."
   [group-key atom-ref]
   (count (get-in @binding-groups [atom-ref group-key] [])))
+(m/=> group-count [:=> [:cat :any :any] :int])
 
 ;; Convenience macros for common patterns
 
@@ -129,6 +135,7 @@
      (bind-group-property :panel-bindings my-atom label :text)"
   [group-key atom-ref widget property-name]
   (bind-group group-key atom-ref (bind/property widget property-name)))
+(m/=> bind-group-property [:=> [:cat :any :any :any :keyword] :any])
 
 (defn bind-group-selection
   "Convenience function to bind an atom to a widget selection with a group key.
@@ -142,6 +149,7 @@
      (bind-group-selection :panel-bindings my-atom checkbox)"
   [group-key atom-ref widget]
   (bind-group group-key atom-ref (bind/selection widget)))
+(m/=> bind-group-selection [:=> [:cat :any :any :any] :any])
 
 (defn bind-group-transform
   "Creates a grouped binding with a transformation function.
@@ -159,6 +167,7 @@
                            (property label :text))"
   [group-key atom-ref transform-fn target]
   (bind-group group-key atom-ref (bind/transform transform-fn) target))
+(m/=> bind-group-transform [:=> [:cat :any :any fn? :any] :any])
 
 ;; Advanced features
 
@@ -179,6 +188,7 @@
   (clean-group group-key atom-ref)
   (doseq [binding-args new-bindings]
     (apply bind-group group-key atom-ref binding-args)))
+(m/=> replace-group [:=> [:cat :any :any sequential?] :nil])
 
 (defn debug-groups
   "Returns debug information about all active binding groups.
@@ -190,3 +200,4 @@
             [atom-ref (into {}
                             (for [[group-key bindings] group-map]
                               [group-key (count bindings)]))]))))
+(m/=> debug-groups [:=> [:cat] [:map-of :any [:map-of :any :int]]])

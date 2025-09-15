@@ -10,6 +10,7 @@
 
 ;; JonGuiDataLiraTarget specification
 (def lira-target-spec
+  "LIRA target data spec - target information for laser-illuminated ranging and acquisition"
   [:map {:closed true}
    [:timestamp :time/unix-timestamp-int64]
    [:target_longitude [:double {:min -180.0 :max 180.0}]]
@@ -25,11 +26,13 @@
 
 ;; Refine target command
 (def refine-target-spec
+  "RefineTarget spec - command to refine LIRA target acquisition"
   [:map {:closed true}
    [:target lira-target-spec]])
 
 ;; Main LIRA command spec using oneof
 (def lira-command-spec
+  "LIRA command root spec - laser-illuminated ranging acquisition control"
   [:oneof
    [:refine_target refine-target-spec]])
 

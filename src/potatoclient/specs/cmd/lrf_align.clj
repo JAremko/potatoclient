@@ -10,17 +10,20 @@
 
 ;; Offset commands
 (def set-offsets-spec
+  "SetOffsets spec - sets absolute X/Y pixel offset values for LRF alignment"
   [:map {:closed true}
    [:x :screen/pixel-offset-x]
    [:y :screen/pixel-offset-y]])
 
 (def shift-offsets-by-spec
+  "ShiftOffsetsBy spec - adjusts LRF alignment by relative X/Y pixel amounts"
   [:map {:closed true}
    [:x :screen/pixel-offset-x]
    [:y :screen/pixel-offset-y]])
 
 ;; Offsets message with cmd oneof
 (def offsets-spec
+  "Offsets command spec - operations for managing LRF alignment offsets"
   [:oneof
    [:set set-offsets-spec]
    [:save :cmd/empty]
@@ -29,6 +32,7 @@
 
 ;; Main LRF Align command spec using channel oneof
 (def lrf-align-command-spec
+  "LRF alignment command root spec - configures laser rangefinder alignment for day/heat channels"
   [:oneof
    [:day offsets-spec]
    [:heat offsets-spec]])

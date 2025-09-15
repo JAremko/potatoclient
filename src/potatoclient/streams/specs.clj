@@ -358,6 +358,7 @@
 
       ;; Unknown gesture type - should never happen
       [:map {:closed false} [:gesture-type :keyword]])))
+(m/=> gesture-event-schema [:=> [:cat :map] :any])
 
 (defn window-event-schema
   "Get the precise schema for a window event based on action."
@@ -368,6 +369,7 @@
     (:focus :blur :minimize :maximize :restore :close-request) WindowSimpleEvent
     ;; Unknown action - should never happen
     [:map {:closed false} [:action :keyword]]))
+(m/=> window-event-schema [:=> [:cat :map] :any])
 
 (defn connection-event-schema
   "Get the precise schema for a connection event based on action."
@@ -379,6 +381,7 @@
     (:timeout :reconnecting) ConnectionSimpleEvent
     ;; Unknown action
     [:map {:closed false} [:action :keyword]]))
+(m/=> connection-event-schema [:=> [:cat :map] :any])
 
 (defn event-message-schema
   "Get the appropriate schema for an event message based on its type."
@@ -393,6 +396,7 @@
     :error StreamErrorEvent
     ;; Unknown event type
     [:map {:closed false} [:type :keyword]]))
+(m/=> event-message-schema [:=> [:cat :map] :any])
 
 (defn log-message-schema
   "Get the appropriate schema for a log message."
@@ -400,6 +404,7 @@
   (if (:data message)
     LogMessageWithData
     LogMessage))
+(m/=> log-message-schema [:=> [:cat :map] :any])
 
 (defn metric-message-schema
   "Get the appropriate schema for a metric message."
@@ -407,6 +412,7 @@
   (if (:tags message)
     MetricMessageWithTags
     MetricMessage))
+(m/=> metric-message-schema [:=> [:cat :map] :any])
 
 (defn message-schema
   "Get the appropriate schema for a message based on its msg-type."
@@ -418,6 +424,7 @@
     :command CommandMessage
     ;; Unknown message type
     [:map {:closed false} [:msg-type :keyword]]))
+(m/=> message-schema [:=> [:cat :map] :any])
 
 ;; ============================================================================
 ;; Validation Functions
@@ -450,6 +457,7 @@
         ;; Report to status bar - this is a bug that needs attention
         (status-msg/set-error! error-msg)))
     valid?))
+(m/=> validate-message [:=> [:cat :map :keyword] :boolean])
 
 (defn validate-and-log
   "Validate a message and log it appropriately.
@@ -463,6 +471,7 @@
                     " Message: " (:msg-type message) "/" (:type message)
                     "/" (or (:action message) (:gesture-type message)))))
     valid?))
+(m/=> validate-and-log [:=> [:cat :map :keyword] :boolean])
 
 ;; ============================================================================
 ;; Registry Registration
@@ -510,6 +519,7 @@
   []
   (doseq [[k spec] stream-specs]
     (registry/register-spec! k spec)))
+(m/=> register-specs! [:=> [:cat] :nil])
 
 ;; Auto-register on namespace load
 (register-specs!)

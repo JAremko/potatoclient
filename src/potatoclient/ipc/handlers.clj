@@ -4,7 +4,8 @@
    Provides reusable patterns for creating message handlers,
    processing queues, and managing IPC communication."
   (:require
-    [potatoclient.logging :as logging])
+    [potatoclient.logging :as logging]
+    [malli.core :as m])
   (:import
     (clojure.lang Atom)
     (java.util.concurrent LinkedBlockingQueue TimeUnit)
@@ -76,6 +77,12 @@
                   [:fn #(satisfies? IMessageHandler %)]]}
   [{:keys [name handler-fn error-fn running?]}]
   (->BaseMessageHandler name handler-fn error-fn running?))
+(m/=> create-handler [:=> [:cat [:map
+                                  [:name :string]
+                                  [:handler-fn fn?]
+                                  [:error-fn {:optional true} fn?]
+                                  [:running? :any]]]
+                      :any])
 
 ;; ============================================================================
 ;; Queue Processing
@@ -117,6 +124,12 @@
           (on-error handler e nil)
           (Thread/sleep ^long error-delay-ms)))))
   nil)
+(m/=> process-queue [:=> [:cat [:map
+                                 [:queue :any]
+                                 [:handler :any]
+                                 [:poll-timeout-ms {:optional true} pos-int?]
+                                 [:error-delay-ms {:optional true} pos-int?]]]
+                     :nil])
 
 ;; ============================================================================
 ;; Thread Management
@@ -148,6 +161,12 @@
     (when daemon?
       (.setDaemon thread true))
     thread))
+(m/=> create-processor-thread [:=> [:cat [:map
+                                           [:name :string]
+                                           [:queue :any]
+                                           [:handler :any]
+                                           [:daemon? {:optional true} :boolean]]]
+                                [:fn #(instance? Thread %)]])
 
 ;; ============================================================================
 ;; Composite Handlers
@@ -189,6 +208,7 @@
                   [:fn #(satisfies? IMessageHandler %)]]}
   [handlers running?]
   (->CompositeHandler handlers running?))
+(m/=> create-composite-handler [:=> [:cat [:vector :any] :any] :any])
 
 ;; ============================================================================
 ;; Filtering Handlers
@@ -227,6 +247,7 @@
                   [:fn #(satisfies? IMessageHandler %)]]}
   [base-handler filter-fn running?]
   (->FilteringHandler base-handler filter-fn running?))
+(m/=> create-filtering-handler [:=> [:cat :any fn? :any] :any])
 
 ;; ============================================================================
 ;; Transforming Handlers
@@ -269,6 +290,7 @@
                   [:fn #(satisfies? IMessageHandler %)]]}
   [base-handler transform-fn running?]
   (->TransformingHandler base-handler transform-fn running?))
+(m/=> create-transforming-handler [:=> [:cat :any fn? :any] :any])
 
 ;; ============================================================================
 ;; Logging Handler
@@ -322,3 +344,4 @@
                   [:fn #(satisfies? IMessageHandler %)]]}
   [base-handler name level running?]
   (->LoggingHandler base-handler name level running?))
+(m/=> create-logging-handler [:=> [:cat :any :string [:enum :trace :debug :info :warn :error] :any] :any])

@@ -10,11 +10,13 @@
 
 ;; Localization
 (def set-localization-spec
+  "SetLocalization spec - configures system localization/language settings"
   [:map {:closed true}
    [:loc :enum/system-localizations]])
 
 ;; Main System command spec using oneof - all 13 commands
 (def system-command-spec
+  "System command root spec - system-wide control operations"
   [:oneof
    [:start_all :cmd/empty]
    [:stop_all :cmd/empty]

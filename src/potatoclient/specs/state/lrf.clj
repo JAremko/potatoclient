@@ -8,6 +8,7 @@
 
 ;; RgbColor message spec
 (def rgb-color-spec
+  "RGB color spec - represents a color with red, green, and blue components [0-255]"
   [:map {:closed true}
    [:red [:int {:min 0 :max 255}]]
    [:green [:int {:min 0 :max 255}]]
@@ -19,6 +20,7 @@
 ;; All 21 fields from proto definition
 
 (def lrf-target-spec
+  "LRF target data spec - complete target information including position, observer data, and metadata"
   [:map {:closed true}
    [:timestamp :time/unix-timestamp]
    [:target_longitude :position/longitude]
@@ -48,6 +50,7 @@
 ;; All 7 fields from proto definition
 
 (def lrf-message-spec
+  "LRF state message spec - laser rangefinder operational status and current target data"
   [:map {:closed true}
    [:is_scanning :boolean]
    [:is_measuring :boolean]

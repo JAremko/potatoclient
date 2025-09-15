@@ -10,6 +10,7 @@
 
 ;; Main OSD command spec using oneof - all 8 commands
 (def osd-command-spec
+  "OSD command root spec - on-screen display control operations"
   [:oneof
    [:show_default_screen :cmd/empty]
    [:show_lrf_measure_screen :cmd/empty]

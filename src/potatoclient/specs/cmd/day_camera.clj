@@ -23,7 +23,9 @@
   [:map {:closed true}
    [:offset_value :range/normalized-offset]])
 
-(def halt-spec :cmd/empty)
+(def halt-spec
+  "Halt command spec - stops camera movement operations"
+  :cmd/empty)
 
 ;; CLAHE-specific messages
 
@@ -52,6 +54,7 @@
 ;; Zoom-specific messages
 
 (def set-zoom-table-value-spec
+  "SetZoomTableValue spec - sets zoom to a specific preset table position"
   [:map {:closed true}
    [:value :proto/int32-positive]])
 
@@ -71,22 +74,27 @@
 ;; Simple command messages
 
 (def set-iris-spec
+  "SetIris spec - controls camera iris/aperture value [0.0, 1.0]"
   [:map {:closed true}
    [:value :range/normalized]])
 
 (def set-infra-red-filter-spec
+  "SetInfraRedFilter spec - enables/disables infrared filter for day/night vision"
   [:map {:closed true}
    [:value [:boolean]]])
 
 (def set-auto-iris-spec
+  "SetAutoIris spec - enables/disables automatic iris adjustment"
   [:map {:closed true}
    [:value [:boolean]]])
 
 (def set-fx-mode-spec
+  "SetFxMode spec - sets camera effects mode from allowed day camera modes"
   [:map {:closed true}
    [:mode :enum/fx-mode-day]])
 
 (def set-digital-zoom-level-spec
+  "SetDigitalZoomLevel spec - controls digital zoom magnification level"
   [:map {:closed true}
    [:value :range/digital-zoom]])
 
@@ -106,6 +114,7 @@
 
 ;; Main Day Camera Root command spec using oneof - all 20 commands (17 + 3 ROI)
 (def day-camera-command-spec
+  "Day camera command root spec - all 20 possible command types for day camera control"
   [:oneof
    [:focus focus-spec]
    [:zoom zoom-spec]

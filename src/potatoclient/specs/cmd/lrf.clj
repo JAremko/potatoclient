@@ -10,11 +10,13 @@
 
 ;; Scan control with mode setting
 (def set-scan-mode-spec
+  "SetScanMode spec - configures laser rangefinder scanning mode"
   [:map {:closed true}
    [:mode :enum/lrf-scan-modes]])
 
 ;; Main LRF command spec using oneof - all 15 commands
 (def lrf-command-spec
+  "LRF command root spec - all laser rangefinder control operations"
   [:oneof
    [:measure :cmd/empty]
    [:scan_on :cmd/empty]

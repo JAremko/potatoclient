@@ -10,6 +10,7 @@
 
 ;; Main Day Cam Glass Heater command spec using oneof
 (def day-cam-glass-heater-command-spec
+  "Day camera glass heater command spec - controls lens heater for condensation prevention"
   [:oneof
    [:start :cmd/empty]
    [:stop :cmd/empty]
