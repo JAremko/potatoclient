@@ -28,40 +28,26 @@
 **ALWAYS use these specialized agents proactively:**
 
 #### 1. Docstring Checker Agent
-**Run after ANY `def`, `defn`, `defn-`, or `defonce` additions/modifications:**
-```
-Task: docstring-checker agent
-Prompt: "Check for missing docstrings in src/"
-```
+**Run after ANY `def`, `defn`, `defn-`, or `defonce` additions/modifications**
 - ALL definitions MUST have docstrings - no exceptions
 - Empty strings (`""`) are invalid - provide meaningful documentation
 
 #### 2. Spec Checker Agent  
-**Run after adding or modifying functions:**
-```
-Task: spec-checker agent
-Prompt: "Check for missing arrow specs in src/"
-```
+**Run after adding or modifying functions**
 - Essential for `malli.dev/start!` instrumentation
 - ALL functions must have tight, precise specs - no `:any`
 - Reuse shared specs from `specs/common.clj`
 
 #### 3. Test Runner Analyzer Agent
-**Run after code changes to verify nothing is broken:**
-```
-Task: test-runner-analyzer agent
-Prompt: "Run tests in /home/jare/git/potatoclient using command: make test"
-```
-- **CRITICAL**: NEVER disable, skip, or comment out failing tests
+**MANDATORY: ALWAYS use this agent for running tests - NEVER run `make test` directly**
+- **CRITICAL POLICY**: ALWAYS use the test-runner-analyzer agent, NEVER run `make test` directly via Bash
+- **WHY**: The agent provides comprehensive failure analysis and detailed reports
+- **NEVER disable, skip, or comment out failing tests**
 - FIX the code to make tests pass
 - All tests MUST pass before any commit
 
 #### 4. I18n Checker Agent
-**Run after adding UI text:**
-```
-Task: i18n-checker agent
-Prompt: "Check translation completeness"
-```
+**Run after adding UI text**
 
 ### Testing Philosophy
 
@@ -490,6 +476,7 @@ To ensure widgets display current atom values, trigger a change after binding:
 4. **No Legacy Code** - Pre-alpha, make breaking changes when needed
 
 **Testing Practices:**
+- **ALWAYS use `test-runner-analyzer` agent** - NEVER run `make test` directly
 - Use test suites for focused testing
 - Property-based testing with `clojure.test.check`
 - Generative testing with Malli schemas
@@ -562,23 +549,10 @@ Futures in Clojure swallow exceptions by default, which can hide critical errors
 7. **Check i18n completeness** - Use `i18n-checker` agent for new UI text
 
 **Automated Verification Workflow:**
-```bash
-# After adding/modifying definitions:
-Task: docstring-checker agent
-Prompt: "Check for missing docstrings"
-
-# After adding/modifying functions:
-Task: spec-checker agent
-Prompt: "Check for missing arrow specs"
-
-# After completing implementation:
-Task: test-runner-analyzer agent  
-Prompt: "Run all tests"
-
-# After adding UI text:
-Task: i18n-checker agent
-Prompt: "Check translation completeness"
-```
+1. After adding/modifying definitions → Use `docstring-checker` agent
+2. After adding/modifying functions → Use `spec-checker` agent  
+3. After completing implementation → Use `test-runner-analyzer` agent (NEVER `make test` directly)
+4. After adding UI text → Use `i18n-checker` agent
 
 ### Development Workflow
 

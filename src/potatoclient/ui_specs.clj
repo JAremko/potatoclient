@@ -160,7 +160,7 @@
 (def future-instance
   "Java Future instance"
   [:fn {:error/message "must be a Future"}
-   #(instance? Future %)])
+   (partial instance? Future)])
 
 (def status-type
   "Status message type"

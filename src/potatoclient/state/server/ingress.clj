@@ -25,6 +25,7 @@
     (catch Exception e
       (logging/log-error {:msg "Failed to parse state message" :error e})
       nil)))
+(m/=> parse-state-message [:=> [:cat bytes?] [:maybe :map]])
 
 (defn- proto->edn
   "Convert protobuf map to EDN using Pronto."
@@ -35,6 +36,7 @@
     (catch Exception e
       (logging/log-error {:msg "Failed to convert proto to EDN" :error e})
       nil)))
+(m/=> proto->edn [:=> [:cat [:maybe :map]] [:maybe :state/root]])
 
 (defrecord ^{:doc "Manages WebSocket state ingress from the server.
    
@@ -51,6 +53,12 @@
    - connection-stats: Atom with connection metrics and health data"}
   StateIngressManager [config connection throttler executor running? connected? connection-stats])
 
+;; Spec for StateIngressManager type
+(def state-ingress-manager?
+  "Spec for StateIngressManager record instances"
+  [:fn {:error/message "must be a StateIngressManager"}
+   (partial instance? StateIngressManager)])
+
 (defn- handle-state-update
   "Process and apply a state update to the app atom."
   [manager edn-state]
@@ -58,6 +66,7 @@
   (when (validation/validate :state/root edn-state)
     ;; Update app state
     (swap! state/app-state assoc :server-state edn-state)))
+(m/=> handle-state-update [:=> [:cat state-ingress-manager? :state/root] :any])
 
 (defn- handle-message
   "Handle incoming WebSocket message."
@@ -83,6 +92,7 @@
       (when-let [conn @(:connection manager)]
         (ws/close conn))
       (reset! (:connection manager) nil))))
+(m/=> check-connection-health [:=> [:cat state-ingress-manager?] :any])
 
 (defn- calculate-backoff-delay
   "Calculate exponential backoff delay with jitter.
@@ -93,6 +103,7 @@
         delay (min (* base-delay (bit-shift-left 1 (min attempt 5))) max-delay)
         jitter (* delay 0.1 (- (rand) 0.5))]  ; +/- 5% jitter
     (long (+ delay jitter))))
+(m/=> calculate-backoff-delay [:=> [:cat nat-int?] [:int {:min 0}]])
 
 (defn- update-connection-stats!
   "Update connection statistics."
@@ -120,6 +131,7 @@
                                (assoc :status :disconnected
                                       :disconnected-at now))
                s)))))
+(m/=> update-connection-stats! [:=> [:cat state-ingress-manager? [:enum :attempting :connected :failed :disconnected]] :any])
 
 (defn- connect-loop
   "Connection loop that maintains WebSocket connection with persistent retry."
@@ -192,7 +204,8 @@
         (let [stats @(:connection-stats manager)
               delay (calculate-backoff-delay (:consecutive-failures stats 0))]
           (logging/log-debug {:msg (str "Retrying in " (/ delay 1000.0) " seconds")})
-          (Thread/sleep delay))))))
+          (Thread/sleep delay)))))
+(m/=> connect-loop [:=> [:cat state-ingress-manager?] :any]))
 
 (defn create-manager
   "Create a state ingress manager.
@@ -224,6 +237,7 @@
                                 :connected-at nil
                                 :disconnected-at nil
                                 :start-time (System/currentTimeMillis)})})))
+(m/=> create-manager [:=> [:cat [:map [:domain :string]]] state-ingress-manager?])
 
 (defn start
   "Start the state ingress manager."
@@ -242,6 +256,7 @@
                           2 2 TimeUnit/SECONDS)
 
     manager))
+(m/=> start [:=> [:cat state-ingress-manager?] state-ingress-manager?])
 
 (defn connected?
   "Check if the state ingress is connected."
@@ -250,11 +265,13 @@
        @(:connected? manager)
        @(:connection manager)
        (ws/connected? @(:connection manager))))
+(m/=> connected? [:=> [:cat state-ingress-manager?] :boolean])
 
 (defn get-connection-stats
   "Get current connection statistics."
   [manager]
   @(:connection-stats manager))
+(m/=> get-connection-stats [:=> [:cat state-ingress-manager?] :map])
 
 (defn stop
   "Stop the state ingress manager."
@@ -277,6 +294,7 @@
     (.shutdown (:executor manager))
 
     manager))
+(m/=> stop [:=> [:cat state-ingress-manager?] state-ingress-manager?])
 
 (defn restart
   "Restart the state ingress manager with new config."
@@ -284,20 +302,4 @@
   (stop manager)
   (reset! (:config manager) new-config)
   (start manager))
-
-;; ====================================================================
-;; Arrow specs for Malli instrumentation
-;; ====================================================================
-(m/=> parse-state-message [:=> [:cat bytes?] [:maybe :map]])
-(m/=> proto->edn [:=> [:cat [:maybe :map]] [:maybe :state/root]])
-(m/=> handle-state-update [:=> [:cat [:fn #(instance? StateIngressManager %)] :state/root] :any])
-(m/=> check-connection-health [:=> [:cat [:fn #(instance? StateIngressManager %)]] :any])
-(m/=> calculate-backoff-delay [:=> [:cat nat-int?] [:int {:min 0}]])
-(m/=> update-connection-stats! [:=> [:cat [:fn #(instance? StateIngressManager %)] [:enum :attempting :connected :failed :disconnected]] :any])
-(m/=> connect-loop [:=> [:cat [:fn #(instance? StateIngressManager %)]] :any])
-(m/=> create-manager [:=> [:cat [:map [:domain :string]]] [:fn #(instance? StateIngressManager %)]])
-(m/=> start [:=> [:cat [:fn #(instance? StateIngressManager %)]] [:fn #(instance? StateIngressManager %)]])
-(m/=> connected? [:=> [:cat [:fn #(instance? StateIngressManager %)]] :boolean])
-(m/=> get-connection-stats [:=> [:cat [:fn #(instance? StateIngressManager %)]] :map])
-(m/=> stop [:=> [:cat [:fn #(instance? StateIngressManager %)]] [:fn #(instance? StateIngressManager %)]])
-(m/=> restart [:=> [:cat [:fn #(instance? StateIngressManager %)] [:map [:domain :string]]] [:fn #(instance? StateIngressManager %)]])
+(m/=> restart [:=> [:cat state-ingress-manager? [:map [:domain :string]]] state-ingress-manager?])
