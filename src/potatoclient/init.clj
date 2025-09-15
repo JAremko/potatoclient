@@ -35,7 +35,7 @@
    Safe to call multiple times - initialization only happens once."
   []
   @registry-initialized?)
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> ensure-registry! [:=> [:cat] :boolean])
 
 ;; ============================================================================
 ;; Development Mode Detection
@@ -47,14 +47,14 @@
   (or (System/getProperty "potatoclient.dev")
       (System/getenv "POTATOCLIENT_DEV")
       (= "dev" (System/getProperty "potatoclient.env"))))
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> development-mode? [:=> [:cat] [:maybe :boolean]])
 
 (defn nrepl-mode?
   "Check if running in nREPL mode."
   []
   (or (System/getProperty "potatoclient.nrepl")
       (some? (resolve 'nrepl.server/start-server))))
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> nrepl-mode? [:=> [:cat] [:maybe :boolean]])
 
 ;; ============================================================================
 ;; Complete Initialization
@@ -91,7 +91,7 @@
     ;; and provide better REPL workflow
     )
   nil)
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> initialize! [:=> [:cat] :nil])
 
 ;; ============================================================================
 ;; Test-specific Initialization
@@ -106,7 +106,7 @@
   ;; Additional test-specific initialization can go here
   (logging/log-info "Test environment initialized")
   nil)
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> initialize-for-tests! [:=> [:cat] :nil])
 
 ;; ============================================================================
 ;; NREPL-specific Initialization
@@ -122,4 +122,4 @@
   (initialize!)
   ;; NREPL-specific setup is now in dev/user.clj
   nil)
-;; Cannot use m/=> here - registry not initialized yet when this compiles
+(m/=> initialize-for-nrepl! [:=> [:cat] :nil])

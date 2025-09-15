@@ -39,7 +39,14 @@
 ;; Base Handler Implementation
 ;; ============================================================================
 
-(defrecord BaseMessageHandler [name handler-fn error-fn running?]
+(defrecord ^{:doc "Base implementation of IMessageHandler protocol.
+   
+   Fields:
+   - name: String identifier for logging and debugging
+   - handler-fn: Function (message) -> any, processes each message
+   - error-fn: Optional function (error, message) -> any, handles processing errors
+   - running?: Atom boolean, controls whether handler continues processing"}
+  BaseMessageHandler [name handler-fn error-fn running?]
   IMessageHandler
   (handle-message [_ message]
     (when handler-fn
@@ -146,7 +153,15 @@
 ;; Composite Handlers
 ;; ============================================================================
 
-(defrecord CompositeHandler [handlers running?]
+(defrecord ^{:doc "Handler that delegates message processing to multiple sub-handlers.
+   
+   Each handler processes messages independently and errors are isolated.
+   Useful for fan-out processing where multiple consumers need the same message.
+   
+   Fields:
+   - handlers: Vector of IMessageHandler implementations to delegate to
+   - running?: Atom boolean, controls whether composite handler continues"}
+  CompositeHandler [handlers running?]
   IMessageHandler
   (handle-message [_ message]
     (doseq [handler handlers]
@@ -179,7 +194,16 @@
 ;; Filtering Handlers
 ;; ============================================================================
 
-(defrecord FilteringHandler [base-handler filter-fn running?]
+(defrecord ^{:doc "Handler wrapper that filters messages before delegating to base handler.
+   
+   Only messages passing the filter predicate are processed.
+   Useful for selective message processing based on content or type.
+   
+   Fields:
+   - base-handler: IMessageHandler to delegate filtered messages to
+   - filter-fn: Predicate (message) -> boolean, determines which messages to process
+   - running?: Atom boolean, controls handler continuation"}
+  FilteringHandler [base-handler filter-fn running?]
   IMessageHandler
   (handle-message [_ message]
     (when (filter-fn message)
@@ -208,7 +232,16 @@
 ;; Transforming Handlers
 ;; ============================================================================
 
-(defrecord TransformingHandler [base-handler transform-fn running?]
+(defrecord ^{:doc "Handler wrapper that transforms messages before delegating to base handler.
+   
+   Applies transformation function to each message before processing.
+   Useful for message format conversion or enrichment.
+   
+   Fields:
+   - base-handler: IMessageHandler to receive transformed messages
+   - transform-fn: Function (message) -> transformed-message
+   - running?: Atom boolean, controls handler continuation"}
+  TransformingHandler [base-handler transform-fn running?]
   IMessageHandler
   (handle-message [_ message]
     (try
@@ -241,7 +274,17 @@
 ;; Logging Handler
 ;; ============================================================================
 
-(defrecord LoggingHandler [base-handler name level running?]
+(defrecord ^{:doc "Handler wrapper that logs messages before and after processing.
+   
+   Provides visibility into message flow for debugging and monitoring.
+   Log level can be configured per handler instance.
+   
+   Fields:
+   - base-handler: IMessageHandler to delegate actual processing to  
+   - name: String identifier used in log messages
+   - level: Keyword log level (:trace :debug :info :warn :error)
+   - running?: Atom boolean, controls handler continuation"}
+  LoggingHandler [base-handler name level running?]
   IMessageHandler
   (handle-message [_ message]
     (case level

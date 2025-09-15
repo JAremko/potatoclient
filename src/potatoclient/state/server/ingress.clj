@@ -36,7 +36,20 @@
       (logging/log-error {:msg "Failed to convert proto to EDN" :error e})
       nil)))
 
-(defrecord StateIngressManager [config connection throttler executor running? connected? connection-stats])
+(defrecord ^{:doc "Manages WebSocket state ingress from the server.
+   
+   Maintains persistent connection, handles reconnection logic,
+   validates incoming state messages, and updates app state atom.
+   
+   Fields:
+   - config: Map with :url :connect-timeout-ms :read-timeout-ms :max-reconnect-delay-ms
+   - connection: Current WebSocketConnection instance or nil
+   - throttler: Throttle instance for rate-limiting updates
+   - executor: ScheduledExecutorService for async operations
+   - running?: Atom boolean, controls connection lifecycle
+   - connected?: Atom boolean, tracks current connection status
+   - connection-stats: Atom with connection metrics and health data"}
+  StateIngressManager [config connection throttler executor running? connected? connection-stats])
 
 (defn- handle-state-update
   "Process and apply a state update to the app atom."

@@ -11,12 +11,16 @@
 
 ;; Auto focus
 (def set-auto-focus-spec
+  "Spec for enabling/disabling auto-focus on a video channel.
+   Channel must be valid video channel enum, value is boolean toggle."
   [:map {:closed true}
    [:channel :enum/video-channel]
    [:value [:boolean]]])
 
 ;; Tracking
 (def start-track-ndc-spec
+  "Spec for starting tracking at normalized device coordinates.
+   Includes channel, NDC position, and timing information for synchronization."
   [:map {:closed true}
    [:channel :enum/video-channel]
    [:x :screen/ndc-x]
@@ -26,6 +30,9 @@
 
 ;; Main CV command spec using oneof - all 11 commands
 (def cv-command-spec
+  "Main computer vision command spec with all 11 command types.
+   Includes tracking, auto-focus, vampire mode, stabilization, dump, and recognition.
+   Uses oneof to ensure exactly one command is specified."
   [:oneof
    [:set_auto_focus set-auto-focus-spec]
    [:start_track_ndc start-track-ndc-spec]

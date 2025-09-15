@@ -10,23 +10,34 @@
 
 ;; Configuration
 (def set-magnetic-declination-spec
+  "Spec for setting magnetic declination angle.
+   Validates value is within magnetic declination range."
   [:map {:closed true}
    [:value :angle/magnetic-declination]])
 
 (def set-offset-angle-azimuth-spec
+  "Spec for setting azimuth offset angle.
+   Validates value is within offset azimuth range."
   [:map {:closed true}
    [:value :angle/offset-azimuth]])
 
 (def set-offset-angle-elevation-spec
+  "Spec for setting elevation offset angle.
+   Validates value is within offset elevation range."
   [:map {:closed true}
    [:value :angle/offset-elevation]])
 
 (def set-use-rotary-position-spec
+  "Spec for toggling rotary position usage.
+   Boolean flag to enable/disable rotary position."
   [:map {:closed true}
    [:flag [:boolean]]])
 
 ;; Main compass command spec using oneof - all 11 commands
 (def compass-command-spec
+  "Main compass command spec with all 11 command types.
+   Uses oneof to ensure exactly one command is specified.
+   Includes start/stop, configuration, calibration, and meteo commands."
   [:oneof
    [:start :cmd/empty]
    [:stop :cmd/empty]
