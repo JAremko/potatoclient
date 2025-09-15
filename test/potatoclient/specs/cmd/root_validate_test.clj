@@ -15,7 +15,11 @@
     [potatoclient.specs.cmd.root]))
 
 ;; Test fixture to ensure environment is ready
-(defn ensure-test-env [f]
+(defn ensure-test-env
+  "Test fixture that verifies required proto classes and validator are available.
+  Checks for compiled protobuf classes and buf.validate library before running tests.
+  Fails fast with clear error message if build artifacts are missing."
+  [f]
   ;; Ensure proto classes are available
   (try
     (Class/forName "cmd.JonSharedCmd$Root")
@@ -48,7 +52,11 @@
 (pronto/defmapper cmd-mapper [cmd.JonSharedCmd$Root])
 
 ;; Initialize validator
-(def validator (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
+(def validator
+  "Lazily initialized buf.validate validator instance.
+  Used to validate protobuf messages against their proto validation rules
+  defined in the .proto files using buf.validate annotations."
+  (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
 
 (defn edn->proto
   "Convert EDN map to protobuf message via Pronto."

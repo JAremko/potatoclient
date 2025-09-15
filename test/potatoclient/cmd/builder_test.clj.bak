@@ -27,9 +27,7 @@
 
 ;; Setup instrumentation for validation tests
 (defn instrument-fixture
-  "Test fixture that enables Malli instrumentation for the builder namespace.
-  Collects function schemas, instruments them for validation, runs the test,
-  then removes instrumentation to avoid interference with other test suites."
+  "Test fixture that instruments command builder functions for validation testing"
   [f]
   (mi/collect! {:ns ['potatoclient.cmd.builder]})
   (mi/instrument!)
@@ -236,19 +234,14 @@
 ;; ============================================================================
 
 (def client-type-gen
-  "Generator for valid client type enum values.
-  Produces one of the four valid JonGuiDataClientType enum values
-  for property-based testing of command building with different client types."
+  "Generator for valid client type enum values used in generative tests"
   (gen/elements [:JON_GUI_DATA_CLIENT_TYPE_INTERNAL_CV
                  :JON_GUI_DATA_CLIENT_TYPE_LOCAL_NETWORK
                  :JON_GUI_DATA_CLIENT_TYPE_CERTIFICATE_PROTECTED
                  :JON_GUI_DATA_CLIENT_TYPE_LIRA]))
 
 (def payload-gen
-  "Generator for valid command payload structures.
-  Produces various command payloads including ping, noop, frozen,
-  and system commands (reboot/power_off) for property-based testing
-  of command validation and building."
+  "Generator for valid command payload structures used in generative tests"
   (gen/elements [{:ping {}}
                  {:noop {}}
                  {:frozen {}}

@@ -14,7 +14,11 @@
     [potatoclient.specs.state.root]))
 
 ;; Test fixture to ensure environment is ready
-(defn ensure-test-env [f]
+(defn ensure-test-env
+  "Test fixture that verifies required proto classes and validator are available.
+  Checks for compiled JonGUIState protobuf class and buf.validate library.
+  Fails fast with clear error message if build artifacts are missing."
+  [f]
   ;; Ensure proto classes are available
   (try
     (Class/forName "ser.JonSharedData$JonGUIState")
@@ -33,7 +37,11 @@
 (registry/setup-global-registry!)
 
 ;; Initialize validator
-(def validator (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
+(def validator
+  "Lazily initialized buf.validate validator instance.
+  Used to validate JonGUIState protobuf messages against their proto
+  validation rules defined in the .proto files using buf.validate annotations."
+  (delay (.build (build.buf.protovalidate.ValidatorFactory/newBuilder))))
 
 ;; Import test harness to ensure proto classes are compiled
 (require '[potatoclient.test-harness :as harness])

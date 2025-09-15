@@ -43,8 +43,15 @@
    'potatoclient.cmd.cam-day-glass-heater
    'potatoclient.cmd.lrf-alignment])
 
-(def num-tests 10)
-(def generator-opts {:size 10})
+(def num-tests
+  "Number of test cases to generate for each property-based test.
+  Lower value for faster CI runs, can be increased for thorough testing."
+  10)
+
+(def generator-opts
+  "Options for test.check generators controlling the complexity of generated data.
+  Size parameter affects the maximum size of generated collections and values."
+  {:size 10})
 
 (defn extract-arg-schemas
   "Extract argument schemas from a :cat or :catn schema."

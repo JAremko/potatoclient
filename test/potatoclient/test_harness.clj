@@ -115,6 +115,10 @@
 ;; Auto-initialize when namespace is loaded
 ;; This ensures all test namespaces that require this will have the system ready
 (defonce initialized?
+  "Tracks whether the test harness has been successfully initialized.
+  Automatically attempts initialization when namespace loads, setting to true
+  on success or false on failure. Test suites check this value to ensure
+  proper setup before running tests."
   (try
     (initialize!)
     (catch Exception e

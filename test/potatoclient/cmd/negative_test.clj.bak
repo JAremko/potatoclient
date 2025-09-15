@@ -22,10 +22,7 @@
 
 ;; Setup instrumentation for validation tests
 (defn instrument-fixture
-  "Test fixture that enables Malli instrumentation for command namespaces.
-  Collects function schemas from root, system, and core namespaces,
-  instruments them for validation testing, runs the test, then removes
-  instrumentation to avoid interference with other test suites."
+  "Test fixture that instruments command functions for validation testing"
   [f]
   (mi/collect! {:ns ['potatoclient.cmd.root
                      'potatoclient.cmd.system
@@ -86,13 +83,13 @@
     (testing "Missing required fields in nested messages"
       (is (thrown? Exception
                    (core/send-command!
-                     {:system {:localization {}}}))  ; Missing required 'loc' field
+                     {:system {:localization {}}})) ; Missing required 'loc' field
           "Should reject command with missing required field"))
 
     (testing "Wrong structure for commands"
       (is (thrown? Exception
                    (core/send-command!
-                     {:system "not-a-map"}))  ; System should be a map
+                     {:system "not-a-map"})) ; System should be a map
           "Should reject wrong type for nested message"))
 
     (testing "Unknown command types"
